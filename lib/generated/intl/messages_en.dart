@@ -279,6 +279,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gstVat": MessageLookupByLibrary.simpleMessage("Gst/Vat"),
         "hAgo": MessageLookupByLibrary.simpleMessage("h ago"),
         "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
+        "history": MessageLookupByLibrary.simpleMessage("History"),
         "holderName": MessageLookupByLibrary.simpleMessage("Holder Name"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "hr24": MessageLookupByLibrary.simpleMessage("24 Hr"),
@@ -393,6 +394,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noOrders": MessageLookupByLibrary.simpleMessage("No Orders"),
         "noOrdersFound":
             MessageLookupByLibrary.simpleMessage("No orders found"),
+        "noPayoutsYet": MessageLookupByLibrary.simpleMessage("No payouts yet"),
         "noRedeemableRewards":
             MessageLookupByLibrary.simpleMessage("No redeemable rewards"),
         "noRestaurantsFound":
@@ -591,6 +593,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
         "scheduled": MessageLookupByLibrary.simpleMessage("SCHEDULED"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
+            "Search amount or Transaction ID"),
         "searchByIdName":
             MessageLookupByLibrary.simpleMessage("Search by ID, name"),
         "searchCategories":
@@ -650,6 +654,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "totalAmount": MessageLookupByLibrary.simpleMessage("Total Amount"),
         "totalBill": MessageLookupByLibrary.simpleMessage("Total Bill"),
         "totalOrdersStat": MessageLookupByLibrary.simpleMessage("Total Orders"),
+        "totalPayoutBalance":
+            MessageLookupByLibrary.simpleMessage("Total Payout Balance"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("Total Profit"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("Total Reviews"),

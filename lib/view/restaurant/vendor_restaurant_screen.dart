@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
+import '../payout/payout_list_screen.dart';
 import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
@@ -456,10 +457,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildBasketList(),
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Received Payouts") ...[
-                  const SizedBox(height: 20),
-                  _sectionHeader("RECEIVED PAYOUTS"),
-                  const SizedBox(height: 12),
-                  _buildPayoutsList(),
+                  // const SizedBox(height: 20),
+                  // _sectionHeader("RECEIVED PAYOUTS"),
+                  //const SizedBox(height: 5),
+                  //_buildPayoutsList(),
+                  PayoutListScreen(),
                   const SizedBox(height: 20),
                 ],
                 SizedBox(height: MediaQuery.of(context).size.height * 0.12),

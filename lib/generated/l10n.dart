@@ -4839,6 +4839,46 @@ class S {
       args: [],
     );
   }
+
+  /// `No payouts yet`
+  String get noPayoutsYet {
+    return Intl.message(
+      'No payouts yet',
+      name: 'noPayoutsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Payout Balance`
+  String get totalPayoutBalance {
+    return Intl.message(
+      'Total Payout Balance',
+      name: 'totalPayoutBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message(
+      'History',
+      name: 'history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search amount or Transaction ID`
+  String get searchAmountOrTransactionId {
+    return Intl.message(
+      'Search amount or Transaction ID',
+      name: 'searchAmountOrTransactionId',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
