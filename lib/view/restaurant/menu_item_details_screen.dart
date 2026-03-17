@@ -19,14 +19,17 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    final profileController = Get.find<ProfileController>();
-    profileController.getRestaurantMenuDetails(
-      restaurantMenuId: int.tryParse(widget.itemId),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profileController = Get.find<ProfileController>();
+      profileController.getRestaurantMenuDetails(
+        restaurantMenuId: int.tryParse(widget.itemId),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     final profileController = Get.find<ProfileController>();
     return CommonBackground(
       appBar: AppBar(
@@ -67,9 +70,11 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
               ? ApiConfigs.IMAGE_URL + menu.image
               : null;
           final isAvailable = menu?.approvalStatus == 1;
-
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: screenHeight * 0.02,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -79,13 +84,13 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                       ? Image.network(
                           imageUrl,
                           width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.25,
+                          height: screenHeight * 0.25,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => _placeholderImage(context),
                         )
                       : _placeholderImage(context),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.02),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -108,7 +113,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.02),
                 _propertyRow(context, S.of(context).itemIdLabel, '# ${widget.itemId}'),
                 if (menu != null) ...[
                   _propertyRow(
@@ -117,9 +122,9 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     categoryName.isNotEmpty ? categoryName : '—',
                   ),
                 ],
-                const SizedBox(height: 32),
+                SizedBox(height: screenHeight * 0.032),
                 _sectionHeader(context, S.of(context).salesPerformanceHeader),
-                const SizedBox(height: 12),
+                SizedBox(height: screenHeight * 0.012),
                 _buildSalesPerformanceCard(
                   context,
                   totalOrders: details?.totalOrders ?? 0,
@@ -127,7 +132,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   averageRating: details?.averageRating ?? 0,
                   totalRatingCount: details?.totalRatingCount ?? 0,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: screenHeight * 0.032),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -142,19 +147,19 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: screenHeight * 0.012),
                 _buildOrderCardsList(context, details?.orderDetails ?? []),
-                const SizedBox(height: 100),
+                SizedBox(height: screenHeight * 0.1),
               ],
             ),
           );
         },
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(screenHeight * 0.016),
         child: SizedBox(
           width: double.infinity,
-          height: 52,
+          height: screenHeight * 0.06,
           child: ElevatedButton(
             onPressed: () {
               // TODO: Update logic

@@ -58,5 +58,7 @@ class ApiEndPoints {
   static String markAsRead = "chat/markAsRead";
   static String getRestaurantCategories = "getRestaurantCategories";
   static String getRestaurantMenuDetails = "restaurantMenuDetails";
+  static String addRestaurantMenu = "addRestaurantMenu";
+  static String getRestaurantTags = "getRestaurantTags";
   static String getNotifications = "notifications";
 }

@@ -678,16 +678,14 @@ class VendorCategoryAddRow extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: onAddPressed,
             icon: const Icon(Icons.add, color: Color(0xFFFF5216), size: 14),
-            label: Flexible(
-              child: Text(
-                S.of(context).addMenuTitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
-                  fontSize: 12,
-                  color: const Color(0xFFFF5216),
-                  fontWeight: FontWeight.w600,
-                ),
+            label: Text(
+              S.of(context).addMenuTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.rubik(
+                fontSize: 12,
+                color: const Color(0xFFFF5216),
+                fontWeight: FontWeight.w600,
               ),
             ),
             style: OutlinedButton.styleFrom(
