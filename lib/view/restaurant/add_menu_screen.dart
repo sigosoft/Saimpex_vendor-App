@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuController;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:get/get.dart';
-import 'package:saimpex_vendor/controller/profile_controller.dart';
+import 'package:saimpex_vendor/controller/menucontroller.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/add_menu_widgets.dart';
 
 class AddMenuScreen extends StatefulWidget {
   const AddMenuScreen({super.key});
@@ -16,67 +16,10 @@ class AddMenuScreen extends StatefulWidget {
 }
 
 class _AddMenuScreenState extends State<AddMenuScreen> {
-  final TextEditingController _nameEnCtrl = TextEditingController();
-  final TextEditingController _descEnCtrl = TextEditingController();
-  final TextEditingController _prepTimeCtrl = TextEditingController();
-  final TextEditingController _priceCtrl = TextEditingController();
-  final TextEditingController _discountPriceCtrl = TextEditingController();
-
-  String? _selectedCategory;
-  String _selectedIsVeg = 'No';
-  String? _selectedTag;
-
-  final List<String> _categories = [
-    'Fast food',
-    'Chinese',
-    'Soups',
-    'Desserts',
-  ];
-  final List<String> _tags = [
-    'New Arrival',
-    'Best Seller',
-    'Popular',
-    'Special',
-  ];
-
-  final List<XFile> _uploadedImages = [];
-
-  @override
-  void dispose() {
-    _nameEnCtrl.dispose();
-    _descEnCtrl.dispose();
-    _prepTimeCtrl.dispose();
-    _priceCtrl.dispose();
-    _discountPriceCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickImages() async {
-    final ImagePicker picker = ImagePicker();
-    final List<XFile> picked = await picker.pickMultiImage(imageQuality: 80);
-    if (picked.isNotEmpty) {
-      setState(() {
-        _uploadedImages.addAll(picked);
-      });
-    }
-  }
-
-  void _reset() {
-    _nameEnCtrl.clear();
-    _descEnCtrl.clear();
-    _prepTimeCtrl.clear();
-    _priceCtrl.clear();
-    _discountPriceCtrl.clear();
-    setState(() {
-      _selectedCategory = null;
-      _selectedIsVeg = 'No';
-      _selectedTag = null;
-      _uploadedImages.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return CommonBackground(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -100,486 +43,323 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
         centerTitle: false,
       ),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Item Name (English) ──────────────────────────────
-            _fieldLabel(S.of(context).itemNameEnglishLabel),
-            const SizedBox(height: 6),
-            _textField(
-              controller: _nameEnCtrl,
-              hint: S.of(context).enterItemNameHint,
-            ),
-            const SizedBox(height: 16),
-
-            // ── Category + Is Veg ────────────────────────────────
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _fieldLabel(S.of(context).categoryLabel),
-                      const SizedBox(height: 6),
-                      _dropdownField(
-                        value: _selectedCategory,
-                        hint: S.of(context).selectCategoryHint,
-                        items: _categories,
-                        onChanged: (v) => setState(() => _selectedCategory = v),
-                        height: 46,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _fieldLabel(S.of(context).isVegLabel),
-                      const SizedBox(height: 6),
-                      _dropdownField(
-                        value: _selectedIsVeg == 'Yes'
-                            ? S.of(context).yesLabel
-                            : S.of(context).noLabel,
-                        items: [S.of(context).yesLabel, S.of(context).noLabel],
-                        onChanged: (v) => setState(
-                          () => _selectedIsVeg = (v == S.of(context).yesLabel)
-                              ? 'Yes'
-                              : 'No',
-                        ),
-                        height: 46,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // ── Description (English) ────────────────────────────
-            _fieldLabel(S.of(context).descriptionEnglishLabel),
-            const SizedBox(height: 6),
-            _textAreaField(
-              controller: _descEnCtrl,
-              hint: S.of(context).enterDescriptionHint,
-            ),
-            const SizedBox(height: 16),
-
-            // ── Tags ─────────────────────────────────────────────
-            _fieldLabel(S.of(context).tagsLabel),
-            const SizedBox(height: 6),
-            _dropdownField(
-              value: _selectedTag,
-              hint: S.of(context).selectTagHint,
-              items: _tags,
-              onChanged: (v) => setState(() => _selectedTag = v),
-              height: 46,
-              fullWidth: true,
-            ),
-            const SizedBox(height: 16),
-
-            // ── Preparation Time ─────────────────────────────────
-            _fieldLabel(S.of(context).preparationTimeMinutesLabel),
-            const SizedBox(height: 6),
-            _textField(
-              controller: _prepTimeCtrl,
-              hint: S.of(context).enterMinutesHint,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-
-            // ── Price + Discount Price ───────────────────────────
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _fieldLabel(S.of(context).priceLabel),
-                      const SizedBox(height: 6),
-                      _textField(
-                        controller: _priceCtrl,
-                        hint: S.of(context).enterPriceHint,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _fieldLabel(S.of(context).discountPriceLabel),
-                      const SizedBox(height: 6),
-                      _textField(
-                        controller: _discountPriceCtrl,
-                        hint: S.of(context).enterDiscountPriceHint,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // ── Item Image ───────────────────────────────────────
-            _fieldLabel(S.of(context).itemImageLabel),
-            const SizedBox(height: 6),
-            GestureDetector(
-              onTap: _pickImages,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.15,
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE5E5E5), width: 2),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.upload_outlined,
-                      color: Color(0xFF94A3B8),
-                      size: 22,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      S.of(context).uploadImageHint,
-                      style: GoogleFonts.rubik(
-                        fontSize: 12,
-                        color: const Color(0xFF94A3B8),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.04,
+          vertical: screenHeight * 0.02,
+        ),
+        child: GetBuilder<MenuController>(
+          init: MenuController(),
+          builder: (controller) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AddMenuFieldLabel(S.of(context).itemNameEnglishLabel),
+              SizedBox(height: screenHeight * 0.007),
+              AddMenuTextField(
+                controller: controller.nameEnCtrl,
+                hint: S.of(context).enterItemNameHint,
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // ── Uploaded Image Thumbnails ─────────────────────────
-            if (_uploadedImages.isNotEmpty)
-              SizedBox(
-                height: 64,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _uploadedImages.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    return Stack(
-                      clipBehavior: Clip.none,
+              SizedBox(height: screenHeight * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(_uploadedImages[index].path),
-                            width: 64,
-                            height: 64,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(8),
+                        AddMenuFieldLabel(S.of(context).categoryLabel),
+                        SizedBox(height: screenHeight * 0.007),
+                        controller.isRestaurantCategoriesLoading
+                            ? const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Color(0xFFFF5216),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : AddMenuDropdownField(
+                                value: controller.selectedCategoryDisplayName,
+                                hint: S.of(context).selectCategoryHint,
+                                items: controller.categoryDisplayNames,
+                                onChanged: (v) {
+                                  controller.setSelectedCategoryByName(v);
+                                  controller.update();
+                                },
+                                height: screenHeight * 0.055,
                               ),
-                              child: const Icon(
-                                Icons.image,
-                                color: Color(0xFF94A3B8),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: -6,
-                          right: -6,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _uploadedImages.removeAt(index);
-                              });
-                            },
-                            child: Container(
-                              width: 18,
-                              height: 18,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFFF5216),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 11,
-                              ),
-                            ),
-                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AddMenuFieldLabel(S.of(context).isVegLabel),
+                        SizedBox(height: screenHeight * 0.007),
+                        AddMenuDropdownField(
+                          value: controller.selectedIsVeg == 'Yes'
+                              ? S.of(context).yesLabel
+                              : S.of(context).noLabel,
+                          items: [
+                            S.of(context).yesLabel,
+                            S.of(context).noLabel,
+                          ],
+                          onChanged: (v) {
+                            controller.selectedIsVeg =
+                                (v == S.of(context).yesLabel) ? 'Yes' : 'No';
+                            controller.update();
+                          },
+                          height: screenHeight * 0.055,
                         ),
                       ],
-                    );
-                  },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).descriptionEnglishLabel),
+              SizedBox(height: screenHeight * 0.007),
+              AddMenuTextAreaField(
+                controller: controller.descEnCtrl,
+                hint: S.of(context).enterDescriptionHint,
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).tagsLabel),
+              SizedBox(height: screenHeight * 0.007),
+              controller.isRestaurantTagsLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFFFF5216),
+                          ),
+                        ),
+                      ),
+                    )
+                  : AddMenuDropdownField(
+                      value: controller.selectedTagDisplayName,
+                      hint: S.of(context).selectTagHint,
+                      items: controller.tagDisplayNames,
+                      onChanged: (v) {
+                        controller.setSelectedTagByName(v);
+                        controller.update();
+                      },
+                      height: screenHeight * 0.055,
+                      fullWidth: true,
+                    ),
+              SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).preparationTimeMinutesLabel),
+              SizedBox(height: screenHeight * 0.007),
+              AddMenuTextField(
+                controller: controller.prepTimeCtrl,
+                hint: S.of(context).enterMinutesHint,
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AddMenuFieldLabel(S.of(context).priceLabel),
+                        SizedBox(height: screenHeight * 0.007),
+                        AddMenuTextField(
+                          controller: controller.priceCtrl,
+                          hint: S.of(context).enterPriceHint,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AddMenuFieldLabel(S.of(context).discountPriceLabel),
+                        SizedBox(height: screenHeight * 0.007),
+                        AddMenuTextField(
+                          controller: controller.discountPriceCtrl,
+                          hint: S.of(context).enterDiscountPriceHint,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).itemImageLabel),
+              SizedBox(height: screenHeight * 0.007),
+              GestureDetector(
+                onTap: () => controller.showImageAlertDialog(context),
+                child: Container(
+                  width: screenWidth * 0.9,
+                  height: screenHeight * 0.15,
+                  padding: EdgeInsets.all(screenHeight * 0.04),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFFE5E5E5),
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.upload_outlined,
+                        color: Color(0xFF94A3B8),
+                        size: 22,
+                      ),
+                      SizedBox(height: screenHeight * 0.005),
+                      Text(
+                        S.of(context).uploadImageHint,
+                        style: GoogleFonts.rubik(
+                          fontSize: 12,
+                          color: const Color(0xFF94A3B8),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-
-            const SizedBox(height: 24),
-
-            // ── Reset + Submit ────────────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Reset
+              SizedBox(height: screenHeight * 0.015),
+              if (controller.uploadedImages.isNotEmpty)
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  height: 40,
-                  child: OutlinedButton(
-                    onPressed: _reset,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(
-                        color: Color(0xFFE5E5E5),
-                        width: 1,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
-                    child: Text(
-                      S.of(context).resetButton,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1F1F1F),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Submit
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.48,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_nameEnCtrl.text.isEmpty) {
-                        showToast(context, "Please enter item name");
-                        return;
-                      }
-                      if (_selectedCategory == null) {
-                        showToast(context, "Please select category");
-                        return;
-                      }
-                      if (_uploadedImages.isEmpty) {
-                        showToast(context, "Please upload image");
-                        return;
-                      }
-
-                      final profileController = Get.find<ProfileController>();
-                      profileController.addGroceryMenu(
-                        context,
-                        categoryIds: ["8"], // Placeholder Category ID
-                        nameEn: _nameEnCtrl.text,
-                        descriptionEn: _descEnCtrl.text,
-                        tags: ["1"], // Placeholder Tag ID
-                        serialNumber: _prepTimeCtrl.text.isNotEmpty
-                            ? _prepTimeCtrl.text
-                            : "SN-${DateTime.now().millisecondsSinceEpoch}",
-                        quantityAllowed: "10", // Placeholder quantity
-                        attributes: [
-                          {
-                            "grocery_attribute_id":
-                                "6", // Placeholder attribute id
-                            "attribute_value": "Standard", // Placeholder
-                            "retail_price": _priceCtrl.text,
-                            "selling_price": _discountPriceCtrl.text,
-                          },
+                  height: screenHeight * 0.08,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.uploadedImages.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(controller.uploadedImages[index].path),
+                              width: screenHeight * 0.08,
+                              height: screenHeight * 0.08,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                width: screenHeight * 0.08,
+                                height: screenHeight * 0.08,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.image,
+                                  color: Color(0xFF94A3B8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -6,
+                            right: -6,
+                            child: GestureDetector(
+                              onTap: () => controller.removeImageAt(index),
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFF5216),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 11,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
-                        imagePath: _uploadedImages.first.path,
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF5216),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+
+              SizedBox(height: screenHeight * 0.03),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: screenWidth * 0.3,
+                    height: screenHeight * 0.05,
+                    child: OutlinedButton(
+                      onPressed: controller.resetForm,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Color(0xFFE5E5E5),
+                          width: 1,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.white,
                       ),
-                    ),
-                    child: Text(
-                      S.of(context).submitButton,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                      child: Text(
+                        S.of(context).resetButton,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1F1F1F),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  Widget _fieldLabel(String label) {
-    return Text(
-      label,
-      style: GoogleFonts.rubik(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: const Color(0xFF64748B),
-      ),
-    );
-  }
-
-  Widget _textField({
-    required TextEditingController controller,
-    required String hint,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      height: 52,
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: GoogleFonts.rubik(
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF1F1F1F),
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.rubik(
-            fontSize: 13,
-            color: const Color(0xFF94A3B8),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          isDense: true,
-          contentPadding: const EdgeInsets.fromLTRB(16, 13, 16, 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFFF5216), width: 1),
+                  SizedBox(width: screenWidth * 0.04),
+                  SizedBox(
+                    width: screenWidth * 0.48,
+                    height: screenHeight * 0.05,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final error = controller.addMenuValidation();
+                        if (error != null) {
+                          showToast(context, error);
+                          return;
+                        }
+                        controller.addMenu(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF5216),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        S.of(context).submitButton,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.04),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _textAreaField({
-    required TextEditingController controller,
-    required String hint,
-  }) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      height: 89,
-      child: TextFormField(
-        controller: controller,
-        maxLines: null,
-        expands: true,
-        style: GoogleFonts.rubik(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: const Color(0xFF1F1F1F),
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.rubik(
-            fontSize: 12,
-            color: const Color(0xFF94A3B8),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.fromLTRB(16, 13, 16, 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFFF5216), width: 1),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _dropdownField({
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-    String? value,
-    String? hint,
-    double height = 52,
-    bool fullWidth = false,
-  }) {
-    return SizedBox(
-      width: fullWidth ? MediaQuery.of(context).size.width * 0.9 : null,
-      height: height,
-      child: DropdownButtonFormField<String>(
-        value: value,
-        onChanged: onChanged,
-        isExpanded: true,
-        hint: hint != null
-            ? Text(
-                hint,
-                style: GoogleFonts.rubik(
-                  fontSize: 13,
-                  color: const Color(0xFF94A3B8),
-                ),
-              )
-            : null,
-        icon: const Icon(
-          Icons.keyboard_arrow_down,
-          color: Color(0xFF94A3B8),
-          size: 20,
-        ),
-        style: GoogleFonts.rubik(
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF1F1F1F),
-        ),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          isDense: true,
-          contentPadding: const EdgeInsets.fromLTRB(16, 13, 8, 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFFF5216), width: 1),
-          ),
-        ),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
       ),
     );
   }

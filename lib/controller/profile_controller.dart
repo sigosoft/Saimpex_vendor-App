@@ -921,7 +921,7 @@ class ProfileController extends GetxController {
   Future<void> getRestaurantMenuDetails({int? restaurantMenuId}) async {
     try {
       isRestaurantMenuDetailsLoading = true;
-      update();
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
       var token = await getSavedObject("token");
       if (token != null) {
         DioClient().updateToken(token);
@@ -942,9 +942,11 @@ class ProfileController extends GetxController {
       debugPrint("getRestaurantMenuDetails Error: $error");
     } finally {
       isRestaurantMenuDetailsLoading = false;
-      update();
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
     }
   }
+
+  
 }
 
 class RestaurantCategory {
