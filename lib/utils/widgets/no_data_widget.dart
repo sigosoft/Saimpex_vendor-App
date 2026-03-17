@@ -15,19 +15,19 @@ Widget NoDataWidget(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 20),
+        //const SizedBox(height: 20),
         Image.asset(
           image,
-          height: imgHeight ?? MediaQuery.of(context).size.height * 0.15,
-          width: imgWidth ?? MediaQuery.of(context).size.width * 0.4,
+          height: imgHeight ?? MediaQuery.of(context).size.height * 0.2,
+          width: imgWidth ?? MediaQuery.of(context).size.width * 0.5,
           fit: BoxFit.contain,
         ),
         // SizedBox(height: 5),
-        // const SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           title,
           style: GoogleFonts.rubik(
-            fontSize: fontSize ?? 12,
+            fontSize: fontSize ?? 15,
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),

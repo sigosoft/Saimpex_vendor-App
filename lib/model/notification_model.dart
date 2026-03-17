@@ -1,108 +1,241 @@
+// To parse this JSON data, do
+//
+//     final notificationModel = notificationModelFromJson(jsonString);
+
+import 'dart:convert';
+
+NotificationModel notificationModelFromJson(String str) => NotificationModel.fromJson(json.decode(str));
+
+String notificationModelToJson(NotificationModel data) => json.encode(data.toJson());
+
 class NotificationModel {
-  final bool status;
-  final NotificationData data;
-  final Message message;
+  final String? status;
+  final Data? data;
+  final String? message;
 
   NotificationModel({
-    required this.status,
-    required this.data,
-    required this.message,
+    this.status,
+    this.data,
+    this.message,
   });
 
-  factory NotificationModel.fromJson(Map<String, dynamic>? json) {
-    return NotificationModel(
-      status: json?['status'] ?? false,
-      data: NotificationData.fromJson(json?['data']),
-      message: Message.fromJson(json?['message']),
-    );
-  }
+  factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
+    status: json["status"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    message: json["message"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "data": data?.toJson(),
+    "message": message,
+  };
 }
 
-class NotificationData {
-  final List<AppNotification> notifications;
+class Data {
+  final int? currentPage;
+  final List<Datum>? data;
+  final String? firstPageUrl;
+  final int? from;
+  final int? lastPage;
+  final String? lastPageUrl;
+  final List<Link>? links;
+  final String? nextPageUrl;
+  final String? path;
+  final int? perPage;
+  final dynamic prevPageUrl;
+  final int? to;
+  final int? total;
 
-  NotificationData({required this.notifications});
-
-  factory NotificationData.fromJson(Map<String, dynamic>? json) {
-    return NotificationData(
-      notifications: (json?['notifications'] as List<dynamic>?)
-              ?.map((e) => AppNotification.fromJson(e))
-              .toList() ??
-          [],
-    );
-  }
-}
-
-class AppNotification {
-  final int id;
-  final String titleEn;
-  final String titleAr;
-  final String titleFr;
-  final String contentEn;
-  final String contentFr;
-  final String contentAr;
-  final String date;
-  final String time;
-  final String notificationsCreatedAt;
-
-  AppNotification({
-    required this.id,
-    required this.titleEn,
-    required this.titleAr,
-    required this.titleFr,
-    required this.contentEn,
-    required this.contentFr,
-    required this.contentAr,
-    required this.date,
-    required this.time,
-    required this.notificationsCreatedAt,
+  Data({
+    this.currentPage,
+    this.data,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
   });
 
-  factory AppNotification.fromJson(Map<String, dynamic>? json) {
-    return AppNotification(
-      id: json?['id'] ?? 0,
-      titleEn: json?['title_en'] ?? '',
-      titleAr: json?['title_ar'] ?? '',
-      titleFr: json?['title_fr'] ?? '',
-      contentEn: json?['content_en'] ?? '',
-      contentFr: json?['content_fr'] ?? '',
-      contentAr: json?['content_ar'] ?? '',
-      date: json?['date'] ?? '',
-      time: json?['time'] ?? '',
-      notificationsCreatedAt:
-          json?['notifications_created_at'] ?? '',
-    );
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    currentPage: json["current_page"],
+    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    firstPageUrl: json["first_page_url"],
+    from: json["from"],
+    lastPage: json["last_page"],
+    lastPageUrl: json["last_page_url"],
+    links: json["links"] == null ? [] : List<Link>.from(json["links"]!.map((x) => Link.fromJson(x))),
+    nextPageUrl: json["next_page_url"],
+    path: json["path"],
+    perPage: json["per_page"],
+    prevPageUrl: json["prev_page_url"],
+    to: json["to"],
+    total: json["total"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "current_page": currentPage,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "first_page_url": firstPageUrl,
+    "from": from,
+    "last_page": lastPage,
+    "last_page_url": lastPageUrl,
+    "links": links == null ? [] : List<dynamic>.from(links!.map((x) => x.toJson())),
+    "next_page_url": nextPageUrl,
+    "path": path,
+    "per_page": perPage,
+    "prev_page_url": prevPageUrl,
+    "to": to,
+    "total": total,
+  };
 }
 
-class Message {
-  final List<String> messageEn;
-  final List<String> messageFr;
-  final List<String> messageAr;
+class Datum {
+  final int? id;
+  final TitleEn? titleEn;
+  final TitleAr? titleAr;
+  final TitleFr? titleFr;
+  final String? contentEn;
+  final String? contentAr;
+  final String? contentFr;
+  final int? type;
+  final int? sendTo;
+  final int? userId;
+  final int? orderId;
+  final DateTime? date;
+  final String? time;
+  final int? addedBy;
+  final dynamic updatedBy;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  Message({
-    required this.messageEn,
-    required this.messageFr,
-    required this.messageAr,
+  Datum({
+    this.id,
+    this.titleEn,
+    this.titleAr,
+    this.titleFr,
+    this.contentEn,
+    this.contentAr,
+    this.contentFr,
+    this.type,
+    this.sendTo,
+    this.userId,
+    this.orderId,
+    this.date,
+    this.time,
+    this.addedBy,
+    this.updatedBy,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  factory Message.fromJson(Map<String, dynamic>? json) {
-    return Message(
-      messageEn:
-          (json?['message_en'] as List<dynamic>?)
-                  ?.map((e) => e.toString())
-                  .toList() ??
-              [],
-      messageFr:
-          (json?['message_fr'] as List<dynamic>?)
-                  ?.map((e) => e.toString())
-                  .toList() ??
-              [],
-      messageAr:
-          (json?['message_ar'] as List<dynamic>?)
-                  ?.map((e) => e.toString())
-                  .toList() ??
-              [],
-    );
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    id: json["id"],
+    titleEn: titleEnValues.map[json["title_en"]],
+    titleAr: titleArValues.map[json["title_ar"]],
+    titleFr: titleFrValues.map[json["title_fr"]],
+    contentEn: json["content_en"],
+    contentAr: json["content_ar"],
+    contentFr: json["content_fr"],
+    type: json["type"],
+    sendTo: json["send_to"],
+    userId: json["user_id"],
+    orderId: json["order_id"],
+    date: json["date"] == null ? null : DateTime.parse(json["date"]),
+    time: json["time"],
+    addedBy: json["added_by"],
+    updatedBy: json["updated_by"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title_en": titleEnValues.reverse[titleEn],
+    "title_ar": titleArValues.reverse[titleAr],
+    "title_fr": titleFrValues.reverse[titleFr],
+    "content_en": contentEn,
+    "content_ar": contentAr,
+    "content_fr": contentFr,
+    "type": type,
+    "send_to": sendTo,
+    "user_id": userId,
+    "order_id": orderId,
+    "date": "${date!.year.toString().padLeft(4, '0')}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}",
+    "time": time,
+    "added_by": addedBy,
+    "updated_by": updatedBy,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+  };
+}
+
+enum TitleAr {
+  EMPTY
+}
+
+final titleArValues = EnumValues({
+  "نظام جديد!": TitleAr.EMPTY
+});
+
+enum TitleEn {
+  A_NEW_ORDER
+}
+
+final titleEnValues = EnumValues({
+  "A new order!": TitleEn.A_NEW_ORDER
+});
+
+enum TitleFr {
+  UN_NOUVEL_ORDRE
+}
+
+final titleFrValues = EnumValues({
+  "Un nouvel ordre !": TitleFr.UN_NOUVEL_ORDRE
+});
+
+class Link {
+  final String? url;
+  final String? label;
+  final int? page;
+  final bool? active;
+
+  Link({
+    this.url,
+    this.label,
+    this.page,
+    this.active,
+  });
+
+  factory Link.fromJson(Map<String, dynamic> json) => Link(
+    url: json["url"],
+    label: json["label"],
+    page: json["page"],
+    active: json["active"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "url": url,
+    "label": label,
+    "page": page,
+    "active": active,
+  };
+}
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
   }
 }
