@@ -54,4 +54,5 @@ class ApiEndPoints {
   static String getRestaurantMenuDetails = "restaurantMenuDetails";
   static String addRestaurantMenu = "addRestaurantMenu";
   static String getRestaurantTags = "getRestaurantTags";
+  static String getNotifications = "notifications";
 }
