@@ -6,6 +6,8 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
 
+import '../../../Utils/Utils.dart';
+
 class VendorWorkingHoursList extends StatelessWidget {
   const VendorWorkingHoursList({super.key});
 
@@ -396,7 +398,7 @@ class VendorReviewItem extends StatelessWidget {
                 ),
               ),
               Text(
-                date,
+                formatOrderPlacedAt(DateTime.parse(date.toString())),
                 style: GoogleFonts.rubik(
                   fontSize: 10,
                   color: const Color(0xFF9CA3AF),
