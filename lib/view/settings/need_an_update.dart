@@ -5,7 +5,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../resources/colors.dart';
@@ -70,15 +70,12 @@ class NeedAnUpdate extends StatelessWidget {
                   text: S.of(context).update, // Use your "Update" key
                   backgroundColor: colorPrimary,
                   onPressed: () async {
-                    final packageInfo = await PackageInfo.fromPlatform();
-                    final String packageName = packageInfo.packageName;
                     final Uri url = Platform.isAndroid
                         ? Uri.parse(
-                            "https://play.google.app/store/apps/details?id=" +
-                                packageName,
+                            "https://play.google.com/store/apps/details?id=${ApiConfigs.androidPackageName}",
                           )
                         : Uri.parse(
-                            "https://apps.apple.app/app/" + "id1234567895",
+                            "https://apps.apple.com/app/id${ApiConfigs.iosAppStoreId}",
                           );
                     if (await canLaunchUrl(url)) {
                       await launchUrl(

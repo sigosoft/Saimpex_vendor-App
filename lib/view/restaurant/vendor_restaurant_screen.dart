@@ -314,11 +314,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: _buildReviewItem(
-                            name: review.username ?? "Anonymous",
+                            name: review.username ?? S.of(context).anonymous,
                             date: review.createdAt ?? "",
                             rating:
                                 double.tryParse(review.rating ?? "0") ?? 0.0,
-                            review: review.comment ?? "No comment",
+                            review: review.comment ?? S.of(context).noComment,
                             orderId: review.orderCode ?? "",
                           ),
                         );
@@ -327,21 +327,21 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   else
                     NoDataWidget(
                       context,
-                      "No reviews found.",
+                      S.of(context).noReviewsFound,
                       "",
                       "lib/assets/images/nodata.png",
                     ),
                   const SizedBox(height: 8),
                 ] else if (selectedMenu == "Leaves") ...[
                   const SizedBox(height: 20),
-                  _sectionHeader("MARK LEAVE"),
+                  _sectionHeader(S.of(context).markLeave),
                   const SizedBox(height: 12),
                   _buildLeaveForm(),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _sectionHeader("LEAVES HISTORY"),
+                      _sectionHeader(S.of(context).leavesHistory),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -364,7 +364,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "Upcoming Leaves",
+                    S.of(context).upcomingLeaves,
                     style: GoogleFonts.rubik(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -378,7 +378,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _buildLeaveTile(
                           dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? "Leave",
+                          reason: leave.reason ?? S.of(context).leave,
                           status: "SCHEDULED",
                           isUpcoming: true,
                         ),
@@ -387,13 +387,13 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   else
                     NoDataWidget(
                       context,
-                      "No upcoming leaves found.",
+                      S.of(context).noUpcomingLeavesFound,
                       "",
                       "lib/assets/images/nodata.png",
                     ),
                   const SizedBox(height: 12),
                   Text(
-                    "Completed Leaves",
+                    S.of(context).completedLeaves,
                     style: GoogleFonts.rubik(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -407,7 +407,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _buildLeaveTile(
                           dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? "Leave",
+                          reason: leave.reason ?? S.of(context).leave,
                           status: "COMPLETED",
                           isUpcoming: false,
                         ),
@@ -416,14 +416,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   else
                     NoDataWidget(
                       context,
-                      "No completed leaves found.",
+                      S.of(context).noCompletedLeavesFound,
                       "",
                       "lib/assets/images/nodata.png",
                     ),
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Working Hours") ...[
                   const SizedBox(height: 20),
-                  _sectionHeader("WORKING HOURS"),
+                  _sectionHeader(S.of(context).workingHours),
                   const SizedBox(height: 12),
                   _buildWorkingHoursList(),
                   const SizedBox(height: 20),
@@ -443,7 +443,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Menu Bulk Import") ...[
                   const SizedBox(height: 20),
-                  _sectionHeader("MENU BULK IMPORT"),
+                  _sectionHeader(S.of(context).menuBulkImport),
                   const SizedBox(height: 24),
                   _buildBulkImportInstructions(),
                   const SizedBox(height: 24),
@@ -451,7 +451,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   const SizedBox(height: 40),
                 ] else if (selectedMenu == "Basket") ...[
                   const SizedBox(height: 20),
-                  _sectionHeader("BASKETS"),
+                  _sectionHeader(S.of(context).baskets),
                   const SizedBox(height: 12),
                   _buildBasketList(),
                   const SizedBox(height: 20),

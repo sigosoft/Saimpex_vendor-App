@@ -77,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "alreadyOneCouponIsAppliedOnThisOrderIfYou":
             MessageLookupByLibrary.simpleMessage(
                 "Already one coupon is applied on this order, if you want to aaply this please remove already applied coupon"),
+        "anonymous": MessageLookupByLibrary.simpleMessage("Anonymous"),
         "applied": MessageLookupByLibrary.simpleMessage("Applied"),
         "apply": MessageLookupByLibrary.simpleMessage("Apply"),
         "applyCoupon": MessageLookupByLibrary.simpleMessage("Apply Coupon"),
@@ -123,6 +124,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Basket Order Details"),
         "basketOrders": MessageLookupByLibrary.simpleMessage("Basket Orders"),
         "basketOrderss": MessageLookupByLibrary.simpleMessage("Basket Orders"),
+        "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
         "beverages": MessageLookupByLibrary.simpleMessage("Beverages"),
         "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now"),
@@ -143,6 +145,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "certificates": MessageLookupByLibrary.simpleMessage("CERTIFICATES"),
         "chat": MessageLookupByLibrary.simpleMessage("Chat"),
         "chatNow": MessageLookupByLibrary.simpleMessage("Chat now"),
+        "checkForUpdate":
+            MessageLookupByLibrary.simpleMessage("Check for update"),
         "checkout": MessageLookupByLibrary.simpleMessage("Checkout"),
         "chooseImageFrom":
             MessageLookupByLibrary.simpleMessage("Choose Image From :"),
@@ -305,6 +309,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "lastPurchaseLabel":
             MessageLookupByLibrary.simpleMessage("Last Purchase"),
+        "leave": MessageLookupByLibrary.simpleMessage("Leave"),
         "leaves": MessageLookupByLibrary.simpleMessage("Leaves"),
         "leavesHistory": MessageLookupByLibrary.simpleMessage("LEAVES HISTORY"),
         "loadingLocation":
@@ -349,6 +354,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "noCategoriesFound":
             MessageLookupByLibrary.simpleMessage("No Categories Found"),
+        "noComment": MessageLookupByLibrary.simpleMessage("No comment"),
+        "noCommentProvided":
+            MessageLookupByLibrary.simpleMessage("No comment provided."),
+        "noCompletedLeavesFound":
+            MessageLookupByLibrary.simpleMessage("No completed leaves found."),
         "noConversations":
             MessageLookupByLibrary.simpleMessage("No Conversations"),
         "noConversationsFound":
@@ -389,12 +399,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No Restaurants Found"),
         "noRestaurantsFounds":
             MessageLookupByLibrary.simpleMessage("No Restaurants Founds"),
+        "noReviewsFound":
+            MessageLookupByLibrary.simpleMessage("No reviews found."),
         "noStoresFound":
             MessageLookupByLibrary.simpleMessage("No Stores Found"),
         "noTrackingDetailsFound":
             MessageLookupByLibrary.simpleMessage("No tracking details found"),
         "noTransactionHistoryAvailable": MessageLookupByLibrary.simpleMessage(
             "No transaction history available"),
+        "noUpcomingLeavesFound":
+            MessageLookupByLibrary.simpleMessage("No upcoming leaves found."),
         "notification": MessageLookupByLibrary.simpleMessage("Notification"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
         "now": MessageLookupByLibrary.simpleMessage("Now"),

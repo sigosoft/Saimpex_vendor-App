@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
 import '../../controller/profile_controller.dart';
@@ -79,7 +80,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
           if (reviews.isEmpty) {
             return NoDataWidget(
               context,
-              "No reviews found.",
+              S.of(context).noReviewsFound,
               "",
               "lib/assets/images/nodata.png",
               imgHeight: MediaQuery.of(context).size.height * 0.25,
@@ -149,7 +150,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      review.username ?? "Anonymous",
+                      review.username ?? S.of(context).anonymous,
                       style: GoogleFonts.rubik(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -183,7 +184,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                 ),
               ),
               Text(
-                review.createdAt ?? "",
+                formatOrderPlacedAt(DateTime.parse(review.createdAt.toString())),
                 style: GoogleFonts.rubik(
                   fontSize: 10,
                   color: const Color(0xFF9CA3AF),
@@ -193,7 +194,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            review.comment ?? "No comment provided.",
+            review.comment ?? S.of(context).noCommentProvided,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.rubik(

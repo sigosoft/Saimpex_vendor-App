@@ -10,6 +10,7 @@ import '../../controller/notification_controller.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
 import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import '../shimmer_loading/shimmer_notification.dart';
 
@@ -46,10 +47,10 @@ class _NotificationsState extends State<Notifications> {
       textDirection: localization.currentLocale?.languageCode == "ar"
           ? TextDirection.rtl
           : TextDirection.ltr,
-      child: Scaffold(
+      child: CommonBackground(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(title: S.of(context).notifications,onTap: (){Get.back();},),
-        body: GetBuilder<NotificationController>(
+        child: GetBuilder<NotificationController>(
           builder: (controller) {
             if (controller.isLoading) {
               return const ShimmerNotification();

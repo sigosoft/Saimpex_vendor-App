@@ -954,5 +954,14 @@
   "orderPickedUp": "Order Picked Up",
   "deliveryStarted": "Delivery Started",
   "deliveryCompleted": "Delivery Completed",
-  "welcomeTo": "Welcome to"
+  "welcomeTo": "Welcome to",
+  "noReviewsFound": "No reviews found.",
+  "anonymous": "Anonymous",
+  "noCommentProvided": "No comment provided.",
+  "noComment": "No comment",
+  "leave": "Leave",
+  "noUpcomingLeavesFound": "No upcoming leaves found.",
+  "noCompletedLeavesFound": "No completed leaves found.",
+  "baskets": "BASKETS",
+  "checkForUpdate": "Check for update"
 }

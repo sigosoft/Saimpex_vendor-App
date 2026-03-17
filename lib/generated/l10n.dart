@@ -4749,6 +4749,96 @@ class S {
       args: [],
     );
   }
+
+  /// `No reviews found.`
+  String get noReviewsFound {
+    return Intl.message(
+      'No reviews found.',
+      name: 'noReviewsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Anonymous`
+  String get anonymous {
+    return Intl.message(
+      'Anonymous',
+      name: 'anonymous',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No comment provided.`
+  String get noCommentProvided {
+    return Intl.message(
+      'No comment provided.',
+      name: 'noCommentProvided',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No comment`
+  String get noComment {
+    return Intl.message(
+      'No comment',
+      name: 'noComment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Leave`
+  String get leave {
+    return Intl.message(
+      'Leave',
+      name: 'leave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No upcoming leaves found.`
+  String get noUpcomingLeavesFound {
+    return Intl.message(
+      'No upcoming leaves found.',
+      name: 'noUpcomingLeavesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No completed leaves found.`
+  String get noCompletedLeavesFound {
+    return Intl.message(
+      'No completed leaves found.',
+      name: 'noCompletedLeavesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BASKETS`
+  String get baskets {
+    return Intl.message(
+      'BASKETS',
+      name: 'baskets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check for update`
+  String get checkForUpdate {
+    return Intl.message(
+      'Check for update',
+      name: 'checkForUpdate',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -367,12 +368,15 @@ class _SettingsState extends State<Settings> {
                         color: Colors.grey,
                       ),
                     ),
-                    Text(
-                      "Check for update",
-                      style: GoogleFonts.rubik(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        decoration: TextDecoration.underline,
+                    GestureDetector(
+                      onTap: () => _openStore(context),
+                      child: Text(
+                        S.of(context).checkForUpdate,
+                        style: GoogleFonts.rubik(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -406,6 +410,30 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
+  }
+
+  Future<void> _openStore(BuildContext context) async {
+    final Uri url;
+    if (Platform.isAndroid) {
+      url = Uri.parse(
+        "https://play.google.com/store/apps/details?id=${ApiConfigs.androidPackageName}",
+      );
+    } else if (Platform.isIOS) {
+      url = Uri.parse(
+        "https://apps.apple.com/app/id${ApiConfigs.iosAppStoreId}",
+      );
+    } else {
+      return;
+    }
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showToast(context, e.toString());
+      }
+    }
   }
 
   void _showLogoutBottomSheet(

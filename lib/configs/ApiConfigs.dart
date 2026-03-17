@@ -9,6 +9,12 @@ class ApiConfigs {
   // This is the base Image URL
   static String IMAGE_URL =
       "https://ourworks.co.in/saimpex-backend/public/storage/";
+
+  /// Android package name for Play Store link
+  static const String androidPackageName = "saimpex.vendor";
+
+  /// iOS App Store ID (numeric). Replace with your app's ID from App Store Connect when published.
+  static const String iosAppStoreId = "123456789";
 }
 
 class ApiEndPoints {
