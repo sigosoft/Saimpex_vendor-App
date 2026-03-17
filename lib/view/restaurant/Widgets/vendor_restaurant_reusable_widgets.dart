@@ -6,6 +6,8 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
 
+import '../../../Utils/Utils.dart';
+
 class VendorWorkingHoursList extends StatelessWidget {
   const VendorWorkingHoursList({super.key});
 
@@ -396,7 +398,7 @@ class VendorReviewItem extends StatelessWidget {
                 ),
               ),
               Text(
-                date,
+                formatOrderPlacedAt(DateTime.parse(date.toString())),
                 style: GoogleFonts.rubik(
                   fontSize: 10,
                   color: const Color(0xFF9CA3AF),
@@ -702,6 +704,46 @@ class VendorCategoryAddRow extends StatelessWidget {
   }
 }
 
+/// Shows availability label: status 1 = Out of stock, 2 = Available.
+class _AvailabilityChip extends StatelessWidget {
+  final int status;
+
+  const _AvailabilityChip({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final isAvailable = status == 2;
+    final label = isAvailable
+        ? S.of(context).availableStatus
+        : S.of(context).outOfStock;
+    final color = isAvailable ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.rubik(
+            fontSize: 11,
+            color: color,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class VendorRichCard extends StatelessWidget {
   final String id;
   final String name;
@@ -712,8 +754,11 @@ class VendorRichCard extends StatelessWidget {
   final String itemId;
   final bool isMenu;
   final List<RestaurantCategory>? categories;
+  /// 1 = Out of stock, 2 = Available. When null, availability is not shown.
+  final int? availabilityStatus;
   final VoidCallback onViewDetails;
   final VoidCallback onEdit;
+  final VoidCallback? onDelete;
 
   const VendorRichCard({
     super.key,
@@ -726,8 +771,10 @@ class VendorRichCard extends StatelessWidget {
     required this.itemId,
     required this.isMenu,
     this.categories,
+    this.availabilityStatus,
     required this.onViewDetails,
     required this.onEdit,
+    this.onDelete,
   });
 
   String get _displayCategory {
@@ -743,10 +790,17 @@ class VendorRichCard extends StatelessWidget {
     if (categoryId == null) return category;
     try {
       final match = categories!.firstWhere((c) => c.id == categoryId);
-      return match.name ?? category;
+      final name = match.name?.trim();
+      return (name != null && name.isNotEmpty) ? name : category;
     } catch (_) {
       return category;
     }
+  }
+
+  /// Category text to show in the bubble; never empty so the bubble always shows a name.
+  String get _displayCategoryLabel {
+    final value = _displayCategory.trim();
+    return value.isEmpty ? '—' : value;
   }
 
   @override
@@ -846,7 +900,7 @@ class VendorRichCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            _displayCategory,
+                            _displayCategoryLabel,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.rubik(
@@ -885,6 +939,10 @@ class VendorRichCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            ],
+                            if (availabilityStatus != null) ...[
+                              const SizedBox(width: 12),
+                              _AvailabilityChip(status: availabilityStatus!),
                             ],
                           ],
                         ),
@@ -926,6 +984,8 @@ class VendorRichCard extends StatelessWidget {
               onSelected: (value) {
                 if (value == 'edit') {
                   onEdit();
+                } else if (value == 'delete' && onDelete != null) {
+                  onDelete!();
                 }
               },
               itemBuilder: (context) => [

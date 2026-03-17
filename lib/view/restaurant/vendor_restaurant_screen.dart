@@ -15,6 +15,8 @@ import 'rating_reviews_screen.dart';
 import 'leave_history_screen.dart';
 import 'Widgets/vendor_restaurant_reusable_widgets.dart';
 import '../../controller/profile_controller.dart';
+import '../../controller/menucontroller.dart' as menu_ctrl;
+import '../../controller/item_controller.dart';
 import '../../Utils/Utils.dart';
 import '../../utils/widgets/app_loader.dart';
 import '../../utils/widgets/no_data_widget.dart';
@@ -373,17 +375,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.upcomingLeaves.isNotEmpty)
-                    ...profileController.upcomingLeaves.take(3).map(
-                      (leave) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildLeaveTile(
-                          dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? S.of(context).leave,
-                          status: "SCHEDULED",
-                          isUpcoming: true,
-                        ),
-                      ),
-                    )
+                    ...profileController.upcomingLeaves
+                        .take(3)
+                        .map(
+                          (leave) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildLeaveTile(
+                              dateRange: _formatLeaveDate(leave.date),
+                              reason: leave.reason ?? S.of(context).leave,
+                              status: "SCHEDULED",
+                              isUpcoming: true,
+                            ),
+                          ),
+                        )
                   else
                     NoDataWidget(
                       context,
@@ -402,17 +406,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.leaveHistory.isNotEmpty)
-                    ...profileController.leaveHistory.take(3).map(
-                      (leave) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildLeaveTile(
-                          dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? S.of(context).leave,
-                          status: "COMPLETED",
-                          isUpcoming: false,
-                        ),
-                      ),
-                    )
+                    ...profileController.leaveHistory
+                        .take(3)
+                        .map(
+                          (leave) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildLeaveTile(
+                              dateRange: _formatLeaveDate(leave.date),
+                              reason: leave.reason ?? S.of(context).leave,
+                              status: "COMPLETED",
+                              isUpcoming: false,
+                            ),
+                          ),
+                        )
                   else
                     NoDataWidget(
                       context,
@@ -438,6 +444,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 ] else if (selectedMenu == "Items") ...[
                   const SizedBox(height: 20),
                   _buildSearchRow(),
+                  const SizedBox(height: 16),
+                  _buildItemsActionRow(),
                   const SizedBox(height: 16),
                   _buildItemsList(),
                   const SizedBox(height: 20),
@@ -616,7 +624,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           (menu.id?.toString() ?? "").contains(query);
     }).toList();
 
-    final filteredRestaurantMenus = profileController.restaurantMenus.where((menu) {
+    final filteredRestaurantMenus = profileController.restaurantMenus.where((
+      menu,
+    ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
       final name = lang == 'fr'
@@ -708,6 +718,117 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
+  Widget _buildItemsActionRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFFFF5216), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Download',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    color: const Color(0xFFFF5216),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Image.asset(
+                  'lib/assets/images/download_image.png',
+                  width: 12,
+                  height: 12,
+                  fit: BoxFit.contain,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFF3B82F6),
+              side: const BorderSide(color: Color(0xFF3B82F6), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Upload Menu',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    color: const Color(0xFF3B82F6),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Image.asset(
+                  'lib/assets/images/upload_button.png',
+                  width: 12,
+                  height: 12,
+                  fit: BoxFit.contain,
+                  color: const Color(0xFF3B82F6),
+                  colorBlendMode: BlendMode.srcIn,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddItemsScreen()),
+              );
+            },
+            icon: const Icon(Icons.add, color: Color(0xFFFF5216), size: 18),
+            label: Text(
+              S.of(context).addItem,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.rubik(
+                fontSize: 12,
+                color: const Color(0xFFFF5216),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFFFF5216), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCategoryAddRow() {
     final profileController = Get.find<ProfileController>();
     return VendorCategoryAddRow(
@@ -758,6 +879,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     required String itemId,
     bool isMenu = false,
     List<RestaurantCategory>? categories,
+    int? availabilityStatus,
   }) {
     return VendorRichCard(
       id: id,
@@ -769,11 +891,15 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       itemId: itemId,
       isMenu: isMenu,
       categories: categories,
+      availabilityStatus: availabilityStatus,
       onViewDetails: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MenuItemDetailsScreen(itemId: itemId),
+            builder: (context) => MenuItemDetailsScreen(
+              itemId: itemId,
+              isMenu: isMenu,
+            ),
           ),
         );
       },
@@ -781,7 +907,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         if (isMenu) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditMenuScreen(itemId: itemId)),
+            MaterialPageRoute(
+              builder: (context) => EditMenuScreen(itemId: itemId),
+            ),
           );
         } else {
           Navigator.push(
@@ -792,6 +920,23 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           );
         }
       },
+      onDelete: isMenu
+          ? () {
+              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+                  ? Get.find<menu_ctrl.MenuController>()
+                  : Get.put(menu_ctrl.MenuController(), permanent: false);
+              menuController.deleteMenu(context,
+                  restaurantMenuId: itemId);
+            }
+          : () {
+              final itemController = Get.isRegistered<ItemController>()
+                  ? Get.find<ItemController>()
+                  : Get.put(ItemController(), permanent: false);
+              itemController.deleteItem(
+                context,
+                restaurantMenuItemId: itemId,
+              );
+            },
     );
   }
 
@@ -802,7 +947,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       return const AppLoader();
     }
     final query = _searchKeyword.trim().toLowerCase();
-    final filteredGroceryItems = profileController.groceryMenuItems.where((item) {
+    final filteredGroceryItems = profileController.groceryMenuItems.where((
+      item,
+    ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
       final name = lang == 'fr'
@@ -820,18 +967,25 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           (item.id?.toString() ?? "").contains(query);
     }).toList();
 
-    final filteredRestaurantItems = profileController.restaurantMenuItems.where((item) {
-      if (query.isEmpty) return true;
-      final lang = profileController.localization.currentLocale?.languageCode;
-      final name = lang == 'fr'
-          ? (item.nameFr ?? item.nameEn ?? "")
-          : lang == 'ar'
-          ? (item.nameAr ?? item.nameEn ?? "")
-          : (item.nameEn ?? "");
-      return name.toLowerCase().contains(query) ||
-          (item.categoryId?.toString() ?? "").toLowerCase().contains(query) ||
-          (item.id?.toString() ?? "").contains(query);
-    }).toList();
+    final filteredRestaurantItems = profileController.restaurantMenuItems.where(
+      (item) {
+        if (query.isEmpty) return true;
+        final lang = profileController.localization.currentLocale?.languageCode;
+        final name = lang == 'fr'
+            ? (item.nameFr ?? item.nameEn ?? "")
+            : lang == 'ar'
+            ? (item.nameAr ?? item.nameEn ?? "")
+            : (item.nameEn ?? "");
+        final category = lang == 'fr'
+            ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
+            : lang == 'ar'
+            ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
+            : (item.categoryNameEn ?? "");
+        return name.toLowerCase().contains(query) ||
+            category.toLowerCase().contains(query) ||
+            (item.id?.toString() ?? "").contains(query);
+      },
+    ).toList();
 
     if (filteredGroceryItems.isEmpty && filteredRestaurantItems.isEmpty) {
       return Column(
@@ -869,6 +1023,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             item.image,
             item.id.toString(),
             category: category,
+            availabilityStatus: item.availableStatus,
           );
         }).toList(),
         ...filteredRestaurantItems.map((item) {
@@ -879,13 +1034,27 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               : lang == 'ar'
               ? (item.nameAr ?? item.nameEn ?? "")
               : (item.nameEn ?? "");
-          final price = "${item.price} MRU";
+          final category = lang == 'fr'
+              ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
+              : lang == 'ar'
+              ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
+              : (item.categoryNameEn ?? "");
+          final hasDiscount =
+              item.discountPrice != null &&
+              item.discountPrice!.isNotEmpty &&
+              item.discountPrice != item.price;
+          final displayPrice = hasDiscount
+              ? "${item.discountPrice} MRU"
+              : "${item.price} MRU";
+          final originalPrice = hasDiscount ? "${item.price} MRU" : null;
           return _foodItem(
             name,
-            price,
+            displayPrice,
             item.image,
             item.id.toString(),
-            category: item.categoryId?.toString() ?? "",
+            category: category,
+            originalPrice: originalPrice,
+            availabilityStatus: item.availableStatus,
           );
         }).toList(),
         const SizedBox(height: 20),
@@ -911,15 +1080,21 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     String? imageUrl,
     String itemId, {
     String category = "Category",
+    List<RestaurantCategory>? categories,
+    String? originalPrice,
+    int? availabilityStatus,
   }) {
     return _richCard(
       id: itemId,
       name: name,
       category: category,
       price: price,
+      originalPrice: originalPrice,
       imageUrl: imageUrl,
       itemId: itemId,
       isMenu: false,
+      categories: categories,
+      availabilityStatus: availabilityStatus,
     );
   }
 

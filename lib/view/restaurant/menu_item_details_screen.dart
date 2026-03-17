@@ -5,11 +5,18 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
+import 'package:saimpex_vendor/view/restaurant/edit_items_screen.dart';
+import 'package:saimpex_vendor/view/restaurant/edit_menu_screen.dart';
 
 class MenuItemDetailsScreen extends StatefulWidget {
   final String itemId;
+  final bool isMenu;
 
-  const MenuItemDetailsScreen({super.key, required this.itemId});
+  const MenuItemDetailsScreen({
+    super.key,
+    required this.itemId,
+    this.isMenu = true,
+  });
 
   @override
   State<MenuItemDetailsScreen> createState() => _MenuItemDetailsScreenState();
@@ -162,7 +169,22 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           height: screenHeight * 0.06,
           child: ElevatedButton(
             onPressed: () {
-              // TODO: Update logic
+              debugPrint("Button tapped");
+              if (widget.isMenu) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditMenuScreen(itemId: widget.itemId),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditItemsScreen(itemId: widget.itemId),
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF5216),

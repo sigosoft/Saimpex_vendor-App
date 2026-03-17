@@ -131,6 +131,10 @@ class RestaurantMenuItemData {
   String? discountPrice;
   int? restaurantMenuItemId;
   int? categoryId;
+  String? categoryNameEn;
+  String? categoryNameAr;
+  String? categoryNameFr;
+  int? availableStatus;
 
   RestaurantMenuItemData({
     this.id,
@@ -145,6 +149,10 @@ class RestaurantMenuItemData {
     this.discountPrice,
     this.restaurantMenuItemId,
     this.categoryId,
+    this.categoryNameEn,
+    this.categoryNameAr,
+    this.categoryNameFr,
+    this.availableStatus,
   });
 
   factory RestaurantMenuItemData.fromJson(Map<String, dynamic>? json) {
@@ -165,6 +173,12 @@ class RestaurantMenuItemData {
       categoryId: json['category_id'] is int
           ? json['category_id'] as int
           : int.tryParse(json['category_id']?.toString() ?? ''),
+      categoryNameEn: json['category_name_en']?.toString() ?? '',
+      categoryNameAr: json['category_name_ar']?.toString() ?? '',
+      categoryNameFr: json['category_name_fr']?.toString() ?? '',
+      availableStatus: json['available_status'] is int
+          ? json['available_status'] as int
+          : int.tryParse(json['available_status']?.toString() ?? '0'),
     );
   }
 }

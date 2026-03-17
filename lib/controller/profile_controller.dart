@@ -221,6 +221,13 @@ class ProfileController extends GetxController {
     }
   }
 
+  /// Removes a restaurant menu from the list by id and triggers UI update.
+  void removeRestaurantMenuById(String restaurantMenuId) {
+    restaurantMenus
+        .removeWhere((m) => m.id?.toString() == restaurantMenuId);
+    update();
+  }
+
   Future<void> fetchRestaurantMenus({
     bool isLoadMore = false,
     String keyword = '',
