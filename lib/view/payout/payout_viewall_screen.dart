@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saimpex_vendor/utils/widgets/common_background.dart';
+import 'package:intl/intl.dart' show DateFormat;
+import '../../controller/payout_controller.dart';
 import '../../generated/l10n.dart';
+import '../../model/received_payout_model.dart';
 import '../../resources/colors.dart';
 import '../../utils/Widgets/custom_app_bar.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import 'payoutitem.dart';
 
-/// Full-screen payout history: app bar "History", balance card, search bar, and list.
+/// Full-screen payout history: app bar "History", balance card, search bar, and list with pagination.
 class PayoutViewAllScreen extends StatefulWidget {
   const PayoutViewAllScreen({super.key});
 
@@ -22,42 +26,19 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  static const String _sampleTotalBalance = '10,140.00';
-  static const String _sampleCurrency = 'MRU';
+  static const String _currency = 'MRU';
 
-  /// Replace with your API/controller when wired.
-  static List<_PayoutEntry> _samplePayouts = [
-    _PayoutEntry(
-      transactionId: 'PYT240',
-      dateTime: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '400.00',
-      balanceAfterPayout: '1,000.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT239',
-      dateTime: 'Feb 06, 2026 03:20 PM',
-      amount: '250.00',
-      balanceAfterPayout: '600.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT238',
-      dateTime: 'Feb 05, 2026 09:15 AM',
-      amount: '500.00',
-      balanceAfterPayout: '350.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT237',
-      dateTime: 'Feb 04, 2026 02:30 PM',
-      amount: '320.00',
-      balanceAfterPayout: '850.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT236',
-      dateTime: 'Feb 03, 2026 11:00 AM',
-      amount: '180.00',
-      balanceAfterPayout: '530.00',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!Get.isRegistered<PayoutController>()) return;
+      final controller = Get.find<PayoutController>();
+      if (controller.receivedPayoutsList.isEmpty && !controller.isLoading) {
+        controller.getReceivedPayouts(context);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -73,64 +54,87 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
 
     return Directionality(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-      child: CommonBackground(
-        backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          title: S.of(context).history,
-          onTap: () => Get.back(),
-        ),
-        child: _buildBody(context),
+      child: GetBuilder<PayoutController>(
+        init: PayoutController(),
+        builder: (controller) {
+          if (controller.isLoading && controller.receivedPayoutsList.isEmpty) {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              appBar: CustomAppBar(
+                title: S.of(context).history,
+                onTap: () => Get.back(),
+              ),
+              body: const Center(child: CircularProgressIndicator(color: colorPrimary)),
+            );
+          }
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: CustomAppBar(
+              title: S.of(context).history,
+              onTap: () => Get.back(),
+            ),
+            body: _buildBody(context, controller),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    final payouts = _samplePayouts; // Replace with controller/API list
-
-    if (payouts.isEmpty) {
-      return NoDataWidget(
-        context,
-        S.of(context).history,
-        S.of(context).noPayoutsYet,
-        'lib/assets/images/nonotifications.png',
-      );
-    }
+  Widget _buildBody(BuildContext context, PayoutController controller) {
+    final payouts = controller.receivedPayoutsList;
+    final showNoData = payouts.isEmpty && !controller.isLoading;
 
     return CustomScrollView(
+      controller: controller.scrollController,
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: _buildTotalPayoutBalanceCard(),
+            child: _buildTotalPayoutBalanceCard(controller.totalPayoutbalance),
           ),
         ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-            child: _buildSearchBar(context),
+            child: _buildSearchBar(context, controller),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final p = payouts[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: PayoutItem(
-                    transactionId: p.transactionId,
-                    dateTime: p.dateTime,
-                    amount: p.amount,
-                    balanceAfterPayout: p.balanceAfterPayout,
-                    currency: _sampleCurrency,
-                  ),
-                );
-              },
-              childCount: payouts.length,
+        if (showNoData)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.1),
+              child: NoDataWidget(
+                context,
+                S.of(context).noPayoutsYet,
+                S.of(context).noPayoutsYet,
+                'lib/assets/images/nonotifications.png',
+              ),
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == payouts.length) {
+                    return controller.isLoadMoreRunning
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Center(child: CircularProgressIndicator(color: colorPrimary)),
+                          )
+                        : const SizedBox(height: 24);
+                  }
+                  final d = payouts[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _payoutItemFromDatum(d),
+                  );
+                },
+                childCount: payouts.length + (controller.isLoadMoreRunning ? 1 : 0),
+              ),
             ),
           ),
-        ),
         const SliverToBoxAdapter(
           child: SizedBox(height: 24),
         ),
@@ -138,7 +142,20 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
     );
   }
 
-  Widget _buildTotalPayoutBalanceCard() {
+  Widget _payoutItemFromDatum(Datum d) {
+    final dateTimeStr = d.paidAt != null
+        ? DateFormat('MMM dd, yyyy h:mm a').format(d.paidAt!)
+        : '—';
+    return PayoutItem(
+      transactionId: 'PYT${d.id ?? ""}',
+      dateTime: dateTimeStr,
+      amount: d.amount ?? '0',
+      balanceAfterPayout: d.balanceAmount ?? '0',
+      currency: _currency,
+    );
+  }
+
+  Widget _buildTotalPayoutBalanceCard(String balance) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
@@ -177,7 +194,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                _sampleTotalBalance,
+                balance,
                 style: GoogleFonts.rubik(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -186,7 +203,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                _sampleCurrency,
+                _currency,
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -200,7 +217,10 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(BuildContext context, PayoutController controller) {
+    if (_searchController.text != controller.keyword && !_searchFocusNode.hasFocus) {
+      _searchController.text = controller.keyword;
+    }
     return TextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
@@ -232,21 +252,8 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       style: GoogleFonts.rubik(fontSize: 14),
-      onChanged: (_) => setState(() {}),
+      onSubmitted: (value) => controller.searchPayouts(context, value),
+      onChanged: (value) => controller.searchPayouts(context, value),
     );
   }
-}
-
-class _PayoutEntry {
-  final String transactionId;
-  final String dateTime;
-  final String amount;
-  final String balanceAfterPayout;
-
-  _PayoutEntry({
-    required this.transactionId,
-    required this.dateTime,
-    required this.amount,
-    required this.balanceAfterPayout,
-  });
 }

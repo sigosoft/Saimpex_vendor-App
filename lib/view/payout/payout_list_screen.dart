@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' show DateFormat;
+import '../../controller/payout_controller.dart';
 import '../../generated/l10n.dart';
+import '../../model/received_payout_model.dart';
 import '../../resources/colors.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import 'payoutitem.dart';
 import 'payout_viewall_screen.dart';
 
-/// Content to show under the "Received Payouts" tab: balance card, history header, search, and list.
-/// Use this widget inside the tab view (e.g. in vendor_restaurant_screen); it has no Scaffold/AppBar.
+/// Content to show under the "Received Payouts" tab: balance card, history header, search, and list (max 5).
 class PayoutListScreen extends StatefulWidget {
   const PayoutListScreen({super.key});
 
@@ -22,30 +26,18 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  /// Replace with your API/controller when wired.
-  static List<_PayoutEntry> _samplePayouts = [
-    _PayoutEntry(
-      transactionId: 'PYT240',
-      dateTime: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '400.00',
-      balanceAfterPayout: '1,000.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT239',
-      dateTime: 'Feb 06, 2026 03:20 PM',
-      amount: '250.00',
-      balanceAfterPayout: '600.00',
-    ),
-    _PayoutEntry(
-      transactionId: 'PYT238',
-      dateTime: 'Feb 05, 2026 09:15 AM',
-      amount: '500.00',
-      balanceAfterPayout: '350.00',
-    ),
-  ];
+  static const String _currency = 'MRU';
+  static const int _maxItems = 5;
 
-  static const String _sampleTotalBalance = '10,140.00';
-  static const String _sampleCurrency = 'MRU';
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<PayoutController>()) {
+        Get.find<PayoutController>().getReceivedPayouts(context);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -61,47 +53,65 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
 
     return Directionality(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-      child: _buildContent(context),
+      child: GetBuilder<PayoutController>(
+        init: PayoutController(),
+        builder: (controller) {
+          if (controller.isLoading && controller.receivedPayoutsList.isEmpty) {
+            return const Center(child: CircularProgressIndicator(color: colorPrimary));
+          }
+          return _buildContent(context, controller);
+        },
+      ),
     );
   }
 
-  Widget _buildContent(BuildContext context) {
-    final payouts = _samplePayouts; // Replace with controller/API list
-
-    if (payouts.isEmpty) {
-      return NoDataWidget(
-        context,
-        S.of(context).receivedPayouts,
-        S.of(context).noPayoutsYet,
-        'lib/assets/images/nonotifications.png',
-      );
-    }
+  Widget _buildContent(BuildContext context, PayoutController controller) {
+    final allPayouts = controller.receivedPayoutsList;
+    final payouts = allPayouts.take(_maxItems).toList();
+    final showNoData = payouts.isEmpty && !controller.isLoading;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTotalPayoutBalanceCard(),
+        _buildTotalPayoutBalanceCard(controller.totalPayoutbalance),
         const SizedBox(height: 10),
         _buildHistoryHeader(context),
         const SizedBox(height: 12),
-        _buildSearchBar(context),
-        const SizedBox(height: 16),
-        ...payouts.map((p) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: PayoutItem(
-                transactionId: p.transactionId,
-                dateTime: p.dateTime,
-                amount: p.amount,
-                balanceAfterPayout: p.balanceAfterPayout,
-                currency: _sampleCurrency,
-              ),
-            )),
+        _buildSearchBar(context, controller),
+        if (showNoData) ...[
+          const SizedBox(height: 24),
+          NoDataWidget(
+            context,
+            S.of(context).noPayoutsYet,
+            S.of(context).noPayoutsYet,
+            'lib/assets/images/nonotifications.png',
+          ),
+        ] else ...[
+          const SizedBox(height: 16),
+          ...payouts.map((d) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _payoutItemFromDatum(d),
+              )),
+        ],
       ],
     );
   }
 
-  Widget _buildTotalPayoutBalanceCard() {
+  Widget _payoutItemFromDatum(Datum d) {
+    final dateTimeStr = d.paidAt != null
+        ? DateFormat('MMM dd, yyyy h:mm a').format(d.paidAt!)
+        : '—';
+    return PayoutItem(
+      transactionId: 'PYT${d.id ?? ""}',
+      dateTime: dateTimeStr,
+      amount: d.amount ?? '0',
+      balanceAfterPayout: d.balanceAmount ?? '0',
+      currency: _currency,
+    );
+  }
+
+  Widget _buildTotalPayoutBalanceCard(String balance) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
@@ -123,55 +133,41 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
           ),
         ],
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Text(
+            S.of(context).totalPayoutBalance,
+            style: GoogleFonts.rubik(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.white.withOpacity(0.95),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                S.of(context).totalPayoutBalance,
+                balance,
                 style: GoogleFonts.rubik(
-                  fontSize: 13,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _currency,
+                style: GoogleFonts.rubik(
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.white.withOpacity(0.95),
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    _sampleTotalBalance,
-                    style: GoogleFonts.rubik(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _sampleCurrency,
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.95),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
-          // Positioned(
-          //   right: -8,
-          //   bottom: -8,
-          //   child: Icon(
-          //     Icons.waves_rounded,
-          //     size: 64,
-          //     color: Colors.white.withOpacity(0.12),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -206,7 +202,10 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(BuildContext context, PayoutController controller) {
+    if (_searchController.text != controller.keyword && !_searchFocusNode.hasFocus) {
+      _searchController.text = controller.keyword;
+    }
     return TextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
@@ -238,21 +237,8 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       style: GoogleFonts.rubik(fontSize: 14),
-      onChanged: (_) => setState(() {}),
+      onSubmitted: (value) => controller.searchPayouts(context, value),
+      onChanged: (value) => controller.searchPayouts(context, value),
     );
   }
-}
-
-class _PayoutEntry {
-  final String transactionId;
-  final String dateTime;
-  final String amount;
-  final String balanceAfterPayout;
-
-  _PayoutEntry({
-    required this.transactionId,
-    required this.dateTime,
-    required this.amount,
-    required this.balanceAfterPayout,
-  });
 }
