@@ -4879,6 +4879,46 @@ class S {
       args: [],
     );
   }
+
+  /// `My Store`
+  String get myStore {
+    return Intl.message(
+      'My Store',
+      name: 'myStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No reports in this date range.`
+  String get noReportsInThisDateRange {
+    return Intl.message(
+      'No reports in this date range.',
+      name: 'noReportsInThisDateRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get download {
+    return Intl.message(
+      'Download',
+      name: 'download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select from date and to date`
+  String get pleaseSelectFromDateAndToDate {
+    return Intl.message(
+      'Please select from date and to date',
+      name: 'pleaseSelectFromDateAndToDate',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

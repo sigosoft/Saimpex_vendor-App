@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
 import '../payout/payout_list_screen.dart';
+import '../reports/sales_reports.dart';
 import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
@@ -151,7 +152,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       const SizedBox(width: 10),
                       _buildMenuButton("Received Payouts"),
                       const SizedBox(width: 10),
-                      _buildMenuButton("Restaurant Reports"),
+                      _buildMenuButton("Store Reports"),
                     ],
                   ),
                 ),
@@ -374,17 +375,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.upcomingLeaves.isNotEmpty)
-                    ...profileController.upcomingLeaves.take(3).map(
-                      (leave) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildLeaveTile(
-                          dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? S.of(context).leave,
-                          status: "SCHEDULED",
-                          isUpcoming: true,
-                        ),
-                      ),
-                    )
+                    ...profileController.upcomingLeaves
+                        .take(3)
+                        .map(
+                          (leave) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildLeaveTile(
+                              dateRange: _formatLeaveDate(leave.date),
+                              reason: leave.reason ?? S.of(context).leave,
+                              status: "SCHEDULED",
+                              isUpcoming: true,
+                            ),
+                          ),
+                        )
                   else
                     NoDataWidget(
                       context,
@@ -403,17 +406,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.leaveHistory.isNotEmpty)
-                    ...profileController.leaveHistory.take(3).map(
-                      (leave) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildLeaveTile(
-                          dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? S.of(context).leave,
-                          status: "COMPLETED",
-                          isUpcoming: false,
-                        ),
-                      ),
-                    )
+                    ...profileController.leaveHistory
+                        .take(3)
+                        .map(
+                          (leave) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildLeaveTile(
+                              dateRange: _formatLeaveDate(leave.date),
+                              reason: leave.reason ?? S.of(context).leave,
+                              status: "COMPLETED",
+                              isUpcoming: false,
+                            ),
+                          ),
+                        )
                   else
                     NoDataWidget(
                       context,
@@ -463,8 +468,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   //_buildPayoutsList(),
                   PayoutListScreen(),
                   const SizedBox(height: 20),
+                ] else if (selectedMenu == "Store Reports") ...[
+                  const SalesReportsScreen(),
+                  // const SizedBox(height: 20),
                 ],
-                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
               ],
             ),
           );
@@ -618,7 +626,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           (menu.id?.toString() ?? "").contains(query);
     }).toList();
 
-    final filteredRestaurantMenus = profileController.restaurantMenus.where((menu) {
+    final filteredRestaurantMenus = profileController.restaurantMenus.where((
+      menu,
+    ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
       final name = lang == 'fr'
@@ -783,7 +793,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         if (isMenu) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditMenuScreen(itemId: itemId)),
+            MaterialPageRoute(
+              builder: (context) => EditMenuScreen(itemId: itemId),
+            ),
           );
         } else {
           Navigator.push(
@@ -804,7 +816,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       return const AppLoader();
     }
     final query = _searchKeyword.trim().toLowerCase();
-    final filteredGroceryItems = profileController.groceryMenuItems.where((item) {
+    final filteredGroceryItems = profileController.groceryMenuItems.where((
+      item,
+    ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
       final name = lang == 'fr'
@@ -822,18 +836,20 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           (item.id?.toString() ?? "").contains(query);
     }).toList();
 
-    final filteredRestaurantItems = profileController.restaurantMenuItems.where((item) {
-      if (query.isEmpty) return true;
-      final lang = profileController.localization.currentLocale?.languageCode;
-      final name = lang == 'fr'
-          ? (item.nameFr ?? item.nameEn ?? "")
-          : lang == 'ar'
-          ? (item.nameAr ?? item.nameEn ?? "")
-          : (item.nameEn ?? "");
-      return name.toLowerCase().contains(query) ||
-          (item.categoryId?.toString() ?? "").toLowerCase().contains(query) ||
-          (item.id?.toString() ?? "").contains(query);
-    }).toList();
+    final filteredRestaurantItems = profileController.restaurantMenuItems.where(
+      (item) {
+        if (query.isEmpty) return true;
+        final lang = profileController.localization.currentLocale?.languageCode;
+        final name = lang == 'fr'
+            ? (item.nameFr ?? item.nameEn ?? "")
+            : lang == 'ar'
+            ? (item.nameAr ?? item.nameEn ?? "")
+            : (item.nameEn ?? "");
+        return name.toLowerCase().contains(query) ||
+            (item.categoryId?.toString() ?? "").toLowerCase().contains(query) ||
+            (item.id?.toString() ?? "").contains(query);
+      },
+    ).toList();
 
     if (filteredGroceryItems.isEmpty && filteredRestaurantItems.isEmpty) {
       return Column(

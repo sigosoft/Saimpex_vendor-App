@@ -62,4 +62,6 @@ class ApiEndPoints {
   static String getRestaurantTags = "getRestaurantTags";
   static String getNotifications = "notifications";
   static String receivedPayouts = "receivedPayouts";
+  static String resturantReport = "resturantReport";
+  static String restaurantReportDownload = "restaurantReportDownload";
 }

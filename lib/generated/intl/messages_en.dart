@@ -229,6 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 ". Do you want to replace them with items from"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
+        "download": MessageLookupByLibrary.simpleMessage("Download"),
         "driver": MessageLookupByLibrary.simpleMessage("Driver"),
         "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
         "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
@@ -342,6 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "myOrders": MessageLookupByLibrary.simpleMessage("My Orders"),
         "myPoints": MessageLookupByLibrary.simpleMessage("My Points"),
         "myRestaurant": MessageLookupByLibrary.simpleMessage("My Restaurant"),
+        "myStore": MessageLookupByLibrary.simpleMessage("My Store"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nationalIdNumber":
             MessageLookupByLibrary.simpleMessage("National Id Number"),
@@ -397,6 +399,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "noPayoutsYet": MessageLookupByLibrary.simpleMessage("No payouts yet"),
         "noRedeemableRewards":
             MessageLookupByLibrary.simpleMessage("No redeemable rewards"),
+        "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
+            "No reports in this date range."),
         "noRestaurantsFound":
             MessageLookupByLibrary.simpleMessage("No Restaurants Found"),
         "noRestaurantsFounds":
@@ -500,6 +504,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pleaseLogin": MessageLookupByLibrary.simpleMessage("Please login"),
         "pleaseLoginToUseThisFeature": MessageLookupByLibrary.simpleMessage(
             "Please login to use this feature"),
+        "pleaseSelectFromDateAndToDate": MessageLookupByLibrary.simpleMessage(
+            "Please select from date and to date"),
         "pleaseSigninToYourAccountAndStartTheAdventure":
             MessageLookupByLibrary.simpleMessage(
                 "Please sign-in to your account and start the adventure"),
