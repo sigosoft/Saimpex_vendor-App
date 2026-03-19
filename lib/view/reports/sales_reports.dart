@@ -61,7 +61,10 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
     );
   }
 
-  Widget _buildReportList(BuildContext context, SalesReportController controller) {
+  Widget _buildReportList(
+    BuildContext context,
+    SalesReportController controller,
+  ) {
     final list = controller.reportsList;
     if (list.isEmpty && !controller.isLoading) {
       return Padding(
@@ -78,18 +81,21 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
       height: MediaQuery.of(context).size.height * 0.48,
       child: ListView.builder(
         controller: controller.scrollController,
+        physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: list.length + (controller.isLoadMoreRunning ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == list.length) {
             return const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator(color: colorPrimary)),
+              child: Center(
+                child: CircularProgressIndicator(color: colorPrimary),
+              ),
             );
           }
           final datum = list[index];
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: 10),
             child: _buildReportCardFromDatum(context, datum),
           );
         },
@@ -98,8 +104,10 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
   }
 
   String _customerName(Datum d) {
-    if (d.userDisplayName != null && d.userDisplayName!.isNotEmpty) return d.userDisplayName!;
-    if (d.userName != null) return userNameValues.reverse[d.userName!] ?? 'Customer';
+    if (d.userDisplayName != null && d.userDisplayName!.isNotEmpty)
+      return d.userDisplayName!;
+    if (d.userName != null)
+      return userNameValues.reverse[d.userName!] ?? 'Customer';
     return 'Customer';
   }
 
@@ -192,7 +200,11 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.phone_rounded, size: 14, color: Colors.grey.shade600),
+                        Icon(
+                          Icons.phone_rounded,
+                          size: 14,
+                          color: Colors.grey.shade600,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           phone.isEmpty ? '—' : phone,
@@ -206,7 +218,11 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.access_time_rounded, size: 14, color: Colors.grey.shade600),
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 14,
+                          color: Colors.grey.shade600,
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
@@ -256,24 +272,26 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 final earning = datum.orderEarnings?.isNotEmpty == true
                     ? datum.orderEarnings!.first
                     : null;
-                Get.to(() => ReportDetailsScreen(
-                      params: ReportDetailsParams(
-                        orderId: datum.orderCode ?? '—',
-                        status: statusStr,
-                        customerName: _customerName(datum),
-                        phone: phone.isEmpty ? '—' : phone,
-                        dateTime: dateTimeStr,
-                        totalAmount: datum.total ?? '0',
-                        subtotal: datum.subtotal ?? '0',
-                        discount: datum.discount ?? '0',
-                        deliveryFee: datum.deliveryFee ?? '0',
-                        tax: datum.tax ?? '0',
-                        earnings: earning?.totalAmount ?? datum.subtotal ?? '0',
-                        commission: earning?.commissionAmount ?? '0',
-                        paymentMethod: datum.paymentType ?? 'Cash',
-                        currency: _currency,
-                      ),
-                    ));
+                Get.to(
+                  () => ReportDetailsScreen(
+                    params: ReportDetailsParams(
+                      orderId: datum.orderCode ?? '—',
+                      status: statusStr,
+                      customerName: _customerName(datum),
+                      phone: phone.isEmpty ? '—' : phone,
+                      dateTime: dateTimeStr,
+                      totalAmount: datum.total ?? '0',
+                      subtotal: datum.subtotal ?? '0',
+                      discount: datum.discount ?? '0',
+                      deliveryFee: datum.deliveryFee ?? '0',
+                      tax: datum.tax ?? '0',
+                      earnings: earning?.totalAmount ?? datum.subtotal ?? '0',
+                      commission: earning?.commissionAmount ?? '0',
+                      paymentMethod: datum.paymentType ?? 'Cash',
+                      currency: _currency,
+                    ),
+                  ),
+                );
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: colorPrimary,
@@ -312,13 +330,18 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
         Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () {
+            onTap: () async {
               if (_fromDate == null || _toDate == null) {
                 showToast(context, S.of(context).pleaseSelectFromDateAndToDate);
                 return;
               }
               controller.setDateRange(_fromDate, _toDate);
-              controller.restaurantReportDownload(context);
+              String vendorType = await getSavedObject("vendorType");
+              if (vendorType == "1") {
+                controller.restaurantReportDownload(context);
+              } else {
+                controller.groceryReportDownload(context);
+              }
             },
             borderRadius: BorderRadius.circular(24),
             child: Container(
@@ -360,7 +383,10 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
     );
   }
 
-  Widget _buildDateFilterCard(BuildContext context, SalesReportController controller) {
+  Widget _buildDateFilterCard(
+    BuildContext context,
+    SalesReportController controller,
+  ) {
     final fromStr = _fromDate != null
         ? '${_fromDate!.day.toString().padLeft(2, '0')}-${_fromDate!.month.toString().padLeft(2, '0')}-${_fromDate!.year}'
         : 'dd-mm-yyyy';
@@ -424,9 +450,14 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
           SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 controller.setDateRange(_fromDate, _toDate);
-                controller.getRestaurantReports(context);
+                String vendorType = await getSavedObject("vendorType");
+                if (vendorType == "1") {
+                  controller.getRestaurantReports(context);
+                } else {
+                  controller.getGroceryReports(context);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorPrimary,
