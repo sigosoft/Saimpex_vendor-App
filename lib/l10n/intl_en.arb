@@ -963,5 +963,13 @@
   "noUpcomingLeavesFound": "No upcoming leaves found.",
   "noCompletedLeavesFound": "No completed leaves found.",
   "baskets": "BASKETS",
-  "checkForUpdate": "Check for update"
+  "checkForUpdate": "Check for update",
+  "noPayoutsYet": "No payouts yet",
+  "totalPayoutBalance": "Total Payout Balance",
+  "history": "History",
+  "searchAmountOrTransactionId": "Search amount or Transaction ID",
+  "myStore": "My Store",
+  "noReportsInThisDateRange": "No reports in this date range.",
+  "download": "Download",
+  "pleaseSelectFromDateAndToDate": "Please select from date and to date"
 }

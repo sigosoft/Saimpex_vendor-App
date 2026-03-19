@@ -4839,6 +4839,86 @@ class S {
       args: [],
     );
   }
+
+  /// `No payouts yet`
+  String get noPayoutsYet {
+    return Intl.message(
+      'No payouts yet',
+      name: 'noPayoutsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Payout Balance`
+  String get totalPayoutBalance {
+    return Intl.message(
+      'Total Payout Balance',
+      name: 'totalPayoutBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message(
+      'History',
+      name: 'history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search amount or Transaction ID`
+  String get searchAmountOrTransactionId {
+    return Intl.message(
+      'Search amount or Transaction ID',
+      name: 'searchAmountOrTransactionId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Store`
+  String get myStore {
+    return Intl.message(
+      'My Store',
+      name: 'myStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No reports in this date range.`
+  String get noReportsInThisDateRange {
+    return Intl.message(
+      'No reports in this date range.',
+      name: 'noReportsInThisDateRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get download {
+    return Intl.message(
+      'Download',
+      name: 'download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select from date and to date`
+  String get pleaseSelectFromDateAndToDate {
+    return Intl.message(
+      'Please select from date and to date',
+      name: 'pleaseSelectFromDateAndToDate',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

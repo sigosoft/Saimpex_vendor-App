@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
+import '../payout/payout_list_screen.dart';
+import '../reports/sales_reports.dart';
 import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
@@ -152,7 +154,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       const SizedBox(width: 10),
                       _buildMenuButton("Received Payouts"),
                       const SizedBox(width: 10),
-                      _buildMenuButton("Restaurant Reports"),
+                      _buildMenuButton("Store Reports"),
                     ],
                   ),
                 ),
@@ -406,19 +408,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.leaveHistory.isNotEmpty)
-                    ...profileController.leaveHistory
-                        .take(3)
-                        .map(
-                          (leave) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildLeaveTile(
-                              dateRange: _formatLeaveDate(leave.date),
-                              reason: leave.reason ?? S.of(context).leave,
-                              status: "COMPLETED",
-                              isUpcoming: false,
-                            ),
-                          ),
-                        )
+                    ...profileController.leaveHistory.take(3).map(
+                      (leave) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildLeaveTile(
+                          dateRange: _formatLeaveDate(leave.date),
+                          reason: leave.reason ?? S.of(context).leave,
+                          status: "COMPLETED",
+                          isUpcoming: false,
+                        ),
+                      ),
+                    )
                   else
                     NoDataWidget(
                       context,
@@ -464,13 +464,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildBasketList(),
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Received Payouts") ...[
+                  // const SizedBox(height: 20),
+                  // _sectionHeader("RECEIVED PAYOUTS"),
+                  //const SizedBox(height: 5),
+                  //_buildPayoutsList(),
+                  PayoutListScreen(),
                   const SizedBox(height: 20),
-                  _sectionHeader("RECEIVED PAYOUTS"),
-                  const SizedBox(height: 12),
-                  _buildPayoutsList(),
-                  const SizedBox(height: 20),
+                ] else if (selectedMenu == "Store Reports") ...[
+                  const SalesReportsScreen(),
+                  // const SizedBox(height: 20),
                 ],
-                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
               ],
             ),
           );

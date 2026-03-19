@@ -229,6 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 ". Do you want to replace them with items from"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
+        "download": MessageLookupByLibrary.simpleMessage("Download"),
         "driver": MessageLookupByLibrary.simpleMessage("Driver"),
         "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
         "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
@@ -279,6 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gstVat": MessageLookupByLibrary.simpleMessage("Gst/Vat"),
         "hAgo": MessageLookupByLibrary.simpleMessage("h ago"),
         "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
+        "history": MessageLookupByLibrary.simpleMessage("History"),
         "holderName": MessageLookupByLibrary.simpleMessage("Holder Name"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "hr24": MessageLookupByLibrary.simpleMessage("24 Hr"),
@@ -341,6 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "myOrders": MessageLookupByLibrary.simpleMessage("My Orders"),
         "myPoints": MessageLookupByLibrary.simpleMessage("My Points"),
         "myRestaurant": MessageLookupByLibrary.simpleMessage("My Restaurant"),
+        "myStore": MessageLookupByLibrary.simpleMessage("My Store"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "nationalIdNumber":
             MessageLookupByLibrary.simpleMessage("National Id Number"),
@@ -393,8 +396,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "noOrders": MessageLookupByLibrary.simpleMessage("No Orders"),
         "noOrdersFound":
             MessageLookupByLibrary.simpleMessage("No orders found"),
+        "noPayoutsYet": MessageLookupByLibrary.simpleMessage("No payouts yet"),
         "noRedeemableRewards":
             MessageLookupByLibrary.simpleMessage("No redeemable rewards"),
+        "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
+            "No reports in this date range."),
         "noRestaurantsFound":
             MessageLookupByLibrary.simpleMessage("No Restaurants Found"),
         "noRestaurantsFounds":
@@ -498,6 +504,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pleaseLogin": MessageLookupByLibrary.simpleMessage("Please login"),
         "pleaseLoginToUseThisFeature": MessageLookupByLibrary.simpleMessage(
             "Please login to use this feature"),
+        "pleaseSelectFromDateAndToDate": MessageLookupByLibrary.simpleMessage(
+            "Please select from date and to date"),
         "pleaseSigninToYourAccountAndStartTheAdventure":
             MessageLookupByLibrary.simpleMessage(
                 "Please sign-in to your account and start the adventure"),
@@ -591,6 +599,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
         "scheduled": MessageLookupByLibrary.simpleMessage("SCHEDULED"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
+            "Search amount or Transaction ID"),
         "searchByIdName":
             MessageLookupByLibrary.simpleMessage("Search by ID, name"),
         "searchCategories":
@@ -650,6 +660,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "totalAmount": MessageLookupByLibrary.simpleMessage("Total Amount"),
         "totalBill": MessageLookupByLibrary.simpleMessage("Total Bill"),
         "totalOrdersStat": MessageLookupByLibrary.simpleMessage("Total Orders"),
+        "totalPayoutBalance":
+            MessageLookupByLibrary.simpleMessage("Total Payout Balance"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("Total Profit"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("Total Reviews"),

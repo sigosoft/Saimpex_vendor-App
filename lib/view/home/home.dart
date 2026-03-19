@@ -146,7 +146,7 @@ class _HomeState extends State<Home> {
                               height: 24,
                               color: colorPrimary,
                             ),
-                            label: S.of(context).myRestaurant,
+                            label: S.of(context).myStore,
                           ),
                           BottomNavigationBarItem(
                             icon: Stack(
