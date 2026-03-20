@@ -512,7 +512,10 @@ class VendorLeaveTile extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: isUpcoming
                       ? const Color(0xFFEEF2FF)
@@ -716,17 +719,16 @@ class _AvailabilityChip extends StatelessWidget {
     final label = isAvailable
         ? S.of(context).availableStatus
         : S.of(context).outOfStock;
-    final color = isAvailable ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
+    final color = isAvailable
+        ? const Color(0xFF22C55E)
+        : const Color(0xFFEF4444);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 6,
           height: 6,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(
@@ -754,6 +756,7 @@ class VendorRichCard extends StatelessWidget {
   final String itemId;
   final bool isMenu;
   final List<RestaurantCategory>? categories;
+
   /// 1 = Out of stock, 2 = Available. When null, availability is not shown.
   final int? availabilityStatus;
   final VoidCallback onViewDetails;
@@ -1086,81 +1089,222 @@ class VendorBulkImportInstructions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEEF2FF),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.info_outline, color: Color(0xFF4F46E1)),
-              const SizedBox(width: 10),
-              Text(
-                "Instructions",
-                style: GoogleFonts.rubik(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF4F46E1),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: onToggle,
+          child: Container(
+            width: double.infinity,
+            height: 52,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  "Instructions",
+                  style: GoogleFonts.rubik(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF6B7280),
+                  ),
                 ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: onToggle,
-                icon: Icon(
+                const Spacer(),
+                Icon(
                   isExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  color: const Color(0xFF4F46E1),
+                  color: const Color(0xFF9CA3AF),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          if (isExpanded) ...[
-            const SizedBox(height: 12),
-            Text(
-              "1. Download the template file.\n"
-              "2. Fill in the menu details as per the format.\n"
-              "3. Ensure all mandatory fields are filled.\n"
-              "4. Upload the completed file below.",
-              style: GoogleFonts.rubik(
-                fontSize: 14,
-                color: const Color(0xFF4338CA),
-                height: 1.6,
-              ),
+        ),
+        if (isExpanded) ...[
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.045,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF4F46E1)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _instructionBlock(
+                  index: '1',
+                  title: 'Download Template',
+                  body:
+                      'Download the template file and fill it with proper data.',
                 ),
-                child: Text(
-                  "Download Template",
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF4F46E1),
-                  ),
+                const SizedBox(height: 12),
+                _instructionBlock(
+                  index: '2',
+                  title: 'Select Category',
+                  body:
+                      'Once you have downloaded and filled the template, select the corresponding category and upload the file.',
                 ),
-              ),
+                const SizedBox(height: 12),
+                _instructionBlock(
+                  index: '3',
+                  title: 'Attributes Reference',
+                  body:
+                      'After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.',
+                ),
+                const SizedBox(height: 12),
+                _instructionBlock(
+                  index: '4',
+                  title: 'Post-Upload Editing',
+                  body:
+                      'After uploading, you need to edit the items individually to set images and variations.',
+                ),
+                const SizedBox(height: 12),
+                _instructionBlock(
+                  index: '5',
+                  title: 'Image File Naming',
+                  body:
+                      'Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).',
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Available Attributes",
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF111827),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF1EE),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: const Color(0xFFFF5216),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        "3 ATTRIBUTES",
+                        style: GoogleFonts.rubik(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                _attributesTable(),
+              ],
             ),
-          ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+Widget _instructionBlock({
+  required String index,
+  required String title,
+  required String body,
+}) {
+  return RichText(
+    text: TextSpan(
+      style: GoogleFonts.rubik(
+        fontSize: 13,
+        height: 1.6,
+        color: const Color(0xFF6B7280),
+      ),
+      children: [
+        TextSpan(
+          text: '$index. ',
+          style: GoogleFonts.rubik(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF111827),
+          ),
+        ),
+        TextSpan(
+          text: title,
+          style: GoogleFonts.rubik(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF1F2937),
+          ),
+        ),
+        const TextSpan(text: '\n'),
+        TextSpan(text: body),
+      ],
+    ),
+  );
+}
+
+Widget _attributesTable() {
+  TextStyle headerStyle = GoogleFonts.rubik(
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF111827),
+  );
+  TextStyle valueStyle = GoogleFonts.rubik(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF374151),
+  );
+
+  Widget headerRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("ID", style: headerStyle),
+          Text("NAME", style: headerStyle),
         ],
       ),
     );
   }
+
+  Widget dataRow(String id, String name) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(id, style: valueStyle),
+          Text(name, style: valueStyle),
+        ],
+      ),
+    );
+  }
+
+  return Container(
+    color: Colors.white,
+    child: Column(
+      children: [
+        headerRow(),
+        dataRow('1', 'Full'),
+        dataRow('2', 'Half'),
+        dataRow('4', 'Quarter'),
+        const SizedBox(height: 2),
+      ],
+    ),
+  );
 }
 
 class VendorImportStep extends StatelessWidget {

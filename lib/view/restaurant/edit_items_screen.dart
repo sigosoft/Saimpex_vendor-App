@@ -16,6 +16,13 @@ class EditItemsScreen extends StatefulWidget {
 }
 
 class _EditItemsScreenState extends State<EditItemsScreen> {
+  bool _didLoadDetails = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonBackground(
@@ -47,11 +54,25 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (!_didLoadDetails &&
+                  controller.editRestaurantMenuItemId != null &&
+                  controller.editRestaurantMenuItemId!.isNotEmpty)
+                () {
+                  _didLoadDetails = true;
+                  Future.microtask(
+                    () =>
+                        controller.getRestaurantMenuItemDetails(widget.itemId),
+                  );
+                  return const SizedBox.shrink();
+                }(),
               EditItemsFieldLabel('Item Type'),
               const SizedBox(height: 8),
               EditItemsDropdownField(
-                value: controller.selectedType != null &&
-                        controller.typeDisplayNames.contains(controller.selectedType)
+                value:
+                    controller.selectedType != null &&
+                        controller.typeDisplayNames.contains(
+                          controller.selectedType,
+                        )
                     ? controller.selectedType
                     : null,
                 hint: controller.isMenuListLoading
@@ -77,8 +98,11 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               EditItemsFieldLabel('Tags'),
               const SizedBox(height: 8),
               EditItemsDropdownField(
-                value: controller.selectedTag != null &&
-                        controller.tagDisplayNames.contains(controller.selectedTag)
+                value:
+                    controller.selectedTag != null &&
+                        controller.tagDisplayNames.contains(
+                          controller.selectedTag,
+                        )
                     ? controller.selectedTag
                     : null,
                 hint: controller.isRestaurantTagsLoading
@@ -95,9 +119,11 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               EditItemsFieldLabel('Attribute'),
               const SizedBox(height: 8),
               EditItemsDropdownField(
-                value: controller.selectedAttribute != null &&
-                        controller.attributeDisplayNames
-                            .contains(controller.selectedAttribute)
+                value:
+                    controller.selectedAttribute != null &&
+                        controller.attributeDisplayNames.contains(
+                          controller.selectedAttribute,
+                        )
                     ? controller.selectedAttribute
                     : null,
                 hint: controller.isRestaurantAttributesLoading
@@ -203,10 +229,16 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               child: SizedBox(
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () => Get.find<ItemController>().updateItem(
-                    context,
-                    restaurantMenuItemId: widget.itemId,
-                  ),
+                  onPressed: () {
+                    final c = Get.find<ItemController>();
+                    c.updateItemAfterEdit(
+                      context,
+                      menuId: c.selectedMenuId?.toString() ?? '',
+                      menuItemId: widget.itemId,
+                      restaurantAttributeId:
+                          c.selectedRestaurantAttributeId?.toString() ?? '',
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF5216),
                     elevation: 0,

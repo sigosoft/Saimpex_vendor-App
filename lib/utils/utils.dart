@@ -210,11 +210,23 @@ void showLoadingDialog(BuildContext context) {
 }
 
 void printFormData(FormData formData) {
-  Map<String, String> formDataMap = {};
-  formData.fields.forEach((field) {
-    formDataMap[field.key] = field.value;
-  });
-  debugPrint(formDataMap.toString());
+  debugPrint("FormData (fields):");
+  if (formData.fields.isEmpty) {
+    debugPrint("  <no fields>");
+  } else {
+    for (final entry in formData.fields) {
+      debugPrint("  ${entry.key}: ${entry.value}");
+    }
+  }
+
+  // If FormData contains files, print their key + filename.
+  if (formData.files.isNotEmpty) {
+    debugPrint("FormData (files):");
+    for (final entry in formData.files) {
+      // MultipartFile.filename is the best stable identifier.
+      debugPrint("  ${entry.key}: ${entry.value.filename}");
+    }
+  }
 }
 
 int versionToCode(String? version) {

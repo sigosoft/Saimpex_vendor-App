@@ -7,6 +7,7 @@ import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/attributes_model.dart';
 import 'package:saimpex_vendor/model/menu_listing_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
+import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/model/tag_model.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 
@@ -30,15 +31,10 @@ class ItemController extends GetxController {
   int? selectedRestaurantAttributeId;
   int? selectedRestaurantTagId;
 
-  /// Converts a preparation time input into `H:i` format expected by API.
-  /// - If user enters `HH:mm` already (contains `:`), we keep it as-is.
-  /// - Otherwise we treat the value as total minutes.
   String formatPreparationTimeToHi(String rawValue) {
     final value = rawValue.trim();
     if (value.isEmpty) return '';
 
-    // If user already enters something like "0:20" or "00:20",
-    // normalize it to exactly "HH:MM" (2-digit hour + 2-digit minutes).
     if (value.contains(':')) {
       final parts = value.split(':');
       if (parts.length >= 2) {
@@ -48,7 +44,7 @@ class ItemController extends GetxController {
           return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
         }
       }
-      // If parsing fails, return as-is (backend will validate).
+
       return value;
     }
 
@@ -96,59 +92,43 @@ class ItemController extends GetxController {
 
   Future<void> _prefillEditValues(String restaurantMenuItemId) async {
     try {
-      // Use the received id as a sensible fallback for menu_item_id.
       serialNumberCtrl.text = restaurantMenuItemId;
-
       final profileController = Get.isRegistered<ProfileController>()
           ? Get.find<ProfileController>()
           : Get.put(ProfileController(), permanent: false);
-
       if (profileController.restaurantMenuItems.isEmpty) {
         await profileController.fetchRestaurantMenuItems();
       }
-
-      // RestaurantMenuItemData can expose either `id` or `restaurantMenuItemId`,
-      // depending on backend response shape.
       final match = profileController.restaurantMenuItems.firstWhere(
         (e) =>
             e.id?.toString() == restaurantMenuItemId ||
             e.restaurantMenuItemId?.toString() == restaurantMenuItemId,
         orElse: () => RestaurantMenuItemData(),
       );
-
       if (match.price != null && match.price!.isNotEmpty) {
         priceCtrl.text = match.price!;
       }
       if (match.discountPrice != null && match.discountPrice!.isNotEmpty) {
         discountPriceCtrl.text = match.discountPrice!;
       }
-
-      // Try to derive "type" (menu_id) from the item's category_id.
       final categoryId = match.categoryId?.toString();
       if (categoryId != null && categoryId.isNotEmpty && menuList.isNotEmpty) {
-        final menuMatch = menuList.where((m) => m.categoryId.contains(categoryId)).toList();
+        final menuMatch = menuList
+            .where((m) => m.categoryId.contains(categoryId))
+            .toList();
         if (menuMatch.isNotEmpty) {
           setSelectedType(menuMatch.first.nameEn);
         }
       }
-
       update();
-    } catch (_) {
-      // Prefill is best-effort; don't block editing if it fails.
-    }
+    } catch (_) {}
   }
 
   Future<void> updateItem(
     BuildContext context, {
     required String restaurantMenuItemId,
   }) async {
-    // Backend doesn't expose a dedicated "update menu item" endpoint here,
-    // so we emulate update by delete + add.
-    await deleteItem(
-      context,
-      restaurantMenuItemId: restaurantMenuItemId,
-    );
-
+    await deleteItem(context, restaurantMenuItemId: restaurantMenuItemId);
     await addItem(
       context,
       menuId: selectedMenuId?.toString() ?? '',
@@ -287,7 +267,7 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      await getSavedObject("vendorType");
+      final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
       final formDataMap = <String, dynamic>{
         "menu_id": menuId,
         "menu_item_id": menuItemId,
@@ -305,7 +285,9 @@ class ItemController extends GetxController {
       );
       printFormData(formData);
       final response = await DioClient().post(
-        ApiEndPoints.addRestaurantMenuItem,
+        vendorType == "1"
+            ? ApiEndPoints.addRestaurantMenuItem
+            : ApiEndPoints.addGroceryMenuItem,
         body: formData,
       );
       if (context.mounted) {
@@ -359,7 +341,12 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(ApiEndPoints.getRestaurantMenus);
+      final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenus
+            : ApiEndPoints.getGroceryMenus,
+      );
       final model = MenuListingModel.fromJson(
         response.data is Map<String, dynamic>
             ? response.data
@@ -367,6 +354,17 @@ class ItemController extends GetxController {
       );
       if (model.status) {
         menuList = model.data;
+      }
+
+      // If we already loaded an item for editing, resolve `selectedMenuId`
+      // once the menus list becomes available.
+      if (selectedType != null &&
+          selectedType!.isNotEmpty &&
+          menuList.isNotEmpty) {
+        final match = menuList.where((m) => m.nameEn == selectedType).toList();
+        if (match.isNotEmpty) {
+          selectedMenuId = match.first.id;
+        }
       }
     } catch (error) {
       debugPrint("getAllMenus Error: $error");
@@ -382,12 +380,17 @@ class ItemController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(ApiEndPoints.getRestaurantTags);
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantTags
+            : ApiEndPoints.getGroceryTags,
+      );
       final tagsModel = TagsModel.fromJson(
         response.data as Map<String, dynamic>,
       );
@@ -408,13 +411,16 @@ class ItemController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantAttributes,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantAttributes
+            : ApiEndPoints.getGroceryAttributes,
       );
       final attributesModel = AttributesModel.fromJson(
         response.data is Map<String, dynamic>
@@ -424,8 +430,9 @@ class ItemController extends GetxController {
       if (attributesModel.status == true) {
         restaurantAttributes = attributesModel.data ?? [];
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
       debugPrint("getAllAttributes Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
     } finally {
       isRestaurantAttributesLoading = false;
       update();
@@ -444,7 +451,6 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      await getSavedObject("vendorType");
       final formDataMap = <String, dynamic>{
         "menu_item_id": restaurantMenuItemId,
       };
@@ -487,6 +493,162 @@ class ItemController extends GetxController {
       if (context.mounted) {
         Get.back();
         showToast(context, error.toString());
+      }
+    }
+  }
+
+  Future<void> getRestaurantMenuItemDetails(String itemId) async {
+    try {
+      debugPrint("getRestaurantMenuItemDetails itemId: $itemId");
+      isRestaurantAttributesLoading = true;
+      update();
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final response = await DioClient().get(
+        ApiEndPoints.getRestaurantMenuItemDetails,
+        query: {"item_id": itemId},
+      );
+      final raw = response.data;
+      debugPrint("getRestaurantMenuItemDetails raw: $raw");
+      if (raw is! Map) return;
+      final model = RestaurantItemsDetailsModel.fromJson(
+        raw is Map<String, dynamic> ? raw : Map<String, dynamic>.from(raw),
+      );
+
+      final details = model.data?.menuItemDetails;
+      if (details == null) return;
+      serialNumberCtrl.text =
+          details.serialNumber?.toString() ?? serialNumberCtrl.text;
+      prepTimeCtrl.text =
+          details.preparationTime?.toString() ?? prepTimeCtrl.text;
+      maxQuantityCtrl.text =
+          details.quantityAllowed?.toString() ?? maxQuantityCtrl.text;
+      priceCtrl.text = details.price?.toString() ?? priceCtrl.text;
+      discountPriceCtrl.text =
+          details.discountPrice?.toString() ?? discountPriceCtrl.text;
+
+      // Menu id (used by update API as `menu_id`)
+      if (details.menuId != null) {
+        selectedMenuId = details.menuId;
+      }
+
+      // Item type dropdown value (if available)
+      final menuName = details.restaurantMenu?.nameEn;
+      if (menuName != null && menuName.isNotEmpty) {
+        // Keep the dropdown label.
+        selectedType = menuName;
+        // If menus are already loaded, also resolve the correct `menu_id`.
+        if (menuList.isNotEmpty) {
+          setSelectedType(menuName);
+        }
+      }
+
+      // Attribute id + name
+      if (details.restaurantAttributeId != null) {
+        selectedRestaurantAttributeId = details.restaurantAttributeId;
+      }
+      final attrName = details.attribute?.nameEn;
+      if (attrName != null && attrName.isNotEmpty) {
+        selectedAttribute = attrName;
+      }
+
+      // Tag id + name
+      final tags = model.data?.menuItemTags ?? [];
+      if (tags.isNotEmpty) {
+        final first = tags.first;
+        if (first.restaurantTagId != null) {
+          selectedRestaurantTagId = first.restaurantTagId;
+        }
+        if (first.nameEn != null && first.nameEn!.isNotEmpty) {
+          selectedTag = first.nameEn;
+        }
+      }
+      update();
+    } catch (error, stackTrace) {
+      debugPrint("getRestaurantMenuItemDetails Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      isRestaurantAttributesLoading = false;
+      update();
+    }
+  }
+
+  Future<void> updateItemAfterEdit(
+    BuildContext context, {
+    required String menuId,
+    required String menuItemId,
+    required String restaurantAttributeId,
+  }) async {
+    try {
+      showLoadingDialog(context);
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final formDataMap = <String, dynamic>{
+        "menu_item_id": menuItemId,
+        "restaurant_attribute_id": restaurantAttributeId,
+        "price": priceCtrl.text.trim(),
+        "discount_price": discountPriceCtrl.text.trim(),
+        "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
+        "serial_number": serialNumberCtrl.text.trim(),
+        "quantity_allowed": maxQuantityCtrl.text.trim(),
+      };
+      debugPrint("formDataMap (updateItemAfterEdit):");
+      for (final e in formDataMap.entries) {
+        debugPrint("  ${e.key}: ${e.value}");
+      }
+      final formData = dio.FormData.fromMap(formDataMap);
+      formData.fields.add(
+        MapEntry("tags[0]", selectedRestaurantTagId.toString()),
+      );
+      printFormData(formData);
+      final response = await DioClient().post(
+        ApiEndPoints.updateRestaurantMenuItem,
+        body: formData,
+      );
+      if (context.mounted) {
+        Get.back();
+      }
+      if (response.data['status'] == 'true' ||
+          response.data['status'] == true) {
+        if (context.mounted) {
+          String successMessage = "Leave marked successfully";
+          if (response.data['message'] != null) {
+            var msgMap = response.data['message'];
+            if (msgMap is Map &&
+                msgMap.containsKey('message_en') &&
+                msgMap['message_en'] is List &&
+                msgMap['message_en'].isNotEmpty) {
+              successMessage = msgMap['message_en'][0];
+            }
+          }
+          showToast(context, successMessage);
+          final profileController = Get.find<ProfileController>();
+          await profileController.fetchRestaurantMenuItems();
+          if (context.mounted) {
+            Get.back();
+          }
+        }
+      } else {
+        if (context.mounted) {
+          showToast(
+            context,
+            response.data['message']?.toString() ?? "Failed to mark leave",
+          );
+        }
+      }
+    } catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+        debugPrint("addItem Error: $error");
       }
     }
   }
