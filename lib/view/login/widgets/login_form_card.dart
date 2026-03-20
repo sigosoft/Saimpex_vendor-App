@@ -70,7 +70,7 @@ class LoginFormCard extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              S.of(context).userName,
+              S.of(context).username,
               style: GoogleFonts.rubik(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

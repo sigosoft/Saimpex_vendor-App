@@ -44,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "aboutTheRestaurant":
             MessageLookupByLibrary.simpleMessage("À PROPOS DU RESTAURANT"),
         "aboutUs": MessageLookupByLibrary.simpleMessage("À propos de nous"),
+        "acceptOrder":
+            MessageLookupByLibrary.simpleMessage("Accepter la commande"),
         "accepted": MessageLookupByLibrary.simpleMessage("Accepté"),
         "account": MessageLookupByLibrary.simpleMessage("Compte"),
         "accountName": MessageLookupByLibrary.simpleMessage("Nom du compte"),
@@ -76,10 +78,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "allMenus": MessageLookupByLibrary.simpleMessage("TOUS LES MENUS"),
         "allRestaurants":
             MessageLookupByLibrary.simpleMessage("Tous les restaurants"),
+        "allRevenue": MessageLookupByLibrary.simpleMessage("Tous les revenus"),
         "allStores": MessageLookupByLibrary.simpleMessage("Tous les magasins"),
         "alreadyOneCouponIsAppliedOnThisOrderIfYou":
             MessageLookupByLibrary.simpleMessage(
                 "Un coupon est déjà appliqué à cette commande. Si vous souhaitez appliquer celui-ci, veuillez supprimer le coupon déjà appliqué"),
+        "anonymous": MessageLookupByLibrary.simpleMessage("Anonyme"),
         "applied": MessageLookupByLibrary.simpleMessage("Appliqué"),
         "apply": MessageLookupByLibrary.simpleMessage("Appliquer"),
         "applyCoupon":
@@ -102,6 +106,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "areYouSureYouWantToPlaceThisOrder":
             MessageLookupByLibrary.simpleMessage(
                 "Êtes-vous sûr de vouloir passer cette commande ?"),
+        "assigned": MessageLookupByLibrary.simpleMessage("ASSIGNÉ"),
+        "assignedDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+            "Partenaire de livraison assigné"),
         "assignedStatus": MessageLookupByLibrary.simpleMessage("Assigné"),
         "attributeLabel": MessageLookupByLibrary.simpleMessage("Attribut"),
         "availableAt": MessageLookupByLibrary.simpleMessage("Disponible à"),
@@ -130,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Commandes du panier"),
         "basketSearchHint": MessageLookupByLibrary.simpleMessage(
             "Recherche par ID, nom d\'article"),
+        "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
         "beverages": MessageLookupByLibrary.simpleMessage("Boissons"),
         "breakfast": MessageLookupByLibrary.simpleMessage("Petit-déjeuner"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Acheter maintenant"),
@@ -151,6 +159,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "certificates": MessageLookupByLibrary.simpleMessage("CERTIFICATS"),
         "chat": MessageLookupByLibrary.simpleMessage("Discussion"),
         "chatNow": MessageLookupByLibrary.simpleMessage("Discuter maintenant"),
+        "checkForUpdate":
+            MessageLookupByLibrary.simpleMessage("Vérifier la mise à jour"),
         "checkout": MessageLookupByLibrary.simpleMessage("Passer à la caisse"),
         "chooseImageFrom":
             MessageLookupByLibrary.simpleMessage("Choisir l’image depuis"),
@@ -201,8 +211,11 @@ class MessageLookup extends MessageLookupByLibrary {
             "Aucun restaurant trouvé actuellement"),
         "currentlyNoStoresFound": MessageLookupByLibrary.simpleMessage(
             "Aucun magasin trouvé actuellement"),
+        "customerNotes":
+            MessageLookupByLibrary.simpleMessage("Notes du client"),
         "dAgo": MessageLookupByLibrary.simpleMessage("il y a"),
         "dateLabel": MessageLookupByLibrary.simpleMessage("DATE"),
+        "dateTime": MessageLookupByLibrary.simpleMessage("Date et heure"),
         "dateTimeLabel": MessageLookupByLibrary.simpleMessage("DATE ET HEURE"),
         "debit": MessageLookupByLibrary.simpleMessage("Débit"),
         "delete": MessageLookupByLibrary.simpleMessage("Supprimer"),
@@ -213,11 +226,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "deleteChat":
             MessageLookupByLibrary.simpleMessage("Supprimer la discussion"),
         "delivered": MessageLookupByLibrary.simpleMessage("Livré"),
+        "delivering":
+            MessageLookupByLibrary.simpleMessage("LIVRAISON EN COURS"),
+        "deliveryAddress":
+            MessageLookupByLibrary.simpleMessage("Adresse de livraison"),
         "deliveryBoys": MessageLookupByLibrary.simpleMessage("Livreurs"),
+        "deliveryCompleted":
+            MessageLookupByLibrary.simpleMessage("Livraison effectuée"),
         "deliveryFee":
             MessageLookupByLibrary.simpleMessage("Frais de livraison"),
         "deliveryLocation":
             MessageLookupByLibrary.simpleMessage("Lieu de livraison"),
+        "deliveryStarted":
+            MessageLookupByLibrary.simpleMessage("Livraison commencée"),
         "descriptionEnglishLabel":
             MessageLookupByLibrary.simpleMessage("Description (anglais)"),
         "didntGetTheOtp": MessageLookupByLibrary.simpleMessage(
@@ -229,6 +250,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Voulez-vous les remplacer par des articles de"),
         "done": MessageLookupByLibrary.simpleMessage("Terminé"),
+        "download": MessageLookupByLibrary.simpleMessage("Télécharger"),
         "driver": MessageLookupByLibrary.simpleMessage("Chauffeur"),
         "driverDetails":
             MessageLookupByLibrary.simpleMessage("Détails du chauffeur"),
@@ -256,8 +278,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Entrer le numéro de série"),
         "enterYourName":
             MessageLookupByLibrary.simpleMessage("Entrez votre nom"),
+        "enterYourPassword":
+            MessageLookupByLibrary.simpleMessage("Entrez votre mot de passe"),
         "enterYourQuantityHere":
             MessageLookupByLibrary.simpleMessage("Entrez la quantité ici"),
+        "enterYourUsername": MessageLookupByLibrary.simpleMessage(
+            "Entrez votre nom d\'utilisateur"),
         "enterYourWhatsappNumber": MessageLookupByLibrary.simpleMessage(
             "Entrez votre numéro WhatsApp"),
         "expiresInDays": m3,
@@ -280,6 +306,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "hAgo": MessageLookupByLibrary.simpleMessage("il y a"),
         "helpSupport":
             MessageLookupByLibrary.simpleMessage("Aide et assistance"),
+        "history": MessageLookupByLibrary.simpleMessage("Historique"),
         "holderName": MessageLookupByLibrary.simpleMessage("Nom du Titulaire"),
         "home": MessageLookupByLibrary.simpleMessage("Accueil"),
         "hr24": MessageLookupByLibrary.simpleMessage("24 Hr"),
@@ -315,6 +342,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "language": MessageLookupByLibrary.simpleMessage("Langue"),
         "lastPurchaseLabel":
             MessageLookupByLibrary.simpleMessage("Dernier achat"),
+        "leave": MessageLookupByLibrary.simpleMessage("Congé"),
         "leaves": MessageLookupByLibrary.simpleMessage("Congés"),
         "leavesHistory":
             MessageLookupByLibrary.simpleMessage("HISTORIQUE DES CONGÉS"),
@@ -326,6 +354,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "logout": MessageLookupByLibrary.simpleMessage("Déconnexion"),
         "lunchMenu": MessageLookupByLibrary.simpleMessage("Menu du Déjeuner"),
         "mAgo": MessageLookupByLibrary.simpleMessage("il y a"),
+        "markAsReady":
+            MessageLookupByLibrary.simpleMessage("Marquer comme prêt"),
         "markLeave": MessageLookupByLibrary.simpleMessage("MARQUER UN CONGÉ"),
         "markLeaveButton":
             MessageLookupByLibrary.simpleMessage("Marquer le Congé"),
@@ -347,6 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "myOrders": MessageLookupByLibrary.simpleMessage("Mes commandes"),
         "myPoints": MessageLookupByLibrary.simpleMessage("Mes points"),
         "myRestaurant": MessageLookupByLibrary.simpleMessage("Mon Restaurant"),
+        "myStore": MessageLookupByLibrary.simpleMessage("Mon magasin"),
         "name": MessageLookupByLibrary.simpleMessage("Nom"),
         "nationalIdNumber":
             MessageLookupByLibrary.simpleMessage("Numéro d\'ID national"),
@@ -360,6 +391,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "no": MessageLookupByLibrary.simpleMessage("Non"),
         "noCategoriesFound":
             MessageLookupByLibrary.simpleMessage("Aucune catégorie trouvée"),
+        "noComment": MessageLookupByLibrary.simpleMessage("Aucun commentaire"),
+        "noCommentProvided":
+            MessageLookupByLibrary.simpleMessage("Aucun commentaire fourni"),
+        "noCompletedLeavesFound":
+            MessageLookupByLibrary.simpleMessage("Aucun congé terminé trouvé"),
         "noConversations":
             MessageLookupByLibrary.simpleMessage("Aucune conversation"),
         "noConversationsFound":
@@ -395,30 +431,58 @@ class MessageLookup extends MessageLookupByLibrary {
         "noOrders": MessageLookupByLibrary.simpleMessage("Aucune commande"),
         "noOrdersFound":
             MessageLookupByLibrary.simpleMessage("Aucune commande trouvée"),
+        "noPayoutsYet": MessageLookupByLibrary.simpleMessage(
+            "Aucun paiement pour le moment"),
         "noRedeemableRewards": MessageLookupByLibrary.simpleMessage(
             "Aucune récompense échangeable"),
+        "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
+            "Aucun rapport pour cette période"),
         "noRestaurantsFound":
             MessageLookupByLibrary.simpleMessage("Aucun restaurant trouvé"),
         "noRestaurantsFounds":
             MessageLookupByLibrary.simpleMessage("Aucun restaurant trouvé"),
+        "noReviewsFound":
+            MessageLookupByLibrary.simpleMessage("Aucun avis trouvé"),
         "noStoresFound":
             MessageLookupByLibrary.simpleMessage("Aucun magasin trouvé"),
         "noTrackingDetailsFound": MessageLookupByLibrary.simpleMessage(
             "Aucun détail de suivi trouvé"),
         "noTransactionHistoryAvailable": MessageLookupByLibrary.simpleMessage(
             "Aucun historique de transactions disponible"),
+        "noUpcomingLeavesFound":
+            MessageLookupByLibrary.simpleMessage("Aucun congé à venir trouvé"),
         "notification": MessageLookupByLibrary.simpleMessage("Notification"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
         "now": MessageLookupByLibrary.simpleMessage("Maintenant"),
         "off": MessageLookupByLibrary.simpleMessage("OFF"),
+        "ongoing": MessageLookupByLibrary.simpleMessage("En cours"),
         "onlinePayment":
             MessageLookupByLibrary.simpleMessage("Paiement en ligne"),
+        "order": MessageLookupByLibrary.simpleMessage("Commande"),
+        "orderAccepted":
+            MessageLookupByLibrary.simpleMessage("Commande acceptée"),
         "orderColon": MessageLookupByLibrary.simpleMessage("Commande : "),
         "orderDetails":
             MessageLookupByLibrary.simpleMessage("Détails de la commande"),
+        "orderDetailsNotFound": MessageLookupByLibrary.simpleMessage(
+            "Détails de commande introuvables"),
+        "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
+            "Détail de la durée de la commande"),
         "orderIdLabel": m4,
+        "orderItems":
+            MessageLookupByLibrary.simpleMessage("Articles de la commande"),
+        "orderPickedUp":
+            MessageLookupByLibrary.simpleMessage("Commande récupérée"),
+        "orderPlaced": MessageLookupByLibrary.simpleMessage("Commande passée"),
         "orderPlacedSuccessfully": MessageLookupByLibrary.simpleMessage(
             "Commande passée avec succès !"),
+        "orderPreparationStarted": MessageLookupByLibrary.simpleMessage(
+            "Préparation de la commande commencée"),
+        "orderReady": MessageLookupByLibrary.simpleMessage("Commande prête"),
+        "orderSuccessfullyPlacedBy": MessageLookupByLibrary.simpleMessage(
+            "Commande passée avec succès par"),
+        "orderTimeline":
+            MessageLookupByLibrary.simpleMessage("Chronologie de la commande"),
         "ordered": MessageLookupByLibrary.simpleMessage("Commandé"),
         "orderedItems":
             MessageLookupByLibrary.simpleMessage("Articles commandés"),
@@ -440,9 +504,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Téléphone du propriétaire"),
         "packagingCost":
             MessageLookupByLibrary.simpleMessage("Coût d\'emballage"),
+        "password": MessageLookupByLibrary.simpleMessage("Mot de passe"),
         "pay": MessageLookupByLibrary.simpleMessage("Payer"),
         "paymentDetails":
             MessageLookupByLibrary.simpleMessage("Détails du paiement"),
+        "paymentOn": MessageLookupByLibrary.simpleMessage("Paiement le"),
+        "paymentSummary":
+            MessageLookupByLibrary.simpleMessage("Récapitulatif des paiements"),
         "paymentSummaryDetails":
             MessageLookupByLibrary.simpleMessage("DÉTAILS DE PAIEMENT"),
         "paymentType": MessageLookupByLibrary.simpleMessage("Type de paiement"),
@@ -455,6 +523,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pickYourFavouritesAndStartYourFeast":
             MessageLookupByLibrary.simpleMessage(
                 "Choisissez vos favoris et commencez votre festin !"),
+        "pickedUp": MessageLookupByLibrary.simpleMessage("RÉCUPÉRÉ"),
         "placeOrder":
             MessageLookupByLibrary.simpleMessage("Passer la commande"),
         "pleaseAddYourItemsToCart": MessageLookupByLibrary.simpleMessage(
@@ -478,12 +547,22 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Veuillez entrer votre nom"),
         "pleaseEnterYourQuantity":
             MessageLookupByLibrary.simpleMessage("Veuillez entrer la quantité"),
+        "pleaseLeaveThePackageAtTheFrontDoorAndRing":
+            MessageLookupByLibrary.simpleMessage(
+                "Veuillez laisser le colis à la porte d\'entrée et sonner"),
         "pleaseLogin":
             MessageLookupByLibrary.simpleMessage("Veuillez vous connecter"),
         "pleaseLoginToUseThisFeature": MessageLookupByLibrary.simpleMessage(
             "Veuillez vous connecter pour utiliser cette fonctionnalité"),
+        "pleaseSelectFromDateAndToDate": MessageLookupByLibrary.simpleMessage(
+            "Veuillez sélectionner la date de début et la date de fin"),
+        "pleaseSigninToYourAccountAndStartTheAdventure":
+            MessageLookupByLibrary.simpleMessage(
+                "Veuillez vous connecter à votre compte et commencer l\'aventure"),
         "points": MessageLookupByLibrary.simpleMessage("Points"),
         "pointsLabel": MessageLookupByLibrary.simpleMessage("POINTS"),
+        "popularItems":
+            MessageLookupByLibrary.simpleMessage("Articles populaires"),
         "positionTheBarcodeWithinTheFrame":
             MessageLookupByLibrary.simpleMessage(
                 "Placez le code-barres dans le cadre"),
@@ -491,7 +570,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Temps de préparation"),
         "preparationTimeMinutesLabel": MessageLookupByLibrary.simpleMessage(
             "Temps de préparation (minutes)"),
+        "prepareOrder":
+            MessageLookupByLibrary.simpleMessage("Préparer la commande"),
         "preparing": MessageLookupByLibrary.simpleMessage("En Préparation"),
+        "preparingFood":
+            MessageLookupByLibrary.simpleMessage("Préparation des repas"),
         "priceLabel": MessageLookupByLibrary.simpleMessage("PRIX"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage(
             "Politique de confidentialité"),
@@ -516,6 +599,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Évaluez votre commande"),
         "ratingReviews":
             MessageLookupByLibrary.simpleMessage("ÉVALUATIONS ET AVIS"),
+        "reachedRestaurant":
+            MessageLookupByLibrary.simpleMessage("ARRIVÉ AU RESTAURANT"),
         "ready": MessageLookupByLibrary.simpleMessage("Prêt"),
         "reasonColonLabel": m6,
         "reasonForLeave":
@@ -532,6 +617,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "redeemed": MessageLookupByLibrary.simpleMessage("Utilisé"),
         "redeemedAmount":
             MessageLookupByLibrary.simpleMessage("Montant utilisé"),
+        "redeemedCustomers":
+            MessageLookupByLibrary.simpleMessage("CLIENTS AYANT RACHETÉ"),
         "redeemedCustomersHeader":
             MessageLookupByLibrary.simpleMessage("CLIENTS AYANT RACHETÉ"),
         "redeemedPoints":
@@ -541,6 +628,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "regNumber": MessageLookupByLibrary.simpleMessage("Numéro d\'Enreg."),
         "registrationDetails":
             MessageLookupByLibrary.simpleMessage("DÉTAILS D\'INSCRIPTION"),
+        "reject": MessageLookupByLibrary.simpleMessage("Refuser"),
         "remove": MessageLookupByLibrary.simpleMessage("Supprimer"),
         "replace": MessageLookupByLibrary.simpleMessage("Remplacer"),
         "replaceCartItem": MessageLookupByLibrary.simpleMessage(
@@ -559,6 +647,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "restaurantReports":
             MessageLookupByLibrary.simpleMessage("Rapports du Restaurant"),
         "revenueLabel": MessageLookupByLibrary.simpleMessage("Revenu"),
+        "revenueReport":
+            MessageLookupByLibrary.simpleMessage("Rapport de revenus"),
         "reviews": MessageLookupByLibrary.simpleMessage("Avis"),
         "saimpex": MessageLookupByLibrary.simpleMessage("SAIMPEX"),
         "salesPerformanceHeader":
@@ -569,6 +659,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scanner le code-barres"),
         "scheduled": MessageLookupByLibrary.simpleMessage("PROGRAMMÉ"),
         "search": MessageLookupByLibrary.simpleMessage("Rechercher"),
+        "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
+            "Rechercher le montant ou l\'ID de transaction"),
         "searchByIdName":
             MessageLookupByLibrary.simpleMessage("Recherche par ID, nom"),
         "searchCategories":
@@ -577,6 +669,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rechercher une zone ou un nom de rue....."),
         "searchForItems":
             MessageLookupByLibrary.simpleMessage("Rechercher des articles"),
+        "searchName": MessageLookupByLibrary.simpleMessage("Rechercher le nom"),
         "searchNameOrMobileNumber": MessageLookupByLibrary.simpleMessage(
             "Rechercher un nom ou un numéro de portable"),
         "selectAttributeHint":
@@ -608,11 +701,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "startTypingToSearch": MessageLookupByLibrary.simpleMessage(
             "Commencez à taper pour rechercher"),
         "status": MessageLookupByLibrary.simpleMessage("Statut"),
+        "storeReports":
+            MessageLookupByLibrary.simpleMessage("Rapports du magasin"),
         "submitButton": MessageLookupByLibrary.simpleMessage("Soumettre"),
         "submitLeaveRequest": MessageLookupByLibrary.simpleMessage(
             "SOUMETTRE LA DEMANDE DE CONGÉ"),
         "submitRating":
             MessageLookupByLibrary.simpleMessage("Soumettre l’évaluation"),
+        "subtotal": MessageLookupByLibrary.simpleMessage("Sous-total"),
         "sunday": MessageLookupByLibrary.simpleMessage("Dimanche"),
         "sushiPlatter":
             MessageLookupByLibrary.simpleMessage("Plateau de Sushi"),
@@ -631,10 +727,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Commandes du Jour"),
         "topSellingDishes":
             MessageLookupByLibrary.simpleMessage("Plats les plus vendus"),
+        "totalAmount": MessageLookupByLibrary.simpleMessage("Montant total"),
         "totalBill":
             MessageLookupByLibrary.simpleMessage("Total de la facture"),
         "totalOrdersStat":
             MessageLookupByLibrary.simpleMessage("Total des Commandes"),
+        "totalPayoutBalance":
+            MessageLookupByLibrary.simpleMessage("Solde total des paiements"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("Bénéfice Total"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("Total des avis"),
@@ -686,6 +785,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewOrders":
             MessageLookupByLibrary.simpleMessage("Voir les commandes"),
         "wednesday": MessageLookupByLibrary.simpleMessage("Mercredi"),
+        "welcomeTo": MessageLookupByLibrary.simpleMessage("Bienvenue chez"),
+        "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(
+            "Bienvenue sur Saimpex Vendor !"),
         "wellBeBackSoon": MessageLookupByLibrary.simpleMessage(
             "Nous serons de retour bientôt"),
         "weveSentAVerificationCodeToYourWhatsapp":

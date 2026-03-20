@@ -111,8 +111,8 @@ class VendorSectionHeader extends StatelessWidget {
       localizedTitle = S.of(context).basket;
     } else if (title == "RECEIVED PAYOUTS") {
       localizedTitle = S.of(context).receivedPayouts;
-    } else if (title == "RESTAURANT REPORTS") {
-      localizedTitle = S.of(context).restaurantReports;
+    } else if (title == "STORE REPORTS") {
+      localizedTitle = S.of(context).storeReports;
     }
 
     return Text(
