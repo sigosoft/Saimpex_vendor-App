@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
 import '../payout/payout_list_screen.dart';
@@ -11,7 +14,6 @@ import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
 import 'edit_items_screen.dart';
-import 'menu_item_details_screen.dart';
 import 'basket_details_screen.dart';
 import 'rating_reviews_screen.dart';
 import 'leave_history_screen.dart';
@@ -39,6 +41,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchKeyword = "";
   Timer? _searchDebounce;
+  DateTime? _lastDownloadTemplateAt;
 
   @override
   void dispose() {
@@ -111,6 +114,52 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   String _formatApiDate(DateTime? date) {
     if (date == null) return "";
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
+  Future<void> _pickBulkImportXlsxFile() async {
+    final profileController = Get.find<ProfileController>();
+    final categoryId = profileController.selectedRestaurantCategoryId;
+    if (categoryId == null) {
+      if (mounted) {
+        showToast(context, 'Please select a category before uploading.');
+      }
+      return;
+    }
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+        allowMultiple: false,
+        withReadStream: false,
+      );
+      if (!mounted) return;
+      if (result == null || result.files.isEmpty) return;
+      final picked = result.files.single;
+      final name = picked.name;
+      final lower = name.toLowerCase();
+      if (!lower.endsWith('.xlsx')) {
+        showToast(context, 'Please select an .xlsx file only');
+        return;
+      }
+      final path = picked.path;
+      if (path == null || path.isEmpty) {
+        showToast(context, 'Could not access the selected file');
+        return;
+      }
+      final uploaded = await profileController.uploadmenuBulkImport(
+        context,
+        path,
+        categoryId,
+      );
+
+      if (mounted && uploaded) {
+        // File selection UI is handled by the server upload flow,
+        // so we don't keep the selected path in state.
+      }
+    } catch (e) {
+      if (mounted) {
+        showToast(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -408,17 +457,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (profileController.leaveHistory.isNotEmpty)
-                    ...profileController.leaveHistory.take(3).map(
-                      (leave) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildLeaveTile(
-                          dateRange: _formatLeaveDate(leave.date),
-                          reason: leave.reason ?? S.of(context).leave,
-                          status: "COMPLETED",
-                          isUpcoming: false,
-                        ),
-                      ),
-                    )
+                    ...profileController.leaveHistory
+                        .take(3)
+                        .map(
+                          (leave) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildLeaveTile(
+                              dateRange: _formatLeaveDate(leave.date),
+                              reason: leave.reason ?? S.of(context).leave,
+                              status: "COMPLETED",
+                              isUpcoming: false,
+                            ),
+                          ),
+                        )
                   else
                     NoDataWidget(
                       context,
@@ -452,11 +503,26 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 ] else if (selectedMenu == "Menu Bulk Import") ...[
                   const SizedBox(height: 20),
                   _sectionHeader(S.of(context).menuBulkImport),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Select a category and import menu items in bulk",
+                    style: GoogleFonts.rubik(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF6B7280),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  _buildBulkImportActionsRow(
+                    profileController: profileController,
+                  ),
+                  const SizedBox(height: 18),
                   _buildBulkImportInstructions(),
+                  const SizedBox(height: 18),
+                  _buildBulkImportCategoryCardsGrid(
+                    profileController: profileController,
+                  ),
                   const SizedBox(height: 24),
-                  _buildImportSteps(),
-                  const SizedBox(height: 40),
                 ] else if (selectedMenu == "Basket") ...[
                   const SizedBox(height: 20),
                   _sectionHeader(S.of(context).baskets),
@@ -504,6 +570,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           final profileController = Get.find<ProfileController>();
           profileController.fetchGroceryMenuItems();
           profileController.fetchRestaurantMenuItems();
+        } else if (title == "Menu Bulk Import") {
+          // Ensure the grid uses fresh category data from the API.
+          final profileController = Get.find<ProfileController>();
+          profileController.getAllCategories();
         }
       },
     );
@@ -670,6 +740,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
 
           return _menuItem(
             name,
+            menu.id?.toString() ?? "",
             category,
             id: menu.id.toString(),
             imageUrl: menu.image,
@@ -683,9 +754,15 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               : lang == 'ar'
               ? (menu.nameAr ?? menu.nameEn ?? "")
               : (menu.nameEn ?? "");
+          final category = lang == 'fr'
+              ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
+              : lang == 'ar'
+              ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
+              : (menu.categoryNameEn ?? "");
           return _menuItem(
             name,
-            menu.categoryId?.toString() ?? "",
+            menu.id?.toString() ?? "",
+            category,
             id: menu.id.toString(),
             imageUrl: menu.image,
             categories: profileController.restaurantCategoriesForDropdown,
@@ -727,7 +804,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              final now = DateTime.now();
+              final last = _lastDownloadTemplateAt;
+              if (last != null &&
+                  now.difference(last) < const Duration(seconds: 20)) {
+                return;
+              }
+              _lastDownloadTemplateAt = now;
+              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+                  ? Get.find<menu_ctrl.MenuController>()
+                  : Get.put(menu_ctrl.MenuController(), permanent: false);
+              menuController.downloadItemTemplate(context);
+            },
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Color(0xFFFF5216), width: 1),
               shape: RoundedRectangleBorder(
@@ -763,7 +852,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         const SizedBox(width: 10),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+                  ? Get.find<menu_ctrl.MenuController>()
+                  : Get.put(menu_ctrl.MenuController(), permanent: false);
+              menuController.uploadItemTemplate(context);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFF3B82F6),
@@ -851,8 +945,27 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
+  /// Category for bulk import (required by API). Does not refetch menu list.
+  Widget _buildBulkImportCategoryRow() {
+    final profileController = Get.find<ProfileController>();
+    return VendorCategoryAddRow(
+      categories: profileController.restaurantCategoriesForDropdown,
+      selectedCategoryId: profileController.selectedRestaurantCategoryId,
+      onCategoryChanged: (int? categoryId) {
+        profileController.setSelectedRestaurantCategoryId(categoryId);
+      },
+      onAddPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddMenuScreen()),
+        );
+      },
+    );
+  }
+
   Widget _menuItem(
     String name,
+    String restaurantMenuItemId,
     String category, {
     String? imageUrl,
     String? id,
@@ -862,6 +975,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   }) {
     return _richCard(
       id: id ?? "33",
+      restaurantMenuItemId: restaurantMenuItemId,
       name: name,
       category: category,
       price: price,
@@ -875,6 +989,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
 
   Widget _richCard({
     required String id,
+    required String restaurantMenuItemId,
     required String name,
     required String category,
     required String price,
@@ -897,15 +1012,22 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       categories: categories,
       availabilityStatus: availabilityStatus,
       onViewDetails: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MenuItemDetailsScreen(
-              itemId: itemId,
-              isMenu: isMenu,
+        if (isMenu) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ViewMenuDetails(restaurantMenuId: itemId),
             ),
-          ),
-        );
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ViewItemDetails(itemId: restaurantMenuItemId),
+            ),
+          );
+        }
       },
       onEdit: () {
         if (isMenu) {
@@ -919,18 +1041,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditItemsScreen(itemId: itemId),
+              builder: (context) =>
+                  EditItemsScreen(itemId: restaurantMenuItemId),
             ),
           );
         }
       },
       onDelete: isMenu
           ? () {
-              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+              final menuController =
+                  Get.isRegistered<menu_ctrl.MenuController>()
                   ? Get.find<menu_ctrl.MenuController>()
                   : Get.put(menu_ctrl.MenuController(), permanent: false);
-              menuController.deleteMenu(context,
-                  restaurantMenuId: itemId);
+              menuController.deleteMenu(context, restaurantMenuId: itemId);
             }
           : () {
               final itemController = Get.isRegistered<ItemController>()
@@ -938,7 +1061,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   : Get.put(ItemController(), permanent: false);
               itemController.deleteItem(
                 context,
-                restaurantMenuItemId: itemId,
+                restaurantMenuItemId: restaurantMenuItemId,
               );
             },
     );
@@ -1024,6 +1147,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           return _foodItem(
             name,
             price,
+            item.id?.toString() ?? "",
             item.image,
             item.id.toString(),
             category: category,
@@ -1054,7 +1178,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           return _foodItem(
             name,
             displayPrice,
-            item.image,
+            item.restaurantMenuItemId?.toString() ?? item.id?.toString() ?? "",
+            item.image ?? "",
             item.id.toString(),
             category: category,
             originalPrice: originalPrice,
@@ -1081,6 +1206,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   Widget _foodItem(
     String name,
     String price,
+    String restaurantMenuItemId,
     String? imageUrl,
     String itemId, {
     String category = "Category",
@@ -1090,6 +1216,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   }) {
     return _richCard(
       id: itemId,
+      restaurantMenuItemId: restaurantMenuItemId,
       name: name,
       category: category,
       price: price,
@@ -1113,48 +1240,223 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  Widget _buildImportSteps() {
-    return Column(
+  Widget _buildBulkImportActionsRow({
+    required ProfileController profileController,
+  }) {
+    return Row(
       children: [
-        _importStep(1, "Upload File", "Select your completed menu file"),
-        const SizedBox(height: 16),
-        _importStep(2, "Review Data", "Verify the imported items"),
-        const SizedBox(height: 16),
-        _importStep(3, "Complete", "Finalize the bulk import"),
-        const SizedBox(height: 32),
-        Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.15,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () =>
+                profileController.importRestaurantMenuItems(context),
+            icon: const Icon(
+              Icons.download_outlined,
+              size: 18,
+              color: Color(0xFF4F46E1),
+            ),
+            label: Text(
+              "Download Template",
+              style: GoogleFonts.rubik(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF4F46E1),
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF4F46E1), width: 1),
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.cloud_upload_outlined,
-                size: 32,
-                color: Color(0xFF9CA3AF),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: _pickBulkImportXlsxFile,
+            icon: const Icon(
+              Icons.file_upload_outlined,
+              size: 18,
+              color: Color(0xFF4F46E1),
+            ),
+            label: Text(
+              "Upload Images",
+              style: GoogleFonts.rubik(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF4F46E1),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Click or drag file to upload",
-                style: GoogleFonts.rubik(
-                  color: const Color(0xFF6B7280),
-                  fontSize: 14,
-                ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF4F46E1), width: 1),
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            ],
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _importStep(int number, String title, String subtitle) {
-    return VendorImportStep(number: number, title: title, subtitle: subtitle);
+  String? _bulkImportCategoryImageAsset(String? categoryName) {
+    final name = (categoryName ?? "").toLowerCase();
+    if (name.contains("soup")) return "lib/assets/images/Soups.png";
+    if (name.contains("juice")) return "lib/assets/images/Juice.png";
+    if (name.contains("chinese")) return "lib/assets/images/Chinese.png";
+    if (name.contains("sandwich")) return "lib/assets/images/Sandwich.png";
+    return null;
+  }
+
+  Widget _buildBulkImportCategoryCardsGrid({
+    required ProfileController profileController,
+  }) {
+    final categories = profileController.restaurantCategoriesForDropdown;
+    final selectedCards = categories
+        .where((c) => c.id != null)
+        .map(
+          (c) => ({
+            "category": c,
+            "assetPath": _bulkImportCategoryImageAsset(c.name),
+          }),
+        )
+        .toList();
+
+    if (selectedCards.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "No categories available for bulk import.",
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildBulkImportCategoryRow(),
+        ],
+      );
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: selectedCards.length,
+      padding: EdgeInsets.zero,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+        childAspectRatio: 0.86,
+      ),
+      itemBuilder: (context, index) {
+        final card = selectedCards[index];
+        final category = card["category"] as RestaurantCategory;
+        final assetPath = card["assetPath"] as String?;
+        return _bulkImportCategoryCard(
+          categoryName: category.name ?? "Category",
+          assetPath: assetPath,
+          onImport: () async {
+            profileController.setSelectedRestaurantCategoryId(category.id);
+            await _pickBulkImportXlsxFile();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _bulkImportCategoryCard({
+    required String categoryName,
+    required String? assetPath,
+    required Future<void> Function() onImport,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: assetPath != null && assetPath.isNotEmpty
+                ? Image.asset(
+                    assetPath,
+                    width: double.infinity,
+                    height: 92,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) {
+                      return Container(
+                        width: double.infinity,
+                        height: 92,
+                        color: const Color(0xFFF1F5F9),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.fastfood,
+                          color: Color(0xFFFF5216),
+                          size: 30,
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    width: double.infinity,
+                    height: 92,
+                    color: const Color(0xFFF1F5F9),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.fastfood,
+                      color: Color(0xFFFF5216),
+                      size: 30,
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            categoryName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.rubik(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1F2937),
+            ),
+          ),
+          const Spacer(),
+          SizedBox(
+            width: double.infinity,
+            height: 36,
+            child: ElevatedButton(
+              onPressed: onImport,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF5216),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                "Import",
+                style: GoogleFonts.rubik(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBasketList() {
@@ -1205,21 +1507,5 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
 
   Widget _basketItem(String name, String count, String status) {
     return VendorBasketItem(name: name, count: count, status: status);
-  }
-
-  Widget _buildPayoutsList() {
-    return Column(
-      children: [
-        _payoutItem("PO-2025-001", "Mar 01, 2025", "\$450.00"),
-        const SizedBox(height: 12),
-        _payoutItem("PO-2025-002", "Feb 23, 2025", "\$320.50"),
-        const SizedBox(height: 12),
-        _payoutItem("PO-2025-003", "Feb 15, 2025", "\$580.00"),
-      ],
-    );
-  }
-
-  Widget _payoutItem(String id, String date, String amount) {
-    return VendorPayoutItem(id: id, date: date, amount: amount);
   }
 }

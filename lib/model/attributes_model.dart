@@ -10,8 +10,11 @@ class AttributesModel {
   });
 
   factory AttributesModel.fromJson(Map<String, dynamic>? json) {
+    final statusVal = json?['status'];
     return AttributesModel(
-      status: json?['status'] == "true",
+      status: statusVal == true ||
+          statusVal?.toString().toLowerCase() == "true" ||
+          statusVal?.toString() == "1",
       data: (json?['data'] as List?)
               ?.map((e) => AttributeData.fromJson(e))
               .toList() ??
@@ -35,11 +38,20 @@ class AttributeData {
   });
 
   factory AttributeData.fromJson(Map<String, dynamic>? json) {
+    final idVal = json?['id'];
+    final nameEnVal = json?['name_en'];
+    final nameArVal = json?['name_ar'];
+    final nameFrVal = json?['name_fr'];
+
+    final parsedId = idVal is int
+        ? idVal
+        : int.tryParse(idVal?.toString() ?? '');
+
     return AttributeData(
-      id: json?['id'] ?? 0,
-      nameEn: json?['name_en'] ?? "",
-      nameAr: json?['name_ar'] ?? "",
-      nameFr: json?['name_fr'] ?? "",
+      id: parsedId,
+      nameEn: nameEnVal?.toString() ?? "",
+      nameAr: nameArVal?.toString() ?? "",
+      nameFr: nameFrVal?.toString() ?? "",
     );
   }
 }

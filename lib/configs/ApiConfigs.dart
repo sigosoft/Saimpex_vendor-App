@@ -66,8 +66,24 @@ class ApiEndPoints {
   static String addRestaurantMenuItem = "addRestaurantMenuItem";
   static String getRestaurantMenus = "getRestaurantMenus";
   static String getRestaurantAttributes = "getRestaurantAttributes";
+  static String getRestaurantMenuItemDetails = "restaurantMenuItemDetail";
   static String deleteRestaurantMenuItem = "deleteRestaurantMenuItem";
   static String receivedPayouts = "receivedPayouts";
   static String resturantReport = "resturantReport";
   static String restaurantReportDownload = "restaurantReportDownload";
+  static String importRestaurantMenuItems = "downloadRestaurantBulkTemplate";
+  static String uploadRestaurantMenuBulkImport = "uploadRestaurantBulkMenu";
+  static String updateRestaurantMenuItem = "updateRestaurantMenuItem";
+  static String exportMenuItems = "exportMenuItems";
+  static String uploadMenuItems = "importRestaurantMenuItems";
+
+  // grocery api endpoints
+
+  static String getGroceryMenuDetails = "groceryMenuDetails";
+  static String importGroceryMenuItems = "importGroceryMenuItems";
+  static String uploadGroceryMenuBulkImport = "uploadGroceryBulkMenu";
+  static String getGroceryCategories = "getGroceryCategories";
+  static String getGroceryTags = "getGroceryTags";
+  static String getGroceryMenus = "getAllGroceryMenus";
+  static String getGroceryAttributes = "getGroceryAttributes";
 }

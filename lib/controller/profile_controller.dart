@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart' as dio;
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +11,8 @@ import 'package:saimpex_vendor/model/restaurant_category_model.dart';
 import 'package:saimpex_vendor/model/rating_review_model.dart';
 import 'package:saimpex_vendor/model/grocery_menus_model.dart';
 import 'package:saimpex_vendor/model/grocery_menu_items_model.dart';
-import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart' hide RestaurantMenu;
+import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart'
+    hide RestaurantMenu;
 import 'package:saimpex_vendor/model/restaurant_menus_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
 import 'package:saimpex_vendor/view/Login/login.dart';
@@ -19,6 +23,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ProfileController extends GetxController {
   final FlutterLocalization localization = FlutterLocalization.instance;
@@ -96,6 +103,9 @@ class ProfileController extends GetxController {
 
   List<RestaurantMenuItemData> restaurantMenuItems = [];
   bool isRestaurantMenuItemsLoading = false;
+
+  /// True while downloading the restaurant bulk-import XML template from API.
+  bool isRestaurantBulkTemplateDownloading = false;
 
   List<RestaurantCategoryData> restaurantCategories = [];
   bool isRestaurantCategoriesLoading = false;
@@ -223,8 +233,7 @@ class ProfileController extends GetxController {
 
   /// Removes a restaurant menu from the list by id and triggers UI update.
   void removeRestaurantMenuById(String restaurantMenuId) {
-    restaurantMenus
-        .removeWhere((m) => m.id?.toString() == restaurantMenuId);
+    restaurantMenus.removeWhere((m) => m.id?.toString() == restaurantMenuId);
     update();
   }
 
@@ -254,11 +263,14 @@ class ProfileController extends GetxController {
     update();
     try {
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
       final response = await DioClient().get(
-        ApiEndPoints.restaurantMenus,
+        vendorType == "1"
+            ? ApiEndPoints.restaurantMenus
+            : ApiEndPoints.groceryMenus,
         query: {
           "limit": _limit,
           "page": _page,
@@ -324,12 +336,15 @@ class ProfileController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
 
       final response = await DioClient().get(
-        ApiEndPoints.groceryMenuItems,
+        vendorType == "1"
+            ? ApiEndPoints.restaurantMenuItems
+            : ApiEndPoints.groceryMenuItems,
         query: {"limit": limit, "page": page, "status": status},
       );
 
@@ -351,12 +366,15 @@ class ProfileController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
 
       final response = await DioClient().get(
-        ApiEndPoints.restaurantMenuItems,
+        vendorType == "1"
+            ? ApiEndPoints.restaurantMenuItems
+            : ApiEndPoints.groceryMenuItems,
         query: {"limit": limit, "page": page},
       );
 
@@ -369,81 +387,6 @@ class ProfileController extends GetxController {
     } finally {
       isRestaurantMenuItemsLoading = false;
       update();
-    }
-  }
-
-  Future<void> addGroceryMenu(
-    BuildContext context, {
-    required List<String> categoryIds,
-    required String nameEn,
-    required String descriptionEn,
-    required List<String> tags,
-    required String serialNumber,
-    required String quantityAllowed,
-    required List<Map<String, dynamic>> attributes,
-    required String imagePath,
-  }) async {
-    try {
-      showLoadingDialog(context);
-
-      var token = await getSavedObject("token");
-      if (token != null) {
-        DioClient().updateToken(token);
-      }
-
-      Map<String, dynamic> formDataMap = {
-        "name_en": nameEn,
-        "description_en": descriptionEn,
-        "serial_number": serialNumber,
-        "quantity_allowed": quantityAllowed,
-        "image": await dio.MultipartFile.fromFile(imagePath),
-      };
-
-      for (int i = 0; i < attributes.length; i++) {
-        attributes[i].forEach((key, value) {
-          formDataMap["attributes[$i][$key]"] = value.toString();
-        });
-      }
-
-      dio.FormData formData = dio.FormData.fromMap(formDataMap);
-
-      for (var id in categoryIds) {
-        formData.fields.add(MapEntry("category_id[]", id));
-      }
-
-      for (var tag in tags) {
-        formData.fields.add(MapEntry("tags[]", tag));
-      }
-
-      final response = await DioClient().post(
-        ApiEndPoints.addGroceryMenu,
-        body: formData,
-      );
-
-      if (context.mounted) {
-        Get.back(); // close dialog
-      }
-
-      if (response.data['status'] == 'true' ||
-          response.data['status'] == true) {
-        if (context.mounted) {
-          showToast(context, "Grocery menu added successfully");
-          Get.back(); // go back to menu list
-          fetchGroceryMenus(); // refresh list
-        }
-      } else {
-        if (context.mounted) {
-          showToast(
-            context,
-            response.data['message']?.toString() ?? "Failed to add menu",
-          );
-        }
-      }
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
     }
   }
 
@@ -461,6 +404,7 @@ class ProfileController extends GetxController {
       showLoadingDialog(context);
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
@@ -476,7 +420,9 @@ class ProfileController extends GetxController {
       });
 
       final response = await DioClient().post(
-        ApiEndPoints.addGroceryMenuItem,
+        vendorType == "1"
+            ? ApiEndPoints.addRestaurantMenuItem
+            : ApiEndPoints.addGroceryMenuItem,
         body: formData,
       );
 
@@ -930,18 +876,23 @@ class ProfileController extends GetxController {
       isRestaurantMenuDetailsLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantMenuDetails,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenuDetails
+            : ApiEndPoints.getGroceryMenuDetails,
         query: restaurantMenuId != null
             ? {'restaurant_menu_id': restaurantMenuId}
             : null,
       );
-      final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(response.data);
+      final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
+        response.data,
+      );
       if (restaurantMenuDetailsModel.status) {
         this.restaurantMenuDetails = restaurantMenuDetailsModel.data;
       }
@@ -953,7 +904,217 @@ class ProfileController extends GetxController {
     }
   }
 
-  
+  Future<void> importRestaurantMenuItems(BuildContext context) async {
+    try {
+      isRestaurantBulkTemplateDownloading = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
+
+      final token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+
+      if (Platform.isAndroid) {
+        await Permission.storage.request();
+      }
+      final response = await DioClient().dio.get<List<int>>(
+        vendorType == "1"
+            ? ApiEndPoints.importRestaurantMenuItems
+            : ApiEndPoints.importGroceryMenuItems,
+        options: dio.Options(
+          responseType: dio.ResponseType.bytes,
+          headers: {
+            'Accept':
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, '
+                'application/vnd.ms-excel, application/octet-stream, */*',
+          },
+          validateStatus: (code) => code != null && code < 600,
+        ),
+      );
+      final bytes = response.data;
+      if (bytes == null || bytes.isEmpty) {
+        if (context.mounted) {
+          showToast(context, 'Empty template response');
+        }
+        return;
+      }
+      final contentType =
+          response.headers.value('content-type')?.toLowerCase() ?? '';
+      // .xlsx is a ZIP (PK…) — avoid utf8-decoding the whole file for JSON checks.
+      final looksLikeZipXlsx =
+          bytes.length >= 2 && bytes[0] == 0x50 && bytes[1] == 0x4B;
+      final maybeJsonBody =
+          !looksLikeZipXlsx &&
+          (contentType.contains('json') ||
+              (bytes.isNotEmpty && bytes[0] == 0x7B));
+      if (maybeJsonBody) {
+        final asText = utf8.decode(bytes, allowMalformed: true);
+        final trimmed = asText.trimLeft();
+        if (contentType.contains('json') || trimmed.startsWith('{')) {
+          try {
+            final map = jsonDecode(asText);
+            if (map is Map) {
+              final msg =
+                  map['message']?.toString() ??
+                  map['error']?.toString() ??
+                  'Could not download template';
+              if (context.mounted) showToast(context, msg);
+            }
+          } catch (_) {
+            if (context.mounted) {
+              showToast(context, 'Unexpected response (not Excel file)');
+            }
+          }
+          return;
+        }
+      }
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        if (context.mounted) {
+          final msg = maybeJsonBody
+              ? utf8.decode(bytes, allowMalformed: true).trim()
+              : '';
+          showToast(
+            context,
+            msg.isNotEmpty ? msg : 'Download failed (${response.statusCode})',
+          );
+        }
+        return;
+      }
+      final fileName =
+          'restaurant_bulk_template_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+
+      Directory? targetDir;
+      if (Platform.isAndroid) {
+        final downloads = Directory('/storage/emulated/0/Download');
+        if (!await downloads.exists()) {
+          await downloads.create(recursive: true);
+        }
+        if (await downloads.exists()) targetDir = downloads;
+      } else if (Platform.isIOS) {
+        targetDir = await getApplicationDocumentsDirectory();
+      }
+      targetDir ??= await getApplicationDocumentsDirectory();
+
+      File file = File('${targetDir.path}/$fileName');
+      try {
+        await file.writeAsBytes(bytes, flush: true);
+      } catch (_) {
+        final fallbackDir = await getApplicationDocumentsDirectory();
+        file = File('${fallbackDir.path}/$fileName');
+        await file.writeAsBytes(bytes, flush: true);
+      }
+
+      if (context.mounted) {
+        showToast(context, 'Saved: ${file.path}');
+        await OpenFilex.open(file.path);
+      }
+    } catch (error) {
+      debugPrint('importRestaurantMenuItems Error: $error');
+      if (context.mounted) {
+        showToast(context, error.toString());
+      }
+    } finally {
+      isRestaurantBulkTemplateDownloading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
+    }
+  }
+
+  Future<bool> uploadmenuBulkImport(
+    BuildContext context,
+    String filePath,
+    int categoryId,
+  ) async {
+    var success = false;
+    try {
+      showLoadingDialog(context);
+      isRestaurantMenuDetailsLoading = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final multipartFile = await dio.MultipartFile.fromFile(filePath);
+      final formData = dio.FormData.fromMap({
+        "file": multipartFile,
+        "category_id": categoryId,
+      });
+      debugPrint("FormData (uploadmenuBulkImport):");
+      for (final e in formData.fields) {
+        debugPrint("  field ${e.key}: ${e.value}");
+      }
+      for (final e in formData.files) {
+        debugPrint("  file ${e.key}: ${e.value.filename}");
+      }
+      final response = await DioClient().post(
+        vendorType == "1"
+            ? ApiEndPoints.uploadRestaurantMenuBulkImport
+            : ApiEndPoints.uploadGroceryMenuBulkImport,
+        body: formData,
+      );
+      final raw = response.data;
+      if (raw is! Map) {
+        if (context.mounted) {
+          showToast(context, 'Invalid server response');
+        }
+      } else {
+        final map = Map<String, dynamic>.from(raw);
+        final ok = map['status']?.toString() == 'true' || map['status'] == true;
+        if (ok) {
+          try {
+            final restaurantMenuDetailsModel =
+                RestaurantMenuDetailsModel.fromJson(map);
+            if (restaurantMenuDetailsModel.data != null) {
+              restaurantMenuDetails = restaurantMenuDetailsModel.data;
+            }
+          } catch (_) {}
+          await fetchRestaurantMenus(keyword: '');
+          await fetchRestaurantMenuItems();
+          if (context.mounted) {
+            final msg = _bulkImportSuccessMessage(map);
+            showToast(context, msg);
+          }
+          success = true;
+        } else if (context.mounted) {
+          showToast(
+            context,
+            map['message']?.toString() ?? 'Bulk upload failed',
+          );
+        }
+      }
+    } catch (error) {
+      debugPrint('uploadmenuBulkImport Error: $error');
+      if (context.mounted) {
+        showToast(context, error.toString());
+      }
+    } finally {
+      if (context.mounted) {
+        final nav = Navigator.of(context, rootNavigator: true);
+        if (nav.canPop()) nav.pop();
+      }
+      isRestaurantMenuDetailsLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
+    }
+    return success;
+  }
+
+  String _bulkImportSuccessMessage(Map<String, dynamic> map) {
+    final msg = map['message'];
+    if (msg is Map) {
+      for (final key in ['message_en', 'message', 'success']) {
+        final v = msg[key];
+        if (v is List && v.isNotEmpty) return v.first.toString();
+        if (v is String && v.isNotEmpty) return v;
+      }
+    }
+    if (msg is String && msg.isNotEmpty) return msg;
+    return 'Bulk menu uploaded successfully';
+  }
 }
 
 class RestaurantCategory {

@@ -8,6 +8,17 @@
         <intent>
             <action android:name="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"/>
         </intent>
+        <!-- file_picker: allow resolving document / file chooser on API 30+ -->
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="*/*" />
+        </intent>
     </queries>
     <application
         android:label="Saimpex Vendor"

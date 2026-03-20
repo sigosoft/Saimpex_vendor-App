@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -55,6 +60,8 @@ class MenuController extends GetxController {
 
   RestaurantMenuDetailsData? restaurantMenuDetails;
   bool isRestaurantMenuDetailsLoading = false;
+
+  bool _isUploadingItemTemplate = false;
 
   @override
   void onInit() {
@@ -399,6 +406,7 @@ class MenuController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -447,7 +455,9 @@ class MenuController extends GetxController {
         );
       }
       final response = await DioClient().post(
-        ApiEndPoints.addRestaurantMenu,
+        vendorType == "1"
+            ? ApiEndPoints.addRestaurantMenu
+            : ApiEndPoints.addGroceryMenu,
         body: formData,
       );
       if (context.mounted) {
@@ -520,13 +530,16 @@ class MenuController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantCategories,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantCategories
+            : ApiEndPoints.getGroceryCategories,
       );
       final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
         response.data,
@@ -548,12 +561,17 @@ class MenuController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(ApiEndPoints.getRestaurantTags);
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantTags
+            : ApiEndPoints.getGroceryTags,
+      );
       final tagsModel = TagsModel.fromJson(
         response.data as Map<String, dynamic>,
       );
@@ -580,13 +598,13 @@ class MenuController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      await getSavedObject("vendorType");
       final formDataMap = <String, dynamic>{
         "restaurant_menu_id": restaurantMenuId,
       };
 
       final response = await DioClient().post(
         ApiEndPoints.deleteRestaurantMenu,
+
         body: formDataMap,
       );
       if (context.mounted) {
@@ -634,13 +652,16 @@ class MenuController extends GetxController {
       isRestaurantMenuDetailsLoading = true;
       update();
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantMenuDetails,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenuDetails
+            : ApiEndPoints.getGroceryMenuDetails,
         query: {'restaurant_menu_id': restaurantMenuId},
       );
       final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
@@ -672,7 +693,6 @@ class MenuController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      await getSavedObject("vendorType");
       final formDataMap = <String, dynamic>{
         "restaurant_menu_id": currentEditMenuId ?? 0,
         "name_en": nameEnCtrl.text,
@@ -800,6 +820,200 @@ class MenuController extends GetxController {
         Get.back();
         showToast(context, error.toString());
       }
+    }
+  }
+
+  void downloadItemTemplate(BuildContext context) async {
+    try {
+      final token = await getSavedObject("token");
+      final vendorType =
+          (await getSavedObject("vendorType"))?.toString() ?? "1";
+
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+
+      if (Platform.isAndroid) {
+        await Permission.storage.request();
+      }
+
+      final response = await DioClient().dio.get<List<int>>(
+        ApiEndPoints.exportMenuItems,
+        queryParameters: {"vendor_type": vendorType},
+        options: dio.Options(
+          responseType: dio.ResponseType.bytes,
+          headers: {
+            'Accept':
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, '
+                'application/vnd.ms-excel, application/octet-stream, */*',
+          },
+          validateStatus: (code) => code != null && code < 600,
+        ),
+      );
+
+      final bytes = response.data;
+      if (bytes == null || bytes.isEmpty) {
+        if (context.mounted) showToast(context, 'Empty template response');
+        return;
+      }
+      final contentType =
+          response.headers.value('content-type')?.toLowerCase() ?? '';
+      final looksLikeZipXlsx =
+          bytes.length >= 2 && bytes[0] == 0x50 && bytes[1] == 0x4B;
+      final maybeJsonBody =
+          !looksLikeZipXlsx &&
+          (contentType.contains('json') ||
+              (bytes.isNotEmpty && bytes[0] == 0x7B));
+      if (maybeJsonBody) {
+        final asText = utf8.decode(bytes, allowMalformed: true);
+        final trimmed = asText.trimLeft();
+        if (contentType.contains('json') || trimmed.startsWith('{')) {
+          try {
+            final map = jsonDecode(asText);
+            if (map is Map) {
+              final msg =
+                  map['message']?.toString() ??
+                  map['error']?.toString() ??
+                  'Could not download template';
+              if (context.mounted) showToast(context, msg);
+            }
+          } catch (_) {
+            if (context.mounted) {
+              showToast(context, 'Unexpected response (not Excel file)');
+            }
+          }
+          return;
+        }
+      }
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        if (context.mounted) {
+          final msg = maybeJsonBody
+              ? utf8.decode(bytes, allowMalformed: true).trim()
+              : '';
+          showToast(
+            context,
+            msg.isNotEmpty ? msg : 'Download failed (${response.statusCode})',
+          );
+        }
+        return;
+      }
+      final fileName =
+          'menu_items_bulk_template_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+      Directory? targetDir;
+      if (Platform.isAndroid) {
+        final downloads = Directory('/storage/emulated/0/Download');
+        if (!await downloads.exists()) {
+          await downloads.create(recursive: true);
+        }
+        if (await downloads.exists()) targetDir = downloads;
+      } else if (Platform.isIOS) {
+        targetDir = await getApplicationDocumentsDirectory();
+      }
+      targetDir ??= await getApplicationDocumentsDirectory();
+
+      File file = File('${targetDir.path}/$fileName');
+      try {
+        await file.writeAsBytes(bytes, flush: true);
+      } catch (_) {
+        final fallbackDir = await getApplicationDocumentsDirectory();
+        file = File('${fallbackDir.path}/$fileName');
+        await file.writeAsBytes(bytes, flush: true);
+      }
+
+      if (context.mounted) {
+        showToast(context, 'Saved: ${file.path}');
+        await OpenFilex.open(file.path);
+      }
+    } catch (error) {
+      debugPrint('downloadItemTemplate Error: $error');
+      if (context.mounted) {
+        showToast(context, error.toString());
+      }
+    }
+  }
+
+  Future<void> uploadItemTemplate(BuildContext context) async {
+    if (_isUploadingItemTemplate) return;
+    _isUploadingItemTemplate = true;
+
+    try {
+      showLoadingDialog(context);
+
+      final token = await getSavedObject("token");
+      final vendorType =
+          (await getSavedObject("vendorType"))?.toString() ?? "1";
+
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['xlsx'],
+        withReadStream: false,
+      );
+      if (result == null || result.files.isEmpty) {
+        return;
+      }
+
+      final picked = result.files.single;
+      final path = picked.path;
+      if (path == null || path.isEmpty) {
+        showToast(context, "Could not access the selected file");
+        return;
+      }
+
+      final fileName = picked.name;
+
+      final multipartFile = await dio.MultipartFile.fromFile(
+        path,
+        filename: fileName,
+      );
+
+      // Backend expects this exact multipart key.
+      final formData = dio.FormData.fromMap({
+        "excel_file": multipartFile,
+      });
+      final response = await DioClient().dio.post(
+        ApiEndPoints.uploadMenuItems,
+        data: formData,
+        queryParameters: {"vendor_type": vendorType},
+        options: dio.Options(contentType: "multipart/form-data"),
+      );
+
+      final raw = response.data;
+      if (raw is! Map) {
+        showToast(context, "Invalid server response");
+        return;
+      }
+
+      final map = Map<String, dynamic>.from(raw);
+      final ok = map['status']?.toString() == 'true' || map['status'] == true;
+      if (ok) {
+        if (Get.isRegistered<ProfileController>()) {
+          await Get.find<ProfileController>().fetchRestaurantMenuItems();
+          await Get.find<ProfileController>().fetchRestaurantMenus();
+        }
+        final msg = map['message']?.toString() ?? 'Upload successful';
+        showToast(context, msg);
+      } else {
+        showToast(context, map['message']?.toString() ?? 'Upload failed');
+      }
+    } catch (error) {
+      debugPrint("uploadItemTemplate Error: $error");
+      showToast(context, error.toString());
+    } finally {
+      // Close the loading dialog.
+      if (context.mounted) {
+        final nav = Navigator.of(context, rootNavigator: true);
+        if (nav.canPop()) nav.pop();
+      }
+      _isUploadingItemTemplate = false;
+      update();
     }
   }
 }
