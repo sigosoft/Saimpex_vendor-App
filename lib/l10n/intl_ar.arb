@@ -550,6 +550,8 @@
   "@menuBulkImport": {},
   "basket": "السلة",
   "@basket": {},
+  "basketSearchHint": "بحث حسب الرقم أو اسم الصنف",
+  "@basketSearchHint": {},
   "receivedPayouts": "الدفعات المستلمة",
   "@receivedPayouts": {},
   "restaurantReports": "تقارير المطعم",

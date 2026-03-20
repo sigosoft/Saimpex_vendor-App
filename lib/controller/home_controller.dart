@@ -19,6 +19,7 @@ import '../model/home_model.dart';
 // import 'cart_controller.dart';
 // import 'chat_controller.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
+import '../view/Home/Home.dart';
 import 'profile_controller.dart';
 
 class HomeController extends GetxController {
@@ -320,7 +321,7 @@ class HomeController extends GetxController {
       SettingsModel model = SettingsModel.fromJson(response.data);
       debugPrint("settings model: ${response.data}");
       debugPrint("current version vendor: $buildNumber");
-      if (model.status == true) {
+      if (model.status.toString() == "true") {
         if (Platform.isAndroid &&
             model.data?.settings?[0].maintenanceAndroidVendor.toString() ==
                 "1") {
@@ -358,9 +359,25 @@ class HomeController extends GetxController {
                     versionToCode(buildNumber.toString()))) {
           Get.offAll(() => NeedAnUpdate());
         } else {
-          debugPrint("Getting orders");
-
-          update();
+          var loginStatus = await getSavedObject("loginStatus");
+          var token = await getSavedObject("token");
+          debugPrint("loginStatus: $loginStatus");
+          debugPrint("token: $token");
+          if (loginStatus != null && loginStatus == "true") {
+            Get.offAll(() => const Home());
+          } else {
+            Get.offAll(() => LoginScreen());
+          }
+        }
+      }else{
+        var loginStatus = await getSavedObject("loginStatus");
+        var token = await getSavedObject("token");
+        debugPrint("loginStatus: $loginStatus");
+        debugPrint("token: $token");
+        if (loginStatus != null && loginStatus == "true") {
+          Get.offAll(() => const Home());
+        } else {
+          Get.offAll(() => LoginScreen());
         }
       }
     } catch (error, stackTrace) {

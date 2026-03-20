@@ -566,6 +566,8 @@
   "@menuBulkImport": {},
   "basket": "Basket",
   "@basket": {},
+  "basketSearchHint": "Search by ID, item name",
+  "@basketSearchHint": {},
   "receivedPayouts": "Received Payouts",
   "@receivedPayouts": {},
   "restaurantReports": "Restaurant Reports",
@@ -971,5 +973,7 @@
   "myStore": "My Store",
   "noReportsInThisDateRange": "No reports in this date range.",
   "download": "Download",
-  "pleaseSelectFromDateAndToDate": "Please select from date and to date"
+  "pleaseSelectFromDateAndToDate": "Please select from date and to date",
+  "redeemedCustomers": "Redeemed Customers",
+  "searchName": "Search Name"
 }

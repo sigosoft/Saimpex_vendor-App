@@ -128,6 +128,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Commandes du panier"),
         "basketOrderss":
             MessageLookupByLibrary.simpleMessage("Commandes du panier"),
+        "basketSearchHint": MessageLookupByLibrary.simpleMessage(
+            "Recherche par ID, nom d\'article"),
         "beverages": MessageLookupByLibrary.simpleMessage("Boissons"),
         "breakfast": MessageLookupByLibrary.simpleMessage("Petit-déjeuner"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Acheter maintenant"),

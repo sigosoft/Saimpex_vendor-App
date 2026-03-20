@@ -115,6 +115,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تفاصيل طلب السلة"),
         "basketOrders": MessageLookupByLibrary.simpleMessage("طلبات السلة"),
         "basketOrderss": MessageLookupByLibrary.simpleMessage("طلبات السلة"),
+        "basketSearchHint":
+            MessageLookupByLibrary.simpleMessage("بحث حسب الرقم أو اسم الصنف"),
         "beverages": MessageLookupByLibrary.simpleMessage("المشروبات"),
         "breakfast": MessageLookupByLibrary.simpleMessage("فطور"),
         "buyNow": MessageLookupByLibrary.simpleMessage("اشترِ الآن"),

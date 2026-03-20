@@ -2940,6 +2940,16 @@ class S {
     );
   }
 
+  /// `Search by ID, item name`
+  String get basketSearchHint {
+    return Intl.message(
+      'Search by ID, item name',
+      name: 'basketSearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Received Payouts`
   String get receivedPayouts {
     return Intl.message(
@@ -4915,6 +4925,26 @@ class S {
     return Intl.message(
       'Please select from date and to date',
       name: 'pleaseSelectFromDateAndToDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeemed Customers`
+  String get redeemedCustomers {
+    return Intl.message(
+      'Redeemed Customers',
+      name: 'redeemedCustomers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search Name`
+  String get searchName {
+    return Intl.message(
+      'Search Name',
+      name: 'searchName',
       desc: '',
       args: [],
     );

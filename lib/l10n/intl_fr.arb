@@ -518,6 +518,8 @@
   "@menuBulkImport": {},
   "basket": "Panier",
   "@basket": {},
+  "basketSearchHint": "Recherche par ID, nom d'article",
+  "@basketSearchHint": {},
   "receivedPayouts": "Paiements Reçus",
   "@receivedPayouts": {},
   "restaurantReports": "Rapports du Restaurant",

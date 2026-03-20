@@ -7,12 +7,12 @@ import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
 import '../payout/payout_list_screen.dart';
 import '../reports/sales_reports.dart';
+import '../basket/basketlisting.dart';
 import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
 import 'edit_items_screen.dart';
 import 'menu_item_details_screen.dart';
-import 'basket_details_screen.dart';
 import 'rating_reviews_screen.dart';
 import 'leave_history_screen.dart';
 import 'Widgets/vendor_restaurant_reusable_widgets.dart';
@@ -458,10 +458,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildImportSteps(),
                   const SizedBox(height: 40),
                 ] else if (selectedMenu == "Basket") ...[
-                  const SizedBox(height: 20),
-                  _sectionHeader(S.of(context).baskets),
-                  const SizedBox(height: 12),
-                  _buildBasketList(),
+                  //const SizedBox(height: 20),
+                  // _sectionHeader(S.of(context).baskets),
+                  // const SizedBox(height: 12),
+                  const BasketListing(),
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Received Payouts") ...[
                   // const SizedBox(height: 20),
@@ -1155,56 +1155,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
 
   Widget _importStep(int number, String title, String subtitle) {
     return VendorImportStep(number: number, title: title, subtitle: subtitle);
-  }
-
-  Widget _buildBasketList() {
-    return Column(
-      children: [
-        _basketItem(
-          S.of(context).classicBasket,
-          "10 Items",
-          S.of(context).activeLabel,
-        ),
-        const SizedBox(height: 12),
-        _basketItem(
-          S.of(context).comboOffer,
-          "5 Items",
-          S.of(context).inactiveLabel,
-        ),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.06,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const BasketDetailsScreen(),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5216),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              S.of(context).createNewBasket,
-              style: GoogleFonts.rubik(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _basketItem(String name, String count, String status) {
-    return VendorBasketItem(name: name, count: count, status: status);
   }
 
   Widget _buildPayoutsList() {

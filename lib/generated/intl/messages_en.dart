@@ -124,6 +124,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Basket Order Details"),
         "basketOrders": MessageLookupByLibrary.simpleMessage("Basket Orders"),
         "basketOrderss": MessageLookupByLibrary.simpleMessage("Basket Orders"),
+        "basketSearchHint":
+            MessageLookupByLibrary.simpleMessage("Search by ID, item name"),
         "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
         "beverages": MessageLookupByLibrary.simpleMessage("Beverages"),
         "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
@@ -562,6 +564,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "redeemed": MessageLookupByLibrary.simpleMessage("Redeemed"),
         "redeemedAmount":
             MessageLookupByLibrary.simpleMessage("Redeemed Amount"),
+        "redeemedCustomers":
+            MessageLookupByLibrary.simpleMessage("Redeemed Customers"),
         "redeemedCustomersHeader":
             MessageLookupByLibrary.simpleMessage("REDEEMED CUSTOMERS"),
         "redeemedPoints":
@@ -609,6 +613,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Search for area, street name....."),
         "searchForItems":
             MessageLookupByLibrary.simpleMessage("Search for items"),
+        "searchName": MessageLookupByLibrary.simpleMessage("Search Name"),
         "searchNameOrMobileNumber": MessageLookupByLibrary.simpleMessage(
             "Search name or mobile number"),
         "selectAttributeHint":

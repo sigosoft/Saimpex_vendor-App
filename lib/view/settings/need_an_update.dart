@@ -10,7 +10,6 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../resources/colors.dart';
 import '../../utils/Widgets/custom_button.dart';
-import '../home/home.dart';
 
 class NeedAnUpdate extends StatelessWidget {
   NeedAnUpdate({super.key});
@@ -82,7 +81,7 @@ class NeedAnUpdate extends StatelessWidget {
                         url,
                         mode: LaunchMode.externalApplication,
                       ).then((value) {
-                        Get.offAll(Home());
+                        Get.offAll(NeedAnUpdate());
                       });
                     } else {
                       throw 'Could not launch $url';

@@ -72,4 +72,7 @@ class ApiEndPoints {
   static String restaurantReportDownload = "restaurantReportDownload";
   static String groceryReport = "groceryReport";
   static String groceryReportDownload = "groceryReportDownload";
+  static String baskets = "baskets";
+  static String basketDetail = "basketDetail";
+  static String basketRedeemedCustomers = "basketRedeemedCustomers";
 }
