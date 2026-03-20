@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
+import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/common_background.dart';
 import '../payout/payout_list_screen.dart';
@@ -15,9 +16,6 @@ import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
 import 'edit_items_screen.dart';
-import 'menu_item_details_screen.dart';
-import 'basket_details_screen.dart';
-import 'rating_reviews_screen.dart';
 import 'leave_history_screen.dart';
 import 'Widgets/vendor_restaurant_reusable_widgets.dart';
 import '../../controller/profile_controller.dart';
@@ -1458,52 +1456,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBasketList() {
-    return Column(
-      children: [
-        _basketItem(
-          S.of(context).classicBasket,
-          "10 Items",
-          S.of(context).activeLabel,
-        ),
-        const SizedBox(height: 12),
-        _basketItem(
-          S.of(context).comboOffer,
-          "5 Items",
-          S.of(context).inactiveLabel,
-        ),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.06,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const BasketDetailsScreen(),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5216),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              S.of(context).createNewBasket,
-              style: GoogleFonts.rubik(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
