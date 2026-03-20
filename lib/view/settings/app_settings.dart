@@ -43,23 +43,23 @@ class AppSettings extends StatelessWidget {
           return Column(
             children: [
               const SizedBox(height: 10),
-              _buildSettingItem(
-                title: S.of(context).notification,
-                trailing: Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: controller.notificationEnabled,
-                    activeTrackColor: const Color(0xFFFF5216),
-                    activeColor: Colors.white,
-                    onChanged: (value) {
-                      controller.notificationEnabled = value;
-                      controller.updateNotificationStatus(context);
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              const Divider(height: 1, indent: 0, endIndent: 0),
+              // _buildSettingItem(
+              //   title: S.of(context).notification,
+              //   trailing: Transform.scale(
+              //     scale: 0.8,
+              //     child: Switch(
+              //       value: controller.notificationEnabled,
+              //       activeTrackColor: const Color(0xFFFF5216),
+              //       activeColor: Colors.white,
+              //       onChanged: (value) {
+              //         controller.notificationEnabled = value;
+              //         controller.updateNotificationStatus(context);
+              //       },
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(height: 5),
+              // const Divider(height: 1, indent: 0, endIndent: 0),
               SizedBox(height: 5),
               _buildSettingItem(
                 title: S.of(context).deleteAccount,
@@ -74,7 +74,7 @@ class AppSettings extends StatelessWidget {
                 },
               ),
               SizedBox(height: 5),
-              const Divider(height: 1, indent: 0, endIndent: 0),
+               Divider(height: 1, indent: 0, endIndent: 0,color: Colors.grey.shade200,),
             ],
           );
         },

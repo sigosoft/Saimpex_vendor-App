@@ -1351,9 +1351,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 14,
-        childAspectRatio: 0.86,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.8,
       ),
       itemBuilder: (context, index) {
         final card = selectedCards[index];
@@ -1382,7 +1382,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1392,7 +1392,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 ? Image.asset(
                     assetPath,
                     width: double.infinity,
-                    height: 92,
+                    height: 80,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) {
                       return Container(
@@ -1434,7 +1434,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           const Spacer(),
           SizedBox(
             width: double.infinity,
-            height: 36,
+            height: 40,
             child: ElevatedButton(
               onPressed: onImport,
               style: ElevatedButton.styleFrom(

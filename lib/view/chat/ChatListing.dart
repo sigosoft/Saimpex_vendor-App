@@ -99,7 +99,9 @@ class ChatListing extends StatelessWidget {
                                   chat.customer?.name ?? S.of(context).unknown,
                               conversationId: chat.id ?? 0,
                             ),
-                          );
+                          )?.then((value) {
+                            controller.getAllConversations(context);
+                          },);
                         },
                       );
                     },
