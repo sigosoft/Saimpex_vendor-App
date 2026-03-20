@@ -86,4 +86,6 @@ class ApiEndPoints {
   static String getGroceryTags = "getGroceryTags";
   static String getGroceryMenus = "getAllGroceryMenus";
   static String getGroceryAttributes = "getGroceryAttributes";
+  static String groceryReport = "groceryReport";
+  static String groceryReportDownload = "groceryReportDownload";
 }
