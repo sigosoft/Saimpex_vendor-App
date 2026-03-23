@@ -263,7 +263,8 @@ class ItemController extends GetxController {
       final formDataMap = <String, dynamic>{
         "menu_id": menuId,
         "menu_item_id": menuItemId,
-        "restaurant_attribute_id": restaurantAttributeId,
+        vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
+            restaurantAttributeId,
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),
         "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
@@ -347,9 +348,6 @@ class ItemController extends GetxController {
       if (model.status) {
         menuList = model.data;
       }
-
-      // If we already loaded an item for editing, resolve `selectedMenuId`
-      // once the menus list becomes available.
       if (selectedType != null &&
           selectedType!.isNotEmpty &&
           menuList.isNotEmpty) {
@@ -401,7 +399,6 @@ class ItemController extends GetxController {
     try {
       isRestaurantAttributesLoading = true;
       update();
-
       var token = await getSavedObject("token");
       var vendorType = await getSavedObject("vendorType");
       if (token != null) {
@@ -447,7 +444,6 @@ class ItemController extends GetxController {
       final formDataMap = <String, dynamic>{
         "menu_item_id": restaurantMenuItemId,
       };
-
       final response = await DioClient().get(
         vendorType == "1"
             ? ApiEndPoints.deleteRestaurantMenuItem
@@ -528,24 +524,16 @@ class ItemController extends GetxController {
       priceCtrl.text = details.price?.toString() ?? priceCtrl.text;
       discountPriceCtrl.text =
           details.discountPrice?.toString() ?? discountPriceCtrl.text;
-
-      // Menu id (used by update API as `menu_id`)
       if (details.menuId != null) {
         selectedMenuId = details.menuId;
       }
-
-      // Item type dropdown value (if available)
       final menuName = details.restaurantMenu?.nameEn;
       if (menuName != null && menuName.isNotEmpty) {
-        // Keep the dropdown label.
         selectedType = menuName;
-        // If menus are already loaded, also resolve the correct `menu_id`.
         if (menuList.isNotEmpty) {
           setSelectedType(menuName);
         }
       }
-
-      // Attribute id + name
       if (details.restaurantAttributeId != null) {
         selectedRestaurantAttributeId = details.restaurantAttributeId;
       }
@@ -553,8 +541,6 @@ class ItemController extends GetxController {
       if (attrName != null && attrName.isNotEmpty) {
         selectedAttribute = attrName;
       }
-
-      // Tag id + name
       final tags = model.data?.menuItemTags ?? [];
       if (tags.isNotEmpty) {
         final first = tags.first;

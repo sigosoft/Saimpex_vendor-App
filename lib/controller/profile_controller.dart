@@ -239,7 +239,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Removes a restaurant menu from the list by id and triggers UI update.
+ 
   void removeRestaurantMenuById(String restaurantMenuId) {
     restaurantMenus.removeWhere((m) => m.id?.toString() == restaurantMenuId);
     update();
@@ -689,7 +689,7 @@ class ProfileController extends GetxController {
           nameController.text,
           countryCode,
           phoneController.text,
-        );
+         );
         isOtpVerified = true;
         Navigator.of(context).pop();
       }
@@ -1107,7 +1107,6 @@ class ProfileController extends GetxController {
     try {
       isRestaurantCategoriesLoading = true;
       update();
-
       final ImageSource? source = await showModalBottomSheet<ImageSource>(
         context: context,
         builder: (bottomSheetContext) {
@@ -1153,7 +1152,6 @@ class ProfileController extends GetxController {
           filename: pickedFile.path.split(RegExp(r'[/\\]')).last,
         ),
       });
-
       final response = await DioClient().post(
         vendorType == "1"
             ? ApiEndPoints.uploadRestaurantImages
