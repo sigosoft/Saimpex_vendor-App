@@ -1,14 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
-
-import 'package:saimpex_vendor/view/Login/login.dart';
-
-import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../Utils/Utils.dart';
-import '../home/home.dart';
+import '../Home/Home.dart';
+import '../Login/Login.dart';
 import '../notifications/notification.dart';
 
 class Splash extends StatefulWidget {
@@ -29,8 +24,15 @@ class _SplashState extends State<Splash> {
   }
 
   splashNavigation() async {
-    final homeController = Get.put(HomeController());
-    homeController.maintenance(context);
+    var loginStatus = await getSavedObject("loginStatus");
+    var token = await getSavedObject("token");
+    debugPrint("loginStatus: $loginStatus");
+    debugPrint("token: $token");
+    if (loginStatus != null && loginStatus == "true") {
+      Get.offAll(() => const Home());
+    } else {
+      Get.offAll(() => LoginScreen());
+    }
   }
 
   @override

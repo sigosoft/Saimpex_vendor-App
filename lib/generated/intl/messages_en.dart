@@ -77,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "alreadyOneCouponIsAppliedOnThisOrderIfYou":
             MessageLookupByLibrary.simpleMessage(
                 "Already one coupon is applied on this order, if you want to aaply this please remove already applied coupon"),
+        "amount": MessageLookupByLibrary.simpleMessage("AMOUNT"),
         "anonymous": MessageLookupByLibrary.simpleMessage("Anonymous"),
         "applied": MessageLookupByLibrary.simpleMessage("Applied"),
         "apply": MessageLookupByLibrary.simpleMessage("Apply"),
@@ -112,6 +113,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("AVAILABLE TIME"),
         "averageRatingLabel":
             MessageLookupByLibrary.simpleMessage("Average Rating"),
+        "balanceAfterPayout":
+            MessageLookupByLibrary.simpleMessage("BALANCE AFTER PAYOUT"),
         "bankDetails": MessageLookupByLibrary.simpleMessage("BANK DETAILS"),
         "bankName": MessageLookupByLibrary.simpleMessage("Bank Name"),
         "basket": MessageLookupByLibrary.simpleMessage("Basket"),
@@ -128,6 +131,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Search by ID, item name"),
         "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
         "beverages": MessageLookupByLibrary.simpleMessage("Beverages"),
+        "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
         "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now"),
         "byHotelLabel": MessageLookupByLibrary.simpleMessage("[By Hotel]"),
@@ -141,6 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
         "cancelledOnLabel": m1,
         "cart": MessageLookupByLibrary.simpleMessage("Cart"),
+        "cash": MessageLookupByLibrary.simpleMessage("Cash"),
         "cashOnDelivery":
             MessageLookupByLibrary.simpleMessage("Cash on Delivery"),
         "categoryLabel": MessageLookupByLibrary.simpleMessage("Category"),
@@ -156,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Clear All"),
         "clickToView": MessageLookupByLibrary.simpleMessage("Click to View"),
         "comboOffer": MessageLookupByLibrary.simpleMessage("Combo Offer"),
+        "commission": MessageLookupByLibrary.simpleMessage("Commission"),
         "commissionPercentage":
             MessageLookupByLibrary.simpleMessage("Commission %"),
         "completed": MessageLookupByLibrary.simpleMessage("COMPLETED"),
@@ -200,6 +206,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Currently no stores found"),
         "customerNotes": MessageLookupByLibrary.simpleMessage("CUSTOMER NOTES"),
         "dAgo": MessageLookupByLibrary.simpleMessage("d ago"),
+        "dashboard": MessageLookupByLibrary.simpleMessage("Dashboard"),
         "dateLabel": MessageLookupByLibrary.simpleMessage("DATE"),
         "dateTime": MessageLookupByLibrary.simpleMessage("DATE & TIME"),
         "dateTimeLabel": MessageLookupByLibrary.simpleMessage("DATE & TIME"),
@@ -225,6 +232,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "didntGetTheOtp":
             MessageLookupByLibrary.simpleMessage("Didn’t get the OTP?"),
         "dinnerSpecial": MessageLookupByLibrary.simpleMessage("Dinner Special"),
+        "discount": MessageLookupByLibrary.simpleMessage("Discount"),
         "discountPriceLabel":
             MessageLookupByLibrary.simpleMessage("Discount Price"),
         "doYouWantToReplaceThemWithDishesFrom":
@@ -235,6 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "driver": MessageLookupByLibrary.simpleMessage("Driver"),
         "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
         "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
+        "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -274,12 +283,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("Friday"),
         "fromDate": MessageLookupByLibrary.simpleMessage("From Date"),
         "gallery": MessageLookupByLibrary.simpleMessage("Gallery"),
+        "goToDashboard":
+            MessageLookupByLibrary.simpleMessage("Go to Dashboard"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got It"),
         "grilledChicken":
             MessageLookupByLibrary.simpleMessage("Grilled Chicken"),
         "grocery": MessageLookupByLibrary.simpleMessage("Grocery"),
         "gstNumber": MessageLookupByLibrary.simpleMessage("GST Number"),
         "gstVat": MessageLookupByLibrary.simpleMessage("Gst/Vat"),
+        "guestLogin": MessageLookupByLibrary.simpleMessage("Guest Login"),
         "hAgo": MessageLookupByLibrary.simpleMessage("h ago"),
         "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
         "history": MessageLookupByLibrary.simpleMessage("History"),
@@ -329,6 +341,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "markLeaveButton": MessageLookupByLibrary.simpleMessage("Mark Leave"),
         "maxAllowedQuantityLabel":
             MessageLookupByLibrary.simpleMessage("Maximum Allowed Quantity"),
+        "member": MessageLookupByLibrary.simpleMessage("Member"),
         "membership": MessageLookupByLibrary.simpleMessage("Membership"),
         "menu": MessageLookupByLibrary.simpleMessage("Menu"),
         "menuBulkImport":
@@ -357,6 +370,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "needsAnUpdate":
             MessageLookupByLibrary.simpleMessage("Needs An Update"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
+        "noBasketsFound":
+            MessageLookupByLibrary.simpleMessage("No baskets found"),
         "noCategoriesFound":
             MessageLookupByLibrary.simpleMessage("No Categories Found"),
         "noComment": MessageLookupByLibrary.simpleMessage("No comment"),
@@ -399,6 +414,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "noOrdersFound":
             MessageLookupByLibrary.simpleMessage("No orders found"),
         "noPayoutsYet": MessageLookupByLibrary.simpleMessage("No payouts yet"),
+        "noPopularItemsFound":
+            MessageLookupByLibrary.simpleMessage("No popular items found"),
         "noRedeemableRewards":
             MessageLookupByLibrary.simpleMessage("No redeemable rewards"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
@@ -425,6 +442,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "onlinePayment": MessageLookupByLibrary.simpleMessage("Online Payment"),
         "order": MessageLookupByLibrary.simpleMessage("ORDER"),
         "orderAccepted": MessageLookupByLibrary.simpleMessage("Order Accepted"),
+        "orderAcceptedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("Order Accepted successfully"),
         "orderColon": MessageLookupByLibrary.simpleMessage("Order: "),
         "orderDetails": MessageLookupByLibrary.simpleMessage("Order Details"),
         "orderDetailsNotFound":
@@ -446,6 +465,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "orderTimeline": MessageLookupByLibrary.simpleMessage("Order Timeline"),
         "ordered": MessageLookupByLibrary.simpleMessage("Ordered"),
         "orderedItems": MessageLookupByLibrary.simpleMessage("Ordered Items"),
+        "orders": MessageLookupByLibrary.simpleMessage("Orders"),
         "ordersCountLabel":
             MessageLookupByLibrary.simpleMessage("ORDERS COUNT"),
         "ordersHeader": MessageLookupByLibrary.simpleMessage("ORDERS"),
@@ -463,6 +483,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pay": MessageLookupByLibrary.simpleMessage("Pay"),
         "paymentDetails":
             MessageLookupByLibrary.simpleMessage("Payment Details"),
+        "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
         "paymentOn": MessageLookupByLibrary.simpleMessage("Payment On"),
         "paymentSummary":
             MessageLookupByLibrary.simpleMessage("PAYMENT SUMMARY"),
@@ -598,6 +619,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "saimpex": MessageLookupByLibrary.simpleMessage("SAIMPEX"),
         "salesPerformanceHeader":
             MessageLookupByLibrary.simpleMessage("SALES & PERFORMANCE"),
+        "salesReport": MessageLookupByLibrary.simpleMessage("Sales Report"),
         "saturday": MessageLookupByLibrary.simpleMessage("Saturday"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
@@ -665,10 +687,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Top Selling Dishes"),
         "totalAmount": MessageLookupByLibrary.simpleMessage("Total Amount"),
         "totalBill": MessageLookupByLibrary.simpleMessage("Total Bill"),
+        "totalOrders": MessageLookupByLibrary.simpleMessage("Total Orders"),
         "totalOrdersStat": MessageLookupByLibrary.simpleMessage("Total Orders"),
         "totalPayoutBalance":
             MessageLookupByLibrary.simpleMessage("Total Payout Balance"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("Total Profit"),
+        "totalRevenue": MessageLookupByLibrary.simpleMessage("Total Revenue"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("Total Reviews"),
         "trackOrder": MessageLookupByLibrary.simpleMessage("Track Order"),
@@ -711,6 +735,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("View all coupons"),
         "viewDetails": MessageLookupByLibrary.simpleMessage("View Details"),
         "viewOrders": MessageLookupByLibrary.simpleMessage("View Orders"),
+        "viewReports": MessageLookupByLibrary.simpleMessage("View Reports"),
         "wednesday": MessageLookupByLibrary.simpleMessage("Wednesday"),
         "welcomeTo": MessageLookupByLibrary.simpleMessage("Welcome to"),
         "welcomeToSaimpexVendor":

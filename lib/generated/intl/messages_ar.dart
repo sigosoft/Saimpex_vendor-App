@@ -76,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "alreadyOneCouponIsAppliedOnThisOrderIfYou":
             MessageLookupByLibrary.simpleMessage(
                 "تم تطبيق قسيمة واحدة بالفعل على هذا الطلب، إذا كنت ترغب في تطبيق هذه القسيمة يرجى إزالة القسيمة المطبقة حالياً"),
+        "amount": MessageLookupByLibrary.simpleMessage("المبلغ"),
         "anonymous": MessageLookupByLibrary.simpleMessage("مجهول"),
         "applied": MessageLookupByLibrary.simpleMessage("تم التطبيق"),
         "apply": MessageLookupByLibrary.simpleMessage("تطبيق"),
@@ -111,6 +112,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الوقت المتاح"),
         "averageRatingLabel":
             MessageLookupByLibrary.simpleMessage("متوسط التقييم"),
+        "balanceAfterPayout":
+            MessageLookupByLibrary.simpleMessage("الرصيد بعد الدفع"),
         "bankDetails": MessageLookupByLibrary.simpleMessage("التفاصيل البنكية"),
         "bankName": MessageLookupByLibrary.simpleMessage("اسم البنك"),
         "basket": MessageLookupByLibrary.simpleMessage("السلة"),
@@ -127,6 +130,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("بحث حسب الرقم أو اسم الصنف"),
         "baskets": MessageLookupByLibrary.simpleMessage("السلال"),
         "beverages": MessageLookupByLibrary.simpleMessage("المشروبات"),
+        "blocked": MessageLookupByLibrary.simpleMessage("محظور"),
         "breakfast": MessageLookupByLibrary.simpleMessage("فطور"),
         "buyNow": MessageLookupByLibrary.simpleMessage("اشترِ الآن"),
         "byHotelLabel": MessageLookupByLibrary.simpleMessage("[بواسطة الفندق]"),
@@ -140,6 +144,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
         "cancelledOnLabel": m1,
         "cart": MessageLookupByLibrary.simpleMessage("سلة التسوق"),
+        "cash": MessageLookupByLibrary.simpleMessage("نقداً"),
         "cashOnDelivery":
             MessageLookupByLibrary.simpleMessage("الدفع عند الاستلام"),
         "categoryLabel": MessageLookupByLibrary.simpleMessage("الفئة"),
@@ -155,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("مسح الكل"),
         "clickToView": MessageLookupByLibrary.simpleMessage("اضغط للعرض"),
         "comboOffer": MessageLookupByLibrary.simpleMessage("عرض كومبو"),
+        "commission": MessageLookupByLibrary.simpleMessage("عمولة"),
         "commissionPercentage":
             MessageLookupByLibrary.simpleMessage("% العمولة"),
         "completed": MessageLookupByLibrary.simpleMessage("مكتمل"),
@@ -198,6 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("لا توجد متاجر حالياً"),
         "customerNotes": MessageLookupByLibrary.simpleMessage("ملاحظات العميل"),
         "dAgo": MessageLookupByLibrary.simpleMessage("منذ"),
+        "dashboard": MessageLookupByLibrary.simpleMessage("لوحة التحكم"),
         "dateLabel": MessageLookupByLibrary.simpleMessage("التاريخ"),
         "dateTime": MessageLookupByLibrary.simpleMessage("التاريخ والوقت"),
         "dateTimeLabel": MessageLookupByLibrary.simpleMessage("التاريخ والوقت"),
@@ -221,6 +228,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "didntGetTheOtp":
             MessageLookupByLibrary.simpleMessage("لم يصلك رمز التحقق؟"),
         "dinnerSpecial": MessageLookupByLibrary.simpleMessage("عشاء خاص"),
+        "discount": MessageLookupByLibrary.simpleMessage("خصم"),
         "discountPriceLabel": MessageLookupByLibrary.simpleMessage("سعر الخصم"),
         "doYouWantToReplaceThemWithDishesFrom":
             MessageLookupByLibrary.simpleMessage("هل تريد استبدالها بعناصر من"),
@@ -229,6 +237,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "driver": MessageLookupByLibrary.simpleMessage("سائق"),
         "driverDetails": MessageLookupByLibrary.simpleMessage("تفاصيل السائق"),
         "durationLabel": MessageLookupByLibrary.simpleMessage("المدة"),
+        "earnings": MessageLookupByLibrary.simpleMessage("الأرباح"),
         "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
         "editProfile":
             MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
@@ -269,11 +278,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("الجمعة"),
         "fromDate": MessageLookupByLibrary.simpleMessage("من تاريخ"),
         "gallery": MessageLookupByLibrary.simpleMessage("المعرض"),
+        "goToDashboard":
+            MessageLookupByLibrary.simpleMessage("اذهب إلى لوحة التحكم"),
         "gotIt": MessageLookupByLibrary.simpleMessage("فهمت"),
         "grilledChicken": MessageLookupByLibrary.simpleMessage("دجاج مشوي"),
         "grocery": MessageLookupByLibrary.simpleMessage("بقالة"),
         "gstNumber": MessageLookupByLibrary.simpleMessage("الرقم الضريبي"),
         "gstVat": MessageLookupByLibrary.simpleMessage("الضريبة"),
+        "guestLogin": MessageLookupByLibrary.simpleMessage("دخول الزائر"),
         "hAgo": MessageLookupByLibrary.simpleMessage("منذ"),
         "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
         "history": MessageLookupByLibrary.simpleMessage("السجل"),
@@ -326,6 +338,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تسجيل الإجازة"),
         "maxAllowedQuantityLabel":
             MessageLookupByLibrary.simpleMessage("الكمية المسموح بها كحد أقصى"),
+        "member": MessageLookupByLibrary.simpleMessage("عضو"),
         "membership": MessageLookupByLibrary.simpleMessage("العضوية"),
         "menu": MessageLookupByLibrary.simpleMessage("القائمة"),
         "menuBulkImport":
@@ -354,6 +367,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "needsAnUpdate":
             MessageLookupByLibrary.simpleMessage("يحتاج إلى تحديث"),
         "no": MessageLookupByLibrary.simpleMessage("لا"),
+        "noBasketsFound":
+            MessageLookupByLibrary.simpleMessage("لم يتم العثور على سلال"),
         "noCategoriesFound":
             MessageLookupByLibrary.simpleMessage("لم يتم العثور على فئات"),
         "noComment": MessageLookupByLibrary.simpleMessage("لا يوجد تعليق"),
@@ -398,6 +413,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("لم يتم العثور على طلبات"),
         "noPayoutsYet":
             MessageLookupByLibrary.simpleMessage("لا توجد مدفوعات حتى الآن"),
+        "noPopularItemsFound":
+            MessageLookupByLibrary.simpleMessage("لا توجد عناصر شائعة"),
         "noRedeemableRewards": MessageLookupByLibrary.simpleMessage(
             "لا توجد مكافآت قابلة للاستبدال"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
@@ -425,6 +442,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الدفع عبر الإنترنت"),
         "order": MessageLookupByLibrary.simpleMessage("طلب"),
         "orderAccepted": MessageLookupByLibrary.simpleMessage("تم قبول الطلب"),
+        "orderAcceptedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("تم قبول الطلب بنجاح"),
         "orderColon": MessageLookupByLibrary.simpleMessage("الطلب: "),
         "orderDetails": MessageLookupByLibrary.simpleMessage("تفاصيل الطلب"),
         "orderDetailsNotFound":
@@ -446,6 +465,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ordered": MessageLookupByLibrary.simpleMessage("تم الطلب"),
         "orderedItems":
             MessageLookupByLibrary.simpleMessage("العناصر المطلوبة"),
+        "orders": MessageLookupByLibrary.simpleMessage("الطلبات"),
         "ordersCountLabel": MessageLookupByLibrary.simpleMessage("عدد الطلبات"),
         "ordersHeader": MessageLookupByLibrary.simpleMessage("الطلبات"),
         "otpVerification":
@@ -461,6 +481,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
         "pay": MessageLookupByLibrary.simpleMessage("ادفع"),
         "paymentDetails": MessageLookupByLibrary.simpleMessage("تفاصيل الدفع"),
+        "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
         "paymentOn": MessageLookupByLibrary.simpleMessage("الدفع في"),
         "paymentSummary":
             MessageLookupByLibrary.simpleMessage("ملخص المدفوعات"),
@@ -595,6 +616,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "saimpex": MessageLookupByLibrary.simpleMessage("SAIMPEX"),
         "salesPerformanceHeader":
             MessageLookupByLibrary.simpleMessage("المبيعات والأداء"),
+        "salesReport": MessageLookupByLibrary.simpleMessage("تقرير المبيعات"),
         "saturday": MessageLookupByLibrary.simpleMessage("السبت"),
         "save": MessageLookupByLibrary.simpleMessage("حفظ"),
         "scanBarcode":
@@ -663,11 +685,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الأطباق الأكثر مبيعاً"),
         "totalAmount": MessageLookupByLibrary.simpleMessage("إجمالي المبلغ"),
         "totalBill": MessageLookupByLibrary.simpleMessage("إجمالي الفاتورة"),
+        "totalOrders": MessageLookupByLibrary.simpleMessage("إجمالي الطلبات"),
         "totalOrdersStat":
             MessageLookupByLibrary.simpleMessage("إجمالي الطلبات"),
         "totalPayoutBalance":
             MessageLookupByLibrary.simpleMessage("إجمالي رصيد المدفوعات"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("إجمالي الربح"),
+        "totalRevenue":
+            MessageLookupByLibrary.simpleMessage("إجمالي الإيرادات"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("إجمالي المراجعات"),
         "trackOrder": MessageLookupByLibrary.simpleMessage("تتبع الطلب"),
@@ -708,6 +733,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("عرض جميع القسائم"),
         "viewDetails": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
         "viewOrders": MessageLookupByLibrary.simpleMessage("عرض الطلبات"),
+        "viewReports": MessageLookupByLibrary.simpleMessage("عرض التقارير"),
         "wednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
         "welcomeTo": MessageLookupByLibrary.simpleMessage("مرحباً بك في"),
         "welcomeToSaimpexVendor":

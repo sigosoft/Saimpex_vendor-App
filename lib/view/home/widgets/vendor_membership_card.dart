@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../generated/l10n.dart';
+
 class VendorMembershipCard extends StatelessWidget {
   const VendorMembershipCard({
     super.key,
@@ -47,7 +49,7 @@ class VendorMembershipCard extends StatelessWidget {
               child: Text(
                 membershipName.toLowerCase().contains("member")
                     ? membershipName
-                    : "$membershipName Member",
+                    : "$membershipName"+" "+S.of(context).member,
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

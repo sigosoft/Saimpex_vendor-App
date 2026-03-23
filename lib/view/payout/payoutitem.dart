@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
 
 /// A single payout list item: transaction ID, date/time, amount, balance after payout.
@@ -80,7 +81,7 @@ class PayoutItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'AMOUNT',
+                    S.of(context).amount,
                     style: GoogleFonts.rubik(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
@@ -108,7 +109,7 @@ class PayoutItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'BALANCE AFTER PAYOUT',
+                S.of(context).balanceAfterPayout,
                 style: GoogleFonts.rubik(
                   fontSize: 10,
                   fontWeight: FontWeight.w400,

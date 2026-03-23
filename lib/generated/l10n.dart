@@ -4959,6 +4959,206 @@ class S {
       args: [],
     );
   }
+
+  /// `Blocked`
+  String get blocked {
+    return Intl.message(
+      'Blocked',
+      name: 'blocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No baskets found`
+  String get noBasketsFound {
+    return Intl.message(
+      'No baskets found',
+      name: 'noBasketsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to Dashboard`
+  String get goToDashboard {
+    return Intl.message(
+      'Go to Dashboard',
+      name: 'goToDashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Member`
+  String get member {
+    return Intl.message(
+      'Member',
+      name: 'member',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Accepted successfully`
+  String get orderAcceptedSuccessfully {
+    return Intl.message(
+      'Order Accepted successfully',
+      name: 'orderAcceptedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dashboard`
+  String get dashboard {
+    return Intl.message(
+      'Dashboard',
+      name: 'dashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Orders`
+  String get totalOrders {
+    return Intl.message(
+      'Total Orders',
+      name: 'totalOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Revenue`
+  String get totalRevenue {
+    return Intl.message(
+      'Total Revenue',
+      name: 'totalRevenue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No popular items found`
+  String get noPopularItemsFound {
+    return Intl.message(
+      'No popular items found',
+      name: 'noPopularItemsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orders`
+  String get orders {
+    return Intl.message(
+      'Orders',
+      name: 'orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Guest Login`
+  String get guestLogin {
+    return Intl.message(
+      'Guest Login',
+      name: 'guestLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BALANCE AFTER PAYOUT`
+  String get balanceAfterPayout {
+    return Intl.message(
+      'BALANCE AFTER PAYOUT',
+      name: 'balanceAfterPayout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AMOUNT`
+  String get amount {
+    return Intl.message(
+      'AMOUNT',
+      name: 'amount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discount`
+  String get discount {
+    return Intl.message(
+      'Discount',
+      name: 'discount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Earnings`
+  String get earnings {
+    return Intl.message(
+      'Earnings',
+      name: 'earnings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Commission`
+  String get commission {
+    return Intl.message(
+      'Commission',
+      name: 'commission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Method`
+  String get paymentMethod {
+    return Intl.message(
+      'Payment Method',
+      name: 'paymentMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cash`
+  String get cash {
+    return Intl.message(
+      'Cash',
+      name: 'cash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sales Report`
+  String get salesReport {
+    return Intl.message(
+      'Sales Report',
+      name: 'salesReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Reports`
+  String get viewReports {
+    return Intl.message(
+      'View Reports',
+      name: 'viewReports',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

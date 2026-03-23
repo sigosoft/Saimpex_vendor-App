@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/view/home/dashboard.dart';
 
+import '../../../generated/l10n.dart';
+
 class VendorDashboardButton extends StatelessWidget {
   const VendorDashboardButton({
     super.key,
@@ -33,7 +35,7 @@ class VendorDashboardButton extends StatelessWidget {
             ),
           ),
           child: Text(
-            "Go to Dashboard",
+            S.of(context).goToDashboard,
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w600,

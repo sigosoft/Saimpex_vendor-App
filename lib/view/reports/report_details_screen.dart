@@ -216,13 +216,13 @@ class ReportDetailsScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _breakdownRow('Subtotal', '${params.subtotal} ${params.currency}'),
-          _breakdownRow('Discount', '${params.discount} ${params.currency}'),
-          _breakdownRow('Delivery Fee', '${params.deliveryFee} ${params.currency}'),
-          _breakdownRow('Tax', '${params.tax} ${params.currency}'),
-          _breakdownRow('Earnings', '${params.earnings} ${params.currency}'),
-          _breakdownRow('Commission', '${params.commission} ${params.currency}'),
-          _breakdownRow('Payment Method', params.paymentMethod=="1"?"Cash":"Online Payment", valueColor: colorPrimary),
+          _breakdownRow(S.of(context).subtotal, '${params.subtotal} ${params.currency}'),
+          _breakdownRow(S.of(context).discount, '${params.discount} ${params.currency}'),
+          _breakdownRow(S.of(context).deliveryFee, '${params.deliveryFee} ${params.currency}'),
+          _breakdownRow(S.of(context).tax, '${params.tax} ${params.currency}'),
+          _breakdownRow(S.of(context).earnings, '${params.earnings} ${params.currency}'),
+          _breakdownRow(S.of(context).commission, '${params.commission} ${params.currency}'),
+          _breakdownRow(S.of(context).paymentMethod, params.paymentMethod=="1"?S.of(context).cash:S.of(context).onlinePayment, valueColor: colorPrimary),
         ],
       ),
     );

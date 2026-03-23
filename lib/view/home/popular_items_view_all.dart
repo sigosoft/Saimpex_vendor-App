@@ -48,7 +48,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
-        title: "Popular Items",
+        title: S.of(context).popularItems,
         onTap: () => Get.back(),
       ),
       body: CommonBackground(
@@ -59,7 +59,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
             if (items.isEmpty) {
               return Center(
                 child: Text(
-                  "No popular items found",
+                  S.of(context).noPopularItemsFound,
                   style: GoogleFonts.rubik(
                     color: const Color(0xFF9CA3AF),
                     fontSize: 13,
@@ -99,7 +99,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
                   final item = paginatedItems[index];
                   final name = controller.getItemName(item, locale);
                   final attrName = controller.getAttributeName(item, locale);
-                  final orders = "${item.orderCount ?? 0} Orders";
+                  final orders = "${item.orderCount ?? 0}"+" "+S.of(context).orders;
                   final subtitle = attrName.isNotEmpty
                       ? "#${item.id}-$attrName"
                       : "#${item.id}";

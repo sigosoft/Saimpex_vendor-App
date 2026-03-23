@@ -138,11 +138,11 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       case 5:
         return S.current.assignedStatus;
       case 6:
-        return "Reached Restaurant";
+        return S.of(context).reachedRestaurant;
       case 7:
-        return "Picked Up";
+        return S.of(context).pickedUp;
       case 8:
-        return "Delivering";
+        return S.of(context).delivering;
       case 9:
         return S.current.delivered;
       case 10:
@@ -228,7 +228,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
             .expiresInDays(membership?.expiresInDays?.toString() ?? "0");
         return CommonBackground(
           resizeToAvoidBottomInset: false,
-          appBar: CustomAppBar(title: "Orders", onTap: () => Get.back()),
+          appBar: CustomAppBar(title: S.of(context).orders, onTap: () => Get.back()),
           child: SizedBox.expand(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

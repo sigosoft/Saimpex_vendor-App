@@ -320,7 +320,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Sales Report',
+          S.of(context).salesReport,
           style: GoogleFonts.rubik(
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -468,7 +468,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 ),
               ),
               child: Text(
-                'View Reports',
+                S.of(context).viewReports,
                 style: GoogleFonts.rubik(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,

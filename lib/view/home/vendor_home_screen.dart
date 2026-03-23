@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/controller/vendor_home_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -17,6 +20,14 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_orders_header.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_stats_section.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
+
+import '../../Utils/Utils.dart';
+import '../../configs/ApiConfigs.dart';
+import '../../configs/ApiConfigs.dart';
+import '../../configs/Dioclient.dart';
+import '../../model/settings_model.dart';
+import '../settings/maintenance.dart';
+import '../settings/need_an_update.dart';
 
 class VendorHomeScreen extends StatefulWidget {
   const VendorHomeScreen({super.key});
@@ -57,10 +68,68 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchOrders();
+     // final homeController = Get.put(HomeController());
+     maintenance(context);
+
     });
   }
-
+  Future<void> maintenance(BuildContext context) async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String buildNumber = packageInfo.version;
+      final response = await DioClient().get(ApiEndPoints.vendorappSettings);
+      SettingsModel model = SettingsModel.fromJson(response.data);
+      debugPrint("settings model: ${response.data}");
+      debugPrint("current version vendor: $buildNumber");
+      if (model.status.toString() == "true") {
+        if (Platform.isAndroid &&
+            model.data?.settings?[0].maintenanceAndroidVendor.toString() ==
+                "1") {
+          Get.offAll(
+            Maintenance(
+              serverDownReason: model.data?.settings?[0]
+                  .maintenanceReasonAndroidVendor
+                  .toString(),
+            ),
+          );
+        } else if (Platform.isIOS &&
+            model.data?.settings?[0].maintenanceIosVendor.toString() == "1") {
+          Get.offAll(
+            Maintenance(
+              serverDownReason: model.data?.settings?[0].maintenanceReasonIosVendor
+                  .toString(),
+            ),
+          );
+        } else if (Platform.isAndroid &&
+            (model.data?.settings?[0].playStoreUpdateVendor.toString() ==
+                "1" &&
+                versionToCode(
+                  model.data?.settings?[0].playStoreVersionVendor
+                      .toString() ??
+                      "",
+                ) >
+                    versionToCode(buildNumber.toString()))) {
+          Get.offAll(() => NeedAnUpdate());
+        } else if (Platform.isIOS &&
+            (model.data?.settings?[0].appStoreUpdateVendor.toString() == "1" &&
+                versionToCode(
+                  model.data?.settings?[0].appStoreVersionVendor.toString() ??
+                      "",
+                ) >
+                    versionToCode(buildNumber.toString()))) {
+          Get.offAll(() => NeedAnUpdate());
+        } else {
+          _fetchOrders();
+        }
+      }else{
+        _fetchOrders();
+      }
+    } catch (error, stackTrace) {
+      debugPrint("maintenance Error: $error");
+      debugPrint("maintenance StackTrace: $stackTrace");
+      _fetchOrders();
+    }
+  }
   int _statusValue(String tab) {
     switch (tab) {
       case "Pending":
@@ -95,11 +164,11 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       case 5:
         return S.current.assignedStatus;
       case 6:
-        return "Reached Restaurant";
+        return S.of(context).reachedRestaurant;
       case 7:
-        return "Picked Up";
+        return S.of(context).pickedUp;
       case 8:
-        return "Delivering";
+        return S.of(context).delivering;
       case 9:
         return S.current.delivered;
       case 10:
