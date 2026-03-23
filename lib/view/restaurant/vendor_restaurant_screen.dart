@@ -1022,11 +1022,15 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           );
         } else {
+          debugPrint("restaurantMenuItemId: $restaurantMenuItemId");
+          debugPrint("itemId: $itemId");
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  ViewItemDetails(itemId: restaurantMenuItemId),
+              builder: (context) => ViewItemDetails(
+                itemId: restaurantMenuItemId,
+                menuItemId: restaurantMenuItemId,
+              ),
             ),
           );
         }

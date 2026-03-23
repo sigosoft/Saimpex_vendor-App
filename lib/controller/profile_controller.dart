@@ -239,7 +239,6 @@ class ProfileController extends GetxController {
     }
   }
 
- 
   void removeRestaurantMenuById(String restaurantMenuId) {
     restaurantMenus.removeWhere((m) => m.id?.toString() == restaurantMenuId);
     update();
@@ -689,7 +688,7 @@ class ProfileController extends GetxController {
           nameController.text,
           countryCode,
           phoneController.text,
-         );
+        );
         isOtpVerified = true;
         Navigator.of(context).pop();
       }
@@ -1116,10 +1115,8 @@ class ProfileController extends GetxController {
                 ListTile(
                   leading: const Icon(Icons.photo_library_outlined),
                   title: const Text('Gallery'),
-                  onTap: () => Navigator.pop(
-                    bottomSheetContext,
-                    ImageSource.gallery,
-                  ),
+                  onTap: () =>
+                      Navigator.pop(bottomSheetContext, ImageSource.gallery),
                 ),
                 ListTile(
                   leading: const Icon(Icons.camera_alt_outlined),
@@ -1159,10 +1156,12 @@ class ProfileController extends GetxController {
         body: formData,
       );
       if (context.mounted) {
-        if (response.data['status'] == 'true' || response.data['status'] == true) {
+        if (response.data['status'] == 'true' ||
+            response.data['status'] == true) {
           showToast(
             context,
-            response.data['message']?.toString() ?? 'Image uploaded successfully',
+            response.data['message']?.toString() ??
+                'Image uploaded successfully',
           );
         } else {
           showToast(

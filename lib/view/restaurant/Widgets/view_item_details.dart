@@ -13,13 +13,10 @@ import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/edit_items_screen.dart';
 
 class ViewItemDetails extends StatefulWidget {
-  /// `restaurant_menu_item_id` from backend.
   final String itemId;
+  final String? menuItemId;
 
-  const ViewItemDetails({
-    super.key,
-    required this.itemId,
-  });
+  const ViewItemDetails({super.key, required this.itemId, this.menuItemId});
 
   @override
   State<ViewItemDetails> createState() => _ViewItemDetailsState();
@@ -44,18 +41,18 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
 
     try {
       final token = await getSavedObject("token");
+      final vendorType = await getSavedObject("vendorType");
       DioClient().updateToken(token?.toString() ?? "");
-
-      final idInt = int.tryParse(widget.itemId);
+      final idInt = int.tryParse(widget.menuItemId ?? widget.itemId);
       if (idInt == null) {
         throw Exception("Invalid itemId: ${widget.itemId}");
       }
-
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantMenuItemDetails,
-        query: {"item_id": idInt},
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenuItemDetails
+            : ApiEndPoints.getGroceryMenuItemDetails,
+        query: {"item_id": vendorType == "1" ? idInt : widget.menuItemId},
       );
-
       final raw = response.data;
       final map = raw is Map<String, dynamic>
           ? raw
@@ -110,7 +107,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => EditItemsScreen(itemId: widget.itemId),
+                    builder: (_) => EditItemsScreen(
+                      itemId: widget.menuItemId ?? widget.itemId,
+                    ),
                   ),
                 );
               },
@@ -137,13 +136,13 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 child: CircularProgressIndicator(color: Color(0xFFFF5216)),
               )
             : _error != null
-                ? Center(
-                    child: Text(
-                      _error!,
-                      style: GoogleFonts.rubik(color: Colors.red),
-                    ),
-                  )
-                : _buildContent(lang),
+            ? Center(
+                child: Text(
+                  _error!,
+                  style: GoogleFonts.rubik(color: Colors.red),
+                ),
+              )
+            : _buildContent(lang),
       ),
     );
   }
@@ -168,7 +167,8 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     final updatedText = _formatDateTime(details.updatedAt);
 
     final priceText = _formatMoney(details.price);
-    final discountText = details.discountPrice != null &&
+    final discountText =
+        details.discountPrice != null &&
             details.discountPrice!.isNotEmpty &&
             details.discountPrice != details.price
         ? _formatMoney(details.discountPrice)
@@ -210,7 +210,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               children: [
                 _kv(
                   label: "MENU NAME",
-                  value: menuName.isNotEmpty ? menuName : "#${details.id ?? widget.itemId}",
+                  value: menuName.isNotEmpty
+                      ? menuName
+                      : "#${details.id ?? widget.itemId}",
                 ),
                 const SizedBox(height: 10),
                 _kv(
@@ -244,9 +246,19 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    Expanded(child: _kvSimple(label: "CREATED DATE", value: createdText)),
+                    Expanded(
+                      child: _kvSimple(
+                        label: "CREATED DATE",
+                        value: createdText,
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Expanded(child: _kvSimple(label: "UPDATED DATE", value: updatedText)),
+                    Expanded(
+                      child: _kvSimple(
+                        label: "UPDATED DATE",
+                        value: updatedText,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 14),
@@ -260,7 +272,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  description.isNotEmpty ? description : "No description available",
+                  description.isNotEmpty
+                      ? description
+                      : "No description available",
                   style: GoogleFonts.rubik(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -335,8 +349,8 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           _itemOrdersCard(
             orderId: widget.itemId,
             merchantName: menuName,
-            isDelivered: (details.availableStatus == 1) ||
-                (details.approvalStatus == 1),
+            isDelivered:
+                (details.availableStatus == 1) || (details.approvalStatus == 1),
             itemsCount: _toInt(details.quantityAllowed?.toString()),
             itemsPriceText: _formatMoneyTo2(details.price),
             dateTimeText: _formatOrderDateTime(details.lastOrderDate),
@@ -566,7 +580,8 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       final dt = DateTime.parse(date);
       final formatted = DateFormat('MMM dd, yyyy, hh:mm a').format(dt);
       final now = DateTime.now();
-      final isToday = dt.year == now.year && dt.month == now.month && dt.day == now.day;
+      final isToday =
+          dt.year == now.year && dt.month == now.month && dt.day == now.day;
       return isToday ? "$formatted, Today" : formatted;
     } catch (_) {
       return date;
@@ -628,11 +643,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.star,
-                    size: 16,
-                    color: const Color(0xFFFF5216),
-                  ),
+                  Icon(Icons.star, size: 16, color: const Color(0xFFFF5216)),
                   const SizedBox(width: 6),
                   Text(
                     avgRating.toStringAsFixed(1),
@@ -688,7 +699,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     required String itemsPriceText,
     required String dateTimeText,
   }) {
-    final badgeBg = isDelivered ? const Color(0xFF16A34A) : const Color(0xFFFF5216);
+    final badgeBg = isDelivered
+        ? const Color(0xFF16A34A)
+        : const Color(0xFFFF5216);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -727,7 +740,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: badgeBg,
                   borderRadius: BorderRadius.circular(12),
@@ -807,10 +823,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     );
   }
 
-  Widget _kvSimple({
-    required String label,
-    required String value,
-  }) {
+  Widget _kvSimple({required String label, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
