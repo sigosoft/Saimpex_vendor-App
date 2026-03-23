@@ -38,7 +38,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
           ),
         ),
         title: Text(
-          'Edit Item',
+          S.of(context).editItem,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -65,7 +65,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                   );
                   return const SizedBox.shrink();
                 }(),
-              EditItemsFieldLabel('Item Type'),
+              EditItemsFieldLabel(S.of(context).itemType),
               const SizedBox(height: 8),
               EditItemsDropdownField(
                 value:
@@ -76,7 +76,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ? controller.selectedType
                     : null,
                 hint: controller.isMenuListLoading
-                    ? 'Loading...'
+                    ? S.of(context).loading
                     : S.of(context).selectTypeHint,
                 items: controller.typeDisplayNames,
                 onChanged: controller.isMenuListLoading
@@ -86,16 +86,16 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel('Preparation Time (minutes)'),
+              EditItemsFieldLabel(S.of(context).preparationTimeMinutes),
               const SizedBox(height: 8),
               EditItemsTextField(
                 controller: controller.prepTimeCtrl,
-                hint: 'Enter minutes',
+                hint: S.of(context).enterMinutes,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel('Tags'),
+              EditItemsFieldLabel(S.of(context).tags),
               const SizedBox(height: 8),
               EditItemsDropdownField(
                 value:
@@ -106,7 +106,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ? controller.selectedTag
                     : null,
                 hint: controller.isRestaurantTagsLoading
-                    ? 'Loading...'
+                    ? S.of(context).loading
                     : S.of(context).selectTagHint,
                 items: controller.tagDisplayNames,
                 onChanged: controller.isRestaurantTagsLoading
@@ -116,7 +116,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel('Attribute'),
+              EditItemsFieldLabel(S.of(context).attribute),
               const SizedBox(height: 8),
               EditItemsDropdownField(
                 value:
@@ -127,7 +127,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ? controller.selectedAttribute
                     : null,
                 hint: controller.isRestaurantAttributesLoading
-                    ? 'Loading...'
+                    ? S.of(context).loading
                     : S.of(context).selectAttributeHint,
                 items: controller.attributeDisplayNames,
                 onChanged: controller.isRestaurantAttributesLoading
@@ -137,19 +137,19 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel('Serial Number'),
+              EditItemsFieldLabel(S.of(context).serialNumber),
               const SizedBox(height: 8),
               EditItemsTextField(
                 controller: controller.serialNumberCtrl,
-                hint: 'Enter serial number',
+                hint: S.of(context).enterSerialNumber,
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel('Maximum Allowed Quantity'),
+              EditItemsFieldLabel(S.of(context).maximumAllowedQuantity),
               const SizedBox(height: 8),
               EditItemsTextField(
                 controller: controller.maxQuantityCtrl,
-                hint: 'Enter maximum allowed quantity',
+                hint: S.of(context).enterMaximumAllowedQuantity,
               ),
               const SizedBox(height: 20),
 
@@ -159,11 +159,11 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        EditItemsFieldLabel('Price'),
+                        EditItemsFieldLabel(S.of(context).price),
                         const SizedBox(height: 8),
                         EditItemsTextField(
                           controller: controller.priceCtrl,
-                          hint: 'Enter Price',
+                          hint: S.of(context).enterPrice,
                           fullWidth: true,
                           keyboardType: TextInputType.number,
                         ),
@@ -175,11 +175,11 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        EditItemsFieldLabel('Discount Price'),
+                        EditItemsFieldLabel(S.of(context).discountPrice),
                         const SizedBox(height: 8),
                         EditItemsTextField(
                           controller: controller.discountPriceCtrl,
-                          hint: 'Enter Discount Price',
+                          hint: S.of(context).enterDiscountPrice,
                           fullWidth: true,
                           keyboardType: TextInputType.number,
                         ),
@@ -213,7 +213,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ),
                   ),
                   child: Text(
-                    'Reset',
+                    S.of(context).reset,
                     style: GoogleFonts.rubik(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -247,7 +247,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ),
                   ),
                   child: Text(
-                    'Submit',
+                    S.of(context).submit,
                     style: GoogleFonts.rubik(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

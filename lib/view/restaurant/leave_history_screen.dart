@@ -108,7 +108,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
             return Center(
               child: NoDataWidget(
                 context,
-                "No leave history found.",
+                S.of(context).noLeaveHistoryFound,
                 "",
                 "lib/assets/images/nodata.png",
                 imgHeight: MediaQuery.of(context).size.height * 0.25,
@@ -138,8 +138,8 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                     child: _buildLeaveTile(
                       context: context,
                       dateRange: _formatLeaveDate(leave.date),
-                      reason: leave.reason ?? "Leave",
-                      status: "SCHEDULED",
+                      reason: leave.reason ?? S.of(context).leave,
+                      status: S.of(context).scheduled,
                       isUpcoming: true,
                     ),
                   ),
@@ -147,7 +147,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               else
                 NoDataWidget(
                   context,
-                  "No upcoming leaves found.",
+                  S.of(context).noUpcomingLeavesFound,
                   "",
                   "lib/assets/images/nodata.png",
                   imgHeight: MediaQuery.of(context).size.height * 0.25,
@@ -171,8 +171,8 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                     child: _buildLeaveTile(
                       context: context,
                       dateRange: _formatLeaveDate(leave.date),
-                      reason: leave.reason ?? "Leave",
-                      status: "COMPLETED",
+                      reason: leave.reason ?? S.of(context).leave,
+                      status: S.of(context).completed,
                       isUpcoming: false,
                     ),
                   ),
@@ -180,7 +180,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               else
                 NoDataWidget(
                   context,
-                  "No completed leaves found.",
+                  S.of(context).noCompletedLeavesFound,
                   "",
                   "lib/assets/images/nodata.png",
                   imgHeight: MediaQuery.of(context).size.height * 0.25,
@@ -264,30 +264,30 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               ),
             ],
           ),
-          if (isUpcoming) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 32,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFFFCCBD)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  "Cancel Leave",
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFFFF5216),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          // if (isUpcoming) ...[
+          //   const SizedBox(height: 12),
+          //   SizedBox(
+          //     width: double.infinity,
+          //     height: 32,
+          //     child: OutlinedButton(
+          //       onPressed: () {},
+          //       style: OutlinedButton.styleFrom(
+          //         side: const BorderSide(color: Color(0xFFFFCCBD)),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(10),
+          //         ),
+          //       ),
+          //       child: Text(
+          //         S.of(context).cancelLeave,
+          //         style: GoogleFonts.rubik(
+          //           fontSize: 12,
+          //           fontWeight: FontWeight.w600,
+          //           color: const Color(0xFFFF5216),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ],
         ],
       ),
     );

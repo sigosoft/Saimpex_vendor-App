@@ -115,7 +115,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                       context,
                       isAvailable
                           ? S.of(context).availableStatus
-                          : 'Unavailable',
+                          : S.of(context).unavailable,
                       isAvailable,
                     ),
                   ],

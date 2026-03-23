@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 
+import '../../generated/l10n.dart';
+
 /// In-app preview of a downloaded XML (or text) file, with option to open externally.
 class XmlPreviewScreen extends StatefulWidget {
   final String filePath;
@@ -60,7 +62,7 @@ class _XmlPreviewScreenState extends State<XmlPreviewScreen> {
           child: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
         ),
         title: Text(
-          'Template preview',
+          S.of(context).templatePreview,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -70,7 +72,7 @@ class _XmlPreviewScreenState extends State<XmlPreviewScreen> {
         centerTitle: false,
         actions: [
           IconButton(
-            tooltip: 'Open with another app',
+            tooltip: S.of(context).openWithAnotherApp,
             onPressed: () => OpenFilex.open(widget.filePath),
             icon: const Icon(Icons.open_in_new, color: Color(0xFFFF5216)),
           ),
