@@ -91,4 +91,11 @@ class ApiEndPoints {
   static String baskets = "baskets";
   static String basketDetail = "basketDetail";
   static String basketRedeemedCustomers = "basketRedeemedCustomers";
+  static String deleteGroceryMenu = "deleteGroceryMenu";
+  static String updateGroceryMenuEdit = "updateGroceryMenu";
+  static String deleteGroceryMenuItem = "deleteGroceryMenuItem";
+  static String getGroceryMenuItemDetails = "groceryMenuItemDetail";
+  static String updateGroceryMenuItem = "updateGroceryMenuItem";
+  static String uploadRestaurantImages = "uploadRestaurantMenuImages";
+  static String uploadGroceryImages = "uploadGroceryMenuImages";
 }

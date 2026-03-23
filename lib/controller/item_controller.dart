@@ -12,21 +12,16 @@ import 'package:saimpex_vendor/model/tag_model.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 
 class ItemController extends GetxController {
-  /// When provided, controller will prefill basic edit fields.
   final String? editRestaurantMenuItemId;
-
   ItemController({this.editRestaurantMenuItemId});
-
   final TextEditingController prepTimeCtrl = TextEditingController();
   final TextEditingController serialNumberCtrl = TextEditingController();
   final TextEditingController maxQuantityCtrl = TextEditingController();
   final TextEditingController priceCtrl = TextEditingController();
   final TextEditingController discountPriceCtrl = TextEditingController();
-
   String? selectedType;
   String? selectedTag;
   String? selectedAttribute;
-
   int? selectedMenuId;
   int? selectedRestaurantAttributeId;
   int? selectedRestaurantTagId;
@@ -44,13 +39,10 @@ class ItemController extends GetxController {
           return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
         }
       }
-
       return value;
     }
-
     final totalMinutes = int.tryParse(value);
     if (totalMinutes == null) return value;
-
     final hours = totalMinutes ~/ 60;
     final minutes = totalMinutes % 60;
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
@@ -446,6 +438,7 @@ class ItemController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -456,7 +449,9 @@ class ItemController extends GetxController {
       };
 
       final response = await DioClient().get(
-        ApiEndPoints.deleteRestaurantMenuItem,
+        vendorType == "1"
+            ? ApiEndPoints.deleteRestaurantMenuItem
+            : ApiEndPoints.deleteGroceryMenuItem,
         query: formDataMap,
       );
       if (context.mounted) {
@@ -503,13 +498,16 @@ class ItemController extends GetxController {
       isRestaurantAttributesLoading = true;
       update();
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantMenuItemDetails,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenuItemDetails
+            : ApiEndPoints.getGroceryMenuItemDetails,
         query: {"item_id": itemId},
       );
       final raw = response.data;
@@ -586,6 +584,7 @@ class ItemController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -593,7 +592,8 @@ class ItemController extends GetxController {
       }
       final formDataMap = <String, dynamic>{
         "menu_item_id": menuItemId,
-        "restaurant_attribute_id": restaurantAttributeId,
+        vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
+            restaurantAttributeId,
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),
         "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
@@ -610,7 +610,10 @@ class ItemController extends GetxController {
       );
       printFormData(formData);
       final response = await DioClient().post(
-        ApiEndPoints.updateRestaurantMenuItem,
+        vendorType == "1"
+            ? ApiEndPoints.updateRestaurantMenuItem
+            : ApiEndPoints.updateGroceryMenuItem,
+
         body: formData,
       );
       if (context.mounted) {
