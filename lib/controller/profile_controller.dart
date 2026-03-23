@@ -375,17 +375,25 @@ class ProfileController extends GetxController {
       if (token != null) {
         DioClient().updateToken(token);
       }
-
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.restaurantMenuItems
-            : ApiEndPoints.groceryMenuItems,
-        query: {"limit": limit, "page": page},
-      );
-
-      final model = RestaurantMenuItemsModel.fromJson(response.data);
-      if (model.status == true) {
-        restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
+      if (vendorType == "1") {
+        final response = await DioClient().get(
+          ApiEndPoints.restaurantMenuItems,
+          query: {"limit": limit, "page": page},
+        );
+        final model = RestaurantMenuItemsModel.fromJson(response.data);
+        if (model.status == true) {
+          restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
+        }
+      } else {
+        final response = await DioClient().get(
+          ApiEndPoints.groceryMenuItems,
+          query: {"limit": limit, "page": page},
+        );
+        final model = GroceryMenuItemsModel.fromJson(response.data);
+        if (model.status == true) {
+          groceryMenuItems = model.data?.groceryMenuItems?.data ?? [];
+        }
+        restaurantMenuItems = [];
       }
     } catch (error) {
       debugPrint("fetchRestaurantMenuItems Error: $error");
@@ -881,7 +889,73 @@ class ProfileController extends GetxController {
           restaurantMenuDetails = restaurantMenuDetailsModel.data;
         }
       } else {
-        GroceryMenuDetailsModel.fromJson(response.data);
+        final groceryMenuDetailsModel =
+            GroceryMenuDetailsModel.fromJson(response.data);
+
+        if (groceryMenuDetailsModel.status == true &&
+            groceryMenuDetailsModel.data != null &&
+            groceryMenuDetailsModel.data!.groceryMenu != null) {
+          final groceryMenu = groceryMenuDetailsModel.data!.groceryMenu!;
+
+          final categoriesJson = (groceryMenu.categories ?? [])
+              .map(
+                (c) => {
+                  "id": c.id ?? 0,
+                  "name_en": c.nameEn ?? "",
+                  "name_ar": c.nameAr ?? "",
+                  "name_fr": c.nameFr ?? "",
+                  "image": c.image ?? "",
+                  "status": c.status ?? 0,
+                  "deleted_at": c.deletedAt?.toString(),
+                  "created_at": c.createdAt ?? "",
+                  "updated_at": c.updatedAt ?? "",
+                },
+              )
+              .toList();
+
+          // Convert grocery payload into the existing restaurant-menu details
+          // model so `ViewMenuDetails` can render for grocery vendors.
+          final converted = {
+            "status": true,
+            "message": groceryMenuDetailsModel.message ?? "",
+            "data": {
+              "restaurant_menu": {
+                "id": groceryMenu.id ?? 0,
+                "category_id": groceryMenu.categoryId ?? "",
+                "restaurant_id": 0,
+                "name_en": groceryMenu.nameEn ?? "",
+                "name_ar": groceryMenu.nameAr ?? "",
+                "name_fr": groceryMenu.nameFr ?? "",
+                "description_en": groceryMenu.descriptionEn ?? "",
+                "description_ar": groceryMenu.descriptionAr ?? "",
+                "description_fr": groceryMenu.descriptionFr ?? "",
+                "image": groceryMenu.image ?? "",
+                // Grocery model doesn't expose `is_veg` here; default to 0 (No).
+                "is_veg": 0,
+                "approval_status": groceryMenu.approvalStatus ?? 0,
+                "deleted_at": groceryMenu.deletedAt?.toString(),
+                "created_at": groceryMenu.createdAt ?? "",
+                "updated_at": groceryMenu.updatedAt ?? "",
+                "category_name_en": groceryMenu.categoryNameEn ?? "",
+                "category_name_ar": groceryMenu.categoryNameAr ?? "",
+                "category_name_fr": groceryMenu.categoryNameFr ?? "",
+                "categories": categoriesJson,
+              },
+              "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
+              "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,
+              "average_rating": groceryMenuDetailsModel.data!.averageRating ?? 0,
+              "total_rating_count":
+                  groceryMenuDetailsModel.data!.totalRatingCount ?? 0,
+              "order_details": groceryMenuDetailsModel.data!.orderDetails ?? [],
+            }
+          };
+
+          final restaurantMenuDetailsModel =
+              RestaurantMenuDetailsModel.fromJson(converted);
+          if (restaurantMenuDetailsModel.status) {
+            restaurantMenuDetails = restaurantMenuDetailsModel.data;
+          }
+        }
       }
     } catch (error) {
       debugPrint("getRestaurantMenuDetails Error: $error");

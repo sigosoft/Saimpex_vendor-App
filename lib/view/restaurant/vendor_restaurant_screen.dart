@@ -1028,7 +1028,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => ViewItemDetails(
-                itemId: restaurantMenuItemId,
+                itemId: itemId,
                 menuItemId: restaurantMenuItemId,
               ),
             ),
@@ -1154,7 +1154,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           return _foodItem(
             name,
             price,
-            item.id?.toString() ?? "",
+            item.menuItemId?.toString() ?? item.id?.toString() ?? "",
             item.image,
             item.id.toString(),
             category: category,

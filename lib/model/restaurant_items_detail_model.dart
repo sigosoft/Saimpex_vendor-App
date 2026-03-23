@@ -17,7 +17,9 @@ class RestaurantItemsDetailsModel {
       data: json?['data'] != null
           ? MenuItemData.fromJson(json?['data'])
           : null,
-      message: json?['message'],
+      // Backend sometimes returns `message` as a localized map.
+      // Ensure we never crash on a non-String message payload.
+      message: json?['message']?.toString(),
     );
   }
 }
@@ -139,9 +141,21 @@ class MenuItemDetails {
               ?.map((e) => WorkingHour.fromJson(e))
               .toList() ??
           [],
-      restaurantMenu: json?['restaurant_menu'] != null
-          ? RestaurantMenu.fromJson(json?['restaurant_menu'])
-          : null,
+      // Restaurant endpoint returns `restaurant_menu`, grocery endpoint returns `grocery_menu`.
+      // We map both into the same `restaurantMenu` field so the UI can render details.
+      restaurantMenu: (() {
+        final dynamic menuJson = json?['restaurant_menu'] ?? json?['grocery_menu'];
+        if (menuJson == null) return null;
+        if (menuJson is Map<String, dynamic>) {
+          return RestaurantMenu.fromJson(menuJson);
+        }
+        if (menuJson is Map) {
+          return RestaurantMenu.fromJson(
+            Map<String, dynamic>.from(menuJson),
+          );
+        }
+        return null;
+      })(),
       attribute: json?['attribute'] != null
           ? Attribute.fromJson(json?['attribute'])
           : null,
@@ -229,13 +243,30 @@ class RestaurantMenu {
   });
 
   factory RestaurantMenu.fromJson(Map<String, dynamic>? json) {
+    final categoryJson = json?['category'];
+    final categoryNameEnFallback = categoryJson is Map
+        ? categoryJson['name_en']
+        : null;
+    final categoryNameArFallback = categoryJson is Map
+        ? categoryJson['name_ar']
+        : null;
+    final categoryNameFrFallback = categoryJson is Map
+        ? categoryJson['name_fr']
+        : null;
+
     return RestaurantMenu(
       id: _toNullableInt(json?['id']),
       nameEn: _toNullableString(json?['name_en']),
-      categoryNameEn: _toNullableString(json?['category_name_en']),
+      categoryNameEn: _toNullableString(
+        json?['category_name_en'] ?? categoryNameEnFallback,
+      ),
       descriptionEn: _toNullableString(json?['description_en']),
-      categoryNameAr: _toNullableString(json?['category_name_ar']),
-      categoryNameFr: _toNullableString(json?['category_name_fr']),
+      categoryNameAr: _toNullableString(
+        json?['category_name_ar'] ?? categoryNameArFallback,
+      ),
+      categoryNameFr: _toNullableString(
+        json?['category_name_fr'] ?? categoryNameFrFallback,
+      ),
       image: _toNullableString(json?['image']),
       isVeg: _toNullableInt(json?['is_veg']),
     );

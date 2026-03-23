@@ -43,15 +43,30 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       final token = await getSavedObject("token");
       final vendorType = await getSavedObject("vendorType");
       DioClient().updateToken(token?.toString() ?? "");
-      final idInt = int.tryParse(widget.menuItemId ?? widget.itemId);
-      if (idInt == null) {
-        throw Exception("Invalid itemId: ${widget.itemId}");
+      final itemIdInt = int.tryParse(widget.itemId);
+      final menuItemIdInt = int.tryParse(widget.menuItemId ?? widget.itemId);
+      if (itemIdInt == null && menuItemIdInt == null) {
+        throw Exception("Invalid item/menu item ids");
       }
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.getRestaurantMenuItemDetails
-            : ApiEndPoints.getGroceryMenuItemDetails,
-        query: {"item_id": vendorType == "1" ? idInt : widget.menuItemId},
+      Map<String, dynamic> query;
+      if (vendorType == "1") {
+        query = {"item_id": itemIdInt!};
+      } else {
+        if (menuItemIdInt == null) {
+          throw Exception("Missing menuItemId for grocery vendor");
+        }
+        query = {"item_id": menuItemIdInt};
+      }
+
+      final endpoint = vendorType == "1"
+          ? ApiEndPoints.getRestaurantMenuItemDetails
+          : ApiEndPoints.getGroceryMenuItemDetails;
+      debugPrint(
+        '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
+      );
+      final response = await DioClient().get(endpoint, query: query);
+      debugPrint(
+        '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
       );
       final raw = response.data;
       final map = raw is Map<String, dynamic>
@@ -59,8 +74,13 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           : (raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{});
 
       _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
-    } catch (e) {
+      debugPrint(
+        '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
+      );
+    } catch (e, stackTrace) {
       _error = e.toString();
+      debugPrint("Error: $e");
+      debugPrint("StackTrace: $stackTrace");
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
