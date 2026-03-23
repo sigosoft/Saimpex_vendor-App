@@ -12,6 +12,8 @@ import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/edit_items_screen.dart';
 
+import '../../../generated/l10n.dart';
+
 class ViewItemDetails extends StatefulWidget {
   final String itemId;
   final String? menuItemId;
@@ -56,6 +58,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           throw Exception("Missing menuItemId for grocery vendor");
         }
         query = {"item_id": menuItemIdInt};
+
+      final idInt = int.tryParse(widget.itemId);
+      if (idInt == null) {
+        throw Exception(S.of(context).invalidItemidWidgetitemid);
       }
 
       final endpoint = vendorType == "1"
@@ -108,7 +114,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ),
           ),
           title: Text(
-            "Details",
+            S.of(context).details,
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -141,7 +147,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               child: Text(
-                "Upload Drive",
+                S.of(context).uploadDrive,
                 style: GoogleFonts.rubik(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -215,7 +221,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           SizedBox(height: screenHeight * 0.02),
 
           Text(
-            "Menu Information",
+            S.of(context).menuInformation,
             style: GoogleFonts.rubik(
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -233,29 +239,31 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   value: menuName.isNotEmpty
                       ? menuName
                       : "#${details.id ?? widget.itemId}",
+                  label: S.of(context).menuName,
+                  value: menuName.isNotEmpty ? menuName : "#${details.id ?? widget.itemId}",
                 ),
                 const SizedBox(height: 10),
                 _kv(
-                  label: "PRICE",
+                  label: S.of(context).price,
                   value: priceText,
                   valueColor: const Color(0xFF1F2937),
                 ),
                 if (discountText.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   _kv(
-                    label: "DISCOUNT PRICE",
+                    label: S.of(context).discountPrice,
                     value: discountText,
                     valueColor: const Color(0xFFFF5216),
                   ),
                 ],
                 const SizedBox(height: 10),
                 _kv(
-                  label: "PREPARATION TIME",
+                  label: S.of(context).preparationTime,
                   value: details.preparationTime?.toString() ?? "-",
                 ),
                 const SizedBox(height: 10),
                 _kv(
-                  label: "CATEGORY",
+                  label: S.of(context).category,
                   value: categoryName.isNotEmpty ? categoryName : "-",
                 ),
                 const SizedBox(height: 10),
@@ -272,6 +280,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         value: createdText,
                       ),
                     ),
+                    Expanded(child: _kvSimple(label: S.of(context).createdDate, value: createdText)),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _kvSimple(
@@ -279,11 +288,12 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         value: updatedText,
                       ),
                     ),
+                    Expanded(child: _kvSimple(label: S.of(context).updatedDate, value: updatedText)),
                   ],
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  "DESCRIPTION",
+                  S.of(context).description,
                   style: GoogleFonts.rubik(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -292,6 +302,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
                 const SizedBox(height: 6),
                 Text(
+                  description.isNotEmpty ? description : S.of(context).noDescriptionAvailable,
                   description.isNotEmpty
                       ? description
                       : "No description available",
@@ -309,7 +320,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           SizedBox(height: screenHeight * 0.02),
 
           Text(
-            "AVAILABLE THE",
+            S.of(context).availableThe,
             style: GoogleFonts.rubik(
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -323,7 +334,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           SizedBox(height: screenHeight * 0.02),
 
           Text(
-            "SALES & PERFORMANCE",
+            S.of(context).salesPerformance,
             style: GoogleFonts.rubik(
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -346,7 +357,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: Text(
-                  "ITEM ORDERS",
+                  S.of(context).itemOrders,
                   style: GoogleFonts.rubik(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -355,7 +366,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               Text(
-                "View All",
+                S.of(context).viewAll,
                 style: GoogleFonts.rubik(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -630,7 +641,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: _statBox(
-                  label: "Total Orders",
+                  label: S.of(context).totalOrders,
                   value: totalOrders.toString(),
                   bg: const Color(0xFFF8FAFC),
                   valueColor: const Color(0xFF111827),
@@ -639,7 +650,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               const SizedBox(width: 12),
               Expanded(
                 child: _statBox(
-                  label: "Revenue",
+                  label: S.of(context).revenue,
                   value: revenueText,
                   bg: const Color(0xFFF8FAFC),
                   valueColor: const Color(0xFF111827),
@@ -652,7 +663,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: Text(
-                  "Average Rating",
+                  S.of(context).averageRating,
                   style: GoogleFonts.rubik(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -678,9 +689,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ],
           ),
           const SizedBox(height: 14),
-          _lineStat(label: "Total Reviews", value: totalRatings.toString()),
+          _lineStat(label: S.of(context).totalReviews, value: totalRatings.toString()),
           const SizedBox(height: 10),
-          _lineStat(label: "Last Purchase", value: lastPurchaseAgo),
+          _lineStat(label: S.of(context).lastPurchase, value: lastPurchaseAgo),
         ],
       ),
     );
@@ -769,7 +780,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  isDelivered ? "DELIVERED" : "PENDING",
+                  isDelivered ? S.of(context).delivered : S.of(context).pending,
                   style: GoogleFonts.rubik(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -784,7 +795,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: Text(
-                  "ITEMS TOTAL",
+                  S.of(context).itemsTotal,
                   style: GoogleFonts.rubik(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -793,7 +804,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               Text(
-                "DATE & TIME",
+                S.of(context).dateTime,
                 style: GoogleFonts.rubik(
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
@@ -809,7 +820,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 child: Row(
                   children: [
                     Text(
-                      "${itemsCount} Items total",
+                      "${itemsCount}"+" "+S.of(context).itemsTotal,
                       style: GoogleFonts.rubik(
                         fontSize: 11,
                         fontWeight: FontWeight.w400,

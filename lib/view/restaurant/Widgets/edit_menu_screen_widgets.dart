@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../generated/l10n.dart';
+
 class EditMenuFieldLabel extends StatelessWidget {
   final String label;
 
@@ -226,7 +228,7 @@ class EditMenuImageUploadArea extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Upload image here',
+              S.of(context).uploadImageHere,
               style: GoogleFonts.rubik(
                 fontSize: 12,
                 color: const Color(0xFF94A3B8),
@@ -360,7 +362,7 @@ class EditMenuActionsRow extends StatelessWidget {
               backgroundColor: Colors.white,
             ),
             child: Text(
-              'Reset',
+              S.of(context).reset,
               style: GoogleFonts.rubik(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -383,7 +385,7 @@ class EditMenuActionsRow extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Submit',
+              S.of(context).submit,
               style: GoogleFonts.rubik(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

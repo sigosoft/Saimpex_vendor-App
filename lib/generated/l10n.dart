@@ -5519,6 +5519,358 @@ class S {
       args: [],
     );
   }
+
+  /// `Upload image here`
+  String get uploadImageHere {
+    return Intl.message(
+      'Upload image here',
+      name: 'uploadImageHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Categories`
+  String get allCategories {
+    return Intl.message(
+      'All Categories',
+      name: 'allCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Instructions`
+  String get instructions {
+    return Intl.message(
+      'Instructions',
+      name: 'instructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Template`
+  String get downloadTemplate {
+    return Intl.message(
+      'Download Template',
+      name: 'downloadTemplate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download the template file and fill it with proper data.`
+  String get downloadTheTemplateFileAndFillItWithProperData {
+    return Intl.message(
+      'Download the template file and fill it with proper data.',
+      name: 'downloadTheTemplateFileAndFillItWithProperData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Category`
+  String get selectCategory {
+    return Intl.message(
+      'Select Category',
+      name: 'selectCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Once you have downloaded and filled the template, select the corresponding category and upload the file.`
+  String get onceYouHaveDownloadedAndFilledTheTemplateSelectThe {
+    return Intl.message(
+      'Once you have downloaded and filled the template, select the corresponding category and upload the file.',
+      name: 'onceYouHaveDownloadedAndFilledTheTemplateSelectThe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attributes Reference`
+  String get attributesReference {
+    return Intl.message(
+      'Attributes Reference',
+      name: 'attributesReference',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.`
+  String get afterAttributesReferenceYouCanEditTheAttributesListBelow {
+    return Intl.message(
+      'After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.',
+      name: 'afterAttributesReferenceYouCanEditTheAttributesListBelow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Post-Upload Editing`
+  String get postuploadEditing {
+    return Intl.message(
+      'Post-Upload Editing',
+      name: 'postuploadEditing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After uploading, you need to edit the items individually to set images and variations.`
+  String get afterUploadingYouNeedToEditTheItemsIndividuallyTo {
+    return Intl.message(
+      'After uploading, you need to edit the items individually to set images and variations.',
+      name: 'afterUploadingYouNeedToEditTheItemsIndividuallyTo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image File Naming`
+  String get imageFileNaming {
+    return Intl.message(
+      'Image File Naming',
+      name: 'imageFileNaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).`
+  String
+      get imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg {
+    return Intl.message(
+      'Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).',
+      name:
+          'imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Attributes`
+  String get availableAttributes {
+    return Intl.message(
+      'Available Attributes',
+      name: 'availableAttributes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Annual vacation, renovation...`
+  String get egAnnualVacationRenovation {
+    return Intl.message(
+      'e.g. Annual vacation, renovation...',
+      name: 'egAnnualVacationRenovation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid itemId: ${widget.itemId}`
+  String get invalidItemidWidgetitemid {
+    return Intl.message(
+      'Invalid itemId: \${widget.itemId}',
+      name: 'invalidItemidWidgetitemid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Details`
+  String get details {
+    return Intl.message(
+      'Details',
+      name: 'details',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload Drive`
+  String get uploadDrive {
+    return Intl.message(
+      'Upload Drive',
+      name: 'uploadDrive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu Information`
+  String get menuInformation {
+    return Intl.message(
+      'Menu Information',
+      name: 'menuInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MENU NAME`
+  String get menuName {
+    return Intl.message(
+      'MENU NAME',
+      name: 'menuName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PREPARATION TIME`
+  String get preparationTime {
+    return Intl.message(
+      'PREPARATION TIME',
+      name: 'preparationTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CREATED DATE`
+  String get createdDate {
+    return Intl.message(
+      'CREATED DATE',
+      name: 'createdDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UPDATED DATE`
+  String get updatedDate {
+    return Intl.message(
+      'UPDATED DATE',
+      name: 'updatedDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DESCRIPTION`
+  String get description {
+    return Intl.message(
+      'DESCRIPTION',
+      name: 'description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No description available`
+  String get noDescriptionAvailable {
+    return Intl.message(
+      'No description available',
+      name: 'noDescriptionAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AVAILABLE THE`
+  String get availableThe {
+    return Intl.message(
+      'AVAILABLE THE',
+      name: 'availableThe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SALES & PERFORMANCE`
+  String get salesPerformance {
+    return Intl.message(
+      'SALES & PERFORMANCE',
+      name: 'salesPerformance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ITEM ORDERS`
+  String get itemOrders {
+    return Intl.message(
+      'ITEM ORDERS',
+      name: 'itemOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Revenue`
+  String get revenue {
+    return Intl.message(
+      'Revenue',
+      name: 'revenue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Average Rating`
+  String get averageRating {
+    return Intl.message(
+      'Average Rating',
+      name: 'averageRating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Reviews`
+  String get totalReviews {
+    return Intl.message(
+      'Total Reviews',
+      name: 'totalReviews',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last Purchase`
+  String get lastPurchase {
+    return Intl.message(
+      'Last Purchase',
+      name: 'lastPurchase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ITEMS TOTAL`
+  String get itemsTotal {
+    return Intl.message(
+      'ITEMS TOTAL',
+      name: 'itemsTotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Statistics`
+  String get statistics {
+    return Intl.message(
+      'Statistics',
+      name: 'statistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Ratings`
+  String get totalRatings {
+    return Intl.message(
+      'Total Ratings',
+      name: 'totalRatings',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

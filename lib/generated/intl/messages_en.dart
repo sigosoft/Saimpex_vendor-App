@@ -63,7 +63,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "address": MessageLookupByLibrary.simpleMessage("Address"),
         "addressNotAvailable":
             MessageLookupByLibrary.simpleMessage("Address not available"),
+        "afterAttributesReferenceYouCanEditTheAttributesListBelow":
+            MessageLookupByLibrary.simpleMessage(
+                "After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value."),
+        "afterUploadingYouNeedToEditTheItemsIndividuallyTo":
+            MessageLookupByLibrary.simpleMessage(
+                "After uploading, you need to edit the items individually to set images and variations."),
         "all": MessageLookupByLibrary.simpleMessage("All"),
+        "allCategories": MessageLookupByLibrary.simpleMessage("All Categories"),
         "allItems": MessageLookupByLibrary.simpleMessage("ALL ITEMS"),
         "allItemsFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
             "All Items from This Restaurant"),
@@ -106,12 +113,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "assignedStatus": MessageLookupByLibrary.simpleMessage("Assigned"),
         "attribute": MessageLookupByLibrary.simpleMessage("Attribute"),
         "attributeLabel": MessageLookupByLibrary.simpleMessage("Attribute"),
+        "attributesReference":
+            MessageLookupByLibrary.simpleMessage("Attributes Reference"),
         "availableAt": MessageLookupByLibrary.simpleMessage("Available at"),
+        "availableAttributes":
+            MessageLookupByLibrary.simpleMessage("Available Attributes"),
         "availablePoints":
             MessageLookupByLibrary.simpleMessage("Available Points"),
         "availableStatus": MessageLookupByLibrary.simpleMessage("Available"),
+        "availableThe": MessageLookupByLibrary.simpleMessage("AVAILABLE THE"),
         "availableTimeHeader":
             MessageLookupByLibrary.simpleMessage("AVAILABLE TIME"),
+        "averageRating": MessageLookupByLibrary.simpleMessage("Average Rating"),
         "averageRatingLabel":
             MessageLookupByLibrary.simpleMessage("Average Rating"),
         "balanceAfterPayout":
@@ -186,6 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Cravings calling? Answer with a bite!"),
         "createNewBasket":
             MessageLookupByLibrary.simpleMessage("CREATE NEW BASKET"),
+        "createdDate": MessageLookupByLibrary.simpleMessage("CREATED DATE"),
         "createdLabel": m2,
         "credit": MessageLookupByLibrary.simpleMessage("Credit"),
         "crop": MessageLookupByLibrary.simpleMessage("Crop"),
@@ -232,6 +246,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Delivery Location"),
         "deliveryStarted":
             MessageLookupByLibrary.simpleMessage("Delivery Started"),
+        "description": MessageLookupByLibrary.simpleMessage("DESCRIPTION"),
         "descriptionArabic":
             MessageLookupByLibrary.simpleMessage("Description (Arabic)"),
         "descriptionEnglish":
@@ -240,6 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Description (English)"),
         "descriptionFrench":
             MessageLookupByLibrary.simpleMessage("Description (French)"),
+        "details": MessageLookupByLibrary.simpleMessage("Details"),
         "didntGetTheOtp":
             MessageLookupByLibrary.simpleMessage("Didn’t get the OTP?"),
         "dinnerSpecial": MessageLookupByLibrary.simpleMessage("Dinner Special"),
@@ -252,6 +268,11 @@ class MessageLookup extends MessageLookupByLibrary {
                 ". Do you want to replace them with items from"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "downloadTemplate":
+            MessageLookupByLibrary.simpleMessage("Download Template"),
+        "downloadTheTemplateFileAndFillItWithProperData":
+            MessageLookupByLibrary.simpleMessage(
+                "Download the template file and fill it with proper data."),
         "driver": MessageLookupByLibrary.simpleMessage("Driver"),
         "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
         "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
@@ -260,6 +281,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "editItem": MessageLookupByLibrary.simpleMessage("Edit Item"),
         "editMenu": MessageLookupByLibrary.simpleMessage("Edit Menu"),
         "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
+        "egAnnualVacationRenovation": MessageLookupByLibrary.simpleMessage(
+            "e.g. Annual vacation, renovation..."),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
         "emailUs": MessageLookupByLibrary.simpleMessage("Email us"),
         "endDate": MessageLookupByLibrary.simpleMessage("End date"),
@@ -326,8 +349,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "idNumber": MessageLookupByLibrary.simpleMessage("ID"),
         "identityProofDocument":
             MessageLookupByLibrary.simpleMessage("Identity Proof Document"),
+        "imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg":
+            MessageLookupByLibrary.simpleMessage(
+                "Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg)."),
+        "imageFileNaming":
+            MessageLookupByLibrary.simpleMessage("Image File Naming"),
         "inactive": MessageLookupByLibrary.simpleMessage("INACTIVE"),
         "inactiveLabel": MessageLookupByLibrary.simpleMessage("Inactive"),
+        "instructions": MessageLookupByLibrary.simpleMessage("Instructions"),
+        "invalidItemidWidgetitemid": MessageLookupByLibrary.simpleMessage(
+            "Invalid itemId: \${widget.itemId}"),
         "invalidProductId":
             MessageLookupByLibrary.simpleMessage("Invalid product ID"),
         "invalidProductInformation":
@@ -346,16 +377,19 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Item Name (English)"),
         "itemNameFrench":
             MessageLookupByLibrary.simpleMessage("Item Name (French)"),
+        "itemOrders": MessageLookupByLibrary.simpleMessage("ITEM ORDERS"),
         "itemOrdersHeader": MessageLookupByLibrary.simpleMessage("ITEM ORDERS"),
         "itemTotal": MessageLookupByLibrary.simpleMessage("Item Total"),
         "itemType": MessageLookupByLibrary.simpleMessage("Item Type"),
         "itemTypeLabel": MessageLookupByLibrary.simpleMessage("Item Type"),
         "items": MessageLookupByLibrary.simpleMessage("Items"),
         "itemsCountLabel": MessageLookupByLibrary.simpleMessage("ITEMS COUNT"),
+        "itemsTotal": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),
         "itemsTotalLabel": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),
         "joinedOn": MessageLookupByLibrary.simpleMessage("Joined on"),
         "km": MessageLookupByLibrary.simpleMessage("Km"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "lastPurchase": MessageLookupByLibrary.simpleMessage("Last Purchase"),
         "lastPurchaseLabel":
             MessageLookupByLibrary.simpleMessage("Last Purchase"),
         "leave": MessageLookupByLibrary.simpleMessage("Leave"),
@@ -382,6 +416,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "menu": MessageLookupByLibrary.simpleMessage("Menu"),
         "menuBulkImport":
             MessageLookupByLibrary.simpleMessage("Menu Bulk Import"),
+        "menuInformation":
+            MessageLookupByLibrary.simpleMessage("Menu Information"),
+        "menuName": MessageLookupByLibrary.simpleMessage("MENU NAME"),
         "mins": MessageLookupByLibrary.simpleMessage("Mins"),
         "missedSomething":
             MessageLookupByLibrary.simpleMessage("Missed Something?"),
@@ -425,6 +462,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "No coupons available right now."),
         "noDeliveryBoysFound":
             MessageLookupByLibrary.simpleMessage("No delivery boys found"),
+        "noDescriptionAvailable":
+            MessageLookupByLibrary.simpleMessage("No description available"),
         "noGroceriesFound":
             MessageLookupByLibrary.simpleMessage("No Groceries Found"),
         "noGroceryOrdersYet":
@@ -476,6 +515,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
         "now": MessageLookupByLibrary.simpleMessage("Now"),
         "off": MessageLookupByLibrary.simpleMessage("OFF"),
+        "onceYouHaveDownloadedAndFilledTheTemplateSelectThe":
+            MessageLookupByLibrary.simpleMessage(
+                "Once you have downloaded and filled the template, select the corresponding category and upload the file."),
         "ongoing": MessageLookupByLibrary.simpleMessage("Ongoing"),
         "onlinePayment": MessageLookupByLibrary.simpleMessage("Online Payment"),
         "openWithAnotherApp":
@@ -580,6 +622,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "positionTheBarcodeWithinTheFrame":
             MessageLookupByLibrary.simpleMessage(
                 "Position the barcode within the frame"),
+        "postuploadEditing":
+            MessageLookupByLibrary.simpleMessage("Post-Upload Editing"),
+        "preparationTime":
+            MessageLookupByLibrary.simpleMessage("PREPARATION TIME"),
         "preparationTimeLabel":
             MessageLookupByLibrary.simpleMessage("Preparation Time"),
         "preparationTimeMinutes":
@@ -659,10 +705,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "restaurantOne": MessageLookupByLibrary.simpleMessage("Restaurant 1"),
         "restaurantReports":
             MessageLookupByLibrary.simpleMessage("Restaurant Reports"),
+        "revenue": MessageLookupByLibrary.simpleMessage("Revenue"),
         "revenueLabel": MessageLookupByLibrary.simpleMessage("Revenue"),
         "revenueReport": MessageLookupByLibrary.simpleMessage("Revenue Report"),
         "reviews": MessageLookupByLibrary.simpleMessage("reviews"),
         "saimpex": MessageLookupByLibrary.simpleMessage("SAIMPEX"),
+        "salesPerformance":
+            MessageLookupByLibrary.simpleMessage("SALES & PERFORMANCE"),
         "salesPerformanceHeader":
             MessageLookupByLibrary.simpleMessage("SALES & PERFORMANCE"),
         "salesReport": MessageLookupByLibrary.simpleMessage("Sales Report"),
@@ -686,6 +735,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Search name or mobile number"),
         "selectAttributeHint":
             MessageLookupByLibrary.simpleMessage("Select attribute"),
+        "selectCategory":
+            MessageLookupByLibrary.simpleMessage("Select Category"),
         "selectCategoryHint":
             MessageLookupByLibrary.simpleMessage("Select Category"),
         "selectDeliveryLocation":
@@ -709,6 +760,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
         "startTypingToSearch":
             MessageLookupByLibrary.simpleMessage("Start typing to search"),
+        "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
         "status": MessageLookupByLibrary.simpleMessage("Status"),
         "storeReports": MessageLookupByLibrary.simpleMessage("Store Reports"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
@@ -743,7 +795,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "totalPayoutBalance":
             MessageLookupByLibrary.simpleMessage("Total Payout Balance"),
         "totalProfit": MessageLookupByLibrary.simpleMessage("Total Profit"),
+        "totalRatings": MessageLookupByLibrary.simpleMessage("Total Ratings"),
         "totalRevenue": MessageLookupByLibrary.simpleMessage("Total Revenue"),
+        "totalReviews": MessageLookupByLibrary.simpleMessage("Total Reviews"),
         "totalReviewsStat":
             MessageLookupByLibrary.simpleMessage("Total Reviews"),
         "trackOrder": MessageLookupByLibrary.simpleMessage("Track Order"),
@@ -771,7 +825,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "update": MessageLookupByLibrary.simpleMessage("Update"),
         "updateDetailsButton":
             MessageLookupByLibrary.simpleMessage("Update Details"),
+        "updatedDate": MessageLookupByLibrary.simpleMessage("UPDATED DATE"),
+        "uploadDrive": MessageLookupByLibrary.simpleMessage("Upload Drive"),
         "uploadImage": MessageLookupByLibrary.simpleMessage("Upload Image"),
+        "uploadImageHere":
+            MessageLookupByLibrary.simpleMessage("Upload image here"),
         "uploadImageHint":
             MessageLookupByLibrary.simpleMessage("Upload image here"),
         "upto": MessageLookupByLibrary.simpleMessage("Upto"),

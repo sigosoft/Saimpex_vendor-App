@@ -535,30 +535,30 @@ class VendorLeaveTile extends StatelessWidget {
               ),
             ],
           ),
-          if (isUpcoming) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 32,
-              child: OutlinedButton(
-                onPressed: onCancelLeave,
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFFFCCBD)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  "Cancel Leave",
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFFFF5216),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          // if (isUpcoming) ...[
+          //   const SizedBox(height: 12),
+          //   SizedBox(
+          //     width: double.infinity,
+          //     height: 32,
+          //     child: OutlinedButton(
+          //       onPressed: onCancelLeave,
+          //       style: OutlinedButton.styleFrom(
+          //         side: const BorderSide(color: Color(0xFFFFCCBD)),
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(10),
+          //         ),
+          //       ),
+          //       child: Text(
+          //         S.of(context).cancelLeave,
+          //         style: GoogleFonts.rubik(
+          //           fontSize: 12,
+          //           fontWeight: FontWeight.w600,
+          //           color: const Color(0xFFFF5216),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ],
         ],
       ),
     );
@@ -631,7 +631,7 @@ class VendorCategoryAddRow extends StatelessWidget {
                 value: selectedCategoryId,
                 isExpanded: true,
                 hint: Text(
-                  "All Categories",
+                  S.of(context).allCategories,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.rubik(
@@ -648,7 +648,7 @@ class VendorCategoryAddRow extends StatelessWidget {
                   DropdownMenuItem<int?>(
                     value: null,
                     child: Text(
-                      "All Categories",
+                      S.of(context).allCategories,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.rubik(
@@ -972,7 +972,7 @@ class VendorRichCard extends StatelessWidget {
                   value: 'edit',
                   child: ListTile(
                     leading: const Icon(Icons.edit_outlined, size: 20),
-                    title: Text("Edit", style: GoogleFonts.rubik(fontSize: 14)),
+                    title: Text(S.of(context).edit, style: GoogleFonts.rubik(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -986,7 +986,7 @@ class VendorRichCard extends StatelessWidget {
                       color: Color(0xFFEF4444),
                     ),
                     title: Text(
-                      "Delete",
+                      S.of(context).delete,
                       style: GoogleFonts.rubik(
                         fontSize: 14,
                         color: const Color(0xFFEF4444),
@@ -1082,7 +1082,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  "Instructions",
+                  S.of(context).instructions,
                   style: GoogleFonts.rubik(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -1115,44 +1115,44 @@ class VendorBulkImportInstructions extends StatelessWidget {
               children: [
                 _instructionBlock(
                   index: '1',
-                  title: 'Download Template',
+                  title: S.of(context).downloadTemplate,
                   body:
-                      'Download the template file and fill it with proper data.',
+                      S.of(context).downloadTheTemplateFileAndFillItWithProperData,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '2',
-                  title: 'Select Category',
+                  title: S.of(context).selectCategory,
                   body:
-                      'Once you have downloaded and filled the template, select the corresponding category and upload the file.',
+                      S.of(context).onceYouHaveDownloadedAndFilledTheTemplateSelectThe,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '3',
-                  title: 'Attributes Reference',
+                  title: S.of(context).attributesReference,
                   body:
-                      'After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.',
+                      S.of(context).afterAttributesReferenceYouCanEditTheAttributesListBelow,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '4',
-                  title: 'Post-Upload Editing',
+                  title: S.of(context).postuploadEditing,
                   body:
-                      'After uploading, you need to edit the items individually to set images and variations.',
+                      S.of(context).afterUploadingYouNeedToEditTheItemsIndividuallyTo,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '5',
-                  title: 'Image File Naming',
+                  title: S.of(context).imageFileNaming,
                   body:
-                      'Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).',
+                      S.of(context).imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg,
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
-                        "Available Attributes",
+                        S.of(context).availableAttributes,
                         style: GoogleFonts.rubik(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -1174,7 +1174,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "3 ATTRIBUTES",
+                        "3 "+"ATTRIBUTES",
                         style: GoogleFonts.rubik(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -1569,7 +1569,7 @@ class VendorMenuButton extends StatelessWidget {
     if (title == "Menu Bulk Import") return S.of(context).menuBulkImport;
     if (title == "Basket") return S.of(context).basket;
     if (title == "Received Payouts") return S.of(context).receivedPayouts;
-    if (title == "Restaurant Reports") return S.of(context).restaurantReports;
+    if (title == "Store Reports") return S.of(context).storeReports;
     return title;
   }
 
@@ -1644,7 +1644,7 @@ class VendorLeaveForm extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "From Date",
+                      S.of(context).fromDate,
                       style: GoogleFonts.rubik(
                         fontSize: 12,
                         color: const Color(0xFF94A3B8),
@@ -1689,7 +1689,7 @@ class VendorLeaveForm extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "To Date",
+                      S.of(context).toDate,
                       style: GoogleFonts.rubik(
                         fontSize: 12,
                         color: const Color(0xFF94A3B8),
@@ -1731,7 +1731,7 @@ class VendorLeaveForm extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            "Reason For Leave",
+            S.of(context).reasonForLeave,
             style: GoogleFonts.rubik(
               fontSize: 12,
               color: const Color(0xFF94A3B8),
@@ -1751,7 +1751,7 @@ class VendorLeaveForm extends StatelessWidget {
               controller: reasonController,
               maxLines: null,
               decoration: InputDecoration(
-                hintText: "e.g. Annual vacation, renovation...",
+                hintText: S.of(context).egAnnualVacationRenovation,
                 hintStyle: GoogleFonts.rubik(
                   fontSize: 12,
                   color: const Color(0xFF94A3B8).withOpacity(0.6),
@@ -1784,7 +1784,7 @@ class VendorLeaveForm extends StatelessWidget {
                 ),
               ),
               child: Text(
-                "Mark Leave",
+                S.of(context).markLeave,
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
