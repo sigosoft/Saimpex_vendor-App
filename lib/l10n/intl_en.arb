@@ -975,5 +975,6 @@
   "download": "Download",
   "pleaseSelectFromDateAndToDate": "Please select from date and to date",
   "redeemedCustomers": "Redeemed Customers",
-  "searchName": "Search Name"
+  "searchName": "Search Name",
+  "storeReports": "Store Reports"
 }

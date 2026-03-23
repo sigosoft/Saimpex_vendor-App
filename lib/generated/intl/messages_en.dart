@@ -641,6 +641,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "startTypingToSearch":
             MessageLookupByLibrary.simpleMessage("Start typing to search"),
         "status": MessageLookupByLibrary.simpleMessage("Status"),
+        "storeReports": MessageLookupByLibrary.simpleMessage("Store Reports"),
         "submitButton": MessageLookupByLibrary.simpleMessage("Submit"),
         "submitLeaveRequest":
             MessageLookupByLibrary.simpleMessage("SUBMIT LEAVE REQUEST"),

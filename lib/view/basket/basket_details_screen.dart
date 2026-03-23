@@ -137,7 +137,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
               // Header Details Container
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.55,
+                height: MediaQuery.of(context).size.height * 0.6,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -407,7 +407,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
       child: Container(
         height: isFullWidth
             ? (maxLines > 1 ? 90 : 70)
-            : 64,
+            : 80,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: const Color(0xFFF8FAFC),
