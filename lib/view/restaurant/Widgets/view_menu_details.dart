@@ -10,6 +10,8 @@ import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/edit_menu_screen.dart';
 
+import '../../../generated/l10n.dart';
+
 class ViewMenuDetails extends StatefulWidget {
   final String restaurantMenuId;
 
@@ -50,7 +52,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
           ),
         ),
         title: Text(
-          'Details',
+          S.of(context).details,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -84,7 +86,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
               ),
             ),
             child: Text(
-              'Edit Menu',
+              S.of(context).editMenu,
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -144,7 +146,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                 SizedBox(height: screenHeight * 0.02),
 
                 Text(
-                  'Menu Information',
+                  S.of(context).menuInformation,
                   style: GoogleFonts.rubik(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -158,12 +160,12 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _labelValue(
-                        label: 'MENU NAME',
+                        label: S.of(context).menuName,
                         value: menuName.isNotEmpty ? menuName : '#${menu.id}',
                       ),
                       const SizedBox(height: 10),
                       _labelValue(
-                        label: 'CATEGORY',
+                        label: S.of(context).category,
                         value: categoryName.isNotEmpty ? categoryName : '—',
                       ),
                       const SizedBox(height: 10),
@@ -173,14 +175,14 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                         children: [
                           Expanded(
                             child: _labelValue(
-                              label: 'CREATED DATE',
+                              label: S.of(context).createdDate,
                               value: createdText,
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: _labelValue(
-                              label: 'UPDATED DATE',
+                              label: S.of(context).updatedDate,
                               value: updatedText,
                             ),
                           ),
@@ -188,7 +190,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'DESCRIPTION',
+                        S.of(context).description,
                         style: GoogleFonts.rubik(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -199,7 +201,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                       Text(
                         description.isNotEmpty
                             ? description
-                            : 'No description available',
+                            : S.of(context).noDescriptionAvailable,
                         style: GoogleFonts.rubik(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -214,7 +216,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                 SizedBox(height: screenHeight * 0.03),
 
                 Text(
-                  'Statistics',
+                  S.of(context).statistics,
                   style: GoogleFonts.rubik(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -224,19 +226,19 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                 const SizedBox(height: 12),
 
                 _StatsMiniRow(
-                  leftLabel: 'Total Orders',
+                  leftLabel: S.of(context).totalOrders,
                   leftValue: details.totalOrders.toString(),
                   leftColor: const Color(0xFFE0F2FE),
-                  rightLabel: 'Total Revenue',
+                  rightLabel: S.of(context).totalRevenue,
                   rightValue: details.totalRevenue.toString(),
                   rightColor: const Color(0xFFDCFCE7),
                 ),
                 const SizedBox(height: 12),
                 _StatsMiniRow(
-                  leftLabel: 'Average Rating',
+                  leftLabel: S.of(context).averageRating,
                   leftValue: details.averageRating.toString(),
                   leftColor: const Color(0xFFF1F5F9),
-                  rightLabel: 'Total Ratings',
+                  rightLabel: S.of(context).totalRatings,
                   rightValue: details.totalRatingCount.toString(),
                   rightColor: const Color(0xFFF1F5F9),
                 ),
