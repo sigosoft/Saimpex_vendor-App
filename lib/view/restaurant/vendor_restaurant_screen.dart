@@ -137,12 +137,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       final name = picked.name;
       final lower = name.toLowerCase();
       if (!lower.endsWith('.xlsx')) {
-        showToast(context, 'Please select an .xlsx file only');
+        showToast(context, S.of(context).pleaseSelectAnXlsxFileOnly);
         return;
       }
       final path = picked.path;
       if (path == null || path.isEmpty) {
-        showToast(context, 'Could not access the selected file');
+        showToast(context, S.of(context).couldNotAccessTheSelectedFile);
         return;
       }
       final uploaded = await profileController.uploadmenuBulkImport(
@@ -203,14 +203,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       const SizedBox(width: 10),
                       _buildMenuButton("Received Payouts"),
                       const SizedBox(width: 10),
-                      _buildMenuButton("Store Reports"),
+                      _buildMenuButton(S.of(context).storeReports),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 if (selectedMenu == "Account") ...[
-                  _sectionHeader("RESTAURANT DETAILS"),
+                  _sectionHeader(S.of(context).restaurantDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
                     height: MediaQuery.of(context).size.height * 0.4,

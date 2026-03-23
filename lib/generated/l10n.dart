@@ -5159,6 +5159,366 @@ class S {
       args: [],
     );
   }
+
+  /// `Edit Item`
+  String get editItem {
+    return Intl.message(
+      'Edit Item',
+      name: 'editItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Type`
+  String get itemType {
+    return Intl.message(
+      'Item Type',
+      name: 'itemType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading...`
+  String get loading {
+    return Intl.message(
+      'Loading...',
+      name: 'loading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparation Time (minutes)`
+  String get preparationTimeMinutes {
+    return Intl.message(
+      'Preparation Time (minutes)',
+      name: 'preparationTimeMinutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter minutes`
+  String get enterMinutes {
+    return Intl.message(
+      'Enter minutes',
+      name: 'enterMinutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tags`
+  String get tags {
+    return Intl.message(
+      'Tags',
+      name: 'tags',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attribute`
+  String get attribute {
+    return Intl.message(
+      'Attribute',
+      name: 'attribute',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial Number`
+  String get serialNumber {
+    return Intl.message(
+      'Serial Number',
+      name: 'serialNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter serial number`
+  String get enterSerialNumber {
+    return Intl.message(
+      'Enter serial number',
+      name: 'enterSerialNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum Allowed Quantity`
+  String get maximumAllowedQuantity {
+    return Intl.message(
+      'Maximum Allowed Quantity',
+      name: 'maximumAllowedQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter maximum allowed quantity`
+  String get enterMaximumAllowedQuantity {
+    return Intl.message(
+      'Enter maximum allowed quantity',
+      name: 'enterMaximumAllowedQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price`
+  String get price {
+    return Intl.message(
+      'Price',
+      name: 'price',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Price`
+  String get enterPrice {
+    return Intl.message(
+      'Enter Price',
+      name: 'enterPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discount Price`
+  String get discountPrice {
+    return Intl.message(
+      'Discount Price',
+      name: 'discountPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Discount Price`
+  String get enterDiscountPrice {
+    return Intl.message(
+      'Enter Discount Price',
+      name: 'enterDiscountPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset`
+  String get reset {
+    return Intl.message(
+      'Reset',
+      name: 'reset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit`
+  String get submit {
+    return Intl.message(
+      'Submit',
+      name: 'submit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Menu`
+  String get editMenu {
+    return Intl.message(
+      'Edit Menu',
+      name: 'editMenu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Name (English)`
+  String get itemNameEnglish {
+    return Intl.message(
+      'Item Name (English)',
+      name: 'itemNameEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Zesty Chicken Burger`
+  String get zestyChickenBurger {
+    return Intl.message(
+      'Zesty Chicken Burger',
+      name: 'zestyChickenBurger',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Name (Arabic)`
+  String get itemNameArabic {
+    return Intl.message(
+      'Item Name (Arabic)',
+      name: 'itemNameArabic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Name (French)`
+  String get itemNameFrench {
+    return Intl.message(
+      'Item Name (French)',
+      name: 'itemNameFrench',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get category {
+    return Intl.message(
+      'Category',
+      name: 'category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Is Veg`
+  String get isVeg {
+    return Intl.message(
+      'Is Veg',
+      name: 'isVeg',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description (English)`
+  String get descriptionEnglish {
+    return Intl.message(
+      'Description (English)',
+      name: 'descriptionEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter description in English...`
+  String get enterDescriptionInEnglish {
+    return Intl.message(
+      'Enter description in English...',
+      name: 'enterDescriptionInEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description (Arabic)`
+  String get descriptionArabic {
+    return Intl.message(
+      'Description (Arabic)',
+      name: 'descriptionArabic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description (French)`
+  String get descriptionFrench {
+    return Intl.message(
+      'Description (French)',
+      name: 'descriptionFrench',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Image`
+  String get itemImage {
+    return Intl.message(
+      'Item Image',
+      name: 'itemImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No leave history found.`
+  String get noLeaveHistoryFound {
+    return Intl.message(
+      'No leave history found.',
+      name: 'noLeaveHistoryFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel Leave`
+  String get cancelLeave {
+    return Intl.message(
+      'Cancel Leave',
+      name: 'cancelLeave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unavailable`
+  String get unavailable {
+    return Intl.message(
+      'Unavailable',
+      name: 'unavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select an .xlsx file only`
+  String get pleaseSelectAnXlsxFileOnly {
+    return Intl.message(
+      'Please select an .xlsx file only',
+      name: 'pleaseSelectAnXlsxFileOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not access the selected file`
+  String get couldNotAccessTheSelectedFile {
+    return Intl.message(
+      'Could not access the selected file',
+      name: 'couldNotAccessTheSelectedFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Template preview`
+  String get templatePreview {
+    return Intl.message(
+      'Template preview',
+      name: 'templatePreview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open with another app`
+  String get openWithAnotherApp {
+    return Intl.message(
+      'Open with another app',
+      name: 'openWithAnotherApp',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

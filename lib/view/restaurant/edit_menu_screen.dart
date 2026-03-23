@@ -5,6 +5,8 @@ import 'package:saimpex_vendor/controller/menucontroller.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/edit_menu_screen_widgets.dart';
 
+import '../../generated/l10n.dart';
+
 class EditMenuScreen extends StatefulWidget {
   final String itemId;
 
@@ -47,7 +49,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
           ),
         ),
         title: Text(
-          'Edit Menu',
+          S.of(context).editMenu,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -73,14 +75,14 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                EditMenuFieldLabel('Item Name (English)'),
+                EditMenuFieldLabel(S.of(context).itemNameEnglish),
                 const SizedBox(height: 6),
                 EditMenuTextField(
                   controller: c.nameEnCtrl,
-                  hint: 'Zesty Chicken Burger',
+                  hint: S.of(context).zestyChickenBurger,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Item Name (Arabic)'),
+                EditMenuFieldLabel(S.of(context).itemNameArabic),
                 const SizedBox(height: 6),
                 EditMenuTextField(
                   controller: c.nameArCtrl,
@@ -88,7 +90,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   textAlign: TextAlign.right,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Item Name (French)'),
+                EditMenuFieldLabel(S.of(context).itemNameFrench),
                 const SizedBox(height: 6),
                 EditMenuTextField(
                   controller: c.nameFrCtrl,
@@ -101,14 +103,14 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          EditMenuFieldLabel('Category'),
+                          EditMenuFieldLabel(S.of(context).category),
                           const SizedBox(height: 6),
                           EditMenuDropdownField(
                             value: c.categoryDisplayNames.isEmpty
-                                ? 'Loading...'
+                                ? S.of(context).loading
                                 : c.selectedEditCategoryDisplayName,
                             items: c.categoryDisplayNames.isEmpty
-                                ? ['Loading...']
+                                ? [S.of(context).loading]
                                 : c.categoryDisplayNames,
                             onChanged: c.categoryDisplayNames.isEmpty
                                 ? (_) {}
@@ -123,7 +125,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          EditMenuFieldLabel('Is Veg'),
+                          EditMenuFieldLabel(S.of(context).isVeg),
                           const SizedBox(height: 6),
                           EditMenuDropdownField(
                             value: c.selectedIsVeg,
@@ -137,14 +139,14 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Description (English)'),
+                EditMenuFieldLabel(S.of(context).descriptionEnglish),
                 const SizedBox(height: 6),
                 EditMenuTextAreaField(
                   controller: c.descEnCtrl,
-                  hint: 'Enter description in English...',
+                  hint: S.of(context).enterDescriptionInEnglish,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Description (Arabic)'),
+                EditMenuFieldLabel(S.of(context).descriptionArabic),
                 const SizedBox(height: 6),
                 EditMenuTextAreaField(
                   controller: c.descArCtrl,
@@ -152,21 +154,21 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   textAlign: TextAlign.right,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Description (French)'),
+                EditMenuFieldLabel(S.of(context).descriptionFrench),
                 const SizedBox(height: 6),
                 EditMenuTextAreaField(
                   controller: c.descFrCtrl,
                   hint: 'Entrez la description en français...',
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Tags'),
+                EditMenuFieldLabel(S.of(context).tags),
                 const SizedBox(height: 6),
                 EditMenuDropdownField(
                   value: c.tagDisplayNames.isEmpty
-                      ? 'Loading...'
+                      ? S.of(context).loading
                       : c.selectedEditTagDisplayName,
                   items: c.tagDisplayNames.isEmpty
-                      ? ['Loading...']
+                      ? [S.of(context).loading]
                       : c.tagDisplayNames,
                   onChanged: c.tagDisplayNames.isEmpty
                       ? (_) {}
@@ -175,7 +177,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Preparation Time (minutes)'),
+                EditMenuFieldLabel(S.of(context).preparationTimeMinutes),
                 const SizedBox(height: 6),
                 EditMenuTextField(
                   controller: c.prepTimeCtrl,
@@ -183,7 +185,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Maximum allowed quantity'),
+                EditMenuFieldLabel(S.of(context).maximumAllowedQuantity),
                 const SizedBox(height: 6),
                 EditMenuTextField(
                   controller: c.quantityAllowedCtrl,
@@ -197,7 +199,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          EditMenuFieldLabel('Price'),
+                          EditMenuFieldLabel(S.of(context).price),
                           const SizedBox(height: 6),
                           EditMenuTextField(
                             controller: c.priceCtrl,
@@ -212,7 +214,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          EditMenuFieldLabel('Discount Price'),
+                          EditMenuFieldLabel(S.of(context).discountPrice),
                           const SizedBox(height: 6),
                           EditMenuTextField(
                             controller: c.discountPriceCtrl,
@@ -225,7 +227,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel('Item Image'),
+                EditMenuFieldLabel(S.of(context).itemImage),
                 const SizedBox(height: 6),
                 EditMenuImageUploadArea(onTap: c.pickImages),
                 const SizedBox(height: 12),
