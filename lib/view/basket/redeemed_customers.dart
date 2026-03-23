@@ -25,46 +25,6 @@ class RedeemedCustomer {
   final String date;
 }
 
-/// Mock list for basket details preview + full redeemed-customers screen.
-final List<RedeemedCustomer> kMockRedeemedCustomers = [
-  const RedeemedCustomer(
-    name: 'Aicha Mint Ahmed',
-    phone: '+222 62345678',
-    points: '2000',
-    date: 'Feb 18 2025, 10:23 AM',
-  ),
-  const RedeemedCustomer(
-    name: 'Mohamed Ould Sidi',
-    phone: '+222 61234567',
-    points: '1500',
-    date: 'Feb 17 2025, 3:45 PM',
-  ),
-  const RedeemedCustomer(
-    name: 'Fatima Mint Ely',
-    phone: '+222 63456789',
-    points: '2000',
-    date: 'Feb 16 2025, 9:12 AM',
-  ),
-  const RedeemedCustomer(
-    name: 'Brahim Ould Cheikh',
-    phone: '+222 64567890',
-    points: '500',
-    date: 'Feb 15 2025, 6:30 PM',
-  ),
-  const RedeemedCustomer(
-    name: 'Mariem Mint Baba',
-    phone: '+222 65678901',
-    points: '2000',
-    date: 'Feb 14 2025, 11:00 AM',
-  ),
-  const RedeemedCustomer(
-    name: 'Sidi Ould Hamadi',
-    phone: '+222 66789012',
-    points: '1200',
-    date: 'Feb 12 2025, 2:15 PM',
-  ),
-];
-
 String redeemedCustomerInitials(String name) {
   final parts =
       name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();

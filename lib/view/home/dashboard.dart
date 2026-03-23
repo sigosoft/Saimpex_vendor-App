@@ -33,7 +33,7 @@ class _DashboardState extends State<Dashboard> {
       builder: (controller) {
         return CommonBackground(
           appBar: CustomAppBar(
-            title: "Dashboard",
+            title: S.of(context).dashboard,
             onTap: () => Get.back(),
           ),
           child: controller.isLoading
@@ -52,7 +52,7 @@ class _DashboardState extends State<Dashboard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           VendorStatCard(
-                            title: "Today's Orders",
+                            title: S.of(context).todaysOrders,
                             value:
                                 controller.dashboardData?.todayOrders
                                     ?.toString() ??
@@ -62,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
                             iconDecorationColor: const Color(0xFF6B6BFF),
                           ),
                           VendorStatCard(
-                            title: "Total Orders",
+                            title: S.of(context).totalOrders,
                             value:
                                 controller.dashboardData?.totalOrders
                                     ?.toString() ??
@@ -72,7 +72,7 @@ class _DashboardState extends State<Dashboard> {
                             iconDecorationColor: const Color(0xFF00D15D),
                           ),
                           VendorStatCard(
-                            title: "Products",
+                            title: S.of(context).products,
                             value:
                                 controller.dashboardData?.totalProducts
                                     ?.toString() ??
@@ -101,7 +101,7 @@ class _DashboardState extends State<Dashboard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "POPULAR ITEMS",
+                            S.of(context).popularItems,
                             style: GoogleFonts.rubik(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                               );
                             },
                             child: Text(
-                              "View All",
+                              S.of(context).viewAll,
                               style: GoogleFonts.rubik(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -186,7 +186,7 @@ class _DashboardState extends State<Dashboard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Total Revenue",
+                    S.of(context).totalRevenue,
                     style: GoogleFonts.rubik(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -329,7 +329,7 @@ class _DashboardState extends State<Dashboard> {
           padding: const EdgeInsets.all(20.0),
           child: Center(
             child: Text(
-              "No popular items found",
+              S.of(context).noPopularItemsFound,
               style: GoogleFonts.rubik(
                 color: const Color(0xFF9CA3AF),
                 fontSize: 13,
@@ -358,7 +358,7 @@ class _DashboardState extends State<Dashboard> {
           final item = items[index];
           final name = controller.getItemName(item, locale);
           final attrName = controller.getAttributeName(item, locale);
-          final orders = "${item.orderCount ?? 0} Orders";
+          final orders = "${item.orderCount ?? 0}"+" "+S.of(context).orders;
           final subtitle = attrName.isNotEmpty
               ? "#${item.id}-$attrName"
               : "#${item.id}";

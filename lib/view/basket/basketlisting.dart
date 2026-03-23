@@ -237,8 +237,8 @@ class _BasketListingState extends State<BasketListing> {
                     const SizedBox(height: 24),
                     NoDataWidget(
                       context,
-                      'No baskets found',
-                      'No baskets found',
+                      S.of(context).noBasketsFound,
+                      S.of(context).noBasketsFound,
                       'lib/assets/images/nonotifications.png',
                     ),
                   ],
@@ -383,7 +383,7 @@ class _BasketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final statusText =
-        isActive ? s.activeLabel.toUpperCase() : 'Blocked';
+        isActive ? s.activeLabel.toUpperCase() : S.of(context).blocked;
     final statusBg = isActive ? _activeBadgeBg : _inactiveBadgeBg;
     final statusFg = isActive ? _activeBadgeText : _inactiveBadgeText;
 

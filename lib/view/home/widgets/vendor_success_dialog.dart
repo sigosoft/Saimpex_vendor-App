@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../generated/l10n.dart';
+
 class VendorSuccessDialog extends StatelessWidget {
   const VendorSuccessDialog({super.key});
 
@@ -31,7 +33,7 @@ class VendorSuccessDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "Order Accepted successfully",
+              S.of(context).orderAcceptedSuccessfully,
               style: GoogleFonts.rubik(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

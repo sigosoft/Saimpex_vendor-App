@@ -3,6 +3,8 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
+import '../../../generated/l10n.dart';
+
 class GuestLoginButtonWidget extends StatelessWidget {
   final VoidCallback onTap;
   final String? text;
@@ -29,7 +31,7 @@ class GuestLoginButtonWidget extends StatelessWidget {
           ),
           child: Center(
             child: BoldTextRubik(
-              text: text ?? "Guest Login",
+              text: text ?? S.of(context).guestLogin,
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: colorPrimary,

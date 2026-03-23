@@ -111,20 +111,20 @@ class VendorOrderCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (status.toLowerCase() == 'preparing')
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    "00:05:00 min",
-                    style: GoogleFonts.rubik(
-                      fontSize: 10,
-                      color: const Color(0xFF64748B),
-                    ),
-                  ),
-                ),
-              ),
+            // if (status.toLowerCase() == 'preparing')
+            //   Align(
+            //     alignment: Alignment.centerRight,
+            //     child: Padding(
+            //       padding: const EdgeInsets.only(top: 4.0),
+            //       child: Text(
+            //         "00:05:00 min",
+            //         style: GoogleFonts.rubik(
+            //           fontSize: 10,
+            //           color: const Color(0xFF64748B),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
             const SizedBox(height: 4), // Reduced gap
             Text(
               customerName,
