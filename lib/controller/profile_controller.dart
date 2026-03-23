@@ -11,6 +11,9 @@ import 'package:saimpex_vendor/model/restaurant_category_model.dart';
 import 'package:saimpex_vendor/model/rating_review_model.dart';
 import 'package:saimpex_vendor/model/grocery_menus_model.dart';
 import 'package:saimpex_vendor/model/grocery_menu_items_model.dart';
+import 'package:saimpex_vendor/model/grocery_menu_details_model.dart'
+    hide GroceryMenu;
+import 'package:saimpex_vendor/model/grocery_all_categories_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart'
     hide RestaurantMenu;
 import 'package:saimpex_vendor/model/restaurant_menus_model.dart';
@@ -115,6 +118,11 @@ class ProfileController extends GetxController {
       restaurantCategories
           .map((d) => RestaurantCategory(id: d.id, name: d.nameEn ?? ''))
           .toList();
+
+  void setSelectedRestaurantCategoryId(int? id) {
+    selectedRestaurantCategoryId = id;
+    update();
+  }
 
   Future<void> getRatingsReviews(
     BuildContext context, {
@@ -263,14 +271,11 @@ class ProfileController extends GetxController {
     update();
     try {
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
       final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.restaurantMenus
-            : ApiEndPoints.groceryMenus,
+        ApiEndPoints.restaurantMenus,
         query: {
           "limit": _limit,
           "page": _page,
@@ -279,6 +284,7 @@ class ProfileController extends GetxController {
             "category_id": selectedRestaurantCategoryId,
         },
       );
+
       final model = RestaurantMenusModel.fromJson(response.data);
       if (model.status == true) {
         final fetchedMenus = model.data ?? [];
@@ -425,17 +431,15 @@ class ProfileController extends GetxController {
             : ApiEndPoints.addGroceryMenuItem,
         body: formData,
       );
-
       if (context.mounted) {
-        Get.back(); // close loading dialog
+        Get.back();
       }
-
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
           showToast(context, "Grocery item added successfully");
-          Get.back(); // go back to items list
-          fetchGroceryMenuItems(); // refresh list
+          Get.back();
+          fetchGroceryMenuItems();
         }
       } else {
         if (context.mounted) {
@@ -456,20 +460,16 @@ class ProfileController extends GetxController {
   Future<void> logout(BuildContext context) async {
     try {
       showLoadingDialog(context);
-
       var token = await getSavedObject("token");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-
       final response = await DioClient().post(ApiEndPoints.logout);
-
       if (context.mounted) {
         Get.back();
       }
-
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
@@ -507,32 +507,26 @@ class ProfileController extends GetxController {
   ) async {
     try {
       showLoadingDialog(context);
-
       var token = await getSavedObject("token");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-
       var vendorType = await getSavedObject("vendorType");
-
       var formData = {
         "vendor_type": vendorType ?? "1",
         "from_date": fromDate,
         "to_date": toDate,
         if (reason.isNotEmpty) "reason": reason,
       };
-
       final response = await DioClient().post(
         ApiEndPoints.markLeave,
         body: formData,
       );
-
       if (context.mounted) {
-        Get.back(); // close dialog
+        Get.back();
       }
-
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
@@ -579,21 +573,17 @@ class ProfileController extends GetxController {
         hasMoreLeaveHistory = true;
       }
       update();
-
       var token = await getSavedObject("token");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-
       var vendorType = await getSavedObject("vendorType");
-
       final response = await DioClient().get(
         ApiEndPoints.profile,
         query: {"vendor_type": vendorType ?? "1", "limit": limit, "page": page},
       );
-
       ProfileModel profileModel = ProfileModel.fromJson(response.data);
       if (profileModel.status == true) {
         if (isLoadMore) {
@@ -620,7 +610,6 @@ class ProfileController extends GetxController {
           phoneController.text = profileData?.mobile ?? "";
           countryCode = profileData?.countryCode ?? "";
           profilePicture = profileData?.image ?? "";
-
           if (leaveHistory.length < limit) {
             hasMoreLeaveHistory = false;
           }
@@ -693,7 +682,7 @@ class ProfileController extends GetxController {
       showLoadingDialog(context);
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        Get.back(); // Close loading dialog
+        Get.back();
         showToast(context, "OTP Verified successfully (Mock)");
         await postEditProfile(
           context,
@@ -722,7 +711,6 @@ class ProfileController extends GetxController {
     String mobile,
   ) async {
     try {
-      // showLoadingDialog(context); // Already showing or not needed for mock
       await Future.delayed(const Duration(seconds: 1));
       showToast(context, "Profile updated successfully (Mock)");
       isOtpSent = true;
@@ -738,24 +726,19 @@ class ProfileController extends GetxController {
   Future<void> deleteAccount(BuildContext context) async {
     try {
       showLoadingDialog(context);
-
       var token = await getSavedObject("token");
       if (token != null) {
         DioClient().updateToken(token);
       }
-
       final response = await DioClient().get(ApiEndPoints.deleteAccount);
-
       if (context.mounted) {
         Get.back();
       }
-
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         final languageCode = localization.currentLocale?.languageCode;
         final messageObj = response.data['message'];
         String? toastMessage;
-
         if (messageObj is Map) {
           final list = languageCode == 'fr'
               ? messageObj['message_fr']
@@ -766,11 +749,9 @@ class ProfileController extends GetxController {
             toastMessage = list.first.toString();
           }
         }
-
         if (context.mounted) {
           showToast(context, toastMessage ?? "Account deleted successfully");
         }
-
         final prefs = await SharedPreferences.getInstance();
         await prefs.clear();
         await savename("@isFirstLaunch", "true");
@@ -842,33 +823,34 @@ class ProfileController extends GetxController {
     try {
       isRestaurantCategoriesLoading = true;
       update();
-
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantCategories,
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantCategories
+            : ApiEndPoints.getGroceryCategories,
       );
-      final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
-        response.data,
-      );
-      if (restaurantCategoriesModel.status == 'true') {
-        restaurantCategories = restaurantCategoriesModel.data ?? [];
+      if (vendorType == "1") {
+        final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
+          response.data,
+        );
+        if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
+          restaurantCategories = restaurantCategoriesModel.data ?? [];
+        }
+      } else {
+        final groceryCategoriesModel = GroceryAllCategoriesModel.fromJson(
+          response.data,
+        );
+        if (groceryCategoriesModel.status == true) {}
       }
     } catch (error) {
       debugPrint("getAllCategories Error: $error");
-    } finally {
-      isRestaurantCategoriesLoading = false;
-      update();
     }
-  }
-
-  void setSelectedRestaurantCategoryId(int? id) {
-    selectedRestaurantCategoryId = id;
-    update();
   }
 
   Future<void> getRestaurantMenuDetails({int? restaurantMenuId}) async {
@@ -886,15 +868,21 @@ class ProfileController extends GetxController {
         vendorType == "1"
             ? ApiEndPoints.getRestaurantMenuDetails
             : ApiEndPoints.getGroceryMenuDetails,
-        query: restaurantMenuId != null
-            ? {'restaurant_menu_id': restaurantMenuId}
-            : null,
+        query: vendorType == "1"
+            ? restaurantMenuId != null
+                  ? {'restaurant_menu_id': restaurantMenuId}
+                  : null
+            : {'grocery_menu_id': restaurantMenuId ?? 0},
       );
-      final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
-        response.data,
-      );
-      if (restaurantMenuDetailsModel.status) {
-        this.restaurantMenuDetails = restaurantMenuDetailsModel.data;
+      if (vendorType == "1") {
+        final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
+          response.data,
+        );
+        if (restaurantMenuDetailsModel.status) {
+          restaurantMenuDetails = restaurantMenuDetailsModel.data;
+        }
+      } else {
+        GroceryMenuDetailsModel.fromJson(response.data);
       }
     } catch (error) {
       debugPrint("getRestaurantMenuDetails Error: $error");
@@ -943,7 +931,6 @@ class ProfileController extends GetxController {
       }
       final contentType =
           response.headers.value('content-type')?.toLowerCase() ?? '';
-      // .xlsx is a ZIP (PK…) — avoid utf8-decoding the whole file for JSON checks.
       final looksLikeZipXlsx =
           bytes.length >= 2 && bytes[0] == 0x50 && bytes[1] == 0x4B;
       final maybeJsonBody =
@@ -1114,6 +1101,87 @@ class ProfileController extends GetxController {
     }
     if (msg is String && msg.isNotEmpty) return msg;
     return 'Bulk menu uploaded successfully';
+  }
+
+  Future<void> uploadImages(BuildContext context) async {
+    try {
+      isRestaurantCategoriesLoading = true;
+      update();
+
+      final ImageSource? source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        builder: (bottomSheetContext) {
+          return SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: const Text('Gallery'),
+                  onTap: () => Navigator.pop(
+                    bottomSheetContext,
+                    ImageSource.gallery,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt_outlined),
+                  title: const Text('Camera'),
+                  onTap: () =>
+                      Navigator.pop(bottomSheetContext, ImageSource.camera),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+      if (source == null) {
+        return;
+      }
+      final XFile? pickedFile = await imagePicker.pickImage(source: source);
+      if (pickedFile == null) {
+        return;
+      }
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final formData = dio.FormData.fromMap({
+        "file": await dio.MultipartFile.fromFile(
+          pickedFile.path,
+          filename: pickedFile.path.split(RegExp(r'[/\\]')).last,
+        ),
+      });
+
+      final response = await DioClient().post(
+        vendorType == "1"
+            ? ApiEndPoints.uploadRestaurantImages
+            : ApiEndPoints.uploadGroceryImages,
+        body: formData,
+      );
+      if (context.mounted) {
+        if (response.data['status'] == 'true' || response.data['status'] == true) {
+          showToast(
+            context,
+            response.data['message']?.toString() ?? 'Image uploaded successfully',
+          );
+        } else {
+          showToast(
+            context,
+            response.data['message']?.toString() ?? 'Image upload failed',
+          );
+        }
+      }
+    } catch (error) {
+      debugPrint("uploadImages Error: $error");
+      if (context.mounted) {
+        showToast(context, error.toString());
+      }
+    } finally {
+      isRestaurantCategoriesLoading = false;
+      update();
+    }
   }
 }
 

@@ -13,13 +13,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
+import 'package:saimpex_vendor/model/attributes_model.dart';
+import 'package:saimpex_vendor/model/grocery_all_categories_model.dart';
+import 'package:saimpex_vendor/model/grocery_tag_model.dart';
 import 'package:saimpex_vendor/model/restaurant_category_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart';
 import 'package:saimpex_vendor/model/tag_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class MenuController extends GetxController {
-  // Form controllers and state previously in AddMenuScreen
   final TextEditingController nameEnCtrl = TextEditingController();
   final TextEditingController nameArCtrl = TextEditingController();
   final TextEditingController nameFrCtrl = TextEditingController();
@@ -29,29 +31,27 @@ class MenuController extends GetxController {
   final TextEditingController prepTimeCtrl = TextEditingController();
   final TextEditingController priceCtrl = TextEditingController();
   final TextEditingController discountPriceCtrl = TextEditingController();
-
+  /// Max quantity allowed for the menu (API: `quantity_allowed`).
+  final TextEditingController quantityAllowedCtrl =
+      TextEditingController(text: '10');
   String? selectedCategory;
   String selectedIsVeg = 'No';
   String? selectedTag;
-
-  // Edit screen: dropdowns (category and tags from API)
+  /// Attribute id for menu attributes row (restaurant vs grocery key differs in API).
+  String? selectedAttributeId;
   static const List<String> vegOptions = ['Yes', 'No'];
   String selectedEditCategoryName = '';
   String selectedEditTagName = '';
-
-  /// Menu id being edited (for update API).
   int? currentEditMenuId;
-
-  /// Category id for edit form (from API or resolved from name).
   String? selectedEditCategoryId;
-
-  /// Tag id for edit form (from API or resolved from name).
   String? selectedEditTagId;
   bool hasPopulatedEditForm = false;
   bool isRestaurantCategoriesLoading = false;
   List<RestaurantCategoryData> restaurantCategories = [];
   bool isRestaurantTagsLoading = false;
   List<TagData> restaurantTags = [];
+  bool isMenuAttributesLoading = false;
+  List<AttributeData> menuAttributes = [];
 
   final List<XFile> uploadedImages = [];
 
@@ -69,6 +69,7 @@ class MenuController extends GetxController {
     debugPrint("MenuController initialized");
     getAllCategories();
     getAllTags();
+    getAllAttributes();
   }
 
   String? get selectedCategoryDisplayName {
@@ -152,6 +153,34 @@ class MenuController extends GetxController {
       .where((s) => s.isNotEmpty)
       .toList();
 
+  List<String> get attributeDisplayNames => menuAttributes
+      .map((a) => a.nameEn ?? '')
+      .where((s) => s.isNotEmpty)
+      .toList();
+
+  String? get selectedAttributeDisplayName {
+    if (selectedAttributeId == null || selectedAttributeId!.isEmpty) {
+      return null;
+    }
+    final match = menuAttributes
+        .where((a) => a.id.toString() == selectedAttributeId)
+        .toList();
+    return match.isEmpty ? null : (match.first.nameEn ?? '');
+  }
+
+  void setSelectedAttributeByName(String? name) {
+    if (name == null || name.isEmpty) {
+      selectedAttributeId = null;
+      update();
+      return;
+    }
+    final match = menuAttributes
+        .where((a) => (a.nameEn ?? '') == name)
+        .toList();
+    selectedAttributeId = match.isEmpty ? null : match.first.id?.toString();
+    update();
+  }
+
   /// Display name for edit tag dropdown (from API list).
   String get selectedEditTagDisplayName {
     if (selectedEditTagId != null && selectedEditTagId!.isNotEmpty) {
@@ -205,8 +234,7 @@ class MenuController extends GetxController {
     return result?.path ?? sourcePath;
   }
 
-  /// Downloads image from [imageUrl] to a temp file and returns the local path.
-  /// Caller should delete the temp file when done, or pass to _prepareJpegImage.
+ 
   Future<String?> _downloadImageToTempFile(String imageUrl) async {
     if (imageUrl.isEmpty) return null;
     try {
@@ -239,6 +267,7 @@ class MenuController extends GetxController {
     prepTimeCtrl.dispose();
     priceCtrl.dispose();
     discountPriceCtrl.dispose();
+    quantityAllowedCtrl.dispose();
     super.onClose();
   }
 
@@ -315,6 +344,7 @@ class MenuController extends GetxController {
     prepTimeCtrl.text = '20 Min';
     priceCtrl.text = '20 MRU';
     discountPriceCtrl.text = '10 MRU';
+    quantityAllowedCtrl.text = '10';
     selectedEditCategoryName = categoryDisplayNames.isNotEmpty
         ? categoryDisplayNames.first
         : '';
@@ -367,9 +397,13 @@ class MenuController extends GetxController {
     prepTimeCtrl.clear();
     priceCtrl.clear();
     discountPriceCtrl.clear();
+    quantityAllowedCtrl.text = '10';
     selectedCategory = null;
     selectedIsVeg = 'No';
     selectedTag = null;
+    selectedAttributeId = menuAttributes.isNotEmpty
+        ? menuAttributes.first.id?.toString()
+        : null;
     uploadedImages.clear();
     update();
   }
@@ -387,6 +421,10 @@ class MenuController extends GetxController {
     if (selectedTag == null || selectedTag!.trim().isEmpty) {
       return "Please select a tag";
     }
+    if (attributeDisplayNames.isNotEmpty &&
+        (selectedAttributeId == null || selectedAttributeId!.trim().isEmpty)) {
+      return "Please select attribute";
+    }
     if (prepTimeCtrl.text.trim().isEmpty) {
       return "Please enter preparation time";
     }
@@ -395,6 +433,9 @@ class MenuController extends GetxController {
     }
     if (discountPriceCtrl.text.trim().isEmpty) {
       return "Please enter discount price";
+    }
+    if (quantityAllowedCtrl.text.trim().isEmpty) {
+      return "Please enter maximum allowed quantity";
     }
     if (uploadedImages.isEmpty) {
       return "Please upload at least one image";
@@ -413,17 +454,24 @@ class MenuController extends GetxController {
         DioClient().updateToken("");
       }
       await getSavedObject("vendorType");
+      final attributeId = (selectedAttributeId != null &&
+              selectedAttributeId!.trim().isNotEmpty)
+          ? selectedAttributeId!.trim()
+          : '2';
       final formDataMap = <String, dynamic>{
         "name_en": nameEnCtrl.text,
         "description_en": descEnCtrl.text,
         "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
-        "quantity_allowed": "10",
-        "attributes[0][restaurant_attribute_id]": "2",
+        "quantity_allowed": quantityAllowedCtrl.text,
         "attributes[0][price]": priceCtrl.text,
         "attributes[0][discount_price]": discountPriceCtrl.text,
         "attributes[0][preparation_time]": prepTimeCtrl.text,
       };
-
+      if (vendorType == "1") {
+        formDataMap["attributes[0][restaurant_attribute_id]"] = attributeId;
+      } else {
+        formDataMap["attributes[0][grocery_attribute_id]"] = attributeId;
+      }
       if (uploadedImages.isNotEmpty) {
         final mainImagePath = await _prepareJpegImage(
           uploadedImages.first.path,
@@ -541,11 +589,19 @@ class MenuController extends GetxController {
             ? ApiEndPoints.getRestaurantCategories
             : ApiEndPoints.getGroceryCategories,
       );
-      final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
-        response.data,
-      );
-      if (restaurantCategoriesModel.status == 'true') {
-        restaurantCategories = restaurantCategoriesModel.data ?? [];
+      if (vendorType == "1") {
+        final restaurantCategoriesModel =
+            RestaurantAllCategoriesModel.fromJson(response.data);
+        if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
+          restaurantCategories = restaurantCategoriesModel.data ?? [];
+        }
+      } else {
+        final groceryCategoriesModel =
+            GroceryAllCategoriesModel.fromJson(response.data);
+        if (groceryCategoriesModel.status == true) {
+          // Grocery categories use `CategoryData` — menu UI uses `restaurantCategories`
+          // for restaurant vendors only; extend if grocery menu flows need a list here.
+        }
       }
     } catch (error) {
       debugPrint("getAllCategories Error: $error");
@@ -572,16 +628,73 @@ class MenuController extends GetxController {
             ? ApiEndPoints.getRestaurantTags
             : ApiEndPoints.getGroceryTags,
       );
-      final tagsModel = TagsModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-      if (tagsModel.status == 'true') {
-        restaurantTags = tagsModel.data ?? [];
+      final raw = response.data;
+      final map = raw is Map<String, dynamic>
+          ? raw
+          : Map<String, dynamic>.from(raw as Map);
+      if (vendorType == "1") {
+        final tagsModel = TagsModel.fromJson(map);
+        if (tagsModel.status == 'true') {
+          restaurantTags = tagsModel.data ?? [];
+        }
+      } else {
+        final groceryTagsModel = GroceryTagsModel.fromJson(map);
+        if (groceryTagsModel.status == true) {
+          restaurantTags = (groceryTagsModel.data ?? [])
+              .map(
+                (g) => TagData(
+                  id: g.id,
+                  nameEn: g.nameEn ?? '',
+                  nameAr: g.nameAr ?? '',
+                  nameFr: g.nameFr ?? '',
+                ),
+              )
+              .toList();
+        }
       }
     } catch (error) {
       debugPrint("getAllTags Error: $error");
     } finally {
       isRestaurantTagsLoading = false;
+      update();
+    }
+  }
+
+  Future<void> getAllAttributes() async {
+    try {
+      isMenuAttributesLoading = true;
+      update();
+
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.getRestaurantAttributes
+            : ApiEndPoints.getGroceryAttributes,
+      );
+      final raw = response.data;
+      final map = raw is Map<String, dynamic>
+          ? raw
+          : Map<String, dynamic>.from(raw as Map);
+      final attributesModel = AttributesModel.fromJson(map);
+      if (attributesModel.status == true) {
+        menuAttributes = attributesModel.data ?? [];
+        if (menuAttributes.isNotEmpty &&
+            (selectedAttributeId == null ||
+                selectedAttributeId!.trim().isEmpty)) {
+          selectedAttributeId = menuAttributes.first.id?.toString();
+        }
+      }
+    } catch (error, stackTrace) {
+      debugPrint("getAllAttributes Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      isMenuAttributesLoading = false;
       update();
     }
   }
@@ -593,17 +706,22 @@ class MenuController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final formDataMap = <String, dynamic>{
-        "restaurant_menu_id": restaurantMenuId,
+        vendorType == "1"
+            ? "restaurant_menu_id"
+            : "grocery_menu_id": restaurantMenuId,
       };
 
       final response = await DioClient().post(
-        ApiEndPoints.deleteRestaurantMenu,
+        vendorType == "1"
+            ? ApiEndPoints.deleteRestaurantMenu
+            : ApiEndPoints.deleteGroceryMenu,
 
         body: formDataMap,
       );
@@ -662,7 +780,9 @@ class MenuController extends GetxController {
         vendorType == "1"
             ? ApiEndPoints.getRestaurantMenuDetails
             : ApiEndPoints.getGroceryMenuDetails,
-        query: {'restaurant_menu_id': restaurantMenuId},
+        query: vendorType == "1"
+            ? {'restaurant_menu_id': restaurantMenuId}
+            : {'grocery_menu_id': restaurantMenuId},
       );
       final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
         response.data is Map<String, dynamic>
@@ -688,6 +808,7 @@ class MenuController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -701,7 +822,7 @@ class MenuController extends GetxController {
         "attributes[0][price]": priceCtrl.text,
         "attributes[0][discount_price]": discountPriceCtrl.text,
         "attributes[0][preparation_time]": prepTimeCtrl.text,
-        "attributes[0][quantity_allowed]": "10",
+        "attributes[0][quantity_allowed]": quantityAllowedCtrl.text.trim(),
       };
       if (kDebugMode) {
         for (final e in formDataMap.entries) {
@@ -782,7 +903,9 @@ class MenuController extends GetxController {
         }
       }
       final response = await DioClient().post(
-        ApiEndPoints.updateRestaurantMenuEdit,
+        vendorType == "1"
+            ? ApiEndPoints.updateRestaurantMenuEdit
+            : ApiEndPoints.updateGroceryMenuEdit,
         body: formData,
       );
       if (context.mounted) {

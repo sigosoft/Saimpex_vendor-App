@@ -526,7 +526,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 ] else if (selectedMenu == "Basket") ...[
                   //const SizedBox(height: 20),
                   // _sectionHeader(S.of(context).baskets),
-                  // const SizedBox(height: 12),
+                  // const Siz
                   const BasketListing(),
                   const SizedBox(height: 20),
                 ] else if (selectedMenu == "Received Payouts") ...[
@@ -812,7 +812,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 return;
               }
               _lastDownloadTemplateAt = now;
-              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+              final menuController =
+                  Get.isRegistered<menu_ctrl.MenuController>()
                   ? Get.find<menu_ctrl.MenuController>()
                   : Get.put(menu_ctrl.MenuController(), permanent: false);
               menuController.downloadItemTemplate(context);
@@ -853,7 +854,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              final menuController = Get.isRegistered<menu_ctrl.MenuController>()
+              final menuController =
+                  Get.isRegistered<menu_ctrl.MenuController>()
                   ? Get.find<menu_ctrl.MenuController>()
                   : Get.put(menu_ctrl.MenuController(), permanent: false);
               menuController.uploadItemTemplate(context);
@@ -1038,6 +1040,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           );
         } else {
+          debugPrint("restaurantMenuItemId: $restaurantMenuItemId");
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -1243,6 +1246,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   Widget _buildBulkImportActionsRow({
     required ProfileController profileController,
   }) {
+    const downloadColor = Color(0xFFE78A63);
+    const downloadBg = Color(0xFFFFF4EE);
+    const uploadColor = Color(0xFF6F7FDD);
+    const uploadBorder = Color(0xFFA7B4FF);
+    const uploadBg = Color(0xFFEFF2FF);
+
     return Row(
       children: [
         Expanded(
@@ -1252,50 +1261,50 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             icon: const Icon(
               Icons.download_outlined,
               size: 18,
-              color: Color(0xFF4F46E1),
+              color: downloadColor,
             ),
             label: Text(
               "Download Template",
               style: GoogleFonts.rubik(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF4F46E1),
+                color: downloadColor,
               ),
             ),
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF4F46E1), width: 1),
-              backgroundColor: Colors.white,
+              side: const BorderSide(color: downloadColor, width: 1),
+              backgroundColor: downloadBg,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: _pickBulkImportXlsxFile,
+            onPressed: () => profileController.uploadImages(context),
             icon: const Icon(
               Icons.file_upload_outlined,
               size: 18,
-              color: Color(0xFF4F46E1),
+              color: uploadColor,
             ),
             label: Text(
               "Upload Images",
               style: GoogleFonts.rubik(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF4F46E1),
+                color: uploadColor,
               ),
             ),
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF4F46E1), width: 1),
-              backgroundColor: Colors.white,
+              side: const BorderSide(color: uploadBorder, width: 1),
+              backgroundColor: uploadBg,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
             ),
           ),
         ),

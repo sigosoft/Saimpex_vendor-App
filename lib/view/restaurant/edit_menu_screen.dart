@@ -183,6 +183,14 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+                EditMenuFieldLabel('Maximum allowed quantity'),
+                const SizedBox(height: 6),
+                EditMenuTextField(
+                  controller: c.quantityAllowedCtrl,
+                  hint: '10',
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(

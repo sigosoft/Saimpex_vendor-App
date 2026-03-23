@@ -842,30 +842,6 @@ class VendorRichCard extends StatelessWidget {
                               )
                             : const _VendorDefaultImage(),
                       ),
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 18,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            "New Arrival",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(width: 12),

@@ -11,7 +11,6 @@ import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/edit_menu_screen.dart';
 
 class ViewMenuDetails extends StatefulWidget {
-  /// `restaurant_menu_id` (from `RestaurantMenuDetailsModel`)
   final String restaurantMenuId;
 
   const ViewMenuDetails({super.key, required this.restaurantMenuId});

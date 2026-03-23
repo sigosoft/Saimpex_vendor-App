@@ -157,11 +157,47 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       fullWidth: true,
                     ),
               SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).attributeLabel),
+              SizedBox(height: screenHeight * 0.007),
+              controller.isMenuAttributesLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFFFF5216),
+                          ),
+                        ),
+                      ),
+                    )
+                  : AddMenuDropdownField(
+                      value: controller.selectedAttributeDisplayName,
+                      hint: S.of(context).selectAttributeHint,
+                      items: controller.attributeDisplayNames,
+                      onChanged: (v) {
+                        controller.setSelectedAttributeByName(v);
+                        controller.update();
+                      },
+                      height: screenHeight * 0.055,
+                      fullWidth: true,
+                    ),
+              SizedBox(height: screenHeight * 0.02),
               AddMenuFieldLabel(S.of(context).preparationTimeMinutesLabel),
               SizedBox(height: screenHeight * 0.007),
               AddMenuTextField(
                 controller: controller.prepTimeCtrl,
                 hint: S.of(context).enterMinutesHint,
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              AddMenuFieldLabel(S.of(context).maxAllowedQuantityLabel),
+              SizedBox(height: screenHeight * 0.007),
+              AddMenuTextField(
+                controller: controller.quantityAllowedCtrl,
+                hint: S.of(context).enterMaxQuantityHint,
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: screenHeight * 0.02),
