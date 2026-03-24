@@ -59,30 +59,33 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         }
         query = {"item_id": menuItemIdInt};
 
-      final idInt = int.tryParse(widget.itemId);
-      if (idInt == null) {
-        throw Exception(S.of(context).invalidItemidWidgetitemid);
+        final idInt = int.tryParse(widget.itemId);
+        if (idInt == null) {
+          throw Exception(S.of(context).invalidItemidWidgetitemid);
+        }
+
+        final endpoint = vendorType == "1"
+            ? ApiEndPoints.getRestaurantMenuItemDetails
+            : ApiEndPoints.getGroceryMenuItemDetails;
+        debugPrint(
+          '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
+        );
+        final response = await DioClient().get(endpoint, query: query);
+        debugPrint(
+          '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
+        );
+        final raw = response.data;
+        final map = raw is Map<String, dynamic>
+            ? raw
+            : (raw is Map
+                  ? Map<String, dynamic>.from(raw)
+                  : <String, dynamic>{});
+
+        _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
+        debugPrint(
+          '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
+        );
       }
-
-      final endpoint = vendorType == "1"
-          ? ApiEndPoints.getRestaurantMenuItemDetails
-          : ApiEndPoints.getGroceryMenuItemDetails;
-      debugPrint(
-        '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
-      );
-      final response = await DioClient().get(endpoint, query: query);
-      debugPrint(
-        '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
-      );
-      final raw = response.data;
-      final map = raw is Map<String, dynamic>
-          ? raw
-          : (raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{});
-
-      _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
-      debugPrint(
-        '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
-      );
     } catch (e, stackTrace) {
       _error = e.toString();
       debugPrint("Error: $e");
@@ -239,8 +242,6 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   value: menuName.isNotEmpty
                       ? menuName
                       : "#${details.id ?? widget.itemId}",
-                  label: S.of(context).menuName,
-                  value: menuName.isNotEmpty ? menuName : "#${details.id ?? widget.itemId}",
                 ),
                 const SizedBox(height: 10),
                 _kv(
@@ -280,7 +281,12 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         value: createdText,
                       ),
                     ),
-                    Expanded(child: _kvSimple(label: S.of(context).createdDate, value: createdText)),
+                    Expanded(
+                      child: _kvSimple(
+                        label: S.of(context).createdDate,
+                        value: createdText,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _kvSimple(
@@ -288,7 +294,12 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         value: updatedText,
                       ),
                     ),
-                    Expanded(child: _kvSimple(label: S.of(context).updatedDate, value: updatedText)),
+                    Expanded(
+                      child: _kvSimple(
+                        label: S.of(context).updatedDate,
+                        value: updatedText,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 14),
@@ -302,10 +313,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  description.isNotEmpty ? description : S.of(context).noDescriptionAvailable,
                   description.isNotEmpty
                       ? description
-                      : "No description available",
+                      : S.of(context).noDescriptionAvailable,
                   style: GoogleFonts.rubik(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -689,7 +699,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ],
           ),
           const SizedBox(height: 14),
-          _lineStat(label: S.of(context).totalReviews, value: totalRatings.toString()),
+          _lineStat(
+            label: S.of(context).totalReviews,
+            value: totalRatings.toString(),
+          ),
           const SizedBox(height: 10),
           _lineStat(label: S.of(context).lastPurchase, value: lastPurchaseAgo),
         ],
@@ -820,7 +833,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 child: Row(
                   children: [
                     Text(
-                      "${itemsCount}"+" "+S.of(context).itemsTotal,
+                      "${itemsCount}" + " " + S.of(context).itemsTotal,
                       style: GoogleFonts.rubik(
                         fontSize: 11,
                         fontWeight: FontWeight.w400,
