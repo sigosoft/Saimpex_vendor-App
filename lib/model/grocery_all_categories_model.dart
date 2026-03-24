@@ -11,7 +11,7 @@ class GroceryAllCategoriesModel {
 
   factory GroceryAllCategoriesModel.fromJson(Map<String, dynamic> json) {
     return GroceryAllCategoriesModel(
-      status: json['status'] == "true" ? true : false,
+      status: json['status'] == true || json['status'] == "true",
       data: json['data'] != null
           ? List<CategoryData>.from(
               json['data'].map((x) => CategoryData.fromJson(x)))

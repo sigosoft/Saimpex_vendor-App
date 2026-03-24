@@ -30,7 +30,21 @@ class DioClient {
       onRequest: (options, handler) {
         log("➡️ REQUEST: ${options.method} ${options.uri}");
         log("Headers: ${options.headers}");
-        log("Data: ${options.data}");
+        final requestData = options.data;
+        if (requestData is FormData) {
+          final fields = requestData.fields
+              .map((e) => "${e.key}: ${e.value}")
+              .join(", ");
+          final files = requestData.files
+              .map((e) => "${e.key}: ${e.value.filename ?? 'file'}")
+              .join(", ");
+          log("Data(FormData) fields: {$fields}");
+          if (files.isNotEmpty) {
+            log("Data(FormData) files: {$files}");
+          }
+        } else {
+          log("Data: $requestData");
+        }
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -60,7 +74,15 @@ class DioClient {
     Map<String, dynamic>? query,
   }) async {
     try {
-      return await dio.post(path, data: body, queryParameters: query);
+      final isMultipart = body is FormData;
+      return await dio.post(
+        path,
+        data: body,
+        queryParameters: query,
+        options: isMultipart
+            ? Options(contentType: Headers.multipartFormDataContentType)
+            : null,
+      );
     } on DioException catch (e) {
       throw _handleError(e);
     }

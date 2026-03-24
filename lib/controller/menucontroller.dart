@@ -15,6 +15,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/attributes_model.dart';
 import 'package:saimpex_vendor/model/grocery_all_categories_model.dart';
+import 'package:saimpex_vendor/model/grocery_menu_details_model.dart';
 import 'package:saimpex_vendor/model/grocery_tag_model.dart';
 import 'package:saimpex_vendor/model/restaurant_category_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart';
@@ -31,12 +32,15 @@ class MenuController extends GetxController {
   final TextEditingController prepTimeCtrl = TextEditingController();
   final TextEditingController priceCtrl = TextEditingController();
   final TextEditingController discountPriceCtrl = TextEditingController();
+
   /// Max quantity allowed for the menu (API: `quantity_allowed`).
-  final TextEditingController quantityAllowedCtrl =
-      TextEditingController(text: '10');
+  final TextEditingController quantityAllowedCtrl = TextEditingController(
+    text: '10',
+  );
   String? selectedCategory;
   String selectedIsVeg = 'No';
   String? selectedTag;
+
   /// Attribute id for menu attributes row (restaurant vs grocery key differs in API).
   String? selectedAttributeId;
   static const List<String> vegOptions = ['Yes', 'No'];
@@ -234,7 +238,6 @@ class MenuController extends GetxController {
     return result?.path ?? sourcePath;
   }
 
- 
   Future<String?> _downloadImageToTempFile(String imageUrl) async {
     if (imageUrl.isEmpty) return null;
     try {
@@ -454,7 +457,8 @@ class MenuController extends GetxController {
         DioClient().updateToken("");
       }
       await getSavedObject("vendorType");
-      final attributeId = (selectedAttributeId != null &&
+      final attributeId =
+          (selectedAttributeId != null &&
               selectedAttributeId!.trim().isNotEmpty)
           ? selectedAttributeId!.trim()
           : '2';
@@ -463,13 +467,16 @@ class MenuController extends GetxController {
         "description_en": descEnCtrl.text,
         "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
         "quantity_allowed": quantityAllowedCtrl.text,
-        "attributes[0][price]": priceCtrl.text,
-        "attributes[0][discount_price]": discountPriceCtrl.text,
-        "attributes[0][preparation_time]": prepTimeCtrl.text,
       };
       if (vendorType == "1") {
+        formDataMap["attributes[0][price]"] = priceCtrl.text;
+        formDataMap["attributes[0][discount_price]"] = discountPriceCtrl.text;
+        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text;
         formDataMap["attributes[0][restaurant_attribute_id]"] = attributeId;
       } else {
+        formDataMap["attributes[0][attribute_value]"] = prepTimeCtrl.text;
+        formDataMap["attributes[0][retail_price]"] = priceCtrl.text;
+        formDataMap["attributes[0][selling_price]"] = discountPriceCtrl.text;
         formDataMap["attributes[0][grocery_attribute_id]"] = attributeId;
       }
       if (uploadedImages.isNotEmpty) {
@@ -573,40 +580,90 @@ class MenuController extends GetxController {
   }
 
   Future<void> getAllCategories({int? categoryId}) async {
+    debugPrint(
+      "[MenuController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategory=$selectedCategory selectedEditCategoryId=$selectedEditCategoryId",
+    );
+    // Clear stale category state before loading for current vendor type.
+    restaurantCategories = [];
+    selectedCategory = null;
+    selectedEditCategoryId = null;
+    selectedEditCategoryName = '';
+    isRestaurantCategoriesLoading = true;
+    update();
     try {
-      isRestaurantCategoriesLoading = true;
-      update();
-
       var token = await getSavedObject("token");
       var vendorType = await getSavedObject("vendorType");
+      final endpoint = vendorType == "1"
+          ? ApiEndPoints.getRestaurantCategories
+          : ApiEndPoints.getGroceryCategories;
+      debugPrint(
+        "[MenuController] getAllCategories:request vendorType=$vendorType endpoint=$endpoint hasToken=${(token?.toString().isNotEmpty ?? false)}",
+      );
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.getRestaurantCategories
-            : ApiEndPoints.getGroceryCategories,
+      final response = await DioClient().get(endpoint);
+      final rawData = response.data is Map<String, dynamic>
+          ? response.data['data']
+          : null;
+      final rawDataCount = rawData is List ? rawData.length : -1;
+      debugPrint(
+        "[MenuController] getAllCategories:response status=${response.data is Map<String, dynamic> ? response.data['status'] : null} message=${response.data is Map<String, dynamic> ? response.data['message'] : null} rawDataCount=$rawDataCount",
       );
       if (vendorType == "1") {
-        final restaurantCategoriesModel =
-            RestaurantAllCategoriesModel.fromJson(response.data);
+        final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
+          response.data,
+        );
         if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
           restaurantCategories = restaurantCategoriesModel.data ?? [];
+          debugPrint(
+            "[MenuController] getAllCategories:restaurant parseSuccess=true",
+          );
+        } else {
+          debugPrint(
+            "[MenuController] getAllCategories:restaurant parseSuccess=false modelStatus=${restaurantCategoriesModel.status}",
+          );
         }
+        debugPrint(
+          "[MenuController] getAllCategories:restaurant mappedCount=${restaurantCategories.length}",
+        );
       } else {
-        final groceryCategoriesModel =
-            GroceryAllCategoriesModel.fromJson(response.data);
+        final groceryCategoriesModel = GroceryAllCategoriesModel.fromJson(
+          response.data,
+        );
         if (groceryCategoriesModel.status == true) {
-          // Grocery categories use `CategoryData` — menu UI uses `restaurantCategories`
-          // for restaurant vendors only; extend if grocery menu flows need a list here.
+          restaurantCategories = (groceryCategoriesModel.data ?? [])
+              .map(
+                (c) => RestaurantCategoryData.fromJson({
+                  "id": c.id ?? 0,
+                  "name_en": c.nameEn ?? "",
+                  "name_ar": c.nameAr ?? "",
+                  "name_fr": c.nameFr ?? "",
+                  "image": c.image ?? "",
+                }),
+              )
+              .toList();
+          debugPrint(
+            "[MenuController] getAllCategories:grocery parseSuccess=true sourceCount=${groceryCategoriesModel.data?.length ?? 0}",
+          );
+        } else {
+          debugPrint(
+            "[MenuController] getAllCategories:grocery parseSuccess=false modelStatus=${groceryCategoriesModel.status}",
+          );
         }
+        debugPrint(
+          "[MenuController] getAllCategories:grocery mappedCount=${restaurantCategories.length}",
+        );
       }
     } catch (error) {
-      debugPrint("getAllCategories Error: $error");
+      debugPrint("[MenuController] getAllCategories:error $error");
     } finally {
       isRestaurantCategoriesLoading = false;
+      debugPrint(
+        "[MenuController] getAllCategories:done finalCount=${restaurantCategories.length} loading=$isRestaurantCategoriesLoading",
+      );
       update();
     }
   }
@@ -713,9 +770,8 @@ class MenuController extends GetxController {
         DioClient().updateToken("");
       }
       final formDataMap = <String, dynamic>{
-        vendorType == "1"
-            ? "restaurant_menu_id"
-            : "grocery_menu_id": restaurantMenuId,
+        vendorType == "1" ? "restaurant_menu_id" : "grocery_menu_id":
+            restaurantMenuId,
       };
 
       final response = await DioClient().post(
@@ -784,16 +840,90 @@ class MenuController extends GetxController {
             ? {'restaurant_menu_id': restaurantMenuId}
             : {'grocery_menu_id': restaurantMenuId},
       );
-      final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
-        response.data is Map<String, dynamic>
-            ? response.data
-            : Map<String, dynamic>.from(response.data),
-      );
-      if (restaurantMenuDetailsModel.status) {
-        restaurantMenuDetails = restaurantMenuDetailsModel.data;
-        final menu = restaurantMenuDetails?.restaurantMenu;
-        if (menu != null) {
-          _populateEditFormFromDetails(menu);
+      if (vendorType == "1") {
+        final restaurantMenuDetailsModel = RestaurantMenuDetailsModel.fromJson(
+          response.data is Map<String, dynamic>
+              ? response.data
+              : Map<String, dynamic>.from(response.data),
+        );
+        if (restaurantMenuDetailsModel.status) {
+          restaurantMenuDetails = restaurantMenuDetailsModel.data;
+          final menu = restaurantMenuDetails?.restaurantMenu;
+          if (menu != null) {
+            _populateEditFormFromDetails(menu);
+          }
+        }
+      } else {
+        final groceryMenuDetailsModel = GroceryMenuDetailsModel.fromJson(
+          response.data is Map<String, dynamic>
+              ? response.data
+              : Map<String, dynamic>.from(response.data),
+        );
+
+        if (groceryMenuDetailsModel.status == true &&
+            groceryMenuDetailsModel.data != null &&
+            groceryMenuDetailsModel.data!.groceryMenu != null) {
+          final groceryMenu = groceryMenuDetailsModel.data!.groceryMenu!;
+
+          final categoriesJson = (groceryMenu.categories ?? [])
+              .map(
+                (c) => {
+                  "id": c.id ?? 0,
+                  "name_en": c.nameEn ?? "",
+                  "name_ar": c.nameAr ?? "",
+                  "name_fr": c.nameFr ?? "",
+                  "image": c.image ?? "",
+                  "status": c.status ?? 0,
+                  "deleted_at": c.deletedAt?.toString(),
+                  "created_at": c.createdAt ?? "",
+                  "updated_at": c.updatedAt ?? "",
+                },
+              )
+              .toList();
+          final converted = {
+            "status": true,
+            "message": groceryMenuDetailsModel.message ?? "",
+            "data": {
+              "restaurant_menu": {
+                "id": groceryMenu.id ?? 0,
+                "category_id": groceryMenu.categoryId ?? "",
+                "restaurant_id": 0,
+                "name_en": groceryMenu.nameEn ?? "",
+                "name_ar": groceryMenu.nameAr ?? "",
+                "name_fr": groceryMenu.nameFr ?? "",
+                "description_en": groceryMenu.descriptionEn ?? "",
+                "description_ar": groceryMenu.descriptionAr ?? "",
+                "description_fr": groceryMenu.descriptionFr ?? "",
+                "image": groceryMenu.image ?? "",
+                "is_veg": 0,
+                "approval_status": groceryMenu.approvalStatus ?? 0,
+                "deleted_at": groceryMenu.deletedAt?.toString(),
+                "created_at": groceryMenu.createdAt ?? "",
+                "updated_at": groceryMenu.updatedAt ?? "",
+                "category_name_en": groceryMenu.categoryNameEn ?? "",
+                "category_name_ar": groceryMenu.categoryNameAr ?? "",
+                "category_name_fr": groceryMenu.categoryNameFr ?? "",
+                "categories": categoriesJson,
+              },
+              "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
+              "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,
+              "average_rating":
+                  groceryMenuDetailsModel.data!.averageRating ?? 0,
+              "total_rating_count":
+                  groceryMenuDetailsModel.data!.totalRatingCount ?? 0,
+              "order_details": groceryMenuDetailsModel.data!.orderDetails ?? [],
+            },
+          };
+
+          final restaurantMenuDetailsModel =
+              RestaurantMenuDetailsModel.fromJson(converted);
+          if (restaurantMenuDetailsModel.status) {
+            restaurantMenuDetails = restaurantMenuDetailsModel.data;
+            final menu = restaurantMenuDetails?.restaurantMenu;
+            if (menu != null) {
+              _populateEditFormFromDetails(menu);
+            }
+          }
         }
       }
     } catch (error) {
@@ -1098,9 +1228,7 @@ class MenuController extends GetxController {
       );
 
       // Backend expects this exact multipart key.
-      final formData = dio.FormData.fromMap({
-        "excel_file": multipartFile,
-      });
+      final formData = dio.FormData.fromMap({"excel_file": multipartFile});
       final response = await DioClient().dio.post(
         ApiEndPoints.uploadMenuItems,
         data: formData,
@@ -1116,15 +1244,40 @@ class MenuController extends GetxController {
 
       final map = Map<String, dynamic>.from(raw);
       final ok = map['status']?.toString() == 'true' || map['status'] == true;
+      String resolveMessage(dynamic message, String fallback) {
+        if (message == null) return fallback;
+        if (message is String && message.trim().isNotEmpty) return message;
+        if (message is Map) {
+          final m = Map<String, dynamic>.from(message);
+          final lang = Get.locale?.languageCode ?? 'en';
+          final key = lang == 'ar'
+              ? 'message_ar'
+              : lang == 'fr'
+              ? 'message_fr'
+              : 'message_en';
+          final localized = m[key];
+          if (localized is List && localized.isNotEmpty) {
+            return localized.first.toString();
+          }
+          final en = m['message_en'];
+          if (en is List && en.isNotEmpty) return en.first.toString();
+          for (final v in m.values) {
+            if (v is List && v.isNotEmpty) return v.first.toString();
+            if (v is String && v.trim().isNotEmpty) return v;
+          }
+        }
+        return fallback;
+      }
       if (ok) {
         if (Get.isRegistered<ProfileController>()) {
           await Get.find<ProfileController>().fetchRestaurantMenuItems();
           await Get.find<ProfileController>().fetchRestaurantMenus();
         }
-        final msg = map['message']?.toString() ?? 'Upload successful';
+        final msg = resolveMessage(map['message'], 'Upload successful');
         showToast(context, msg);
+        debugPrint("uploadItemTemplate: $msg");
       } else {
-        showToast(context, map['message']?.toString() ?? 'Upload failed');
+        showToast(context, resolveMessage(map['message'], 'Upload failed'));
       }
     } catch (error) {
       debugPrint("uploadItemTemplate Error: $error");

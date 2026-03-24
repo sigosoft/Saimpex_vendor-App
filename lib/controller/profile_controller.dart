@@ -239,6 +239,19 @@ class ProfileController extends GetxController {
     }
   }
 
+  /// Clears stale grocery menus before entering restaurant-only menu flow.
+  void clearGroceryMenusForRestaurantFlow() {
+    debugPrint(
+      "[ProfileController] clearing grocery menus for restaurant flow: before=${groceryMenus.length}",
+    );
+    groceryMenus = [];
+    isGroceryMenusLoading = false;
+    debugPrint(
+      "[ProfileController] clearing grocery menus for restaurant flow: after=${groceryMenus.length}",
+    );
+    update();
+  }
+
   void removeRestaurantMenuById(String restaurantMenuId) {
     restaurantMenus.removeWhere((m) => m.id?.toString() == restaurantMenuId);
     update();
@@ -270,11 +283,14 @@ class ProfileController extends GetxController {
     update();
     try {
       var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       }
       final response = await DioClient().get(
-        ApiEndPoints.restaurantMenus,
+        vendorType == "1"
+            ? ApiEndPoints.restaurantMenus
+            : ApiEndPoints.groceryMenus,
         query: {
           "limit": _limit,
           "page": _page,
@@ -284,21 +300,43 @@ class ProfileController extends GetxController {
         },
       );
 
-      final model = RestaurantMenusModel.fromJson(response.data);
-      if (model.status == true) {
-        final fetchedMenus = model.data ?? [];
-        if (isLoadMore) {
-          if (fetchedMenus.isNotEmpty) {
-            restaurantMenus.addAll(fetchedMenus);
+      if (vendorType == "1") {
+        final model = RestaurantMenusModel.fromJson(response.data);
+        if (model.status == true) {
+          final fetchedMenus = model.data ?? [];
+          if (isLoadMore) {
+            if (fetchedMenus.isNotEmpty) {
+              restaurantMenus.addAll(fetchedMenus);
+            } else {
+              _hasNextPage = false;
+            }
           } else {
+            restaurantMenus = fetchedMenus;
+            groceryMenus = [];
+          }
+
+          if (fetchedMenus.length < _limit) {
             _hasNextPage = false;
           }
-        } else {
-          restaurantMenus = fetchedMenus;
         }
+      } else {
+        final model = GroceryMenusModel.fromJson(response.data);
+        if (model.status == true) {
+          final fetchedMenus = model.data?.groceryMenus?.data ?? [];
+          if (isLoadMore) {
+            if (fetchedMenus.isNotEmpty) {
+              groceryMenus.addAll(fetchedMenus);
+            } else {
+              _hasNextPage = false;
+            }
+          } else {
+            groceryMenus = fetchedMenus;
+            restaurantMenus = [];
+          }
 
-        if (fetchedMenus.length < _limit) {
-          _hasNextPage = false;
+          if (fetchedMenus.length < _limit) {
+            _hasNextPage = false;
+          }
         }
       }
     } catch (error) {
@@ -335,6 +373,7 @@ class ProfileController extends GetxController {
     int limit = 10,
     int page = 1,
     int status = 1,
+    int? categoryId,
   }) async {
     try {
       isGroceryMenuItemsLoading = true;
@@ -350,12 +389,24 @@ class ProfileController extends GetxController {
         vendorType == "1"
             ? ApiEndPoints.restaurantMenuItems
             : ApiEndPoints.groceryMenuItems,
-        query: {"limit": limit, "page": page, "status": status},
+        query: {
+          "limit": limit,
+          "page": page,
+          "status": status,
+          if (categoryId != null) "category_id": categoryId,
+        },
       );
 
-      final model = GroceryMenuItemsModel.fromJson(response.data);
-      if (model.status == true) {
-        groceryMenuItems = model.data?.groceryMenuItems?.data ?? [];
+      if (vendorType == "1") {
+        final model = RestaurantMenuItemsModel.fromJson(response.data);
+        if (model.status == true) {
+          restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
+        }
+      } else {
+        final model = GroceryMenuItemsModel.fromJson(response.data);
+        if (model.status == true) {
+          groceryMenuItems = model.data?.groceryMenuItems?.data ?? [];
+        }
       }
     } catch (error) {
       debugPrint("fetchGroceryMenuItems Error: $error");
@@ -421,16 +472,37 @@ class ProfileController extends GetxController {
       if (token != null) {
         DioClient().updateToken(token);
       }
-
-      dio.FormData formData = dio.FormData.fromMap({
-        "menu_id": menuId,
-        "attribute_value": attributeValue,
-        "grocery_attribute_id": groceryAttributeId,
-        "price": price,
-        "discount_price": discountPrice,
-        "quantity_allowed": quantityAllowed,
-        "serial_number": serialNumber,
-      });
+      final dio.FormData formData = vendorType == "1"
+          ? dio.FormData.fromMap({
+              "menu_id": menuId,
+              "attribute_value": attributeValue,
+              "grocery_attribute_id": groceryAttributeId,
+              "price": price,
+              "discount_price": discountPrice,
+              "quantity_allowed": quantityAllowed,
+              "serial_number": serialNumber,
+            })
+          : dio.FormData.fromMap({
+              "menu_id": menuId,
+              "serial_number": serialNumber,
+              "quantity_allowed": quantityAllowed,
+              "attributes[0][grocery_attribute_id]": groceryAttributeId,
+              "attributes[0][attribute_value]": attributeValue,
+              "attributes[0][retail_price]": price,
+              "attributes[0][selling_price]": discountPrice,
+            });
+      final formattedFields = formData.fields
+          .map((e) => "${e.key}: ${e.value}")
+          .join("\n");
+      final formattedFiles = formData.files
+          .map((e) => "${e.key}: ${e.value.filename ?? 'file'}")
+          .join("\n");
+      debugPrint(
+        "[ProfileController] addGroceryMenuItem formData\n"
+        "vendorType=$vendorType\n"
+        "fields:\n$formattedFields"
+        "${formattedFiles.isNotEmpty ? "\nfiles:\n$formattedFiles" : ""}",
+      );
 
       final response = await DioClient().post(
         vendorType == "1"
@@ -827,20 +899,34 @@ class ProfileController extends GetxController {
   }
 
   Future<void> getAllCategories({int? categoryId}) async {
+    debugPrint(
+      "[ProfileController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategoryId=$selectedRestaurantCategoryId",
+    );
+    isRestaurantCategoriesLoading = true;
+    restaurantCategories = [];
+    selectedRestaurantCategoryId = null;
+    update();
     try {
-      isRestaurantCategoriesLoading = true;
-      update();
       var token = await getSavedObject("token");
       var vendorType = await getSavedObject("vendorType");
+      final endpoint = vendorType == "1"
+          ? ApiEndPoints.getRestaurantCategories
+          : ApiEndPoints.getGroceryCategories;
+      debugPrint(
+        "[ProfileController] getAllCategories:request vendorType=$vendorType endpoint=$endpoint hasToken=${(token?.toString().isNotEmpty ?? false)}",
+      );
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.getRestaurantCategories
-            : ApiEndPoints.getGroceryCategories,
+      final response = await DioClient().get(endpoint);
+      final rawData = response.data is Map<String, dynamic>
+          ? response.data['data']
+          : null;
+      final rawDataCount = rawData is List ? rawData.length : -1;
+      debugPrint(
+        "[ProfileController] getAllCategories:response status=${response.data is Map<String, dynamic> ? response.data['status'] : null} message=${response.data is Map<String, dynamic> ? response.data['message'] : null} rawDataCount=$rawDataCount",
       );
       if (vendorType == "1") {
         final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
@@ -848,15 +934,53 @@ class ProfileController extends GetxController {
         );
         if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
           restaurantCategories = restaurantCategoriesModel.data ?? [];
+          debugPrint(
+            "[ProfileController] getAllCategories:restaurant parseSuccess=true",
+          );
+        } else {
+          debugPrint(
+            "[ProfileController] getAllCategories:restaurant parseSuccess=false modelStatus=${restaurantCategoriesModel.status}",
+          );
         }
+        debugPrint(
+          "[ProfileController] getAllCategories:restaurant mappedCount=${restaurantCategories.length}",
+        );
       } else {
         final groceryCategoriesModel = GroceryAllCategoriesModel.fromJson(
           response.data,
         );
-        if (groceryCategoriesModel.status == true) {}
+        if (groceryCategoriesModel.status == true) {
+          restaurantCategories = (groceryCategoriesModel.data ?? [])
+              .map(
+                (c) => RestaurantCategoryData.fromJson({
+                  "id": c.id ?? 0,
+                  "name_en": c.nameEn ?? "",
+                  "name_ar": c.nameAr ?? "",
+                  "name_fr": c.nameFr ?? "",
+                  "image": c.image ?? "",
+                }),
+              )
+              .toList();
+          debugPrint(
+            "[ProfileController] getAllCategories:grocery parseSuccess=true sourceCount=${groceryCategoriesModel.data?.length ?? 0}",
+          );
+        } else {
+          debugPrint(
+            "[ProfileController] getAllCategories:grocery parseSuccess=false modelStatus=${groceryCategoriesModel.status}",
+          );
+        }
+        debugPrint(
+          "[ProfileController] getAllCategories:grocery mappedCount=${restaurantCategories.length}",
+        );
       }
     } catch (error) {
-      debugPrint("getAllCategories Error: $error");
+      debugPrint("[ProfileController] getAllCategories:error $error");
+    } finally {
+      isRestaurantCategoriesLoading = false;
+      debugPrint(
+        "[ProfileController] getAllCategories:done finalCount=${restaurantCategories.length} loading=$isRestaurantCategoriesLoading",
+      );
+      update();
     }
   }
 
@@ -889,8 +1013,9 @@ class ProfileController extends GetxController {
           restaurantMenuDetails = restaurantMenuDetailsModel.data;
         }
       } else {
-        final groceryMenuDetailsModel =
-            GroceryMenuDetailsModel.fromJson(response.data);
+        final groceryMenuDetailsModel = GroceryMenuDetailsModel.fromJson(
+          response.data,
+        );
 
         if (groceryMenuDetailsModel.status == true &&
             groceryMenuDetailsModel.data != null &&
@@ -912,9 +1037,6 @@ class ProfileController extends GetxController {
                 },
               )
               .toList();
-
-          // Convert grocery payload into the existing restaurant-menu details
-          // model so `ViewMenuDetails` can render for grocery vendors.
           final converted = {
             "status": true,
             "message": groceryMenuDetailsModel.message ?? "",
@@ -930,7 +1052,6 @@ class ProfileController extends GetxController {
                 "description_ar": groceryMenu.descriptionAr ?? "",
                 "description_fr": groceryMenu.descriptionFr ?? "",
                 "image": groceryMenu.image ?? "",
-                // Grocery model doesn't expose `is_veg` here; default to 0 (No).
                 "is_veg": 0,
                 "approval_status": groceryMenu.approvalStatus ?? 0,
                 "deleted_at": groceryMenu.deletedAt?.toString(),
@@ -943,11 +1064,12 @@ class ProfileController extends GetxController {
               },
               "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
               "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,
-              "average_rating": groceryMenuDetailsModel.data!.averageRating ?? 0,
+              "average_rating":
+                  groceryMenuDetailsModel.data!.averageRating ?? 0,
               "total_rating_count":
                   groceryMenuDetailsModel.data!.totalRatingCount ?? 0,
               "order_details": groceryMenuDetailsModel.data!.orderDetails ?? [],
-            }
+            },
           };
 
           final restaurantMenuDetailsModel =

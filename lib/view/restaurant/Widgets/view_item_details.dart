@@ -40,52 +40,46 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       _isLoading = true;
       _error = null;
     });
-
+    debugPrint(
+      "ViewItemDetails _fetch widget.itemId=${widget.itemId} widget.menuItemId=${widget.menuItemId}",
+    );
     try {
       final token = await getSavedObject("token");
       final vendorType = await getSavedObject("vendorType");
       DioClient().updateToken(token?.toString() ?? "");
       final itemIdInt = int.tryParse(widget.itemId);
-      final menuItemIdInt = int.tryParse(widget.menuItemId ?? widget.itemId);
+      final menuItemIdInt = int.tryParse(widget.menuItemId ?? "");
       if (itemIdInt == null && menuItemIdInt == null) {
         throw Exception("Invalid item/menu item ids");
       }
-      Map<String, dynamic> query;
-      if (vendorType == "1") {
-        query = {"item_id": itemIdInt!};
-      } else {
-        if (menuItemIdInt == null) {
-          throw Exception("Missing menuItemId for grocery vendor");
-        }
-        query = {"item_id": menuItemIdInt};
-
-        final idInt = int.tryParse(widget.itemId);
-        if (idInt == null) {
-          throw Exception(S.of(context).invalidItemidWidgetitemid);
-        }
-
-        final endpoint = vendorType == "1"
-            ? ApiEndPoints.getRestaurantMenuItemDetails
-            : ApiEndPoints.getGroceryMenuItemDetails;
-        debugPrint(
-          '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
-        );
-        final response = await DioClient().get(endpoint, query: query);
-        debugPrint(
-          '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
-        );
-        final raw = response.data;
-        final map = raw is Map<String, dynamic>
-            ? raw
-            : (raw is Map
-                  ? Map<String, dynamic>.from(raw)
-                  : <String, dynamic>{});
-
-        _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
-        debugPrint(
-          '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
+      final selectedItemId = vendorType == "1" ? itemIdInt : menuItemIdInt;
+      if (selectedItemId == null) {
+        throw Exception(
+          vendorType == "1"
+              ? S.of(context).invalidItemidWidgetitemid
+              : "Missing menuItemId for grocery vendor",
         );
       }
+      final query = {"item_id": selectedItemId.toString()};
+      final endpoint = vendorType == "1"
+          ? ApiEndPoints.getRestaurantMenuItemDetails
+          : ApiEndPoints.getGroceryMenuItemDetails;
+      debugPrint(
+        '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
+      );
+      final response = await DioClient().get(endpoint, query: query);
+      debugPrint(
+        '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
+      );
+      final raw = response.data;
+      final map = raw is Map<String, dynamic>
+          ? raw
+          : (raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{});
+
+      _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
+      debugPrint(
+        '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
+      );
     } catch (e, stackTrace) {
       _error = e.toString();
       debugPrint("Error: $e");

@@ -564,7 +564,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         if (title == "Menu") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
-          profileController.fetchGroceryMenus();
+          profileController.clearGroceryMenusForRestaurantFlow();
           profileController.fetchRestaurantMenus(keyword: _searchKeyword);
         } else if (title == "Items") {
           final profileController = Get.find<ProfileController>();
@@ -850,7 +850,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 14),
         Expanded(
           child: ElevatedButton(
             onPressed: () {
@@ -896,7 +896,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 14),
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () {
@@ -947,7 +947,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  /// Category for bulk import (required by API). Does not refetch menu list.
   Widget _buildBulkImportCategoryRow() {
     final profileController = Get.find<ProfileController>();
     return VendorCategoryAddRow(
@@ -1028,7 +1027,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => ViewItemDetails(
-                itemId: itemId,
+                itemId: restaurantMenuItemId,
                 menuItemId: restaurantMenuItemId,
               ),
             ),
@@ -1040,7 +1039,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditMenuScreen(itemId: itemId),
+              builder: (context) =>
+                  EditMenuScreen(itemId: restaurantMenuItemId),
             ),
           );
         } else {
