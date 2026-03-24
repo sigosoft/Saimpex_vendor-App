@@ -740,7 +740,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   asset: "lib/assets/images/Delivery.png",
                                 ),
                                 _timelineItem(
-                                  S.of(context).pickedUp,
+                                  S.of(context).pickedUp[0].toUpperCase() + S.of(context).pickedUp.substring(1).toLowerCase(),
                                   S.of(context).orderPickedUp,
                                   controller.orderData!.status! >= 7
                                       ? controller
@@ -755,7 +755,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       "lib/assets/images/Reached Restaurant.png",
                                 ),
                                 _timelineItem(
-                                  S.of(context).delivering,
+                                  S.of(context).delivering[0].toUpperCase() + S.of(context).delivering.substring(1).toLowerCase(),
                                   S.of(context).deliveryStarted,
                                   controller.orderData!.status! >= 8
                                       ? controller

@@ -81,7 +81,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
       height: MediaQuery.of(context).size.height * 0.48,
       child: ListView.builder(
         controller: controller.scrollController,
-        physics: NeverScrollableScrollPhysics(),
+        //physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         itemCount: list.length + (controller.isLoadMoreRunning ? 1 : 0),
         itemBuilder: (context, index) {
