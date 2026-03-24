@@ -39,8 +39,11 @@ class ProfileModel {
                 .map((i) => LeaveData.fromJson(i))
                 .toList()
           : null,
-      workingHours: json['data']?['working_hours'] != null
-          ? (json['data']['working_hours'] as List)
+      workingHours: (json['data']?['vendor']?['working_hours'] ??
+                  json['data']?['working_hours']) !=
+              null
+          ? ((json['data']?['vendor']?['working_hours'] ??
+                      json['data']?['working_hours']) as List)
                 .map((i) => WorkingHour.fromJson(i))
                 .toList()
           : null,
@@ -230,16 +233,24 @@ class LeaveData {
 class WorkingHour {
   final int? id;
   final String? day;
+  final int? dayOfWeek;
+  final int? isOpen24h;
+  final int? status;
   final String? openingTime;
   final String? closingTime;
   final bool? isClosed;
+  final List<WorkingTimeSlot>? timeSlots;
 
   WorkingHour({
     this.id,
     this.day,
+    this.dayOfWeek,
+    this.isOpen24h,
+    this.status,
     this.openingTime,
     this.closingTime,
     this.isClosed,
+    this.timeSlots,
   });
 
   factory WorkingHour.fromJson(Map<String, dynamic>? json) {
@@ -269,14 +280,56 @@ class WorkingHour {
     }
 
     return WorkingHour(
-      id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
+      id: _toNullableInt(json['id']),
       day:
           json['day']?.toString() ??
           json['day_name']?.toString() ??
           json['name']?.toString(),
+      dayOfWeek: _toNullableInt(json['day_of_week']),
+      isOpen24h: _toNullableInt(json['is_open_24h']),
+      status: _toNullableInt(json['status']),
       openingTime: openTime,
       closingTime: closeTime,
       isClosed: closed,
+      timeSlots: (json['time_slots'] as List?)
+          ?.map((e) => WorkingTimeSlot.fromJson(e))
+          .toList(),
     );
   }
+}
+
+class WorkingTimeSlot {
+  final int? id;
+  final int? vendorWorkingHourId;
+  final String? openTime;
+  final String? closeTime;
+
+  WorkingTimeSlot({
+    this.id,
+    this.vendorWorkingHourId,
+    this.openTime,
+    this.closeTime,
+  });
+
+  factory WorkingTimeSlot.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return WorkingTimeSlot();
+    return WorkingTimeSlot(
+      id: _toNullableInt(json['id']),
+      vendorWorkingHourId: _toNullableInt(json['vendor_working_hour_id']),
+      openTime: _toNullableString(json['open_time']),
+      closeTime: _toNullableString(json['close_time']),
+    );
+  }
+}
+
+int? _toNullableInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  return int.tryParse(value.toString());
+}
+
+String? _toNullableString(dynamic value) {
+  if (value == null) return null;
+  final text = value.toString().trim();
+  return text.isEmpty ? null : text;
 }

@@ -1067,5 +1067,7 @@
   "lastPurchase": "Last Purchase",
   "itemsTotal": "ITEMS TOTAL",
   "statistics": "Statistics",
-  "totalRatings": "Total Ratings"
+  "totalRatings": "Total Ratings",
+  "storeDetails": "STORE DETAILS",
+  "aboutTheStore": "ABOUT THE STORE"
 }

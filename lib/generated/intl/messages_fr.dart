@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Servir des saveurs authentiques avec des ingrédients frais. Spécialisé dans les cuisines continentale et orientale."),
         "aboutTheRestaurant":
             MessageLookupByLibrary.simpleMessage("À PROPOS DU RESTAURANT"),
+        "aboutTheStore":
+            MessageLookupByLibrary.simpleMessage("À PROPOS DU MAGASIN"),
         "aboutUs": MessageLookupByLibrary.simpleMessage("À propos de nous"),
         "acceptOrder":
             MessageLookupByLibrary.simpleMessage("Accepter la commande"),
@@ -829,6 +831,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Commencez à taper pour rechercher"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistiques"),
         "status": MessageLookupByLibrary.simpleMessage("Statut"),
+        "storeDetails":
+            MessageLookupByLibrary.simpleMessage("DÉTAILS DU MAGASIN"),
         "storeReports":
             MessageLookupByLibrary.simpleMessage("Rapports du magasin"),
         "submit": MessageLookupByLibrary.simpleMessage("Soumettre"),

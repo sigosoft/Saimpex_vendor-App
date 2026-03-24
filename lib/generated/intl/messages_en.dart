@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Serving authentic flavors with fresh ingredients. Specializing in continental and oriental cuisines."),
         "aboutTheRestaurant":
             MessageLookupByLibrary.simpleMessage("ABOUT THE RESTAURANT"),
+        "aboutTheStore":
+            MessageLookupByLibrary.simpleMessage("ABOUT THE STORE"),
         "aboutUs": MessageLookupByLibrary.simpleMessage("About Us"),
         "acceptOrder": MessageLookupByLibrary.simpleMessage("Accept Order"),
         "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
@@ -762,6 +764,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Start typing to search"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
         "status": MessageLookupByLibrary.simpleMessage("Status"),
+        "storeDetails": MessageLookupByLibrary.simpleMessage("STORE DETAILS"),
         "storeReports": MessageLookupByLibrary.simpleMessage("Store Reports"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "submitButton": MessageLookupByLibrary.simpleMessage("Submit"),

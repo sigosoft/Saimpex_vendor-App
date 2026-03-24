@@ -203,20 +203,20 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       const SizedBox(width: 10),
                       _buildMenuButton("Received Payouts"),
                       const SizedBox(width: 10),
-                      _buildMenuButton(S.of(context).storeReports),
+                      _buildMenuButton("Store Reports"),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 if (selectedMenu == "Account") ...[
-                  _sectionHeader(S.of(context).restaurantDetails),
+                  _sectionHeader(S.of(context).storeDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                    height: MediaQuery.of(context).size.height * 0.36,
                     child: Column(
                       children: [
-                        _detailRow("Name", profile?.name ?? "Restaurant 1"),
+                        _detailRow("Name", profile?.name ?? "Store 1"),
                         _detailRow("Owner", profile?.owner ?? "Salman"),
                         _detailRow("ID", profile?.id?.toString() ?? "1"),
                         _detailRow(
@@ -236,14 +236,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           "Address",
                           _formatLongText(
                             profile?.address ??
-                                "Restaurant Block 5, Mauritania",
+                                "Store Block 5, Mauritania",
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("BANK DETAILS"),
+                  _sectionHeader(S.of(context).bankDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
                     height: MediaQuery.of(context).size.height * 0.2,
@@ -262,10 +262,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("ABOUT THE RESTAURANT"),
+                  _sectionHeader(S.of(context).aboutTheStore),
                   const SizedBox(height: 12),
                   _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    height: MediaQuery.of(context).size.height * 0.09,
                     child: _detailRow(
                       "Category",
                       profile?.restaurantType == 1
@@ -276,10 +276,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("REGISTRATION DETAILS"),
+                  _sectionHeader(S.of(context).registrationDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.19,
+                    height: MediaQuery.of(context).size.height * 0.2,
                     child: Column(
                       children: [
                         _detailRow(
@@ -295,11 +295,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("PAYMENT DETAILS"),
+                  _sectionHeader(S.of(context).paymentDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.15,
+                    // Let card expand to content to avoid vertical overflow on small screens.
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         _detailRow(
                           "Commission %",
@@ -316,14 +317,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("OWNER IDENTITY PROOF"),
+                  _sectionHeader(S.of(context).ownerIdentityProof),
                   const SizedBox(height: 12),
                   _buildImageCard(
                     height: MediaQuery.of(context).size.height * 0.14,
                     imageUrl: profile?.ownerIdProof,
                   ),
                   const SizedBox(height: 24),
-                  _sectionHeader("CERTIFICATES"),
+                  _sectionHeader(S.of(context).certificates),
                   const SizedBox(height: 12),
                   _buildImageCard(
                     height: MediaQuery.of(context).size.height * 0.14,
@@ -334,7 +335,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _sectionHeader(
-                        "RATING & REVIEWS (${profileController.ratingReviewData?.totalReviews ?? 0})",
+                        S.of(context).ratingReviews+" (${profileController.ratingReviewData?.totalReviews ?? 0})",
                       ),
                       TextButton(
                         onPressed: () {
