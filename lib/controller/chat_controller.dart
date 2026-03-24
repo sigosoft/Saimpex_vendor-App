@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
@@ -68,6 +69,22 @@ class ChatController extends GetxController {
     conversationsScrollController.addListener(_conversationsScrollListener);
     messagesScrollController.addListener(_messagesScrollListener);
     _initializePusher();
+    _startSilentRefreshTimer();
+  }
+
+  Timer? _refreshTimer;
+
+  void _startSilentRefreshTimer() {
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      final context = Get.context;
+      if (context != null) {
+        getAllConversations(context, quiet: true);
+        if (currentConversation != null) {
+          _refreshChatHistoryFromAPI();
+        }
+      }
+    });
   }
 
   @override
@@ -76,6 +93,7 @@ class ChatController extends GetxController {
     messagesScrollController.dispose();
     messageController.dispose();
     customerSearchController.dispose();
+    _refreshTimer?.cancel();
     _disposePusher();
     super.onClose();
   }
@@ -274,7 +292,7 @@ class ChatController extends GetxController {
         _showInAppNotification(eventDataMap);
 
         if (context != null) {
-          getAllConversations(context);
+          getAllConversations(context, quiet: true);
           _refreshChatHistoryFromAPI();
         }
 
@@ -304,7 +322,11 @@ class ChatController extends GetxController {
       debugPrint("REFRESHING CHAT HISTORY FROM API");
       final context = Get.context;
       if (context != null) {
-        await getConversationDetails(context, currentConversation!.id!);
+        await getConversationDetails(
+          context,
+          currentConversation!.id!,
+          quiet: true,
+        );
       }
       debugPrint("✅ Chat history refreshed from API");
       if (onMessageReceived != null) {
@@ -433,6 +455,7 @@ class ChatController extends GetxController {
           final newConversationId = response.data['data']['conversation_id'];
           if (newConversationId != null) {
             getConversationDetails(context, newConversationId);
+            getAllConversations(context, quiet: true);
           }
         }
       }
@@ -516,6 +539,7 @@ class ChatController extends GetxController {
           final newConversationId = response.data['data']['conversation_id'];
           if (newConversationId != null) {
             getConversationDetails(context, newConversationId);
+            getAllConversations(context, quiet: true);
           }
         }
       }
@@ -583,22 +607,43 @@ class ChatController extends GetxController {
   //  Conversations list
   // ====================================================
 
-  Future<void> getAllConversations(BuildContext context) async {
+  Future<void> getAllConversations(
+    BuildContext context, {
+    bool quiet = false,
+  }) async {
     try {
-      isLoading = true;
-      _conversationsPage = 1;
-      _hasNextConversations = true;
+      if (!quiet) {
+        isLoading = true;
+        _conversationsPage = 1;
+        _hasNextConversations = true;
+      }
+      // We always fetch page 1 for refreshes
+      final fetchPage = 1;
       update();
       var token = await getSavedObject("token");
       DioClient().updateToken(token);
       final response = await DioClient().get(
         ApiEndPoints.allConversations,
-        query: {"page": _conversationsPage},
+        query: {"page": fetchPage},
       );
       if (response.data != null) {
         conversationsModel = ConversationsModel.fromJson(response.data);
         if (conversationsModel?.status == true) {
-          conversations = conversationsModel?.data?.conversations ?? [];
+          final newConvs = conversationsModel?.data?.conversations ?? [];
+          if (quiet) {
+            for (var c in newConvs) {
+              final idx = conversations.indexWhere(
+                (existing) => existing.id == c.id,
+              );
+              if (idx != -1) {
+                conversations[idx] = c; // Update existing
+              } else {
+                conversations.insert(0, c); // Add new
+              }
+            }
+          } else {
+            conversations = newConvs;
+          }
           _sortConversations();
           if (conversations.length < 10) {
             _hasNextConversations = false;
@@ -608,7 +653,9 @@ class ChatController extends GetxController {
     } catch (error) {
       debugPrint("getAllConversations Error: $error");
     } finally {
-      isLoading = false;
+      if (!quiet) {
+        isLoading = false;
+      }
       update();
     }
   }
@@ -632,7 +679,11 @@ class ChatController extends GetxController {
           if (newConversations.isEmpty) {
             _hasNextConversations = false;
           } else {
-            conversations.addAll(newConversations);
+            for (var conv in newConversations) {
+              if (!conversations.any((existing) => existing.id == conv.id)) {
+                conversations.add(conv);
+              }
+            }
             _sortConversations();
           }
         }
@@ -652,24 +703,46 @@ class ChatController extends GetxController {
 
   Future<void> getConversationDetails(
     BuildContext context,
-    int conversationId,
-  ) async {
+    int conversationId, {
+    bool quiet = false,
+  }) async {
     try {
-      isLoadingMessages = true;
-      currentConversation = null;
-      _messagesPage = 1;
-      _hasNextMessages = true;
+      if (!quiet) {
+        isLoadingMessages = true;
+        currentConversation = null;
+        _messagesPage = 1;
+        _hasNextMessages = true;
+      }
+      // Always fetch page 1 for refresh
+      final fetchPage = 1;
       update();
       var token = await getSavedObject("token");
       DioClient().updateToken(token);
       final response = await DioClient().get(
         ApiEndPoints.getConversation,
-        query: {"conversation_id": conversationId, "page": _messagesPage},
+        query: {"conversation_id": conversationId, "page": fetchPage},
       );
       if (response.data != null) {
         final model = GetConversationModel.fromJson(response.data);
         if (model.status == true) {
-          currentConversation = model.data?.conversation;
+          final newConvo = model.data?.conversation;
+          if (quiet && currentConversation != null && newConvo != null) {
+            final newMsgs = newConvo.messages ?? [];
+            for (var m in newMsgs) {
+              if (!(currentConversation!.messages?.any(
+                    (existing) => existing.id == m.id,
+                  ) ??
+                  false)) {
+                currentConversation!.messages!.insert(0, m);
+              }
+            }
+            // Update any other fields
+            currentConversation!.lastMessage = newConvo.lastMessage;
+            currentConversation!.lastMessageAt = newConvo.lastMessageAt;
+            currentConversation!.unreadCount = newConvo.unreadCount;
+          } else {
+            currentConversation = newConvo;
+          }
           _sortMessages();
           if ((currentConversation?.messages?.length ?? 0) < 10) {
             _hasNextMessages = false;
@@ -679,7 +752,9 @@ class ChatController extends GetxController {
     } catch (error) {
       debugPrint("getConversationDetails Error: $error");
     } finally {
-      isLoadingMessages = false;
+      if (!quiet) {
+        isLoadingMessages = false;
+      }
       update();
     }
   }
@@ -710,7 +785,14 @@ class ChatController extends GetxController {
           if (newMessages.isEmpty) {
             _hasNextMessages = false;
           } else {
-            currentConversation?.messages?.addAll(newMessages);
+            for (var msg in newMessages) {
+              if (!(currentConversation?.messages?.any(
+                    (existing) => existing.id == msg.id,
+                  ) ??
+                  false)) {
+                currentConversation?.messages?.add(msg);
+              }
+            }
             _sortMessages();
           }
         }
