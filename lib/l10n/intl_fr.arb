@@ -1123,5 +1123,6 @@
   "uploadImageHere": "Téléverser l'image ici",
   "zestyChickenBurger": "Zesty Chicken Burger",
   "storeDetails": "DÉTAILS DU MAGASIN",
-  "aboutTheStore": "À PROPOS DU MAGASIN"
+  "aboutTheStore": "À PROPOS DU MAGASIN",
+  "noRedeemedCustomersFound": "Aucun client ayant utilisé des points trouvé"
 }

@@ -73,7 +73,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
           context,
           S.of(context).noReportsInThisDateRange,
           S.of(context).noReportsInThisDateRange,
-          'lib/assets/images/nonotifications.png',
+          'lib/assets/images/nodata.png',
         ),
       );
     }

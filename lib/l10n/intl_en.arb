@@ -1069,5 +1069,6 @@
   "statistics": "Statistics",
   "totalRatings": "Total Ratings",
   "storeDetails": "STORE DETAILS",
-  "aboutTheStore": "ABOUT THE STORE"
+  "aboutTheStore": "ABOUT THE STORE",
+  "noRedeemedCustomersFound": "No Redeemed Customers Found"
 }

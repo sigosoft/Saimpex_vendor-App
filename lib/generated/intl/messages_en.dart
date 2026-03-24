@@ -497,6 +497,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No popular items found"),
         "noRedeemableRewards":
             MessageLookupByLibrary.simpleMessage("No redeemable rewards"),
+        "noRedeemedCustomersFound":
+            MessageLookupByLibrary.simpleMessage("No Redeemed Customers Found"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
             "No reports in this date range."),
         "noRestaurantsFound":

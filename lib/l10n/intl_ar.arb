@@ -1121,5 +1121,6 @@
   "uploadImageHere": "ارفع الصورة هنا",
   "zestyChickenBurger": "Zesty Chicken Burger",
   "storeDetails": "تفاصيل المتجر",
-  "aboutTheStore": "حول المتجر"
+  "aboutTheStore": "حول المتجر",
+  "noRedeemedCustomersFound": "لم يتم العثور على عملاء مستبدلين"
 }

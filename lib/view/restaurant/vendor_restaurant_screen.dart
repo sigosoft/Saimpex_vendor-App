@@ -215,6 +215,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildDetailCard(
                     height: MediaQuery.of(context).size.height * 0.36,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _detailRow("Name", profile?.name ?? "Store 1"),
                         _detailRow("Owner", profile?.owner ?? "Salman"),
@@ -248,6 +249,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildDetailCard(
                     height: MediaQuery.of(context).size.height * 0.2,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _detailRow(
                           "Holder Name",
@@ -281,6 +283,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildDetailCard(
                     height: MediaQuery.of(context).size.height * 0.2,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _detailRow(
                           "Reg. Number",
@@ -300,7 +303,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   _buildDetailCard(
                     // Let card expand to content to avoid vertical overflow on small screens.
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _detailRow(
                           "Commission %",

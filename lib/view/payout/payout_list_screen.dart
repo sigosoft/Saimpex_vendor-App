@@ -85,7 +85,7 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
             context,
             S.of(context).noPayoutsYet,
             S.of(context).noPayoutsYet,
-            'lib/assets/images/nonotifications.png',
+            'lib/assets/images/nodata.png',
           ),
         ] else ...[
           const SizedBox(height: 16),

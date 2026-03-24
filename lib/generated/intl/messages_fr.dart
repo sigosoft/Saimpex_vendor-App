@@ -536,6 +536,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Aucun article populaire trouvé"),
         "noRedeemableRewards": MessageLookupByLibrary.simpleMessage(
             "Aucune récompense échangeable"),
+        "noRedeemedCustomersFound": MessageLookupByLibrary.simpleMessage(
+            "Aucun client ayant utilisé des points trouvé"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
             "Aucun rapport pour cette période"),
         "noRestaurantsFound":

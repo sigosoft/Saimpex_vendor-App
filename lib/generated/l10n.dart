@@ -5891,6 +5891,16 @@ class S {
       args: [],
     );
   }
+
+  /// `No Redeemed Customers Found`
+  String get noRedeemedCustomersFound {
+    return Intl.message(
+      'No Redeemed Customers Found',
+      name: 'noRedeemedCustomersFound',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

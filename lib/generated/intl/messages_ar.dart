@@ -496,6 +496,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("لا توجد عناصر شائعة"),
         "noRedeemableRewards": MessageLookupByLibrary.simpleMessage(
             "لا توجد مكافآت قابلة للاستبدال"),
+        "noRedeemedCustomersFound": MessageLookupByLibrary.simpleMessage(
+            "لم يتم العثور على عملاء مستبدلين"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
             "لا توجد تقارير في هذا النطاق الزمني"),
         "noRestaurantsFound":
