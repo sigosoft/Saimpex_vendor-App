@@ -753,15 +753,15 @@ class VendorSearchRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFF1F5F9)),
-          ),
-          child: const Icon(Icons.tune, color: Color(0xFF64748B), size: 24),
-        ),
+        // Container(
+        //   padding: const EdgeInsets.all(12),
+        //   decoration: BoxDecoration(
+        //     color: Colors.white,
+        //     borderRadius: BorderRadius.circular(12),
+        //     border: Border.all(color: const Color(0xFFF1F5F9)),
+        //   ),
+        //   child: const Icon(Icons.tune, color: Color(0xFF64748B), size: 24),
+        // ),
       ],
     );
   }
