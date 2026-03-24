@@ -239,7 +239,7 @@ class _BasketListingState extends State<BasketListing> {
                       context,
                       S.of(context).noBasketsFound,
                       S.of(context).noBasketsFound,
-                      'lib/assets/images/nonotifications.png',
+                      'lib/assets/images/nodata.png',
                     ),
                   ],
                   if (basketController.isLoadMoreRunning) ...[

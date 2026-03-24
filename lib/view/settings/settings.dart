@@ -65,10 +65,11 @@ class _SettingsState extends State<Settings> {
           builder: (controller) => Stack(
             children: [
               // Custom Top Background (Circular Curve)
-              Positioned(
+              Positioned.directional(
+                textDirection: LocalizationService().getTextDirection(),
                 top: -400,
-                left: -context.width * 0.2,
-                right: -context.width * 0.2,
+                start: -context.width * 0.2,
+                end: -context.width * 0.2,
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.7,
                   decoration: const BoxDecoration(

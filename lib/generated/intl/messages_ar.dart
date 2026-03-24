@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "aboutDescription": MessageLookupByLibrary.simpleMessage(
             "تقديم نكهات أصيلة بمكونات طازجة. متخصصون في المأكولات القارية والشرقية."),
         "aboutTheRestaurant": MessageLookupByLibrary.simpleMessage("عن المطعم"),
+        "aboutTheStore": MessageLookupByLibrary.simpleMessage("حول المتجر"),
         "aboutUs": MessageLookupByLibrary.simpleMessage("من نحن"),
         "acceptOrder": MessageLookupByLibrary.simpleMessage("قبول الطلب"),
         "accepted": MessageLookupByLibrary.simpleMessage("تم القبول"),
@@ -495,6 +496,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("لا توجد عناصر شائعة"),
         "noRedeemableRewards": MessageLookupByLibrary.simpleMessage(
             "لا توجد مكافآت قابلة للاستبدال"),
+        "noRedeemedCustomersFound": MessageLookupByLibrary.simpleMessage(
+            "لم يتم العثور على عملاء مستبدلين"),
         "noReportsInThisDateRange": MessageLookupByLibrary.simpleMessage(
             "لا توجد تقارير في هذا النطاق الزمني"),
         "noRestaurantsFound":
@@ -759,6 +762,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("ابدأ الكتابة للبحث"),
         "statistics": MessageLookupByLibrary.simpleMessage("الإحصائيات"),
         "status": MessageLookupByLibrary.simpleMessage("الحالة"),
+        "storeDetails": MessageLookupByLibrary.simpleMessage("تفاصيل المتجر"),
         "storeReports": MessageLookupByLibrary.simpleMessage("تقارير المتجر"),
         "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
         "submitButton": MessageLookupByLibrary.simpleMessage("إرسال"),

@@ -106,9 +106,9 @@ class _RedeemedCustomersScreenState extends State<RedeemedCustomersScreen> {
             : list.isEmpty
                 ? NoDataWidget(
                     context,
-                    S.of(context).noOrdersFound,
-                    S.of(context).noOrdersFound,
-                    'lib/assets/images/nonotifications.png',
+                    S.of(context).noRedeemedCustomersFound,
+                    S.of(context).noRedeemedCustomersFound,
+                    'lib/assets/images/nodata.png',
                   )
                 : ListView.separated(
                 controller: c.scrollController,

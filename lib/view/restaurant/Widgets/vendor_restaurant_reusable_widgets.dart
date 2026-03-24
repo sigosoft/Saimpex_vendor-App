@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
 
@@ -23,51 +25,216 @@ class VendorWorkingHoursList extends StatelessWidget {
       S.of(context).sunday,
     ];
 
-    return Column(
-      children: days.map((day) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: VendorDetailCard(
-            height: MediaQuery.of(context).size.height * 0.08,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    day,
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1F1F1F),
+    return GetBuilder<ProfileController>(
+      builder: (profileController) {
+        return Column(
+          children: List.generate(days.length, (index) {
+            final day = days[index];
+            final workingHour = _findWorkingHourForDay(
+              profileController.workingHours,
+              index,
+            );
+            final durationLabel = _workingDurationLabel(
+              context,
+              workingHour,
+            );
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: VendorDetailCard(
+                height: MediaQuery.of(context).size.height * 0.08,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        day,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF1F1F1F),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1EE),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Text(
-                    S.of(context).hr24,
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFF5216),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF1EE),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        durationLabel,
+                        style: GoogleFonts.rubik(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }),
         );
-      }).toList(),
+      },
     );
+  }
+
+  WorkingHour? _findWorkingHourForDay(List<WorkingHour> hours, int dayIndex) {
+    if (hours.isEmpty) return null;
+    final apiDay = dayIndex + 1; // Backend format: 1=Mon ... 7=Sun.
+
+    for (final hour in hours) {
+      if (hour.dayOfWeek == apiDay) return hour;
+    }
+
+    // Fallback for APIs that return Monday..Sunday in order.
+    if (hours.length > dayIndex && (hours[dayIndex].day?.trim().isEmpty ?? true)) {
+      return hours[dayIndex];
+    }
+
+    const aliases = [
+      ['mon', 'monday', '1'],
+      ['tue', 'tuesday', '2'],
+      ['wed', 'wednesday', '3'],
+      ['thu', 'thursday', '4'],
+      ['fri', 'friday', '5'],
+      ['sat', 'saturday', '6'],
+      ['sun', 'sunday', '7'],
+    ];
+    final dayAliases = aliases[dayIndex];
+
+    for (final hour in hours) {
+      final rawDay = (hour.day ?? '').toLowerCase().trim();
+      if (rawDay.isEmpty) continue;
+      if (dayAliases.any((alias) => rawDay == alias || rawDay.contains(alias))) {
+        return hour;
+      }
+    }
+
+    // Last fallback by position if mapping fails.
+    if (hours.length > dayIndex) return hours[dayIndex];
+    return null;
+  }
+
+  String _workingDurationLabel(BuildContext context, WorkingHour? hour) {
+    if (hour == null || hour.isClosed == true) return '-';
+    if (hour.status != null && hour.status == 0) return '-';
+    if (hour.isOpen24h == 1) return S.of(context).hr24;
+
+    final firstSlot = (hour.timeSlots == null || hour.timeSlots!.isEmpty)
+        ? null
+        : hour.timeSlots!.first;
+
+    int? openMinutes = _parseToMinutes(firstSlot?.openTime ?? hour.openingTime);
+    int? closeMinutes = _parseToMinutes(firstSlot?.closeTime ?? hour.closingTime);
+
+    // Some APIs provide a single "open-close" range in one field.
+    if (openMinutes == null || closeMinutes == null) {
+      final rangeFromOpen = _parseRangeFromText(hour.openingTime);
+      if (rangeFromOpen != null) {
+        openMinutes ??= rangeFromOpen[0];
+        closeMinutes ??= rangeFromOpen[1];
+      }
+    }
+    if (openMinutes == null || closeMinutes == null) {
+      final rangeFromClose = _parseRangeFromText(hour.closingTime);
+      if (rangeFromClose != null) {
+        openMinutes ??= rangeFromClose[0];
+        closeMinutes ??= rangeFromClose[1];
+      }
+    }
+
+    if (openMinutes == null || closeMinutes == null) {
+      final open = (hour.openingTime ?? '').trim();
+      final close = (hour.closingTime ?? '').trim();
+      if (open.isNotEmpty && close.isNotEmpty) return '$open - $close';
+      return '-';
+    }
+
+    int diff = closeMinutes - openMinutes;
+    if (diff < 0) diff += 24 * 60; // Supports overnight shifts.
+
+    final hours = diff ~/ 60;
+    final minutes = diff % 60;
+    if (hours == 0 && minutes == 0) return '0m';
+    if (minutes == 0) return '${hours}h';
+    if (hours == 0) return '${minutes}m';
+    return '${hours}h ${minutes}m';
+  }
+
+  int? _parseToMinutes(String? value) {
+    if (value == null) return null;
+    final input = value.trim().toLowerCase();
+    if (input.isEmpty) return null;
+
+    // Strict match: "09:30", "09:30:00", "9:30 am", "09:30 pm", "9 pm".
+    final strictMatch = RegExp(
+      r'^(\d{1,2})(?::(\d{1,2}))?(?::\d{1,2})?\s*(am|pm)?$',
+      caseSensitive: false,
+    ).firstMatch(input);
+    if (strictMatch != null) return _matchToMinutes(strictMatch);
+
+    // Fallback: extract first time-like token from date/range text.
+    final tokenMatch = RegExp(
+      r'(\d{1,2}(?::\d{1,2})?(?::\d{1,2})?\s*(?:am|pm)?)',
+      caseSensitive: false,
+    ).firstMatch(input);
+    if (tokenMatch == null) return null;
+    final token = tokenMatch.group(1)?.trim().toLowerCase();
+    if (token == null || token.isEmpty) return null;
+
+    final match = RegExp(
+      r'^(\d{1,2})(?::(\d{1,2}))?(?::\d{1,2})?\s*(am|pm)?$',
+      caseSensitive: false,
+    ).firstMatch(token);
+    if (match == null) return null;
+
+    return _matchToMinutes(match);
+  }
+
+  int? _matchToMinutes(RegExpMatch match) {
+    int hour = int.tryParse(match.group(1) ?? '') ?? -1;
+    final minute = int.tryParse(match.group(2) ?? '0') ?? 0;
+    final period = match.group(3)?.toLowerCase();
+
+    if (minute < 0 || minute > 59) return null;
+    if (period == null) {
+      if (hour < 0 || hour > 23) return null;
+      return hour * 60 + minute;
+    }
+
+    if (hour < 1 || hour > 12) return null;
+    if (period == 'am') {
+      if (hour == 12) hour = 0;
+    } else if (period == 'pm') {
+      if (hour != 12) hour += 12;
+    }
+    return hour * 60 + minute;
+  }
+
+  List<int>? _parseRangeFromText(String? value) {
+    if (value == null) return null;
+    final input = value.trim();
+    if (input.isEmpty) return null;
+
+    final matches = RegExp(
+      r'(\d{1,2}(?::\d{1,2})?(?::\d{1,2})?\s*(?:am|pm)?)',
+      caseSensitive: false,
+    ).allMatches(input).toList();
+
+    if (matches.length < 2) return null;
+
+    final first = _parseToMinutes(matches[0].group(1));
+    final second = _parseToMinutes(matches[1].group(1));
+    if (first == null || second == null) return null;
+    return [first, second];
   }
 }
 
@@ -142,7 +309,7 @@ class VendorDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height,
-      padding: padding ?? const EdgeInsets.all(20),
+      padding: padding ?? const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -216,6 +383,7 @@ class VendorDetailRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
+            flex: 1,
             child: Text(
               localizedLabel,
               style: GoogleFonts.rubik(
@@ -244,13 +412,14 @@ class VendorDetailRow extends StatelessWidget {
             )
           else
             Expanded(
+              flex: 2,
               child: Text(
                 value,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                textAlign: TextAlign.right,
+                textAlign: TextAlign.end,
                 style: GoogleFonts.rubik(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: isBoldValue ? FontWeight.bold : FontWeight.w500,
                   color: const Color(0xFF1F1F1F),
                 ),

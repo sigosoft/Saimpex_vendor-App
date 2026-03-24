@@ -5871,6 +5871,36 @@ class S {
       args: [],
     );
   }
+
+  /// `STORE DETAILS`
+  String get storeDetails {
+    return Intl.message(
+      'STORE DETAILS',
+      name: 'storeDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ABOUT THE STORE`
+  String get aboutTheStore {
+    return Intl.message(
+      'ABOUT THE STORE',
+      name: 'aboutTheStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Redeemed Customers Found`
+  String get noRedeemedCustomersFound {
+    return Intl.message(
+      'No Redeemed Customers Found',
+      name: 'noRedeemedCustomersFound',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

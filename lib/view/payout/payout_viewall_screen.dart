@@ -107,7 +107,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
                 context,
                 S.of(context).noPayoutsYet,
                 S.of(context).noPayoutsYet,
-                'lib/assets/images/nonotifications.png',
+                'lib/assets/images/nodata.png',
               ),
             ),
           )
