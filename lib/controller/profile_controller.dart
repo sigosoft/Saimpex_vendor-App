@@ -637,6 +637,62 @@ class ProfileController extends GetxController {
     }
   }
 
+  Future<void> unmarkLeave(
+      BuildContext context,
+      String leave_id,
+      ) async {
+    try {
+      showLoadingDialog(context);
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      var vendorType = await getSavedObject("vendorType");
+      var formData = {
+        "vendor_type": vendorType ?? "1",
+        "leave_id": leave_id,
+      };
+      final response = await DioClient().post(
+        ApiEndPoints.unmarkLeave,
+        body: formData,
+      );
+      if (context.mounted) {
+        Get.back();
+      }
+      if (response.data['status'] == 'true' ||
+          response.data['status'] == true) {
+        if (context.mounted) {
+          String successMessage = "Leave unmarked successfully";
+          if (response.data['message'] != null) {
+            var msgMap = response.data['message'];
+            if (msgMap is Map &&
+                msgMap.containsKey('message_en') &&
+                msgMap['message_en'] is List &&
+                msgMap['message_en'].isNotEmpty) {
+              successMessage = msgMap['message_en'][0];
+            }
+          }
+          showToast(context, successMessage);
+          getProfile(context);
+        }
+      } else {
+        if (context.mounted) {
+          showToast(
+            context,
+            response.data['message']?.toString() ?? "Failed to unmark leave",
+          );
+        }
+      }
+    } catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+    }
+  }
+
   Future<void> getProfile(
     BuildContext context, {
     int page = 1,

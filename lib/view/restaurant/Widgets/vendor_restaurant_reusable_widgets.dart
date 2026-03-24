@@ -704,30 +704,30 @@ class VendorLeaveTile extends StatelessWidget {
               ),
             ],
           ),
-          // if (isUpcoming) ...[
-          //   const SizedBox(height: 12),
-          //   SizedBox(
-          //     width: double.infinity,
-          //     height: 32,
-          //     child: OutlinedButton(
-          //       onPressed: onCancelLeave,
-          //       style: OutlinedButton.styleFrom(
-          //         side: const BorderSide(color: Color(0xFFFFCCBD)),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //       ),
-          //       child: Text(
-          //         S.of(context).cancelLeave,
-          //         style: GoogleFonts.rubik(
-          //           fontSize: 12,
-          //           fontWeight: FontWeight.w600,
-          //           color: const Color(0xFFFF5216),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ],
+          if (isUpcoming) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 32,
+              child: OutlinedButton(
+                onPressed: onCancelLeave,
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFFFCCBD)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  S.of(context).cancelLeave,
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFFFF5216),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

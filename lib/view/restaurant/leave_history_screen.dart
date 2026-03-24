@@ -137,10 +137,12 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: _buildLeaveTile(
                       context: context,
+                      controller: profileController,
                       dateRange: _formatLeaveDate(leave.date),
                       reason: leave.reason ?? S.of(context).leave,
                       status: S.of(context).scheduled,
                       isUpcoming: true,
+                      leave_id: leave.id.toString()
                     ),
                   ),
                 )
@@ -170,10 +172,12 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: _buildLeaveTile(
                       context: context,
+                      controller: profileController,
                       dateRange: _formatLeaveDate(leave.date),
                       reason: leave.reason ?? S.of(context).leave,
                       status: S.of(context).completed,
                       isUpcoming: false,
+                      leave_id: leave.id.toString()
                     ),
                   ),
                 )
@@ -201,10 +205,11 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
 
   Widget _buildLeaveTile({
     required BuildContext context,
+    required ProfileController controller,
     required String dateRange,
     required String reason,
     required String status,
-    required bool isUpcoming,
+    required bool isUpcoming, required String leave_id,
   }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
@@ -264,30 +269,34 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               ),
             ],
           ),
-          // if (isUpcoming) ...[
-          //   const SizedBox(height: 12),
-          //   SizedBox(
-          //     width: double.infinity,
-          //     height: 32,
-          //     child: OutlinedButton(
-          //       onPressed: () {},
-          //       style: OutlinedButton.styleFrom(
-          //         side: const BorderSide(color: Color(0xFFFFCCBD)),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //       ),
-          //       child: Text(
-          //         S.of(context).cancelLeave,
-          //         style: GoogleFonts.rubik(
-          //           fontSize: 12,
-          //           fontWeight: FontWeight.w600,
-          //           color: const Color(0xFFFF5216),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ],
+          if (isUpcoming) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 32,
+              child: OutlinedButton(
+                onPressed: () {
+                  controller.unmarkLeave(
+                    context,
+                    leave_id);
+                },
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFFFCCBD)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  S.of(context).cancelLeave,
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFFFF5216),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

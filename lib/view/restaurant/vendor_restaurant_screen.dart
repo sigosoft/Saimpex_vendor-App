@@ -440,6 +440,13 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                               reason: leave.reason ?? S.of(context).leave,
                               status: "SCHEDULED",
                               isUpcoming: true,
+                              onCancelLeave: leave.id == null
+                                  ? null
+                                  : () => Get.find<ProfileController>()
+                                        .unmarkLeave(
+                                          context,
+                                          leave.id.toString(),
+                                        ),
                             ),
                           ),
                         )
@@ -666,12 +673,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     required String reason,
     required String status,
     required bool isUpcoming,
+    VoidCallback? onCancelLeave,
   }) {
     return VendorLeaveTile(
       dateRange: dateRange,
       reason: reason,
       status: status,
       isUpcoming: isUpcoming,
+      onCancelLeave: onCancelLeave,
     );
   }
 
@@ -854,7 +863,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: 5),
         Expanded(
           child: ElevatedButton(
             onPressed: () {
@@ -873,34 +882,37 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 10),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Upload Menu',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    color: const Color(0xFF3B82F6),
-                    fontWeight: FontWeight.w600,
+            child: Container(
+              margin: EdgeInsets.only(left: 3,right: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Upload Menu',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.rubik(
+                      fontSize: 12,
+                      color: const Color(0xFF3B82F6),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Image.asset(
-                  'lib/assets/images/upload_button.png',
-                  width: 12,
-                  height: 12,
-                  fit: BoxFit.contain,
-                  color: const Color(0xFF3B82F6),
-                  colorBlendMode: BlendMode.srcIn,
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Image.asset(
+                    'lib/assets/images/upload_button.png',
+                    width: 12,
+                    height: 12,
+                    fit: BoxFit.contain,
+                    color: const Color(0xFF3B82F6),
+                    colorBlendMode: BlendMode.srcIn,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: 5),
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () {
