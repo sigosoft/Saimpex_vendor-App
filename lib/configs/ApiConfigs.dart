@@ -99,4 +99,5 @@ class ApiEndPoints {
   static String updateGroceryMenuItem = "updateGroceryMenuItem";
   static String uploadRestaurantImages = "uploadRestaurantMenuImages";
   static String uploadGroceryImages = "uploadGroceryMenuImages";
+  static String uploadWorkingHours = "updateWorkingHours";
 }

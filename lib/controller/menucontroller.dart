@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -1086,10 +1085,6 @@ class MenuController extends GetxController {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
-      }
-
-      if (Platform.isAndroid) {
-        await Permission.storage.request();
       }
 
       final response = await DioClient().dio.get<List<int>>(

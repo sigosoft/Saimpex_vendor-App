@@ -6,7 +6,6 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/model/sales_report_model.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../Utils/Utils.dart';
@@ -131,11 +130,6 @@ class SalesReportController extends GetxController {
 
       final token = await getSavedObject("token");
       DioClient().updateToken(token);
-
-      // Best-effort permission (Android). If denied, we still try app directory fallback.
-      if (Platform.isAndroid) {
-        await Permission.storage.request();
-      }
 
       final response = await DioClient().dio.get<List<int>>(
         ApiEndPoints.restaurantReportDownload,
@@ -328,11 +322,6 @@ class SalesReportController extends GetxController {
 
       final token = await getSavedObject("token");
       DioClient().updateToken(token);
-
-      // Best-effort permission (Android). If denied, we still try app directory fallback.
-      if (Platform.isAndroid) {
-        await Permission.storage.request();
-      }
 
       final response = await DioClient().dio.get<List<int>>(
         ApiEndPoints.groceryReportDownload,

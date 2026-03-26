@@ -11,7 +11,10 @@ import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
 import '../../../Utils/Utils.dart';
 
 class VendorWorkingHoursList extends StatelessWidget {
-  const VendorWorkingHoursList({super.key});
+  final void Function(int dayIndex, WorkingHour hour)? onEditDay;
+  final void Function(WorkingHour hour, WorkingTimeSlot slot)? onDeleteSlot;
+
+  const VendorWorkingHoursList({super.key, this.onEditDay, this.onDeleteSlot});
 
   @override
   Widget build(BuildContext context) {
@@ -28,61 +31,841 @@ class VendorWorkingHoursList extends StatelessWidget {
     return GetBuilder<ProfileController>(
       builder: (profileController) {
         return Column(
-          children: List.generate(days.length, (index) {
-            final day = days[index];
-            final workingHour = _findWorkingHourForDay(
+          children: List.generate(days.length, (dayIndex) {
+            final dayLabel = days[dayIndex];
+            final hour = _findWorkingHourForDay(
               profileController.workingHours,
-              index,
-            );
-            final durationLabel = _workingDurationLabel(
-              context,
-              workingHour,
+              dayIndex,
             );
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: VendorDetailCard(
-                height: MediaQuery.of(context).size.height * 0.08,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        day,
-                        style: GoogleFonts.rubik(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF1F1F1F),
-                        ),
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      dayLabel,
+                      style: GoogleFonts.rubik(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1F1F1F),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF1EE),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        durationLabel,
-                        style: GoogleFonts.rubik(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFFFF5216),
-                        ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: _daySlotWidgets(
+                        context,
+                        hour,
+                        dayIndex,
+                        dayLabel,
+                        profileController,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }),
         );
       },
+    );
+  }
+
+  List<Widget> _daySlotWidgets(
+    BuildContext context,
+    WorkingHour? hour,
+    int dayIndex,
+    String dayLabel,
+    ProfileController profileController,
+  ) {
+    if (hour == null || hour.isClosed == true) {
+      return [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Text(
+            '-',
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF6B7280),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    if (hour.status != null && hour.status == 0) {
+      return [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Text(
+            '-',
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF6B7280),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    if (hour.isOpen24h == 1) {
+      return [
+        _timePillRow(
+          label: S.of(context).hr24,
+          pillColor: const Color(0xFFEFF2FF),
+          pillTextColor: const Color(0xFF4B5563),
+          actionIcon: Icons.edit_outlined,
+          actionColor: const Color(0xFFFF5216),
+          onActionPressed: () {
+            if (onEditDay != null) {
+              onEditDay!(dayIndex, hour);
+              return;
+            }
+            _showEditWorkingHourDialog(
+              context,
+              dayLabel: dayLabel,
+              profileController: profileController,
+              dayId: dayIndex + 1,
+              initialIsOpen24: true,
+              initialStartTime: hour.openingTime,
+              initialEndTime: hour.closingTime,
+              initialTimeSlots: hour.timeSlots,
+              currentHour: hour,
+            );
+          },
+        ),
+      ];
+    }
+
+    // Non-24h: show one pill per slot (Monday screenshot shows multiple).
+    final nonNullHour = hour;
+
+    final slots =
+        (nonNullHour.timeSlots != null && nonNullHour.timeSlots!.isNotEmpty)
+        ? nonNullHour.timeSlots!
+        : [
+            WorkingTimeSlot(
+              id: null,
+              vendorWorkingHourId: nonNullHour.id,
+              openTime: nonNullHour.openingTime,
+              closeTime: nonNullHour.closingTime,
+            ),
+          ];
+
+    return List.generate(slots.length, (index) {
+      final slot = slots[index];
+      final rangeLabel = _timeRangeLabel(hour: nonNullHour, slot: slot);
+      return Padding(
+        padding: EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 8),
+        child: _timePillRow(
+          label: rangeLabel,
+          pillColor: const Color(0xFFEFF2FF),
+          pillTextColor: const Color(0xFF4B5563),
+          actionIcon: Icons.delete_outline,
+          actionColor: const Color(0xFFEF4444),
+          onActionPressed: () {
+            if (onDeleteSlot != null) {
+              onDeleteSlot!(nonNullHour, slot);
+              return;
+            }
+            // Default behavior: remove current time slot UI and reset day to 24h.
+            _resetDayTo24Hours(
+              profileController: profileController,
+              dayIndex: dayIndex,
+              currentHour: nonNullHour,
+            );
+
+            // Persist the change to backend: reset day to 24h with empty hours.
+            // This will build the payload from updated `profileController.workingHours`.
+            profileController.uploadWorkingHours(context);
+          },
+        ),
+      );
+    });
+  }
+
+  void _resetDayTo24Hours({
+    required ProfileController profileController,
+    required int dayIndex,
+    required WorkingHour? currentHour,
+  }) {
+    if (currentHour == null) return;
+
+    final apiDay = dayIndex + 1; // Backend format: 1=Mon ... 7=Sun.
+
+    // Prefer matching by id when present, otherwise by dayOfWeek.
+    final targetIndex = profileController.workingHours.indexWhere((h) {
+      if (currentHour.id != null && h.id == currentHour.id) return true;
+      return (h.dayOfWeek ?? 0) == apiDay;
+    });
+
+    if (targetIndex < 0) return;
+
+    final original = profileController.workingHours[targetIndex];
+    final updated = WorkingHour(
+      id: original.id,
+      day: original.day,
+      dayOfWeek: original.dayOfWeek ?? apiDay,
+      isOpen24h: 1,
+      status: (original.status != null && original.status == 0)
+          ? 1
+          : original.status,
+      openingTime: original.openingTime ?? '00:00',
+      closingTime: original.closingTime ?? '23:59',
+      isClosed: false,
+      timeSlots: const [],
+    );
+
+    profileController.workingHours[targetIndex] = updated;
+    profileController.update();
+  }
+
+  Future<void> _showEditWorkingHourDialog(
+    BuildContext context, {
+    required String dayLabel,
+    required ProfileController profileController,
+    required int dayId,
+    required bool initialIsOpen24,
+    String? initialStartTime,
+    String? initialEndTime,
+    List<WorkingTimeSlot>? initialTimeSlots,
+    WorkingHour? currentHour,
+  }) async {
+    final startMinutes =
+        _parseToMinutes(initialStartTime ?? '') ?? (0 * 60); // 00:00
+    final endMinutes =
+        _parseToMinutes(initialEndTime ?? '') ?? (23 * 60 + 59); // 23:59
+
+    final defaultStartText = _formatMinutesHHmm(startMinutes);
+    final defaultEndText = _formatMinutesHHmm(endMinutes);
+
+    String _maybeFormatSlot(String? raw) {
+      final mins = _parseToMinutes(raw ?? '');
+      if (mins == null) return '';
+      return _formatMinutesHHmm(mins);
+    }
+
+    // If Open 24 Hr is disabled initially (or user disables it), prefill slots
+    // from API timeSlots; otherwise fall back to opening/closing time.
+    final initialSlotDrafts = (!initialIsOpen24)
+        ? (initialTimeSlots != null && initialTimeSlots.isNotEmpty)
+              ? initialTimeSlots
+                    .take(3)
+                    .map(
+                      (slot) => {
+                        'start': _maybeFormatSlot(slot.openTime),
+                        'end': _maybeFormatSlot(slot.closeTime),
+                      },
+                    )
+                    .toList()
+              : [
+                      {
+                        'start': _maybeFormatSlot(initialStartTime),
+                        'end': _maybeFormatSlot(initialEndTime),
+                      },
+                    ]
+                    .where(
+                      (m) =>
+                          (m['start'] ?? '').isNotEmpty ||
+                          (m['end'] ?? '').isNotEmpty,
+                    )
+                    .toList()
+        : <Map<String, String>>[];
+
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        bool isOpen24 = initialIsOpen24;
+        String startTime = defaultStartText;
+        String endTime = defaultEndText;
+        List<Map<String, String>> slotDrafts = initialSlotDrafts
+            .map(
+              (m) => <String, String>{
+                'start': m['start'] ?? '',
+                'end': m['end'] ?? '',
+              },
+            )
+            .toList();
+
+        return StatefulBuilder(
+          builder: (dialogContext, setState) {
+            Widget timeBox({
+              required String value,
+              required bool enabled,
+              required VoidCallback? onTap,
+            }) {
+              return InkWell(
+                onTap: enabled ? onTap : null,
+                child: Container(
+                  height: 44,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    value,
+                    style: GoogleFonts.rubik(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF111827),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            Future<void> pickTime({required bool isStart}) async {
+              final parts = (isStart ? startTime : endTime).split(':');
+              final h = int.tryParse(parts[0]) ?? 0;
+              final m = int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0;
+              final picked = await showTimePicker(
+                context: dialogContext,
+                initialTime: TimeOfDay(hour: h, minute: m),
+              );
+              if (picked == null) return;
+              setState(() {
+                final newText =
+                    "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
+                if (isStart) {
+                  startTime = newText;
+                } else {
+                  endTime = newText;
+                }
+              });
+            }
+
+            Future<void> pickSlotTime({
+              required int slotIndex,
+              required bool isStart,
+            }) async {
+              final current = isStart
+                  ? (slotDrafts[slotIndex]['start'] ?? '')
+                  : (slotDrafts[slotIndex]['end'] ?? '');
+              final parts = current.split(':');
+              final h = int.tryParse(parts[0]) ?? 0;
+              final m = int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0;
+              final picked = await showTimePicker(
+                context: dialogContext,
+                initialTime: TimeOfDay(hour: h, minute: m),
+              );
+              if (picked == null) return;
+              setState(() {
+                final newText =
+                    "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
+                if (isStart) {
+                  slotDrafts[slotIndex]['start'] = newText;
+                } else {
+                  slotDrafts[slotIndex]['end'] = newText;
+                }
+              });
+            }
+
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width * 0.85,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Edit Working Hour",
+                      style: GoogleFonts.rubik(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF111827),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        dayLabel,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF111827),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: isOpen24,
+                          activeColor: const Color(0xFFFF5216),
+                          onChanged: (v) {
+                            if (v == null) return;
+                            setState(() {
+                              isOpen24 = v;
+                              if (!isOpen24) {
+                                // Show first empty slot immediately (matches your screenshot).
+                                if (slotDrafts.isEmpty) {
+                                  final slotStart = _maybeFormatSlot(
+                                    initialStartTime,
+                                  );
+                                  final slotEnd = _maybeFormatSlot(
+                                    initialEndTime,
+                                  );
+                                  slotDrafts =
+                                      [
+                                            {
+                                              'start': slotStart,
+                                              'end': slotEnd,
+                                            },
+                                          ]
+                                          .where(
+                                            (m) =>
+                                                (m['start'] ?? '').isNotEmpty ||
+                                                (m['end'] ?? '').isNotEmpty,
+                                          )
+                                          .toList();
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                          "Open 24 Hr",
+                          style: GoogleFonts.rubik(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF111827),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    if (isOpen24)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Start Time",
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 12,
+                                    color: const Color(0xFF6B7280),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                timeBox(
+                                  value: startTime,
+                                  enabled: !isOpen24,
+                                  onTap: () {
+                                    pickTime(isStart: true);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "End Time",
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 12,
+                                    color: const Color(0xFF6B7280),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                timeBox(
+                                  value: endTime,
+                                  enabled: !isOpen24,
+                                  onTap: () {
+                                    pickTime(isStart: false);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (slotDrafts.isEmpty)
+                            OutlinedButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  if (slotDrafts.length >= 3) return;
+                                  slotDrafts.add({'start': '', 'end': ''});
+                                });
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Color(0xFFFF5216),
+                                  width: 1,
+                                ),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                minimumSize: Size(
+                                  MediaQuery.of(context).size.width,
+                                  44,
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.add,
+                                size: 18,
+                                color: Color(0xFFFF5216),
+                              ),
+                              label: Text(
+                                "+ Add Time Slot",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFFF5216),
+                                ),
+                              ),
+                            )
+                          else
+                            ...List.generate(slotDrafts.length, (slotIndex) {
+                              final slotStart =
+                                  slotDrafts[slotIndex]['start'] ?? '';
+                              final slotEnd =
+                                  slotDrafts[slotIndex]['end'] ?? '';
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Start Time",
+                                              style: GoogleFonts.rubik(
+                                                fontSize: 12,
+                                                color: const Color(0xFF6B7280),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            timeBox(
+                                              value: slotStart,
+                                              enabled: true,
+                                              onTap: () {
+                                                pickSlotTime(
+                                                  slotIndex: slotIndex,
+                                                  isStart: true,
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "End Time",
+                                              style: GoogleFonts.rubik(
+                                                fontSize: 12,
+                                                color: const Color(0xFF6B7280),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            timeBox(
+                                              value: slotEnd,
+                                              enabled: true,
+                                              onTap: () {
+                                                pickSlotTime(
+                                                  slotIndex: slotIndex,
+                                                  isStart: false,
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (slotIndex < slotDrafts.length - 1)
+                                    const SizedBox(height: 12),
+                                ],
+                              );
+                            }),
+                          if (slotDrafts.isNotEmpty && slotDrafts.length < 3)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 14),
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    if (slotDrafts.length >= 3) return;
+                                    slotDrafts.add({'start': '', 'end': ''});
+                                  });
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                    color: Color(0xFFFF5216),
+                                    width: 1,
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  minimumSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    44,
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  Icons.add,
+                                  size: 18,
+                                  color: Color(0xFFFF5216),
+                                ),
+                                label: Text(
+                                  "+ Add Time Slot",
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFFF5216),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    const SizedBox(height: 18),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFE5E7EB),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Text(
+                                "Cancel",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF4B5563),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Convert dialog values into WorkingHour model,
+                                // update controller state, then upload to API.
+                                final existingIndex = profileController
+                                    .workingHours
+                                    .indexWhere((h) {
+                                      if (currentHour?.id != null &&
+                                          h.id == currentHour!.id) {
+                                        return true;
+                                      }
+                                      return (h.dayOfWeek ?? 0) == dayId;
+                                    });
+
+                                final existingHour = existingIndex >= 0
+                                    ? profileController
+                                          .workingHours[existingIndex]
+                                    : currentHour;
+
+                                List<WorkingTimeSlot> validSlots = [];
+                                String fallbackOpen = startTime;
+                                String fallbackClose = endTime;
+
+                                if (!isOpen24) {
+                                  final filtered = slotDrafts
+                                      .take(3)
+                                      .where(
+                                        (m) =>
+                                            (m['start'] ?? '').isNotEmpty &&
+                                            (m['end'] ?? '').isNotEmpty,
+                                      )
+                                      .toList();
+
+                                  validSlots = filtered
+                                      .map(
+                                        (m) => WorkingTimeSlot(
+                                          id: null,
+                                          vendorWorkingHourId: existingHour?.id,
+                                          openTime: m['start'],
+                                          closeTime: m['end'],
+                                        ),
+                                      )
+                                      .toList();
+
+                                  if (validSlots.isEmpty) {
+                                    showToast(
+                                      context,
+                                      "Please add at least one valid time slot.",
+                                    );
+                                    return;
+                                  }
+
+                                  fallbackOpen =
+                                      validSlots.first.openTime ?? startTime;
+                                  fallbackClose =
+                                      validSlots.first.closeTime ?? endTime;
+                                }
+
+                                final updatedHour = WorkingHour(
+                                  id: existingHour?.id,
+                                  day: existingHour?.day,
+                                  dayOfWeek: dayId,
+                                  isOpen24h: isOpen24 ? 1 : 2,
+                                  status: existingHour?.status,
+                                  openingTime: fallbackOpen,
+                                  closingTime: fallbackClose,
+                                  isClosed: false,
+                                  timeSlots: isOpen24
+                                      ? <WorkingTimeSlot>[]
+                                      : validSlots,
+                                );
+
+                                if (existingIndex >= 0) {
+                                  profileController
+                                          .workingHours[existingIndex] =
+                                      updatedHour;
+                                } else {
+                                  profileController.workingHours.add(
+                                    updatedHour,
+                                  );
+                                }
+
+                                profileController.update();
+
+                                await profileController.uploadWorkingHours(
+                                  dialogContext,
+                                );
+
+                                if (dialogContext.mounted) {
+                                  Navigator.of(dialogContext).pop();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5216),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Text(
+                                "Save",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _timePillRow({
+    required String label,
+    required Color pillColor,
+    required Color pillTextColor,
+    required IconData actionIcon,
+    required Color actionColor,
+    VoidCallback? onActionPressed,
+  }) {
+    final Widget actionWidget;
+    if (onActionPressed == null) {
+      actionWidget = Icon(actionIcon, size: 18, color: actionColor);
+    } else {
+      actionWidget = IconButton(
+        visualDensity: VisualDensity.compact,
+        padding: EdgeInsets.zero,
+        icon: Icon(actionIcon, size: 18, color: actionColor),
+        onPressed: onActionPressed,
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: pillColor,
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: pillTextColor,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        actionWidget,
+      ],
     );
   }
 
@@ -95,7 +878,8 @@ class VendorWorkingHoursList extends StatelessWidget {
     }
 
     // Fallback for APIs that return Monday..Sunday in order.
-    if (hours.length > dayIndex && (hours[dayIndex].day?.trim().isEmpty ?? true)) {
+    if (hours.length > dayIndex &&
+        (hours[dayIndex].day?.trim().isEmpty ?? true)) {
       return hours[dayIndex];
     }
 
@@ -113,7 +897,9 @@ class VendorWorkingHoursList extends StatelessWidget {
     for (final hour in hours) {
       final rawDay = (hour.day ?? '').toLowerCase().trim();
       if (rawDay.isEmpty) continue;
-      if (dayAliases.any((alias) => rawDay == alias || rawDay.contains(alias))) {
+      if (dayAliases.any(
+        (alias) => rawDay == alias || rawDay.contains(alias),
+      )) {
         return hour;
       }
     }
@@ -123,50 +909,49 @@ class VendorWorkingHoursList extends StatelessWidget {
     return null;
   }
 
-  String _workingDurationLabel(BuildContext context, WorkingHour? hour) {
-    if (hour == null || hour.isClosed == true) return '-';
-    if (hour.status != null && hour.status == 0) return '-';
-    if (hour.isOpen24h == 1) return S.of(context).hr24;
+  String _timeRangeLabel({
+    required WorkingHour hour,
+    required WorkingTimeSlot slot,
+  }) {
+    // Prefer slot-specific values, fallback to day values.
+    final openInput = (slot.openTime ?? hour.openingTime)?.trim();
+    final closeInput = (slot.closeTime ?? hour.closingTime)?.trim();
 
-    final firstSlot = (hour.timeSlots == null || hour.timeSlots!.isEmpty)
-        ? null
-        : hour.timeSlots!.first;
-
-    int? openMinutes = _parseToMinutes(firstSlot?.openTime ?? hour.openingTime);
-    int? closeMinutes = _parseToMinutes(firstSlot?.closeTime ?? hour.closingTime);
+    int? openMinutes = _parseToMinutes(openInput);
+    int? closeMinutes = _parseToMinutes(closeInput);
 
     // Some APIs provide a single "open-close" range in one field.
     if (openMinutes == null || closeMinutes == null) {
-      final rangeFromOpen = _parseRangeFromText(hour.openingTime);
+      final rangeFromOpen = _parseRangeFromText(openInput);
       if (rangeFromOpen != null) {
         openMinutes ??= rangeFromOpen[0];
         closeMinutes ??= rangeFromOpen[1];
       }
     }
     if (openMinutes == null || closeMinutes == null) {
-      final rangeFromClose = _parseRangeFromText(hour.closingTime);
+      final rangeFromClose = _parseRangeFromText(closeInput);
       if (rangeFromClose != null) {
         openMinutes ??= rangeFromClose[0];
         closeMinutes ??= rangeFromClose[1];
       }
     }
 
-    if (openMinutes == null || closeMinutes == null) {
-      final open = (hour.openingTime ?? '').trim();
-      final close = (hour.closingTime ?? '').trim();
-      if (open.isNotEmpty && close.isNotEmpty) return '$open - $close';
-      return '-';
+    if (openMinutes != null && closeMinutes != null) {
+      final open = _formatMinutesHHmm(openMinutes);
+      final close = _formatMinutesHHmm(closeMinutes);
+      return '$open - $close';
     }
 
-    int diff = closeMinutes - openMinutes;
-    if (diff < 0) diff += 24 * 60; // Supports overnight shifts.
+    if ((openInput ?? '').isNotEmpty && (closeInput ?? '').isNotEmpty) {
+      return '$openInput - $closeInput';
+    }
+    return '-';
+  }
 
-    final hours = diff ~/ 60;
-    final minutes = diff % 60;
-    if (hours == 0 && minutes == 0) return '0m';
-    if (minutes == 0) return '${hours}h';
-    if (hours == 0) return '${minutes}m';
-    return '${hours}h ${minutes}m';
+  String _formatMinutesHHmm(int minutes) {
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
   }
 
   int? _parseToMinutes(String? value) {
@@ -1141,7 +1926,10 @@ class VendorRichCard extends StatelessWidget {
                   value: 'edit',
                   child: ListTile(
                     leading: const Icon(Icons.edit_outlined, size: 20),
-                    title: Text(S.of(context).edit, style: GoogleFonts.rubik(fontSize: 14)),
+                    title: Text(
+                      S.of(context).edit,
+                      style: GoogleFonts.rubik(fontSize: 14),
+                    ),
                     trailing: const Icon(Icons.chevron_right, size: 20),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -1285,36 +2073,41 @@ class VendorBulkImportInstructions extends StatelessWidget {
                 _instructionBlock(
                   index: '1',
                   title: S.of(context).downloadTemplate,
-                  body:
-                      S.of(context).downloadTheTemplateFileAndFillItWithProperData,
+                  body: S
+                      .of(context)
+                      .downloadTheTemplateFileAndFillItWithProperData,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '2',
                   title: S.of(context).selectCategory,
-                  body:
-                      S.of(context).onceYouHaveDownloadedAndFilledTheTemplateSelectThe,
+                  body: S
+                      .of(context)
+                      .onceYouHaveDownloadedAndFilledTheTemplateSelectThe,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '3',
                   title: S.of(context).attributesReference,
-                  body:
-                      S.of(context).afterAttributesReferenceYouCanEditTheAttributesListBelow,
+                  body: S
+                      .of(context)
+                      .afterAttributesReferenceYouCanEditTheAttributesListBelow,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '4',
                   title: S.of(context).postuploadEditing,
-                  body:
-                      S.of(context).afterUploadingYouNeedToEditTheItemsIndividuallyTo,
+                  body: S
+                      .of(context)
+                      .afterUploadingYouNeedToEditTheItemsIndividuallyTo,
                 ),
                 const SizedBox(height: 12),
                 _instructionBlock(
                   index: '5',
                   title: S.of(context).imageFileNaming,
-                  body:
-                      S.of(context).imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg,
+                  body: S
+                      .of(context)
+                      .imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -1343,7 +2136,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "3 "+"ATTRIBUTES",
+                        "3 " + "ATTRIBUTES",
                         style: GoogleFonts.rubik(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,

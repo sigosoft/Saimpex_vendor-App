@@ -28,7 +28,6 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ProfileController extends GetxController {
   final FlutterLocalization localization = FlutterLocalization.instance;
@@ -637,10 +636,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> unmarkLeave(
-      BuildContext context,
-      String leave_id,
-      ) async {
+  Future<void> unmarkLeave(BuildContext context, String leave_id) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
@@ -650,10 +646,7 @@ class ProfileController extends GetxController {
         DioClient().updateToken("");
       }
       var vendorType = await getSavedObject("vendorType");
-      var formData = {
-        "vendor_type": vendorType ?? "1",
-        "leave_id": leave_id,
-      };
+      var formData = {"vendor_type": vendorType ?? "1", "leave_id": leave_id};
       final response = await DioClient().post(
         ApiEndPoints.unmarkLeave,
         body: formData,
@@ -1156,9 +1149,6 @@ class ProfileController extends GetxController {
         DioClient().updateToken("");
       }
 
-      if (Platform.isAndroid) {
-        await Permission.storage.request();
-      }
       final response = await DioClient().dio.get<List<int>>(
         vendorType == "1"
             ? ApiEndPoints.importRestaurantMenuItems
@@ -1430,6 +1420,130 @@ class ProfileController extends GetxController {
     } finally {
       isRestaurantCategoriesLoading = false;
       update();
+    }
+  }
+
+  Future<void> uploadWorkingHours(BuildContext context) async {
+    try {
+      showLoadingDialog(context);
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final vendorTypeInt = int.tryParse(vendorType?.toString() ?? '') ?? 1;
+      String normalizeTime(String? raw) {
+        if (raw == null) return '';
+        final v = raw.trim();
+        if (v.isEmpty) return '';
+        if (v.length >= 5 && v[2] == ':') return v.substring(0, 5);
+        return v;
+      }
+
+      WorkingHour? findHourForDay(int dayId) {
+        final byDayOfWeek = workingHours.cast<WorkingHour?>().firstWhere(
+          (h) => h?.dayOfWeek == dayId,
+          orElse: () => null,
+        );
+        if (byDayOfWeek != null) return byDayOfWeek;
+        final aliases = [
+          ['mon', 'monday'],
+          ['tue', 'tuesday'],
+          ['wed', 'wednesday'],
+          ['thu', 'thursday'],
+          ['fri', 'friday'],
+          ['sat', 'saturday'],
+          ['sun', 'sunday'],
+        ];
+        final idx = dayId - 1;
+        if (idx < 0 || idx >= 7) return null;
+        final dayAliases = aliases[idx];
+        final byName = workingHours.cast<WorkingHour?>().firstWhere((h) {
+          final raw = h?.day?.toLowerCase().trim() ?? '';
+          if (raw.isEmpty) return false;
+          return dayAliases.any((a) => raw == a || raw.contains(a));
+        }, orElse: () => null);
+        return byName;
+      }
+
+      final daysPayload = List.generate(7, (i) {
+        final dayId = i + 1;
+        final h = findHourForDay(dayId);
+        if (h == null) {
+          return {"day_id": dayId, "is_24h": 1, "hours": <dynamic>[]};
+        }
+        final isOpen24 = h.isOpen24h == 1;
+        if (isOpen24) {
+          return {"day_id": dayId, "is_24h": 1, "hours": <dynamic>[]};
+        }
+        final slots = (h.timeSlots != null && h.timeSlots!.isNotEmpty)
+            ? h.timeSlots!
+            : null;
+        final hoursPayload = <Map<String, String>>[];
+        if (slots != null) {
+          for (final s in slots) {
+            final open = normalizeTime(s.openTime);
+            final close = normalizeTime(s.closeTime);
+            if (open.isEmpty || close.isEmpty) continue;
+            hoursPayload.add({"open_time": open, "close_time": close});
+          }
+        } else {
+          final open = normalizeTime(h.openingTime);
+          final close = normalizeTime(h.closingTime);
+          if (open.isNotEmpty && close.isNotEmpty) {
+            hoursPayload.add({"open_time": open, "close_time": close});
+          }
+        }
+        return {"day_id": dayId, "is_24h": 2, "hours": hoursPayload};
+      });
+
+      final payload = {
+        "vendor_type": vendorTypeInt == 0 ? 1 : vendorTypeInt,
+        "days": daysPayload,
+      };
+
+      final formData = dio.FormData.fromMap(payload);
+      final response = await DioClient().post(
+        ApiEndPoints.uploadWorkingHours,
+        body: formData,
+      );
+      if (context.mounted) {
+        Get.back();
+        if (response.data['status'] == 'true' ||
+            response.data['status'] == true) {
+          final languageCode = localization.currentLocale?.languageCode;
+          final messageObj = response.data['message'];
+          String toastMessage = 'Working hours updated successfully';
+          if (messageObj is Map) {
+            // Expected shape from backend:
+            // { message_en: [...], message_fr: [...], message_ar: [...] }
+            final key = languageCode == 'fr'
+                ? 'message_fr'
+                : languageCode == 'ar'
+                ? 'message_ar'
+                : 'message_en';
+            final raw = messageObj[key];
+            if (raw is List && raw.isNotEmpty) {
+              toastMessage = raw.first.toString();
+            } else if (raw != null) {
+              toastMessage = raw.toString();
+            }
+          } else if (messageObj != null) {
+            toastMessage = messageObj.toString();
+          }
+          showToast(context, toastMessage);
+          debugPrint("Working hours updated successfully: $toastMessage");
+          getProfile(context);
+        }
+      }
+    } catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+      debugPrint("getMyPoints Mock Error: $error");
     }
   }
 }
