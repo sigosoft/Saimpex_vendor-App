@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -9,7 +10,9 @@ import 'package:saimpex_vendor/model/menu_listing_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
 import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/model/tag_model.dart';
+import 'package:saimpex_vendor/model/success_model.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/restaurant_menu_item_stock_logs_model.dart';
 
 class ItemController extends GetxController {
   final String? editRestaurantMenuItemId;
@@ -70,6 +73,10 @@ class ItemController extends GetxController {
   bool isRestaurantAttributesLoading = false;
   List<AttributeData> restaurantAttributes = [];
 
+  bool isStockLogsLoading = false;
+  RestaurantItemStockLogModel? menuItemStockLogModel;
+  List<StockLogItem> menuItemStockLogs = [];
+
   @override
   void onInit() {
     super.onInit();
@@ -89,7 +96,7 @@ class ItemController extends GetxController {
           ? Get.find<ProfileController>()
           : Get.put(ProfileController(), permanent: false);
       if (profileController.restaurantMenuItems.isEmpty) {
-        await profileController.fetchRestaurantMenuItems();
+        await profileController.fetchGroceryMenuItems();
       }
       final match = profileController.restaurantMenuItems.firstWhere(
         (e) =>
@@ -301,7 +308,7 @@ class ItemController extends GetxController {
           }
           showToast(context, successMessage);
           final profileController = Get.find<ProfileController>();
-          await profileController.fetchRestaurantMenuItems();
+          await profileController.fetchGroceryMenuItems();
           if (context.mounted) {
             Get.back();
           }
@@ -457,7 +464,7 @@ class ItemController extends GetxController {
           response.data['status'] == true) {
         if (Get.isRegistered<ProfileController>()) {
           final profileController = Get.find<ProfileController>();
-          await profileController.fetchRestaurantMenuItems();
+          await profileController.fetchGroceryMenuItems();
         }
         if (context.mounted) {
           String successMessage = "Leave marked successfully";
@@ -527,6 +534,8 @@ class ItemController extends GetxController {
       if (details.menuId != null) {
         selectedMenuId = details.menuId;
       }
+
+      debugPrint("details.availabilityStatus: ${details.availableStatus}");
       final menuName = details.restaurantMenu?.nameEn;
       if (menuName != null && menuName.isNotEmpty) {
         selectedType = menuName;
@@ -620,7 +629,7 @@ class ItemController extends GetxController {
           }
           showToast(context, successMessage);
           final profileController = Get.find<ProfileController>();
-          await profileController.fetchRestaurantMenuItems();
+          await profileController.fetchGroceryMenuItems();
           if (context.mounted) {
             Get.back();
           }
@@ -639,6 +648,210 @@ class ItemController extends GetxController {
         showToast(context, error.toString());
         debugPrint("addItem Error: $error");
       }
+    }
+  }
+
+  Future<void> updateItemStatus(int itemId, int status) async {
+    try {
+      isRestaurantTagsLoading = true;
+      update();
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.updateItemStatus
+            : ApiEndPoints.updateItemStatus,
+        query: {"menu_item_id": itemId, "available_status": status},
+      );
+      debugPrint("updateItemStatus response: $response");
+      final successModel = SuccessModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
+      String? firstNonEmptyString(List<String>? values) {
+        if (values == null) return null;
+        final nonEmpty = values
+            .map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+        return nonEmpty.isNotEmpty ? nonEmpty.first : null;
+      }
+
+      final toastFromMessage =
+          firstNonEmptyString(successModel.message?.messageEn) ??
+          firstNonEmptyString(successModel.message?.messageFr) ??
+          firstNonEmptyString(successModel.message?.messageAr) ??
+          '';
+
+      final resolvedToastMessage = toastFromMessage.isNotEmpty
+          ? toastFromMessage
+          : (successModel.status == 'true'
+                ? 'Item status updated successfully'
+                : 'Failed to update item status');
+
+      debugPrint('updateItemStatus toast: $resolvedToastMessage');
+
+      final ctx = Get.overlayContext ?? Get.context;
+      if (ctx != null) {
+        try {
+          showToast(ctx, resolvedToastMessage);
+        } catch (e) {
+          debugPrint(
+            'showToast failed (overlay missing). Falling back. err=$e',
+          );
+          Fluttertoast.showToast(
+            msg: resolvedToastMessage,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 14.0,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: resolvedToastMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 14.0,
+        );
+      }
+
+      if (successModel.status == 'true') {
+        final updatedData = successModel.data ?? [];
+        restaurantTags = updatedData.map((e) {
+          if (e is Map<String, dynamic>) {
+            return TagData.fromJson(e);
+          }
+          if (e is Map) {
+            return TagData.fromJson(Map<String, dynamic>.from(e));
+          }
+          return TagData();
+        }).toList();
+      }
+    } catch (error) {
+      debugPrint("updateItemStatus Error: $error");
+    } finally {
+      isRestaurantTagsLoading = false;
+      update();
+    }
+  }
+
+  Future<void> getMenuItemStockLogs(
+    String menuItemId,
+    int page,
+    int limit,
+  ) async {
+    try {
+      isStockLogsLoading = true;
+      update();
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final response = await DioClient().get(
+        vendorType == "1"
+            ? ApiEndPoints.restaurantMenuItemStockLogs
+            : ApiEndPoints.groceryMenuItemStockLogs,
+        query: {"menu_item_id": menuItemId, "page": page, "limit": limit},
+      );
+      debugPrint("getMenuItemStockLogs response: $response");
+      final model = RestaurantItemStockLogModel.fromJson(
+        response.data is Map<String, dynamic>
+            ? response.data
+            : Map<String, dynamic>.from(response.data as Map),
+      );
+      menuItemStockLogModel = model;
+      menuItemStockLogs = model.data?.stockLogs?.data ?? [];
+    } catch (error, stackTrace) {
+      debugPrint("getMenuItemStockLogs Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      isStockLogsLoading = false;
+      update();
+    }
+  }
+
+  Future<void> updateMenuItemStock(
+    BuildContext context,
+    String menuItemId,
+    int quantity,
+    String movementType,
+  ) async {
+    try {
+      isStockLogsLoading = true;
+      update();
+      var token = await getSavedObject("token");
+      var vendorType = await getSavedObject("vendorType");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      final response = await DioClient().post(
+        vendorType == "1"
+            ? ApiEndPoints.updateRestaurantMenuItemStock
+            : ApiEndPoints.updateGroceryMenuItemStock,
+        body: {
+          "menu_item_id": menuItemId,
+          "quantity": quantity,
+          "movement_type": movementType,
+        },
+      );
+      debugPrint("updateMenuItemStock response: $response");
+      final successModel = SuccessModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+      String? firstNonEmptyString(List<String>? values) {
+        if (values == null) return null;
+        final nonEmpty = values
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+        return nonEmpty.isNotEmpty ? nonEmpty.first : null;
+      }
+
+      final toastMessage =
+          firstNonEmptyString(successModel.message?.messageEn) ??
+          firstNonEmptyString(successModel.message?.messageFr) ??
+          firstNonEmptyString(successModel.message?.messageAr) ??
+          (successModel.status == 'true'
+              ? 'Stock updated successfully'
+              : 'Failed to update stock');
+
+      final ctx = Get.overlayContext ?? Get.context;
+      if (ctx != null) {
+        try {
+          showToast(ctx, toastMessage);
+        } catch (_) {
+          Fluttertoast.showToast(
+            msg: toastMessage,
+            toastLength: Toast.LENGTH_SHORT,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: toastMessage,
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      }
+    } catch (error, stackTrace) {
+      debugPrint("getMenuItemStockLogs Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
+      showToast(context, error.toString());
+    } finally {
+      isStockLogsLoading = false;
+      update();
     }
   }
 }

@@ -1,17 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
-import 'package:saimpex_vendor/generated/l10n.dart';
-import 'package:saimpex_vendor/model/settings_model.dart';
-import 'package:saimpex_vendor/view/login/login.dart';
-import 'package:saimpex_vendor/view/settings/maintenance.dart';
-import 'package:saimpex_vendor/view/settings/need_an_update.dart';
 
 import '../Utils/utils.dart';
 import '../model/home_model.dart';
@@ -19,7 +11,6 @@ import '../model/home_model.dart';
 // import 'cart_controller.dart';
 // import 'chat_controller.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
-import '../view/Home/Home.dart';
 import 'profile_controller.dart';
 
 class HomeController extends GetxController {
@@ -32,6 +23,7 @@ class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
 
   HomeModel? homeData;
+  int? autoAcceptMode; // API mapping: 1 = ON, 2 = OFF
   bool _hasNextPage = true;
   bool isFirstLoadRunning = true;
   bool isLoadMoreRunning = false;
@@ -39,6 +31,8 @@ class HomeController extends GetxController {
 
   bool badge = false;
   int unreadChatCount = 0;
+
+  bool get isAutoAcceptOrders => (autoAcceptMode ?? 1) == 1;
 
   @override
   void onInit() {
@@ -55,7 +49,6 @@ class HomeController extends GetxController {
     scrollController.dispose();
     super.dispose();
   }
-
 
   Future<void> onTabTapped(int index, BuildContext context) async {
     selectedcurrentIndex = index;
@@ -134,8 +127,6 @@ class HomeController extends GetxController {
       update();
     }
   }
-
-
 
   Future<void> fetchHome(
     BuildContext context, {
@@ -227,16 +218,111 @@ class HomeController extends GetxController {
   Future<void> fetchUnreadChatCount() async {
     try {
       var token = await getSavedObject("token");
-      if (token == null || token.toString().isEmpty || token.toString() == "null") return;
+      if (token == null ||
+          token.toString().isEmpty ||
+          token.toString() == "null")
+        return;
       DioClient().updateToken(token);
-      final response = await DioClient().get(ApiEndPoints.totalUnreadMessagesCount);
+      final response = await DioClient().get(
+        ApiEndPoints.totalUnreadMessagesCount,
+      );
       if (response.data != null && response.data['status'] == true) {
         final count = response.data['data']?['total_unread_messages_count'];
-        unreadChatCount = (count is int) ? count : int.tryParse(count?.toString() ?? '0') ?? 0;
+        unreadChatCount = (count is int)
+            ? count
+            : int.tryParse(count?.toString() ?? '0') ?? 0;
         update();
       }
     } catch (e) {
       debugPrint("fetchUnreadChatCount error: $e");
+    }
+  }
+
+  Future<void> updateAutoAcceptOrders(BuildContext context, int status) async {
+    try {
+      showLoadingDialog(context);
+      final prev = autoAcceptMode;
+      autoAcceptMode = status;
+      update();
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      var formData = {"auto_accept_mode": status};
+      final response = await DioClient().post(
+        ApiEndPoints.updateAutoAcceptOrders,
+        body: formData,
+      );
+      if (context.mounted) {
+        Get.back();
+      }
+      if (response.data['status'] == 'true' ||
+          response.data['status'] == true) {
+        if (context.mounted) {
+          String successMessage = "Auto accept orders updated successfully";
+          final msg = response.data['message'];
+          if (msg is String && msg.trim().isNotEmpty) {
+            successMessage = msg.trim();
+          } else if (msg is Map &&
+              msg.containsKey('message_en') &&
+              msg['message_en'] is List &&
+              (msg['message_en'] as List).isNotEmpty) {
+            successMessage = (msg['message_en'] as List).first.toString();
+          }
+          showToast(context, successMessage);
+        }
+      } else {
+        autoAcceptMode = prev;
+        update();
+        if (context.mounted) {
+          showToast(
+            context,
+            response.data['message']?.toString() ??
+                "Failed to update auto accept orders",
+          );
+        }
+      }
+    } catch (error) {
+      // best-effort rollback if request fails
+      // (keep current value if we never changed it)
+      update();
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+    }
+  }
+
+  Future<void> getProfile(
+    BuildContext context, {
+    int page = 1,
+    int limit = 10,
+    bool isLoadMore = false,
+  }) async {
+    try {
+      update();
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      var vendorType = await getSavedObject("vendorType");
+      final response = await DioClient().get(
+        ApiEndPoints.profile,
+        query: {"vendor_type": vendorType ?? "1", "limit": limit, "page": page},
+      );
+      ProfileModel profileModel = ProfileModel.fromJson(response.data);
+      if (profileModel.status == true) {
+        autoAcceptMode = profileModel.data?.autoAcceptMode ?? autoAcceptMode;
+        debugPrint("auto accept mode: ${profileModel.data?.autoAcceptMode}");
+      }
+    } catch (error) {
+      debugPrint("getProfile Error: $error");
+    } finally {
+      update();
     }
   }
 }

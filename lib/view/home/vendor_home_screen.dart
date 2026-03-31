@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,7 +23,6 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
 
 import '../../Utils/Utils.dart';
-import '../../configs/ApiConfigs.dart';
 import '../../configs/ApiConfigs.dart';
 import '../../configs/Dioclient.dart';
 import '../../model/settings_model.dart';
@@ -179,6 +179,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   }
 
   Future<void> _fetchOrders({String? keyword}) async {
+    await homeController.getProfile(context);
     await homeController.fetchHome(
       context,
       orderStatus: _statusValue(selectedTab),
@@ -332,6 +333,83 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                             });
                             _fetchOrders();
                           },
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: layout.horizontalPadding,
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Color(0xFF16A34A),
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Auto-Accept Orders",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF1F2937),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        "Orders will be accepted automatically",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: const Color(0xFF9CA3AF),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Transform.scale(
+                                  scale: 0.85,
+                                  child: CupertinoSwitch(
+                                    value: controller.isAutoAcceptOrders,
+                                    onChanged: (value) async {
+                                      // API mapping: 1 = auto accept ON, 2 = OFF
+                                      final statusToSend = value ? 1 : 2;
+                                      await controller.updateAutoAcceptOrders(
+                                        context,
+                                        statusToSend,
+                                      );
+                                      if (mounted) {
+                                        await _fetchOrders();
+                                      }
+                                    },
+                                    activeTrackColor: const Color(0xFF16A34A),
+                                    thumbColor: Colors.white,
+                                    trackColor: const Color(0xFFD1D5DB),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 16),
                         controller.isFirstLoadRunning

@@ -391,7 +391,6 @@ class ProfileController extends GetxController {
         query: {
           "limit": limit,
           "page": page,
-          "status": status,
           if (categoryId != null) "category_id": categoryId,
         },
       );
@@ -400,6 +399,9 @@ class ProfileController extends GetxController {
         final model = RestaurantMenuItemsModel.fromJson(response.data);
         if (model.status == true) {
           restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
+          debugPrint(
+            "availabilityStatus: ${restaurantMenuItems.first.availableStatus.toString()}",
+          );
         }
       } else {
         final model = GroceryMenuItemsModel.fromJson(response.data);
@@ -411,44 +413,6 @@ class ProfileController extends GetxController {
       debugPrint("fetchGroceryMenuItems Error: $error");
     } finally {
       isGroceryMenuItemsLoading = false;
-      update();
-    }
-  }
-
-  Future<void> fetchRestaurantMenuItems({int limit = 10, int page = 1}) async {
-    try {
-      isRestaurantMenuItemsLoading = true;
-      update();
-
-      var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
-      if (token != null) {
-        DioClient().updateToken(token);
-      }
-      if (vendorType == "1") {
-        final response = await DioClient().get(
-          ApiEndPoints.restaurantMenuItems,
-          query: {"limit": limit, "page": page},
-        );
-        final model = RestaurantMenuItemsModel.fromJson(response.data);
-        if (model.status == true) {
-          restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
-        }
-      } else {
-        final response = await DioClient().get(
-          ApiEndPoints.groceryMenuItems,
-          query: {"limit": limit, "page": page},
-        );
-        final model = GroceryMenuItemsModel.fromJson(response.data);
-        if (model.status == true) {
-          groceryMenuItems = model.data?.groceryMenuItems?.data ?? [];
-        }
-        restaurantMenuItems = [];
-      }
-    } catch (error) {
-      debugPrint("fetchRestaurantMenuItems Error: $error");
-    } finally {
-      isRestaurantMenuItemsLoading = false;
       update();
     }
   }
@@ -608,15 +572,15 @@ class ProfileController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
+          String successMessage = "Busy status updated successfully";
+          final msg = response.data['message'];
+          if (msg is String && msg.trim().isNotEmpty) {
+            successMessage = msg.trim();
+          } else if (msg is Map &&
+              msg.containsKey('message_en') &&
+              msg['message_en'] is List &&
+              (msg['message_en'] as List).isNotEmpty) {
+            successMessage = (msg['message_en'] as List).first.toString();
           }
           showToast(context, successMessage);
         }
@@ -624,7 +588,8 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            response.data['message']?.toString() ??
+                "Failed to update busy status",
           );
         }
       }
@@ -1137,6 +1102,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> importRestaurantMenuItems(BuildContext context) async {
+    debugPrint("importRestaurantMenuItems:start");
     try {
       isRestaurantBulkTemplateDownloading = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
@@ -1302,7 +1268,7 @@ class ProfileController extends GetxController {
             }
           } catch (_) {}
           await fetchRestaurantMenus(keyword: '');
-          await fetchRestaurantMenuItems();
+          await fetchGroceryMenuItems();
           if (context.mounted) {
             final msg = _bulkImportSuccessMessage(map);
             showToast(context, msg);
@@ -1517,8 +1483,6 @@ class ProfileController extends GetxController {
           final messageObj = response.data['message'];
           String toastMessage = 'Working hours updated successfully';
           if (messageObj is Map) {
-            // Expected shape from backend:
-            // { message_en: [...], message_fr: [...], message_ar: [...] }
             final key = languageCode == 'fr'
                 ? 'message_fr'
                 : languageCode == 'ar'
@@ -1544,6 +1508,54 @@ class ProfileController extends GetxController {
         showToast(context, error.toString());
       }
       debugPrint("getMyPoints Mock Error: $error");
+    }
+  }
+
+  Future<void> updateBusyStatus(BuildContext context, int status) async {
+    try {
+      showLoadingDialog(context);
+      var token = await getSavedObject("token");
+      if (token != null) {
+        DioClient().updateToken(token);
+      } else {
+        DioClient().updateToken("");
+      }
+      var formData = {"is_busy": status};
+      final response = await DioClient().post(
+        ApiEndPoints.updateBusyStatus,
+        body: formData,
+      );
+      if (context.mounted) {
+        Get.back();
+      }
+      if (response.data['status'] == 'true' ||
+          response.data['status'] == true) {
+        if (context.mounted) {
+          String successMessage = "Busy status updated successfully";
+          if (response.data['message'] != null) {
+            var msgMap = response.data['message'];
+            if (msgMap is Map &&
+                msgMap.containsKey('message_en') &&
+                msgMap['message_en'] is List &&
+                msgMap['message_en'].isNotEmpty) {
+              successMessage = msgMap['message_en'][0];
+            }
+          }
+          showToast(context, successMessage);
+        }
+      } else {
+        if (context.mounted) {
+          showToast(
+            context,
+            response.data['message']?.toString() ?? "Failed to mark leave",
+          );
+        }
+      }
+    } catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
     }
   }
 }

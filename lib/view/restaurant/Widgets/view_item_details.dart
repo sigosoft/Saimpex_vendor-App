@@ -10,7 +10,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
-import 'package:saimpex_vendor/view/restaurant/edit_items_screen.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/view_stock_history_screen.dart';
 
 import '../../../generated/l10n.dart';
 
@@ -127,11 +127,17 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             height: MediaQuery.of(context).size.height * 0.07,
             child: ElevatedButton(
               onPressed: () {
+                final details = _detailsModel?.data?.menuItemDetails;
+                final menu = details?.restaurantMenu;
+                if (menu == null) return;
+                final name = _pickMenuName(menu, lang);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => EditItemsScreen(
-                      itemId: widget.menuItemId ?? widget.itemId,
+                    builder: (_) => ViewStockHistoryScreen(
+                      itemName: name.isNotEmpty ? name : 'Item',
+                      imageUrl: menu.image,
+                      editItemId: widget.menuItemId ?? widget.itemId,
                     ),
                   ),
                 );
@@ -144,7 +150,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               child: Text(
-                S.of(context).uploadDrive,
+                'View Stock History',
                 style: GoogleFonts.rubik(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -271,23 +277,11 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   children: [
                     Expanded(
                       child: _kvSimple(
-                        label: "CREATED DATE",
-                        value: createdText,
-                      ),
-                    ),
-                    Expanded(
-                      child: _kvSimple(
                         label: S.of(context).createdDate,
                         value: createdText,
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _kvSimple(
-                        label: "UPDATED DATE",
-                        value: updatedText,
-                      ),
-                    ),
                     Expanded(
                       child: _kvSimple(
                         label: S.of(context).updatedDate,

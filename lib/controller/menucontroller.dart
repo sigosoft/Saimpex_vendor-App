@@ -33,11 +33,9 @@ class MenuController extends GetxController {
   final TextEditingController discountPriceCtrl = TextEditingController();
 
   /// Max quantity allowed for the menu (API: `quantity_allowed`).
-  final TextEditingController quantityAllowedCtrl = TextEditingController(
-    text: '10',
-  );
+  final TextEditingController quantityAllowedCtrl = TextEditingController();
   String? selectedCategory;
-  String selectedIsVeg = 'No';
+  String? selectedIsVeg;
   String? selectedTag;
 
   /// Attribute id for menu attributes row (restaurant vs grocery key differs in API).
@@ -399,13 +397,11 @@ class MenuController extends GetxController {
     prepTimeCtrl.clear();
     priceCtrl.clear();
     discountPriceCtrl.clear();
-    quantityAllowedCtrl.text = '10';
+    quantityAllowedCtrl.clear();
     selectedCategory = null;
-    selectedIsVeg = 'No';
+    selectedIsVeg = null;
     selectedTag = null;
-    selectedAttributeId = menuAttributes.isNotEmpty
-        ? menuAttributes.first.id?.toString()
-        : null;
+    selectedAttributeId = null;
     uploadedImages.clear();
     update();
   }
@@ -416,6 +412,9 @@ class MenuController extends GetxController {
     }
     if (selectedCategory == null || selectedCategory!.trim().isEmpty) {
       return "Please select category";
+    }
+    if (selectedIsVeg == null || selectedIsVeg!.trim().isEmpty) {
+      return "Please select veg type";
     }
     if (descEnCtrl.text.trim().isEmpty) {
       return "Please enter description";
@@ -740,11 +739,6 @@ class MenuController extends GetxController {
       final attributesModel = AttributesModel.fromJson(map);
       if (attributesModel.status == true) {
         menuAttributes = attributesModel.data ?? [];
-        if (menuAttributes.isNotEmpty &&
-            (selectedAttributeId == null ||
-                selectedAttributeId!.trim().isEmpty)) {
-          selectedAttributeId = menuAttributes.first.id?.toString();
-        }
       }
     } catch (error, stackTrace) {
       debugPrint("getAllAttributes Error: $error");
@@ -1076,6 +1070,7 @@ class MenuController extends GetxController {
   }
 
   void downloadItemTemplate(BuildContext context) async {
+    debugPrint("downloadItemTemplate:start");
     try {
       final token = await getSavedObject("token");
       final vendorType =
@@ -1086,7 +1081,6 @@ class MenuController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-
       final response = await DioClient().dio.get<List<int>>(
         ApiEndPoints.exportMenuItems,
         queryParameters: {"vendor_type": vendorType},
@@ -1160,7 +1154,8 @@ class MenuController extends GetxController {
         targetDir = await getApplicationDocumentsDirectory();
       }
       targetDir ??= await getApplicationDocumentsDirectory();
-
+      final internalDir = await getApplicationDocumentsDirectory();
+      final internalFile = File('${internalDir.path}/$fileName');
       File file = File('${targetDir.path}/$fileName');
       try {
         await file.writeAsBytes(bytes, flush: true);
@@ -1169,11 +1164,30 @@ class MenuController extends GetxController {
         file = File('${fallbackDir.path}/$fileName');
         await file.writeAsBytes(bytes, flush: true);
       }
-
-      if (context.mounted) {
-        showToast(context, 'Saved: ${file.path}');
-        await OpenFilex.open(file.path);
+      await internalFile.writeAsBytes(bytes, flush: true);
+      final exists = await file.exists();
+      final fileSize = exists ? await file.length() : 0;
+      if (!exists || fileSize == 0) {
+        final internalExists = await internalFile.exists();
+        final internalSize = internalExists ? await internalFile.length() : 0;
+        if (!internalExists || internalSize == 0) {
+          if (context.mounted) showToast(context, 'Downloaded file is empty.');
+          return;
+        }
       }
+      if (context.mounted) {
+        showToast(context, 'Saved: ${internalFile.path}');
+      }
+      try {
+        final result = await OpenFilex.open(internalFile.path);
+        debugPrint(
+          "OpenFilex result: type=${result.type} message=${result.message}",
+        );
+      } catch (e) {
+        debugPrint('OpenFilex open error: $e');
+        if (context.mounted) showToast(context, e.toString());
+      }
+      return;
     } catch (error) {
       debugPrint('downloadItemTemplate Error: $error');
       if (context.mounted) {
@@ -1263,9 +1277,9 @@ class MenuController extends GetxController {
         }
         return fallback;
       }
+
       if (ok) {
         if (Get.isRegistered<ProfileController>()) {
-          await Get.find<ProfileController>().fetchRestaurantMenuItems();
           await Get.find<ProfileController>().fetchRestaurantMenus();
         }
         final msg = resolveMessage(map['message'], 'Upload successful');

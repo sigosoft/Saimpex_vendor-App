@@ -77,6 +77,8 @@ class ApiEndPoints {
   static String updateRestaurantMenuItem = "updateRestaurantMenuItem";
   static String exportMenuItems = "exportMenuItems";
   static String uploadMenuItems = "importRestaurantMenuItems";
+  static String restaurantMenuItemStockLogs = "restaurantMenuItemStockLogs";
+  static String updateRestaurantMenuItemStock = "updateRestaurantItemStock";
 
   // grocery api endpoints
 
@@ -100,4 +102,9 @@ class ApiEndPoints {
   static String uploadRestaurantImages = "uploadRestaurantMenuImages";
   static String uploadGroceryImages = "uploadGroceryMenuImages";
   static String uploadWorkingHours = "updateWorkingHours";
+  static String updateItemStatus = "updateItemAvailabilityStatus";
+  static String groceryMenuItemStockLogs = "groceryMenuItemStockLogs";
+  static String updateGroceryMenuItemStock = "updateGroceryItemStock";
+  static String updateAutoAcceptOrders = "updateAutoAcceptMode";
+  static String updateBusyStatus = "updateBusyMode";
 }

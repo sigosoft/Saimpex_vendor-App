@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,6 +35,8 @@ class VendorRestaurantScreen extends StatefulWidget {
 
 class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   String selectedMenu = "Account";
+  bool _isRestaurantBusy = false;
+  bool _busyStatusInitialized = false;
   bool isInstructionsExpanded = false;
   DateTime? _fromDate;
   DateTime? _toDate;
@@ -168,6 +171,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       child: GetBuilder<ProfileController>(
         builder: (profileController) {
           final profile = profileController.profileData;
+          // Initialize Busy toggle from server profile once.
+          if (!_busyStatusInitialized && profile?.isBusy != null) {
+            _isRestaurantBusy = (profile?.isBusy ?? 2) == 1; // 1 = Busy
+            _busyStatusInitialized = true;
+          }
           return SingleChildScrollView(
             controller: profileController.scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -210,6 +218,52 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 const SizedBox(height: 24),
 
                 if (selectedMenu == "Account") ...[
+                  _sectionHeader("Restaurant Status"),
+                  const SizedBox(height: 12),
+                  Material(
+                    elevation: 3,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      height: 56,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Busy",
+                              style: GoogleFonts.rubik(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFEF4444),
+                              ),
+                            ),
+                            const Spacer(),
+                            Transform.scale(
+                              scale: 0.8,
+                              child: CupertinoSwitch(
+                                value: _isRestaurantBusy,
+                                onChanged: (value) async {
+                                  setState(() => _isRestaurantBusy = value);
+                                  final statusToSend = value ? 1 : 2;
+                                  await profileController.updateBusyStatus(
+                                    context,
+                                    statusToSend,
+                                  );
+                                  // Re-sync from server on next rebuild if profile is refreshed elsewhere.
+                                  _busyStatusInitialized = false;
+                                },
+                                activeTrackColor: const Color(0xFFEF4444),
+                                thumbColor: Colors.white,
+                                trackColor: const Color(0xFFE5E7EB),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   _sectionHeader(S.of(context).storeDetails),
                   const SizedBox(height: 12),
                   _buildDetailCard(
@@ -236,8 +290,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         _detailRow(
                           "Address",
                           _formatLongText(
-                            profile?.address ??
-                                "Store Block 5, Mauritania",
+                            profile?.address ?? "Store Block 5, Mauritania",
                           ),
                         ),
                       ],
@@ -338,7 +391,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _sectionHeader(
-                        S.of(context).ratingReviews+" (${profileController.ratingReviewData?.totalReviews ?? 0})",
+                        S.of(context).ratingReviews +
+                            " (${profileController.ratingReviewData?.totalReviews ?? 0})",
                       ),
                       TextButton(
                         onPressed: () {
@@ -580,9 +634,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         } else if (title == "Items") {
           final profileController = Get.find<ProfileController>();
           profileController.fetchGroceryMenuItems();
-          profileController.fetchRestaurantMenuItems();
         } else if (title == "Menu Bulk Import") {
-          // Ensure the grid uses fresh category data from the API.
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
         }
@@ -883,7 +935,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
             ),
             child: Container(
-              margin: EdgeInsets.only(left: 3,right: 3),
+              margin: EdgeInsets.only(left: 3, right: 3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -1172,7 +1224,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             price,
             item.menuItemId?.toString() ?? item.id?.toString() ?? "",
             item.image,
-            item.id.toString(),
+            item.menuItemId?.toString() ?? item.id.toString(),
             category: category,
             availabilityStatus: item.availableStatus,
           );
@@ -1203,7 +1255,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             displayPrice,
             item.restaurantMenuItemId?.toString() ?? item.id?.toString() ?? "",
             item.image ?? "",
-            item.id.toString(),
+            // Card "ID" should represent the actual restaurant menu item id.
+            item.restaurantMenuItemId?.toString() ?? item.id.toString(),
             category: category,
             originalPrice: originalPrice,
             availabilityStatus: item.availableStatus,
@@ -1488,7 +1541,4 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  Widget _basketItem(String name, String count, String status) {
-    return VendorBasketItem(name: name, count: count, status: status);
-  }
 }

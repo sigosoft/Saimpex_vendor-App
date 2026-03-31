@@ -128,7 +128,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                           EditMenuFieldLabel(S.of(context).isVeg),
                           const SizedBox(height: 6),
                           EditMenuDropdownField(
-                            value: c.selectedIsVeg,
+                            value: c.selectedIsVeg ?? 'No',
                             items: MenuController.vegOptions,
                             onChanged: c.setSelectedIsVeg,
                             height: 46,

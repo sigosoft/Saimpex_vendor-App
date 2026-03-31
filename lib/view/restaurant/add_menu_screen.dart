@@ -102,9 +102,12 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                         AddMenuFieldLabel(S.of(context).isVegLabel),
                         SizedBox(height: screenHeight * 0.007),
                         AddMenuDropdownField(
-                          value: controller.selectedIsVeg == 'Yes'
-                              ? S.of(context).yesLabel
-                              : S.of(context).noLabel,
+                          value: controller.selectedIsVeg == null
+                              ? null
+                              : (controller.selectedIsVeg == 'Yes'
+                                    ? S.of(context).yesLabel
+                                    : S.of(context).noLabel),
+                          hint: 'Select',
                           items: [
                             S.of(context).yesLabel,
                             S.of(context).noLabel,

@@ -93,7 +93,11 @@ class ProfileData {
   final String? certificate;
   // Restaurant type
   final int? restaurantType;
+  // Busy status (API: 1 = Busy, 2 = Not Busy)
+  final int? isBusy;
+  // Auto accept mode
 
+  final int? autoAcceptMode;
   ProfileData({
     this.id,
     this.name,
@@ -123,6 +127,8 @@ class ProfileData {
     this.ownerIdProof,
     this.certificate,
     this.restaurantType,
+    this.isBusy,
+    this.autoAcceptMode,
   });
 
   factory ProfileData.fromJson(Map<String, dynamic>? json) {
@@ -162,6 +168,12 @@ class ProfileData {
       certificate: json['certificate']?.toString(),
       restaurantType: json['restaurant_type'] != null
           ? int.tryParse(json['restaurant_type'].toString())
+          : null,
+      isBusy: json['is_busy'] != null
+          ? int.tryParse(json['is_busy'].toString())
+          : (json['isBusy'] != null ? int.tryParse(json['isBusy'].toString()) : null),
+      autoAcceptMode: json['auto_accept_mode'] != null
+          ? int.tryParse(json['auto_accept_mode'].toString())
           : null,
     );
   }

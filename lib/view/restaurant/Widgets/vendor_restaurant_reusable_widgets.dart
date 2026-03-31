@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/controller/item_controller.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -27,7 +29,6 @@ class VendorWorkingHoursList extends StatelessWidget {
       S.of(context).saturday,
       S.of(context).sunday,
     ];
-
     return GetBuilder<ProfileController>(
       builder: (profileController) {
         return Column(
@@ -37,7 +38,6 @@ class VendorWorkingHoursList extends StatelessWidget {
               profileController.workingHours,
               dayIndex,
             );
-
             return Padding(
               padding: const EdgeInsets.only(bottom: 14),
               child: Row(
@@ -152,9 +152,7 @@ class VendorWorkingHoursList extends StatelessWidget {
       ];
     }
 
-    // Non-24h: show one pill per slot (Monday screenshot shows multiple).
     final nonNullHour = hour;
-
     final slots =
         (nonNullHour.timeSlots != null && nonNullHour.timeSlots!.isNotEmpty)
         ? nonNullHour.timeSlots!
@@ -183,15 +181,11 @@ class VendorWorkingHoursList extends StatelessWidget {
               onDeleteSlot!(nonNullHour, slot);
               return;
             }
-            // Default behavior: remove current time slot UI and reset day to 24h.
             _resetDayTo24Hours(
               profileController: profileController,
               dayIndex: dayIndex,
               currentHour: nonNullHour,
             );
-
-            // Persist the change to backend: reset day to 24h with empty hours.
-            // This will build the payload from updated `profileController.workingHours`.
             profileController.uploadWorkingHours(context);
           },
         ),
@@ -205,17 +199,12 @@ class VendorWorkingHoursList extends StatelessWidget {
     required WorkingHour? currentHour,
   }) {
     if (currentHour == null) return;
-
-    final apiDay = dayIndex + 1; // Backend format: 1=Mon ... 7=Sun.
-
-    // Prefer matching by id when present, otherwise by dayOfWeek.
+    final apiDay = dayIndex + 1;
     final targetIndex = profileController.workingHours.indexWhere((h) {
       if (currentHour.id != null && h.id == currentHour.id) return true;
       return (h.dayOfWeek ?? 0) == apiDay;
     });
-
     if (targetIndex < 0) return;
-
     final original = profileController.workingHours[targetIndex];
     final updated = WorkingHour(
       id: original.id,
@@ -246,22 +235,16 @@ class VendorWorkingHoursList extends StatelessWidget {
     List<WorkingTimeSlot>? initialTimeSlots,
     WorkingHour? currentHour,
   }) async {
-    final startMinutes =
-        _parseToMinutes(initialStartTime ?? '') ?? (0 * 60); // 00:00
-    final endMinutes =
-        _parseToMinutes(initialEndTime ?? '') ?? (23 * 60 + 59); // 23:59
-
+    final startMinutes = _parseToMinutes(initialStartTime ?? '') ?? (0 * 60);
+    final endMinutes = _parseToMinutes(initialEndTime ?? '') ?? (23 * 60 + 59);
     final defaultStartText = _formatMinutesHHmm(startMinutes);
     final defaultEndText = _formatMinutesHHmm(endMinutes);
-
     String _maybeFormatSlot(String? raw) {
       final mins = _parseToMinutes(raw ?? '');
       if (mins == null) return '';
       return _formatMinutesHHmm(mins);
     }
 
-    // If Open 24 Hr is disabled initially (or user disables it), prefill slots
-    // from API timeSlots; otherwise fall back to opening/closing time.
     final initialSlotDrafts = (!initialIsOpen24)
         ? (initialTimeSlots != null && initialTimeSlots.isNotEmpty)
               ? initialTimeSlots
@@ -286,7 +269,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                     )
                     .toList()
         : <Map<String, String>>[];
-
     return showDialog<void>(
       context: context,
       builder: (dialogContext) {
@@ -301,7 +283,6 @@ class VendorWorkingHoursList extends StatelessWidget {
               },
             )
             .toList();
-
         return StatefulBuilder(
           builder: (dialogContext, setState) {
             Widget timeBox({
@@ -422,7 +403,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                             setState(() {
                               isOpen24 = v;
                               if (!isOpen24) {
-                                // Show first empty slot immediately (matches your screenshot).
                                 if (slotDrafts.isEmpty) {
                                   final slotStart = _maybeFormatSlot(
                                     initialStartTime,
@@ -705,8 +685,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                             height: 40,
                             child: ElevatedButton(
                               onPressed: () async {
-                                // Convert dialog values into WorkingHour model,
-                                // update controller state, then upload to API.
                                 final existingIndex = profileController
                                     .workingHours
                                     .indexWhere((h) {
@@ -716,16 +694,13 @@ class VendorWorkingHoursList extends StatelessWidget {
                                       }
                                       return (h.dayOfWeek ?? 0) == dayId;
                                     });
-
                                 final existingHour = existingIndex >= 0
                                     ? profileController
                                           .workingHours[existingIndex]
                                     : currentHour;
-
                                 List<WorkingTimeSlot> validSlots = [];
                                 String fallbackOpen = startTime;
                                 String fallbackClose = endTime;
-
                                 if (!isOpen24) {
                                   final filtered = slotDrafts
                                       .take(3)
@@ -735,7 +710,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                                             (m['end'] ?? '').isNotEmpty,
                                       )
                                       .toList();
-
                                   validSlots = filtered
                                       .map(
                                         (m) => WorkingTimeSlot(
@@ -746,7 +720,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                                         ),
                                       )
                                       .toList();
-
                                   if (validSlots.isEmpty) {
                                     showToast(
                                       context,
@@ -754,13 +727,11 @@ class VendorWorkingHoursList extends StatelessWidget {
                                     );
                                     return;
                                   }
-
                                   fallbackOpen =
                                       validSlots.first.openTime ?? startTime;
                                   fallbackClose =
                                       validSlots.first.closeTime ?? endTime;
                                 }
-
                                 final updatedHour = WorkingHour(
                                   id: existingHour?.id,
                                   day: existingHour?.day,
@@ -774,7 +745,6 @@ class VendorWorkingHoursList extends StatelessWidget {
                                       ? <WorkingTimeSlot>[]
                                       : validSlots,
                                 );
-
                                 if (existingIndex >= 0) {
                                   profileController
                                           .workingHours[existingIndex] =
@@ -784,13 +754,10 @@ class VendorWorkingHoursList extends StatelessWidget {
                                     updatedHour,
                                   );
                                 }
-
                                 profileController.update();
-
                                 await profileController.uploadWorkingHours(
                                   dialogContext,
                                 );
-
                                 if (dialogContext.mounted) {
                                   Navigator.of(dialogContext).pop();
                                 }
@@ -844,7 +811,6 @@ class VendorWorkingHoursList extends StatelessWidget {
         onPressed: onActionPressed,
       );
     }
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -871,13 +837,10 @@ class VendorWorkingHoursList extends StatelessWidget {
 
   WorkingHour? _findWorkingHourForDay(List<WorkingHour> hours, int dayIndex) {
     if (hours.isEmpty) return null;
-    final apiDay = dayIndex + 1; // Backend format: 1=Mon ... 7=Sun.
-
+    final apiDay = dayIndex + 1;
     for (final hour in hours) {
       if (hour.dayOfWeek == apiDay) return hour;
     }
-
-    // Fallback for APIs that return Monday..Sunday in order.
     if (hours.length > dayIndex &&
         (hours[dayIndex].day?.trim().isEmpty ?? true)) {
       return hours[dayIndex];
@@ -903,8 +866,6 @@ class VendorWorkingHoursList extends StatelessWidget {
         return hour;
       }
     }
-
-    // Last fallback by position if mapping fails.
     if (hours.length > dayIndex) return hours[dayIndex];
     return null;
   }
@@ -913,14 +874,10 @@ class VendorWorkingHoursList extends StatelessWidget {
     required WorkingHour hour,
     required WorkingTimeSlot slot,
   }) {
-    // Prefer slot-specific values, fallback to day values.
     final openInput = (slot.openTime ?? hour.openingTime)?.trim();
     final closeInput = (slot.closeTime ?? hour.closingTime)?.trim();
-
     int? openMinutes = _parseToMinutes(openInput);
     int? closeMinutes = _parseToMinutes(closeInput);
-
-    // Some APIs provide a single "open-close" range in one field.
     if (openMinutes == null || closeMinutes == null) {
       final rangeFromOpen = _parseRangeFromText(openInput);
       if (rangeFromOpen != null) {
@@ -958,15 +915,11 @@ class VendorWorkingHoursList extends StatelessWidget {
     if (value == null) return null;
     final input = value.trim().toLowerCase();
     if (input.isEmpty) return null;
-
-    // Strict match: "09:30", "09:30:00", "9:30 am", "09:30 pm", "9 pm".
     final strictMatch = RegExp(
       r'^(\d{1,2})(?::(\d{1,2}))?(?::\d{1,2})?\s*(am|pm)?$',
       caseSensitive: false,
     ).firstMatch(input);
     if (strictMatch != null) return _matchToMinutes(strictMatch);
-
-    // Fallback: extract first time-like token from date/range text.
     final tokenMatch = RegExp(
       r'(\d{1,2}(?::\d{1,2})?(?::\d{1,2})?\s*(?:am|pm)?)',
       caseSensitive: false,
@@ -974,7 +927,6 @@ class VendorWorkingHoursList extends StatelessWidget {
     if (tokenMatch == null) return null;
     final token = tokenMatch.group(1)?.trim().toLowerCase();
     if (token == null || token.isEmpty) return null;
-
     final match = RegExp(
       r'^(\d{1,2})(?::(\d{1,2}))?(?::\d{1,2})?\s*(am|pm)?$',
       caseSensitive: false,
@@ -988,13 +940,11 @@ class VendorWorkingHoursList extends StatelessWidget {
     int hour = int.tryParse(match.group(1) ?? '') ?? -1;
     final minute = int.tryParse(match.group(2) ?? '0') ?? 0;
     final period = match.group(3)?.toLowerCase();
-
     if (minute < 0 || minute > 59) return null;
     if (period == null) {
       if (hour < 0 || hour > 23) return null;
       return hour * 60 + minute;
     }
-
     if (hour < 1 || hour > 12) return null;
     if (period == 'am') {
       if (hour == 12) hour = 0;
@@ -1008,14 +958,11 @@ class VendorWorkingHoursList extends StatelessWidget {
     if (value == null) return null;
     final input = value.trim();
     if (input.isEmpty) return null;
-
     final matches = RegExp(
       r'(\d{1,2}(?::\d{1,2})?(?::\d{1,2})?\s*(?:am|pm)?)',
       caseSensitive: false,
     ).allMatches(input).toList();
-
     if (matches.length < 2) return null;
-
     final first = _parseToMinutes(matches[0].group(1));
     final second = _parseToMinutes(matches[1].group(1));
     if (first == null || second == null) return null;
@@ -1661,15 +1608,15 @@ class VendorCategoryAddRow extends StatelessWidget {
   }
 }
 
-/// Shows availability label: status 1 = Out of stock, 2 = Available.
 class _AvailabilityChip extends StatelessWidget {
   final int status;
-
   const _AvailabilityChip({required this.status});
-
   @override
   Widget build(BuildContext context) {
-    final isAvailable = status == 2;
+    // API semantics:
+    // 1 -> Available
+    // 2 -> Out of stock
+    final isAvailable = status == 1;
     final label = isAvailable
         ? S.of(context).availableStatus
         : S.of(context).outOfStock;
@@ -1710,8 +1657,6 @@ class VendorRichCard extends StatelessWidget {
   final String itemId;
   final bool isMenu;
   final List<RestaurantCategory>? categories;
-
-  /// 1 = Out of stock, 2 = Available. When null, availability is not shown.
   final int? availabilityStatus;
   final VoidCallback onViewDetails;
   final VoidCallback onEdit;
@@ -1736,7 +1681,6 @@ class VendorRichCard extends StatelessWidget {
 
   String get _displayCategory {
     if (categories == null || category.isEmpty) return category;
-    // Support plain id "7" or API array string "[7]", "['7']", etc.
     int? categoryId = int.tryParse(category.trim());
     if (categoryId == null) {
       final firstNumber = RegExp(r'\d+').firstMatch(category);
@@ -1754,7 +1698,6 @@ class VendorRichCard extends StatelessWidget {
     }
   }
 
-  /// Category text to show in the bubble; never empty so the bubble always shows a name.
   String get _displayCategoryLabel {
     final value = _displayCategory.trim();
     return value.isEmpty ? '—' : value;
@@ -1762,6 +1705,9 @@ class VendorRichCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+      "availabilityStatus: $availabilityStatus (id: $id, itemId: $itemId)",
+    );
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -1844,67 +1790,654 @@ class VendorRichCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                price,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.rubik(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF1F1F1F),
-                                ),
-                              ),
-                            ),
-                            if (originalPrice != null) ...[
-                              const SizedBox(width: 8),
+                        if (!isMenu)
+                          Row(
+                            children: [
                               Flexible(
                                 child: Text(
-                                  originalPrice!,
+                                  price,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.rubik(
-                                    fontSize: 11,
-                                    color: const Color(0xFF94A3B8),
-                                    decoration: TextDecoration.lineThrough,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF1F1F1F),
                                   ),
                                 ),
                               ),
+                              if (originalPrice != null) ...[
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    originalPrice!,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 11,
+                                      color: const Color(0xFF94A3B8),
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              if (availabilityStatus != null) ...[
+                                const SizedBox(width: 12),
+                                _AvailabilityChip(status: availabilityStatus!),
+                              ],
                             ],
-                            if (availabilityStatus != null) ...[
-                              const SizedBox(width: 12),
-                              _AvailabilityChip(status: availabilityStatus!),
-                            ],
-                          ],
-                        ),
+                          ),
                       ],
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.05,
-                child: OutlinedButton(
-                  onPressed: onViewDetails,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFFFF5216)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              if (isMenu)
+                SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  child: OutlinedButton(
+                    onPressed: onViewDetails,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFFF5216)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).viewDetails,
+                      style: GoogleFonts.rubik(
+                        color: const Color(0xFFFF5216),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    S.of(context).viewDetails,
-                    style: GoogleFonts.rubik(
-                      color: const Color(0xFFFF5216),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                )
+              else
+                Builder(
+                  builder: (context) {
+                    // If null, default to out-of-stock (2).
+                    final isCurrentlyAvailable = (availabilityStatus ?? 2) == 1;
+                    Future<void> showUpdateStockDialog() async {
+                      final qtyController = TextEditingController();
+                      String stockAction = 'Add';
+
+                      return showDialog<void>(
+                        context: context,
+                        builder: (dialogContext) {
+                          return StatefulBuilder(
+                            builder: (context, setDialogState) {
+                              return Dialog(
+                                backgroundColor: Colors.white,
+                                surfaceTintColor: Colors.white,
+                                insetPadding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  constraints: const BoxConstraints(
+                                    minHeight: 280,
+                                  ),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    14,
+                                    14,
+                                    14,
+                                    14,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Update Stock',
+                                              style: GoogleFonts.rubik(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFF111827),
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () => Navigator.of(
+                                              dialogContext,
+                                            ).pop(),
+                                            child: Container(
+                                              width: 28,
+                                              height: 28,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: const Color(
+                                                    0xFFD1D5DB,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                size: 18,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Type',
+                                        style: GoogleFonts.rubik(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        height: 42,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color(0xFFE5E7EB),
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            value: stockAction,
+                                            isExpanded: true,
+                                            icon: const Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: Color(0xFF6B7280),
+                                            ),
+                                            items: const [
+                                              DropdownMenuItem(
+                                                value: 'Add',
+                                                child: Text('Add'),
+                                              ),
+                                              DropdownMenuItem(
+                                                value: 'Remove',
+                                                child: Text('Remove'),
+                                              ),
+                                            ],
+                                            onChanged: (value) {
+                                              if (value == null) return;
+                                              setDialogState(() {
+                                                stockAction = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 14),
+                                      Text(
+                                        'Item Quantity',
+                                        style: GoogleFonts.rubik(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      TextFormField(
+                                        controller: qtyController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText: '',
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 12,
+                                              ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: Color(0xFFE5E7EB),
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: Color(0xFFE5E7EB),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: Color(0xFFFF5216),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 42,
+                                              child: OutlinedButton(
+                                                onPressed: () => Navigator.of(
+                                                  dialogContext,
+                                                ).pop(),
+                                                style: OutlinedButton.styleFrom(
+                                                  side: const BorderSide(
+                                                    color: Color(0xFFFF5216),
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: GoogleFonts.rubik(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: const Color(
+                                                      0xFFFF5216,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 42,
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  final qty = int.tryParse(
+                                                    qtyController.text.trim(),
+                                                  );
+                                                  if (qty == null || qty <= 0) {
+                                                    showToast(
+                                                      context,
+                                                      'Please enter valid quantity',
+                                                    );
+                                                    return;
+                                                  }
+                                                  final itemController =
+                                                      Get.isRegistered<
+                                                        ItemController
+                                                      >()
+                                                      ? Get.find<
+                                                          ItemController
+                                                        >()
+                                                      : Get.put(
+                                                          ItemController(),
+                                                          permanent: false,
+                                                        );
+                                                  final movementType =
+                                                      stockAction == 'Add'
+                                                      ? '1'
+                                                      : '2';
+                                                  await itemController
+                                                      .updateMenuItemStock(
+                                                        context,
+                                                        itemId,
+                                                        qty,
+                                                        movementType,
+                                                      );
+                                                  await itemController
+                                                      .getMenuItemStockLogs(
+                                                        itemId,
+                                                        1,
+                                                        10,
+                                                      );
+                                                  final profileController =
+                                                      Get.find<
+                                                        ProfileController
+                                                      >();
+                                                  await profileController
+                                                      .fetchGroceryMenuItems();
+
+                                                  if (dialogContext.mounted) {
+                                                    Navigator.of(
+                                                      dialogContext,
+                                                    ).pop();
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: const Color(
+                                                    0xFFFF5216,
+                                                  ),
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'Update',
+                                                  style: GoogleFonts.rubik(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+
+                    Future<void> showConfirmDialog() async {
+                      return showDialog<void>(
+                        context: context,
+                        builder: (dialogContext) {
+                          final message = isCurrentlyAvailable
+                              ? 'Are you sure you want to mark this item as out of stock?'
+                              : 'Are you sure you want to mark this item as available?';
+                          final actionColor = isCurrentlyAvailable
+                              ? const Color(0xFFEF4444)
+                              : const Color(0xFF16A34A);
+                          const Color noActionColor = Color(0xFFDC2626);
+                          return Dialog(
+                            insetPadding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    22,
+                                    20,
+                                    18,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(height: 28),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                        ),
+                                        child: Text(
+                                          message,
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.rubik(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFF111827),
+                                            height: 1.35,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 18),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 42,
+                                              child: OutlinedButton(
+                                                onPressed: () => Navigator.of(
+                                                  dialogContext,
+                                                ).pop(),
+                                                style: OutlinedButton.styleFrom(
+                                                  side: BorderSide(
+                                                    color: noActionColor,
+                                                    width: 1,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'No',
+                                                  style: GoogleFonts.rubik(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: noActionColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 42,
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(
+                                                    dialogContext,
+                                                  ).pop();
+                                                  final idInt = int.tryParse(
+                                                    itemId,
+                                                  );
+                                                  if (idInt == null) {
+                                                    return;
+                                                  }
+
+                                                  final itemController =
+                                                      Get.isRegistered<
+                                                        ItemController
+                                                      >()
+                                                      ? Get.find<
+                                                          ItemController
+                                                        >()
+                                                      : Get.put(
+                                                          ItemController(),
+                                                          permanent: false,
+                                                        );
+
+                                                  final profileController =
+                                                      Get.find<
+                                                        ProfileController
+                                                      >();
+
+                                                  final statusToSend =
+                                                      isCurrentlyAvailable
+                                                      ? 2 // Mark Out Of Stock
+                                                      : 1; // Mark Available
+
+                                                  await itemController
+                                                      .updateItemStatus(
+                                                        idInt,
+                                                        statusToSend,
+                                                      );
+
+                                                  // Refresh the items listing.
+                                                  await profileController
+                                                      .fetchGroceryMenuItems();
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: actionColor,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'Yes',
+                                                  style: GoogleFonts.rubik(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(999),
+                                      onTap: () =>
+                                          Navigator.of(dialogContext).pop(),
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: const Color(0xFFE5E7EB),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 18,
+                                          color: Color(0xFF111827),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: 42,
+                          child: OutlinedButton(
+                            onPressed: onViewDetails,
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFFFF5216)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              S.of(context).viewDetails,
+                              style: GoogleFonts.rubik(
+                                color: const Color(0xFFFF5216),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 42,
+                                child: ElevatedButton(
+                                  onPressed: showConfirmDialog,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        (availabilityStatus ?? 2) == 1
+                                        ? const Color(0xFFEF4444)
+                                        : const Color(0xFF16A34A),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    (availabilityStatus ?? 2) == 1
+                                        ? 'Mark Out Of Stock'
+                                        : 'Mark Available',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: SizedBox(
+                                height: 42,
+                                child: ElevatedButton(
+                                  onPressed: showUpdateStockDialog,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFF5216),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Update Stock',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ),
             ],
           ),
           Positioned(
