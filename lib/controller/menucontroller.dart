@@ -34,9 +34,9 @@ class MenuController extends GetxController {
 
   /// Max quantity allowed for the menu (API: `quantity_allowed`).
   final TextEditingController quantityAllowedCtrl = TextEditingController();
-  String? selectedCategory;
+  final List<String> selectedCategoryIds = [];
   String? selectedIsVeg;
-  String? selectedTag;
+  final List<String> selectedTagIds = [];
 
   /// Attribute id for menu attributes row (restaurant vs grocery key differs in API).
   String? selectedAttributeId;
@@ -46,6 +46,8 @@ class MenuController extends GetxController {
   int? currentEditMenuId;
   String? selectedEditCategoryId;
   String? selectedEditTagId;
+  final List<String> selectedEditCategoryIds = [];
+  final List<String> selectedEditTagIds = [];
   bool hasPopulatedEditForm = false;
   bool isRestaurantCategoriesLoading = false;
   List<RestaurantCategoryData> restaurantCategories = [];
@@ -73,23 +75,30 @@ class MenuController extends GetxController {
     getAllAttributes();
   }
 
-  String? get selectedCategoryDisplayName {
-    if (selectedCategory == null || selectedCategory!.isEmpty) return null;
-    final match = restaurantCategories
-        .where((c) => c.id.toString() == selectedCategory)
+  List<String> get selectedCategoryDisplayNames {
+    if (selectedCategoryIds.isEmpty) return const [];
+    final set = selectedCategoryIds.toSet();
+    return restaurantCategories
+        .where((c) => c.id != null && set.contains(c.id.toString()))
+        .map((c) => c.nameEn ?? '')
+        .where((s) => s.trim().isNotEmpty)
         .toList();
-    return match.isEmpty ? null : (match.first.nameEn ?? '');
   }
 
-  void setSelectedCategoryByName(String? name) {
-    if (name == null || name.isEmpty) {
-      selectedCategory = null;
-      return;
+  String? get selectedCategoryDisplayText {
+    final names = selectedCategoryDisplayNames;
+    if (names.isEmpty) return null;
+    return names.join(', ');
+  }
+
+  void toggleCategoryById(String id) {
+    if (id.trim().isEmpty) return;
+    if (selectedCategoryIds.contains(id)) {
+      selectedCategoryIds.remove(id);
+    } else {
+      selectedCategoryIds.add(id);
     }
-    final match = restaurantCategories
-        .where((c) => (c.nameEn ?? '') == name)
-        .toList();
-    selectedCategory = match.isEmpty ? null : match.first.id?.toString();
+    update();
   }
 
   List<String> get categoryDisplayNames => restaurantCategories
@@ -115,10 +124,41 @@ class MenuController extends GetxController {
     return names.isNotEmpty ? names.first : '';
   }
 
+  List<String> get selectedEditCategoryDisplayNames {
+    if (selectedEditCategoryIds.isEmpty) return const [];
+    final set = selectedEditCategoryIds.toSet();
+    return restaurantCategories
+        .where((c) => c.id != null && set.contains(c.id.toString()))
+        .map((c) => c.nameEn ?? '')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+  }
+
+  String? get selectedEditCategoryDisplayText {
+    final names = selectedEditCategoryDisplayNames;
+    if (names.isEmpty) return null;
+    return names.join(', ');
+  }
+
+  void toggleEditCategoryById(String id) {
+    if (id.trim().isEmpty) return;
+    if (selectedEditCategoryIds.contains(id)) {
+      selectedEditCategoryIds.remove(id);
+    } else {
+      selectedEditCategoryIds.add(id);
+    }
+    // Keep single-edit field in sync for legacy code paths.
+    selectedEditCategoryId = selectedEditCategoryIds.isNotEmpty
+        ? selectedEditCategoryIds.first
+        : null;
+    update();
+  }
+
   void setSelectedEditCategoryByName(String? name) {
     if (name == null || name.isEmpty) {
       selectedEditCategoryId = null;
       selectedEditCategoryName = '';
+      selectedEditCategoryIds.clear();
       update();
       return;
     }
@@ -127,26 +167,36 @@ class MenuController extends GetxController {
         .toList();
     selectedEditCategoryName = name;
     selectedEditCategoryId = match.isEmpty ? null : match.first.id?.toString();
+    selectedEditCategoryIds
+      ..clear()
+      ..addAll(selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!]);
     update();
   }
 
-  String? get selectedTagDisplayName {
-    if (selectedTag == null || selectedTag!.isEmpty) return null;
-    final match = restaurantTags
-        .where((t) => t.id.toString() == selectedTag)
+  List<String> get selectedTagDisplayNames {
+    if (selectedTagIds.isEmpty) return const [];
+    final set = selectedTagIds.toSet();
+    return restaurantTags
+        .where((t) => t.id != null && set.contains(t.id.toString()))
+        .map((t) => t.nameEn ?? '')
+        .where((s) => s.trim().isNotEmpty)
         .toList();
-    return match.isEmpty ? null : (match.first.nameEn ?? '');
   }
 
-  void setSelectedTagByName(String? name) {
-    if (name == null || name.isEmpty) {
-      selectedTag = null;
-      return;
+  String? get selectedTagDisplayText {
+    final names = selectedTagDisplayNames;
+    if (names.isEmpty) return null;
+    return names.join(', ');
+  }
+
+  void toggleTagById(String id) {
+    if (id.trim().isEmpty) return;
+    if (selectedTagIds.contains(id)) {
+      selectedTagIds.remove(id);
+    } else {
+      selectedTagIds.add(id);
     }
-    final match = restaurantTags
-        .where((t) => (t.nameEn ?? '') == name)
-        .toList();
-    selectedTag = match.isEmpty ? null : match.first.id?.toString();
+    update();
   }
 
   List<String> get tagDisplayNames => restaurantTags
@@ -199,10 +249,39 @@ class MenuController extends GetxController {
     return names.isNotEmpty ? names.first : '';
   }
 
+  List<String> get selectedEditTagDisplayNames {
+    if (selectedEditTagIds.isEmpty) return const [];
+    final set = selectedEditTagIds.toSet();
+    return restaurantTags
+        .where((t) => t.id != null && set.contains(t.id.toString()))
+        .map((t) => t.nameEn ?? '')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+  }
+
+  String? get selectedEditTagDisplayText {
+    final names = selectedEditTagDisplayNames;
+    if (names.isEmpty) return null;
+    return names.join(', ');
+  }
+
+  void toggleEditTagById(String id) {
+    if (id.trim().isEmpty) return;
+    if (selectedEditTagIds.contains(id)) {
+      selectedEditTagIds.remove(id);
+    } else {
+      selectedEditTagIds.add(id);
+    }
+    // Keep single-edit field in sync for legacy code paths.
+    selectedEditTagId = selectedEditTagIds.isNotEmpty ? selectedEditTagIds.first : null;
+    update();
+  }
+
   void setSelectedEditTagByName(String? name) {
     if (name == null || name.isEmpty) {
       selectedEditTagId = null;
       selectedEditTagName = '';
+      selectedEditTagIds.clear();
       update();
       return;
     }
@@ -211,6 +290,9 @@ class MenuController extends GetxController {
         .toList();
     selectedEditTagName = name;
     selectedEditTagId = match.isEmpty ? null : match.first.id?.toString();
+    selectedEditTagIds
+      ..clear()
+      ..addAll(selectedEditTagId == null ? const [] : [selectedEditTagId!]);
     update();
   }
 
@@ -294,9 +376,16 @@ class MenuController extends GetxController {
     descArCtrl.text = menu.descriptionAr;
     descFrCtrl.text = menu.descriptionFr;
     selectedIsVeg = menu.isVeg == 1 ? 'Yes' : 'No';
-    selectedEditCategoryId = menu.categoryId.isNotEmpty
-        ? menu.categoryId
-        : null;
+    selectedEditCategoryId = menu.categoryId.isNotEmpty ? menu.categoryId : null;
+    selectedEditCategoryIds
+      ..clear()
+      ..addAll(
+        menu.categories.isNotEmpty
+            ? menu.categories.map((c) => c.id.toString()).toList()
+            : (selectedEditCategoryId != null && selectedEditCategoryId!.isNotEmpty)
+                ? [selectedEditCategoryId!]
+                : const [],
+      );
     final names = categoryDisplayNames;
     selectedEditCategoryName =
         menu.categoryNameEn.isNotEmpty && names.contains(menu.categoryNameEn)
@@ -307,6 +396,9 @@ class MenuController extends GetxController {
     selectedEditTagId = restaurantTags.isNotEmpty
         ? restaurantTags.first.id?.toString()
         : null;
+    selectedEditTagIds
+      ..clear()
+      ..addAll(selectedEditTagId == null ? const [] : [selectedEditTagId!]);
     currentEditMenuId = menu.id;
     selectedEditCategoryId = menu.categoryId.isNotEmpty
         ? menu.categoryId
@@ -351,6 +443,9 @@ class MenuController extends GetxController {
     selectedEditCategoryId = restaurantCategories.isNotEmpty
         ? restaurantCategories.first.id?.toString()
         : null;
+    selectedEditCategoryIds
+      ..clear()
+      ..addAll(selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!]);
     selectedIsVeg = 'No';
     selectedEditTagName = tagDisplayNames.isNotEmpty
         ? tagDisplayNames.first
@@ -358,6 +453,9 @@ class MenuController extends GetxController {
     selectedEditTagId = restaurantTags.isNotEmpty
         ? restaurantTags.first.id?.toString()
         : null;
+    selectedEditTagIds
+      ..clear()
+      ..addAll(selectedEditTagId == null ? const [] : [selectedEditTagId!]);
     existingMenuImageUrls = [];
     uploadedImages.clear();
     update();
@@ -398,9 +496,9 @@ class MenuController extends GetxController {
     priceCtrl.clear();
     discountPriceCtrl.clear();
     quantityAllowedCtrl.clear();
-    selectedCategory = null;
+    selectedCategoryIds.clear();
     selectedIsVeg = null;
-    selectedTag = null;
+    selectedTagIds.clear();
     selectedAttributeId = null;
     uploadedImages.clear();
     update();
@@ -410,8 +508,8 @@ class MenuController extends GetxController {
     if (nameEnCtrl.text.trim().isEmpty) {
       return "Please enter item name";
     }
-    if (selectedCategory == null || selectedCategory!.trim().isEmpty) {
-      return "Please select category";
+    if (selectedCategoryIds.isEmpty) {
+      return "Please select at least one category";
     }
     if (selectedIsVeg == null || selectedIsVeg!.trim().isEmpty) {
       return "Please select veg type";
@@ -419,8 +517,8 @@ class MenuController extends GetxController {
     if (descEnCtrl.text.trim().isEmpty) {
       return "Please enter description";
     }
-    if (selectedTag == null || selectedTag!.trim().isEmpty) {
-      return "Please select a tag";
+    if (selectedTagIds.isEmpty) {
+      return "Please select at least one tag";
     }
     if (attributeDisplayNames.isNotEmpty &&
         (selectedAttributeId == null || selectedAttributeId!.trim().isEmpty)) {
@@ -487,11 +585,17 @@ class MenuController extends GetxController {
         );
       }
       final formData = dio.FormData.fromMap(formDataMap);
-      if (selectedCategory != null && selectedCategory!.isNotEmpty) {
-        formData.fields.add(MapEntry("category_id[]", selectedCategory!));
+      for (final id in selectedCategoryIds) {
+        final trimmed = id.trim();
+        if (trimmed.isNotEmpty) {
+          formData.fields.add(MapEntry("category_id[]", trimmed));
+        }
       }
-      if (selectedTag != null && selectedTag!.isNotEmpty) {
-        formData.fields.add(MapEntry("tags[]", selectedTag!));
+      for (final id in selectedTagIds) {
+        final trimmed = id.trim();
+        if (trimmed.isNotEmpty) {
+          formData.fields.add(MapEntry("tags[]", trimmed));
+        }
       }
       for (int i = 1; i < uploadedImages.length; i++) {
         final jpgPath = await _prepareJpegImage(uploadedImages[i].path);
@@ -579,11 +683,11 @@ class MenuController extends GetxController {
 
   Future<void> getAllCategories({int? categoryId}) async {
     debugPrint(
-      "[MenuController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategory=$selectedCategory selectedEditCategoryId=$selectedEditCategoryId",
+      "[MenuController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategoryIds=${selectedCategoryIds.length} selectedEditCategoryId=$selectedEditCategoryId",
     );
     // Clear stale category state before loading for current vendor type.
     restaurantCategories = [];
-    selectedCategory = null;
+    selectedCategoryIds.clear();
     selectedEditCategoryId = null;
     selectedEditCategoryName = '';
     isRestaurantCategoriesLoading = true;
@@ -991,20 +1095,39 @@ class MenuController extends GetxController {
         );
       }
       final formData = dio.FormData.fromMap(formDataMap);
-      String? categoryId = selectedEditCategoryId;
-      if (categoryId == null || categoryId.isEmpty) {
-        final match = restaurantCategories
-            .where((c) => (c.nameEn ?? '') == selectedEditCategoryName)
-            .toList();
-        if (match.isNotEmpty && match.first.id != null) {
-          categoryId = match.first.id.toString();
+      final List<String> categoryIdsToSend = selectedEditCategoryIds.isNotEmpty
+          ? selectedEditCategoryIds
+          : (() {
+              String? categoryId = selectedEditCategoryId;
+              if (categoryId == null || categoryId.isEmpty) {
+                final match = restaurantCategories
+                    .where((c) => (c.nameEn ?? '') == selectedEditCategoryName)
+                    .toList();
+                if (match.isNotEmpty && match.first.id != null) {
+                  categoryId = match.first.id.toString();
+                }
+              }
+              if (categoryId == null || categoryId.isEmpty) return <String>[];
+              final normalized =
+                  RegExp(r'\d+').firstMatch(categoryId)?.group(0) ?? '';
+              return normalized.isNotEmpty ? <String>[normalized] : <String>[];
+            })();
+      for (final id in categoryIdsToSend) {
+        final normalized = RegExp(r'\d+').firstMatch(id)?.group(0) ?? '';
+        if (normalized.isNotEmpty) {
+          formData.fields.add(MapEntry("category_id[]", normalized));
         }
       }
-      if (categoryId != null && categoryId.isNotEmpty) {
-        final normalized =
-            RegExp(r'\d+').firstMatch(categoryId)?.group(0) ?? '';
+
+      final List<String> tagIdsToSend = selectedEditTagIds.isNotEmpty
+          ? selectedEditTagIds
+          : (selectedEditTagId != null && selectedEditTagId!.trim().isNotEmpty)
+              ? <String>[selectedEditTagId!.trim()]
+              : <String>[];
+      for (final id in tagIdsToSend) {
+        final normalized = RegExp(r'\d+').firstMatch(id)?.group(0) ?? '';
         if (normalized.isNotEmpty) {
-          formData.fields.add(MapEntry("category_id", normalized));
+          formData.fields.add(MapEntry("tags[]", normalized));
         }
       }
       for (int i = 1; i < imagePaths.length; i++) {

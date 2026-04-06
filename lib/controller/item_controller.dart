@@ -23,7 +23,7 @@ class ItemController extends GetxController {
   final TextEditingController priceCtrl = TextEditingController();
   final TextEditingController discountPriceCtrl = TextEditingController();
   String? selectedType;
-  String? selectedTag;
+  final List<int> selectedRestaurantTagIds = [];
   String? selectedAttribute;
   int? selectedMenuId;
   int? selectedRestaurantAttributeId;
@@ -154,9 +154,40 @@ class ItemController extends GetxController {
   }
 
   void setSelectedTag(String? value) {
-    selectedTag = value;
+    // Legacy single-select API used by some screens; keep it working.
     final match = restaurantTags.where((t) => t.nameEn == value);
     selectedRestaurantTagId = match.isEmpty ? null : match.first.id;
+    selectedRestaurantTagIds
+      ..clear()
+      ..addAll(selectedRestaurantTagId == null ? const [] : [selectedRestaurantTagId!]);
+    update();
+  }
+
+  List<String> get selectedTagDisplayNames {
+    if (selectedRestaurantTagIds.isEmpty) return const [];
+    final set = selectedRestaurantTagIds.toSet();
+    return restaurantTags
+        .where((t) => t.id != null && set.contains(t.id!))
+        .map((t) => t.nameEn ?? '')
+        .where((s) => s.trim().isNotEmpty)
+        .toList();
+  }
+
+  String? get selectedTagDisplayText {
+    final names = selectedTagDisplayNames;
+    if (names.isEmpty) return null;
+    return names.join(', ');
+  }
+
+  void toggleTagById(int id) {
+    if (id <= 0) return;
+    if (selectedRestaurantTagIds.contains(id)) {
+      selectedRestaurantTagIds.remove(id);
+    } else {
+      selectedRestaurantTagIds.add(id);
+    }
+    selectedRestaurantTagId =
+        selectedRestaurantTagIds.isNotEmpty ? selectedRestaurantTagIds.first : null;
     update();
   }
 
@@ -175,7 +206,7 @@ class ItemController extends GetxController {
     discountPriceCtrl.clear();
     selectedType = null;
     selectedMenuId = null;
-    selectedTag = null;
+    selectedRestaurantTagIds.clear();
     selectedAttribute = null;
     selectedRestaurantAttributeId = null;
     selectedRestaurantTagId = null;
@@ -238,8 +269,8 @@ class ItemController extends GetxController {
     } else if (serialNumberCtrl.text.trim().isEmpty) {
       showToast(context, "Please enter serial number");
       return false;
-    } else if (selectedRestaurantTagId == null) {
-      showToast(context, "Please select tag");
+    } else if (selectedRestaurantTagIds.isEmpty) {
+      showToast(context, "Please select at least one tag");
       return false;
     }
     return true;
@@ -280,9 +311,12 @@ class ItemController extends GetxController {
       };
 
       final formData = dio.FormData.fromMap(formDataMap);
-      formData.fields.add(
-        MapEntry("tags[0]", selectedRestaurantTagId.toString()),
-      );
+      final tagIds = selectedRestaurantTagIds.isNotEmpty
+          ? selectedRestaurantTagIds
+          : (selectedRestaurantTagId != null ? [selectedRestaurantTagId!] : const <int>[]);
+      for (int i = 0; i < tagIds.length; i++) {
+        formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+      }
       printFormData(formData);
       final response = await DioClient().post(
         vendorType == "1"
@@ -552,13 +586,17 @@ class ItemController extends GetxController {
       }
       final tags = model.data?.menuItemTags ?? [];
       if (tags.isNotEmpty) {
-        final first = tags.first;
-        if (first.restaurantTagId != null) {
-          selectedRestaurantTagId = first.restaurantTagId;
-        }
-        if (first.nameEn != null && first.nameEn!.isNotEmpty) {
-          selectedTag = first.nameEn;
-        }
+        final ids = tags
+            .map((t) => t.restaurantTagId)
+            .whereType<int>()
+            .where((id) => id > 0)
+            .toSet()
+            .toList();
+        selectedRestaurantTagIds
+          ..clear()
+          ..addAll(ids);
+        selectedRestaurantTagId =
+            selectedRestaurantTagIds.isNotEmpty ? selectedRestaurantTagIds.first : null;
       }
       update();
     } catch (error, stackTrace) {
@@ -600,9 +638,12 @@ class ItemController extends GetxController {
         debugPrint("  ${e.key}: ${e.value}");
       }
       final formData = dio.FormData.fromMap(formDataMap);
-      formData.fields.add(
-        MapEntry("tags[0]", selectedRestaurantTagId.toString()),
-      );
+      final tagIds = selectedRestaurantTagIds.isNotEmpty
+          ? selectedRestaurantTagIds
+          : (selectedRestaurantTagId != null ? [selectedRestaurantTagId!] : const <int>[]);
+      for (int i = 0; i < tagIds.length; i++) {
+        formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+      }
       printFormData(formData);
       final response = await DioClient().post(
         vendorType == "1"

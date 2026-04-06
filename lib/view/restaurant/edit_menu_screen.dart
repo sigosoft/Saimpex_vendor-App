@@ -19,6 +19,251 @@ class EditMenuScreen extends StatefulWidget {
 class _EditMenuScreenState extends State<EditMenuScreen> {
   late final MenuController _controller;
 
+  void _openEditCategoryMultiSelect(
+    BuildContext context,
+    MenuController controller,
+  ) {
+    if (controller.restaurantCategories.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (_, setModalState) {
+            void rebuildSheet() => setModalState(() {});
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 12,
+                  bottom: 12 + MediaQuery.of(sheetContext).viewInsets.bottom,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            S.of(context).category,
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF1F1F1F),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            controller.selectedEditCategoryIds.clear();
+                            controller.selectedEditCategoryId = null;
+                            controller.update();
+                            rebuildSheet();
+                          },
+                          child: Text(
+                            S.of(context).reset,
+                            style: GoogleFonts.rubik(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: controller.restaurantCategories.length,
+                        itemBuilder: (_, index) {
+                          final c = controller.restaurantCategories[index];
+                          final id = c.id?.toString() ?? '';
+                          final name = (c.nameEn ?? '').trim();
+                          final checked = id.isNotEmpty &&
+                              controller.selectedEditCategoryIds.contains(id);
+                          return CheckboxListTile(
+                            value: checked,
+                            onChanged: id.isEmpty
+                                ? null
+                                : (_) {
+                                    controller.toggleEditCategoryById(id);
+                                    rebuildSheet();
+                                  },
+                            title: Text(
+                              name.isNotEmpty ? name : '-',
+                              style: GoogleFonts.rubik(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1F1F1F),
+                              ),
+                            ),
+                            activeColor: const Color(0xFFFF5216),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding: EdgeInsets.zero,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5216),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          S.of(context).submit,
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _openEditTagMultiSelect(BuildContext context, MenuController controller) {
+    if (controller.restaurantTags.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (_, setModalState) {
+            void rebuildSheet() => setModalState(() {});
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 12,
+                  bottom: 12 + MediaQuery.of(sheetContext).viewInsets.bottom,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            S.of(context).tags,
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF1F1F1F),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            controller.selectedEditTagIds.clear();
+                            controller.selectedEditTagId = null;
+                            controller.update();
+                            rebuildSheet();
+                          },
+                          child: Text(
+                            S.of(context).reset,
+                            style: GoogleFonts.rubik(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: controller.restaurantTags.length,
+                        itemBuilder: (_, index) {
+                          final t = controller.restaurantTags[index];
+                          final id = t.id?.toString() ?? '';
+                          final name = (t.nameEn ?? '').trim();
+                          final checked = id.isNotEmpty &&
+                              controller.selectedEditTagIds.contains(id);
+                          return CheckboxListTile(
+                            value: checked,
+                            onChanged: id.isEmpty
+                                ? null
+                                : (_) {
+                                    controller.toggleEditTagById(id);
+                                    rebuildSheet();
+                                  },
+                            title: Text(
+                              name.isNotEmpty ? name : '-',
+                              style: GoogleFonts.rubik(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1F1F1F),
+                              ),
+                            ),
+                            activeColor: const Color(0xFFFF5216),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding: EdgeInsets.zero,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5216),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          S.of(context).submit,
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -105,17 +350,16 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                         children: [
                           EditMenuFieldLabel(S.of(context).category),
                           const SizedBox(height: 6),
-                          EditMenuDropdownField(
-                            value: c.categoryDisplayNames.isEmpty
+                          EditMenuMultiSelectField(
+                            displayText: c.selectedEditCategoryDisplayText,
+                            hint: c.categoryDisplayNames.isEmpty
                                 ? S.of(context).loading
-                                : c.selectedEditCategoryDisplayName,
-                            items: c.categoryDisplayNames.isEmpty
-                                ? [S.of(context).loading]
-                                : c.categoryDisplayNames,
-                            onChanged: c.categoryDisplayNames.isEmpty
-                                ? (_) {}
-                                : c.setSelectedEditCategoryByName,
+                                : S.of(context).selectCategoryHint,
+                            onTap: c.categoryDisplayNames.isEmpty
+                                ? () {}
+                                : () => _openEditCategoryMultiSelect(context, c),
                             height: 46,
+                            width: MediaQuery.of(context).size.width * 0.42,
                           ),
                         ],
                       ),
@@ -163,16 +407,14 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                 const SizedBox(height: 16),
                 EditMenuFieldLabel(S.of(context).tags),
                 const SizedBox(height: 6),
-                EditMenuDropdownField(
-                  value: c.tagDisplayNames.isEmpty
+                EditMenuMultiSelectField(
+                  displayText: c.selectedEditTagDisplayText,
+                  hint: c.tagDisplayNames.isEmpty
                       ? S.of(context).loading
-                      : c.selectedEditTagDisplayName,
-                  items: c.tagDisplayNames.isEmpty
-                      ? [S.of(context).loading]
-                      : c.tagDisplayNames,
-                  onChanged: c.tagDisplayNames.isEmpty
-                      ? (_) {}
-                      : c.setSelectedEditTagByName,
+                      : S.of(context).selectTagHint,
+                  onTap: c.tagDisplayNames.isEmpty
+                      ? () {}
+                      : () => _openEditTagMultiSelect(context, c),
                   height: 46,
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),

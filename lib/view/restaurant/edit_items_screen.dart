@@ -18,6 +18,127 @@ class EditItemsScreen extends StatefulWidget {
 class _EditItemsScreenState extends State<EditItemsScreen> {
   bool _didLoadDetails = false;
 
+  void _openTagsMultiSelect(BuildContext context, ItemController controller) {
+    if (controller.restaurantTags.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (_, setModalState) {
+            void rebuildSheet() => setModalState(() {});
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 12,
+                  bottom: 12 + MediaQuery.of(sheetContext).viewInsets.bottom,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            S.of(context).tags,
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF1F2937),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            controller.selectedRestaurantTagIds.clear();
+                            controller.selectedRestaurantTagId = null;
+                            controller.update();
+                            rebuildSheet();
+                          },
+                          child: Text(
+                            S.of(context).resetButton,
+                            style: GoogleFonts.rubik(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: controller.restaurantTags.length,
+                        itemBuilder: (_, index) {
+                          final t = controller.restaurantTags[index];
+                          final id = t.id ?? 0;
+                          final name = (t.nameEn ?? '').trim();
+                          final checked = id > 0 &&
+                              controller.selectedRestaurantTagIds.contains(id);
+                          return CheckboxListTile(
+                            value: checked,
+                            onChanged: id <= 0
+                                ? null
+                                : (_) {
+                                    controller.toggleTagById(id);
+                                    rebuildSheet();
+                                  },
+                            title: Text(
+                              name.isNotEmpty ? name : '-',
+                              style: GoogleFonts.rubik(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1F2937),
+                              ),
+                            ),
+                            activeColor: const Color(0xFFFF5216),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding: EdgeInsets.zero,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5216),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          S.of(context).submitButton,
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -97,21 +218,14 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
 
               EditItemsFieldLabel(S.of(context).tags),
               const SizedBox(height: 8),
-              EditItemsDropdownField(
-                value:
-                    controller.selectedTag != null &&
-                        controller.tagDisplayNames.contains(
-                          controller.selectedTag,
-                        )
-                    ? controller.selectedTag
-                    : null,
+              EditItemsMultiSelectField(
+                displayText: controller.selectedTagDisplayText,
                 hint: controller.isRestaurantTagsLoading
                     ? S.of(context).loading
                     : S.of(context).selectTagHint,
-                items: controller.tagDisplayNames,
-                onChanged: controller.isRestaurantTagsLoading
-                    ? (_) {}
-                    : controller.setSelectedTag,
+                onTap: controller.isRestaurantTagsLoading
+                    ? () {}
+                    : () => _openTagsMultiSelect(context, controller),
                 fullWidth: true,
               ),
               const SizedBox(height: 20),
