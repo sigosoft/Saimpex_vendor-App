@@ -286,6 +286,22 @@ class ProfileController extends GetxController {
       if (token != null) {
         DioClient().updateToken(token);
       }
+      int? matchedCategoryId = selectedRestaurantCategoryId;
+      String apiKeyword = _currentMenuKeyword;
+
+      if (apiKeyword.isNotEmpty && matchedCategoryId == null) {
+        final lq = apiKeyword.toLowerCase();
+        for (var cat in restaurantCategories) {
+          if ((cat.nameEn ?? '').toLowerCase().contains(lq) ||
+              (cat.nameAr ?? '').toLowerCase().contains(lq) ||
+              (cat.nameFr ?? '').toLowerCase().contains(lq)) {
+            matchedCategoryId = cat.id;
+            apiKeyword = '';
+            break;
+          }
+        }
+      }
+
       final response = await DioClient().get(
         vendorType == "1"
             ? ApiEndPoints.restaurantMenus
@@ -293,9 +309,8 @@ class ProfileController extends GetxController {
         query: {
           "limit": _limit,
           "page": _page,
-          if (_currentMenuKeyword.isNotEmpty) "keyword": _currentMenuKeyword,
-          if (selectedRestaurantCategoryId != null)
-            "category_id": selectedRestaurantCategoryId,
+          if (apiKeyword.isNotEmpty) "keyword": apiKeyword,
+          if (matchedCategoryId != null) "category_id": matchedCategoryId,
         },
       );
 
@@ -373,6 +388,7 @@ class ProfileController extends GetxController {
     int page = 1,
     int status = 1,
     int? categoryId,
+    String keyword = '',
   }) async {
     try {
       isGroceryMenuItemsLoading = true;
@@ -384,6 +400,22 @@ class ProfileController extends GetxController {
         DioClient().updateToken(token);
       }
 
+      int? matchedCategoryId = categoryId;
+      String apiKeyword = keyword.trim();
+
+      if (apiKeyword.isNotEmpty && matchedCategoryId == null) {
+        final lq = apiKeyword.toLowerCase();
+        for (var cat in restaurantCategories) {
+          if ((cat.nameEn ?? '').toLowerCase().contains(lq) ||
+              (cat.nameAr ?? '').toLowerCase().contains(lq) ||
+              (cat.nameFr ?? '').toLowerCase().contains(lq)) {
+            matchedCategoryId = cat.id;
+            apiKeyword = '';
+            break;
+          }
+        }
+      }
+
       final response = await DioClient().get(
         vendorType == "1"
             ? ApiEndPoints.restaurantMenuItems
@@ -391,7 +423,8 @@ class ProfileController extends GetxController {
         query: {
           "limit": limit,
           "page": page,
-          if (categoryId != null) "category_id": categoryId,
+          if (matchedCategoryId != null) "category_id": matchedCategoryId,
+          if (apiKeyword.isNotEmpty) "keyword": apiKeyword,
         },
       );
 

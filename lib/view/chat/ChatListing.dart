@@ -85,7 +85,15 @@ class ChatListing extends StatelessWidget {
                         avatarUrl: chat.customer?.image != null
                             ? "${ApiConfigs.IMAGE_URL}${chat.customer?.image}"
                             : null,
-                        lastMessage: chat.lastMessage?.message ?? "",
+                        lastMessage:
+                            (chat.lastMessage?.messageType == 'image' ||
+                                (chat.lastMessage?.attachmentUrl != null &&
+                                    chat
+                                        .lastMessage!
+                                        .attachmentUrl!
+                                        .isNotEmpty))
+                            ? "📷 Image"
+                            : chat.lastMessage?.message ?? "",
                         timestamp: formatChatTime(timeStr),
                         unreadCount: chat.unreadCount ?? 0,
                         onTap: () {
@@ -101,7 +109,7 @@ class ChatListing extends StatelessWidget {
                             ),
                           )?.then((value) {
                             controller.getAllConversations(context);
-                          },);
+                          });
                         },
                       );
                     },
@@ -115,7 +123,13 @@ class ChatListing extends StatelessWidget {
   String formatChatTime(String? timeStr) {
     if (timeStr == null || timeStr.isEmpty) return "";
     try {
-      DateTime dt = DateTime.parse(timeStr).toLocal();
+      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
+      if (timeStr.contains('-') && !timeStr.contains('T')) {
+        try {
+          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
+        } catch (_) {}
+      }
+      dt = dt.toLocal();
       DateTime now = DateTime.now();
       if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
         return DateFormat('hh:mm a').format(dt);

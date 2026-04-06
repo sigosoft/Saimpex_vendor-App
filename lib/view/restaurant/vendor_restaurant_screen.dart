@@ -561,6 +561,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   const SizedBox(height: 20),
                   _buildSearchRow(),
                   const SizedBox(height: 16),
+                  _buildCategoryAddRow(isItemsTab: true),
+                  const SizedBox(height: 16),
                   _buildItemsActionRow(),
                   const SizedBox(height: 16),
                   _buildItemsList(),
@@ -633,7 +635,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           profileController.fetchRestaurantMenus(keyword: _searchKeyword);
         } else if (title == "Items") {
           final profileController = Get.find<ProfileController>();
-          profileController.fetchGroceryMenuItems();
+          profileController.getAllCategories();
+          profileController.fetchGroceryMenuItems(
+            categoryId: profileController.selectedRestaurantCategoryId,
+            keyword: _searchKeyword.trim(),
+          );
         } else if (title == "Menu Bulk Import") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
@@ -773,7 +779,13 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           : lang == 'ar'
           ? (menu.nameAr ?? menu.nameEn ?? "")
           : (menu.nameEn ?? "");
+      final category = lang == 'fr'
+          ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
+          : lang == 'ar'
+          ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
+          : (menu.categoryNameEn ?? "");
       return name.toLowerCase().contains(query) ||
+          category.toLowerCase().contains(query) ||
           (menu.categoryId ?? "").toLowerCase().contains(query) ||
           (menu.id?.toString() ?? "").contains(query);
     }).toList();
@@ -856,6 +868,16 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           _searchDebounce = Timer(const Duration(milliseconds: 400), () {
             if (!mounted) return;
             Get.find<ProfileController>().fetchRestaurantMenus(
+              keyword: _searchKeyword.trim(),
+            );
+          });
+        } else if (selectedMenu == "Items") {
+          _searchDebounce?.cancel();
+          _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+            if (!mounted) return;
+            final profileController = Get.find<ProfileController>();
+            profileController.fetchGroceryMenuItems(
+              categoryId: profileController.selectedRestaurantCategoryId,
               keyword: _searchKeyword.trim(),
             );
           });
@@ -997,14 +1019,21 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  Widget _buildCategoryAddRow() {
+  Widget _buildCategoryAddRow({bool isItemsTab = false}) {
     final profileController = Get.find<ProfileController>();
     return VendorCategoryAddRow(
       categories: profileController.restaurantCategoriesForDropdown,
       selectedCategoryId: profileController.selectedRestaurantCategoryId,
       onCategoryChanged: (int? categoryId) {
         profileController.setSelectedRestaurantCategoryId(categoryId);
-        profileController.fetchRestaurantMenus(keyword: _searchKeyword);
+        if (isItemsTab) {
+          profileController.fetchGroceryMenuItems(
+            categoryId: categoryId,
+            keyword: _searchKeyword.trim(),
+          );
+        } else {
+          profileController.fetchRestaurantMenus(keyword: _searchKeyword);
+        }
       },
       onAddPressed: () {
         Navigator.push(
@@ -1540,5 +1569,4 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       ),
     );
   }
-
 }

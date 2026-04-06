@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class RestaurantMenuItemsModel {
   bool? status;
   RestaurantMenuItemsData? data;
@@ -170,9 +172,7 @@ class RestaurantMenuItemData {
       price: json['price']?.toString() ?? '0',
       discountPrice: json['discount_price']?.toString() ?? '0',
       restaurantMenuItemId: json['restaurant_menu_item_id'] as int? ?? 0,
-      categoryId: json['category_id'] is int
-          ? json['category_id'] as int
-          : int.tryParse(json['category_id']?.toString() ?? ''),
+      categoryId: _parseCategoryIdToInt(json['category_id']),
       categoryNameEn: json['category_name_en']?.toString() ?? '',
       categoryNameAr: json['category_name_ar']?.toString() ?? '',
       categoryNameFr: json['category_name_fr']?.toString() ?? '',
@@ -180,6 +180,22 @@ class RestaurantMenuItemData {
           ? json['available_status'] as int
           : int.tryParse(json['available_status']?.toString() ?? '0'),
     );
+  }
+  static int? _parseCategoryIdToInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is List) {
+      if (value.isNotEmpty) return int.tryParse(value.first.toString());
+      return null;
+    }
+    String s = value.toString();
+    if (s.startsWith('[') && s.endsWith(']')) {
+      try {
+        final List<dynamic> list = List.from(jsonDecode(s));
+        if (list.isNotEmpty) return int.tryParse(list.first.toString());
+      } catch (_) {}
+    }
+    return int.tryParse(s);
   }
 }
 

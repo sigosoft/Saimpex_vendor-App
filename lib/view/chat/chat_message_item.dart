@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
 /// A single message bubble in the chat details screen.
 /// [isSent] controls alignment and colors (orange/right for sent, gray/left for received).
@@ -52,7 +53,9 @@ class ChatMessageItem extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      attachmentUrl!,
+                      attachmentUrl!.startsWith('http')
+                          ? attachmentUrl!
+                          : "${ApiConfigs.IMAGE_URL}${attachmentUrl!.startsWith('/') ? attachmentUrl!.substring(1) : attachmentUrl!}",
                       width: 200,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => const Icon(

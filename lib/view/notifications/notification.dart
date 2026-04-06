@@ -49,8 +49,8 @@ class FCM {
   final titleCtlr = StreamController<String>.broadcast();
   final bodyCtlr = StreamController<String>.broadcast();
 
-  static final FlutterLocalNotificationsPlugin
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// Call this in `main()` after Firebase.initializeApp()
   Future<void> setNotifications() async {
@@ -58,12 +58,8 @@ class FCM {
     await _initLocalNotifications();
 
     // Request permissions
-    NotificationSettings settings =
-    await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(alert: true, badge: true, sound: true);
     print("iOS Notification permission: ${settings.authorizationStatus}");
 
     // Get FCM token
@@ -101,18 +97,22 @@ class FCM {
 
       // Check notification type and handle accordingly
       final String? notificationType = message.data['type']?.toString();
-      print("Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}");
+      print(
+        "Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}",
+      );
 
       if (notificationType == 'order_request' && message.data.isNotEmpty) {
         // Navigate to AcceptOrder screen for order_request type (only if data is not empty)
         await navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
       } else {
         // For other types or when data is empty, refresh Home UI if app is in foreground
-        print("Refreshing Home UI - type: $notificationType, data empty: ${message.data.isEmpty}");
-        if(notificationType=="other_order_request"||notificationType=="new_order_request"){
+        print(
+          "Refreshing Home UI - type: $notificationType, data empty: ${message.data.isEmpty}",
+        );
+        if (notificationType == "other_order_request" ||
+            notificationType == "new_order_request") {
           Get.offAll(Home());
         }
-
       }
     });
 
@@ -129,7 +129,9 @@ class FCM {
         Future.delayed(const Duration(milliseconds: 1000), () async {
           final String? notificationType = message.data['type']?.toString();
           if (notificationType == 'order_request') {
-            await navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
+            await navigateToAcceptOrderIfLoggedIn(
+              notificationData: message.data,
+            );
           } else {
             // For other types, just refresh Home UI when app loads
             await refreshHomeUI();
@@ -161,20 +163,20 @@ class FCM {
   Future<void> _initLocalNotifications() async {
     // Handle notification tap when app is opened from notification
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
-    InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -185,11 +187,14 @@ class FCM {
     // This ensures the channel is recreated with the correct sound settings
     final androidImplementation = flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     if (androidImplementation != null) {
       try {
-        await androidImplementation.deleteNotificationChannel('default_channel_id');
+        await androidImplementation.deleteNotificationChannel(
+          'default_channel_id',
+        );
         // Wait a bit to ensure channel is fully deleted before recreating
         await Future.delayed(const Duration(milliseconds: 100));
       } catch (e) {
@@ -198,47 +203,58 @@ class FCM {
     }
 
     // Create Android notification channel with custom sound for order_request
-    const AndroidNotificationChannel orderRequestChannel = AndroidNotificationChannel(
-      'default_channel_id',
-      'default_channel',
-      description: 'Default notification channel',
-      importance: Importance.max,
-      playSound: true,
-      enableVibration: true,
-      sound: RawResourceAndroidNotificationSound('notification_ring'),
-      enableLights: true,
-    );
+    const AndroidNotificationChannel orderRequestChannel =
+        AndroidNotificationChannel(
+          'default_channel_id',
+          'default_channel',
+          description: 'Default notification channel',
+          importance: Importance.max,
+          playSound: true,
+          enableVibration: true,
+          sound: RawResourceAndroidNotificationSound('notification_ring'),
+          enableLights: true,
+        );
 
     // Create a separate channel for default sounds (non-order_request notifications)
-    const AndroidNotificationChannel defaultSoundChannel = AndroidNotificationChannel(
-      'default_sound_channel_id',
-      'default_sound_channel',
-      description: 'Default sound notification channel',
-      importance: Importance.max,
-      playSound: true,
-      enableVibration: true,
-      // No custom sound - will use default system sound
-      enableLights: true,
-    );
+    const AndroidNotificationChannel defaultSoundChannel =
+        AndroidNotificationChannel(
+          'default_sound_channel_id',
+          'default_sound_channel',
+          description: 'Default sound notification channel',
+          importance: Importance.max,
+          playSound: true,
+          enableVibration: true,
+          // No custom sound - will use default system sound
+          enableLights: true,
+        );
 
     try {
       final androidImplementation = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
       if (androidImplementation != null) {
         // Delete default sound channel if exists
         try {
-          await androidImplementation.deleteNotificationChannel('default_sound_channel_id');
+          await androidImplementation.deleteNotificationChannel(
+            'default_sound_channel_id',
+          );
           await Future.delayed(const Duration(milliseconds: 50));
         } catch (e) {
           // Ignore if channel doesn't exist
         }
 
         // Create both channels
-        await androidImplementation.createNotificationChannel(orderRequestChannel);
-        await androidImplementation.createNotificationChannel(defaultSoundChannel);
-        print("Notification channels created: order_request (custom sound) and default (system sound)");
+        await androidImplementation.createNotificationChannel(
+          orderRequestChannel,
+        );
+        await androidImplementation.createNotificationChannel(
+          defaultSoundChannel,
+        );
+        print(
+          "Notification channels created: order_request (custom sound) and default (system sound)",
+        );
       }
     } catch (e) {
       print("Error creating notification channels: $e");
@@ -247,17 +263,19 @@ class FCM {
     // Important for iOS: show notifications in foreground
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   /// Check if user is logged in
   static Future<bool> isUserLoggedIn() async {
     final loginStatus = await getSavedObject("loginStatus");
     final token = await getSavedObject("token");
-    return loginStatus == "true" && token != null && token.toString().isNotEmpty;
+    return loginStatus == "true" &&
+        token != null &&
+        token.toString().isNotEmpty;
   }
 
   /// Refresh Home UI by updating HomeController
@@ -288,7 +306,9 @@ class FCM {
   }
 
   /// Navigate to AcceptOrder only if user is logged in and notification data is not empty
-  static Future<void> navigateToAcceptOrderIfLoggedIn({Map<String, dynamic>? notificationData}) async {
+  static Future<void> navigateToAcceptOrderIfLoggedIn({
+    Map<String, dynamic>? notificationData,
+  }) async {
     // Check if notification data is empty or null
     if (notificationData == null || notificationData.isEmpty) {
       print("Notification data is empty, skipping AcceptOrder navigation");
@@ -344,68 +364,46 @@ class FCM {
     }
 
     // Extract order ID
-    final orderId = getValue([
-      'order_id',
-    ]);
+    final orderId = getValue(['order_id']);
 
     // Extract request ID
-    final requestId = getValue([
-      'request_id',
-    ]);
+    final requestId = getValue(['request_id']);
 
     // Extract order number/code
-    final orderNumber = getValue([
-      'order_code',
-    ]);
+    final orderNumber = getValue(['order_code']);
 
     // Extract order date
-    final orderDate = getValue([
-      'order_created_at_formatted',
-    ]);
+    final orderDate = getValue(['order_created_at_formatted']);
 
     // Extract restaurant/vendor name
-    final restaurantName = getValue([
-      'vendor_name',
-    ]);
+    final restaurantName = getValue(['vendor_name']);
 
     // Extract restaurant/vendor address
-    final restaurantAddress = getValue([
-      'vendor_address',
-    ]);
+    final restaurantAddress = getValue(['vendor_address']);
 
     // Extract restaurant/vendor image
-    final restaurantImage = getValue([
-      'vendor_image',
-    ]);
+    final restaurantImage = getValue(['vendor_image']);
 
     // Extract amount
-    String? amount = getValue([
-      'total_delivery_amount',
-    ]);
+    String? amount = getValue(['total_delivery_amount']);
     // Add currency if amount exists and doesn't already have it
-    if (amount != null && amount.isNotEmpty && !amount.toUpperCase().contains('MRU')) {
+    if (amount != null &&
+        amount.isNotEmpty &&
+        !amount.toUpperCase().contains('MRU')) {
       amount = '$amount MRU';
     }
 
     // Extract phone number
-    final phoneNumber = getValue([
-      'vendor_mobile',
-    ]);
+    final phoneNumber = getValue(['vendor_mobile']);
 
     // Extract country code
-    final countryCode = getValue([
-      'vendor_country_code',
-    ]);
+    final countryCode = getValue(['vendor_country_code']);
 
     // Extract latitude
-    final latitude = getValue([
-      'vendor_latitude',
-    ]);
+    final latitude = getValue(['vendor_latitude']);
 
     // Extract longitude
-    final longitude = getValue([
-      'vendor_longitude',
-    ]);
+    final longitude = getValue(['vendor_longitude']);
 
     return {
       'orderId': orderId,
@@ -518,9 +516,14 @@ class FCM {
 
   /// Get FCM Token
   Future<String> getDeviceToken() async {
-    FirebaseMessaging firebaseMessage = FirebaseMessaging.instance;
-    deviceToken = await firebaseMessage.getToken();
-    return (deviceToken == null) ? "" : deviceToken!;
+    try {
+      FirebaseMessaging firebaseMessage = FirebaseMessaging.instance;
+      deviceToken = await firebaseMessage.getToken();
+      return (deviceToken == null) ? "" : deviceToken!;
+    } catch (e) {
+      print("Error getting device token: $e");
+      return "";
+    }
   }
 
   /// Show notification on both Android & iOS
@@ -618,32 +621,37 @@ class FCM {
         platformChannelSpecifics,
       );
       if (isOrderRequest) {
-        print("✓ Foreground notification shown with CUSTOM sound (notification_ring) - type: $notificationType");
+        print(
+          "✓ Foreground notification shown with CUSTOM sound (notification_ring) - type: $notificationType",
+        );
       } else {
-        print("✓ Foreground notification shown with DEFAULT system sound - type: ${notificationType ?? 'null'}");
+        print(
+          "✓ Foreground notification shown with DEFAULT system sound - type: ${notificationType ?? 'null'}",
+        );
       }
     } catch (e) {
       print("Error showing notification: $e");
       // Fallback: use default system sound
       try {
         final AndroidNotificationDetails fallbackAndroidDetails =
-        AndroidNotificationDetails(
-          'default_channel_id',
-          'default_channel',
-          channelDescription: 'Default notification channel',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-          // No custom sound - will use default system sound
-        );
+            AndroidNotificationDetails(
+              'default_channel_id',
+              'default_channel',
+              channelDescription: 'Default notification channel',
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+              enableVibration: true,
+              // No custom sound - will use default system sound
+            );
 
-        const DarwinNotificationDetails fallbackIOSDetails = DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-          // No custom sound - will use default system sound
-        );
+        const DarwinNotificationDetails fallbackIOSDetails =
+            DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              // No custom sound - will use default system sound
+            );
 
         final NotificationDetails fallbackDetails = NotificationDetails(
           android: fallbackAndroidDetails,
@@ -656,7 +664,9 @@ class FCM {
           payload.notification?.body ?? '',
           fallbackDetails,
         );
-        print("Foreground notification shown with default system sound (fallback)");
+        print(
+          "Foreground notification shown with default system sound (fallback)",
+        );
       } catch (fallbackError) {
         print("Error showing notification with fallback: $fallbackError");
       }

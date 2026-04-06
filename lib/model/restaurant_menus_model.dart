@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class RestaurantMenusModel {
   bool? status;
   List<RestaurantMenu>? data;
@@ -179,7 +181,7 @@ class RestaurantMenu {
       nameEn: json['name_en']?.toString() ?? '',
       nameAr: json['name_ar']?.toString() ?? '',
       nameFr: json['name_fr']?.toString() ?? '',
-      categoryId: json['category_id']?.toString() ?? '',
+      categoryId: _parseCategoryId(json['category_id']),
       restaurantId: _toNullableInt(json['restaurant_id']),
       descriptionEn: json['description_en']?.toString() ?? '',
       descriptionAr: json['description_ar']?.toString() ?? '',
@@ -198,6 +200,22 @@ class RestaurantMenu {
               .toList() ??
           [],
     );
+  }
+
+  static String _parseCategoryId(dynamic value) {
+    if (value == null) return '';
+    if (value is List) {
+      if (value.isNotEmpty) return value.first.toString();
+      return '';
+    }
+    String s = value.toString();
+    if (s.startsWith('[') && s.endsWith(']')) {
+      try {
+        final List<dynamic> list = List.from(jsonDecode(s));
+        if (list.isNotEmpty) return list.first.toString();
+      } catch (_) {}
+    }
+    return s;
   }
 
   static int _toInt(dynamic value) =>

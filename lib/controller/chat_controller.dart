@@ -16,6 +16,7 @@ import 'package:saimpex_vendor/model/get_conversation_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/notifications/notification.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 class ChatController extends GetxController {
   // ----- Pusher -----
@@ -281,15 +282,20 @@ class ChatController extends GetxController {
         "Pusher Data -> Type: $receiverType, ID: $receiverId, VendorID: $currentVendorId, UserID: $userId",
       );
 
+      final senderId = eventDataMap?['sender_id']?.toString() ?? "";
+
       final bool isForMe =
           receiverId == currentVendorId.toString() ||
-          receiverId == userId.toString();
+          receiverId == userId.toString() ||
+          senderId == currentVendorId.toString() ||
+          senderId == userId.toString();
 
-      if (eventDataMap != null &&
-          (receiverType.contains("vendor")) &&
-          isForMe) {
-        // Show local notification
-        _showInAppNotification(eventDataMap);
+      if (eventDataMap != null && isForMe) {
+        // Show local notification only if we are the receiver
+        final bool isReceiver = receiverId == currentVendorId.toString() || receiverId == userId.toString();
+        if (isReceiver) {
+          _showInAppNotification(eventDataMap);
+        }
 
         if (context != null) {
           getAllConversations(context, quiet: true);
@@ -450,6 +456,8 @@ class ChatController extends GetxController {
             final newMessage = LastMessage.fromJson(newMessageJson);
             currentConversation?.messages?.insert(0, newMessage);
             _sortMessages();
+            // Important: Update the list view (ChatListing) as well
+            _updateConversationInList(conversationId, newMessage);
           }
         } else if (customerId != null) {
           final newConversationId = response.data['data']['conversation_id'];
@@ -507,7 +515,10 @@ class ChatController extends GetxController {
       update();
 
       Map<String, dynamic> body = {
-        "image": await dio.MultipartFile.fromFile(imageFile.path),
+        "message": await dio.MultipartFile.fromFile(
+          imageFile.path,
+          filename: imageFile.path.split('/').last,
+        ),
         "message_type": "image",
       };
 
@@ -534,6 +545,8 @@ class ChatController extends GetxController {
             final newMessage = LastMessage.fromJson(newMessageJson);
             currentConversation?.messages?.insert(0, newMessage);
             _sortMessages();
+            // Important: Update the list view (ChatListing) as well
+            _updateConversationInList(conversationId, newMessage);
           }
         } else {
           final newConversationId = response.data['data']['conversation_id'];
@@ -597,10 +610,23 @@ class ChatController extends GetxController {
     conversations.sort((a, b) {
       String? timeA = a.lastMessageAt ?? a.lastMessage?.createdAt;
       String? timeB = b.lastMessageAt ?? b.lastMessage?.createdAt;
-      DateTime dateA = DateTime.tryParse(timeA ?? '') ?? DateTime(0);
-      DateTime dateB = DateTime.tryParse(timeB ?? '') ?? DateTime(0);
-      return dateB.compareTo(dateA); // Latest first (index 0 is latest)
+      DateTime dateA = _parseDateTime(timeA);
+      DateTime dateB = _parseDateTime(timeB);
+      return dateB.compareTo(dateA); // Latest first
     });
+  }
+
+  DateTime _parseDateTime(String? s) {
+    if (s == null || s.isEmpty) return DateTime(0);
+    try {
+      DateTime? dt = DateTime.tryParse(s);
+      if (dt != null) return dt.toLocal();
+      // Try common Laravel/Saimpex formats
+      if (s.contains('-')) {
+        return DateFormat("yyyy-MM-dd HH:mm:ss").parse(s).toLocal();
+      }
+    } catch (_) {}
+    return DateTime(0);
   }
 
   // ====================================================
@@ -636,9 +662,19 @@ class ChatController extends GetxController {
                 (existing) => existing.id == c.id,
               );
               if (idx != -1) {
-                conversations[idx] = c; // Update existing
+                // Determine which message is newer: local or server
+                final serverTime = _parseDateTime(c.lastMessageAt ?? c.lastMessage?.createdAt);
+                final localTime = _parseDateTime(conversations[idx].lastMessageAt ?? conversations[idx].lastMessage?.createdAt);
+
+                if (serverTime.isAfter(localTime) || serverTime.isAtSameMomentAs(localTime)) {
+                  conversations[idx] = c;
+                } else {
+                  // Keep local message if it's newer than what the allConversations API returned
+                  // Note: The backend sometimes returns outdated last_message in this list
+                  conversations[idx].unreadCount = c.unreadCount;
+                }
               } else {
-                conversations.insert(0, c); // Add new
+                conversations.insert(0, c);
               }
             }
           } else {
@@ -803,6 +839,21 @@ class ChatController extends GetxController {
     } finally {
       isLoadMoreMessages = false;
       update();
+    }
+  }
+
+  /// Updates a specific conversation's preview in the list and re-sorts.
+  void _updateConversationInList(int? convoId, LastMessage lastMsg) {
+    if (convoId == null || convoId == 0) return;
+    final idx = conversations.indexWhere((c) => c.id == convoId);
+    if (idx != -1) {
+      conversations[idx].lastMessage = lastMsg;
+      conversations[idx].lastMessageAt = lastMsg.createdAt;
+      _sortConversations();
+      update();
+    } else {
+      // Re-fetch list if conversation not found in current list
+      getAllConversations(Get.context ?? Get.overlayContext!, quiet: true);
     }
   }
 }
