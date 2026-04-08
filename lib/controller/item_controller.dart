@@ -122,16 +122,18 @@ class ItemController extends GetxController {
   }
 
   List<String> get typeDisplayNames =>
-      menuList.map((e) => e.nameEn).where((s) => s.isNotEmpty).toList();
+      menuList.map((e) => e.nameEn).where((s) => s.isNotEmpty).toSet().toList();
 
   List<String> get tagDisplayNames => restaurantTags
       .map((e) => e.nameEn ?? '')
       .where((s) => s.isNotEmpty)
+      .toSet()
       .toList();
 
   List<String> get attributeDisplayNames => restaurantAttributes
       .map((e) => e.nameEn ?? '')
       .where((s) => s.isNotEmpty)
+      .toSet()
       .toList();
 
   bool isMenuListLoading = false;
@@ -395,13 +397,19 @@ class ItemController extends GetxController {
         formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
       }
       if (pickedImageFile != null) {
+        final path = pickedImageFile!.path;
+        final baseName = path.split(RegExp(r'[/\\]')).last;
+        final jpgFilename =
+            baseName.endsWith('.jpg') ||
+                baseName.endsWith('.jpeg') ||
+                baseName.endsWith('.png')
+            ? baseName
+            : '${baseName.split('.').first}.jpg';
+
         formData.files.add(
           MapEntry(
             'image',
-            await dio.MultipartFile.fromFile(
-              pickedImageFile!.path,
-              filename: pickedImageFile!.name,
-            ),
+            await dio.MultipartFile.fromFile(path, filename: jpgFilename),
           ),
         );
       }
@@ -737,13 +745,19 @@ class ItemController extends GetxController {
         formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
       }
       if (pickedImageFile != null) {
+        final path = pickedImageFile!.path;
+        final baseName = path.split(RegExp(r'[/\\]')).last;
+        final jpgFilename =
+            baseName.endsWith('.jpg') ||
+                baseName.endsWith('.jpeg') ||
+                baseName.endsWith('.png')
+            ? baseName
+            : '${baseName.split('.').first}.jpg';
+
         formData.files.add(
           MapEntry(
             'image',
-            await dio.MultipartFile.fromFile(
-              pickedImageFile!.path,
-              filename: pickedImageFile!.name,
-            ),
+            await dio.MultipartFile.fromFile(path, filename: jpgFilename),
           ),
         );
       }

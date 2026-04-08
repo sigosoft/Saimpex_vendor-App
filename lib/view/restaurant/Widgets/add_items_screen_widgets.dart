@@ -139,6 +139,7 @@ class AddItemsDropdownField extends StatelessWidget {
           ),
         ),
         items: items
+            .toSet()
             .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
       ),
