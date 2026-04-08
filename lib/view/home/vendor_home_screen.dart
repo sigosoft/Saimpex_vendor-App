@@ -67,6 +67,10 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   @override
   void initState() {
     super.initState();
+    if (homeController.targetOrderStatusTab != null) {
+      selectedTab = homeController.targetOrderStatusTab!;
+      homeController.targetOrderStatusTab = null;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
      // final homeController = Get.put(HomeController());
      maintenance(context);

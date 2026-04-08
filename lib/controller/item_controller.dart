@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -28,6 +30,74 @@ class ItemController extends GetxController {
   int? selectedMenuId;
   int? selectedRestaurantAttributeId;
   int? selectedRestaurantTagId;
+
+  // ── Image pick + crop ──────────────────────────────────────────────────────
+  XFile? pickedImageFile;
+
+  Future<void> pickAndCropImage(BuildContext context) async {
+    try {
+      final picker = ImagePicker();
+      final source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (sc) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.camera_alt_outlined,
+                    color: Color(0xFFFF5216),
+                  ),
+                  title: const Text('Camera'),
+                  onTap: () => Navigator.of(sc).pop(ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.photo_library_outlined,
+                    color: Color(0xFFFF5216),
+                  ),
+                  title: const Text('Gallery'),
+                  onTap: () => Navigator.of(sc).pop(ImageSource.gallery),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (source == null) return;
+
+      final picked = await picker.pickImage(source: source, imageQuality: 90);
+      if (picked == null) return;
+
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: const Color(0xFFFF5216),
+            toolbarWidgetColor: Colors.white,
+            activeControlsWidgetColor: const Color(0xFFFF5216),
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+        ],
+      );
+      if (cropped == null) return;
+
+      pickedImageFile = XFile(cropped.path);
+      update();
+    } catch (e) {
+      debugPrint('pickAndCropImage error: $e');
+    }
+  }
+  // ──────────────────────────────────────────────────────────────────────────
 
   String formatPreparationTimeToHi(String rawValue) {
     final value = rawValue.trim();
@@ -159,7 +229,9 @@ class ItemController extends GetxController {
     selectedRestaurantTagId = match.isEmpty ? null : match.first.id;
     selectedRestaurantTagIds
       ..clear()
-      ..addAll(selectedRestaurantTagId == null ? const [] : [selectedRestaurantTagId!]);
+      ..addAll(
+        selectedRestaurantTagId == null ? const [] : [selectedRestaurantTagId!],
+      );
     update();
   }
 
@@ -186,8 +258,9 @@ class ItemController extends GetxController {
     } else {
       selectedRestaurantTagIds.add(id);
     }
-    selectedRestaurantTagId =
-        selectedRestaurantTagIds.isNotEmpty ? selectedRestaurantTagIds.first : null;
+    selectedRestaurantTagId = selectedRestaurantTagIds.isNotEmpty
+        ? selectedRestaurantTagIds.first
+        : null;
     update();
   }
 
@@ -210,6 +283,7 @@ class ItemController extends GetxController {
     selectedAttribute = null;
     selectedRestaurantAttributeId = null;
     selectedRestaurantTagId = null;
+    pickedImageFile = null;
     update();
   }
 
@@ -303,6 +377,7 @@ class ItemController extends GetxController {
         "menu_item_id": menuItemId,
         vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
             restaurantAttributeId,
+        "attribute_value": selectedAttribute ?? "",
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),
         "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
@@ -313,9 +388,22 @@ class ItemController extends GetxController {
       final formData = dio.FormData.fromMap(formDataMap);
       final tagIds = selectedRestaurantTagIds.isNotEmpty
           ? selectedRestaurantTagIds
-          : (selectedRestaurantTagId != null ? [selectedRestaurantTagId!] : const <int>[]);
+          : (selectedRestaurantTagId != null
+                ? [selectedRestaurantTagId!]
+                : const <int>[]);
       for (int i = 0; i < tagIds.length; i++) {
         formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+      }
+      if (pickedImageFile != null) {
+        formData.files.add(
+          MapEntry(
+            'image',
+            await dio.MultipartFile.fromFile(
+              pickedImageFile!.path,
+              filename: pickedImageFile!.name,
+            ),
+          ),
+        );
       }
       printFormData(formData);
       final response = await DioClient().post(
@@ -595,8 +683,9 @@ class ItemController extends GetxController {
         selectedRestaurantTagIds
           ..clear()
           ..addAll(ids);
-        selectedRestaurantTagId =
-            selectedRestaurantTagIds.isNotEmpty ? selectedRestaurantTagIds.first : null;
+        selectedRestaurantTagId = selectedRestaurantTagIds.isNotEmpty
+            ? selectedRestaurantTagIds.first
+            : null;
       }
       update();
     } catch (error, stackTrace) {
@@ -627,6 +716,7 @@ class ItemController extends GetxController {
         "menu_item_id": menuItemId,
         vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
             restaurantAttributeId,
+        "attribute_value": selectedAttribute ?? "",
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),
         "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
@@ -640,9 +730,22 @@ class ItemController extends GetxController {
       final formData = dio.FormData.fromMap(formDataMap);
       final tagIds = selectedRestaurantTagIds.isNotEmpty
           ? selectedRestaurantTagIds
-          : (selectedRestaurantTagId != null ? [selectedRestaurantTagId!] : const <int>[]);
+          : (selectedRestaurantTagId != null
+                ? [selectedRestaurantTagId!]
+                : const <int>[]);
       for (int i = 0; i < tagIds.length; i++) {
         formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+      }
+      if (pickedImageFile != null) {
+        formData.files.add(
+          MapEntry(
+            'image',
+            await dio.MultipartFile.fromFile(
+              pickedImageFile!.path,
+              filename: pickedImageFile!.name,
+            ),
+          ),
+        );
       }
       printFormData(formData);
       final response = await DioClient().post(
@@ -694,8 +797,6 @@ class ItemController extends GetxController {
 
   Future<void> updateItemStatus(int itemId, int status) async {
     try {
-      isRestaurantTagsLoading = true;
-      update();
       var token = await getSavedObject("token");
       var vendorType = await getSavedObject("vendorType");
       if (token != null) {
@@ -706,7 +807,7 @@ class ItemController extends GetxController {
       final response = await DioClient().get(
         vendorType == "1"
             ? ApiEndPoints.updateItemStatus
-            : ApiEndPoints.updateItemStatus,
+            : ApiEndPoints.updateGroceryItemStatus,
         query: {"menu_item_id": itemId, "available_status": status},
       );
       debugPrint("updateItemStatus response: $response");
@@ -764,23 +865,9 @@ class ItemController extends GetxController {
           fontSize: 14.0,
         );
       }
-
-      if (successModel.status == 'true') {
-        final updatedData = successModel.data ?? [];
-        restaurantTags = updatedData.map((e) {
-          if (e is Map<String, dynamic>) {
-            return TagData.fromJson(e);
-          }
-          if (e is Map) {
-            return TagData.fromJson(Map<String, dynamic>.from(e));
-          }
-          return TagData();
-        }).toList();
-      }
     } catch (error) {
       debugPrint("updateItemStatus Error: $error");
     } finally {
-      isRestaurantTagsLoading = false;
       update();
     }
   }
@@ -842,7 +929,7 @@ class ItemController extends GetxController {
       final response = await DioClient().post(
         vendorType == "1"
             ? ApiEndPoints.updateRestaurantMenuItemStock
-            : ApiEndPoints.updateGroceryMenuItemStock,
+            : ApiEndPoints.updateGrocerytItemStock,
         body: {
           "menu_item_id": menuItemId,
           "quantity": quantity,

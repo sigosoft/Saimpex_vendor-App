@@ -480,6 +480,7 @@ class ProfileController extends GetxController {
             })
           : dio.FormData.fromMap({
               "menu_id": menuId,
+              "attribute_value": attributeValue,
               "serial_number": serialNumber,
               "quantity_allowed": quantityAllowed,
               "attributes[0][grocery_attribute_id]": groceryAttributeId,

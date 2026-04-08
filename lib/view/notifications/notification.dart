@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
+import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../Utils/Utils.dart';
 import '../Home/Home.dart';
 
@@ -127,15 +127,8 @@ class FCM {
         await flutterLocalNotificationsPlugin.cancelAll();
         // Wait for app to be fully initialized before navigating
         Future.delayed(const Duration(milliseconds: 1000), () async {
-          final String? notificationType = message.data['type']?.toString();
-          if (notificationType == 'order_request') {
-            await navigateToAcceptOrderIfLoggedIn(
-              notificationData: message.data,
-            );
-          } else {
-            // For other types, just refresh Home UI when app loads
-            await refreshHomeUI();
-          }
+          // Navigate and parse order data if present, regardless of type
+          await navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
         });
       }
     });
@@ -145,16 +138,9 @@ class FCM {
       print("App opened from background");
       // Cancel any local notifications that might be showing
       await flutterLocalNotificationsPlugin.cancelAll();
-      // Check notification type and handle accordingly
+      // Navigate and parse order data if present, regardless of type
       if (message.data.isNotEmpty) {
-        final String? notificationType = message.data['type']?.toString();
-        print("Background notification type: $notificationType");
-        if (notificationType == 'order_request') {
-          navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
-        } else {
-          // For other types, refresh Home UI
-          await refreshHomeUI();
-        }
+        navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
       }
     });
   }
@@ -324,21 +310,30 @@ class FCM {
         if (Get.context != null) {
           // Extract and map notification data
           final orderData = _extractOrderData(notificationData);
+          final statusIdStr = orderData['statusId'];
+          String targetTab = "Pending";
+          if (statusIdStr != null) {
+            final statusId = int.tryParse(statusIdStr);
+            if (statusId == 2)
+              targetTab = "Accepted";
+            else if (statusId == 3)
+              targetTab = "Preparing";
+            else if (statusId == 4)
+              targetTab = "Ready";
+            else if (statusId == 8)
+              targetTab = "On Going";
+            else if (statusId == 9)
+              targetTab = "Delivered";
+            else if (statusId == 10)
+              targetTab = "Cancelled";
+          }
+
+          if (Get.isRegistered<HomeController>()) {
+            Get.find<HomeController>().targetOrderStatusTab = targetTab;
+          } else {
+            Get.put(HomeController()).targetOrderStatusTab = targetTab;
+          }
           Get.offAll(() => Home());
-          // Get.offAll(() => AcceptOrder(
-          //   orderId: orderData['orderId'],
-          //   requestId: orderData['requestId'],
-          //   orderNumber: orderData['orderNumber'],
-          //   orderDate: orderData['orderDate'],
-          //   restaurantName: orderData['restaurantName'],
-          //   restaurantAddress: orderData['restaurantAddress'],
-          //   restaurantImage: orderData['restaurantImage'],
-          //   amount: orderData['amount'],
-          //   phoneNumber: orderData['phoneNumber'],
-          //   countryCode: orderData['countryCode'],
-          //   latitude: orderData['latitude'],
-          //   longitude: orderData['longitude'],
-          // ));
         }
       });
     } else {
@@ -405,6 +400,9 @@ class FCM {
     // Extract longitude
     final longitude = getValue(['vendor_longitude']);
 
+    // Extract order status
+    final statusId = getValue(['order_status', 'status']);
+
     return {
       'orderId': orderId,
       'requestId': requestId,
@@ -418,6 +416,7 @@ class FCM {
       'countryCode': countryCode,
       'latitude': latitude,
       'longitude': longitude,
+      'statusId': statusId,
     };
   }
 

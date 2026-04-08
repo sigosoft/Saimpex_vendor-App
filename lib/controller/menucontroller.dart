@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuController;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -169,7 +170,9 @@ class MenuController extends GetxController {
     selectedEditCategoryId = match.isEmpty ? null : match.first.id?.toString();
     selectedEditCategoryIds
       ..clear()
-      ..addAll(selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!]);
+      ..addAll(
+        selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!],
+      );
     update();
   }
 
@@ -273,7 +276,9 @@ class MenuController extends GetxController {
       selectedEditTagIds.add(id);
     }
     // Keep single-edit field in sync for legacy code paths.
-    selectedEditTagId = selectedEditTagIds.isNotEmpty ? selectedEditTagIds.first : null;
+    selectedEditTagId = selectedEditTagIds.isNotEmpty
+        ? selectedEditTagIds.first
+        : null;
     update();
   }
 
@@ -376,15 +381,18 @@ class MenuController extends GetxController {
     descArCtrl.text = menu.descriptionAr;
     descFrCtrl.text = menu.descriptionFr;
     selectedIsVeg = menu.isVeg == 1 ? 'Yes' : 'No';
-    selectedEditCategoryId = menu.categoryId.isNotEmpty ? menu.categoryId : null;
+    selectedEditCategoryId = menu.categoryId.isNotEmpty
+        ? menu.categoryId
+        : null;
     selectedEditCategoryIds
       ..clear()
       ..addAll(
         menu.categories.isNotEmpty
             ? menu.categories.map((c) => c.id.toString()).toList()
-            : (selectedEditCategoryId != null && selectedEditCategoryId!.isNotEmpty)
-                ? [selectedEditCategoryId!]
-                : const [],
+            : (selectedEditCategoryId != null &&
+                  selectedEditCategoryId!.isNotEmpty)
+            ? [selectedEditCategoryId!]
+            : const [],
       );
     final names = categoryDisplayNames;
     selectedEditCategoryName =
@@ -445,7 +453,9 @@ class MenuController extends GetxController {
         : null;
     selectedEditCategoryIds
       ..clear()
-      ..addAll(selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!]);
+      ..addAll(
+        selectedEditCategoryId == null ? const [] : [selectedEditCategoryId!],
+      );
     selectedIsVeg = 'No';
     selectedEditTagName = tagDisplayNames.isNotEmpty
         ? tagDisplayNames.first
@@ -665,20 +675,52 @@ class MenuController extends GetxController {
           TextButton(
             onPressed: () async {
               Navigator.of(dialogContext).pop();
-              await pickImages();
+              await pickAndCropImage(context, ImageSource.gallery);
             },
             child: const Text("Gallery"),
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(dialogContext).pop();
-              await pickFromCamera();
+              await pickAndCropImage(context, ImageSource.camera);
             },
             child: const Text("Camera"),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> pickAndCropImage(
+    BuildContext context,
+    ImageSource source,
+  ) async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: source, imageQuality: 80);
+      if (picked == null) return;
+
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: const Color(0xFFFF5216),
+            toolbarWidgetColor: Colors.white,
+            activeControlsWidgetColor: const Color(0xFFFF5216),
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+        ],
+      );
+      if (cropped != null) {
+        uploadedImages.add(XFile(cropped.path));
+        update();
+      }
+    } catch (e) {
+      debugPrint("pickAndCropImage error: $e");
+    }
   }
 
   Future<void> getAllCategories({int? categoryId}) async {
@@ -1122,8 +1164,8 @@ class MenuController extends GetxController {
       final List<String> tagIdsToSend = selectedEditTagIds.isNotEmpty
           ? selectedEditTagIds
           : (selectedEditTagId != null && selectedEditTagId!.trim().isNotEmpty)
-              ? <String>[selectedEditTagId!.trim()]
-              : <String>[];
+          ? <String>[selectedEditTagId!.trim()]
+          : <String>[];
       for (final id in tagIdsToSend) {
         final normalized = RegExp(r'\d+').firstMatch(id)?.group(0) ?? '';
         if (normalized.isNotEmpty) {

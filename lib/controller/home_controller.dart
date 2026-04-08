@@ -21,6 +21,8 @@ class HomeController extends GetxController {
   String selectedLocation = '';
   String userName = '';
   TextEditingController searchController = TextEditingController();
+  
+  String? targetOrderStatusTab;
 
   HomeModel? homeData;
   int? autoAcceptMode; // API mapping: 1 = ON, 2 = OFF

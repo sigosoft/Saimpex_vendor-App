@@ -103,8 +103,9 @@ class ApiEndPoints {
   static String uploadGroceryImages = "uploadGroceryMenuImages";
   static String uploadWorkingHours = "updateWorkingHours";
   static String updateItemStatus = "updateItemAvailabilityStatus";
+  static String updateGroceryItemStatus = "updateGroceryItemAvailabilityStatus";
   static String groceryMenuItemStockLogs = "groceryMenuItemStockLogs";
-  static String updateGroceryMenuItemStock = "updateGroceryItemStock";
+  static String updateGrocerytItemStock = "updateGrocerytItemStock";
   static String updateAutoAcceptOrders = "updateAutoAcceptMode";
   static String updateBusyStatus = "updateBusyMode";
 }

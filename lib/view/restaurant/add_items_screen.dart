@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
@@ -77,7 +78,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           final t = controller.restaurantTags[index];
                           final id = t.id ?? 0;
                           final name = (t.nameEn ?? '').trim();
-                          final checked = id > 0 &&
+                          final checked =
+                              id > 0 &&
                               controller.selectedRestaurantTagIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
@@ -138,6 +140,15 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Get.isRegistered<ItemController>()
+          ? Get.find<ItemController>()
+          : Get.put(ItemController());
+      if (controller.restaurantTags.isEmpty &&
+          !controller.isRestaurantTagsLoading) {
+        controller.getAllTags();
+      }
+    });
   }
 
   @override
@@ -176,11 +187,108 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
           builder: (controller) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Image picker / crop ───────────────────────────────────────
+              AddItemsFieldLabel('Item Image'),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () => controller.pickAndCropImage(context),
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: const Color(0xFFF1F5F9),
+                      width: 1,
+                    ),
+                  ),
+                  child: controller.pickedImageFile != null
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(controller.pickedImageFile!.path),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: GestureDetector(
+                                onTap: () {
+                                  controller.pickedImageFile = null;
+                                  controller.update();
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: Color(0xFFFF5216),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 6,
+                              right: 6,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    controller.pickAndCropImage(context),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFF5216),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.crop,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 32,
+                              color: Color(0xFFFF5216),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Tap to upload & crop image',
+                              style: GoogleFonts.rubik(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // ── End image picker ──────────────────────────────────────────
               AddItemsFieldLabel(S.of(context).itemTypeLabel),
               const SizedBox(height: 8),
               AddItemsDropdownField(
-                value: controller.selectedType != null &&
-                        controller.typeDisplayNames.contains(controller.selectedType)
+                value:
+                    controller.selectedType != null &&
+                        controller.typeDisplayNames.contains(
+                          controller.selectedType,
+                        )
                     ? controller.selectedType
                     : null,
                 hint: controller.isMenuListLoading
@@ -217,9 +325,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
               AddItemsFieldLabel(S.of(context).attributeLabel),
               const SizedBox(height: 8),
               AddItemsDropdownField(
-                value: controller.selectedAttribute != null &&
-                        controller.attributeDisplayNames
-                            .contains(controller.selectedAttribute)
+                value:
+                    controller.selectedAttribute != null &&
+                        controller.attributeDisplayNames.contains(
+                          controller.selectedAttribute,
+                        )
                     ? controller.selectedAttribute
                     : null,
                 hint: controller.isRestaurantAttributesLoading
