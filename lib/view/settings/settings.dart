@@ -15,6 +15,7 @@ import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
 import 'package:saimpex_vendor/view/settings/about_us.dart';
 import 'package:saimpex_vendor/view/settings/app_settings.dart';
 import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
+import 'package:saimpex_vendor/view/settings/earnings.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../generated/l10n.dart';
@@ -272,6 +273,16 @@ class _SettingsState extends State<Settings> {
                               ),
                               () {
                                 Get.to(() => const DeliveryBoysScreen());
+                              },
+                            ),
+                            _buildMenuItem(
+                              context,
+                              'Earnings',
+                              const AssetImage(
+                                "lib/assets/images/earnings.png",
+                              ),
+                              () {
+                                Get.to(() => const EarningsScreen());
                               },
                             ),
                             _buildMenuItem(
