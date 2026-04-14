@@ -141,8 +141,10 @@ class RestaurantMenu {
           json['selling_price']?.toString() ??
           attr['discount_price']?.toString() ??
           attr['selling_price']?.toString(),
-      preparationTime:
-          json['preparation_time']?.toString() ?? attr['preparation_time']?.toString(),
+      preparationTime: json['preparation_time']?.toString() ??
+          json['prep_time']?.toString() ??
+          attr['preparation_time']?.toString() ??
+          attr['prep_time']?.toString(),
       quantityAllowed:
           json['quantity_allowed'] is int ? json['quantity_allowed'] : 
           int.tryParse(json['quantity_allowed']?.toString() ?? '') ?? 

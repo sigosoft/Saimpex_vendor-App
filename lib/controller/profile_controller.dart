@@ -439,7 +439,33 @@ class ProfileController extends GetxController {
       } else {
         final model = GroceryMenuItemsModel.fromJson(response.data);
         if (model.status == true) {
-          groceryMenuItems = model.data?.groceryMenuItems?.data ?? [];
+          final items = model.data?.groceryMenuItems?.data ?? [];
+          groceryMenuItems = items;
+
+          // Also populate restaurantMenuItems so that other controllers/views can find the items
+          restaurantMenuItems = items
+              .map(
+                (g) => RestaurantMenuItemData(
+                  id: g.id,
+                  nameEn: g.nameEn,
+                  nameAr: g.nameAr,
+                  nameFr: g.nameFr,
+                  descriptionEn: g.descriptionEn,
+                  descriptionAr: g.descriptionAr,
+                  descriptionFr: g.descriptionFr,
+                  image: g.image,
+                  price: g.price,
+                  discountPrice: g.price, // Fallback if grocery doesn't have it
+                  restaurantMenuItemId: g.menuItemId,
+                  categoryId:
+                      0, // Not easily available here but often unused for pre-fill match
+                  categoryNameEn: g.categoryNameEn,
+                  categoryNameAr: g.categoryNameAr,
+                  categoryNameFr: g.categoryNameFr,
+                  availableStatus: g.availableStatus,
+                ),
+              )
+              .toList();
         }
       }
     } catch (error) {
@@ -1096,6 +1122,13 @@ class ProfileController extends GetxController {
               ? Map<String, dynamic>.from(rawGroceryMenuPc)
               : <String, dynamic>{};
 
+          final rawMenuItemDetailsPc = (rawDataPc['data'] is Map)
+              ? (rawDataPc['data'] as Map)['menu_item_details']
+              : null;
+          final rawMenuItemDetailsMapPc = rawMenuItemDetailsPc is Map
+              ? Map<String, dynamic>.from(rawMenuItemDetailsPc)
+              : <String, dynamic>{};
+
           final converted = {
             "status": true,
             "message": groceryMenuDetailsModel.message ?? "",
@@ -1121,12 +1154,23 @@ class ProfileController extends GetxController {
                 "category_name_fr": groceryMenu.categoryNameFr ?? "",
                 "categories": categoriesJson,
                 "attributes": rawGroceryMenuMapPc['attributes'] ?? [],
-                "price": rawGroceryMenuMapPc['retail_price']?.toString(),
-                "discount_price": rawGroceryMenuMapPc['selling_price']
-                    ?.toString(),
-                "preparation_time": rawGroceryMenuMapPc['preparation_time']
-                    ?.toString(),
-                "quantity_allowed": rawGroceryMenuMapPc['quantity_allowed'],
+                "price":
+                    (rawMenuItemDetailsMapPc['price'] ??
+                            rawGroceryMenuMapPc['retail_price'])
+                        ?.toString(),
+                "discount_price":
+                    (rawMenuItemDetailsMapPc['discount_price'] ??
+                            rawGroceryMenuMapPc['selling_price'])
+                        ?.toString(),
+                "preparation_time":
+                    (rawMenuItemDetailsMapPc['preparation_time'] ??
+                            rawMenuItemDetailsMapPc['prep_time'] ??
+                            rawGroceryMenuMapPc['preparation_time'] ??
+                            rawGroceryMenuMapPc['prep_time'])
+                        ?.toString(),
+                "quantity_allowed":
+                    rawMenuItemDetailsMapPc['quantity_allowed'] ??
+                    rawGroceryMenuMapPc['quantity_allowed'],
               },
               "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
               "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,

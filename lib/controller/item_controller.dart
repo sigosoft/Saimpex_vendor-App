@@ -374,11 +374,23 @@ class ItemController extends GetxController {
         DioClient().updateToken("");
       }
       final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
+      String finalAttrId = restaurantAttributeId;
+      if (finalAttrId.isEmpty &&
+          selectedAttribute != null &&
+          restaurantAttributes.isNotEmpty) {
+        final match = restaurantAttributes.where(
+          (a) => a.nameEn == selectedAttribute,
+        );
+        if (match.isNotEmpty) {
+          finalAttrId = match.first.id?.toString() ?? '';
+        }
+      }
+
       final formDataMap = <String, dynamic>{
         "menu_id": menuId,
         "menu_item_id": menuItemId,
         vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
-            restaurantAttributeId,
+            finalAttrId,
         "attribute_value": selectedAttribute ?? "",
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),
@@ -675,6 +687,8 @@ class ItemController extends GetxController {
       }
       if (details.restaurantAttributeId != null) {
         selectedRestaurantAttributeId = details.restaurantAttributeId;
+      } else if (details.attribute?.id != null) {
+        selectedRestaurantAttributeId = details.attribute?.id;
       }
       final attrName = details.attribute?.nameEn;
       if (attrName != null && attrName.isNotEmpty) {
@@ -720,11 +734,23 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
+      String finalAttrId = restaurantAttributeId;
+      if (finalAttrId.isEmpty &&
+          selectedAttribute != null &&
+          restaurantAttributes.isNotEmpty) {
+        final match = restaurantAttributes.where(
+          (a) => a.nameEn == selectedAttribute,
+        );
+        if (match.isNotEmpty) {
+          finalAttrId = match.first.id?.toString() ?? '';
+        }
+      }
+
       final formDataMap = <String, dynamic>{
         "menu_id": menuId,
         "menu_item_id": menuItemId,
         vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
-            restaurantAttributeId,
+            finalAttrId,
         "attribute_value": selectedAttribute ?? "",
         "price": priceCtrl.text.trim(),
         "discount_price": discountPriceCtrl.text.trim(),

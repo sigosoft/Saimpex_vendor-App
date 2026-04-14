@@ -3,20 +3,15 @@ class RestaurantItemsDetailsModel {
   final MenuItemData? data;
   final String? message;
 
-  RestaurantItemsDetailsModel({
-    this.status,
-    this.data,
-    this.message,
-  });
+  RestaurantItemsDetailsModel({this.status, this.data, this.message});
 
   factory RestaurantItemsDetailsModel.fromJson(Map<String, dynamic>? json) {
     return RestaurantItemsDetailsModel(
-      status: json?['status'] == true ||
+      status:
+          json?['status'] == true ||
           json?['status']?.toString().toLowerCase() == "true" ||
           json?['status']?.toString() == "1",
-      data: json?['data'] != null
-          ? MenuItemData.fromJson(json?['data'])
-          : null,
+      data: json?['data'] != null ? MenuItemData.fromJson(json?['data']) : null,
       // Backend sometimes returns `message` as a localized map.
       // Ensure we never crash on a non-String message payload.
       message: json?['message']?.toString(),
@@ -39,17 +34,15 @@ class MenuItemData {
   final MenuItemDetails? menuItemDetails;
   final List<MenuItemTag>? menuItemTags;
 
-  MenuItemData({
-    this.menuItemDetails,
-    this.menuItemTags,
-  });
+  MenuItemData({this.menuItemDetails, this.menuItemTags});
 
   factory MenuItemData.fromJson(Map<String, dynamic>? json) {
     return MenuItemData(
       menuItemDetails: json?['menu_item_details'] != null
           ? MenuItemDetails.fromJson(json?['menu_item_details'])
           : null,
-      menuItemTags: (json?['menu_item_tags'] as List?)
+      menuItemTags:
+          ((json?['menu_item_tags'] ?? json?['grocery_item_tags']) as List?)
               ?.map((e) => MenuItemTag.fromJson(e))
               .toList() ??
           [],
@@ -118,9 +111,15 @@ class MenuItemDetails {
       id: json?['id'],
       menuId: _toNullableInt(json?['menu_id']),
       restaurantId: _toNullableInt(json?['restaurant_id']),
-      preparationTime: _toNullableString(json?['preparation_time']),
+      preparationTime: _toNullableString(
+        json?['preparation_time'] ?? json?['prep_time'],
+      ),
       serialNumber: _toNullableString(json?['serial_number']),
-      restaurantAttributeId: _toNullableInt(json?['restaurant_attribute_id']),
+      restaurantAttributeId: _toNullableInt(
+        json?['restaurant_attribute_id'] ??
+            json?['grocery_attribute_id'] ??
+            json?['attribute_id'],
+      ),
       attributeValue: json?['attribute_value'],
       price: _toNullableString(json?['price']),
       discountPrice: _toNullableString(json?['discount_price']),
@@ -137,22 +136,22 @@ class MenuItemDetails {
       avgRating: json?['avg_rating'],
       totalRatings: json?['total_ratings'],
       lastOrderDate: _toNullableString(json?['last_order_date']),
-      workingHours: (json?['working_hours'] as List?)
+      workingHours:
+          (json?['working_hours'] as List?)
               ?.map((e) => WorkingHour.fromJson(e))
               .toList() ??
           [],
       // Restaurant endpoint returns `restaurant_menu`, grocery endpoint returns `grocery_menu`.
       // We map both into the same `restaurantMenu` field so the UI can render details.
       restaurantMenu: (() {
-        final dynamic menuJson = json?['restaurant_menu'] ?? json?['grocery_menu'];
+        final dynamic menuJson =
+            json?['restaurant_menu'] ?? json?['grocery_menu'];
         if (menuJson == null) return null;
         if (menuJson is Map<String, dynamic>) {
           return RestaurantMenu.fromJson(menuJson);
         }
         if (menuJson is Map) {
-          return RestaurantMenu.fromJson(
-            Map<String, dynamic>.from(menuJson),
-          );
+          return RestaurantMenu.fromJson(Map<String, dynamic>.from(menuJson));
         }
         return null;
       })(),
@@ -190,7 +189,8 @@ class WorkingHour {
       byRestaurant: _toNullableInt(json?['by_restaurant']),
       isOpen24h: _toNullableInt(json?['is_open_24h']),
       status: _toNullableInt(json?['status']),
-      timeSlots: (json?['time_slots'] as List?)
+      timeSlots:
+          (json?['time_slots'] as List?)
               ?.map((e) => TimeSlot.fromJson(e))
               .toList() ??
           [],
@@ -204,12 +204,7 @@ class TimeSlot {
   final String? openTime;
   final String? closeTime;
 
-  TimeSlot({
-    this.id,
-    this.itemWorkingHourId,
-    this.openTime,
-    this.closeTime,
-  });
+  TimeSlot({this.id, this.itemWorkingHourId, this.openTime, this.closeTime});
 
   factory TimeSlot.fromJson(Map<String, dynamic>? json) {
     return TimeSlot(
@@ -277,10 +272,7 @@ class Attribute {
   final int? id;
   final String? nameEn;
 
-  Attribute({
-    this.id,
-    this.nameEn,
-  });
+  Attribute({this.id, this.nameEn});
 
   factory Attribute.fromJson(Map<String, dynamic>? json) {
     return Attribute(
@@ -307,7 +299,9 @@ class MenuItemTag {
     return MenuItemTag(
       id: _toNullableInt(json?['id']),
       restaurantMenuItemId: _toNullableInt(json?['restaurant_menu_item_id']),
-      restaurantTagId: _toNullableInt(json?['restaurant_tag_id']),
+      restaurantTagId: _toNullableInt(
+        json?['restaurant_tag_id'] ?? json?['grocery_tag_id'],
+      ),
       nameEn: _toNullableString(json?['name_en']),
     );
   }
