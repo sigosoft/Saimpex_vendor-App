@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/controller/coupon_controller.dart';
 import '../../utils/utils.dart';
@@ -103,7 +104,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
             ),
           ),
           title: Text(
-            isEdit ? 'Update Coupon' : 'Add Coupon',
+            isEdit ? S.of(context).updateCoupon : S.of(context).addCoupon,
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -125,35 +126,35 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildLabel('Coupon Name'),
+                _buildLabel(S.of(context).couponName),
                 const SizedBox(height: 8),
-                _buildTextField(_nameController, 'Enter coupon name'),
+                _buildTextField(_nameController, S.of(context).enterCouponName),
                 const SizedBox(height: 16),
-                _buildLabel('Coupon Code'),
+                _buildLabel(S.of(context).couponCode),
                 const SizedBox(height: 8),
-                _buildTextField(_codeController, 'Enter coupon code'),
+                _buildTextField(_codeController, S.of(context).enterCouponCode),
                 const SizedBox(height: 16),
-                _buildLabel('Coupon Type'),
+                _buildLabel(S.of(context).couponType),
                 const SizedBox(height: 8),
                 _buildDropdown(),
                 const SizedBox(height: 16),
-                _buildLabel('Discount'),
+                _buildLabel(S.of(context).discount),
                 const SizedBox(height: 8),
                 _buildTextField(
                   _discountController,
-                  'Enter discount',
+                  S.of(context).enterDiscount,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-                _buildLabel('Count'),
+                _buildLabel(S.of(context).countLabel),
                 const SizedBox(height: 8),
                 _buildTextField(
                   _countController,
-                  'Enter count',
+                  S.of(context).enterCount,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-                _buildLabel('Valid Upto'),
+                _buildLabel(S.of(context).validUptoLabel),
                 const SizedBox(height: 8),
                 _buildDatePickerField(),
                 const SizedBox(height: 40),
@@ -185,7 +186,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      S.of(context).cancel,
                       style: GoogleFonts.rubik(
                         color: const Color(0xFF374151),
                         fontSize: 15,
@@ -205,7 +206,10 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                         if (_selectedType == null) {
                           final ctx = Get.overlayContext ?? Get.context;
                           if (ctx != null) {
-                            showToast(ctx, "Please select coupon type");
+                            showToast(
+                              ctx,
+                              S.of(context).pleaseSelectCouponType,
+                            );
                           }
                           return;
                         }
@@ -269,7 +273,9 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                       ),
                     ),
                     child: Text(
-                      isEdit ? 'Update Coupon' : 'Add Coupon',
+                      isEdit
+                          ? S.of(context).updateCoupon
+                          : S.of(context).addCoupon,
                       style: GoogleFonts.rubik(
                         color: Colors.white,
                         fontSize: 15,
@@ -347,7 +353,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
         child: DropdownButton<String>(
           value: _selectedType,
           hint: Text(
-            'Select',
+            S.of(context).select,
             style: GoogleFonts.rubik(
               fontSize: 13,
               color: const Color(0xFF9CA3AF),
@@ -360,7 +366,9 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
             return DropdownMenuItem<String>(
               value: type,
               child: Text(
-                type,
+                type == 'Percentage'
+                    ? S.of(context).percentage
+                    : S.of(context).amount,
                 style: GoogleFonts.rubik(fontSize: 14, color: Colors.black),
               ),
             );

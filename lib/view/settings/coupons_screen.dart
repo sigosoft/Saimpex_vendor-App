@@ -51,7 +51,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           ),
         ),
         title: Text(
-          'Coupons',
+          S.of(context).coupons,
           style: GoogleFonts.rubik(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -79,7 +79,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                       Icon(Icons.add, color: colorPrimary, size: 18),
                       const SizedBox(width: 4),
                       Text(
-                        'Add Coupon',
+                        S.of(context).addCoupon,
                         style: GoogleFonts.rubik(
                           color: colorPrimary,
                           fontSize: 13,
@@ -117,7 +117,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     ],
                   ),
                   child: CustomSearchBox(
-                    hintText: 'Search Coupon',
+                    hintText: S.of(context).searchCoupon,
                     controller: _searchController,
                     boxColor: Colors.white,
                     width: screenWidth * 0.92,
@@ -152,7 +152,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  "No Coupons Found",
+                                  S.of(context).noCouponsFound,
                                   style: GoogleFonts.rubik(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -201,10 +201,10 @@ class _CouponsScreenState extends State<CouponsScreen> {
         'N/A';
     final int statusInt =
         int.tryParse(coupon['status']?.toString() ?? '0') ?? 0;
-    final String status = statusInt == 1 ? 'ACTIVE' : 'INACTIVE';
+    final String status = statusInt == 1 ? S.of(context).active : S.of(context).inactive;
     final String code = coupon['code']?.toString() ?? 'N/A';
     final int typeInt = int.tryParse(coupon['type']?.toString() ?? '1') ?? 1;
-    final String type = typeInt == 2 ? 'PERCENTAGE' : 'FIXED AMOUNT';
+    final String type = typeInt == 2 ? S.of(context).percentage.toUpperCase() : S.of(context).amount.toUpperCase();
     final String discountValue = coupon['discount_value']?.toString() ?? '0.00';
     final String discount = typeInt == 2 ? '$discountValue%' : discountValue;
     final String count = coupon['count']?.toString() ?? '0';
@@ -276,7 +276,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'CODE:  ',
+                      text: '${S.of(context).codeLabel}:  ',
                       style: GoogleFonts.rubik(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -305,11 +305,11 @@ class _CouponsScreenState extends State<CouponsScreen> {
           IntrinsicHeight(
             child: Row(
               children: [
-                _buildDetailItem('DISCOUNT', discount, screenWidth),
+                _buildDetailItem(S.of(context).discountLabel, discount, screenWidth),
                 _buildVerticalDivider(),
-                _buildDetailItem('COUNT', count, screenWidth),
+                _buildDetailItem(S.of(context).countLabel, count, screenWidth),
                 _buildVerticalDivider(),
-                _buildDetailItem('VALID UPTO', validUpto, screenWidth),
+                _buildDetailItem(S.of(context).validUptoLabel, validUpto, screenWidth),
               ],
             ),
           ),
@@ -317,9 +317,9 @@ class _CouponsScreenState extends State<CouponsScreen> {
           _buildDottedDivider(),
           const SizedBox(height: 16),
           // Created/Updated On
-          _buildDateRow('CREATED ON:', createdOn),
+          _buildDateRow('${S.of(context).createdOnLabel}:', createdOn),
           const SizedBox(height: 8),
-          _buildDateRow('UPDATED ON:', updatedOn),
+          _buildDateRow('${S.of(context).updatedOnLabel}:', updatedOn),
           const SizedBox(height: 20),
           // Status Button
           SizedBox(
@@ -341,7 +341,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 elevation: 0,
               ),
               child: Text(
-                'Update Coupon Status',
+                S.of(context).updateCouponStatus,
                 style: GoogleFonts.rubik(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -472,7 +472,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               const Icon(Icons.edit_outlined, size: 18, color: Colors.grey),
               const SizedBox(width: 10),
               Text(
-                'Edit',
+                S.of(context).edit,
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   color: const Color(0xFF1F2937),
@@ -492,7 +492,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               const Icon(Icons.delete_outline, size: 18, color: Colors.grey),
               const SizedBox(width: 10),
               Text(
-                'Delete',
+                S.of(context).delete,
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   color: const Color(0xFF1F2937),
@@ -549,7 +549,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Are you sure you want to delete this Coupon?',
+                  S.of(context).areYouSureYouWantToDeleteThisCoupon,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.rubik(
                     fontSize: 16,
@@ -571,7 +571,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          'No',
+                          S.of(context).no,
                           style: GoogleFonts.rubik(
                             color: colorPrimary,
                             fontWeight: FontWeight.w700,
@@ -599,7 +599,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          'Yes',
+                          S.of(context).yes,
                           style: GoogleFonts.rubik(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -624,7 +624,6 @@ class _CouponsScreenState extends State<CouponsScreen> {
     int couponId,
     int currentStatus,
   ) {
-    final String actionText = currentStatus == 1 ? 'block' : 'activate';
     final int nextStatus = currentStatus == 1 ? 2 : 1;
 
     showDialog(
@@ -659,7 +658,9 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Are you sure you want to $actionText this Coupon?',
+                  currentStatus == 1
+                      ? S.of(context).areYouSureYouWantToBlockThisCoupon
+                      : S.of(context).areYouSureYouWantToActivateThisCoupon,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.rubik(
                     fontSize: 16,
@@ -681,7 +682,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          'No',
+                          S.of(context).no,
                           style: GoogleFonts.rubik(
                             color: colorPrimary,
                             fontWeight: FontWeight.w700,
@@ -714,7 +715,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          'Yes',
+                          S.of(context).yes,
                           style: GoogleFonts.rubik(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

@@ -3,6 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/settings/payout_details.dart';
 
 class EarningsScreen extends StatefulWidget {
@@ -117,7 +118,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'Earnings',
+            S.of(context).earnings,
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -189,13 +190,13 @@ class _EarningsScreenState extends State<EarningsScreen> {
       child: Row(
         children: [
           _buildTabItem(
-            label: 'Order Amount',
+            label: S.of(context).orderAmount,
             index: 0,
             screenWidth: screenWidth,
             screenHeight: screenHeight,
           ),
           _buildTabItem(
-            label: 'Payouts',
+            label: S.of(context).payouts,
             index: 1,
             screenWidth: screenWidth,
             screenHeight: screenHeight,
@@ -261,13 +262,13 @@ class _EarningsScreenState extends State<EarningsScreen> {
       child: Column(
         children: [
           _buildSummaryRow(
-            isPayouts ? 'Total Sale Amount' : 'Pending Order Balance',
+            isPayouts ? S.of(context).totalSaleAmount : S.of(context).pendingOrderBalance,
             isPayouts ? '${totalSale.toStringAsFixed(2)} MRU' : '400.00 MRU',
             screenWidth,
           ),
           SizedBox(height: screenHeight * 0.012),
           _buildSummaryRow(
-            isPayouts ? 'Available Payout Balance' : 'Available Order Balance',
+            isPayouts ? S.of(context).availablePayoutBalance : S.of(context).availableOrderBalance,
             isPayouts
                 ? '${availablePayoutBalance.toStringAsFixed(2)} MRU'
                 : '1300.00 MRU',
@@ -275,7 +276,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
           ),
           SizedBox(height: screenHeight * 0.012),
           _buildSummaryRow(
-            'Total  Payout Recieved',
+            S.of(context).totalPayoutReceived,
             isPayouts
                 ? (totalReceived == 0
                           ? '00.00'
@@ -337,7 +338,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                 ),
               ),
               child: Text(
-                filter,
+                _getLocalizedFilter(filter),
                 style: GoogleFonts.rubik(
                   fontSize: screenWidth * 0.031,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -349,6 +350,36 @@ class _EarningsScreenState extends State<EarningsScreen> {
         );
       }).toList(),
     );
+  }
+
+  String _getLocalizedFilter(String filter) {
+    switch (filter.toLowerCase()) {
+      case 'all':
+        return S.of(context).all;
+      case 'available':
+        return S.of(context).available;
+      case 'pending':
+        return S.of(context).pending;
+      case 'cancelled':
+        return S.of(context).cancelled;
+      default:
+        return filter;
+    }
+  }
+
+  String _getLocalizedStatus(String status) {
+    switch (status.toUpperCase()) {
+      case 'AVAILABLE':
+        return S.of(context).available;
+      case 'CREDITED':
+        return S.of(context).credited;
+      case 'PENDING':
+        return S.of(context).pending;
+      case 'CANCELLED':
+        return S.of(context).cancelled;
+      default:
+        return status;
+    }
   }
 
   // ─── Order Tile ────────────────────────────────────────────────────────────
@@ -424,7 +455,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                status,
+                _getLocalizedStatus(status),
                 style: GoogleFonts.rubik(
                   fontSize: screenWidth * 0.026,
                   fontWeight: FontWeight.w700,
@@ -524,7 +555,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    status,
+                    _getLocalizedStatus(status),
                     style: GoogleFonts.rubik(
                       fontSize: screenWidth * 0.026,
                       fontWeight: FontWeight.w700,
@@ -562,7 +593,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                 padding: EdgeInsets.zero,
               ),
               child: Text(
-                'View Details',
+                S.of(context).viewDetails,
                 style: GoogleFonts.rubik(
                   fontSize: screenWidth * 0.035,
                   fontWeight: FontWeight.w500,

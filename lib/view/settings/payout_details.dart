@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 class PayoutDetailsScreen extends StatelessWidget {
@@ -65,7 +66,7 @@ class PayoutDetailsScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'Earnings',
+            S.of(context).earnings,
             style: GoogleFonts.rubik(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -115,7 +116,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          status,
+                          _getLocalizedStatus(status, context),
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.028,
                             fontWeight: FontWeight.w700,
@@ -164,7 +165,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Payment ID: ABCD123456',
+                          '${S.of(context).paymentId}: ABCD123456',
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.03,
                             color: const Color(0xFF333E63),
@@ -174,7 +175,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () {},
                           child: Text(
-                            'View Payment Proof',
+                            S.of(context).viewPaymentProof,
                             style: GoogleFonts.rubik(
                               fontSize: screenWidth * 0.03,
                               color: colorPrimary,
@@ -189,7 +190,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                     SizedBox(height: screenHeight * 0.008),
                     // Row 4: Notes
                     Text(
-                      'Notes: Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                      '${S.of(context).notes}: Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                       style: GoogleFonts.rubik(
                         fontSize: screenWidth * 0.028,
                         color: const Color(0xFF333E63),
@@ -213,6 +214,21 @@ class PayoutDetailsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getLocalizedStatus(String status, BuildContext context) {
+    switch (status.toUpperCase()) {
+      case 'AVAILABLE':
+        return S.of(context).available;
+      case 'CREDITED':
+        return S.of(context).credited;
+      case 'PENDING':
+        return S.of(context).pending;
+      case 'CANCELLED':
+        return S.of(context).cancelled;
+      default:
+        return status;
+    }
   }
 
   Widget _buildOrderTile(

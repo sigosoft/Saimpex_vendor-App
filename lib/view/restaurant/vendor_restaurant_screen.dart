@@ -218,30 +218,30 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _buildMenuButton("Account"),
+                        _buildMenuButton(S.of(context).account, "Account"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Working Hours"),
+                        _buildMenuButton(S.of(context).workHours, "Working Hours"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Leaves"),
+                        _buildMenuButton(S.of(context).leaves, "Leaves"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Menu"),
+                        _buildMenuButton(S.of(context).menu, "Menu"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Items"),
+                        _buildMenuButton(S.of(context).items, "Items"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Menu Bulk Import"),
+                        _buildMenuButton(S.of(context).menuBulkImport, "Menu Bulk Import"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Basket"),
+                        _buildMenuButton(S.of(context).basket, "Basket"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Received Payouts"),
+                        _buildMenuButton(S.of(context).receivedPayouts, "Received Payouts"),
                         const SizedBox(width: 10),
-                        _buildMenuButton("Store Reports"),
+                        _buildMenuButton(S.of(context).storeReports, "Store Reports"),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   if (selectedMenu == "Account") ...[
-                    _sectionHeader("Restaurant Status"),
+                    _sectionHeader(S.of(context).restaurantStatus),
                     const SizedBox(height: 12),
                     Material(
                       elevation: 3,
@@ -254,7 +254,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           child: Row(
                             children: [
                               Text(
-                                "Busy",
+                                S.of(context).busy,
                                 style: GoogleFonts.rubik(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -294,24 +294,24 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _detailRow("Name", profile?.name ?? "Store 1"),
-                          _detailRow("Owner", profile?.owner ?? "Salman"),
-                          _detailRow("ID", profile?.id?.toString() ?? "1"),
+                          _detailRow(S.of(context).name, profile?.name ?? "Store 1"),
+                          _detailRow(S.of(context).owner, profile?.owner ?? "Salman"),
+                          _detailRow(S.of(context).storeId, profile?.id?.toString() ?? "1"),
                           _detailRow(
-                            "Contact",
+                            S.of(context).contact,
                             "${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}",
                           ),
                           _detailRow(
-                            "Email",
+                            S.of(context).email,
                             profile?.email ?? "rest1@saimpex.com",
                           ),
                           _detailRow(
-                            "Status",
+                            S.of(context).status,
                             profile?.status ?? "ACTIVE",
                             isStatus: true,
                           ),
                           _detailRow(
-                            "Address",
+                            S.of(context).address,
                             _formatLongText(
                               profile?.address ?? "Store Block 5, Mauritania",
                             ),
@@ -328,14 +328,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _detailRow(
-                            "Holder Name",
+                            S.of(context).holderName,
                             profile?.accountHolderName ?? "-",
                           ),
                           _detailRow(
-                            "Account Number",
+                            S.of(context).accountNumber,
                             _formatLongText(profile?.accountNumber ?? "-"),
                           ),
-                          _detailRow("SWIFT Code", profile?.ifscCode ?? "-"),
+                          _detailRow(S.of(context).swiftCode, profile?.ifscCode ?? "-"),
                         ],
                       ),
                     ),
@@ -345,11 +345,11 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     _buildDetailCard(
                       height: MediaQuery.of(context).size.height * 0.09,
                       child: _detailRow(
-                        "Category",
+                        S.of(context).categoryLabel,
                         profile?.restaurantType == 1
-                            ? "Veg"
+                            ? S.of(context).veg
                             : profile?.restaurantType == 2
-                            ? "Non-Veg"
+                            ? S.of(context).nonVeg
                             : "-",
                       ),
                     ),
@@ -362,14 +362,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _detailRow(
-                            "Reg. Number",
+                            S.of(context).regNumber,
                             profile?.registrationNumber ?? "-",
                           ),
                           _detailRow(
-                            "Reg. Date",
+                            S.of(context).regDate,
                             _formatLeaveDate(profile?.registrationDate),
                           ),
-                          _detailRow("GST Number", profile?.gstNo ?? "-"),
+                          _detailRow(S.of(context).gstNumber, profile?.gstNo ?? "-"),
                         ],
                       ),
                     ),
@@ -382,13 +382,13 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _detailRow(
-                            "Commission %",
+                            S.of(context).commissionPercentage,
                             profile?.commissionPercentage != null
                                 ? "${profile!.commissionPercentage}%"
                                 : "-",
                           ),
                           _detailRow(
-                            "Total Profit",
+                            S.of(context).totalProfit,
                             "${profile?.totalProfit ?? "0"} MRU",
                             isBoldValue: true,
                           ),
@@ -649,27 +649,27 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     return const VendorWorkingHoursList();
   }
 
-  Widget _buildMenuButton(String title) {
+  Widget _buildMenuButton(String displayTitle, String internalKey) {
     return VendorMenuButton(
-      title: title,
-      isSelected: selectedMenu == title,
+      title: displayTitle,
+      isSelected: selectedMenu == internalKey,
       onTap: () {
         setState(() {
-          selectedMenu = title;
+          selectedMenu = internalKey;
         });
-        if (title == "Menu") {
+        if (internalKey == "Menu") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
           profileController.clearGroceryMenusForRestaurantFlow();
           profileController.fetchRestaurantMenus(keyword: _searchKeyword);
-        } else if (title == "Items") {
+        } else if (internalKey == "Items") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
           profileController.fetchGroceryMenuItems(
             categoryId: profileController.selectedRestaurantCategoryId,
             keyword: _searchKeyword.trim(),
           );
-        } else if (title == "Menu Bulk Import") {
+        } else if (internalKey == "Menu Bulk Import") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
         }
