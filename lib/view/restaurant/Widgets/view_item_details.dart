@@ -8,9 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_stock_history_screen.dart';
+import 'package:get/get.dart';
 
 import '../../../generated/l10n.dart';
 
@@ -258,11 +260,13 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   ),
                 ],
                 const SizedBox(height: 10),
-                _kv(
-                  label: S.of(context).preparationTime,
-                  value: details.preparationTime?.toString() ?? "-",
-                ),
-                const SizedBox(height: 10),
+                if (Get.find<ProfileController>().vendorType != '2') ...[
+                  _kv(
+                    label: S.of(context).preparationTime,
+                    value: details.preparationTime?.toString() ?? "-",
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 _kv(
                   label: S.of(context).category,
                   value: categoryName.isNotEmpty ? categoryName : "-",

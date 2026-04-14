@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/controller/item_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/add_items_screen_widgets.dart';
 
 class AddItemsScreen extends StatefulWidget {
@@ -301,14 +302,16 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                 fullWidth: true,
               ),
               const SizedBox(height: 20),
-              AddItemsFieldLabel(S.of(context).preparationTimeMinutesLabel),
-              const SizedBox(height: 8),
-              AddItemsTextField(
-                controller: controller.prepTimeCtrl,
-                hint: S.of(context).enterMinutesHint,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 20),
+              if (Get.find<ProfileController>().vendorType != '2') ...[
+                AddItemsFieldLabel(S.of(context).preparationTimeMinutesLabel),
+                const SizedBox(height: 8),
+                AddItemsTextField(
+                  controller: controller.prepTimeCtrl,
+                  hint: S.of(context).enterMinutesHint,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 20),
+              ],
               AddItemsFieldLabel(S.of(context).tagsLabel),
               const SizedBox(height: 8),
               AddItemsMultiSelectField(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide MenuController;
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/menucontroller.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/edit_menu_screen_widgets.dart';
 
@@ -425,14 +426,16 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
                 const SizedBox(height: 16),
-                EditMenuFieldLabel(S.of(context).preparationTimeMinutes),
-                const SizedBox(height: 6),
-                EditMenuTextField(
-                  controller: c.prepTimeCtrl,
-                  hint: '20 Min',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
+                if (Get.find<ProfileController>().vendorType != '2') ...[
+                  EditMenuFieldLabel(S.of(context).preparationTimeMinutes),
+                  const SizedBox(height: 6),
+                  EditMenuTextField(
+                    controller: c.prepTimeCtrl,
+                    hint: '20 Min',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 EditMenuFieldLabel(S.of(context).maximumAllowedQuantity),
                 const SizedBox(height: 6),
                 EditMenuTextField(

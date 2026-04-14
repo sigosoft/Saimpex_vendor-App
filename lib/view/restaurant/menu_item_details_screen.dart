@@ -147,7 +147,8 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     "${menu.discountPrice} MRU",
                     isPrice: true,
                   ),
-                  if (menu.preparationTime != null)
+                  if (menu.preparationTime != null &&
+                      Get.find<ProfileController>().vendorType != '2')
                     _propertyRow(
                       context,
                       S.of(context).preparationTimeMinutes,

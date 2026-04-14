@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/menucontroller.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/add_menu_widgets.dart';
 
@@ -16,7 +17,10 @@ class AddMenuScreen extends StatefulWidget {
 }
 
 class _AddMenuScreenState extends State<AddMenuScreen> {
-  void _openCategoryMultiSelect(BuildContext context, MenuController controller) {
+  void _openCategoryMultiSelect(
+    BuildContext context,
+    MenuController controller,
+  ) {
     if (controller.restaurantCategories.isEmpty) return;
     showModalBottomSheet(
       context: context,
@@ -78,7 +82,8 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                           final c = controller.restaurantCategories[index];
                           final id = c.id?.toString() ?? '';
                           final name = (c.nameEn ?? '').trim();
-                          final checked = id.isNotEmpty &&
+                          final checked =
+                              id.isNotEmpty &&
                               controller.selectedCategoryIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
@@ -199,7 +204,8 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                           final id = t.id?.toString() ?? '';
                           final name = (t.nameEn ?? '').trim();
                           final checked =
-                              id.isNotEmpty && controller.selectedTagIds.contains(id);
+                              id.isNotEmpty &&
+                              controller.selectedTagIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
                             onChanged: id.isEmpty
@@ -322,10 +328,13 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                                 ),
                               )
                             : AddMenuMultiSelectField(
-                                displayText: controller.selectedCategoryDisplayText,
+                                displayText:
+                                    controller.selectedCategoryDisplayText,
                                 hint: S.of(context).selectCategoryHint,
-                                onTap: () =>
-                                    _openCategoryMultiSelect(context, controller),
+                                onTap: () => _openCategoryMultiSelect(
+                                  context,
+                                  controller,
+                                ),
                                 height: screenHeight * 0.055,
                               ),
                       ],
@@ -421,14 +430,16 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       fullWidth: true,
                     ),
               SizedBox(height: screenHeight * 0.02),
-              AddMenuFieldLabel(S.of(context).preparationTimeMinutesLabel),
-              SizedBox(height: screenHeight * 0.007),
-              AddMenuTextField(
-                controller: controller.prepTimeCtrl,
-                hint: S.of(context).enterMinutesHint,
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: screenHeight * 0.02),
+              if (Get.find<ProfileController>().vendorType != '2') ...[
+                AddMenuFieldLabel(S.of(context).preparationTimeMinutesLabel),
+                SizedBox(height: screenHeight * 0.007),
+                AddMenuTextField(
+                  controller: controller.prepTimeCtrl,
+                  hint: S.of(context).enterMinutesHint,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: screenHeight * 0.02),
+              ],
               AddMenuFieldLabel(S.of(context).maxAllowedQuantityLabel),
               SizedBox(height: screenHeight * 0.007),
               AddMenuTextField(

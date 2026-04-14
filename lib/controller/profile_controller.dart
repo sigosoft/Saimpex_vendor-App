@@ -46,12 +46,20 @@ class ProfileController extends GetxController {
   bool isProfileLoading = false;
   bool notificationEnabled = true;
   String version = '';
+  String vendorType = '0'; // 1 = Restaurant, 2 = Grocery
 
   @override
   void onInit() {
     getAppVersion();
+    getVendorType();
     scrollController.addListener(_loadMore);
     super.onInit();
+  }
+
+  Future<void> getVendorType() async {
+    final type = await getSavedObject("vendorType");
+    vendorType = type?.toString() ?? '0';
+    update();
   }
 
   @override

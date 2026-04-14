@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/edit_items_screen_widgets.dart';
@@ -81,7 +82,8 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           final t = controller.restaurantTags[index];
                           final id = t.id ?? 0;
                           final name = (t.nameEn ?? '').trim();
-                          final checked = id > 0 &&
+                          final checked =
+                              id > 0 &&
                               controller.selectedRestaurantTagIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
@@ -207,14 +209,16 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               ),
               const SizedBox(height: 20),
 
-              EditItemsFieldLabel(S.of(context).preparationTimeMinutes),
-              const SizedBox(height: 8),
-              EditItemsTextField(
-                controller: controller.prepTimeCtrl,
-                hint: S.of(context).enterMinutes,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 20),
+              if (Get.find<ProfileController>().vendorType != '2') ...[
+                EditItemsFieldLabel(S.of(context).preparationTimeMinutes),
+                const SizedBox(height: 8),
+                EditItemsTextField(
+                  controller: controller.prepTimeCtrl,
+                  hint: S.of(context).enterMinutes,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 20),
+              ],
 
               EditItemsFieldLabel(S.of(context).tags),
               const SizedBox(height: 8),
