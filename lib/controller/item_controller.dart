@@ -721,6 +721,7 @@ class ItemController extends GetxController {
         DioClient().updateToken("");
       }
       final formDataMap = <String, dynamic>{
+        "menu_id": menuId,
         "menu_item_id": menuItemId,
         vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
             restaurantAttributeId,
@@ -804,7 +805,7 @@ class ItemController extends GetxController {
       if (context.mounted) {
         Get.back();
         showToast(context, error.toString());
-        debugPrint("addItem Error: $error");
+        debugPrint("updateItemAfterEdit Error: $error");
       }
     }
   }

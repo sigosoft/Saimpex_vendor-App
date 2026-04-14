@@ -1085,6 +1085,17 @@ class ProfileController extends GetxController {
                 },
               )
               .toList();
+          // Extract raw data first to avoid ?[] inside map literals (causes parser errors)
+          final rawDataPc = (response.data is Map<String, dynamic>)
+              ? response.data as Map<String, dynamic>
+              : <String, dynamic>{};
+          final rawGroceryMenuPc = (rawDataPc['data'] is Map)
+              ? (rawDataPc['data'] as Map)['grocery_menu']
+              : null;
+          final rawGroceryMenuMapPc = rawGroceryMenuPc is Map
+              ? Map<String, dynamic>.from(rawGroceryMenuPc)
+              : <String, dynamic>{};
+
           final converted = {
             "status": true,
             "message": groceryMenuDetailsModel.message ?? "",
@@ -1109,6 +1120,13 @@ class ProfileController extends GetxController {
                 "category_name_ar": groceryMenu.categoryNameAr ?? "",
                 "category_name_fr": groceryMenu.categoryNameFr ?? "",
                 "categories": categoriesJson,
+                "attributes": rawGroceryMenuMapPc['attributes'] ?? [],
+                "price": rawGroceryMenuMapPc['retail_price']?.toString(),
+                "discount_price": rawGroceryMenuMapPc['selling_price']
+                    ?.toString(),
+                "preparation_time": rawGroceryMenuMapPc['preparation_time']
+                    ?.toString(),
+                "quantity_allowed": rawGroceryMenuMapPc['quantity_allowed'],
               },
               "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
               "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,

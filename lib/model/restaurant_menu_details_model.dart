@@ -72,6 +72,11 @@ class RestaurantMenu {
   final String categoryNameFr;
   final List<Category> categories;
 
+  final String? price;
+  final String? discountPrice;
+  final String? preparationTime;
+  final int? quantityAllowed;
+
   RestaurantMenu({
     required this.id,
     required this.categoryId,
@@ -92,12 +97,22 @@ class RestaurantMenu {
     required this.categoryNameAr,
     required this.categoryNameFr,
     required this.categories,
+    this.price,
+    this.discountPrice,
+    this.preparationTime,
+    this.quantityAllowed,
   });
 
   factory RestaurantMenu.fromJson(Map<String, dynamic> json) {
+    final attributes = (json['attributes'] as List?) ?? [];
+    Map<String, dynamic> attr = {};
+    if (attributes.isNotEmpty && attributes.first is Map) {
+      attr = Map<String, dynamic>.from(attributes.first);
+    }
+
     return RestaurantMenu(
       id: json['id'] ?? 0,
-      categoryId: json['category_id'] ?? "",
+      categoryId: json['category_id']?.toString() ?? "",
       restaurantId: json['restaurant_id'] ?? 0,
       nameEn: json['name_en'] ?? "",
       nameAr: json['name_ar'] ?? "",
@@ -118,6 +133,21 @@ class RestaurantMenu {
               ?.map((e) => Category.fromJson(e))
               .toList() ??
           [],
+      price: json['price']?.toString() ??
+          json['retail_price']?.toString() ??
+          attr['price']?.toString() ??
+          attr['retail_price']?.toString(),
+      discountPrice: json['discount_price']?.toString() ??
+          json['selling_price']?.toString() ??
+          attr['discount_price']?.toString() ??
+          attr['selling_price']?.toString(),
+      preparationTime:
+          json['preparation_time']?.toString() ?? attr['preparation_time']?.toString(),
+      quantityAllowed:
+          json['quantity_allowed'] is int ? json['quantity_allowed'] : 
+          int.tryParse(json['quantity_allowed']?.toString() ?? '') ?? 
+          (attr['quantity_allowed'] is int ? attr['quantity_allowed'] :
+          int.tryParse(attr['quantity_allowed']?.toString() ?? '')),
     );
   }
 }

@@ -128,6 +128,48 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     S.of(context).categoryLabel,
                     categoryName.isNotEmpty ? categoryName : '—',
                   ),
+                  _propertyRow(
+                    context,
+                    "Vegetarian", 
+                    menu.isVeg == 1 ? "Yes" : "No",
+                  ),
+                  if (menu.price != null)
+                   _propertyRow(
+                    context,
+                    S.of(context).price,
+                    "${menu.price} MRU",
+                    isPrice: true,
+                  ),
+                  if (menu.discountPrice != null)
+                   _propertyRow(
+                    context,
+                    S.of(context).discountPrice,
+                    "${menu.discountPrice} MRU",
+                    isPrice: true,
+                  ),
+                  if (menu.preparationTime != null)
+                    _propertyRow(
+                      context,
+                      S.of(context).preparationTimeMinutes,
+                      menu.preparationTime!,
+                    ),
+                  if (menu.quantityAllowed != null)
+                    _propertyRow(
+                      context,
+                      "Max Quantity",
+                      menu.quantityAllowed.toString(),
+                    ),
+                  const SizedBox(height: 12),
+                  _sectionHeader(context, "Description"),
+                  const SizedBox(height: 8),
+                  Text(
+                    _menuDescription(menu, lang),
+                    style: GoogleFonts.rubik(
+                      fontSize: 14,
+                      color: const Color(0xFF64748B),
+                      height: 1.5,
+                    ),
+                  ),
                 ],
                 SizedBox(height: screenHeight * 0.032),
                 _sectionHeader(context, S.of(context).salesPerformanceHeader),
@@ -168,23 +210,26 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           width: double.infinity,
           height: screenHeight * 0.06,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               debugPrint("Button tapped");
               if (widget.isMenu) {
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditMenuScreen(itemId: widget.itemId),
                   ),
                 );
               } else {
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditItemsScreen(itemId: widget.itemId),
                   ),
                 );
               }
+              profileController.getRestaurantMenuDetails(
+                restaurantMenuId: int.tryParse(widget.itemId),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF5216),
@@ -205,6 +250,13 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         ),
       ),
     );
+  }
+
+  String _menuDescription(dynamic menu, String? lang) {
+    if (menu == null) return '';
+    if (lang == 'fr') return menu.descriptionFr ?? menu.descriptionEn ?? '';
+    if (lang == 'ar') return menu.descriptionAr ?? menu.descriptionEn ?? '';
+    return menu.descriptionEn ?? '';
   }
 
   String _menuName(dynamic menu, String? lang) {

@@ -418,6 +418,10 @@ class MenuController extends GetxController {
                 : '${ApiConfigs.IMAGE_URL}${menu.image}',
           ]
         : [];
+    prepTimeCtrl.text = menu.preparationTime ?? '20 Min';
+    priceCtrl.text = menu.price ?? '20 MRU';
+    discountPriceCtrl.text = menu.discountPrice ?? '10 MRU';
+    quantityAllowedCtrl.text = menu.quantityAllowed?.toString() ?? '10';
     hasPopulatedEditForm = true;
     update();
   }
@@ -1019,6 +1023,17 @@ class MenuController extends GetxController {
                 },
               )
               .toList();
+          // Extract raw data first to avoid ?[] inside map literals (causes parser errors)
+          final rawData = (response.data is Map<String, dynamic>)
+              ? response.data as Map<String, dynamic>
+              : <String, dynamic>{};
+          final rawGroceryMenu = (rawData['data'] is Map)
+              ? (rawData['data'] as Map)['grocery_menu']
+              : null;
+          final rawGroceryMenuMap = rawGroceryMenu is Map
+              ? Map<String, dynamic>.from(rawGroceryMenu)
+              : <String, dynamic>{};
+
           final converted = {
             "status": true,
             "message": groceryMenuDetailsModel.message ?? "",
@@ -1043,6 +1058,13 @@ class MenuController extends GetxController {
                 "category_name_ar": groceryMenu.categoryNameAr ?? "",
                 "category_name_fr": groceryMenu.categoryNameFr ?? "",
                 "categories": categoriesJson,
+                "attributes": rawGroceryMenuMap['attributes'] ?? [],
+                "price": rawGroceryMenuMap['retail_price']?.toString(),
+                "discount_price": rawGroceryMenuMap['selling_price']
+                    ?.toString(),
+                "preparation_time": rawGroceryMenuMap['preparation_time']
+                    ?.toString(),
+                "quantity_allowed": rawGroceryMenuMap['quantity_allowed'],
               },
               "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
               "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,
@@ -1083,16 +1105,33 @@ class MenuController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
+      final isRestaurant = vendorType == "1";
       final formDataMap = <String, dynamic>{
-        "restaurant_menu_id": currentEditMenuId ?? 0,
-        "name_en": nameEnCtrl.text,
-        "description_en": descEnCtrl.text,
+        isRestaurant ? "restaurant_menu_id" : "grocery_menu_id":
+            currentEditMenuId ?? 0,
+        "name_en": nameEnCtrl.text.trim(),
+        "name_ar": nameArCtrl.text.trim(),
+        "name_fr": nameFrCtrl.text.trim(),
+        "description_en": descEnCtrl.text.trim(),
+        "description_ar": descArCtrl.text.trim(),
+        "description_fr": descFrCtrl.text.trim(),
         "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
-        "attributes[0][price]": priceCtrl.text,
-        "attributes[0][discount_price]": discountPriceCtrl.text,
-        "attributes[0][preparation_time]": prepTimeCtrl.text,
-        "attributes[0][quantity_allowed]": quantityAllowedCtrl.text.trim(),
+        "quantity_allowed": quantityAllowedCtrl.text.trim(),
       };
+
+      if (isRestaurant) {
+        formDataMap["attributes[0][price]"] = priceCtrl.text.trim();
+        formDataMap["attributes[0][discount_price]"] = discountPriceCtrl.text
+            .trim();
+        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
+            .trim();
+      } else {
+        formDataMap["attributes[0][attribute_value]"] = prepTimeCtrl.text
+            .trim();
+        formDataMap["attributes[0][retail_price]"] = priceCtrl.text.trim();
+        formDataMap["attributes[0][selling_price]"] = discountPriceCtrl.text
+            .trim();
+      }
       if (kDebugMode) {
         for (final e in formDataMap.entries) {
           final v = e.value;

@@ -107,5 +107,10 @@ class ApiEndPoints {
   static String groceryMenuItemStockLogs = "groceryMenuItemStockLogs";
   static String updateGrocerytItemStock = "updateGrocerytItemStock";
   static String updateAutoAcceptOrders = "updateAutoAcceptMode";
-  static String updateBusyStatus = "updateBusyMode";
+  static String updateBusyStatus = "updateBusyStatus";
+  static String updateCouponStatus = "updateCouponStatus";
+  static String coupons = "coupons";
+  static String addCoupon = "addCoupon";
+  static String updateCoupon = "updateCoupon";
+  static String deleteCoupon = "deleteCoupon";
 }

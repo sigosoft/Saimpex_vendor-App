@@ -14,6 +14,7 @@ import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
 import 'package:saimpex_vendor/view/settings/about_us.dart';
 import 'package:saimpex_vendor/view/settings/app_settings.dart';
+import 'package:saimpex_vendor/view/settings/coupons_screen.dart';
 import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
 import 'package:saimpex_vendor/view/settings/earnings.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
@@ -283,6 +284,14 @@ class _SettingsState extends State<Settings> {
                               ),
                               () {
                                 Get.to(() => const EarningsScreen());
+                              },
+                            ),
+                            _buildMenuItem(
+                              context,
+                              'Coupons',
+                              const AssetImage("lib/assets/images/Coupons.png"),
+                              () {
+                                Get.to(() => const CouponsScreen());
                               },
                             ),
                             _buildMenuItem(

@@ -165,6 +165,26 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    final profileController = Get.find<ProfileController>();
+    if (selectedMenu == 'Account') {
+      await profileController.getProfile(context);
+    } else if (selectedMenu == 'Menu') {
+      await profileController.fetchRestaurantMenus(keyword: _searchKeyword);
+    } else if (selectedMenu == 'Items') {
+      await profileController.fetchGroceryMenuItems(
+        categoryId: profileController.selectedRestaurantCategoryId,
+        keyword: _searchKeyword.trim(),
+      );
+    } else if (selectedMenu == 'Leaves') {
+      await profileController.getProfile(context);
+    } else if (selectedMenu == 'Working Hours') {
+      await profileController.getProfile(context);
+    } else {
+      await profileController.getProfile(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonBackground(
@@ -176,439 +196,448 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             _isRestaurantBusy = (profile?.isBusy ?? 2) == 1; // 1 = Busy
             _busyStatusInitialized = true;
           }
-          return SingleChildScrollView(
-            controller: profileController.scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60),
-                VendorProfileHeaderCard(
-                  name: profile?.name ?? S.of(context).restaurantOne,
-                  rating: profile?.rating?.isNotEmpty == true
-                      ? profile!.rating!
-                      : "4.6",
-                ),
-                const SizedBox(height: 24),
-                // Menu Buttons
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildMenuButton("Account"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Working Hours"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Leaves"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Menu"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Items"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Menu Bulk Import"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Basket"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Received Payouts"),
-                      const SizedBox(width: 10),
-                      _buildMenuButton("Store Reports"),
-                    ],
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            color: const Color(0xFFFF5216),
+            child: SingleChildScrollView(
+              controller: profileController.scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 60),
+                  VendorProfileHeaderCard(
+                    name: profile?.name ?? S.of(context).restaurantOne,
+                    rating: profile?.rating?.isNotEmpty == true
+                        ? profile!.rating!
+                        : "4.6",
                   ),
-                ),
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
+                  // Menu Buttons
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildMenuButton("Account"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Working Hours"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Leaves"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Menu"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Items"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Menu Bulk Import"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Basket"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Received Payouts"),
+                        const SizedBox(width: 10),
+                        _buildMenuButton("Store Reports"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
-                if (selectedMenu == "Account") ...[
-                  _sectionHeader("Restaurant Status"),
-                  const SizedBox(height: 12),
-                  Material(
-                    elevation: 3,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      height: 56,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Busy",
-                              style: GoogleFonts.rubik(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFEF4444),
+                  if (selectedMenu == "Account") ...[
+                    _sectionHeader("Restaurant Status"),
+                    const SizedBox(height: 12),
+                    Material(
+                      elevation: 3,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        height: 56,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Busy",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFEF4444),
+                                ),
+                              ),
+                              const Spacer(),
+                              Transform.scale(
+                                scale: 0.8,
+                                child: CupertinoSwitch(
+                                  value: _isRestaurantBusy,
+                                  onChanged: (value) async {
+                                    setState(() => _isRestaurantBusy = value);
+                                    final statusToSend = value ? 1 : 2;
+                                    await profileController.updateBusyStatus(
+                                      context,
+                                      statusToSend,
+                                    );
+                                    // Re-sync from server on next rebuild if profile is refreshed elsewhere.
+                                    _busyStatusInitialized = false;
+                                  },
+                                  activeTrackColor: const Color(0xFFEF4444),
+                                  thumbColor: Colors.white,
+                                  trackColor: const Color(0xFFE5E7EB),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).storeDetails),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      height: MediaQuery.of(context).size.height * 0.36,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _detailRow("Name", profile?.name ?? "Store 1"),
+                          _detailRow("Owner", profile?.owner ?? "Salman"),
+                          _detailRow("ID", profile?.id?.toString() ?? "1"),
+                          _detailRow(
+                            "Contact",
+                            "${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}",
+                          ),
+                          _detailRow(
+                            "Email",
+                            profile?.email ?? "rest1@saimpex.com",
+                          ),
+                          _detailRow(
+                            "Status",
+                            profile?.status ?? "ACTIVE",
+                            isStatus: true,
+                          ),
+                          _detailRow(
+                            "Address",
+                            _formatLongText(
+                              profile?.address ?? "Store Block 5, Mauritania",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).bankDetails),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _detailRow(
+                            "Holder Name",
+                            profile?.accountHolderName ?? "-",
+                          ),
+                          _detailRow(
+                            "Account Number",
+                            _formatLongText(profile?.accountNumber ?? "-"),
+                          ),
+                          _detailRow("SWIFT Code", profile?.ifscCode ?? "-"),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).aboutTheStore),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      height: MediaQuery.of(context).size.height * 0.09,
+                      child: _detailRow(
+                        "Category",
+                        profile?.restaurantType == 1
+                            ? "Veg"
+                            : profile?.restaurantType == 2
+                            ? "Non-Veg"
+                            : "-",
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).registrationDetails),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _detailRow(
+                            "Reg. Number",
+                            profile?.registrationNumber ?? "-",
+                          ),
+                          _detailRow(
+                            "Reg. Date",
+                            _formatLeaveDate(profile?.registrationDate),
+                          ),
+                          _detailRow("GST Number", profile?.gstNo ?? "-"),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).paymentDetails),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      // Let card expand to content to avoid vertical overflow on small screens.
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _detailRow(
+                            "Commission %",
+                            profile?.commissionPercentage != null
+                                ? "${profile!.commissionPercentage}%"
+                                : "-",
+                          ),
+                          _detailRow(
+                            "Total Profit",
+                            "${profile?.totalProfit ?? "0"} MRU",
+                            isBoldValue: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).ownerIdentityProof),
+                    const SizedBox(height: 12),
+                    _buildImageCard(
+                      height: MediaQuery.of(context).size.height * 0.14,
+                      imageUrl: profile?.ownerIdProof,
+                    ),
+                    const SizedBox(height: 24),
+                    _sectionHeader(S.of(context).certificates),
+                    const SizedBox(height: 12),
+                    _buildImageCard(
+                      height: MediaQuery.of(context).size.height * 0.14,
+                      imageUrl: profile?.certificate,
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _sectionHeader(
+                          S.of(context).ratingReviews +
+                              " (${profileController.ratingReviewData?.totalReviews ?? 0})",
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RatingReviewsScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            S.of(context).viewAll,
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (profileController.isRatingReviewLoading)
+                      const AppLoader()
+                    else if (profileController.ratingReviewData?.reviews !=
+                            null &&
+                        profileController.ratingReviewData!.reviews!.isNotEmpty)
+                      ...profileController.ratingReviewData!.reviews!
+                          .take(5)
+                          .map((review) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _buildReviewItem(
+                                name:
+                                    review.username ?? S.of(context).anonymous,
+                                date: review.createdAt ?? "",
+                                rating:
+                                    double.tryParse(review.rating ?? "0") ??
+                                    0.0,
+                                review:
+                                    review.comment ?? S.of(context).noComment,
+                                orderId: review.orderCode ?? "",
+                              ),
+                            );
+                          })
+                    else
+                      NoDataWidget(
+                        context,
+                        S.of(context).noReviewsFound,
+                        "",
+                        "lib/assets/images/nodata.png",
+                      ),
+                    const SizedBox(height: 8),
+                  ] else if (selectedMenu == "Leaves") ...[
+                    const SizedBox(height: 20),
+                    _sectionHeader(S.of(context).markLeave),
+                    const SizedBox(height: 12),
+                    _buildLeaveForm(),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _sectionHeader(S.of(context).leavesHistory),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const LeaveHistoryScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            S.of(context).viewAll,
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      S.of(context).upcomingLeaves,
+                      style: GoogleFonts.rubik(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: const Color.fromARGB(255, 95, 145, 245),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (profileController.upcomingLeaves.isNotEmpty)
+                      ...profileController.upcomingLeaves
+                          .take(3)
+                          .map(
+                            (leave) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _buildLeaveTile(
+                                dateRange: _formatLeaveDate(leave.date),
+                                reason: leave.reason ?? S.of(context).leave,
+                                status: "SCHEDULED",
+                                isUpcoming: true,
+                                onCancelLeave: leave.id == null
+                                    ? null
+                                    : () => Get.find<ProfileController>()
+                                          .unmarkLeave(
+                                            context,
+                                            leave.id.toString(),
+                                          ),
                               ),
                             ),
-                            const Spacer(),
-                            Transform.scale(
-                              scale: 0.8,
-                              child: CupertinoSwitch(
-                                value: _isRestaurantBusy,
-                                onChanged: (value) async {
-                                  setState(() => _isRestaurantBusy = value);
-                                  final statusToSend = value ? 1 : 2;
-                                  await profileController.updateBusyStatus(
-                                    context,
-                                    statusToSend,
-                                  );
-                                  // Re-sync from server on next rebuild if profile is refreshed elsewhere.
-                                  _busyStatusInitialized = false;
-                                },
-                                activeTrackColor: const Color(0xFFEF4444),
-                                thumbColor: Colors.white,
-                                trackColor: const Color(0xFFE5E7EB),
+                          )
+                    else
+                      NoDataWidget(
+                        context,
+                        S.of(context).noUpcomingLeavesFound,
+                        "",
+                        "lib/assets/images/nodata.png",
+                      ),
+                    const SizedBox(height: 12),
+                    Text(
+                      S.of(context).completedLeaves,
+                      style: GoogleFonts.rubik(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: const Color.fromARGB(255, 35, 208, 102),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (profileController.leaveHistory.isNotEmpty)
+                      ...profileController.leaveHistory
+                          .take(3)
+                          .map(
+                            (leave) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _buildLeaveTile(
+                                dateRange: _formatLeaveDate(leave.date),
+                                reason: leave.reason ?? S.of(context).leave,
+                                status: "COMPLETED",
+                                isUpcoming: false,
                               ),
                             ),
-                          ],
-                        ),
+                          )
+                    else
+                      NoDataWidget(
+                        context,
+                        S.of(context).noCompletedLeavesFound,
+                        "",
+                        "lib/assets/images/nodata.png",
+                      ),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Working Hours") ...[
+                    const SizedBox(height: 20),
+                    _sectionHeader(S.of(context).workingHours),
+                    const SizedBox(height: 12),
+                    _buildWorkingHoursList(),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Menu") ...[
+                    const SizedBox(height: 20),
+                    _buildSearchRow(),
+                    const SizedBox(height: 16),
+                    _buildCategoryAddRow(),
+                    const SizedBox(height: 20),
+                    _buildMenuList(),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Items") ...[
+                    const SizedBox(height: 20),
+                    _buildSearchRow(),
+                    const SizedBox(height: 16),
+                    _buildCategoryAddRow(isItemsTab: true),
+                    const SizedBox(height: 16),
+                    _buildItemsActionRow(),
+                    const SizedBox(height: 16),
+                    _buildItemsList(),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Menu Bulk Import") ...[
+                    const SizedBox(height: 20),
+                    _sectionHeader(S.of(context).menuBulkImport),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Select a category and import menu items in bulk",
+                      style: GoogleFonts.rubik(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF6B7280),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).storeDetails),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.36,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _detailRow("Name", profile?.name ?? "Store 1"),
-                        _detailRow("Owner", profile?.owner ?? "Salman"),
-                        _detailRow("ID", profile?.id?.toString() ?? "1"),
-                        _detailRow(
-                          "Contact",
-                          "${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}",
-                        ),
-                        _detailRow(
-                          "Email",
-                          profile?.email ?? "rest1@saimpex.com",
-                        ),
-                        _detailRow(
-                          "Status",
-                          profile?.status ?? "ACTIVE",
-                          isStatus: true,
-                        ),
-                        _detailRow(
-                          "Address",
-                          _formatLongText(
-                            profile?.address ?? "Store Block 5, Mauritania",
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 18),
+                    _buildBulkImportActionsRow(
+                      profileController: profileController,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).bankDetails),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _detailRow(
-                          "Holder Name",
-                          profile?.accountHolderName ?? "-",
-                        ),
-                        _detailRow(
-                          "Account Number",
-                          _formatLongText(profile?.accountNumber ?? "-"),
-                        ),
-                        _detailRow("SWIFT Code", profile?.ifscCode ?? "-"),
-                      ],
+                    const SizedBox(height: 18),
+                    _buildBulkImportInstructions(),
+                    const SizedBox(height: 18),
+                    _buildBulkImportCategoryCardsGrid(
+                      profileController: profileController,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).aboutTheStore),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.09,
-                    child: _detailRow(
-                      "Category",
-                      profile?.restaurantType == 1
-                          ? "Veg"
-                          : profile?.restaurantType == 2
-                          ? "Non-Veg"
-                          : "-",
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).registrationDetails),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _detailRow(
-                          "Reg. Number",
-                          profile?.registrationNumber ?? "-",
-                        ),
-                        _detailRow(
-                          "Reg. Date",
-                          _formatLeaveDate(profile?.registrationDate),
-                        ),
-                        _detailRow("GST Number", profile?.gstNo ?? "-"),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).paymentDetails),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    // Let card expand to content to avoid vertical overflow on small screens.
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _detailRow(
-                          "Commission %",
-                          profile?.commissionPercentage != null
-                              ? "${profile!.commissionPercentage}%"
-                              : "-",
-                        ),
-                        _detailRow(
-                          "Total Profit",
-                          "${profile?.totalProfit ?? "0"} MRU",
-                          isBoldValue: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).ownerIdentityProof),
-                  const SizedBox(height: 12),
-                  _buildImageCard(
-                    height: MediaQuery.of(context).size.height * 0.14,
-                    imageUrl: profile?.ownerIdProof,
-                  ),
-                  const SizedBox(height: 24),
-                  _sectionHeader(S.of(context).certificates),
-                  const SizedBox(height: 12),
-                  _buildImageCard(
-                    height: MediaQuery.of(context).size.height * 0.14,
-                    imageUrl: profile?.certificate,
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _sectionHeader(
-                        S.of(context).ratingReviews +
-                            " (${profileController.ratingReviewData?.totalReviews ?? 0})",
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RatingReviewsScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          S.of(context).viewAll,
-                          style: GoogleFonts.rubik(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFFF5216),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  if (profileController.isRatingReviewLoading)
-                    const AppLoader()
-                  else if (profileController.ratingReviewData?.reviews !=
-                          null &&
-                      profileController.ratingReviewData!.reviews!.isNotEmpty)
-                    ...profileController.ratingReviewData!.reviews!.take(5).map(
-                      (review) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _buildReviewItem(
-                            name: review.username ?? S.of(context).anonymous,
-                            date: review.createdAt ?? "",
-                            rating:
-                                double.tryParse(review.rating ?? "0") ?? 0.0,
-                            review: review.comment ?? S.of(context).noComment,
-                            orderId: review.orderCode ?? "",
-                          ),
-                        );
-                      },
-                    )
-                  else
-                    NoDataWidget(
-                      context,
-                      S.of(context).noReviewsFound,
-                      "",
-                      "lib/assets/images/nodata.png",
-                    ),
-                  const SizedBox(height: 8),
-                ] else if (selectedMenu == "Leaves") ...[
-                  const SizedBox(height: 20),
-                  _sectionHeader(S.of(context).markLeave),
-                  const SizedBox(height: 12),
-                  _buildLeaveForm(),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _sectionHeader(S.of(context).leavesHistory),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LeaveHistoryScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          S.of(context).viewAll,
-                          style: GoogleFonts.rubik(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFFF5216),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    S.of(context).upcomingLeaves,
-                    style: GoogleFonts.rubik(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 95, 145, 245),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  if (profileController.upcomingLeaves.isNotEmpty)
-                    ...profileController.upcomingLeaves
-                        .take(3)
-                        .map(
-                          (leave) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildLeaveTile(
-                              dateRange: _formatLeaveDate(leave.date),
-                              reason: leave.reason ?? S.of(context).leave,
-                              status: "SCHEDULED",
-                              isUpcoming: true,
-                              onCancelLeave: leave.id == null
-                                  ? null
-                                  : () => Get.find<ProfileController>()
-                                        .unmarkLeave(
-                                          context,
-                                          leave.id.toString(),
-                                        ),
-                            ),
-                          ),
-                        )
-                  else
-                    NoDataWidget(
-                      context,
-                      S.of(context).noUpcomingLeavesFound,
-                      "",
-                      "lib/assets/images/nodata.png",
-                    ),
-                  const SizedBox(height: 12),
-                  Text(
-                    S.of(context).completedLeaves,
-                    style: GoogleFonts.rubik(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 35, 208, 102),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  if (profileController.leaveHistory.isNotEmpty)
-                    ...profileController.leaveHistory
-                        .take(3)
-                        .map(
-                          (leave) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildLeaveTile(
-                              dateRange: _formatLeaveDate(leave.date),
-                              reason: leave.reason ?? S.of(context).leave,
-                              status: "COMPLETED",
-                              isUpcoming: false,
-                            ),
-                          ),
-                        )
-                  else
-                    NoDataWidget(
-                      context,
-                      S.of(context).noCompletedLeavesFound,
-                      "",
-                      "lib/assets/images/nodata.png",
-                    ),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Working Hours") ...[
-                  const SizedBox(height: 20),
-                  _sectionHeader(S.of(context).workingHours),
-                  const SizedBox(height: 12),
-                  _buildWorkingHoursList(),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Menu") ...[
-                  const SizedBox(height: 20),
-                  _buildSearchRow(),
-                  const SizedBox(height: 16),
-                  _buildCategoryAddRow(),
-                  const SizedBox(height: 20),
-                  _buildMenuList(),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Items") ...[
-                  const SizedBox(height: 20),
-                  _buildSearchRow(),
-                  const SizedBox(height: 16),
-                  _buildCategoryAddRow(isItemsTab: true),
-                  const SizedBox(height: 16),
-                  _buildItemsActionRow(),
-                  const SizedBox(height: 16),
-                  _buildItemsList(),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Menu Bulk Import") ...[
-                  const SizedBox(height: 20),
-                  _sectionHeader(S.of(context).menuBulkImport),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Select a category and import menu items in bulk",
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF6B7280),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  _buildBulkImportActionsRow(
-                    profileController: profileController,
-                  ),
-                  const SizedBox(height: 18),
-                  _buildBulkImportInstructions(),
-                  const SizedBox(height: 18),
-                  _buildBulkImportCategoryCardsGrid(
-                    profileController: profileController,
-                  ),
-                  const SizedBox(height: 24),
-                ] else if (selectedMenu == "Basket") ...[
-                  //const SizedBox(height: 20),
-                  // _sectionHeader(S.of(context).baskets),
-                  // const Siz
-                  const BasketListing(),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Received Payouts") ...[
-                  // const SizedBox(height: 20),
-                  // _sectionHeader("RECEIVED PAYOUTS"),
-                  //const SizedBox(height: 5),
-                  //_buildPayoutsList(),
-                  PayoutListScreen(),
-                  const SizedBox(height: 20),
-                ] else if (selectedMenu == "Store Reports") ...[
-                  const SalesReportsScreen(),
-                  // const SizedBox(height: 20),
+                    const SizedBox(height: 24),
+                  ] else if (selectedMenu == "Basket") ...[
+                    //const SizedBox(height: 20),
+                    // _sectionHeader(S.of(context).baskets),
+                    // const Siz
+                    const BasketListing(),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Received Payouts") ...[
+                    // const SizedBox(height: 20),
+                    // _sectionHeader("RECEIVED PAYOUTS"),
+                    //const SizedBox(height: 5),
+                    //_buildPayoutsList(),
+                    PayoutListScreen(),
+                    const SizedBox(height: 20),
+                  ] else if (selectedMenu == "Store Reports") ...[
+                    const SalesReportsScreen(),
+                    // const SizedBox(height: 20),
+                  ],
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 ],
-                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-              ],
+              ),
             ),
           );
         },

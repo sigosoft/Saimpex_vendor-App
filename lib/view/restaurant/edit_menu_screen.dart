@@ -85,7 +85,8 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                           final c = controller.restaurantCategories[index];
                           final id = c.id?.toString() ?? '';
                           final name = (c.nameEn ?? '').trim();
-                          final checked = id.isNotEmpty &&
+                          final checked =
+                              id.isNotEmpty &&
                               controller.selectedEditCategoryIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
@@ -143,7 +144,10 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
     );
   }
 
-  void _openEditTagMultiSelect(BuildContext context, MenuController controller) {
+  void _openEditTagMultiSelect(
+    BuildContext context,
+    MenuController controller,
+  ) {
     if (controller.restaurantTags.isEmpty) return;
     showModalBottomSheet(
       context: context,
@@ -206,7 +210,8 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                           final t = controller.restaurantTags[index];
                           final id = t.id?.toString() ?? '';
                           final name = (t.nameEn ?? '').trim();
-                          final checked = id.isNotEmpty &&
+                          final checked =
+                              id.isNotEmpty &&
                               controller.selectedEditTagIds.contains(id);
                           return CheckboxListTile(
                             value: checked,
@@ -357,7 +362,8 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                                 : S.of(context).selectCategoryHint,
                             onTap: c.categoryDisplayNames.isEmpty
                                 ? () {}
-                                : () => _openEditCategoryMultiSelect(context, c),
+                                : () =>
+                                      _openEditCategoryMultiSelect(context, c),
                             height: 46,
                             width: MediaQuery.of(context).size.width * 0.42,
                           ),
@@ -483,9 +489,6 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   onReset: c.resetEditForm,
                   onSubmit: () {
                     c.updateEditedMenu(context);
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
                   },
                 ),
                 const SizedBox(height: 32),
