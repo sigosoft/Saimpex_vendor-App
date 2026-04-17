@@ -64,7 +64,9 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
                 title: S.of(context).history,
                 onTap: () => Get.back(),
               ),
-              body: const Center(child: CircularProgressIndicator(color: colorPrimary)),
+              body: const Center(
+                child: CircularProgressIndicator(color: colorPrimary),
+              ),
             );
           }
           return Scaffold(
@@ -102,11 +104,13 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
         if (showNoData)
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.1),
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.1,
+              ),
               child: NoDataWidget(
                 context,
-                S.of(context).noPayoutsYet,
-                S.of(context).noPayoutsYet,
+                S.of(context).noPayouts,
+                S.of(context).noPayouts,
                 'lib/assets/images/nodata.png',
               ),
             ),
@@ -121,7 +125,11 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
                     return controller.isLoadMoreRunning
                         ? const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16),
-                            child: Center(child: CircularProgressIndicator(color: colorPrimary)),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: colorPrimary,
+                              ),
+                            ),
                           )
                         : const SizedBox(height: 24);
                   }
@@ -131,13 +139,12 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
                     child: _payoutItemFromDatum(d),
                   );
                 },
-                childCount: payouts.length + (controller.isLoadMoreRunning ? 1 : 0),
+                childCount:
+                    payouts.length + (controller.isLoadMoreRunning ? 1 : 0),
               ),
             ),
           ),
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 24),
-        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
     );
   }
@@ -163,10 +170,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colorPrimary,
-            colorPrimary.withOpacity(0.85),
-          ],
+          colors: [colorPrimary, colorPrimary.withOpacity(0.85)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -218,7 +222,8 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
   }
 
   Widget _buildSearchBar(BuildContext context, PayoutController controller) {
-    if (_searchController.text != controller.keyword && !_searchFocusNode.hasFocus) {
+    if (_searchController.text != controller.keyword &&
+        !_searchFocusNode.hasFocus) {
       _searchController.text = controller.keyword;
     }
     return TextField(
@@ -226,10 +231,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
       focusNode: _searchFocusNode,
       decoration: InputDecoration(
         hintText: S.of(context).searchAmountOrTransactionId,
-        hintStyle: GoogleFonts.rubik(
-          fontSize: 14,
-          color: Colors.grey.shade500,
-        ),
+        hintStyle: GoogleFonts.rubik(fontSize: 14, color: Colors.grey.shade500),
         prefixIcon: Icon(
           Icons.search_rounded,
           size: 22,
@@ -249,7 +251,10 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade400),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       style: GoogleFonts.rubik(fontSize: 14),
       onSubmitted: (value) => controller.searchPayouts(context, value),

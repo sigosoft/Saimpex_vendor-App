@@ -21,11 +21,27 @@ class _CouponsScreenState extends State<CouponsScreen> {
       Get.isRegistered<CouponController>()
       ? Get.find<CouponController>()
       : Get.put(CouponController());
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _couponController.fetchCoupons();
+    _scrollController.addListener(() {
+      if (_scrollController.position.extentAfter < 300 &&
+          _couponController.hasNextPage &&
+          !_couponController.isLoading &&
+          !_couponController.isLoadMoreRunning) {
+        _couponController.fetchCoupons(loadMore: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -165,11 +181,22 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         )
                       : ListView.builder(
                           physics: const AlwaysScrollableScrollPhysics(),
+                          controller: _scrollController,
                           padding: EdgeInsets.symmetric(
                             horizontal: screenWidth * 0.04,
                           ),
-                          itemCount: controller.couponsList.length,
+                          itemCount: controller.couponsList.length + 1,
                           itemBuilder: (context, index) {
+                            if (index == controller.couponsList.length) {
+                              if (controller.isLoadMoreRunning) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(child: AppLoader()),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }
                             return _buildCouponCard(
                               controller.couponsList[index],
                               screenWidth,
@@ -201,10 +228,14 @@ class _CouponsScreenState extends State<CouponsScreen> {
         'N/A';
     final int statusInt =
         int.tryParse(coupon['status']?.toString() ?? '0') ?? 0;
-    final String status = statusInt == 1 ? S.of(context).active : S.of(context).inactive;
+    final String status = statusInt == 1
+        ? S.of(context).active
+        : S.of(context).inactive;
     final String code = coupon['code']?.toString() ?? 'N/A';
     final int typeInt = int.tryParse(coupon['type']?.toString() ?? '1') ?? 1;
-    final String type = typeInt == 2 ? S.of(context).percentage.toUpperCase() : S.of(context).amount.toUpperCase();
+    final String type = typeInt == 2
+        ? S.of(context).percentage.toUpperCase()
+        : S.of(context).amount.toUpperCase();
     final String discountValue = coupon['discount_value']?.toString() ?? '0.00';
     final String discount = typeInt == 2 ? '$discountValue%' : discountValue;
     final String count = coupon['count']?.toString() ?? '0';
@@ -305,11 +336,19 @@ class _CouponsScreenState extends State<CouponsScreen> {
           IntrinsicHeight(
             child: Row(
               children: [
-                _buildDetailItem(S.of(context).discountLabel, discount, screenWidth),
+                _buildDetailItem(
+                  S.of(context).discountLabel,
+                  discount,
+                  screenWidth,
+                ),
                 _buildVerticalDivider(),
                 _buildDetailItem(S.of(context).countLabel, count, screenWidth),
                 _buildVerticalDivider(),
-                _buildDetailItem(S.of(context).validUptoLabel, validUpto, screenWidth),
+                _buildDetailItem(
+                  S.of(context).validUptoLabel,
+                  validUpto,
+                  screenWidth,
+                ),
               ],
             ),
           ),

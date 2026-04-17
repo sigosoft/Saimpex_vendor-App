@@ -9,11 +9,24 @@ import '../utils/utils.dart';
 class CouponController extends GetxController {
   bool isLoading = false;
   List<dynamic> couponsList = [];
+  bool hasNextPage = true;
+  bool isLoadMoreRunning = false;
+  int page = 1;
 
-  Future<void> fetchCoupons() async {
+  Future<void> fetchCoupons({bool loadMore = false}) async {
     try {
-      isLoading = true;
-      update();
+      if (!loadMore) {
+        isLoading = true;
+        page = 1;
+        couponsList.clear();
+        hasNextPage = true;
+        isLoadMoreRunning = false;
+        update();
+      } else {
+        if (isLoadMoreRunning) return;
+        isLoadMoreRunning = true;
+        update();
+      }
 
       var token = await getSavedObject("token");
       DioClient().updateToken(token ?? "");
@@ -28,7 +41,7 @@ class CouponController extends GetxController {
 
       final response = await DioClient().get(
         ApiEndPoints.coupons,
-        query: {"limit": "10"},
+        query: {"limit": "10", "page": page.toString()},
       );
 
       // Console log response details
@@ -39,12 +52,32 @@ class CouponController extends GetxController {
 
       if (response.data['status'] == true ||
           response.data['status'].toString() == 'true') {
-        couponsList = response.data['data']?['coupons']?['data'] ?? [];
+        final dataStr = response.data['data']?['coupons'];
+        final newData = dataStr?['data'] as List? ?? [];
+        final currentPage = dataStr?['current_page'] ?? 1;
+        final lastPage = dataStr?['last_page'] ?? 1;
+
+        if (loadMore) {
+          couponsList.addAll(newData);
+        } else {
+          couponsList = newData;
+        }
+
+        if (currentPage >= lastPage) {
+          hasNextPage = false;
+        } else {
+          hasNextPage = true;
+          page++;
+        }
+      } else {
+        hasNextPage = false;
       }
     } catch (error) {
       debugPrint("fetchCoupons Error: $error");
+      hasNextPage = false;
     } finally {
       isLoading = false;
+      isLoadMoreRunning = false;
       update();
     }
   }

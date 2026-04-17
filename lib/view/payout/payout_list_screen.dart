@@ -57,7 +57,9 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
         init: PayoutController(),
         builder: (controller) {
           if (controller.isLoading && controller.receivedPayoutsList.isEmpty) {
-            return const Center(child: CircularProgressIndicator(color: colorPrimary));
+            return const Center(
+              child: CircularProgressIndicator(color: colorPrimary),
+            );
           }
           return _buildContent(context, controller);
         },
@@ -83,16 +85,18 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
           const SizedBox(height: 24),
           NoDataWidget(
             context,
-            S.of(context).noPayoutsYet,
-            S.of(context).noPayoutsYet,
+            S.of(context).noPayouts,
+            S.of(context).noPayouts,
             'lib/assets/images/nodata.png',
           ),
         ] else ...[
           const SizedBox(height: 16),
-          ...payouts.map((d) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _payoutItemFromDatum(d),
-              )),
+          ...payouts.map(
+            (d) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _payoutItemFromDatum(d),
+            ),
+          ),
         ],
       ],
     );
@@ -119,10 +123,7 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colorPrimary,
-            colorPrimary.withOpacity(0.85),
-          ],
+          colors: [colorPrimary, colorPrimary.withOpacity(0.85)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -203,7 +204,8 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
   }
 
   Widget _buildSearchBar(BuildContext context, PayoutController controller) {
-    if (_searchController.text != controller.keyword && !_searchFocusNode.hasFocus) {
+    if (_searchController.text != controller.keyword &&
+        !_searchFocusNode.hasFocus) {
       _searchController.text = controller.keyword;
     }
     return TextField(
@@ -211,10 +213,7 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
       focusNode: _searchFocusNode,
       decoration: InputDecoration(
         hintText: S.of(context).searchAmountOrTransactionId,
-        hintStyle: GoogleFonts.rubik(
-          fontSize: 14,
-          color: Colors.grey.shade500,
-        ),
+        hintStyle: GoogleFonts.rubik(fontSize: 14, color: Colors.grey.shade500),
         prefixIcon: Icon(
           Icons.search_rounded,
           size: 22,
@@ -234,7 +233,10 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade400),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       style: GoogleFonts.rubik(fontSize: 14),
       onSubmitted: (value) => controller.searchPayouts(context, value),

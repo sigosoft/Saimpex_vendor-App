@@ -13,9 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum BasketStatusFilter { all, active, blocked }
 
-
 class BasketController extends GetxController {
-
   final FlutterLocalization localization = FlutterLocalization.instance;
   String keyword = "";
 
@@ -137,7 +135,6 @@ class BasketController extends GetxController {
     }
   }
 
-
   Future<void> getBaskets(
     BuildContext context, {
     BasketStatusFilter statusFilter = BasketStatusFilter.all,
@@ -172,9 +169,7 @@ class BasketController extends GetxController {
 
       if (response.data?['status'].toString() == "true") {
         //debugPrint("response.data: ${response.data}");
-        BasketModel basketModel = BasketModel.fromJson(
-          response.data,
-        );
+        BasketModel basketModel = BasketModel.fromJson(response.data);
         if (basketModel.status.toString() == "true") {
           basketList = basketModel.data!.data ?? [];
           debugPrint("basketReportList: ${basketList.length}");
@@ -209,7 +204,7 @@ class BasketController extends GetxController {
         await prefs.clear();
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(LoginScreen());
-      }else{
+      } else {
         showToast(context, error.toString());
       }
     }
@@ -234,10 +229,7 @@ class BasketController extends GetxController {
 
       final response = await DioClient().get(
         ApiEndPoints.basketDetail,
-        query: {
-          "vendor_type": vendorType,
-          "basket_id": basketId,
-        },
+        query: {"vendor_type": vendorType, "basket_id": basketId},
       );
 
       final raw = response.data;
@@ -269,6 +261,4 @@ class BasketController extends GetxController {
       update();
     }
   }
-  
-
 }

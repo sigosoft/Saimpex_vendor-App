@@ -80,6 +80,11 @@ class ApiEndPoints {
   static String restaurantMenuItemStockLogs = "restaurantMenuItemStockLogs";
   static String updateRestaurantMenuItemStock = "updateRestaurantItemStock";
 
+  static String earningsSummary = "earnings/summary";
+  static String earningsOrders = "earnings/orders";
+  static String earningsPayoutHistory = "earnings/payoutHistory";
+  static String earningsPayoutDetail = "earnings/payoutDetail";
+
   // grocery api endpoints
 
   static String getGroceryMenuDetails = "groceryMenuDetails";

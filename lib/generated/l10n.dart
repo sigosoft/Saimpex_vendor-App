@@ -3835,13 +3835,8 @@ class S {
   }
 
   /// `No payouts yet`
-  String get noPayoutsYet {
-    return Intl.message(
-      'No payouts yet',
-      name: 'noPayoutsYet',
-      desc: '',
-      args: [],
-    );
+  String get noPayouts {
+    return Intl.message('No payouts', name: 'noPayouts', desc: '', args: []);
   }
 
   /// `Total Payout Balance`

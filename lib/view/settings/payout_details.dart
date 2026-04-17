@@ -4,24 +4,88 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
-class PayoutDetailsScreen extends StatelessWidget {
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/Utils/Utils.dart';
+import 'package:saimpex_vendor/Utils/widgets/app_loader.dart';
+
+class PayoutDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> payout;
 
   const PayoutDetailsScreen({super.key, required this.payout});
 
-  // Dummy related orders for this payout
-  static const List<Map<String, dynamic>> _relatedOrders = [
-    {
-      'id': '#ORD-000246',
-      'date': 'Feb 07, 2026 11:45 AM, Today',
-      'amount': '450.00 MRU',
-    },
-    {
-      'id': '#ORD-000241',
-      'date': 'Feb 07, 2026 10:45 AM, Today',
-      'amount': '550.00 MRU',
-    },
-  ];
+  @override
+  State<PayoutDetailsScreen> createState() => _PayoutDetailsScreenState();
+}
+
+class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
+  bool _isLoading = true;
+  Map<String, dynamic>? _payoutDetails;
+  List<Map<String, dynamic>> _relatedOrders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDetails();
+  }
+
+  Future<void> _fetchDetails() async {
+    try {
+      var token = await getSavedObject("token");
+      DioClient().updateToken(token);
+
+      var payoutId = widget.payout['raw']?['id']?.toString() ?? widget.payout['id']?.toString().replaceAll(RegExp(r'[^0-9]'), '');
+
+      final response = await DioClient().get(
+        ApiEndPoints.earningsPayoutDetail,
+        query: {"id": payoutId},
+      );
+
+      if (response.data?['status'].toString() == "true") {
+        if (mounted) {
+          setState(() {
+            _payoutDetails = response.data['data'];
+            
+            // Map related orders dynamically if present
+            if (_payoutDetails?['orders'] != null) {
+               List<dynamic> rawOrders = _payoutDetails?['orders'];
+               _relatedOrders = rawOrders.map((o) {
+                 String rawDate = o['order_placed_at']?.toString() ?? o['created_at']?.toString() ?? '';
+                 DateTime? dt;
+                 if (rawDate.isNotEmpty) {
+                   dt = DateTime.tryParse(rawDate);
+                 }
+                 String formattedDate = rawDate;
+                 if (dt != null) {
+                   formattedDate = formatOrderPlacedAt(dt);
+                 }
+                 return {
+                   'id': o['order_code']?.toString() ?? '#ORD-${o['id']}',
+                   'date': formattedDate,
+                   'amount': '${o['order_total'] ?? o['amount'] ?? '0.00'} MRU',
+                 };
+               }).toList();
+            }
+            
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching payout details: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   Color _statusColor(String status) {
     switch (status.toUpperCase()) {
@@ -43,7 +107,7 @@ class PayoutDetailsScreen extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    final String status = payout['status'] as String? ?? '';
+    final String status = widget.payout['status'] as String? ?? '';
     final Color statusColor = _statusColor(status);
 
     return Directionality(
@@ -108,7 +172,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          payout['id'] as String? ?? '',
+                          widget.payout['id'] as String? ?? '',
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w700,
@@ -140,7 +204,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(width: screenWidth * 0.01),
                             Text(
-                              payout['date'] as String? ?? '',
+                              widget.payout['date'] as String? ?? '',
                               style: GoogleFonts.rubik(
                                 fontSize: screenWidth * 0.028,
                                 color: Colors.grey,
@@ -150,7 +214,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          payout['amount'] as String? ?? '',
+                          widget.payout['amount'] as String? ?? '',
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w700,
@@ -165,7 +229,7 @@ class PayoutDetailsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${S.of(context).paymentId}: ABCD123456',
+                          '${S.of(context).paymentId}: ${_payoutDetails?['vendor_payment_id'] ?? _payoutDetails?['transaction_id'] ?? _payoutDetails?['payment_id'] ?? 'N/A'}',
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.03,
                             color: const Color(0xFF333E63),
@@ -189,16 +253,29 @@ class PayoutDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: screenHeight * 0.008),
                     // Row 4: Notes
-                    Text(
-                      '${S.of(context).notes}: Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                      style: GoogleFonts.rubik(
-                        fontSize: screenWidth * 0.028,
-                        color: const Color(0xFF333E63),
-                        fontWeight: FontWeight.w400,
+                    if (_payoutDetails?['notes'] != null && _payoutDetails!['notes'].toString().isNotEmpty) ...[
+                      Text(
+                        '${S.of(context).notes}: ${_payoutDetails!['notes']}',
+                        style: GoogleFonts.rubik(
+                          fontSize: screenWidth * 0.028,
+                          color: const Color(0xFF333E63),
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    ] else ...[
+                      Text(
+                        '${S.of(context).notes}: N/A',
+                        style: GoogleFonts.rubik(
+                          fontSize: screenWidth * 0.028,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -206,9 +283,29 @@ class PayoutDetailsScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
 
               // ─── Related Orders List ───
-              ..._relatedOrders
-                  .map((order) => _buildOrderTile(order, screenWidth, screenHeight))
-                  .toList(),
+              if (_isLoading)
+                Padding(
+                  padding: EdgeInsets.only(top: screenHeight * 0.05),
+                  child: const Center(child: AppLoader()),
+                )
+              else if (_relatedOrders.isEmpty)
+                Padding(
+                  padding: EdgeInsets.only(top: screenHeight * 0.05),
+                  child: Center(
+                    child: Text(
+                      S.of(context).noOrdersFound,
+                      style: GoogleFonts.rubik(
+                        color: Colors.grey,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                )
+              else ...[
+                ..._relatedOrders
+                    .map((order) => _buildOrderTile(order, screenWidth, screenHeight))
+                    .toList(),
+              ],
             ],
           ),
         ),
