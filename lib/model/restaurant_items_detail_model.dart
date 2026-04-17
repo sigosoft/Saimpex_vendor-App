@@ -219,22 +219,34 @@ class TimeSlot {
 class RestaurantMenu {
   final int? id;
   final String? nameEn;
-  final String? categoryNameEn;
+  final String? nameAr;
+  final String? nameFr;
   final String? descriptionEn;
+  final String? descriptionAr;
+  final String? descriptionFr;
+  final String? categoryNameEn;
   final String? categoryNameAr;
   final String? categoryNameFr;
   final String? image;
   final int? isVeg;
+  final int? quantityAllowed;
+  final List<Category> categories;
 
   RestaurantMenu({
     this.id,
     this.nameEn,
-    this.categoryNameEn,
+    this.nameAr,
+    this.nameFr,
     this.descriptionEn,
+    this.descriptionAr,
+    this.descriptionFr,
+    this.categoryNameEn,
     this.categoryNameAr,
     this.categoryNameFr,
     this.image,
     this.isVeg,
+    this.quantityAllowed,
+    this.categories = const [],
   });
 
   factory RestaurantMenu.fromJson(Map<String, dynamic>? json) {
@@ -249,13 +261,22 @@ class RestaurantMenu {
         ? categoryJson['name_fr']
         : null;
 
+    final categoriesJson = (json?['categories'] as List?) ?? [];
+    final categoriesList = categoriesJson
+        .map((e) => Category.fromJson(e as Map<String, dynamic>))
+        .toList();
+
     return RestaurantMenu(
       id: _toNullableInt(json?['id']),
       nameEn: _toNullableString(json?['name_en']),
+      nameAr: _toNullableString(json?['name_ar']),
+      nameFr: _toNullableString(json?['name_fr']),
+      descriptionEn: _toNullableString(json?['description_en']),
+      descriptionAr: _toNullableString(json?['description_ar']),
+      descriptionFr: _toNullableString(json?['description_fr']),
       categoryNameEn: _toNullableString(
         json?['category_name_en'] ?? categoryNameEnFallback,
       ),
-      descriptionEn: _toNullableString(json?['description_en']),
       categoryNameAr: _toNullableString(
         json?['category_name_ar'] ?? categoryNameArFallback,
       ),
@@ -264,6 +285,20 @@ class RestaurantMenu {
       ),
       image: _toNullableString(json?['image']),
       isVeg: _toNullableInt(json?['is_veg']),
+      quantityAllowed: _toNullableInt(json?['quantity_allowed']),
+      categories: categoriesList,
+    );
+  }
+}
+
+class Category {
+  final int id;
+  Category({required this.id});
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
     );
   }
 }

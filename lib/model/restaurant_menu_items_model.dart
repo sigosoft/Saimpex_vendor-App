@@ -137,6 +137,7 @@ class RestaurantMenuItemData {
   String? categoryNameAr;
   String? categoryNameFr;
   int? availableStatus;
+  String? preparationTime;
 
   RestaurantMenuItemData({
     this.id,
@@ -155,6 +156,7 @@ class RestaurantMenuItemData {
     this.categoryNameAr,
     this.categoryNameFr,
     this.availableStatus,
+    this.preparationTime,
   });
 
   factory RestaurantMenuItemData.fromJson(Map<String, dynamic>? json) {
@@ -179,6 +181,8 @@ class RestaurantMenuItemData {
       availableStatus: json['available_status'] is int
           ? json['available_status'] as int
           : int.tryParse(json['available_status']?.toString() ?? '0'),
+      preparationTime:
+          json['preparation_time']?.toString() ?? json['prep_time']?.toString(),
     );
   }
   static int? _parseCategoryIdToInt(dynamic value) {

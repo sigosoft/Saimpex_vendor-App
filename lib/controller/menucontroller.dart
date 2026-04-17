@@ -47,6 +47,7 @@ class MenuController extends GetxController {
   int? currentEditMenuId;
   String? selectedEditCategoryId;
   String? selectedEditTagId;
+  int? currentEditAttributeId;
   final List<String> selectedEditCategoryIds = [];
   final List<String> selectedEditTagIds = [];
   bool hasPopulatedEditForm = false;
@@ -418,10 +419,11 @@ class MenuController extends GetxController {
                 : '${ApiConfigs.IMAGE_URL}${menu.image}',
           ]
         : [];
-    prepTimeCtrl.text = menu.preparationTime ?? '20 Min';
+    prepTimeCtrl.text = menu.preparationTime ?? '';
     priceCtrl.text = menu.price ?? '20 MRU';
     discountPriceCtrl.text = menu.discountPrice ?? '10 MRU';
     quantityAllowedCtrl.text = menu.quantityAllowed?.toString() ?? '10';
+    currentEditAttributeId = menu.firstAttributeId;
     hasPopulatedEditForm = true;
     update();
   }
@@ -445,7 +447,7 @@ class MenuController extends GetxController {
     descEnCtrl.clear();
     descArCtrl.clear();
     descFrCtrl.clear();
-    prepTimeCtrl.text = '20 Min';
+    prepTimeCtrl.clear();
     priceCtrl.text = '20 MRU';
     discountPriceCtrl.text = '10 MRU';
     quantityAllowedCtrl.text = '10';
@@ -1034,6 +1036,20 @@ class MenuController extends GetxController {
               ? Map<String, dynamic>.from(rawGroceryMenu)
               : <String, dynamic>{};
 
+          final rawAttributes =
+              (rawGroceryMenuMap['attributes'] as List?) ??
+              (rawGroceryMenuMap['grocery_menu_attributes'] as List?) ??
+              (rawGroceryMenuMap['grocery_menu_items'] as List?) ??
+              [];
+          String? prepTimeFallback;
+          if (rawAttributes.isNotEmpty && rawAttributes.first is Map) {
+            final firstAttr = rawAttributes.first as Map;
+            prepTimeFallback =
+                firstAttr['preparation_time']?.toString() ??
+                firstAttr['prep_time']?.toString() ??
+                firstAttr['attribute_value']?.toString();
+          }
+
           final converted = {
             "status": true,
             "message": groceryMenuDetailsModel.message ?? "",
@@ -1058,13 +1074,28 @@ class MenuController extends GetxController {
                 "category_name_ar": groceryMenu.categoryNameAr ?? "",
                 "category_name_fr": groceryMenu.categoryNameFr ?? "",
                 "categories": categoriesJson,
-                "attributes": rawGroceryMenuMap['attributes'] ?? [],
-                "price": rawGroceryMenuMap['retail_price']?.toString(),
-                "discount_price": rawGroceryMenuMap['selling_price']
-                    ?.toString(),
-                "preparation_time": rawGroceryMenuMap['preparation_time']
-                    ?.toString(),
-                "quantity_allowed": rawGroceryMenuMap['quantity_allowed'],
+                "attributes": rawAttributes,
+                "price":
+                    rawGroceryMenuMap['retail_price']?.toString() ??
+                    (rawAttributes.isNotEmpty
+                        ? (rawAttributes.first as Map)['retail_price']
+                              ?.toString()
+                        : null),
+                "discount_price":
+                    rawGroceryMenuMap['selling_price']?.toString() ??
+                    (rawAttributes.isNotEmpty
+                        ? (rawAttributes.first as Map)['selling_price']
+                              ?.toString()
+                        : null),
+                "preparation_time":
+                    rawGroceryMenuMap['preparation_time']?.toString() ??
+                    rawGroceryMenuMap['prep_time']?.toString() ??
+                    prepTimeFallback,
+                "quantity_allowed":
+                    rawGroceryMenuMap['quantity_allowed'] ??
+                    (rawAttributes.isNotEmpty
+                        ? (rawAttributes.first as Map)['quantity_allowed']
+                        : null),
               },
               "total_orders": groceryMenuDetailsModel.data!.totalOrders ?? 0,
               "total_revenue": groceryMenuDetailsModel.data!.totalRevenue ?? 0,
@@ -1117,16 +1148,23 @@ class MenuController extends GetxController {
         "description_fr": descFrCtrl.text.trim(),
         "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
         "quantity_allowed": quantityAllowedCtrl.text.trim(),
+        "preparation_time": prepTimeCtrl.text.trim(),
       };
 
       if (isRestaurant) {
+        if (currentEditAttributeId != null) {
+          formDataMap["attributes[0][id]"] = currentEditAttributeId;
+        }
         formDataMap["attributes[0][price]"] = priceCtrl.text.trim();
         formDataMap["attributes[0][discount_price]"] = discountPriceCtrl.text
             .trim();
         formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
             .trim();
       } else {
-        formDataMap["attributes[0][attribute_value]"] = prepTimeCtrl.text
+        if (currentEditAttributeId != null) {
+          formDataMap["attributes[0][id]"] = currentEditAttributeId;
+        }
+        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
             .trim();
         formDataMap["attributes[0][retail_price]"] = priceCtrl.text.trim();
         formDataMap["attributes[0][selling_price]"] = discountPriceCtrl.text

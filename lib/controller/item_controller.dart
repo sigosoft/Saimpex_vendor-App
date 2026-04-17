@@ -30,6 +30,7 @@ class ItemController extends GetxController {
   int? selectedMenuId;
   int? selectedRestaurantAttributeId;
   int? selectedRestaurantTagId;
+  RestaurantMenu? currentMenuData;
 
   // ── Image pick + crop ──────────────────────────────────────────────────────
   XFile? pickedImageFile;
@@ -664,6 +665,7 @@ class ItemController extends GetxController {
 
       final details = model.data?.menuItemDetails;
       if (details == null) return;
+      currentMenuData = details.restaurantMenu;
       serialNumberCtrl.text =
           details.serialNumber?.toString() ?? serialNumberCtrl.text;
       prepTimeCtrl.text =
@@ -813,6 +815,47 @@ class ItemController extends GetxController {
             }
           }
           showToast(context, successMessage);
+
+          if (currentMenuData != null) {
+            try {
+              final isRestaurant = vendorType == "1";
+              final formDataMap = <String, dynamic>{
+                isRestaurant ? "restaurant_menu_id" : "grocery_menu_id":
+                    currentMenuData!.id ?? 0,
+                "name_en": currentMenuData!.nameEn,
+                "name_ar": currentMenuData!.nameAr,
+                "name_fr": currentMenuData!.nameFr,
+                "description_en": currentMenuData!.descriptionEn,
+                "description_ar": currentMenuData!.descriptionAr,
+                "description_fr": currentMenuData!.descriptionFr,
+                "is_veg": currentMenuData!.isVeg.toString(),
+                "quantity_allowed":
+                    currentMenuData!.quantityAllowed?.toString() ?? "10",
+                "preparation_time": prepTimeCtrl.text.trim(),
+              };
+
+              final formData = dio.FormData.fromMap(formDataMap);
+              final cats = currentMenuData!.categories;
+              for (int i = 0; i < cats.length; i++) {
+                formData.fields.add(
+                  MapEntry("categories[$i]", cats[i].id.toString()),
+                );
+              }
+
+              debugPrint(
+                "[ItemController] Syncing with Menu: id=${currentMenuData!.id} prepTime=${prepTimeCtrl.text.trim()}",
+              );
+              await DioClient().post(
+                isRestaurant
+                    ? ApiEndPoints.updateRestaurantMenuEdit
+                    : ApiEndPoints.updateGroceryMenuEdit,
+                body: formData,
+              );
+            } catch (e) {
+              debugPrint("[ItemController] Menu sync failed: $e");
+            }
+          }
+
           final profileController = Get.find<ProfileController>();
           await profileController.fetchGroceryMenuItems();
           if (context.mounted) {

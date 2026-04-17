@@ -76,6 +76,7 @@ class RestaurantMenu {
   final String? discountPrice;
   final String? preparationTime;
   final int? quantityAllowed;
+  final int? firstAttributeId;
 
   RestaurantMenu({
     required this.id,
@@ -101,13 +102,27 @@ class RestaurantMenu {
     this.discountPrice,
     this.preparationTime,
     this.quantityAllowed,
+    this.firstAttributeId,
   });
 
   factory RestaurantMenu.fromJson(Map<String, dynamic> json) {
-    final attributes = (json['attributes'] as List?) ?? [];
+    final attributes = (json['attributes'] as List?) ??
+        (json['restaurant_menu_attributes'] as List?) ??
+        (json['grocery_menu_attributes'] as List?) ??
+        (json['restaurant_menu_items'] as List?) ??
+        (json['grocery_menu_items'] as List?) ??
+        [];
     Map<String, dynamic> attr = {};
+    int? attrId;
     if (attributes.isNotEmpty && attributes.first is Map) {
       attr = Map<String, dynamic>.from(attributes.first);
+      attrId = attr['id'] is int ? attr['id'] : int.tryParse(attr['id']?.toString() ?? '');
+      if (attrId == null) {
+        attrId = attr['restaurant_attribute_id'] is int ? attr['restaurant_attribute_id'] : int.tryParse(attr['restaurant_attribute_id']?.toString() ?? '');
+      }
+      if (attrId == null) {
+        attrId = attr['grocery_attribute_id'] is int ? attr['grocery_attribute_id'] : int.tryParse(attr['grocery_attribute_id']?.toString() ?? '');
+      }
     }
 
     return RestaurantMenu(
@@ -150,6 +165,7 @@ class RestaurantMenu {
           int.tryParse(json['quantity_allowed']?.toString() ?? '') ?? 
           (attr['quantity_allowed'] is int ? attr['quantity_allowed'] :
           int.tryParse(attr['quantity_allowed']?.toString() ?? '')),
+      firstAttributeId: attrId,
     );
   }
 }
