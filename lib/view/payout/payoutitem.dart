@@ -47,7 +47,9 @@ class PayoutItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      transactionId.startsWith('#') ? transactionId : '#$transactionId',
+                      transactionId.startsWith('#')
+                          ? transactionId
+                          : '#$transactionId',
                       style: GoogleFonts.rubik(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -101,9 +103,9 @@ class PayoutItem extends StatelessWidget {
               ),
             ],
           ),
-           Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1,color: Colors.grey.shade300,),
+            child: Divider(height: 1, color: Colors.grey.shade300),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
