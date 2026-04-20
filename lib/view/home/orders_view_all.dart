@@ -228,7 +228,10 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
             .expiresInDays(membership?.expiresInDays?.toString() ?? "0");
         return CommonBackground(
           resizeToAvoidBottomInset: false,
-          appBar: CustomAppBar(title: S.of(context).orders, onTap: () => Get.back()),
+          appBar: CustomAppBar(
+            title: S.of(context).orders,
+            onTap: () => Get.back(),
+          ),
           child: SizedBox.expand(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,6 +317,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       status: _statusLabel(order.status),
                                       deliveryBoyName: order.deliveryBoyName,
                                       cancelReason: order.cancelReason,
+                                      type: order.type,
                                       onAccept: () => _handleAcceptOrder(
                                         order.id?.toString() ?? "",
                                       ),

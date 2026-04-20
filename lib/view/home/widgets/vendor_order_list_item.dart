@@ -18,6 +18,7 @@ class VendorOrderListItem extends StatelessWidget {
     this.onMarkAsReady,
     this.deliveryBoyName,
     this.cancelReason,
+    this.type,
   });
 
   final double horizontalPadding;
@@ -32,6 +33,7 @@ class VendorOrderListItem extends StatelessWidget {
   final VoidCallback? onMarkAsReady;
   final String? deliveryBoyName;
   final String? cancelReason;
+  final String? type;
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +51,15 @@ class VendorOrderListItem extends StatelessWidget {
         onMarkAsReady: onMarkAsReady,
         deliveryBoyName: deliveryBoyName,
         cancelReason: cancelReason,
+        type: type,
         onTap: () {
           if (status.toLowerCase() != 'cancelled') {
-            Get.to(() => VendorOrderDetails(orderId: orderId.toString()));
+            Get.to(
+              () => VendorOrderDetails(
+                orderId: orderId.toString(),
+                orderType: type,
+              ),
+            );
           }
         },
       ),

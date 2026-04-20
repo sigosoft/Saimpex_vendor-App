@@ -20,8 +20,13 @@ import '../../utils/widgets/no_data_widget.dart';
 
 class VendorOrderDetails extends StatefulWidget {
   final String orderId;
+  final String? orderType;
 
-  const VendorOrderDetails({super.key, required this.orderId});
+  const VendorOrderDetails({
+    super.key,
+    required this.orderId,
+    this.orderType,
+  });
 
   @override
   State<VendorOrderDetails> createState() => _VendorOrderDetailsState();
@@ -118,13 +123,66 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          controller.orderData!.orderCode
-                                              .toString(),
-                                          style: GoogleFonts.rubik(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: colorPrimary,
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                S
+                                                    .of(context)
+                                                    .orderIdLabel(
+                                                      controller
+                                                          .orderData!
+                                                          .orderCode
+                                                          .toString(),
+                                                    ),
+                                                style: GoogleFonts.rubik(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: colorPrimary,
+                                                ),
+                                              ),
+                                              if (widget.orderType
+                                                          ?.trim()
+                                                          .toLowerCase()
+                                                          .contains("basket") ==
+                                                      true ||
+                                                  controller.orderData?.type
+                                                          ?.trim()
+                                                          .toLowerCase()
+                                                          .contains("basket") ==
+                                                      true) ...[
+                                                const SizedBox(height: 8),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(
+                                                      0xFFDFF3F4,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    "Basket order",
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: const Color(
+                                                        0xFF37ADB5,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
                                           ),
                                         ),
                                         Container(
@@ -194,7 +252,9 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 : controller.orderData?.status
                                                           .toString() ==
                                                       '6'
-                                                ? S.of(context).reachedRestaurant
+                                                ? S
+                                                      .of(context)
+                                                      .reachedRestaurant
                                                 : controller.orderData?.status
                                                           .toString() ==
                                                       '7'
@@ -502,92 +562,103 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       ),
                                     ),
                               const SizedBox(height: 32),
-                              Text(
-                                S.of(context).paymentSummary,
-                                style: GoogleFonts.rubik(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF9CA3AF),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              // Payment Summary Card
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.32,
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: const Color(0xFFE5E7EB),
-                                    width: 1,
+                              if (widget.orderType
+                                          ?.trim()
+                                          .toLowerCase()
+                                          .contains("basket") !=
+                                      true &&
+                                  controller.orderData?.type
+                                          ?.trim()
+                                          .toLowerCase()
+                                          .contains("basket") !=
+                                      true) ...[
+                                Text(
+                                  S.of(context).paymentSummary,
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF9CA3AF),
                                   ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    _summaryRow(
-                                      S.of(context).subtotal,
-                                      controller.orderData!.subtotal
-                                              .toString() +
-                                          " MRU",
+                                const SizedBox(height: 16),
+                                // Payment Summary Card
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.32,
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: const Color(0xFFE5E7EB),
+                                      width: 1,
                                     ),
-                                    const SizedBox(height: 16),
-                                    // Gap 16px as requested
-                                    _summaryRow(
-                                      S.of(context).deliveryFee,
-                                      controller.orderData!.deliveryFee
-                                              .toString() +
-                                          " MRU",
-                                    ),
-                                    const SizedBox(height: 16),
-                                    // Gap 16px
-                                    _summaryRow(
-                                      S.of(context).tax,
-                                      controller.orderData!.tax.toString() +
-                                          " MRU",
-                                    ),
-                                    const SizedBox(height: 16),
-                                    // Gap 16px
-                                    _summaryRow(
-                                      S.of(context).paymentType,
-                                      controller.orderData!.paymentType
-                                                  .toString() ==
-                                              "1"
-                                          ? S.of(context).cashOnDelivery
-                                          : S.of(context).onlinePayment,
-                                      isGreen: true,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _summaryRow(
-                                      S.of(context).paymentOn,
-                                      formatOrderPlacedAt(
-                                        controller.orderData?.placedAt,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _summaryRow(
+                                        S.of(context).subtotal,
+                                        controller.orderData!.subtotal
+                                                .toString() +
+                                            " MRU",
                                       ),
-                                      isSmall: true,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    // Gap 16px
-                                    CustomPaint(
-                                      painter: DottedLinePainter(
-                                        color: Colors.grey.withOpacity(0.3),
+                                      const SizedBox(height: 16),
+                                      // Gap 16px as requested
+                                      _summaryRow(
+                                        S.of(context).deliveryFee,
+                                        controller.orderData!.deliveryFee
+                                                .toString() +
+                                            " MRU",
                                       ),
-                                      child: const SizedBox(
-                                        width: double.infinity,
-                                        height: 1,
+                                      const SizedBox(height: 16),
+                                      // Gap 16px
+                                      _summaryRow(
+                                        S.of(context).tax,
+                                        controller.orderData!.tax.toString() +
+                                            " MRU",
                                       ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    // Gap 16px
-                                    _summaryRow(
-                                      S.of(context).totalAmount,
-                                      controller.orderData!.total.toString() +
-                                          " MRU",
-                                      isTotal: true,
-                                    ),
-                                  ],
+                                      const SizedBox(height: 16),
+                                      // Gap 16px
+                                      _summaryRow(
+                                        S.of(context).paymentType,
+                                        controller.orderData!.paymentType
+                                                    .toString() ==
+                                                "1"
+                                            ? S.of(context).cashOnDelivery
+                                            : S.of(context).onlinePayment,
+                                        isGreen: true,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _summaryRow(
+                                        S.of(context).paymentOn,
+                                        formatOrderPlacedAt(
+                                          controller.orderData?.placedAt,
+                                        ),
+                                        isSmall: true,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      // Gap 16px
+                                      CustomPaint(
+                                        painter: DottedLinePainter(
+                                          color: Colors.grey.withOpacity(0.3),
+                                        ),
+                                        child: const SizedBox(
+                                          width: double.infinity,
+                                          height: 1,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      // Gap 16px
+                                      _summaryRow(
+                                        S.of(context).totalAmount,
+                                        controller.orderData!.total.toString() +
+                                            " MRU",
+                                        isTotal: true,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
+                              ],
 
                               const SizedBox(height: 32),
                               // Order Overview / Order Duration Breakdown tabs
@@ -689,7 +760,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 // Timeline items (Order Overview)
                                 _timelineItem(
                                   S.of(context).orderPlaced,
-                                  S.of(context).orderSuccessfullyPlacedBy +" "+
+                                  S.of(context).orderSuccessfullyPlacedBy +
+                                      " " +
                                       controller.orderData!.userName.toString(),
                                   controller.orderData!.statusLogs![0].updatedAt
                                       .toString(),
@@ -740,7 +812,12 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   asset: "lib/assets/images/Delivery.png",
                                 ),
                                 _timelineItem(
-                                  S.of(context).pickedUp[0].toUpperCase() + S.of(context).pickedUp.substring(1).toLowerCase(),
+                                  S.of(context).pickedUp[0].toUpperCase() +
+                                      S
+                                          .of(context)
+                                          .pickedUp
+                                          .substring(1)
+                                          .toLowerCase(),
                                   S.of(context).orderPickedUp,
                                   controller.orderData!.status! >= 7
                                       ? controller
@@ -755,7 +832,12 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       "lib/assets/images/Reached Restaurant.png",
                                 ),
                                 _timelineItem(
-                                  S.of(context).delivering[0].toUpperCase() + S.of(context).delivering.substring(1).toLowerCase(),
+                                  S.of(context).delivering[0].toUpperCase() +
+                                      S
+                                          .of(context)
+                                          .delivering
+                                          .substring(1)
+                                          .toLowerCase(),
                                   S.of(context).deliveryStarted,
                                   controller.orderData!.status! >= 8
                                       ? controller

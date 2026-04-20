@@ -21,7 +21,7 @@ class HomeController extends GetxController {
   String selectedLocation = '';
   String userName = '';
   TextEditingController searchController = TextEditingController();
-  
+
   String? targetOrderStatusTab;
 
   HomeModel? homeData;
@@ -167,40 +167,43 @@ class HomeController extends GetxController {
         query: queryParams,
       );
 
-      if (isLoadMore && homeData?.data != null) {
-        HomeModel newHomeData = HomeModel.fromJson(
+      if (response.data != null &&
+          response.data['status']?.toString() == "true") {
+        HomeModel newHomeModel = HomeModel.fromJson(
           response.data as Map<String, dynamic>?,
         );
 
-        if (newHomeData.data?.orders?.data != null &&
-            homeData!.data!.orders != null) {
-          List<OrderData> existingOrders = List.from(
-            homeData!.data!.orders!.data ?? [],
-          );
-          existingOrders.addAll(newHomeData.data!.orders!.data!);
+        if (isLoadMore && homeData?.data != null) {
+          if (newHomeModel.data?.orders?.data != null &&
+              homeData!.data!.orders != null) {
+            List<OrderData> existingOrders = List.from(
+              homeData!.data!.orders!.data ?? [],
+            );
+            existingOrders.addAll(newHomeModel.data!.orders!.data!);
 
-          Orders updatedOrders = Orders(
-            currentPage: newHomeData.data!.orders!.currentPage,
-            lastPage: newHomeData.data!.orders!.lastPage,
-            total: newHomeData.data!.orders!.total,
-            data: existingOrders,
-          );
+            Orders updatedOrders = Orders(
+              currentPage: newHomeModel.data!.orders!.currentPage,
+              lastPage: newHomeModel.data!.orders!.lastPage,
+              total: newHomeModel.data!.orders!.total,
+              data: existingOrders,
+            );
 
-          HomeData updatedData = HomeData(
-            membership: homeData!.data!.membership,
-            summary: homeData!.data!.summary,
-            vendor: homeData!.data!.vendor,
-            orders: updatedOrders,
-          );
+            HomeData updatedData = HomeData(
+              membership: homeData!.data!.membership,
+              summary: homeData!.data!.summary,
+              vendor: homeData!.data!.vendor,
+              orders: updatedOrders,
+            );
 
-          homeData = HomeModel(
-            status: homeData!.status,
-            message: homeData!.message,
-            data: updatedData,
-          );
+            homeData = HomeModel(
+              status: homeData!.status,
+              message: homeData!.message,
+              data: updatedData,
+            );
+          }
+        } else {
+          homeData = newHomeModel;
         }
-      } else {
-        homeData = HomeModel.fromJson(response.data as Map<String, dynamic>?);
       }
       debugPrint("home model: ${response.data}");
     } catch (error) {

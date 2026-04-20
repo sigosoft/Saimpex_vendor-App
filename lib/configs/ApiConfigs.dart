@@ -22,6 +22,7 @@ class ApiEndPoints {
   static String settings = "settings";
   static String vendorappSettings = "vendorappSettings";
   static String home = "home";
+
   static String restaurantOrderDetails = "restaurantOrderDetail";
   static String groceryOrderDetails = "groceryOrderDetail";
   static String profile = "profile";
@@ -112,7 +113,7 @@ class ApiEndPoints {
   static String groceryMenuItemStockLogs = "groceryMenuItemStockLogs";
   static String updateGrocerytItemStock = "updateGrocerytItemStock";
   static String updateAutoAcceptOrders = "updateAutoAcceptMode";
-  static String updateBusyStatus = "updateBusyStatus";
+  static String updateBusyMode = "updateBusyMode";
   static String updateCouponStatus = "updateCouponStatus";
   static String coupons = "coupons";
   static String addCoupon = "addCoupon";

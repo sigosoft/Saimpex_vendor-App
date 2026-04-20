@@ -488,6 +488,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         status: _statusLabel(order.status),
                                         deliveryBoyName: order.deliveryBoyName,
                                         cancelReason: order.cancelReason,
+                                        type: order.type,
                                         onAccept: () => _handleAcceptOrder(
                                           order.id?.toString() ?? "",
                                         ),

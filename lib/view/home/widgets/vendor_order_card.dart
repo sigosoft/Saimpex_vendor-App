@@ -16,6 +16,7 @@ class VendorOrderCard extends StatelessWidget {
   final VoidCallback? onTap;
   final String? deliveryBoyName;
   final String? cancelReason;
+  final String? type;
 
   const VendorOrderCard({
     super.key,
@@ -31,6 +32,7 @@ class VendorOrderCard extends StatelessWidget {
     this.onTap,
     this.deliveryBoyName,
     this.cancelReason,
+    this.type,
   });
 
   @override
@@ -64,13 +66,40 @@ class VendorOrderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
-                    S.of(context).orderIdLabel(orderId),
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: colorPrimary,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        S.of(context).orderIdLabel(orderId),
+                        style: GoogleFonts.rubik(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: colorPrimary,
+                        ),
+                      ),
+                      if (type?.trim().toLowerCase().contains("basket") ==
+                          true) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDFF3F4),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            "Basket order",
+                            style: GoogleFonts.rubik(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF37ADB5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 const SizedBox(width: 8),

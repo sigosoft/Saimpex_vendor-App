@@ -371,6 +371,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                         ],
                       ),
                     ),
+                    /*
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -387,6 +388,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                         ],
                       ),
                     ),
+*/
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -411,6 +413,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   controller: c.descFrCtrl,
                   hint: 'Entrez la description en français...',
                 ),
+                /*
                 const SizedBox(height: 16),
                 EditMenuFieldLabel(S.of(context).tags),
                 const SizedBox(height: 6),
@@ -425,7 +428,9 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   height: 46,
                   width: MediaQuery.of(context).size.width * 0.9,
                 ),
+*/
                 const SizedBox(height: 16),
+                /*
                 if (Get.find<ProfileController>().vendorType != '2') ...[
                   EditMenuFieldLabel(S.of(context).preparationTimeMinutes),
                   const SizedBox(height: 6),
@@ -436,6 +441,8 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   ),
                   const SizedBox(height: 16),
                 ],
+*/
+                /*
                 EditMenuFieldLabel(S.of(context).maximumAllowedQuantity),
                 const SizedBox(height: 6),
                 EditMenuTextField(
@@ -444,6 +451,8 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+*/
+                /*
                 Row(
                   children: [
                     Expanded(
@@ -478,6 +487,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
+*/
                 EditMenuFieldLabel(S.of(context).itemImage),
                 const SizedBox(height: 6),
                 EditMenuImageUploadArea(onTap: c.pickImages),

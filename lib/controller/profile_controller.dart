@@ -1626,7 +1626,7 @@ class ProfileController extends GetxController {
       }
       var formData = {"is_busy": status};
       final response = await DioClient().post(
-        ApiEndPoints.updateBusyStatus,
+        ApiEndPoints.updateBusyMode,
         body: formData,
       );
       if (context.mounted) {

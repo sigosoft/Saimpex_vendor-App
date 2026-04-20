@@ -4,26 +4,27 @@
 
 import 'dart:convert';
 
-OrderDetailsModel orderDetailsModelFromJson(String str) => OrderDetailsModel.fromJson(json.decode(str));
+OrderDetailsModel orderDetailsModelFromJson(String str) =>
+    OrderDetailsModel.fromJson(json.decode(str));
 
-String orderDetailsModelToJson(OrderDetailsModel data) => json.encode(data.toJson());
+String orderDetailsModelToJson(OrderDetailsModel data) =>
+    json.encode(data.toJson());
 
 class OrderDetailsModel {
   final String? status;
   final Data? data;
   final Message? message;
 
-  OrderDetailsModel({
-    this.status,
-    this.data,
-    this.message,
-  });
+  OrderDetailsModel({this.status, this.data, this.message});
 
-  factory OrderDetailsModel.fromJson(Map<String, dynamic> json) => OrderDetailsModel(
-    status: json["status"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-    message: json["message"] == null ? null : Message.fromJson(json["message"]),
-  );
+  factory OrderDetailsModel.fromJson(Map<String, dynamic> json) =>
+      OrderDetailsModel(
+        status: json["status"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        message: json["message"] == null
+            ? null
+            : Message.fromJson(json["message"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "status": status,
@@ -60,6 +61,7 @@ class Data {
   final DateTime? payedOn;
   final List<OrderItem>? orderItems;
   final OrderDurations? orderDurations;
+  final String? type;
   final List<StatusLog>? statusLogs;
 
   Data({
@@ -68,6 +70,7 @@ class Data {
     this.status,
     this.placedAt,
     this.paymentType,
+    this.type,
     this.subtotal,
     this.tax,
     this.deliveryFee,
@@ -97,8 +100,12 @@ class Data {
     id: json["id"],
     orderCode: json["order_code"],
     status: json["status"],
-    placedAt: json["placed_at"] == null ? null : DateTime.parse(json["placed_at"]),
+    placedAt: json["placed_at"] == null
+        ? null
+        : DateTime.parse(json["placed_at"]),
     paymentType: json["payment_type"],
+    type: (json["type"] ?? json["order_type"] ?? json["basket_type"])
+        ?.toString(),
     subtotal: json["subtotal"],
     tax: json["tax"],
     deliveryFee: json["delivery_fee"],
@@ -107,7 +114,9 @@ class Data {
     location: json["location"],
     latitude: json["latitude"],
     longitude: json["longitude"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
     customerNote: json["customer_note"],
     userName: json["user_name"],
     userEmail: json["user_email"],
@@ -119,9 +128,19 @@ class Data {
     deliveryBoyImage: json["delivery_boy_image"],
     deliveryCountryCode: json["delivery_country_code"],
     payedOn: json["payed_on"] == null ? null : DateTime.parse(json["payed_on"]),
-    orderItems: json["orderItems"] == null ? [] : List<OrderItem>.from(json["orderItems"]!.map((x) => OrderItem.fromJson(x))),
-    orderDurations: json["order_durations"] == null ? null : OrderDurations.fromJson(json["order_durations"]),
-    statusLogs: json["status_logs"] == null ? [] : List<StatusLog>.from(json["status_logs"]!.map((x) => StatusLog.fromJson(x))),
+    orderItems: json["orderItems"] == null
+        ? []
+        : List<OrderItem>.from(
+            json["orderItems"]!.map((x) => OrderItem.fromJson(x)),
+          ),
+    orderDurations: json["order_durations"] == null
+        ? null
+        : OrderDurations.fromJson(json["order_durations"]),
+    statusLogs: json["status_logs"] == null
+        ? []
+        : List<StatusLog>.from(
+            json["status_logs"]!.map((x) => StatusLog.fromJson(x)),
+          ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -130,6 +149,7 @@ class Data {
     "status": status,
     "placed_at": placedAt?.toIso8601String(),
     "payment_type": paymentType,
+    "type": type,
     "subtotal": subtotal,
     "tax": tax,
     "delivery_fee": deliveryFee,
@@ -150,9 +170,13 @@ class Data {
     "delivery_boy_image": deliveryBoyImage,
     "delivery_country_code": deliveryCountryCode,
     "payed_on": payedOn?.toIso8601String(),
-    "orderItems": orderItems == null ? [] : List<dynamic>.from(orderItems!.map((x) => x.toJson())),
+    "orderItems": orderItems == null
+        ? []
+        : List<dynamic>.from(orderItems!.map((x) => x.toJson())),
     "order_durations": orderDurations?.toJson(),
-    "status_logs": statusLogs == null ? [] : List<dynamic>.from(statusLogs!.map((x) => x.toJson())),
+    "status_logs": statusLogs == null
+        ? []
+        : List<dynamic>.from(statusLogs!.map((x) => x.toJson())),
   };
 }
 
@@ -189,12 +213,17 @@ class OrderDurations {
     restaurantAcceptanceDuration: json["restaurant_acceptance_duration"],
     preparationStartDuration: json["preparation_start_duration"],
     preparationDuration: json["preparation_duration"],
-    deliveryPartnerToRestaurantDuration: json["delivery_partner_to_restaurant_duration"],
+    deliveryPartnerToRestaurantDuration:
+        json["delivery_partner_to_restaurant_duration"],
     pickupWaitDuration: json["pickup_wait_duration"],
     restaurantToCustomerDuration: json["restaurant_to_customer_duration"],
     totalDuration: json["total_duration"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -203,7 +232,8 @@ class OrderDurations {
     "restaurant_acceptance_duration": restaurantAcceptanceDuration,
     "preparation_start_duration": preparationStartDuration,
     "preparation_duration": preparationDuration,
-    "delivery_partner_to_restaurant_duration": deliveryPartnerToRestaurantDuration,
+    "delivery_partner_to_restaurant_duration":
+        deliveryPartnerToRestaurantDuration,
     "pickup_wait_duration": pickupWaitDuration,
     "restaurant_to_customer_duration": restaurantToCustomerDuration,
     "total_duration": totalDuration,
@@ -228,7 +258,9 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
-    orderItem: json["order_item"] == null ? null : OrderItemClass.fromJson(json["order_item"]),
+    orderItem: json["order_item"] == null
+        ? null
+        : OrderItemClass.fromJson(json["order_item"]),
     unitPrice: json["unit_price"],
     quantity: json["quantity"],
     price: json["price"],
@@ -249,11 +281,7 @@ class OrderItemClass {
   final String? nameAr;
   final String? nameFr;
 
-  OrderItemClass({
-    this.nameEn,
-    this.nameAr,
-    this.nameFr,
-  });
+  OrderItemClass({this.nameEn, this.nameAr, this.nameFr});
 
   factory OrderItemClass.fromJson(Map<String, dynamic> json) => OrderItemClass(
     nameEn: json["name_en"],
@@ -274,12 +302,7 @@ class StatusLog {
   final String? remark;
   final String? updatedAt;
 
-  StatusLog({
-    this.status,
-    this.text,
-    this.remark,
-    this.updatedAt,
-  });
+  StatusLog({this.status, this.text, this.remark, this.updatedAt});
 
   factory StatusLog.fromJson(Map<String, dynamic> json) => StatusLog(
     status: json["status"],
@@ -301,21 +324,29 @@ class Message {
   final List<String>? messageFr;
   final List<String>? messageAr;
 
-  Message({
-    this.messageEn,
-    this.messageFr,
-    this.messageAr,
-  });
+  Message({this.messageEn, this.messageFr, this.messageAr});
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
-    messageEn: json["message_en"] == null ? [] : List<String>.from(json["message_en"]!.map((x) => x)),
-    messageFr: json["message_fr"] == null ? [] : List<String>.from(json["message_fr"]!.map((x) => x)),
-    messageAr: json["message_ar"] == null ? [] : List<String>.from(json["message_ar"]!.map((x) => x)),
+    messageEn: json["message_en"] == null
+        ? []
+        : List<String>.from(json["message_en"]!.map((x) => x)),
+    messageFr: json["message_fr"] == null
+        ? []
+        : List<String>.from(json["message_fr"]!.map((x) => x)),
+    messageAr: json["message_ar"] == null
+        ? []
+        : List<String>.from(json["message_ar"]!.map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
-    "message_en": messageEn == null ? [] : List<dynamic>.from(messageEn!.map((x) => x)),
-    "message_fr": messageFr == null ? [] : List<dynamic>.from(messageFr!.map((x) => x)),
-    "message_ar": messageAr == null ? [] : List<dynamic>.from(messageAr!.map((x) => x)),
+    "message_en": messageEn == null
+        ? []
+        : List<dynamic>.from(messageEn!.map((x) => x)),
+    "message_fr": messageFr == null
+        ? []
+        : List<dynamic>.from(messageFr!.map((x) => x)),
+    "message_ar": messageAr == null
+        ? []
+        : List<dynamic>.from(messageAr!.map((x) => x)),
   };
 }
