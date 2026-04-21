@@ -329,9 +329,18 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                                   0,
                                                                   (sum, bo) =>
                                                                       sum +
-                                                                      (bo.basket
-                                                                              ?.basketItems
-                                                                              ?.fold<int>(0, (s, i) => s + (i.quantity ?? 0)) ??
+                                                                      (bo.basket?.basketItems?.fold<
+                                                                            int
+                                                                          >(
+                                                                            0,
+                                                                            (
+                                                                              s,
+                                                                              i,
+                                                                            ) =>
+                                                                                s +
+                                                                                (i.quantity ??
+                                                                                    0),
+                                                                          ) ??
                                                                           0),
                                                                 ) ??
                                                             0)
@@ -344,26 +353,26 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               " " +
                                               S.of(context).items +
                                               (((double.tryParse(
-                                                                controller
-                                                                        .orderData
-                                                                        ?.total ??
-                                                                    '0',
-                                                              ) ??
-                                                              0) <=
-                                                          0)
+                                                            controller
+                                                                    .orderData
+                                                                    ?.total ??
+                                                                '0',
+                                                          ) ??
+                                                          0) <=
+                                                      0)
                                                   ? ""
                                                   : (" • " +
                                                         "${controller.orderData?.total} " +
                                                         "MRU")),
                                           isPrice:
                                               ((double.tryParse(
-                                                            controller
-                                                                    .orderData
-                                                                    ?.total ??
-                                                                '0',
-                                                          ) ??
-                                                          0) >
-                                                      0),
+                                                    controller
+                                                            .orderData
+                                                            ?.total ??
+                                                        '0',
+                                                  ) ??
+                                                  0) >
+                                              0),
                                         ),
                                         _infoCol(
                                           S.of(context).dateTime,
@@ -477,7 +486,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                         0,
                                                         (sum, bo) =>
                                                             sum +
-                                                            (bo.basket
+                                                            (bo
+                                                                    .basket
                                                                     ?.basketItems
                                                                     ?.fold<int>(
                                                                       0,

@@ -1175,12 +1175,14 @@ class MenuController extends GetxController {
           formDataMap["attributes[0][id]"] = currentEditAttributeId;
         }
         formDataMap["attributes[0][price]"] = _cleanPrice(priceCtrl.text);
-        formDataMap["attributes[0][discount_price]"] =
-            _cleanPrice(discountPriceCtrl.text);
-        formDataMap["attributes[0][preparation_time]"] =
-            prepTimeCtrl.text.trim();
+        formDataMap["attributes[0][discount_price]"] = _cleanPrice(
+          discountPriceCtrl.text,
+        );
+        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
+            .trim();
       } else {
-        final attrId = (selectedAttributeId != null &&
+        final attrId =
+            (selectedAttributeId != null &&
                 selectedAttributeId!.trim().isNotEmpty)
             ? selectedAttributeId!.trim()
             : (currentEditAttributeId?.toString() ?? "2");
@@ -1191,12 +1193,14 @@ class MenuController extends GetxController {
         formDataMap["attributes[0][grocery_attribute_id]"] = attrId;
         formDataMap["attributes[0][attribute_value]"] =
             prepTimeCtrl.text.trim().isEmpty
-                ? (selectedAttributeDisplayName ?? "1")
-                : prepTimeCtrl.text.trim();
-        formDataMap["attributes[0][retail_price]"] =
-            _cleanPrice(priceCtrl.text);
-        formDataMap["attributes[0][selling_price]"] =
-            _cleanPrice(discountPriceCtrl.text);
+            ? (selectedAttributeDisplayName ?? "1")
+            : prepTimeCtrl.text.trim();
+        formDataMap["attributes[0][retail_price]"] = _cleanPrice(
+          priceCtrl.text,
+        );
+        formDataMap["attributes[0][selling_price]"] = _cleanPrice(
+          discountPriceCtrl.text,
+        );
       }
       if (kDebugMode) {
         for (final e in formDataMap.entries) {
