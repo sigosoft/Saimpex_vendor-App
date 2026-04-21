@@ -7,12 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/utils/widgets/dotted_line_painter.dart';
+// ignore: unused_import — success_dialog is used indirectly via utils
 import 'package:saimpex_vendor/utils/widgets/success_dialog.dart';
 import 'package:saimpex_vendor/view/shimmer_loading/shimmer_text_content.dart';
 
 import '../../configs/ApiConfigs.dart';
 import '../../controller/order_details_controller.dart';
 import '../../generated/l10n.dart';
+// ignore: unused_import
 import '../../model/OrderDetailsModel.dart';
 import '../../utils/Widgets/custom_app_bar.dart';
 import '../../utils/utils.dart';
@@ -22,11 +24,7 @@ class VendorOrderDetails extends StatefulWidget {
   final String orderId;
   final String? orderType;
 
-  const VendorOrderDetails({
-    super.key,
-    required this.orderId,
-    this.orderType,
-  });
+  const VendorOrderDetails({super.key, required this.orderId, this.orderType});
 
   @override
   State<VendorOrderDetails> createState() => _VendorOrderDetailsState();
@@ -58,6 +56,15 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
           }
         },
         builder: (controller) {
+          final bool isBasketOrder =
+              widget.orderType?.trim().toLowerCase().contains("basket") ==
+                  true ||
+              controller.orderData?.type?.trim().toLowerCase().contains(
+                    "basket",
+                  ) ==
+                  true ||
+              (controller.orderData?.basketOrders?.isNotEmpty == true);
+
           if (!controller.isLoading && controller.orderData == null) {
             return Scaffold(
               backgroundColor: Colors.white,
@@ -314,17 +321,49 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       children: [
                                         _infoCol(
                                           S.of(context).items,
-                                          controller
-                                                  .orderData!
-                                                  .orderItems!
-                                                  .length
+                                          (isBasketOrder
+                                                      ? (controller
+                                                                .orderData!
+                                                                .basketOrders
+                                                                ?.fold<int>(
+                                                                  0,
+                                                                  (sum, bo) =>
+                                                                      sum +
+                                                                      (bo.basket
+                                                                              ?.basketItems
+                                                                              ?.fold<int>(0, (s, i) => s + (i.quantity ?? 0)) ??
+                                                                          0),
+                                                                ) ??
+                                                            0)
+                                                      : (controller
+                                                                .orderData!
+                                                                .orderItems
+                                                                ?.length ??
+                                                            0))
                                                   .toString() +
                                               " " +
                                               S.of(context).items +
-                                              " • " +
-                                              "${controller.orderData?.total} " +
-                                              "MRU",
-                                          isPrice: true,
+                                              (((double.tryParse(
+                                                                controller
+                                                                        .orderData
+                                                                        ?.total ??
+                                                                    '0',
+                                                              ) ??
+                                                              0) <=
+                                                          0)
+                                                  ? ""
+                                                  : (" • " +
+                                                        "${controller.orderData?.total} " +
+                                                        "MRU")),
+                                          isPrice:
+                                              ((double.tryParse(
+                                                            controller
+                                                                    .orderData
+                                                                    ?.total ??
+                                                                '0',
+                                                          ) ??
+                                                          0) >
+                                                      0),
                                         ),
                                         _infoCol(
                                           S.of(context).dateTime,
@@ -430,7 +469,31 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 S.of(context).orderItems +
                                     " " +
                                     "(" +
-                                    controller.orderData!.orderItems!.length
+                                    (isBasketOrder
+                                            ? (controller
+                                                      .orderData!
+                                                      .basketOrders
+                                                      ?.fold<int>(
+                                                        0,
+                                                        (sum, bo) =>
+                                                            sum +
+                                                            (bo.basket
+                                                                    ?.basketItems
+                                                                    ?.fold<int>(
+                                                                      0,
+                                                                      (s, i) =>
+                                                                          s +
+                                                                          (i.quantity ??
+                                                                              0),
+                                                                    ) ??
+                                                                0),
+                                                      ) ??
+                                                  0)
+                                            : (controller
+                                                      .orderData!
+                                                      .orderItems
+                                                      ?.length ??
+                                                  0))
                                         .toString() +
                                     ")",
                                 style: GoogleFonts.rubik(
@@ -444,51 +507,82 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                               ListView.separated(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount:
-                                    controller.orderData!.orderItems!.length,
+                                itemCount: isBasketOrder
+                                    ? (controller.orderData!.basketOrders
+                                              ?.expand(
+                                                (bo) =>
+                                                    bo.basket?.basketItems ??
+                                                    [],
+                                              )
+                                              .length ??
+                                          0)
+                                    : (controller
+                                              .orderData!
+                                              .orderItems
+                                              ?.length ??
+                                          0),
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 12),
-                                itemBuilder: (context, index) => _itemTile(
-                                  controller.orderData!.orderItems![index].image
-                                      .toString(),
-                                  localization.currentLocale!.languageCode
-                                              .toString() ==
-                                          "ar"
-                                      ? controller
-                                            .orderData!
-                                            .orderItems![index]
-                                            .orderItem!
-                                            .nameAr
-                                            .toString()
-                                      : localization.currentLocale!.languageCode
-                                                .toString() ==
-                                            "fr"
-                                      ? controller
-                                            .orderData!
-                                            .orderItems![index]
-                                            .orderItem!
-                                            .nameFr
-                                            .toString()
-                                      : controller
-                                            .orderData!
-                                            .orderItems![index]
-                                            .orderItem!
-                                            .nameEn
-                                            .toString(),
-                                  double.parse(
-                                    controller
+                                itemBuilder: (context, index) {
+                                  if (isBasketOrder) {
+                                    final allItems =
+                                        controller.orderData!.basketOrders
+                                            ?.expand(
+                                              (bo) =>
+                                                  bo.basket?.basketItems ?? [],
+                                            )
+                                            .toList() ??
+                                        [];
+                                    if (index >= allItems.length) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    final basketItem = allItems[index];
+                                    final langCode = localization
+                                        .currentLocale!
+                                        .languageCode
+                                        .toString();
+
+                                    final menu =
+                                        basketItem.restaurantMenu ??
+                                        basketItem.groceryMenu;
+                                    final name = langCode == "ar"
+                                        ? (menu?.nameAr ?? menu?.nameEn ?? '')
+                                        : langCode == "fr"
+                                        ? (menu?.nameFr ?? menu?.nameEn ?? '')
+                                        : (menu?.nameEn ?? '');
+
+                                    return _itemTile(
+                                      menu?.image ?? '',
+                                      name,
+                                      0.0,
+                                      basketItem.quantity ?? 0,
+                                      context,
+                                      showPrice: false,
+                                    );
+                                  } else {
+                                    final item = controller
                                         .orderData!
-                                        .orderItems![index]
-                                        .unitPrice
-                                        .toString(),
-                                  ),
-                                  controller
-                                      .orderData!
-                                      .orderItems![index]
-                                      .quantity!,
-                                  context,
-                                ),
+                                        .orderItems![index];
+                                    final langCode = localization
+                                        .currentLocale!
+                                        .languageCode
+                                        .toString();
+                                    return _itemTile(
+                                      item.image.toString(),
+                                      langCode == "ar"
+                                          ? item.orderItem!.nameAr.toString()
+                                          : langCode == "fr"
+                                          ? item.orderItem!.nameFr.toString()
+                                          : item.orderItem!.nameEn.toString(),
+                                      double.parse(item.unitPrice.toString()),
+                                      item.quantity!,
+                                      context,
+                                    );
+                                  }
+                                },
                               ),
+
                               controller.orderData!.customerNote.toString() ==
                                           "null" ||
                                       controller.orderData!.customerNote
@@ -1137,8 +1231,9 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
     String name,
     double price,
     int qty,
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    bool showPrice = true,
+  }) {
     return Container(
       height: 100,
       padding: const EdgeInsets.all(12),
@@ -1176,15 +1271,17 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                     color: const Color(0xFF1F2937),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  "${price.toStringAsFixed(2)} MRU",
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: colorPrimary,
+                if (showPrice) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    "${price.toStringAsFixed(2)} MRU",
+                    style: GoogleFonts.rubik(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: colorPrimary,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

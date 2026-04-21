@@ -135,16 +135,18 @@ class ProfileData {
     if (json == null) return ProfileData();
 
     return ProfileData(
-      id: json['id'] as int?,
-      name: json['name'] as String?,
-      countryCode: json['country_code'] as String?,
-      mobile: json['mobile'] as String?,
-      image: json['image'] as String?,
-      facebookUrl: json['facebook_url'] as String?,
-      instagramUrl: json['instagram_url'] as String?,
-      twitterUrl: json['twitter_url'] as String?,
-      whatsappUrl: json['whatsapp_url'] as String?,
-      hasBasketOrders: json['has_basket_orders'] as bool?,
+      id: _toNullableInt(json['id']),
+      name: json['name']?.toString(),
+      countryCode: json['country_code']?.toString(),
+      mobile: json['mobile']?.toString(),
+      image: json['image']?.toString(),
+      facebookUrl: json['facebook_url']?.toString(),
+      instagramUrl: json['instagram_url']?.toString(),
+      twitterUrl: json['twitter_url']?.toString(),
+      whatsappUrl: json['whatsapp_url']?.toString(),
+      hasBasketOrders: json['has_basket_orders'] == true ||
+          json['has_basket_orders']?.toString() == '1' ||
+          json['has_basket_orders']?.toString().toLowerCase() == 'true',
       email: json['email']?.toString(),
       address: json['address']?.toString(),
       owner: json['owner_name']?.toString() ?? json['owner']?.toString(),

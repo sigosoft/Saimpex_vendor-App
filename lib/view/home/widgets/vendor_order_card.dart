@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/resources/colors.dart';
 
 class VendorOrderCard extends StatelessWidget {
   final String orderId;
+  final String? orderCode;
   final String customerName;
   final int itemsCount;
   final double price;
@@ -21,6 +22,7 @@ class VendorOrderCard extends StatelessWidget {
   const VendorOrderCard({
     super.key,
     required this.orderId,
+    this.orderCode,
     required this.customerName,
     required this.itemsCount,
     required this.price,
@@ -70,7 +72,7 @@ class VendorOrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        S.of(context).orderIdLabel(orderId),
+                        S.of(context).orderIdLabel(orderCode ?? orderId),
                         style: GoogleFonts.rubik(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -190,15 +192,32 @@ class VendorOrderCard extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: "$itemsCount ${S.of(context).items} • ",
+                              text:
+                                  "$itemsCount ${S.of(context).items}" +
+                                  (price > 0 ||
+                                          type?.trim().toLowerCase().contains(
+                                                "basket",
+                                              ) ==
+                                              true
+                                      ? " • "
+                                      : ""),
                             ),
-                            TextSpan(
-                              text: "${price.toStringAsFixed(2)} MRU",
-                              style: const TextStyle(
-                                color: Color(0xFFFF5216),
-                                fontWeight: FontWeight.w600,
+                            if (price > 0 ||
+                                type?.trim().toLowerCase().contains("basket") ==
+                                    true)
+                              TextSpan(
+                                text:
+                                    type?.trim().toLowerCase().contains(
+                                          "basket",
+                                        ) ==
+                                        true
+                                    ? "0.00 MRU"
+                                    : "${price.toStringAsFixed(2)} MRU",
+                                style: const TextStyle(
+                                  color: Color(0xFFFF5216),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

@@ -34,7 +34,9 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
       var token = await getSavedObject("token");
       DioClient().updateToken(token);
 
-      var payoutId = widget.payout['raw']?['id']?.toString() ?? widget.payout['id']?.toString().replaceAll(RegExp(r'[^0-9]'), '');
+      var payoutId =
+          widget.payout['raw']?['id']?.toString() ??
+          widget.payout['id']?.toString().replaceAll(RegExp(r'[^0-9]'), '');
 
       final response = await DioClient().get(
         ApiEndPoints.earningsPayoutDetail,
@@ -44,29 +46,41 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
       if (response.data?['status'].toString() == "true") {
         if (mounted) {
           setState(() {
-            _payoutDetails = response.data['data'];
-            
-            // Map related orders dynamically if present
-            if (_payoutDetails?['orders'] != null) {
-               List<dynamic> rawOrders = _payoutDetails?['orders'];
-               _relatedOrders = rawOrders.map((o) {
-                 String rawDate = o['order_placed_at']?.toString() ?? o['created_at']?.toString() ?? '';
-                 DateTime? dt;
-                 if (rawDate.isNotEmpty) {
-                   dt = DateTime.tryParse(rawDate);
-                 }
-                 String formattedDate = rawDate;
-                 if (dt != null) {
-                   formattedDate = formatOrderPlacedAt(dt);
-                 }
-                 return {
-                   'id': o['order_code']?.toString() ?? '#ORD-${o['id']}',
-                   'date': formattedDate,
-                   'amount': '${o['order_total'] ?? o['amount'] ?? '0.00'} MRU',
-                 };
-               }).toList();
+            // The API wraps the payout inside response.data['data']['payout']
+            _payoutDetails =
+                response.data['data']?['payout'] as Map<String, dynamic>?;
+
+            // Related orders are under the 'payout_orders' key
+            final rawOrdersList = _payoutDetails?['payout_orders'];
+            if (rawOrdersList != null && rawOrdersList is List) {
+              _relatedOrders = (rawOrdersList as List<dynamic>).map((o) {
+                // Try to get order specific date, fallback to payout's payment_date
+                String rawDate =
+                    o['order_placed_at']?.toString() ??
+                    o['created_at']?.toString() ??
+                    _payoutDetails?['payment_date']?.toString() ??
+                    _payoutDetails?['created_at']?.toString() ??
+                    '';
+
+                DateTime? dt;
+                if (rawDate.isNotEmpty) {
+                  dt = DateTime.tryParse(rawDate);
+                }
+
+                String formattedDate = rawDate;
+                if (dt != null) {
+                  formattedDate = formatOrderPlacedAt(dt);
+                }
+
+                return {
+                  'id': o['order_code']?.toString() ?? '#ORD-${o['order_id']}',
+                  'date': formattedDate.isNotEmpty ? formattedDate : '—',
+                  'amount':
+                      '${o['payout_amount'] ?? o['amount'] ?? '0.00'} MRU',
+                };
+              }).toList();
             }
-            
+
             _isLoading = false;
           });
         }
@@ -160,9 +174,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFEDE6),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: colorPrimary.withOpacity(0.15),
-                  ),
+                  border: Border.all(color: colorPrimary.withOpacity(0.15)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +241,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${S.of(context).paymentId}: ${_payoutDetails?['vendor_payment_id'] ?? _payoutDetails?['transaction_id'] ?? _payoutDetails?['payment_id'] ?? 'N/A'}',
+                          '${S.of(context).paymentId}: ${_payoutDetails?['transaction_ref'] ?? _payoutDetails?['payment_id'] ?? 'N/A'}',
                           style: GoogleFonts.rubik(
                             fontSize: screenWidth * 0.03,
                             color: const Color(0xFF333E63),
@@ -253,9 +265,12 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                     ),
                     SizedBox(height: screenHeight * 0.008),
                     // Row 4: Notes
-                    if (_payoutDetails?['notes'] != null && _payoutDetails!['notes'].toString().isNotEmpty) ...[
+                    if (_payoutDetails?['payment_note'] != null &&
+                        _payoutDetails!['payment_note']
+                            .toString()
+                            .isNotEmpty) ...[
                       Text(
-                        '${S.of(context).notes}: ${_payoutDetails!['notes']}',
+                        '${S.of(context).notes}: ${_payoutDetails!['payment_note']}',
                         style: GoogleFonts.rubik(
                           fontSize: screenWidth * 0.028,
                           color: const Color(0xFF333E63),
@@ -303,7 +318,10 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                 )
               else ...[
                 ..._relatedOrders
-                    .map((order) => _buildOrderTile(order, screenWidth, screenHeight))
+                    .map(
+                      (order) =>
+                          _buildOrderTile(order, screenWidth, screenHeight),
+                    )
                     .toList(),
               ],
             ],

@@ -101,6 +101,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String buildNumber = packageInfo.version;
       final response = await DioClient().get(ApiEndPoints.vendorappSettings);
+      if (!mounted) return;
       SettingsModel model = SettingsModel.fromJson(response.data);
       debugPrint("settings model: ${response.data}");
       debugPrint("current version vendor: $buildNumber");
@@ -147,15 +148,21 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                     versionToCode(buildNumber.toString()))) {
           Get.offAll(() => NeedAnUpdate());
         } else {
-          _fetchOrders();
+          if (mounted) {
+            _fetchOrders();
+          }
         }
       } else {
-        _fetchOrders();
+        if (mounted) {
+          _fetchOrders();
+        }
       }
     } catch (error, stackTrace) {
       debugPrint("maintenance Error: $error");
       debugPrint("maintenance StackTrace: $stackTrace");
-      _fetchOrders();
+      if (mounted) {
+        _fetchOrders();
+      }
     }
   }
 
@@ -209,12 +216,14 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
 
   Future<void> _fetchOrders({String? keyword}) async {
     await homeController.getProfile(context);
+    if (!mounted) return;
     await homeController.fetchHome(
       context,
       orderStatus: _statusValue(selectedTab),
       keyword: keyword ?? homeController.searchController.text.trim(),
       limit: _defaultLimit,
     );
+    if (!mounted) return;
     _refreshSelectedTabCount();
   }
 
@@ -479,6 +488,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         horizontalPadding:
                                             layout.horizontalPadding,
                                         orderId: order.id?.toString() ?? "NA",
+                                        orderCode: order.orderCode,
                                         customerName:
                                             order.userName ??
                                             S.of(context).unknown,

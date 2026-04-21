@@ -8,6 +8,7 @@ class VendorOrderListItem extends StatelessWidget {
     super.key,
     required this.horizontalPadding,
     required this.orderId,
+    this.orderCode,
     required this.customerName,
     required this.itemsCount,
     required this.price,
@@ -23,6 +24,7 @@ class VendorOrderListItem extends StatelessWidget {
 
   final double horizontalPadding;
   final String orderId;
+  final String? orderCode;
   final String customerName;
   final int itemsCount;
   final double price;
@@ -41,6 +43,7 @@ class VendorOrderListItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: VendorOrderCard(
         orderId: orderId,
+        orderCode: orderCode,
         customerName: customerName,
         itemsCount: itemsCount,
         price: price,

@@ -420,12 +420,18 @@ class MenuController extends GetxController {
           ]
         : [];
     prepTimeCtrl.text = menu.preparationTime ?? '';
-    priceCtrl.text = menu.price ?? '20 MRU';
-    discountPriceCtrl.text = menu.discountPrice ?? '10 MRU';
+    priceCtrl.text = _cleanPrice(menu.price ?? '20');
+    discountPriceCtrl.text = _cleanPrice(menu.discountPrice ?? '10');
     quantityAllowedCtrl.text = menu.quantityAllowed?.toString() ?? '10';
     currentEditAttributeId = menu.firstAttributeId;
+    selectedAttributeId = menu.firstAttributeId?.toString();
     hasPopulatedEditForm = true;
     update();
+  }
+
+  String _cleanPrice(String price) {
+    // Remove "MRU " or "MRU" and any other non-numeric characters except decimal point
+    return price.replaceAll(RegExp(r'[^0-9.]'), '').trim();
   }
 
   void removeEditImageAt(int index) {
@@ -540,7 +546,8 @@ class MenuController extends GetxController {
         (selectedAttributeId == null || selectedAttributeId!.trim().isEmpty)) {
       return "Please select attribute";
     }
-    if (prepTimeCtrl.text.trim().isEmpty) {
+    final vendorType = Get.find<ProfileController>().vendorType;
+    if (vendorType != '2' && prepTimeCtrl.text.trim().isEmpty) {
       return "Please enter preparation time";
     }
     if (priceCtrl.text.trim().isEmpty) {
@@ -581,14 +588,23 @@ class MenuController extends GetxController {
         "quantity_allowed": quantityAllowedCtrl.text,
       };
       if (vendorType == "1") {
-        formDataMap["attributes[0][price]"] = priceCtrl.text;
-        formDataMap["attributes[0][discount_price]"] = discountPriceCtrl.text;
+        formDataMap["attributes[0][price]"] = _cleanPrice(priceCtrl.text);
+        formDataMap["attributes[0][discount_price]"] = _cleanPrice(
+          discountPriceCtrl.text,
+        );
         formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text;
         formDataMap["attributes[0][restaurant_attribute_id]"] = attributeId;
       } else {
-        formDataMap["attributes[0][attribute_value]"] = prepTimeCtrl.text;
-        formDataMap["attributes[0][retail_price]"] = priceCtrl.text;
-        formDataMap["attributes[0][selling_price]"] = discountPriceCtrl.text;
+        formDataMap["attributes[0][attribute_value]"] =
+            prepTimeCtrl.text.trim().isEmpty
+            ? (selectedAttributeDisplayName ?? "1")
+            : prepTimeCtrl.text;
+        formDataMap["attributes[0][retail_price]"] = _cleanPrice(
+          priceCtrl.text,
+        );
+        formDataMap["attributes[0][selling_price]"] = _cleanPrice(
+          discountPriceCtrl.text,
+        );
         formDataMap["attributes[0][grocery_attribute_id]"] = attributeId;
       }
       if (uploadedImages.isNotEmpty) {
@@ -1146,29 +1162,41 @@ class MenuController extends GetxController {
         "description_en": descEnCtrl.text.trim(),
         "description_ar": descArCtrl.text.trim(),
         "description_fr": descFrCtrl.text.trim(),
-        "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
         "quantity_allowed": quantityAllowedCtrl.text.trim(),
-        "preparation_time": prepTimeCtrl.text.trim(),
       };
+
+      if (isRestaurant) {
+        formDataMap["is_veg"] = selectedIsVeg == 'Yes' ? '1' : '2';
+        formDataMap["preparation_time"] = prepTimeCtrl.text.trim();
+      }
 
       if (isRestaurant) {
         if (currentEditAttributeId != null) {
           formDataMap["attributes[0][id]"] = currentEditAttributeId;
         }
-        formDataMap["attributes[0][price]"] = priceCtrl.text.trim();
-        formDataMap["attributes[0][discount_price]"] = discountPriceCtrl.text
-            .trim();
-        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
-            .trim();
+        formDataMap["attributes[0][price]"] = _cleanPrice(priceCtrl.text);
+        formDataMap["attributes[0][discount_price]"] =
+            _cleanPrice(discountPriceCtrl.text);
+        formDataMap["attributes[0][preparation_time]"] =
+            prepTimeCtrl.text.trim();
       } else {
+        final attrId = (selectedAttributeId != null &&
+                selectedAttributeId!.trim().isNotEmpty)
+            ? selectedAttributeId!.trim()
+            : (currentEditAttributeId?.toString() ?? "2");
+
         if (currentEditAttributeId != null) {
-          formDataMap["attributes[0][id]"] = currentEditAttributeId;
+          formDataMap["attributes[0][id]"] = currentEditAttributeId.toString();
         }
-        formDataMap["attributes[0][preparation_time]"] = prepTimeCtrl.text
-            .trim();
-        formDataMap["attributes[0][retail_price]"] = priceCtrl.text.trim();
-        formDataMap["attributes[0][selling_price]"] = discountPriceCtrl.text
-            .trim();
+        formDataMap["attributes[0][grocery_attribute_id]"] = attrId;
+        formDataMap["attributes[0][attribute_value]"] =
+            prepTimeCtrl.text.trim().isEmpty
+                ? (selectedAttributeDisplayName ?? "1")
+                : prepTimeCtrl.text.trim();
+        formDataMap["attributes[0][retail_price]"] =
+            _cleanPrice(priceCtrl.text);
+        formDataMap["attributes[0][selling_price]"] =
+            _cleanPrice(discountPriceCtrl.text);
       }
       if (kDebugMode) {
         for (final e in formDataMap.entries) {
@@ -1273,34 +1301,49 @@ class MenuController extends GetxController {
             : ApiEndPoints.updateGroceryMenuEdit,
         body: formData,
       );
+
       if (context.mounted) {
         Get.back();
       }
+
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (Get.isRegistered<ProfileController>()) {
           await Get.find<ProfileController>().fetchRestaurantMenus();
         }
         if (context.mounted) {
-          Get.back();
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
+          String successMessage = "Menu updated successfully";
+          final msgMap = response.data['message'];
+          if (msgMap is Map) {
+            final locale = Get.locale?.languageCode ?? 'en';
+            final localMsg = msgMap['message_$locale'] ?? msgMap['message_en'];
+            if (localMsg is List && localMsg.isNotEmpty) {
+              successMessage = localMsg.first.toString();
+            } else if (localMsg != null) {
+              successMessage = localMsg.toString();
             }
+          } else if (msgMap is String && msgMap.isNotEmpty) {
+            successMessage = msgMap;
           }
           showToast(context, successMessage);
+          Get.back();
         }
       } else {
         if (context.mounted) {
-          showToast(
-            context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
-          );
+          String errorMessage = "Failed to update menu";
+          final msgMap = response.data['message'];
+          if (msgMap is Map) {
+            final locale = Get.locale?.languageCode ?? 'en';
+            final localMsg = msgMap['message_$locale'] ?? msgMap['message_en'];
+            if (localMsg is List && localMsg.isNotEmpty) {
+              errorMessage = localMsg.first.toString();
+            } else if (localMsg != null) {
+              errorMessage = localMsg.toString();
+            }
+          } else if (msgMap is String && msgMap.isNotEmpty) {
+            errorMessage = msgMap;
+          }
+          showToast(context, errorMessage);
         }
       }
     } catch (error) {

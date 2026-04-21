@@ -308,6 +308,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       horizontalPadding:
                                           layout.horizontalPadding,
                                       orderId: order.id?.toString() ?? "NA",
+                                      orderCode: order.orderCode,
                                       customerName:
                                           order.userName ??
                                           S.of(context).unknown,

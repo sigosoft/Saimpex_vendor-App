@@ -1,3 +1,5 @@
+import 'OrderDetailsModel.dart';
+
 class HomeModel {
   final bool? status;
   final HomeData? data;
@@ -64,7 +66,9 @@ class Membership {
       nameEn: json['name_en']?.toString(),
       nameFr: json['name_fr']?.toString(),
       nameAr: json['name_ar']?.toString(),
-      expiresInDays: json['expires_in_days'],
+      expiresInDays: (json['expires_in_days'] is int)
+          ? json['expires_in_days']
+          : int.tryParse(json['expires_in_days']?.toString() ?? ''),
       subscriptionEndDate: json['subscription_end_date']?.toString(),
     );
   }
@@ -81,9 +85,15 @@ class Summary {
     if (json == null) return Summary();
 
     return Summary(
-      todayOrders: json['today_orders'],
-      totalOrders: json['total_orders'],
-      totalProducts: json['total_products'],
+      todayOrders: (json['today_orders'] is int)
+          ? json['today_orders']
+          : int.tryParse(json['today_orders']?.toString() ?? ''),
+      totalOrders: (json['total_orders'] is int)
+          ? json['total_orders']
+          : int.tryParse(json['total_orders']?.toString() ?? ''),
+      totalProducts: (json['total_products'] is int)
+          ? json['total_products']
+          : int.tryParse(json['total_products']?.toString() ?? ''),
     );
   }
 }
@@ -100,8 +110,12 @@ class Orders {
     if (json == null) return Orders();
 
     return Orders(
-      currentPage: json['current_page'],
-      lastPage: json['last_page'],
+      currentPage: (json['current_page'] is int)
+          ? json['current_page']
+          : int.tryParse(json['current_page']?.toString() ?? ''),
+      lastPage: (json['last_page'] is int)
+          ? json['last_page']
+          : int.tryParse(json['last_page']?.toString() ?? ''),
       total: json['total'],
       data: (json['data'] as List?)?.map((e) => OrderData.fromJson(e)).toList(),
     );
@@ -118,10 +132,13 @@ class OrderData {
   final String? userEmail;
   final String? userMobile;
   final int? orderItemsCount;
+  final int? totalItems;
+  final int? basketItemsCount;
   final String? placedAtFormatted;
   final String? deliveryBoyName;
   final String? cancelReason;
   final String? type;
+  final List<BasketOrder>? basketOrders;
 
   OrderData({
     this.orderCode,
@@ -133,29 +150,68 @@ class OrderData {
     this.userEmail,
     this.userMobile,
     this.orderItemsCount,
+    this.totalItems,
+    this.basketItemsCount,
     this.placedAtFormatted,
     this.deliveryBoyName,
     this.cancelReason,
     this.type,
+    this.basketOrders,
   });
 
   factory OrderData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return OrderData();
 
+    final typeStr =
+        (json['type'] ?? json['order_type'] ?? json['basket_type'])
+            ?.toString()
+            .toLowerCase() ??
+        '';
+    final isBasket = typeStr.contains('basket');
+    final basketOrders = (json['basket_orders'] as List?)
+        ?.map((e) => BasketOrder.fromJson(e))
+        .toList();
+
     return OrderData(
       orderCode: json['order_code']?.toString(),
-      status: json['status'],
+      status: (json['status'] is int)
+          ? json['status']
+          : int.tryParse(json['status']?.toString() ?? ''),
       placedAt: json['placed_at']?.toString(),
-      id: json['id'],
+      id: (json['id'] is int)
+          ? json['id']
+          : int.tryParse(json['id']?.toString() ?? ''),
       total: json['total']?.toString(),
       userName: json['user_name']?.toString(),
       userEmail: json['user_email']?.toString(),
       userMobile: json['user_mobile']?.toString(),
-      orderItemsCount: json['order_items_count'],
+      orderItemsCount: isBasket
+          ? (basketOrders?.fold<int>(
+                0,
+                (sum, bo) =>
+                    sum +
+                    (bo.basket?.basketItems?.fold<int>(
+                          0,
+                          (s, i) => s + (i.quantity ?? 0),
+                        ) ??
+                        0),
+              ) ??
+              int.tryParse(json['total_items']?.toString() ?? '') ??
+              int.tryParse(json['basket_items_count']?.toString() ?? '') ??
+              int.tryParse(json['order_items_count']?.toString() ?? '') ??
+              0)
+          : (int.tryParse(json['order_items_count']?.toString() ?? '') ?? 0),
+      totalItems: (json['total_items'] is int)
+          ? json['total_items']
+          : int.tryParse(json['total_items']?.toString() ?? ''),
+      basketItemsCount: (json['basket_items_count'] is int)
+          ? json['basket_items_count']
+          : int.tryParse(json['basket_items_count']?.toString() ?? ''),
       placedAtFormatted: json['placed_at_formatted']?.toString(),
       cancelReason: json['cancel_reason']?.toString(),
       type: (json['type'] ?? json['order_type'] ?? json['basket_type'])
           ?.toString(),
+      basketOrders: basketOrders,
       deliveryBoyName:
           (json['delivery_boy_name']?.toString() ??
                   json['delivery_boy']?['name']?.toString() ??
@@ -188,11 +244,15 @@ class Vendor {
     if (json == null) return Vendor();
 
     return Vendor(
-      id: json['id'],
+      id: (json['id'] is int)
+          ? json['id']
+          : int.tryParse(json['id']?.toString() ?? ''),
       nameEn: json['name_en']?.toString(),
       nameAr: json['name_ar']?.toString(),
       nameFr: json['name_fr']?.toString(),
-      vendorType: json['vendor_type'],
+      vendorType: (json['vendor_type'] is int)
+          ? json['vendor_type']
+          : int.tryParse(json['vendor_type']?.toString() ?? ''),
       image: json['image']?.toString(),
     );
   }

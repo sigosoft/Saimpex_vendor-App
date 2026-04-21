@@ -340,7 +340,8 @@ class ItemController extends GetxController {
     } else if (discountPriceCtrl.text.trim().isEmpty) {
       showToast(context, "Please enter discount price");
       return false;
-    } else if (prepTimeCtrl.text.trim().isEmpty) {
+    } else if (Get.find<ProfileController>().vendorType != '2' &&
+        prepTimeCtrl.text.trim().isEmpty) {
       showToast(context, "Please enter preparation time");
       return false;
     } else if (serialNumberCtrl.text.trim().isEmpty) {
