@@ -23,6 +23,7 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_orders_header.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_stats_section.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
+import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 
 import '../../Utils/Utils.dart';
 import '../../configs/ApiConfigs.dart';
@@ -239,13 +240,27 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   }
 
   void _handleAcceptOrder(String orderId) {
-    final vendorType =
-        homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
-    if (vendorType == "1") {
-      detailsController.acceptRestaurantOrder(context, orderId);
-    } else {
-      detailsController.acceptGroceryOrder(context, orderId);
-    }
+    showAcceptOrderDialog(
+      context: context,
+      onAccept: () {
+        final vendorType =
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+        if (vendorType == "1") {
+          detailsController.acceptRestaurantOrder(context, orderId);
+        } else {
+          detailsController.acceptGroceryOrder(context, orderId);
+        }
+      },
+      onAcceptAndPrint: () {
+        final vendorType =
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+        if (vendorType == "1") {
+          detailsController.acceptRestaurantOrder(context, orderId);
+        } else {
+          detailsController.acceptGroceryOrder(context, orderId);
+        }
+      },
+    );
   }
 
   void _handleCancelOrder(String orderId) {

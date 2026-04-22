@@ -10,6 +10,7 @@ import 'package:saimpex_vendor/utils/widgets/dotted_line_painter.dart';
 // ignore: unused_import — success_dialog is used indirectly via utils
 import 'package:saimpex_vendor/utils/widgets/success_dialog.dart';
 import 'package:saimpex_vendor/view/shimmer_loading/shimmer_text_content.dart';
+import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 
 import '../../configs/ApiConfigs.dart';
 import '../../controller/order_details_controller.dart';
@@ -1057,17 +1058,37 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               await getSavedObject(
                                                 "vendorType",
                                               );
-                                          if (vendorType == "1") {
-                                            controller.acceptRestaurantOrder(
-                                              context,
-                                              widget.orderId,
-                                            );
-                                          } else {
-                                            controller.acceptGroceryOrder(
-                                              context,
-                                              widget.orderId,
-                                            );
-                                          }
+                                          showAcceptOrderDialog(
+                                            context: context,
+                                            onAccept: () {
+                                              if (vendorType == "1") {
+                                                controller
+                                                    .acceptRestaurantOrder(
+                                                      context,
+                                                      widget.orderId,
+                                                    );
+                                              } else {
+                                                controller.acceptGroceryOrder(
+                                                  context,
+                                                  widget.orderId,
+                                                );
+                                              }
+                                            },
+                                            onAcceptAndPrint: () {
+                                              if (vendorType == "1") {
+                                                controller
+                                                    .acceptRestaurantOrder(
+                                                      context,
+                                                      widget.orderId,
+                                                    );
+                                              } else {
+                                                controller.acceptGroceryOrder(
+                                                  context,
+                                                  widget.orderId,
+                                                );
+                                              }
+                                            },
+                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: const Color(
