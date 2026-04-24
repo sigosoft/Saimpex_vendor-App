@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -2960,11 +2961,13 @@ class VendorPayoutItem extends StatelessWidget {
 class VendorProfileHeaderCard extends StatelessWidget {
   final String name;
   final String rating;
+  final String? imageUrl;
 
   const VendorProfileHeaderCard({
     super.key,
     required this.name,
     required this.rating,
+    this.imageUrl,
   });
 
   @override
@@ -2989,23 +2992,79 @@ class VendorProfileHeaderCard extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width * 0.2,
             height: MediaQuery.of(context).size.width * 0.2,
-            padding: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               color: const Color(0xFFEEF2FF),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Center(
-              child: Text(
-                name.isNotEmpty ? name[0].toUpperCase() : "R1",
-                style: GoogleFonts.rubik(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFFF5216),
-                ),
-              ),
-            ),
+            child: imageUrl != null && imageUrl!.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child:
+                        (imageUrl!.startsWith('http') ||
+                            imageUrl!.startsWith('user/'))
+                        ? Image.network(
+                            imageUrl!.startsWith('http')
+                                ? imageUrl!
+                                : '${ApiConfigs.IMAGE_URL}$imageUrl',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Center(
+                                  child: Text(
+                                    name.isNotEmpty
+                                        ? name[0].toUpperCase()
+                                        : "R1",
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFFFF5216),
+                                    ),
+                                  ),
+                                ),
+                          )
+                        : imageUrl!.contains('/')
+                        ? Image.file(
+                            File(imageUrl!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Center(
+                                  child: Text(
+                                    name.isNotEmpty
+                                        ? name[0].toUpperCase()
+                                        : "R1",
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFFFF5216),
+                                    ),
+                                  ),
+                                ),
+                          )
+                        : Center(
+                            child: Text(
+                              name.isNotEmpty ? name[0].toUpperCase() : "R1",
+                              style: GoogleFonts.rubik(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFFF5216),
+                              ),
+                            ),
+                          ),
+                  )
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        name.isNotEmpty ? name[0].toUpperCase() : "R1",
+                        style: GoogleFonts.rubik(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
+                    ),
+                  ),
           ),
-          const SizedBox(height: 10),
           Text(
             name,
             style: GoogleFonts.rubik(

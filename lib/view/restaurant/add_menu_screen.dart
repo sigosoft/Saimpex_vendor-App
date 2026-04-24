@@ -341,33 +341,34 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AddMenuFieldLabel(S.of(context).isVegLabel),
-                        SizedBox(height: screenHeight * 0.007),
-                        AddMenuDropdownField(
-                          value: controller.selectedIsVeg == null
-                              ? null
-                              : (controller.selectedIsVeg == 'Yes'
-                                    ? S.of(context).yesLabel
-                                    : S.of(context).noLabel),
-                          hint: 'Select',
-                          items: [
-                            S.of(context).yesLabel,
-                            S.of(context).noLabel,
-                          ],
-                          onChanged: (v) {
-                            controller.selectedIsVeg =
-                                (v == S.of(context).yesLabel) ? 'Yes' : 'No';
-                            controller.update();
-                          },
-                          height: screenHeight * 0.055,
-                        ),
-                      ],
+                  if (Get.find<ProfileController>().vendorType != '2')
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AddMenuFieldLabel(S.of(context).isVegLabel),
+                          SizedBox(height: screenHeight * 0.007),
+                          AddMenuDropdownField(
+                            value: controller.selectedIsVeg == null
+                                ? null
+                                : (controller.selectedIsVeg == 'Yes'
+                                      ? S.of(context).yesLabel
+                                      : S.of(context).noLabel),
+                            hint: 'Select',
+                            items: [
+                              S.of(context).yesLabel,
+                              S.of(context).noLabel,
+                            ],
+                            onChanged: (v) {
+                              controller.selectedIsVeg =
+                                  (v == S.of(context).yesLabel) ? 'Yes' : 'No';
+                              controller.update();
+                            },
+                            height: screenHeight * 0.055,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
               SizedBox(height: screenHeight * 0.02),

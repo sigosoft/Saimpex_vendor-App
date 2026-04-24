@@ -3,6 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/model/OrderStatusModel.dart' as order;
 import 'package:saimpex_vendor/controller/home_controller.dart';
+import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 
 import '../configs/ApiConfigs.dart';
 import '../configs/Dioclient.dart';
@@ -165,8 +166,9 @@ class OrderDetailsController extends GetxController {
 
   Future<void> acceptRestaurantOrder(
     BuildContext context,
-    String orderid,
-  ) async {
+    String orderid, {
+    bool printAfter = false,
+  }) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
@@ -179,6 +181,16 @@ class OrderDetailsController extends GetxController {
         response.data,
       );
       if (orderStatusModel.status.toString() == "true") {
+        if (printAfter) {
+          try {
+            await OrderPrintService().printOrder(
+              orderId: orderid,
+              orderType: "restaurant",
+            );
+          } catch (e) {
+            debugPrint("Print error: $e");
+          }
+        }
         Get.back();
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
@@ -207,7 +219,11 @@ class OrderDetailsController extends GetxController {
     }
   }
 
-  Future<void> acceptGroceryOrder(BuildContext context, String orderid) async {
+  Future<void> acceptGroceryOrder(
+    BuildContext context,
+    String orderid, {
+    bool printAfter = false,
+  }) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
@@ -220,6 +236,16 @@ class OrderDetailsController extends GetxController {
         response.data,
       );
       if (orderStatusModel.status.toString() == "true") {
+        if (printAfter) {
+          try {
+            await OrderPrintService().printOrder(
+              orderId: orderid,
+              orderType: "grocery",
+            );
+          } catch (e) {
+            debugPrint("Print error: $e");
+          }
+        }
         Get.back();
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);

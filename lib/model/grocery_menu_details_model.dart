@@ -91,6 +91,7 @@ class GroceryMenu {
   final String? categoryNameAr;
   final String? categoryNameFr;
   final List<Category>? categories;
+  final int? isVeg;
   final String? subCategoryNameEn;
   final String? subCategoryNameAr;
   final String? subCategoryNameFr;
@@ -109,6 +110,7 @@ class GroceryMenu {
     this.descriptionFr,
     this.unitTypeId,
     this.image,
+    this.isVeg,
     this.approvalStatus,
     this.deletedAt,
     this.createdAt,
@@ -148,6 +150,9 @@ class GroceryMenu {
           ? List<Category>.from(
               json['categories'].map((x) => Category.fromJson(x)))
           : [],
+      isVeg: json['is_veg'] is int
+          ? json['is_veg']
+          : int.tryParse(json['is_veg']?.toString() ?? '') ?? 0,
       subCategoryNameEn: json['sub_category_name_en'] ?? "",
       subCategoryNameAr: json['sub_category_name_ar'] ?? "",
       subCategoryNameFr: json['sub_category_name_fr'] ?? "",
@@ -177,6 +182,7 @@ class GroceryMenu {
       "category_name_ar": categoryNameAr ?? "",
       "category_name_fr": categoryNameFr ?? "",
       "categories": categories?.map((x) => x.toJson()).toList() ?? [],
+      "is_veg": isVeg ?? 0,
       "sub_category_name_en": subCategoryNameEn ?? "",
       "sub_category_name_ar": subCategoryNameAr ?? "",
       "sub_category_name_fr": subCategoryNameFr ?? "",

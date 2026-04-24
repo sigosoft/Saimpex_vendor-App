@@ -169,8 +169,10 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                         value: categoryName.isNotEmpty ? categoryName : '—',
                       ),
                       const SizedBox(height: 10),
-                      _labelIsVeg(isVeg: isVeg, value: isVeg ? 'Yes' : 'No'),
-                      const SizedBox(height: 14),
+                      if (Get.find<ProfileController>().vendorType != '2') ...[
+                        _labelIsVeg(isVeg: isVeg, value: isVeg ? 'Yes' : 'No'),
+                        const SizedBox(height: 14),
+                      ],
                       Row(
                         children: [
                           Expanded(

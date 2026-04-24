@@ -156,6 +156,13 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
   }
 
   Future<void> _fetchOrders({String? keyword}) async {
+    // Switch away from Pending tab if auto-accept is enabled
+    if (homeController.isAutoAcceptOrders && selectedTab == "Pending") {
+      setState(() {
+        selectedTab = "Accepted";
+      });
+    }
+
     _currentPage = 1;
     _hasNextPage = true;
     await homeController.fetchHome(
@@ -183,7 +190,8 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       context: context,
       onAccept: () {
         final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
+            "0";
         if (vendorType == "1") {
           detailsController.acceptRestaurantOrder(context, orderId);
         } else {
@@ -192,7 +200,8 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       },
       onAcceptAndPrint: () {
         final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
+            "0";
         if (vendorType == "1") {
           detailsController.acceptRestaurantOrder(context, orderId);
         } else {
@@ -230,10 +239,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       );
       debugPrint('ESC/POS bytes generated: ${payload.bytes.length}');
       if (!mounted) return;
-      showToast(
-        context,
-        'Printed successfully',
-      );
+      showToast(context, 'Printed successfully');
       debugPrint(payload.preview);
     } catch (error) {
       if (!mounted) return;
@@ -300,7 +306,9 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                   height: layout.tabsHeight,
                   leftPadding: layout.horizontalPadding,
                   tabWidth: layout.tabWidth,
-                  tabs: tabs,
+                  tabs: controller.isAutoAcceptOrders
+                      ? tabs.where((t) => t != "Pending").toList()
+                      : tabs,
                   tabCounts: _tabCounts,
                   selectedTab: selectedTab,
                   onTabChanged: (tab) {

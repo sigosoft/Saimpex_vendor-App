@@ -136,7 +136,9 @@ class RestaurantMenu {
       descriptionAr: json['description_ar'] ?? "",
       descriptionFr: json['description_fr'] ?? "",
       image: json['image'] ?? "",
-      isVeg: json['is_veg'] ?? 0,
+      isVeg: json['is_veg'] is int
+          ? json['is_veg']
+          : int.tryParse(json['is_veg']?.toString() ?? '') ?? 0,
       approvalStatus: json['approval_status'] ?? 0,
       deletedAt: json['deleted_at'],
       createdAt: json['created_at'] ?? "",

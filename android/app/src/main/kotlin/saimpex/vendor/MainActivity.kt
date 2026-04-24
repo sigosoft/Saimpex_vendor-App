@@ -99,12 +99,31 @@ class MainActivity : FlutterActivity() {
             var socket: BluetoothSocket? = null
             try {
                 adapter.cancelDiscovery()
-                socket = device.createRfcommSocketToServiceRecord(sppUuid)
-                socket.connect()
+                
+                // Try secure connection first
+                socket = try {
+                    device.createRfcommSocketToServiceRecord(sppUuid)
+                } catch (e: Exception) {
+                    // Fallback to insecure if creation fails
+                    device.createInsecureRfcommSocketToServiceRecord(sppUuid)
+                }
+                
+                try {
+                    socket?.connect()
+                } catch (e: Exception) {
+                    // If secure connect fails, try insecure connect
+                    socket?.close()
+                    socket = device.createInsecureRfcommSocketToServiceRecord(sppUuid)
+                    socket.connect()
+                }
 
-                val output = socket.outputStream
+                val output = socket?.outputStream ?: throw IOException("Unable to get output stream")
                 output.write(payload)
                 output.flush()
+                
+                // Give the printer a moment to process before closing the socket
+                Thread.sleep(200)
+                
                 return device.address
             } catch (e: Exception) {
                 lastError = e

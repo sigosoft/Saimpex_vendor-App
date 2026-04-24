@@ -377,6 +377,79 @@ class VendorOrderCard extends StatelessWidget {
                 ],
               )
             else if (status.toLowerCase() == 'preparing')
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: onTap,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFFF5216)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: Text(
+                            S.of(context).viewDetails,
+                            style: GoogleFonts.rubik(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: onMarkAsReady,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF5216),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: Text(
+                            S.of(context).markAsReady,
+                            style: GoogleFonts.rubik(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: OutlinedButton(
+                      onPressed: onPrint ?? () {},
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFFFF5216)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      child: Text(
+                        "Accept & Print",
+                        style: GoogleFonts.rubik(
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else if (status.toLowerCase() == 'cancelled')
+              const SizedBox.shrink()
+            else if (status.toLowerCase() == 'accepted')
               Row(
                 children: [
                   Expanded(
@@ -401,7 +474,7 @@ class VendorOrderCard extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onMarkAsReady,
+                      onPressed: onPrint ?? () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF5216),
                         foregroundColor: Colors.white,
@@ -412,60 +485,63 @@ class VendorOrderCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
-                        S.of(context).markAsReady,
+                        "Print Order",
                         style: GoogleFonts.rubik(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
                 ],
               )
-            else if (status.toLowerCase() == 'cancelled')
-              const SizedBox.shrink()
             else
-              SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.05,
-                child: OutlinedButton(
-                  onPressed: onTap,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFFFF5216)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    child: OutlinedButton(
+                      onPressed: onTap,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFFFF5216)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        S.of(context).viewDetails,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    S.of(context).viewDetails,
-                    style: GoogleFonts.rubik(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFFFF5216),
-                    ),
-                  ),
-                ),
+                  const SizedBox(height: 12),
+                  status.toLowerCase() == 'cancelled'
+                      ? Container()
+                      : SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          child: OutlinedButton(
+                            onPressed: onPrint ?? () {},
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFFFF5216)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              "Accept & Print",
+                              style: GoogleFonts.rubik(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFFF5216),
+                              ),
+                            ),
+                          ),
+                        ),
+                ],
               ),
-            const SizedBox(height: 12),
-            status.toLowerCase() == 'cancelled'?Container():
-            SizedBox(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: OutlinedButton(
-                onPressed: onPrint ?? () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFFF5216)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  "Accept & Print",
-                  style: GoogleFonts.rubik(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFFFF5216),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

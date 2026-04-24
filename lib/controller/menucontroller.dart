@@ -370,6 +370,8 @@ class MenuController extends GetxController {
     final menuId = int.tryParse(itemId);
     if (menuId == null) return;
     hasPopulatedEditForm = false;
+    uploadedImages.clear();
+    existingMenuImageUrls.clear();
     update();
     await getRestaurantMenuDetails(restaurantMenuId: menuId);
   }
@@ -533,7 +535,9 @@ class MenuController extends GetxController {
     if (selectedCategoryIds.isEmpty) {
       return "Please select at least one category";
     }
-    if (selectedIsVeg == null || selectedIsVeg!.trim().isEmpty) {
+    final profileController = Get.find<ProfileController>();
+    if (profileController.vendorType == '1' &&
+        (selectedIsVeg == null || selectedIsVeg!.trim().isEmpty)) {
       return "Please select veg type";
     }
     if (descEnCtrl.text.trim().isEmpty) {
@@ -546,8 +550,8 @@ class MenuController extends GetxController {
         (selectedAttributeId == null || selectedAttributeId!.trim().isEmpty)) {
       return "Please select attribute";
     }
-    final vendorType = Get.find<ProfileController>().vendorType;
-    if (vendorType != '2' && prepTimeCtrl.text.trim().isEmpty) {
+    if (profileController.vendorType == '1' &&
+        prepTimeCtrl.text.trim().isEmpty) {
       return "Please enter preparation time";
     }
     if (priceCtrl.text.trim().isEmpty) {
@@ -655,7 +659,13 @@ class MenuController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (Get.isRegistered<ProfileController>()) {
-          await Get.find<ProfileController>().fetchRestaurantMenus();
+          final profileCtrl = Get.find<ProfileController>();
+          await profileCtrl.fetchRestaurantMenus();
+          if (profileCtrl.vendorType == '2') {
+            await profileCtrl.fetchGroceryMenuItems(
+              categoryId: profileCtrl.selectedRestaurantCategoryId,
+            );
+          }
         }
         if (context.mounted) {
           Get.back();
@@ -1313,7 +1323,18 @@ class MenuController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (Get.isRegistered<ProfileController>()) {
-          await Get.find<ProfileController>().fetchRestaurantMenus();
+          final profileCtrl = Get.find<ProfileController>();
+          await profileCtrl.fetchRestaurantMenus();
+          if (profileCtrl.vendorType == '2') {
+            await profileCtrl.fetchGroceryMenuItems(
+              categoryId: profileCtrl.selectedRestaurantCategoryId,
+            );
+          }
+          if (currentEditMenuId != null) {
+            await profileCtrl.getRestaurantMenuDetails(
+              restaurantMenuId: currentEditMenuId,
+            );
+          }
         }
         if (context.mounted) {
           String successMessage = "Menu updated successfully";

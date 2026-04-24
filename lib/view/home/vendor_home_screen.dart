@@ -219,6 +219,14 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   Future<void> _fetchOrders({String? keyword}) async {
     await homeController.getProfile(context);
     if (!mounted) return;
+
+    // Switch away from Pending tab if auto-accept is enabled
+    if (homeController.isAutoAcceptOrders && selectedTab == "Pending") {
+      setState(() {
+        selectedTab = "Accepted";
+      });
+    }
+
     await homeController.fetchHome(
       context,
       orderStatus: _statusValue(selectedTab),
@@ -403,7 +411,9 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                             height: layout.tabsHeight,
                             leftPadding: layout.horizontalPadding,
                             tabWidth: layout.tabWidth,
-                            tabs: tabs,
+                            tabs: controller.isAutoAcceptOrders
+                                ? tabs.where((t) => t != "Pending").toList()
+                                : tabs,
                             tabCounts: _tabCounts,
                             selectedTab: selectedTab,
                             onTabChanged: (tab) {
@@ -478,6 +488,11 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                           statusToSend,
                                         );
                                         if (mounted) {
+                                          if (value && selectedTab == "Pending") {
+                                            setState(() {
+                                              selectedTab = "Accepted";
+                                            });
+                                          }
                                           await _fetchOrders();
                                         }
                                       },

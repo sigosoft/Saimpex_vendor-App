@@ -11,6 +11,7 @@ import 'package:saimpex_vendor/utils/widgets/dotted_line_painter.dart';
 import 'package:saimpex_vendor/utils/widgets/success_dialog.dart';
 import 'package:saimpex_vendor/view/shimmer_loading/shimmer_text_content.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
+import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 
 import '../../configs/ApiConfigs.dart';
 import '../../controller/order_details_controller.dart';
@@ -981,10 +982,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 ),
                               ],
 
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.15,
-                              ),
+                              SizedBox(height: 200),
                               // Spacing for bottom buttons
                             ],
                           ),
@@ -994,189 +992,406 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                 controller.orderData == null
                     ? Container()
                     : Positioned(
-                        bottom: 30,
-                        left: 20,
-                        right: 20,
-                        child: controller.orderData!.status.toString() == '1'
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(24),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 15,
+                                offset: const Offset(0, -4),
+                              ),
+                            ],
+                          ),
+                          child: controller.orderData!.status.toString() == '1'
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 40,
+                                            child: ElevatedButton(
+                                              onPressed: () async {
+                                                String vendorType =
+                                                    await getSavedObject(
+                                                      "vendorType",
+                                                    );
+                                                if (vendorType == "1") {
+                                                  controller
+                                                      .cancelRestaurantOrder(
+                                                        context,
+                                                        widget.orderId,
+                                                      );
+                                                } else {
+                                                  controller.cancelGroceryOrder(
+                                                    context,
+                                                    widget.orderId,
+                                                  );
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(
+                                                  0xFFF1F5F9,
+                                                ),
+                                                foregroundColor: const Color(
+                                                  0xFFEF4444,
+                                                ),
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 10,
+                                                    ),
+                                              ),
+                                              child: Text(
+                                                S.of(context).reject,
+                                                style: GoogleFonts.rubik(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 40,
+                                            child: ElevatedButton(
+                                              onPressed: () async {
+                                                String vendorType =
+                                                    await getSavedObject(
+                                                      "vendorType",
+                                                    );
+                                                showAcceptOrderDialog(
+                                                  context: context,
+                                                  onAccept: () {
+                                                    if (vendorType == "1") {
+                                                      controller
+                                                          .acceptRestaurantOrder(
+                                                            context,
+                                                            widget.orderId,
+                                                          );
+                                                    } else {
+                                                      controller
+                                                          .acceptGroceryOrder(
+                                                            context,
+                                                            widget.orderId,
+                                                          );
+                                                    }
+                                                  },
+                                                  onAcceptAndPrint: () {
+                                                    if (vendorType == "1") {
+                                                      controller
+                                                          .acceptRestaurantOrder(
+                                                            context,
+                                                            widget.orderId,
+                                                            printAfter: true,
+                                                          );
+                                                    } else {
+                                                      controller
+                                                          .acceptGroceryOrder(
+                                                            context,
+                                                            widget.orderId,
+                                                            printAfter: true,
+                                                          );
+                                                    }
+                                                  },
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(
+                                                  0xFFFF5216,
+                                                ),
+                                                foregroundColor: Colors.white,
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 10,
+                                                    ),
+                                              ),
+                                              child: Text(
+                                                S.of(context).acceptOrder,
+                                                style: GoogleFonts.rubik(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      width: double.infinity,
                                       height: 40,
-                                      child: ElevatedButton(
+                                      child: OutlinedButton(
                                         onPressed: () async {
                                           String vendorType =
                                               await getSavedObject(
                                                 "vendorType",
                                               );
                                           if (vendorType == "1") {
-                                            controller.cancelRestaurantOrder(
+                                            controller.acceptRestaurantOrder(
                                               context,
                                               widget.orderId,
+                                              printAfter: true,
                                             );
                                           } else {
-                                            controller.cancelGroceryOrder(
+                                            controller.acceptGroceryOrder(
                                               context,
                                               widget.orderId,
+                                              printAfter: true,
                                             );
                                           }
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFFF1F5F9,
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                            color: Color(0xFFFF5216),
                                           ),
-                                          foregroundColor: const Color(
-                                            0xFFEF4444,
-                                          ),
-                                          elevation: 0,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 10,
-                                          ),
                                         ),
                                         child: Text(
-                                          S.of(context).reject,
+                                          "Accept & Print",
                                           style: GoogleFonts.rubik(
+                                            color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Container(
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          String vendorType =
-                                              await getSavedObject(
-                                                "vendorType",
+                                  ],
+                                )
+                              : controller.orderData!.status.toString() == '2'
+                              ? Row(
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: OutlinedButton(
+                                          onPressed: () async {
+                                            try {
+                                              await OrderPrintService()
+                                                  .printOrder(
+                                                    orderId: widget.orderId,
+                                                    orderType: widget.orderType,
+                                                  );
+                                            } catch (e) {
+                                              debugPrint("Print error: $e");
+                                            }
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                              color: Color(0xFFFF5216),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Print Order",
+                                            style: GoogleFonts.rubik(
+                                              color: const Color(0xFFFF5216),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            String vendorType =
+                                                await getSavedObject(
+                                                  "vendorType",
+                                                );
+                                            if (vendorType == "1") {
+                                              controller.prepareRestaurantOrder(
+                                                context,
+                                                widget.orderId,
                                               );
-                                          showAcceptOrderDialog(
-                                            context: context,
-                                            onAccept: () {
-                                              if (vendorType == "1") {
-                                                controller
-                                                    .acceptRestaurantOrder(
-                                                      context,
-                                                      widget.orderId,
-                                                    );
-                                              } else {
-                                                controller.acceptGroceryOrder(
-                                                  context,
-                                                  widget.orderId,
-                                                );
-                                              }
-                                            },
-                                            onAcceptAndPrint: () {
-                                              if (vendorType == "1") {
-                                                controller
-                                                    .acceptRestaurantOrder(
-                                                      context,
-                                                      widget.orderId,
-                                                    );
-                                              } else {
-                                                controller.acceptGroceryOrder(
-                                                  context,
-                                                  widget.orderId,
-                                                );
-                                              }
-                                            },
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFFFF5216,
+                                            } else {
+                                              controller.prepareGroceryOrder(
+                                                context,
+                                                widget.orderId,
+                                              );
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(
+                                              0xFFFF5216,
+                                            ),
+                                            foregroundColor: Colors.white,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
                                           ),
-                                          foregroundColor: Colors.white,
-                                          elevation: 0,
+                                          child: Text(
+                                            S.of(context).prepareOrder,
+                                            style: GoogleFonts.rubik(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : controller.orderData!.status.toString() == '3'
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 40,
+                                            child: OutlinedButton(
+                                              onPressed: () async {
+                                                try {
+                                                  await OrderPrintService()
+                                                      .printOrder(
+                                                        orderId: widget.orderId,
+                                                        orderType:
+                                                            widget.orderType,
+                                                      );
+                                                } catch (e) {
+                                                  debugPrint("Print error: $e");
+                                                }
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                side: const BorderSide(
+                                                  color: Color(0xFFFF5216),
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Print Order",
+                                                style: GoogleFonts.rubik(
+                                                  color: const Color(
+                                                    0xFFFF5216,
+                                                  ),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 40,
+                                            child: ElevatedButton(
+                                              onPressed: () async {
+                                                String vendorType =
+                                                    await getSavedObject(
+                                                      "vendorType",
+                                                    );
+                                                if (vendorType == "1") {
+                                                  controller
+                                                      .markAsReadyRestaurantOrder(
+                                                        context,
+                                                        widget.orderId,
+                                                      );
+                                                } else {
+                                                  controller
+                                                      .markAsReadyGroceryOrder(
+                                                        context,
+                                                        widget.orderId,
+                                                      );
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(
+                                                  0xFFFF5216,
+                                                ),
+                                                foregroundColor: Colors.white,
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                S.of(context).markAsReady,
+                                                style: GoogleFonts.rubik(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 40,
+                                      child: OutlinedButton(
+                                        onPressed: () async {
+                                          try {
+                                            await OrderPrintService()
+                                                .printOrder(
+                                                  orderId: widget.orderId,
+                                                  orderType: widget.orderType,
+                                                );
+                                          } catch (e) {
+                                            debugPrint("Print error: $e");
+                                          }
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                            color: Color(0xFFFF5216),
+                                          ),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 10,
-                                          ),
                                         ),
                                         child: Text(
-                                          S.of(context).acceptOrder,
+                                          "Accept & Print",
                                           style: GoogleFonts.rubik(
+                                            color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : (controller.orderData!.status.toString() == '2' ||
-                                  controller.orderData!.status.toString() ==
-                                      '3')
-                            ? SizedBox(
-                                width: double.infinity,
-                                height: 40,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    String vendorType = await getSavedObject(
-                                      "vendorType",
-                                    );
-
-                                    if (controller.orderData!.status
-                                            .toString() ==
-                                        '3') {
-                                      if (vendorType == "1") {
-                                        controller.markAsReadyRestaurantOrder(
-                                          context,
-                                          widget.orderId,
-                                        );
-                                      } else {
-                                        controller.markAsReadyGroceryOrder(
-                                          context,
-                                          widget.orderId,
-                                        );
-                                      }
-                                    } else {
-                                      if (vendorType == "1") {
-                                        controller.prepareRestaurantOrder(
-                                          context,
-                                          widget.orderId,
-                                        );
-                                      } else {
-                                        controller.prepareGroceryOrder(
-                                          context,
-                                          widget.orderId,
-                                        );
-                                      }
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF5216),
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    controller.orderData!.status.toString() ==
-                                            '3'
-                                        ? S.of(context).markAsReady
-                                        : S.of(context).prepareOrder,
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                       ),
               ],
             ),

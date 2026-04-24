@@ -1152,7 +1152,7 @@ class ProfileController extends GetxController {
                 "description_ar": groceryMenu.descriptionAr ?? "",
                 "description_fr": groceryMenu.descriptionFr ?? "",
                 "image": groceryMenu.image ?? "",
-                "is_veg": 0,
+                "is_veg": groceryMenu.isVeg ?? 0,
                 "approval_status": groceryMenu.approvalStatus ?? 0,
                 "deleted_at": groceryMenu.deletedAt?.toString(),
                 "created_at": groceryMenu.createdAt ?? "",

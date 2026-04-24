@@ -3,11 +3,7 @@ class RestaurantItemsModel {
   RestaurantItemsData? data;
   String? message;
 
-  RestaurantItemsModel({
-    this.status,
-    this.data,
-    this.message,
-  });
+  RestaurantItemsModel({this.status, this.data, this.message});
 
   factory RestaurantItemsModel.fromJson(Map<String, dynamic> json) {
     return RestaurantItemsModel(
@@ -82,15 +78,15 @@ class MenuItemsPagination {
   factory MenuItemsPagination.fromJson(Map<String, dynamic> json) {
     return MenuItemsPagination(
       currentPage: json['current_page'] ?? 0,
-      data: (json['data'] as List?)
-              ?.map((e) => MenuItem.fromJson(e))
-              .toList() ??
+      data:
+          (json['data'] as List?)?.map((e) => MenuItem.fromJson(e)).toList() ??
           [],
       firstPageUrl: json['first_page_url'] ?? '',
       from: json['from'] ?? 0,
       lastPage: json['last_page'] ?? 0,
       lastPageUrl: json['last_page_url'] ?? '',
-      links: (json['links'] as List?)
+      links:
+          (json['links'] as List?)
               ?.map((e) => PaginationLink.fromJson(e))
               .toList() ??
           [],
@@ -153,7 +149,9 @@ class MenuItem {
       descriptionAr: json['description_ar'] ?? '',
       descriptionFr: json['description_fr'] ?? '',
       image: json['image'] ?? '',
-      isVeg: json['is_veg'] ?? 0,
+      isVeg: json['is_veg'] is int
+          ? json['is_veg']
+          : int.tryParse(json['is_veg']?.toString() ?? '') ?? 0,
       price: json['price'] ?? '',
       discountPrice: json['discount_price'] ?? '',
       attributeNameEn: json['attribute_name_en'] ?? '',
@@ -161,7 +159,8 @@ class MenuItem {
       attributeNameFr: json['attribute_name_fr'] ?? '',
       itemStatus: json['item_status'] ?? 0,
       availableStatus: json['available_status'] ?? 0,
-      categories: (json['categories'] as List?)
+      categories:
+          (json['categories'] as List?)
               ?.map((e) => Category.fromJson(e))
               .toList() ??
           [],
@@ -176,13 +175,7 @@ class Category {
   String? nameFr;
   String? image;
 
-  Category({
-    this.id,
-    this.nameEn,
-    this.nameAr,
-    this.nameFr,
-    this.image,
-  });
+  Category({this.id, this.nameEn, this.nameAr, this.nameFr, this.image});
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
@@ -201,12 +194,7 @@ class PaginationLink {
   int? page;
   bool? active;
 
-  PaginationLink({
-    this.url,
-    this.label,
-    this.page,
-    this.active,
-  });
+  PaginationLink({this.url, this.label, this.page, this.active});
 
   factory PaginationLink.fromJson(Map<String, dynamic> json) {
     return PaginationLink(

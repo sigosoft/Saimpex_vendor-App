@@ -211,6 +211,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     rating: profile?.rating?.isNotEmpty == true
                         ? profile!.rating!
                         : "4.6",
+                    imageUrl: profileController.profilePicture.isNotEmpty
+                        ? profileController.profilePicture
+                        : profile?.image,
                   ),
                   const SizedBox(height: 24),
                   // Menu Buttons
@@ -220,7 +223,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       children: [
                         _buildMenuButton(S.of(context).account, "Account"),
                         const SizedBox(width: 10),
-                        _buildMenuButton(S.of(context).workHours, "Working Hours"),
+                        _buildMenuButton(
+                          S.of(context).workHours,
+                          "Working Hours",
+                        ),
                         const SizedBox(width: 10),
                         _buildMenuButton(S.of(context).leaves, "Leaves"),
                         const SizedBox(width: 10),
@@ -228,13 +234,22 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         const SizedBox(width: 10),
                         _buildMenuButton(S.of(context).items, "Items"),
                         const SizedBox(width: 10),
-                        _buildMenuButton(S.of(context).menuBulkImport, "Menu Bulk Import"),
+                        _buildMenuButton(
+                          S.of(context).menuBulkImport,
+                          "Menu Bulk Import",
+                        ),
                         const SizedBox(width: 10),
                         _buildMenuButton(S.of(context).basket, "Basket"),
                         const SizedBox(width: 10),
-                        _buildMenuButton(S.of(context).receivedPayouts, "Received Payouts"),
+                        _buildMenuButton(
+                          S.of(context).receivedPayouts,
+                          "Received Payouts",
+                        ),
                         const SizedBox(width: 10),
-                        _buildMenuButton(S.of(context).storeReports, "Store Reports"),
+                        _buildMenuButton(
+                          S.of(context).storeReports,
+                          "Store Reports",
+                        ),
                       ],
                     ),
                   ),
@@ -294,9 +309,18 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _detailRow(S.of(context).name, profile?.name ?? "Store 1"),
-                          _detailRow(S.of(context).owner, profile?.owner ?? "Salman"),
-                          _detailRow(S.of(context).storeId, profile?.id?.toString() ?? "1"),
+                          _detailRow(
+                            S.of(context).name,
+                            profile?.name ?? "Store 1",
+                          ),
+                          _detailRow(
+                            S.of(context).owner,
+                            profile?.owner ?? "Salman",
+                          ),
+                          _detailRow(
+                            S.of(context).storeId,
+                            profile?.id?.toString() ?? "1",
+                          ),
                           _detailRow(
                             S.of(context).contact,
                             "${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}",
@@ -335,7 +359,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             S.of(context).accountNumber,
                             _formatLongText(profile?.accountNumber ?? "-"),
                           ),
-                          _detailRow(S.of(context).swiftCode, profile?.ifscCode ?? "-"),
+                          _detailRow(
+                            S.of(context).swiftCode,
+                            profile?.ifscCode ?? "-",
+                          ),
                         ],
                       ),
                     ),
@@ -369,7 +396,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             S.of(context).regDate,
                             _formatLeaveDate(profile?.registrationDate),
                           ),
-                          _detailRow(S.of(context).gstNumber, profile?.gstNo ?? "-"),
+                          _detailRow(
+                            S.of(context).gstNumber,
+                            profile?.gstNo ?? "-",
+                          ),
                         ],
                       ),
                     ),
@@ -389,7 +419,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           ),
                           _detailRow(
                             S.of(context).totalProfit,
-                            "${profile?.totalProfit ?? "0"} MRU",
+                            "${(double.tryParse(profile?.totalProfit ?? "0") ?? 0.0).toStringAsFixed(2)} MRU",
                             isBoldValue: true,
                           ),
                         ],

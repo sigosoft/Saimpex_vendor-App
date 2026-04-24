@@ -167,7 +167,9 @@ class MenuItem {
       nameFr: json['name_fr']?.toString() ?? '',
       categoryId: json['category_id'] as int? ?? 0,
       image: json['image']?.toString() ?? '',
-      isVeg: json['is_veg'] as int? ?? 0,
+      isVeg: json['is_veg'] is int
+          ? json['is_veg'] as int
+          : int.tryParse(json['is_veg']?.toString() ?? '') ?? 0,
       restaurantId: json['restaurant_id'] as int? ?? 0,
       restaurantName: json['restaurant_name']?.toString() ?? '',
       price: json['price']?.toString() ?? '0',
