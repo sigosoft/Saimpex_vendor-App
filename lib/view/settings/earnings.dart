@@ -438,8 +438,8 @@ class _EarningsScreenState extends State<EarningsScreen> {
                       padding: EdgeInsets.only(top: screenHeight * 0.05),
                       child: NoDataWidget(
                         context,
-                        S.of(context).noPayouts,
-                        S.of(context).noPayouts,
+                        S.of(context).noPayoutsYet,
+                        S.of(context).noPayoutsYet,
                         'lib/assets/images/nodata.png',
                       ),
                     )

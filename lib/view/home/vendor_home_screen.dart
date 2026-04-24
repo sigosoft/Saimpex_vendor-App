@@ -23,6 +23,7 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_orders_header.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_stats_section.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
+import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 
 import '../../Utils/Utils.dart';
@@ -283,6 +284,25 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
     }
   }
 
+  Future<void> _handlePrintOrder(String orderId, String? orderType) async {
+    try {
+      final payload = await OrderPrintService().printOrder(
+        orderId: orderId,
+        orderType: orderType,
+      );
+      debugPrint('ESC/POS bytes generated: ${payload.bytes.length}');
+      if (!mounted) return;
+      showToast(
+        context,
+        'Printed successfully',
+      );
+      debugPrint(payload.preview);
+    } catch (error) {
+      if (!mounted) return;
+      showToast(context, error.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -522,6 +542,10 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         ),
                                         onMarkAsReady: () => _handleMarkAsReady(
                                           order.id?.toString() ?? "",
+                                        ),
+                                        onPrint: () => _handlePrintOrder(
+                                          order.id?.toString() ?? "",
+                                          order.type,
                                         ),
                                       ),
                                     );

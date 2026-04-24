@@ -85,8 +85,8 @@ class _PayoutListScreenState extends State<PayoutListScreen> {
           const SizedBox(height: 24),
           NoDataWidget(
             context,
-            S.of(context).noPayouts,
-            S.of(context).noPayouts,
+            S.of(context).noPayoutsYet,
+            S.of(context).noPayoutsYet,
             'lib/assets/images/nodata.png',
           ),
         ] else ...[

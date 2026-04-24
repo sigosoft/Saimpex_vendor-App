@@ -14,6 +14,7 @@ class VendorOrderCard extends StatelessWidget {
   final VoidCallback onReject;
   final VoidCallback onAccept;
   final VoidCallback? onMarkAsReady;
+  final VoidCallback? onPrint;
   final VoidCallback? onTap;
   final String? deliveryBoyName;
   final String? cancelReason;
@@ -31,6 +32,7 @@ class VendorOrderCard extends StatelessWidget {
     required this.onReject,
     required this.onAccept,
     this.onMarkAsReady,
+    this.onPrint,
     this.onTap,
     this.deliveryBoyName,
     this.cancelReason,
@@ -441,6 +443,29 @@ class VendorOrderCard extends StatelessWidget {
                   ),
                 ),
               ),
+            const SizedBox(height: 12),
+            status.toLowerCase() == 'cancelled'?Container():
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.05,
+              child: OutlinedButton(
+                onPressed: onPrint ?? () {},
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFFF5216)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  "Accept & Print",
+                  style: GoogleFonts.rubik(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFFFF5216),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

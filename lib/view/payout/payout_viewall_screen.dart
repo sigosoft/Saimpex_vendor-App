@@ -109,8 +109,8 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
               ),
               child: NoDataWidget(
                 context,
-                S.of(context).noPayouts,
-                S.of(context).noPayouts,
+                S.of(context).noPayoutsYet,
+                S.of(context).noPayoutsYet,
                 'lib/assets/images/nodata.png',
               ),
             ),

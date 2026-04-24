@@ -17,6 +17,7 @@ class VendorOrderListItem extends StatelessWidget {
     required this.onAccept,
     required this.onReject,
     this.onMarkAsReady,
+    this.onPrint,
     this.deliveryBoyName,
     this.cancelReason,
     this.type,
@@ -33,6 +34,7 @@ class VendorOrderListItem extends StatelessWidget {
   final VoidCallback onAccept;
   final VoidCallback onReject;
   final VoidCallback? onMarkAsReady;
+  final VoidCallback? onPrint;
   final String? deliveryBoyName;
   final String? cancelReason;
   final String? type;
@@ -52,6 +54,7 @@ class VendorOrderListItem extends StatelessWidget {
         onReject: onReject,
         onAccept: onAccept,
         onMarkAsReady: onMarkAsReady,
+        onPrint: onPrint,
         deliveryBoyName: deliveryBoyName,
         cancelReason: cancelReason,
         type: type,

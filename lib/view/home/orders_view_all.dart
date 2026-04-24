@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/controller/vendor_home_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
+import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
@@ -14,6 +15,7 @@ import 'package:saimpex_vendor/controller/order_details_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 
 import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/utils.dart';
 
 class OrdersViewAll extends StatefulWidget {
   const OrdersViewAll({super.key});
@@ -220,6 +222,25 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     }
   }
 
+  Future<void> _handlePrintOrder(String orderId, String? orderType) async {
+    try {
+      final payload = await OrderPrintService().printOrder(
+        orderId: orderId,
+        orderType: orderType,
+      );
+      debugPrint('ESC/POS bytes generated: ${payload.bytes.length}');
+      if (!mounted) return;
+      showToast(
+        context,
+        'Printed successfully',
+      );
+      debugPrint(payload.preview);
+    } catch (error) {
+      if (!mounted) return;
+      showToast(context, error.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -342,6 +363,10 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       ),
                                       onMarkAsReady: () => _handleMarkAsReady(
                                         order.id?.toString() ?? "",
+                                      ),
+                                      onPrint: () => _handlePrintOrder(
+                                        order.id?.toString() ?? "",
+                                        order.type,
                                       ),
                                     ),
                                   );
