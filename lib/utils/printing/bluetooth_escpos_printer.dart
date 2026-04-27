@@ -10,19 +10,21 @@ class BluetoothEscPosPrinter {
 
   Future<void> printBytes({
     String? printerAddress,
-    required List<int> bytes,
+    required List<int> bytes80mm,
+    required List<int> bytes58mm,
   }) async {
     if (!Platform.isAndroid) {
       throw Exception('Bluetooth ESC/POS printing is currently Android-only');
     }
-    if (bytes.isEmpty) {
+    if (bytes80mm.isEmpty || bytes58mm.isEmpty) {
       throw Exception('Nothing to print');
     }
     await _ensureBluetoothPermissions();
 
     await _channel.invokeMethod('printEscPos', <String, dynamic>{
       'address': printerAddress?.trim(),
-      'bytes': bytes,
+      'bytes80mm': bytes80mm,
+      'bytes58mm': bytes58mm,
     });
   }
 

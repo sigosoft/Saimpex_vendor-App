@@ -20,7 +20,7 @@ class OrderPrintService {
     String? orderType,
   }) async {
     final data = await _fetchOrderDetails(orderId: orderId, orderType: orderType);
-    return _receiptBuilder.build80mmReceipt(
+    return _receiptBuilder.buildReceipt(
       data,
       feedLines: 6, // ensures full feed before cutter
       withCut: true, // explicit cut command
@@ -39,7 +39,8 @@ class OrderPrintService {
 
     await _printer.printBytes(
       printerAddress: printerAddress ?? await _resolvePrinterAddressOrNull(),
-      bytes: payload.bytes,
+      bytes80mm: payload.bytes80mm,
+      bytes58mm: payload.bytes58mm,
     );
     return payload;
   }

@@ -3,29 +3,38 @@ import 'dart:convert';
 import 'package:saimpex_vendor/model/OrderDetailsModel.dart';
 
 class EscPosReceiptBuildResult {
-  final List<int> bytes;
+  final List<int> bytes80mm;
+  final List<int> bytes58mm;
   final String preview;
 
-  const EscPosReceiptBuildResult({required this.bytes, required this.preview});
+  const EscPosReceiptBuildResult({
+    required this.bytes80mm,
+    required this.bytes58mm,
+    required this.preview,
+  });
 }
 
 class EscPosReceiptBuilder {
   static const int _lineWidth80mm = 48;
+  static const int _lineWidth58mm = 32;
 
-  EscPosReceiptBuildResult build80mmReceipt(
+  EscPosReceiptBuildResult buildReceipt(
     Data data, {
     int feedLines = 6,
     bool withCut = true,
   }) {
-    final bytes = <int>[];
     final previewLines = <String>[];
 
-    void addBytes(List<int> value) => bytes.addAll(value);
+    List<int> buildForWidth(bool is58mm) {
+      final bytes = <int>[];
+      final lineWidth = is58mm ? _lineWidth58mm : _lineWidth80mm;
 
-    void addText(String text) {
-      addBytes(latin1.encode('$text\n'));
-      previewLines.add(text);
-    }
+      void addBytes(List<int> value) => bytes.addAll(value);
+
+      void addText(String text) {
+        addBytes(latin1.encode('$text\n'));
+        if (!is58mm) previewLines.add(text); // only add preview once
+      }
 
     void center() => addBytes(const [0x1B, 0x61, 0x01]); // ESC a 1
     void left() => addBytes(const [0x1B, 0x61, 0x00]); // ESC a 0
@@ -35,53 +44,60 @@ class EscPosReceiptBuilder {
 
     center();
     bold(true);
-    addText('ORDER RECEIPT');
+    addText(is58mm ? 'RECEIPT' : 'ORDER RECEIPT');
     bold(false);
-    addText('--------------------------------');
+    addText('-' * lineWidth);
     left();
 
     addText(_twoCol('Order', data.orderCode?.trim().isNotEmpty == true
         ? data.orderCode!.trim()
-        : '#${data.id ?? '-'}'));
-    addText(_twoCol('Date', _safeDate(data.placedAt)));
-    addText(_twoCol('Customer', _clean(data.userName)));
-    addText(_twoCol('Phone', '${_clean(data.countryCode)} ${_clean(data.userMobile)}'.trim()));
-    addText(_twoCol('Payment', _clean(data.paymentType)));
-    addText(_divider());
+        : '#${data.id ?? '-'}', lineWidth));
+    addText(_twoCol('Date', _safeDate(data.placedAt), lineWidth));
+    addText(_twoCol('Customer', _clean(data.userName), lineWidth));
+    addText(_twoCol('Phone', '${_clean(data.countryCode)} ${_clean(data.userMobile)}'.trim(), lineWidth));
+    addText(_twoCol('Payment', _clean(data.paymentType), lineWidth));
+    addText(_divider(lineWidth));
 
-    addText(_itemHeader());
-    addText(_divider());
+    addText(_itemHeader(lineWidth, is58mm));
+    addText(_divider(lineWidth));
 
     final items = _extractItems(data);
     if (items.isEmpty) {
-      addText(_fit('No items', _lineWidth80mm));
+      addText(_fit('No items', lineWidth));
     } else {
       for (final item in items) {
-        addText(_itemRow(item));
+        addText(_itemRow(item, lineWidth, is58mm));
       }
     }
 
-    addText(_divider());
-    addText(_amountRow('Subtotal', '${_num(data.subtotal)} MRU'));
-    addText(_amountRow('Tax', '${_num(data.tax)} MRU'));
-    addText(_amountRow('Delivery', '${_num(data.deliveryFee)} MRU'));
+    addText(_divider(lineWidth));
+    addText(_amountRow('Subtotal', '${_num(data.subtotal)} MRU', lineWidth));
+    addText(_amountRow('Tax', '${_num(data.tax)} MRU', lineWidth));
+    addText(_amountRow('Delivery', '${_num(data.deliveryFee)} MRU', lineWidth));
     bold(true);
-    addText(_amountRow('TOTAL', '${_num(data.total)} MRU'));
+    addText(_amountRow('TOTAL', '${_num(data.total)} MRU', lineWidth));
     bold(false);
-    addText(_divider());
+    addText(_divider(lineWidth));
     addText('Thank you!');
 
-    // Fix #1: always feed paper past cutter blade.
-    final safeFeed = feedLines < 4 ? 4 : feedLines;
-    addBytes([0x1B, 0x64, safeFeed]); // ESC d n : print and feed n lines
+      // Fix #1: always feed paper past cutter blade.
+      final safeFeed = feedLines < 4 ? 4 : feedLines;
+      addBytes([0x1B, 0x64, safeFeed]); // ESC d n : print and feed n lines
 
-    // Fix #2: send explicit full cut command.
-    if (withCut) {
-      addBytes(const [0x1D, 0x56, 0x00]); // GS V 0 : full cut
+      // Fix #2: send explicit full cut command (only for 80mm as pocket printers usually lack cutters).
+      if (withCut && !is58mm) {
+        addBytes(const [0x1D, 0x56, 0x00]); // GS V 0 : full cut
+      }
+
+      return bytes;
     }
 
+    final bytes80 = buildForWidth(false);
+    final bytes58 = buildForWidth(true);
+
     return EscPosReceiptBuildResult(
-      bytes: bytes,
+      bytes80mm: bytes80,
+      bytes58mm: bytes58,
       preview: previewLines.join('\n'),
     );
   }
@@ -105,36 +121,52 @@ class EscPosReceiptBuilder {
     return (n ?? 0).toStringAsFixed(2);
   }
 
-  String _divider() => '-' * _lineWidth80mm;
+  String _divider(int width) => '-' * width;
 
-  String _twoCol(String left, String right) {
-    const leftWidth = 14;
+  String _twoCol(String left, String right, int width) {
+    final leftWidth = (width * 0.35).floor();
     final l = _fit(left, leftWidth);
-    final r = _fitRight(right, _lineWidth80mm - leftWidth);
+    final r = _fitRight(right, width - leftWidth);
     return '$l$r';
   }
 
-  String _amountRow(String label, String amount) {
-    const leftWidth = 24;
+  String _amountRow(String label, String amount, int width) {
+    final leftWidth = (width * 0.5).floor();
     final l = _fit(label, leftWidth);
-    final r = _fitRight(amount, _lineWidth80mm - leftWidth);
+    final r = _fitRight(amount, width - leftWidth);
     return '$l$r';
   }
 
-  String _itemHeader() {
-    final name = _fit('ITEM', 24);
-    final qty = _fitRight('QTY', 6);
-    final unit = _fitRight('UNIT', 8);
-    final total = _fitRight('TOTAL', 10);
-    return '$name$qty$unit$total';
+  String _itemHeader(int width, bool is58mm) {
+    if (is58mm) {
+      final name = _fit('ITEM', 12);
+      final qty = _fitRight('QTY', 4);
+      final unit = _fitRight('UNIT', 7);
+      final total = _fitRight('TOTAL', 9);
+      return '$name$qty$unit$total';
+    } else {
+      final name = _fit('ITEM', 24);
+      final qty = _fitRight('QTY', 6);
+      final unit = _fitRight('UNIT', 8);
+      final total = _fitRight('TOTAL', 10);
+      return '$name$qty$unit$total';
+    }
   }
 
-  String _itemRow(_ReceiptItem item) {
-    final name = _fit(item.name, 24);
-    final qty = _fitRight(item.qty.toString(), 6);
-    final unit = _fitRight(item.unit, 8);
-    final total = _fitRight(item.total, 10);
-    return '$name$qty$unit$total';
+  String _itemRow(_ReceiptItem item, int width, bool is58mm) {
+    if (is58mm) {
+      final name = _fit(item.name, 12);
+      final qty = _fitRight(item.qty.toString(), 4);
+      final unit = _fitRight(item.unit, 7);
+      final total = _fitRight(item.total, 9);
+      return '$name$qty$unit$total';
+    } else {
+      final name = _fit(item.name, 24);
+      final qty = _fitRight(item.qty.toString(), 6);
+      final unit = _fitRight(item.unit, 8);
+      final total = _fitRight(item.total, 10);
+      return '$name$qty$unit$total';
+    }
   }
 
   String _fit(String value, int width) {

@@ -237,7 +237,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
         orderId: orderId,
         orderType: orderType,
       );
-      debugPrint('ESC/POS bytes generated: ${payload.bytes.length}');
+      debugPrint('ESC/POS bytes generated: ${payload.bytes80mm.length}');
       if (!mounted) return;
       showToast(context, 'Printed successfully');
       debugPrint(payload.preview);
