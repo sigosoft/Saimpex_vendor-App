@@ -20,8 +20,17 @@ class OrderPrintService {
     String? orderType,
   }) async {
     final data = await _fetchOrderDetails(orderId: orderId, orderType: orderType);
+
+    // Resolve vendor/store name from saved preferences
+    final vendorName =
+        (await getSavedObject('storeName'))?.toString().trim() ??
+        (await getSavedObject('vendorName'))?.toString().trim() ??
+        (await getSavedObject('restaurantName'))?.toString().trim() ??
+        '';
+
     return _receiptBuilder.buildReceipt(
       data,
+      vendorName: vendorName.isNotEmpty ? vendorName : null,
       feedLines: 6, // ensures full feed before cutter
       withCut: true, // explicit cut command
     );
@@ -93,4 +102,3 @@ class OrderPrintService {
     return picked;
   }
 }
-
