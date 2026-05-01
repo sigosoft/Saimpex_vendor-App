@@ -367,20 +367,22 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _sectionHeader(S.of(context).aboutTheStore),
-                    const SizedBox(height: 12),
-                    _buildDetailCard(
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      child: _detailRow(
-                        S.of(context).categoryLabel,
-                        profile?.restaurantType == 1
-                            ? S.of(context).veg
-                            : profile?.restaurantType == 2
-                            ? S.of(context).nonVeg
-                            : "-",
+                    if (profileController.vendorType == "1") ...[
+                      _sectionHeader(S.of(context).aboutTheStore),
+                      const SizedBox(height: 12),
+                      _buildDetailCard(
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        child: _detailRow(
+                          S.of(context).categoryLabel,
+                          profile?.restaurantType == 1
+                              ? S.of(context).veg
+                              : profile?.restaurantType == 2
+                              ? S.of(context).nonVeg
+                              : "-",
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
+                    ],
                     _sectionHeader(S.of(context).registrationDetails),
                     const SizedBox(height: 12),
                     _buildDetailCard(
