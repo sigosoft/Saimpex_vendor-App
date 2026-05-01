@@ -1,7 +1,7 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
-  static String BASE_URL =
-      "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
+  static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";
+  // "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
   //   static String BASE_URL = "";
