@@ -1,14 +1,16 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
-  static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";
-  //"https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
+  static String BASE_URL =
+  //  "https://api.saimpexenterprise.com/api/vendorapp/";
+  "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
   //   static String BASE_URL = "";
 
   // This is the base Image URL
-  static String IMAGE_URL = "https://api.saimpexenterprise.com/storage/";
-  //"https://ourworks.co.in/saimpex-backend/public/storage/";
+  static String IMAGE_URL = 
+  // "https://api.saimpexenterprise.com/storage/";
+  "https://ourworks.co.in/saimpex-backend/public/storage/";
 
   /// Android package name for Play Store link
   static const String androidPackageName = "saimpex.vendor";

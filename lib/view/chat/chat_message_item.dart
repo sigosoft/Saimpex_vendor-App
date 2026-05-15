@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/view/chat/widgets/VoiceMessageBubble.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
@@ -64,6 +65,14 @@ class ChatMessageItem extends StatelessWidget {
                       ),
                     ),
                   ),
+                )
+              else if (messageType == 'voice' && attachmentUrl != null)
+                VoiceMessageBubble(
+                  audioUrl: attachmentUrl!.startsWith('http')
+                      ? attachmentUrl!
+                      : "${ApiConfigs.IMAGE_URL}${attachmentUrl!.startsWith('/') ? attachmentUrl!.substring(1) : attachmentUrl!}",
+                  isSender: isSent,
+                  time: timestamp,
                 )
               else if (message.isNotEmpty)
                 Text(

@@ -17,6 +17,9 @@ import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/notifications/notification.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChatController extends GetxController {
   // ----- Pusher -----
@@ -26,6 +29,16 @@ class ChatController extends GetxController {
 
   // Callback for UI updates (set by ChatDetails screen)
   VoidCallback? onMessageReceived;
+
+  // Voice recording variables
+  final AudioRecorder audioRecorder = AudioRecorder();
+  bool isRecording = false;
+  bool isPaused = false;
+  String? recordingPath;
+  Timer? recordingTimer;
+  int recordingDuration = 0;
+  double currentAmplitude = 0.0;
+  StreamSubscription<Amplitude>? _amplitudeSubscription;
 
   // ----- Chat history (Pusher-driven list) -----
   List<LastMessage> chatHistoryList = [];
@@ -96,6 +109,8 @@ class ChatController extends GetxController {
     customerSearchController.dispose();
     _refreshTimer?.cancel();
     _disposePusher();
+    audioRecorder.dispose();
+    _amplitudeSubscription?.cancel();
     super.onClose();
   }
 
@@ -627,6 +642,207 @@ class ChatController extends GetxController {
       }
     } catch (_) {}
     return DateTime(0);
+  }
+
+  // ====================================================
+  //  Voice recording
+  // ====================================================
+
+  Future<void> startRecording() async {
+    try {
+      if (await Permission.microphone.request().isGranted) {
+        final tempDir = await getTemporaryDirectory();
+        final path =
+            '${tempDir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+        const config = RecordConfig();
+
+        await audioRecorder.start(config, path: path);
+
+        isRecording = true;
+        isPaused = false;
+        recordingPath = path;
+        recordingDuration = 0;
+        currentAmplitude = 0.0;
+        _startTimer();
+        _startAmplitudeListener();
+        update();
+        debugPrint("Recording started: $path");
+      } else {
+        debugPrint("Microphone permission denied");
+        Get.snackbar(
+          "Permission Denied",
+          "Microphone permission is required to record voice messages.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error starting recording: $e");
+    }
+  }
+
+  void _startTimer() {
+    recordingTimer?.cancel();
+    recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      recordingDuration++;
+      update();
+    });
+  }
+
+  void _startAmplitudeListener() {
+    _amplitudeSubscription?.cancel();
+    _amplitudeSubscription = audioRecorder
+        .onAmplitudeChanged(const Duration(milliseconds: 150))
+        .listen((amp) {
+      if (isRecording && !isPaused) {
+        // Map decibels to 0.0 - 1.0 range
+        // Typical speech dB range on mobile is -50 to -10
+        double normalized = (amp.current + 50) / 40;
+        currentAmplitude = normalized.clamp(0.0, 1.0);
+        update();
+      }
+    });
+  }
+
+  Future<String?> stopRecording() async {
+    try {
+      final path = await audioRecorder.stop();
+      recordingTimer?.cancel();
+      _amplitudeSubscription?.cancel();
+      isRecording = false;
+      isPaused = false;
+      currentAmplitude = 0.0;
+      update();
+      debugPrint("Recording stopped: $path");
+      return path;
+    } catch (e) {
+      debugPrint("Error stopping recording: $e");
+      return null;
+    }
+  }
+
+  Future<void> pauseRecording() async {
+    try {
+      await audioRecorder.pause();
+      isPaused = true;
+      recordingTimer?.cancel();
+      _amplitudeSubscription?.cancel();
+      currentAmplitude = 0.0;
+      update();
+      debugPrint("Recording paused");
+    } catch (e) {
+      debugPrint("Error pausing recording: $e");
+    }
+  }
+
+  Future<void> resumeRecording() async {
+    try {
+      await audioRecorder.resume();
+      isPaused = false;
+      _startTimer();
+      _startAmplitudeListener();
+      update();
+      debugPrint("Recording resumed");
+    } catch (e) {
+      debugPrint("Error resuming recording: $e");
+    }
+  }
+
+  Future<void> cancelRecording() async {
+    try {
+      await audioRecorder.stop();
+      recordingTimer?.cancel();
+      _amplitudeSubscription?.cancel();
+      isRecording = false;
+      isPaused = false;
+      currentAmplitude = 0.0;
+      if (recordingPath != null) {
+        final file = File(recordingPath!);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
+      recordingPath = null;
+      recordingDuration = 0;
+      update();
+      debugPrint("Recording cancelled and file deleted");
+    } catch (e) {
+      debugPrint("Error cancelling recording: $e");
+    }
+  }
+
+  Future<void> sendVoiceMessage(
+    BuildContext context,
+    String filePath, {
+    int? conversationId,
+    int? customerId,
+    required int duration,
+  }) async {
+    try {
+      isSendingMessage = true;
+      update();
+
+      final Map<String, dynamic> body = {
+        "message_type": "voice",
+        "duration": duration,
+        "voice_note": await dio.MultipartFile.fromFile(
+          filePath,
+          filename: 'voice_note.m4a',
+        ),
+      };
+
+      if (conversationId != null && conversationId != 0) {
+        body["conversation_id"] = conversationId;
+      } else if (customerId != null) {
+        body["customer_id"] = customerId;
+      }
+
+      var token = await getSavedObject("token");
+      DioClient().updateToken(token);
+      final response = await DioClient().post(
+        ApiEndPoints.sendMessage,
+        body: dio.FormData.fromMap(body),
+      );
+
+      if (response.data != null && response.data['status'] == true) {
+        // Clean up recorded file
+        try {
+          final file = File(filePath);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (e) {
+          debugPrint("Error deleting recorded file: $e");
+        }
+
+        if (conversationId != null &&
+            conversationId != 0 &&
+            currentConversation != null &&
+            currentConversation!.id == conversationId) {
+          final newMessageJson = response.data['data']['message'];
+          if (newMessageJson != null) {
+            final newMessage = LastMessage.fromJson(newMessageJson);
+            currentConversation?.messages?.insert(0, newMessage);
+            _sortMessages();
+            _updateConversationInList(conversationId, newMessage);
+          }
+        } else if (customerId != null) {
+          final newConversationId = response.data['data']['conversation_id'];
+          if (newConversationId != null) {
+            getConversationDetails(context, newConversationId);
+            getAllConversations(context, quiet: true);
+          }
+        }
+      }
+    } catch (error) {
+      debugPrint("sendVoiceMessage Error: $error");
+      if (context.mounted) {
+        showToast(context, "Failed to send voice message");
+      }
+    } finally {
+      isSendingMessage = false;
+      update();
+    }
   }
 
   // ====================================================

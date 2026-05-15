@@ -85,15 +85,11 @@ class ChatListing extends StatelessWidget {
                         avatarUrl: chat.customer?.image != null
                             ? "${ApiConfigs.IMAGE_URL}${chat.customer?.image}"
                             : null,
-                        lastMessage:
-                            (chat.lastMessage?.messageType == 'image' ||
-                                (chat.lastMessage?.attachmentUrl != null &&
-                                    chat
-                                        .lastMessage!
-                                        .attachmentUrl!
-                                        .isNotEmpty))
+                        lastMessage: chat.lastMessage?.messageType == 'image'
                             ? "📷 Image"
-                            : chat.lastMessage?.message ?? "",
+                            : chat.lastMessage?.messageType == 'voice'
+                                ? "🎤 Voice message"
+                                : chat.lastMessage?.message ?? "",
                         timestamp: formatChatTime(timeStr),
                         unreadCount: chat.unreadCount ?? 0,
                         onTap: () {
