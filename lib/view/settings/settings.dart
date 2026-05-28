@@ -12,7 +12,6 @@ import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
-import 'package:saimpex_vendor/view/settings/about_us.dart';
 import 'package:saimpex_vendor/view/settings/app_settings.dart';
 import 'package:saimpex_vendor/view/settings/coupons_screen.dart';
 import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
@@ -20,6 +19,7 @@ import 'package:saimpex_vendor/view/settings/earnings.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../generated/l10n.dart';
+import 'package:saimpex_vendor/view/restaurant/restaurant_management_screen.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -268,6 +268,15 @@ class _SettingsState extends State<Settings> {
                           children: [
                             _buildMenuItem(
                               context,
+                              "Restaurant Managment",
+                              null,
+                              () {
+                                Get.to(() => const RestaurantManagementScreen());
+                              },
+                              leadingIcon: Icons.storefront_outlined,
+                            ),
+                            _buildMenuItem(
+                              context,
                               S.of(context).deliveryBoys,
                               const AssetImage(
                                 "lib/assets/images/DeliveryBoys.png",
@@ -302,16 +311,6 @@ class _SettingsState extends State<Settings> {
                               ),
                               () {
                                 Get.to(() => const AppSettings());
-                              },
-                            ),
-                            _buildMenuItem(
-                              context,
-                              S.of(context).aboutUs,
-                              const AssetImage(
-                                "lib/assets/images/about_us_icon.png",
-                              ),
-                              () {
-                                Get.to(() => const AboutUs());
                               },
                             ),
                             // const Divider(height: 1),
@@ -576,11 +575,14 @@ class _SettingsState extends State<Settings> {
   Widget _buildMenuItem(
     BuildContext context,
     String title,
-    ImageProvider image,
-    VoidCallback onTap,
-  ) {
+    ImageProvider? image,
+    VoidCallback onTap, {
+    IconData? leadingIcon,
+  }) {
     return ListTile(
-      leading: ImageIcon(image, color: Colors.grey[600], size: 24),
+      leading: leadingIcon != null
+          ? Icon(leadingIcon, color: Colors.grey, size: 24)
+          : ImageIcon(image, color: Colors.grey[900], size: 24),
       title: Text(
         title,
         style: GoogleFonts.rubik(

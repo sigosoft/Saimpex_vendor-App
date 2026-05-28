@@ -138,6 +138,8 @@ class OrderData {
   final String? deliveryBoyName;
   final String? cancelReason;
   final String? type;
+  final dynamic deliveryType;
+  final dynamic isSelfPickup;
   final List<BasketOrder>? basketOrders;
 
   OrderData({
@@ -156,6 +158,8 @@ class OrderData {
     this.deliveryBoyName,
     this.cancelReason,
     this.type,
+    this.deliveryType,
+    this.isSelfPickup,
     this.basketOrders,
   });
 
@@ -211,6 +215,9 @@ class OrderData {
       cancelReason: json['cancel_reason']?.toString(),
       type: (json['type'] ?? json['order_type'] ?? json['basket_type'])
           ?.toString(),
+      deliveryType:
+          json['delivery_type'] ?? json['deliveryType'] ?? json['fulfillment_type'],
+      isSelfPickup: json['is_self_pickup'] ?? json['isSelfPickup'],
       basketOrders: basketOrders,
       deliveryBoyName:
           (json['delivery_boy_name']?.toString() ??

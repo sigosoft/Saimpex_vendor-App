@@ -19,8 +19,10 @@ import '../../generated/l10n.dart';
 // ignore: unused_import
 import '../../model/OrderDetailsModel.dart';
 import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/order_fulfillment.dart';
 import '../../utils/utils.dart';
 import '../../utils/widgets/no_data_widget.dart';
+import 'widgets/order_fulfillment_badge.dart';
 
 class VendorOrderDetails extends StatefulWidget {
   final String orderId;
@@ -137,20 +139,37 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                S
-                                                    .of(context)
-                                                    .orderIdLabel(
-                                                      controller
-                                                          .orderData!
-                                                          .orderCode
-                                                          .toString(),
+                                              Wrap(
+                                                crossAxisAlignment:
+                                                    WrapCrossAlignment.center,
+                                                spacing: 8,
+                                                runSpacing: 4,
+                                                children: [
+                                                  Text(
+                                                    S
+                                                        .of(context)
+                                                        .orderIdLabel(
+                                                          controller
+                                                              .orderData!
+                                                              .orderCode
+                                                              .toString(),
+                                                        ),
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: colorPrimary,
                                                     ),
-                                                style: GoogleFonts.rubik(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: colorPrimary,
-                                                ),
+                                                  ),
+                                                  OrderFulfillmentBadge(
+                                                    deliveryType: controller
+                                                        .orderData
+                                                        ?.deliveryType,
+                                                    isSelfPickup: controller
+                                                        .orderData
+                                                        ?.isSelfPickup,
+                                                  ),
+                                                ],
                                               ),
                                               if (widget.orderType
                                                           ?.trim()
@@ -1384,6 +1403,86 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           style: GoogleFonts.rubik(
                                             color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : controller.orderData!.status.toString() == '4' &&
+                                    OrderFulfillment.isSelfPickupFrom(
+                                      deliveryType:
+                                          controller.orderData?.deliveryType,
+                                      isSelfPickup:
+                                          controller.orderData?.isSelfPickup,
+                                    )
+                              ? Row(
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: OutlinedButton(
+                                          onPressed: () async {
+                                            try {
+                                              await OrderPrintService()
+                                                  .printOrder(
+                                                    orderId: widget.orderId,
+                                                    orderType: widget.orderType,
+                                                  );
+                                            } catch (e) {
+                                              debugPrint("Print error: $e");
+                                            }
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                              color: Color(0xFFFF5216),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Print Order",
+                                            style: GoogleFonts.rubik(
+                                              color: const Color(0xFFFF5216),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            controller.markSelfPickupCompleted(
+                                              context,
+                                              widget.orderId,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(
+                                              0xFFFF5216,
+                                            ),
+                                            foregroundColor: Colors.white,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            S
+                                                .of(context)
+                                                .markSelfPickupCompleted,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.rubik(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),

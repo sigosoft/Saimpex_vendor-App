@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/utils/order_fulfillment.dart';
+import 'package:saimpex_vendor/view/home/widgets/order_fulfillment_badge.dart';
 
 class VendorOrderCard extends StatelessWidget {
   final String orderId;
@@ -19,6 +21,9 @@ class VendorOrderCard extends StatelessWidget {
   final String? deliveryBoyName;
   final String? cancelReason;
   final String? type;
+  final dynamic deliveryType;
+  final dynamic isSelfPickup;
+  final VoidCallback? onMarkSelfPickupCompleted;
 
   const VendorOrderCard({
     super.key,
@@ -37,7 +42,15 @@ class VendorOrderCard extends StatelessWidget {
     this.deliveryBoyName,
     this.cancelReason,
     this.type,
+    this.deliveryType,
+    this.isSelfPickup,
+    this.onMarkSelfPickupCompleted,
   });
+
+  bool get _isSelfPickup => OrderFulfillment.isSelfPickupFrom(
+        deliveryType: deliveryType,
+        isSelfPickup: isSelfPickup,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +86,24 @@ class VendorOrderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        S.of(context).orderIdLabel(orderCode ?? orderId),
-                        style: GoogleFonts.rubik(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: colorPrimary,
-                        ),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          Text(
+                            S.of(context).orderIdLabel(orderCode ?? orderId),
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: colorPrimary,
+                            ),
+                          ),
+                          OrderFulfillmentBadge(
+                            deliveryType: deliveryType,
+                            isSelfPickup: isSelfPickup,
+                          ),
+                        ],
                       ),
                       if (type?.trim().toLowerCase().contains("basket") ==
                           true) ...[
@@ -253,15 +277,16 @@ class VendorOrderCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (status.toLowerCase() == 'ready' ||
-                status.toLowerCase() == 'delivered' ||
-                status.toLowerCase() == 'assigned' ||
-                status.toLowerCase() == 'reached restaurant' ||
-                status.toLowerCase() == 'picked up' ||
-                status.toLowerCase() == 'delivering' ||
-                status == S.of(context).ready ||
-                status == S.of(context).delivered ||
-                status == S.of(context).assignedStatus) ...[
+            if (!_isSelfPickup &&
+                (status.toLowerCase() == 'ready' ||
+                    status.toLowerCase() == 'delivered' ||
+                    status.toLowerCase() == 'assigned' ||
+                    status.toLowerCase() == 'reached restaurant' ||
+                    status.toLowerCase() == 'picked up' ||
+                    status.toLowerCase() == 'delivering' ||
+                    status == S.of(context).ready ||
+                    status == S.of(context).delivered ||
+                    status == S.of(context).assignedStatus)) ...[
               const SizedBox(height: 12),
               Text(
                 S.of(context).driver.toUpperCase(),
@@ -449,6 +474,80 @@ class VendorOrderCard extends StatelessWidget {
               )
             else if (status.toLowerCase() == 'cancelled')
               const SizedBox.shrink()
+            else if (_isSelfPickup &&
+                status.toLowerCase() == 'ready' &&
+                onMarkSelfPickupCompleted != null)
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: onTap,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFFF5216)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: Text(
+                            S.of(context).viewDetails,
+                            style: GoogleFonts.rubik(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: onMarkSelfPickupCompleted,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF5216),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: Text(
+                            S.of(context).markSelfPickupCompleted,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.rubik(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: OutlinedButton(
+                      onPressed: onPrint ?? () {},
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFFFF5216)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        "Print Order",
+                        style: GoogleFonts.rubik(
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFFF5216),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             else if (status.toLowerCase() == 'accepted')
               Row(
                 children: [

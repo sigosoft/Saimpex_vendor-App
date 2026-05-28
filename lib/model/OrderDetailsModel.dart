@@ -63,6 +63,8 @@ class Data {
   final List<BasketOrder>? basketOrders;
   final OrderDurations? orderDurations;
   final String? type;
+  final dynamic deliveryType;
+  final dynamic isSelfPickup;
   final List<StatusLog>? statusLogs;
 
   Data({
@@ -72,6 +74,8 @@ class Data {
     this.placedAt,
     this.paymentType,
     this.type,
+    this.deliveryType,
+    this.isSelfPickup,
     this.subtotal,
     this.tax,
     this.deliveryFee,
@@ -112,6 +116,9 @@ class Data {
     paymentType: json["payment_type"],
     type: (json["type"] ?? json["order_type"] ?? json["basket_type"])
         ?.toString(),
+    deliveryType:
+        json["delivery_type"] ?? json["deliveryType"] ?? json["fulfillment_type"],
+    isSelfPickup: json["is_self_pickup"] ?? json["isSelfPickup"],
     subtotal: json["subtotal"],
     tax: json["tax"],
     deliveryFee: json["delivery_fee"],
@@ -163,6 +170,8 @@ class Data {
     "placed_at": placedAt?.toIso8601String(),
     "payment_type": paymentType,
     "type": type,
+    "delivery_type": deliveryType,
+    "is_self_pickup": isSelfPickup,
     "subtotal": subtotal,
     "tax": tax,
     "delivery_fee": deliveryFee,

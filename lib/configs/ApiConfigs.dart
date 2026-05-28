@@ -50,6 +50,7 @@ class ApiEndPoints {
   static String cancelRestaurantOrder = "cancelRestaurantOrder";
   static String prepareRestaurantOrder = "prepareRestaurantOrder";
   static String markAsReadyRestaurantOrder = "markAsReadyRestaurantOrder";
+  static String markSelfPickupCompleted = "markSelfPickupCompleted";
   static String getTermsandConditions = "getTermsandConditions";
   static String getPrivacyPolicy = "getPrivacyPolicy";
   static String getContact = "getContact";
@@ -61,9 +62,18 @@ class ApiEndPoints {
   static String totalUnreadMessagesCount = "chat/totalUnreadMessagesCount";
   static String markAsRead = "chat/markAsRead";
   static String getRestaurantCategories = "getRestaurantCategories";
+  static String addMenuCategory = "addMenuCategory";
+  static String updateMenuCategory = "updateMenuCategory";
+  static String updateMenuCategoryStatus = "updateMenuCategoryStatus";
+  static String deleteMenuCategory = "deleteMenuCategory";
   static String getRestaurantMenuDetails = "restaurantMenuDetails";
   static String addRestaurantMenu = "addRestaurantMenu";
   static String getRestaurantTags = "getRestaurantTags";
+  static String menuTags = "menuTags";
+  static String addMenuTag = "addMenuTag";
+  static String updateMenuTag = "updateMenuTag";
+  static String updateMenuTagStatus = "updateMenuTagStatus";
+  static String deleteMenuTag = "deleteMenuTag";
   static String getNotifications = "notifications";
   static String deleteRestaurantMenu = "deleteRestaurantMenu";
   static String updateRestaurantMenuEdit = "updateRestaurantMenu";

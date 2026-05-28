@@ -231,6 +231,10 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     }
   }
 
+  void _handleMarkSelfPickupCompleted(String orderId) {
+    detailsController.markSelfPickupCompleted(context, orderId);
+  }
+
   Future<void> _handlePrintOrder(String orderId, String? orderType) async {
     try {
       final payload = await OrderPrintService().printOrder(
@@ -363,6 +367,12 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       deliveryBoyName: order.deliveryBoyName,
                                       cancelReason: order.cancelReason,
                                       type: order.type,
+                                      deliveryType: order.deliveryType,
+                                      isSelfPickup: order.isSelfPickup,
+                                      onMarkSelfPickupCompleted: () =>
+                                          _handleMarkSelfPickupCompleted(
+                                        order.id?.toString() ?? "",
+                                      ),
                                       onAccept: () => _handleAcceptOrder(
                                         order.id?.toString() ?? "",
                                       ),

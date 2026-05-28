@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
@@ -49,10 +50,25 @@ class DioClient {
       },
       onResponse: (response, handler) {
         log("⬅️ RESPONSE: ${response.statusCode} ${response.data}");
+        final apiName = response.requestOptions.path;
+        debugPrint(
+          "✅ API SUCCESS: ${response.requestOptions.method} "
+          "(Status code: ${response.statusCode}) "
+          "API: $apiName",
+        );
         return handler.next(response);
       },
       onError: (DioException error, handler) {
         log("❌ ERROR: ${error.error}");
+        final apiName = error.requestOptions.path;
+        debugPrint(
+          "❌ API ERROR: ${error.requestOptions.method} "
+          "(Status code: ${error.response?.statusCode ?? 'No response'}) "
+          "API: $apiName",
+        );
+        debugPrint("❌ API ERROR QUERY: ${error.requestOptions.queryParameters}");
+        debugPrint("❌ API ERROR BODY: ${error.requestOptions.data}");
+        debugPrint("❌ API ERROR RESPONSE: ${error.response?.data}");
         return handler.next(error);
       },
     );

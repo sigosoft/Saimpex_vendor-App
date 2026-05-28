@@ -403,6 +403,50 @@ class OrderDetailsController extends GetxController {
     }
   }
 
+  Future<void> markSelfPickupCompleted(
+    BuildContext context,
+    String orderId,
+  ) async {
+    try {
+      showLoadingDialog(context);
+      var token = await getSavedObject("token");
+      DioClient().updateToken(token);
+      final response = await DioClient().get(
+        ApiEndPoints.markSelfPickupCompleted,
+        query: {"order_id": orderId},
+      );
+      order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
+        response.data,
+      );
+      if (orderStatusModel.status.toString() == "true") {
+        Get.back();
+        if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
+          Get.until((route) => route.isFirst);
+        }
+        showSuccessDialog(orderStatusModel.message.toString());
+        try {
+          final homeCtrl = Get.find<HomeController>();
+          homeCtrl.homeData?.data?.orders?.data?.removeWhere(
+            (element) => element.id.toString() == orderId,
+          );
+          homeCtrl.update();
+        } catch (_) {}
+      }
+    } catch (error, stackTrace) {
+      Get.back();
+      debugPrint("stackTrace: $stackTrace");
+      debugPrint("markSelfPickupCompleted Error: $error");
+      if (error.toString() == "Unauthorized") {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        showToast(context, S.of(context).youAreLoggedOutSuccessfully);
+        Get.offAll(() => const LoginScreen());
+      } else {
+        showToast(context, error.toString());
+      }
+    }
+  }
+
   Future<void> markAsReadyGroceryOrder(
     BuildContext context,
     String orderid,
