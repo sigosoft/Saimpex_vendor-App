@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -506,123 +507,217 @@ class _RestaurantManagementScreenState
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
+            return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
-              title: Text(
-                item == null ? "Add Category" : "Edit Category",
-                style: GoogleFonts.rubik(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF333E63),
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        try {
-                          final picker = ImagePicker();
-                          final XFile? pickedFile = await picker.pickImage(
-                            source: ImageSource.gallery,
-                          );
-                          if (pickedFile != null) {
-                            setDialogState(() {
-                              selectedImage = pickedFile;
-                            });
-                          }
-                        } catch (e) {
-                          debugPrint("Error picking image: $e");
-                        }
-                      },
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey[300]!),
+              backgroundColor: Colors.white,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item == null ? "Add Category" : "Edit Category",
+                            style: GoogleFonts.rubik(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Name",
+                        style: GoogleFonts.rubik(
+                          color: Colors.grey[600],
+                          fontSize: 14,
                         ),
-                        child: selectedImage != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(11),
-                                child: Image.file(
-                                  File(selectedImage!.path),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : (item?.image != null && item!.image!.isNotEmpty
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: nameCtrl,
+                        decoration: InputDecoration(
+                          hintText: "Enter Category Name",
+                          hintStyle: GoogleFonts.rubik(
+                            color: Colors.grey[400],
+                            fontSize: 13,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: colorPrimary),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Image",
+                        style: GoogleFonts.rubik(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () async {
+                          try {
+                            final picker = ImagePicker();
+                            final XFile? pickedFile = await picker.pickImage(
+                              source: ImageSource.gallery,
+                            );
+                            if (pickedFile != null) {
+                              setDialogState(() {
+                                selectedImage = pickedFile;
+                              });
+                            }
+                          } catch (e) {
+                            debugPrint("Error picking image: $e");
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: CustomPaint(
+                            painter: DashedRectPainter(
+                              color: Colors.blueGrey.withOpacity(0.3),
+                              strokeWidth: 1.5,
+                              gap: 6.0,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: selectedImage != null
                                   ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(11),
-                                      child: CachedNetworkImage(
-                                        imageUrl: item.image!,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.file(
+                                        File(selectedImage!.path),
                                         fit: BoxFit.cover,
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(
-                                              Icons.add_a_photo_outlined,
-                                              color: colorPrimary,
-                                              size: 32,
-                                            ),
+                                        width: double.infinity,
                                       ),
                                     )
-                                  : const Icon(
-                                      Icons.add_a_photo_outlined,
-                                      color: colorPrimary,
-                                      size: 32,
-                                    )),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: nameCtrl,
-                      decoration: InputDecoration(
-                        hintText: "Enter category name",
-                        hintStyle: GoogleFonts.rubik(color: Colors.grey[400]),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                                  : (item?.image != null &&
+                                            item!.image!.isNotEmpty
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              imageUrl: item.image!,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      _buildAddImagePlaceholder(),
+                                            ),
+                                          )
+                                        : _buildAddImagePlaceholder()),
+                            ),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: colorPrimary),
-                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: colorPrimary),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                              ),
+                              child: Text(
+                                "Cancel",
+                                style: GoogleFonts.rubik(
+                                  color: colorPrimary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                final text = nameCtrl.text.trim();
+                                if (text.isEmpty) return;
+                                Navigator.pop(context);
+                                await _saveCategory(
+                                  text,
+                                  item: item,
+                                  pickedImage: selectedImage,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                "Save",
+                                style: GoogleFonts.rubik(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    "Cancel",
-                    style: GoogleFonts.rubik(color: Colors.grey[600]),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    final text = nameCtrl.text.trim();
-                    if (text.isEmpty) return;
-                    Navigator.pop(context);
-                    await _saveCategory(
-                      text,
-                      item: item,
-                      pickedImage: selectedImage,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    "Save",
-                    style: GoogleFonts.rubik(color: Colors.white),
-                  ),
-                ),
-              ],
             );
           },
         );
@@ -636,58 +731,140 @@ class _RestaurantManagementScreenState
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          title: Text(
-            item == null ? "Add Tag" : "Edit Tag",
-            style: GoogleFonts.rubik(
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF333E63),
+          backgroundColor: Colors.white,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        item == null ? "Add Tag" : "Edit Tag",
+                        style: GoogleFonts.rubik(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 18,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Name",
+                    style: GoogleFonts.rubik(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: nameCtrl,
+                    decoration: InputDecoration(
+                      hintText: "Enter the tag name",
+                      hintStyle: GoogleFonts.rubik(
+                        color: Colors.grey[400],
+                        fontSize: 13,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: colorPrimary),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: colorPrimary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.rubik(
+                              color: colorPrimary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final text = nameCtrl.text.trim();
+                            if (text.isEmpty) return;
+                            Navigator.pop(context);
+                            await _saveTag(text, item: item);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorPrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            "Save",
+                            style: GoogleFonts.rubik(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          content: TextField(
-            controller: nameCtrl,
-            decoration: InputDecoration(
-              hintText: "Enter tag name",
-              hintStyle: GoogleFonts.rubik(color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: colorPrimary),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                "Cancel",
-                style: GoogleFonts.rubik(color: Colors.grey[600]),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final text = nameCtrl.text.trim();
-                if (text.isEmpty) return;
-                Navigator.pop(context);
-                await _saveTag(text, item: item);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                "Save",
-                style: GoogleFonts.rubik(color: Colors.white),
-              ),
-            ),
-          ],
         );
       },
     );
@@ -831,8 +1008,16 @@ class _RestaurantManagementScreenState
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFE0D8),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(35),
+                    border: Border.all(color: Colors.grey[200]!),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
@@ -1110,148 +1295,157 @@ class _RestaurantManagementScreenState
                         color: const Color(0xFF333E63),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.date,
-                      style: GoogleFonts.rubik(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                      ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.date,
+                            style: GoogleFonts.rubik(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // Status Capsule
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: item.status == "ACTIVE"
+                                ? const Color(0xFFC5F4D3)
+                                : const Color(0xffFEE2E2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            item.status,
+                            style: GoogleFonts.rubik(
+                              color: item.status == "ACTIVE"
+                                  ? const Color(0xFF008318)
+                                  : const Color(0xffEF4444),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        // Custom Popup Menu popover
+                        PopupMenuButton<String>(
+                          padding: EdgeInsets.zero,
+                          child: Icon(Icons.more_vert, color: Colors.grey[400], size: 20),
+                          color: const Color(0xFFECEFF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          onSelected: (val) {
+                            if (val == "edit") {
+                              _showCategoryDialog(item: item);
+                            } else if (val == "delete") {
+                              _showDeleteCategoryDialog(item);
+                            } else if (val == "status") {
+                              _updateCategoryStatus(item);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: "edit",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.edit_outlined,
+                                    color: Colors.grey[700],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Edit",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[500],
+                                    size: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(height: 1),
+                            PopupMenuItem(
+                              value: "delete",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.grey[700],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Delete",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[500],
+                                    size: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(height: 1),
+                            PopupMenuItem(
+                              value: "status",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    item.status == "ACTIVE"
+                                        ? Icons.cancel_outlined
+                                        : Icons.check_circle_outline,
+                                    color: item.status == "ACTIVE"
+                                        ? Colors.red[400]
+                                        : Colors.green[600],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Update Status",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              // Status Capsule
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: item.status == "ACTIVE"
-                      ? const Color(0xFFC5F4D3)
-                      : const Color(0xffFEE2E2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  item.status,
-                  style: GoogleFonts.rubik(
-                    color: item.status == "ACTIVE"
-                        ? const Color(0xFF008318)
-                        : const Color(0xffEF4444),
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Custom Popup Menu popover
-              PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, color: Colors.grey[400]),
-                color: const Color(0xFFECEFF1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-                onSelected: (val) {
-                  if (val == "edit") {
-                    _showCategoryDialog(item: item);
-                  } else if (val == "delete") {
-                    _showDeleteCategoryDialog(item);
-                  } else if (val == "status") {
-                    _updateCategoryStatus(item);
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: "edit",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          color: Colors.grey[700],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Edit",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[500],
-                          size: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuDivider(height: 1),
-                  PopupMenuItem(
-                    value: "delete",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          color: Colors.grey[700],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Delete",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[500],
-                          size: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuDivider(height: 1),
-                  PopupMenuItem(
-                    value: "status",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          item.status == "ACTIVE"
-                              ? Icons.cancel_outlined
-                              : Icons.check_circle_outline,
-                          color: item.status == "ACTIVE"
-                              ? Colors.red[400]
-                              : Colors.green[600],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Update Status",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -1310,153 +1504,259 @@ class _RestaurantManagementScreenState
                         color: const Color(0xFF333E63),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.date,
-                      style: GoogleFonts.rubik(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                      ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.date,
+                            style: GoogleFonts.rubik(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // Status Capsule
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: item.status == "ACTIVE"
+                                ? const Color(0xFFC5F4D3)
+                                : const Color(0xffFEE2E2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            item.status,
+                            style: GoogleFonts.rubik(
+                              color: item.status == "ACTIVE"
+                                  ? const Color(0xFF008318)
+                                  : const Color(0xffEF4444),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        // Custom Popup Menu popover
+                        PopupMenuButton<String>(
+                          padding: EdgeInsets.zero,
+                          child: Icon(Icons.more_vert, color: Colors.grey[400], size: 20),
+                          color: const Color(0xFFECEFF1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          onSelected: (val) {
+                            if (val == "edit") {
+                              _showTagDialog(item: item);
+                            } else if (val == "delete") {
+                              _showDeleteTagDialog(item);
+                            } else if (val == "status") {
+                              _updateTagStatus(item);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: "edit",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.edit_outlined,
+                                    color: Colors.grey[700],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Edit",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[500],
+                                    size: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(height: 1),
+                            PopupMenuItem(
+                              value: "delete",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.grey[700],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Delete",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[500],
+                                    size: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(height: 1),
+                            PopupMenuItem(
+                              value: "status",
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    item.status == "ACTIVE"
+                                        ? Icons.cancel_outlined
+                                        : Icons.check_circle_outline,
+                                    color: item.status == "ACTIVE"
+                                        ? Colors.red[400]
+                                        : Colors.green[600],
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      "Update Status",
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.grey[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              // Status Capsule
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: item.status == "ACTIVE"
-                      ? const Color(0xFFC5F4D3)
-                      : const Color(0xffFEE2E2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  item.status,
-                  style: GoogleFonts.rubik(
-                    color: item.status == "ACTIVE"
-                        ? const Color(0xFF008318)
-                        : const Color(0xffEF4444),
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Custom Popup Menu popover
-              PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, color: Colors.grey[400]),
-                color: const Color(0xFFECEFF1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-                onSelected: (val) {
-                  if (val == "edit") {
-                    _showTagDialog(item: item);
-                  } else if (val == "delete") {
-                    _showDeleteTagDialog(item);
-                  } else if (val == "status") {
-                    _updateTagStatus(item);
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: "edit",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          color: Colors.grey[700],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Edit",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[500],
-                          size: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuDivider(height: 1),
-                  PopupMenuItem(
-                    value: "delete",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          color: Colors.grey[700],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Delete",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey[500],
-                          size: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuDivider(height: 1),
-                  PopupMenuItem(
-                    value: "status",
-                    height: 40,
-                    child: Row(
-                      children: [
-                        Icon(
-                          item.status == "ACTIVE"
-                              ? Icons.cancel_outlined
-                              : Icons.check_circle_outline,
-                          color: item.status == "ACTIVE"
-                              ? Colors.red[400]
-                              : Colors.green[600],
-                          size: 16,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Update Status",
-                            style: GoogleFonts.rubik(
-                              color: Colors.grey[800],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  Widget _buildAddImagePlaceholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFFFFD4C6)),
+          ),
+          child: const Icon(Icons.add, color: colorPrimary, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Add Image",
+          style: GoogleFonts.rubik(
+            color: Colors.blueGrey.withOpacity(0.6),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class DashedRectPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+
+  DashedRectPainter({
+    this.color = Colors.black,
+    this.strokeWidth = 1.0,
+    this.gap = 5.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final Path path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(10),
+        ),
+      );
+
+    final Path dashedPath = _dashPath(
+      path,
+      dashArray: CircularIntervalList<double>([gap, gap]),
+    );
+
+    canvas.drawPath(dashedPath, paint);
+  }
+
+  Path _dashPath(
+    Path source, {
+    required CircularIntervalList<double> dashArray,
+  }) {
+    final Path dest = Path();
+    for (final PathMetric metric in source.computeMetrics()) {
+      double distance = 0.0;
+      bool draw = true;
+      while (distance < metric.length) {
+        final double len = dashArray.next;
+        if (draw) {
+          dest.addPath(
+            metric.extractPath(distance, distance + len),
+            Offset.zero,
+          );
+        }
+        distance += len;
+        draw = !draw;
+      }
+    }
+    return dest;
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class CircularIntervalList<T> {
+  CircularIntervalList(this._vals);
+  final List<T> _vals;
+  int _idx = 0;
+  T get next {
+    if (_idx >= _vals.length) {
+      _idx = 0;
+    }
+    return _vals[_idx++];
   }
 }
