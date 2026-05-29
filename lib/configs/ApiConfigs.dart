@@ -1,16 +1,16 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
   static String BASE_URL =
-  //  "https://api.saimpexenterprise.com/api/vendorapp/";
-  "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
+      //  "https://api.saimpexenterprise.com/api/vendorapp/";
+      "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
   //   static String BASE_URL = "";
 
   // This is the base Image URL
-  static String IMAGE_URL = 
-  // "https://api.saimpexenterprise.com/storage/";
-  "https://ourworks.co.in/saimpex-backend/public/storage/";
+  static String IMAGE_URL =
+      // "https://api.saimpexenterprise.com/storage/";
+      "https://ourworks.co.in/saimpex-backend/public/storage/";
 
   /// Android package name for Play Store link
   static const String androidPackageName = "saimpex.vendor";
@@ -66,7 +66,6 @@ class ApiEndPoints {
   static String updateMenuCategory = "updateMenuCategory";
   static String updateMenuCategoryStatus = "updateMenuCategoryStatus";
   static String deleteMenuCategory = "deleteMenuCategory";
-  static String imageEnhance = "imageEnhance";
   static String getRestaurantMenuDetails = "restaurantMenuDetails";
   static String addRestaurantMenu = "addRestaurantMenu";
   static String getRestaurantTags = "getRestaurantTags";
@@ -132,4 +131,5 @@ class ApiEndPoints {
   static String addCoupon = "addCoupon";
   static String updateCoupon = "updateCoupon";
   static String deleteCoupon = "deleteCoupon";
+  static String imageEnhance = "image-auto-enhance";
 }
