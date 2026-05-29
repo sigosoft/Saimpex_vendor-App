@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -241,5 +243,67 @@ class DioClient {
     }
 
     return "Unexpected error occurred: ${e.message ?? e.type.toString()}";
+  }
+
+  /// Enhance an image using the imageEnhance endpoint.
+  /// Returns the enhanced image bytes, or null if enhancement fails.
+  Future<Uint8List?> enhanceImageBytes(String localPath, String originalFilename) async {
+    try {
+      final enhanceBodyMap = <String, dynamic>{
+        'image': await MultipartFile.fromFile(
+          localPath,
+          filename: originalFilename,
+        ),
+        'file': await MultipartFile.fromFile(
+          localPath,
+          filename: originalFilename,
+        ),
+      };
+      final enhanceBody = FormData.fromMap(enhanceBodyMap);
+
+      final enhanceResponse = await dio.post(
+        ApiConfigs.BASE_URL + ApiEndPoints.imageEnhance,
+        data: enhanceBody,
+        options: Options(
+          responseType: ResponseType.bytes,
+          validateStatus: (status) => status != null && status < 500,
+        ),
+      );
+
+      final bytes = enhanceResponse.data as List<int>?;
+      if (bytes != null && bytes.isNotEmpty) {
+        final isJson = bytes[0] == 123; // '{' in ASCII
+        if (isJson) {
+          final jsonStr = utf8.decode(bytes);
+          final map = jsonDecode(jsonStr);
+          if (map is Map) {
+            final rawPath = map['image'] ??
+                map['data']?['image'] ??
+                map['data'] ??
+                map['enhanced_image'] ??
+                map['url'];
+            if (rawPath != null) {
+              final String imageUrl = rawPath.toString();
+              final fullUrl = imageUrl.startsWith('http')
+                  ? imageUrl
+                  : '${ApiConfigs.IMAGE_URL}$imageUrl';
+
+              final downloadRes = await dio.get<List<int>>(
+                fullUrl,
+                options: Options(responseType: ResponseType.bytes),
+              );
+              if (downloadRes.data != null) {
+                return Uint8List.fromList(downloadRes.data!);
+              }
+            }
+          }
+        } else {
+          return Uint8List.fromList(bytes);
+        }
+      }
+    } catch (e) {
+      debugPrint("DioClient enhanceImageBytes error: $e");
+    }
+    return null;
   }
 }

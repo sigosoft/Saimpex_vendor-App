@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -262,6 +264,24 @@ class _RestaurantManagementScreenState
         ApiEndPoints.menuTags,
         query: {'limit': 100},
       );
+      debugPrint(
+        "[RestaurantManagement] raw menuTags response data: ${response.data}",
+      );
+
+      try {
+        final compareResponse = await DioClient().get(
+          ApiEndPoints.getRestaurantTags,
+          query: {'limit': 100},
+        );
+        debugPrint(
+          "[RestaurantManagement] raw getRestaurantTags response data: ${compareResponse.data}",
+        );
+      } catch (e) {
+        debugPrint(
+          "[RestaurantManagement] raw getRestaurantTags comparison failed: $e",
+        );
+      }
+
       final items = _extractDataList(response.data)
           .map(_tagFromJson)
           .where((item) => item.id.isNotEmpty && item.name.isNotEmpty)
@@ -293,13 +313,43 @@ class _RestaurantManagementScreenState
       await _setToken();
 
       dio.MultipartFile? imageFile;
+      dio.MultipartFile? categoryImageFile;
       if (pickedImage != null) {
-        imageFile = await dio.MultipartFile.fromFile(
-          pickedImage.path,
-          filename: pickedImage.name,
-        );
+        try {
+          debugPrint("[RestaurantManagement] Enhancing image using imageEnhance endpoint...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            pickedImage.path,
+            pickedImage.name,
+          );
+          if (enhancedBytes != null) {
+            imageFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_${pickedImage.name}',
+            );
+            categoryImageFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_${pickedImage.name}',
+            );
+            debugPrint("[RestaurantManagement] Image enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[RestaurantManagement] Image enhancement failed: $e. Using original image.");
+        }
+
+        // Fallback to original image
+        if (imageFile == null) {
+          imageFile = await dio.MultipartFile.fromFile(
+            pickedImage.path,
+            filename: pickedImage.name,
+          );
+          categoryImageFile = await dio.MultipartFile.fromFile(
+            pickedImage.path,
+            filename: pickedImage.name,
+          );
+        }
       } else if (item == null) {
         imageFile = await _defaultCategoryImage();
+        categoryImageFile = await _defaultCategoryImage();
       }
 
       final bodyMap = <String, dynamic>{
@@ -309,6 +359,9 @@ class _RestaurantManagementScreenState
 
       if (imageFile != null) {
         bodyMap['image'] = imageFile;
+      }
+      if (categoryImageFile != null) {
+        bodyMap['category_image'] = categoryImageFile;
       }
 
       final body = dio.FormData.fromMap(bodyMap);
@@ -643,7 +696,9 @@ class _RestaurantManagementScreenState
                                               8,
                                             ),
                                             child: CachedNetworkImage(
-                                              imageUrl: item.image!,
+                                              imageUrl: item.image!.startsWith('http')
+                                                  ? item.image!
+                                                  : '${ApiConfigs.IMAGE_URL}${item.image!}',
                                               fit: BoxFit.cover,
                                               width: double.infinity,
                                               errorWidget:
@@ -1266,7 +1321,9 @@ class _RestaurantManagementScreenState
                     ? CachedNetworkImage(
                         height: 50,
                         width: 50,
-                        imageUrl: item.image!,
+                        imageUrl: item.image!.startsWith('http')
+                            ? item.image!
+                            : '${ApiConfigs.IMAGE_URL}${item.image!}',
                         fit: BoxFit.cover,
                         errorWidget: (context, url, error) => Image.asset(
                           'lib/assets/images/nodata.png',

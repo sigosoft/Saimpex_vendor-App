@@ -66,6 +66,7 @@ class ApiEndPoints {
   static String updateMenuCategory = "updateMenuCategory";
   static String updateMenuCategoryStatus = "updateMenuCategoryStatus";
   static String deleteMenuCategory = "deleteMenuCategory";
+  static String imageEnhance = "imageEnhance";
   static String getRestaurantMenuDetails = "restaurantMenuDetails";
   static String addRestaurantMenu = "addRestaurantMenu";
   static String getRestaurantTags = "getRestaurantTags";

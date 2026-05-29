@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:fluttertoast/fluttertoast.dart';
@@ -420,10 +421,29 @@ class ItemController extends GetxController {
             ? baseName
             : '${baseName.split('.').first}.jpg';
 
+        dio.MultipartFile? uploadFile;
+        try {
+          debugPrint("[ItemController] Enhancing image using imageEnhance endpoint...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(path, jpgFilename);
+          if (enhancedBytes != null) {
+            uploadFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_$jpgFilename',
+            );
+            debugPrint("[ItemController] Image enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[ItemController] Image enhancement failed: $e. Using original image.");
+        }
+
+        if (uploadFile == null) {
+          uploadFile = await dio.MultipartFile.fromFile(path, filename: jpgFilename);
+        }
+
         formData.files.add(
           MapEntry(
             'image',
-            await dio.MultipartFile.fromFile(path, filename: jpgFilename),
+            uploadFile,
           ),
         );
       }
@@ -784,10 +804,29 @@ class ItemController extends GetxController {
             ? baseName
             : '${baseName.split('.').first}.jpg';
 
+        dio.MultipartFile? uploadFile;
+        try {
+          debugPrint("[ItemController] Enhancing image using imageEnhance endpoint...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(path, jpgFilename);
+          if (enhancedBytes != null) {
+            uploadFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_$jpgFilename',
+            );
+            debugPrint("[ItemController] Image enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[ItemController] Image enhancement failed: $e. Using original image.");
+        }
+
+        if (uploadFile == null) {
+          uploadFile = await dio.MultipartFile.fromFile(path, filename: jpgFilename);
+        }
+
         formData.files.add(
           MapEntry(
             'image',
-            await dio.MultipartFile.fromFile(path, filename: jpgFilename),
+            uploadFile,
           ),
         );
       }

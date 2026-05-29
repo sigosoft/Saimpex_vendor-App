@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuController;
@@ -615,10 +616,31 @@ class MenuController extends GetxController {
         final mainImagePath = await _prepareJpegImage(
           uploadedImages.first.path,
         );
-        formDataMap["image"] = await dio.MultipartFile.fromFile(
-          mainImagePath,
-          filename: mainImagePath.split(RegExp(r'[/\\]')).last,
-        );
+        final baseName = mainImagePath.split(RegExp(r'[/\\]')).last;
+
+        dio.MultipartFile? uploadFile;
+        try {
+          debugPrint("[MenuController] Enhancing main menu image...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(mainImagePath, baseName);
+          if (enhancedBytes != null) {
+            uploadFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_$baseName',
+            );
+            debugPrint("[MenuController] Main menu image enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[MenuController] Main menu image enhancement failed: $e");
+        }
+
+        if (uploadFile == null) {
+          uploadFile = await dio.MultipartFile.fromFile(
+            mainImagePath,
+            filename: baseName,
+          );
+        }
+
+        formDataMap["image"] = uploadFile;
       }
       final formData = dio.FormData.fromMap(formDataMap);
       for (final id in selectedCategoryIds) {
@@ -640,10 +662,30 @@ class MenuController extends GetxController {
             baseName.endsWith('.jpg') || baseName.endsWith('.jpeg')
             ? baseName
             : '${baseName.split('.').first}.jpg';
+
+        dio.MultipartFile? uploadFile;
+        try {
+          debugPrint("[MenuController] Enhancing supplementary image $i...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(jpgPath, jpgFilename);
+          if (enhancedBytes != null) {
+            uploadFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_$jpgFilename',
+            );
+            debugPrint("[MenuController] Supplementary image $i enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[MenuController] Supplementary image $i enhancement failed: $e");
+        }
+
+        if (uploadFile == null) {
+          uploadFile = await dio.MultipartFile.fromFile(jpgPath, filename: jpgFilename);
+        }
+
         formData.files.add(
           MapEntry(
             "image[]",
-            await dio.MultipartFile.fromFile(jpgPath, filename: jpgFilename),
+            uploadFile,
           ),
         );
       }
@@ -1250,10 +1292,26 @@ class MenuController extends GetxController {
       }
       if (imagePaths.isNotEmpty) {
         final first = imagePaths.first;
-        formDataMap["image"] = await dio.MultipartFile.fromFile(
-          first.key,
-          filename: first.value,
-        );
+        dio.MultipartFile? uploadFile;
+        try {
+          debugPrint("[MenuController] Enhancing main menu image on update...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(first.key, first.value);
+          if (enhancedBytes != null) {
+            uploadFile = dio.MultipartFile.fromBytes(
+              enhancedBytes,
+              filename: 'enhanced_${first.value}',
+            );
+            debugPrint("[MenuController] Main menu image enhanced successfully!");
+          }
+        } catch (e) {
+          debugPrint("[MenuController] Main menu image enhancement failed: $e");
+        }
+
+        if (uploadFile == null) {
+          uploadFile = await dio.MultipartFile.fromFile(first.key, filename: first.value);
+        }
+
+        formDataMap["image"] = uploadFile;
       }
       final formData = dio.FormData.fromMap(formDataMap);
       final List<String> categoryIdsToSend = selectedEditCategoryIds.isNotEmpty

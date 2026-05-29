@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
@@ -529,11 +530,28 @@ class ChatController extends GetxController {
       isSendingMessage = true;
       update();
 
+      final filename = imageFile.path.split('/').last;
+      dio.MultipartFile? uploadFile;
+      try {
+        debugPrint("[ChatController] Enhancing chat image using imageEnhance endpoint...");
+        final enhancedBytes = await DioClient().enhanceImageBytes(imageFile.path, filename);
+        if (enhancedBytes != null) {
+          uploadFile = dio.MultipartFile.fromBytes(
+            enhancedBytes,
+            filename: 'enhanced_$filename',
+          );
+          debugPrint("[ChatController] Chat image enhanced successfully!");
+        }
+      } catch (e) {
+        debugPrint("[ChatController] Chat image enhancement failed: $e. Using original image.");
+      }
+
+      if (uploadFile == null) {
+        uploadFile = await dio.MultipartFile.fromFile(imageFile.path, filename: filename);
+      }
+
       Map<String, dynamic> body = {
-        "message": await dio.MultipartFile.fromFile(
-          imageFile.path,
-          filename: imageFile.path.split('/').last,
-        ),
+        "message": uploadFile,
         "message_type": "image",
       };
 

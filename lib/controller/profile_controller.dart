@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart' as dio;
 import 'package:country_picker/country_picker.dart';
@@ -1455,11 +1456,28 @@ class ProfileController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
+      final filename = pickedFile.path.split(RegExp(r'[/\\]')).last;
+      dio.MultipartFile? uploadFile;
+      try {
+        debugPrint("[ProfileController] Enhancing image using imageEnhance endpoint...");
+        final enhancedBytes = await DioClient().enhanceImageBytes(pickedFile.path, filename);
+        if (enhancedBytes != null) {
+          uploadFile = dio.MultipartFile.fromBytes(
+            enhancedBytes,
+            filename: 'enhanced_$filename',
+          );
+          debugPrint("[ProfileController] Image enhanced successfully!");
+        }
+      } catch (e) {
+        debugPrint("[ProfileController] Image enhancement failed: $e. Using original image.");
+      }
+
+      if (uploadFile == null) {
+        uploadFile = await dio.MultipartFile.fromFile(pickedFile.path, filename: filename);
+      }
+
       final formData = dio.FormData.fromMap({
-        "file": await dio.MultipartFile.fromFile(
-          pickedFile.path,
-          filename: pickedFile.path.split(RegExp(r'[/\\]')).last,
-        ),
+        "file": uploadFile,
       });
       final response = await DioClient().post(
         vendorType == "1"
