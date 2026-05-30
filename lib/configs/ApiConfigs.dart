@@ -62,6 +62,7 @@ class ApiEndPoints {
   static String totalUnreadMessagesCount = "chat/totalUnreadMessagesCount";
   static String markAsRead = "chat/markAsRead";
   static String getRestaurantCategories = "getRestaurantCategories";
+  static String menuCategories = "menuCategories";
   static String addMenuCategory = "addMenuCategory";
   static String updateMenuCategory = "updateMenuCategory";
   static String updateMenuCategoryStatus = "updateMenuCategoryStatus";

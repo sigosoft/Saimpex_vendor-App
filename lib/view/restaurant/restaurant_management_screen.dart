@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -235,9 +236,10 @@ class _RestaurantManagementScreenState
     try {
       await _setToken();
       final response = await DioClient().get(
-        ApiEndPoints.getRestaurantCategories,
+        ApiEndPoints.menuCategories,
         query: {'limit': 100},
       );
+      debugPrint("[FetchCategories] raw response data: ${response.data}");
       final items = _extractDataList(response.data)
           .map(_categoryFromJson)
           .where((item) => item.id.isNotEmpty && item.name.isNotEmpty)
@@ -264,6 +266,7 @@ class _RestaurantManagementScreenState
         ApiEndPoints.menuTags,
         query: {'limit': 100},
       );
+      debugPrint("[FetchTags] raw response data: ${response.data}");
       debugPrint(
         "[RestaurantManagement] raw menuTags response data: ${response.data}",
       );
@@ -385,7 +388,7 @@ class _RestaurantManagementScreenState
                       : 'Category updated successfully')
                 : 'Category action failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -423,7 +426,7 @@ class _RestaurantManagementScreenState
                       : 'Tag updated successfully')
                 : 'Tag action failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -455,7 +458,7 @@ class _RestaurantManagementScreenState
                 ? 'Category deleted successfully'
                 : 'Category delete failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -485,7 +488,7 @@ class _RestaurantManagementScreenState
             response.data,
             success ? 'Tag deleted successfully' : 'Tag delete failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -507,6 +510,9 @@ class _RestaurantManagementScreenState
         query: {'id': item.id.toString(), 'status': nextStatus.toString()},
       );
       final success = _isSuccess(response.data);
+      debugPrint(
+        "[StatusUpdate] Category updating: id=${item.id}, name='${item.name}', nextStatus=$nextStatus, success=$success",
+      );
       if (mounted) {
         showToast(
           context,
@@ -514,7 +520,7 @@ class _RestaurantManagementScreenState
             response.data,
             success ? 'Status updated successfully' : 'Status update failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -533,6 +539,9 @@ class _RestaurantManagementScreenState
         query: {'id': item.id.toString(), 'status': nextStatus.toString()},
       );
       final success = _isSuccess(response.data);
+      debugPrint(
+        "[StatusUpdate] Tag updating: id=${item.id}, name='${item.name}', nextStatus=$nextStatus, success=$success",
+      );
       if (mounted) {
         showToast(
           context,
@@ -540,7 +549,7 @@ class _RestaurantManagementScreenState
             response.data,
             success ? 'Status updated successfully' : 'Status update failed',
             statusCode: response.statusCode,
-            showStatusCode: success,
+            showStatusCode: false,
           ),
         );
       }
@@ -548,6 +557,97 @@ class _RestaurantManagementScreenState
     } catch (error) {
       if (mounted) showToast(context, error.toString());
     }
+  }
+
+  Future<void> _pickAndCropCategoryImage(
+    ImageSource source,
+    void Function(void Function()) setDialogState,
+    void Function(XFile) onImageCropped,
+  ) async {
+    try {
+      final picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
+      if (pickedFile == null) return;
+
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: const Color(0xFFFF5216),
+            toolbarWidgetColor: Colors.white,
+            activeControlsWidgetColor: const Color(0xFFFF5216),
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+        ],
+      );
+
+      if (cropped != null) {
+        setDialogState(() {
+          onImageCropped(XFile(cropped.path));
+        });
+      }
+    } catch (e) {
+      debugPrint("Error picking/cropping category image: $e");
+    }
+  }
+
+  void _showCategoryImageSelector(
+    BuildContext context,
+    void Function(void Function()) setDialogState,
+    void Function(XFile) onImageCropped,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Text(
+          "Select Image",
+          style: GoogleFonts.rubik(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Choose image from gallery or camera",
+          style: GoogleFonts.rubik(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await _pickAndCropCategoryImage(
+                ImageSource.gallery,
+                setDialogState,
+                onImageCropped,
+              );
+            },
+            child: Text(
+              "Gallery",
+              style: GoogleFonts.rubik(color: colorPrimary, fontWeight: FontWeight.bold),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await _pickAndCropCategoryImage(
+                ImageSource.camera,
+                setDialogState,
+                onImageCropped,
+              );
+            },
+            child: Text(
+              "Camera",
+              style: GoogleFonts.rubik(color: colorPrimary, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Dialog to Add/Edit Category
@@ -650,20 +750,14 @@ class _RestaurantManagementScreenState
                       ),
                       const SizedBox(height: 8),
                       GestureDetector(
-                        onTap: () async {
-                          try {
-                            final picker = ImagePicker();
-                            final XFile? pickedFile = await picker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (pickedFile != null) {
-                              setDialogState(() {
-                                selectedImage = pickedFile;
-                              });
-                            }
-                          } catch (e) {
-                            debugPrint("Error picking image: $e");
-                          }
+                        onTap: () {
+                          _showCategoryImageSelector(
+                            context,
+                            setDialogState,
+                            (croppedFile) {
+                              selectedImage = croppedFile;
+                            },
+                          );
                         },
                         child: Container(
                           width: double.infinity,
