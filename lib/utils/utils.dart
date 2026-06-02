@@ -546,3 +546,83 @@ void showConfirmationBottomSheet({
     },
   );
 }
+
+String translateOffreToEnglish(String name, String langCode) {
+  if (langCode != 'en') return name;
+  final trimmed = name.trim();
+  final trimmedLower = trimmed.toLowerCase();
+  
+  // Direct matches
+  if (trimmedLower == 'offre') return 'Offer';
+  if (trimmedLower == 'offres') return 'Offers';
+  if (trimmedLower == 'offre combo' || trimmedLower == 'combo offre') return 'Combo Offer';
+  if (trimmedLower == 'offre basic' || trimmedLower == 'basic offre') return 'Basic Offer';
+  if (trimmedLower == 'offre premium' || trimmedLower == 'premium offre') return 'Premium Offer';
+  
+  // Month mappings in French (e.g. "offre 1 mois" -> "1 Month Offer")
+  final moisRegex = RegExp(r'^offre\s+(\d+)\s+mois$', caseSensitive: false);
+  if (moisRegex.hasMatch(trimmedLower)) {
+    final match = moisRegex.firstMatch(trimmedLower);
+    final number = match?.group(1);
+    if (number != null) {
+      return '$number Month Offer';
+    }
+  }
+
+  // Year mappings in French (e.g. "offre 1 an" -> "1 Year Offer")
+  final anRegex = RegExp(r'^offre\s+(\d+)\s+an(s)?$', caseSensitive: false);
+  if (anRegex.hasMatch(trimmedLower)) {
+    final match = anRegex.firstMatch(trimmedLower);
+    final number = match?.group(1);
+    if (number != null) {
+      return '$number Year Offer';
+    }
+  }
+
+  // General mappings for prefixes
+  if (trimmedLower.startsWith('offre ')) {
+    var remainder = trimmed.substring(6).trim();
+    // Translate some common French adjectives
+    if (remainder.toLowerCase() == 'mensuelle' || remainder.toLowerCase() == 'mensuel') {
+      remainder = 'Monthly';
+    } else if (remainder.toLowerCase() == 'annuelle' || remainder.toLowerCase() == 'annuel') {
+      remainder = 'Annual';
+    } else if (remainder.toLowerCase() == 'gratuite' || remainder.toLowerCase() == 'gratuit') {
+      remainder = 'Free';
+    } else if (remainder.toLowerCase() == "d'essai") {
+      remainder = 'Trial';
+    } else if (remainder.isNotEmpty) {
+      remainder = '${remainder[0].toUpperCase()}${remainder.substring(1)}';
+    }
+    return '$remainder Offer';
+  }
+  
+  // General mappings for suffixes
+  if (trimmedLower.endsWith(' offre')) {
+    var remainder = trimmed.substring(0, trimmed.length - 6).trim();
+    if (remainder.toLowerCase() == 'mensuelle' || remainder.toLowerCase() == 'mensuel') {
+      remainder = 'Monthly';
+    } else if (remainder.toLowerCase() == 'annuelle' || remainder.toLowerCase() == 'annuel') {
+      remainder = 'Annual';
+    } else if (remainder.toLowerCase() == 'gratuite' || remainder.toLowerCase() == 'gratuit') {
+      remainder = 'Free';
+    } else if (remainder.toLowerCase() == "d'essai") {
+      remainder = 'Trial';
+    } else if (remainder.isNotEmpty) {
+      remainder = '${remainder[0].toUpperCase()}${remainder.substring(1)}';
+    }
+    return '$remainder Offer';
+  }
+  
+  // Fallback: If it contains "offre" (case-insensitive) but wasn't caught by prefix/suffix,
+  // let's replace "offre" with "Offer" and "offres" with "Offers".
+  if (trimmedLower.contains('offre')) {
+    String replaced = trimmed
+      .replaceAll(RegExp(r'\boffres\b', caseSensitive: false), 'Offers')
+      .replaceAll(RegExp(r'\boffre\b', caseSensitive: false), 'Offer');
+    return replaced;
+  }
+  
+  return name;
+}
+

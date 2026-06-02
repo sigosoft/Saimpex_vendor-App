@@ -139,6 +139,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "attribute": MessageLookupByLibrary.simpleMessage("سمة"),
     "attributeLabel": MessageLookupByLibrary.simpleMessage("الخاصية"),
     "attributesReference": MessageLookupByLibrary.simpleMessage("مرجع السمات"),
+    "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
+      "سيتم قبول الطلبات تلقائيًا",
+    ),
+    "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
+      "قبول الطلبات تلقائيًا",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("متاح"),
     "availableAt": MessageLookupByLibrary.simpleMessage("متوفر في"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -337,6 +343,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "راسلنا عبر البريد الإلكتروني",
     ),
     "endDate": MessageLookupByLibrary.simpleMessage("تاريخ الانتهاء"),
+    "enterCategoryNameHint": MessageLookupByLibrary.simpleMessage(
+      "أدخل اسم الفئة",
+    ),
     "enterCount": MessageLookupByLibrary.simpleMessage("أدخل العدد"),
     "enterCouponCode": MessageLookupByLibrary.simpleMessage("أدخل رمز القسيمة"),
     "enterCouponName": MessageLookupByLibrary.simpleMessage("أدخل اسم القسيمة"),
@@ -368,6 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterSerialNumberHint": MessageLookupByLibrary.simpleMessage(
       "أدخل الرقم التسلسلي",
     ),
+    "enterTagNameHint": MessageLookupByLibrary.simpleMessage("أدخل اسم الوسم"),
     "enterYourName": MessageLookupByLibrary.simpleMessage("أدخل اسمك"),
     "enterYourPassword": MessageLookupByLibrary.simpleMessage(
       "أدخل كلمة المرور الخاصة بك",
@@ -859,6 +869,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "نسبة عمولة المطعم لكل طلب",
     ),
     "restaurantDetails": MessageLookupByLibrary.simpleMessage("تفاصيل المطعم"),
+    "restaurantManagement": MessageLookupByLibrary.simpleMessage(
+      "إدارة المطعم",
+    ),
     "restaurantOne": MessageLookupByLibrary.simpleMessage("المطعم 1"),
     "restaurantReports": MessageLookupByLibrary.simpleMessage("تقارير المطعم"),
     "restaurantStatus": MessageLookupByLibrary.simpleMessage("حالة المطعم"),

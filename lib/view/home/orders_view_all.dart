@@ -263,12 +263,37 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     return GetBuilder<HomeController>(
       builder: (controller) {
         final membership = controller.homeData?.data?.membership;
-        final summary = controller.homeData?.data?.summary;
         final List<OrderData> orders =
             controller.homeData?.data?.orders?.data ?? <OrderData>[];
-        final membershipName = membership?.nameEn?.trim().isNotEmpty == true
-            ? membership!.nameEn!.trim()
-            : S.of(context).membership;
+        final langCode =
+            (Localizations.maybeLocaleOf(context)?.languageCode ?? 'en')
+                .toLowerCase();
+        final nameEn = membership?.nameEn?.trim() ?? '';
+        final nameFr = membership?.nameFr?.trim() ?? '';
+        final nameAr = membership?.nameAr?.trim() ?? '';
+        String resolvedName;
+        switch (langCode) {
+          case 'ar':
+            resolvedName =
+                nameAr.isNotEmpty ? nameAr : (nameEn.isNotEmpty ? nameEn : nameFr);
+            break;
+          case 'fr':
+            resolvedName =
+                nameFr.isNotEmpty ? nameFr : (nameEn.isNotEmpty ? nameEn : nameAr);
+            break;
+          default:
+            resolvedName =
+                nameEn.isNotEmpty ? nameEn : (nameFr.isNotEmpty ? nameFr : nameAr);
+        }
+        // Keep membership name locale-correct even if not shown on this screen.
+        // (Some layouts might add it back later.)
+        // ignore: unused_local_variable
+        final membershipName = resolvedName.trim().isEmpty
+            ? S.of(context).membership
+            : (langCode == 'en'
+                  ? translateOffreToEnglish(resolvedName, 'en')
+                  : resolvedName);
+        // ignore: unused_local_variable
         final expiryText = S
             .of(context)
             .expiresInDays(membership?.expiresInDays?.toString() ?? "0");

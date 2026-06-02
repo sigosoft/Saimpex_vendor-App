@@ -69,6 +69,36 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
   ];
   Timer? _autoRefreshTimer;
 
+  String _currentLanguageCode(BuildContext context) {
+    return (Localizations.maybeLocaleOf(context)?.languageCode ?? 'en')
+        .toLowerCase();
+  }
+
+  String _resolveMembershipName(BuildContext context, Membership? membership) {
+    final langCode = _currentLanguageCode(context);
+    final nameEn = membership?.nameEn?.trim() ?? '';
+    final nameFr = membership?.nameFr?.trim() ?? '';
+    final nameAr = membership?.nameAr?.trim() ?? '';
+
+    String resolved;
+    switch (langCode) {
+      case 'ar':
+        resolved = nameAr.isNotEmpty ? nameAr : (nameEn.isNotEmpty ? nameEn : nameFr);
+        break;
+      case 'fr':
+        resolved = nameFr.isNotEmpty ? nameFr : (nameEn.isNotEmpty ? nameEn : nameAr);
+        break;
+      default:
+        resolved = nameEn.isNotEmpty ? nameEn : (nameFr.isNotEmpty ? nameFr : nameAr);
+    }
+
+    if (resolved.trim().isEmpty) return S.of(context).membership;
+
+    // Backend sometimes returns French words even for English names.
+    // Only normalize "offre -> offer" when UI language is English.
+    return langCode == 'en' ? translateOffreToEnglish(resolved, 'en') : resolved;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -331,9 +361,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
         final summary = controller.homeData?.data?.summary;
         final List<OrderData> orders =
             controller.homeData?.data?.orders?.data ?? <OrderData>[];
-        final membershipName = membership?.nameEn?.trim().isNotEmpty == true
-            ? membership!.nameEn!.trim()
-            : S.of(context).membership;
+        final membershipName = _resolveMembershipName(context, membership);
         final expiryText = S
             .of(context)
             .expiresInDays(membership?.expiresInDays?.toString() ?? "0");
@@ -462,7 +490,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Auto-Accept Orders",
+                                          S.of(context).autoAcceptOrdersTitle,
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w700,
@@ -471,7 +499,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          "Orders will be accepted automatically",
+                                          S.of(context).autoAcceptOrdersSubtitle,
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color(0xFF9CA3AF),

@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +11,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 class CategoryItem {
   final String id;
@@ -155,13 +155,27 @@ class _RestaurantManagementScreenState
   }
 
   String _nameFromJson(Map<String, dynamic> map) {
-    return (map['name_en'] ??
-            map['name'] ??
-            map['title'] ??
-            map['tag_name'] ??
-            map['category_name'] ??
-            '')
-        .toString();
+    final lang = FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+    String name = '';
+    if (lang == 'fr') {
+      name = (map['name_fr'] ?? map['name_en'] ?? map['name'] ?? map['title'] ?? map['tag_name'] ?? map['category_name'] ?? '').toString();
+    } else if (lang == 'ar') {
+      name = (map['name_ar'] ?? map['name_en'] ?? map['name'] ?? map['title'] ?? map['tag_name'] ?? map['category_name'] ?? '').toString();
+    } else {
+      name = (map['name_en'] ?? map['name'] ?? map['title'] ?? map['tag_name'] ?? map['category_name'] ?? '').toString();
+    }
+
+    if (lang == 'en') {
+      final trimmedLower = name.trim().toLowerCase();
+      if (trimmedLower == 'offre') {
+        name = 'Offer';
+      } else if (trimmedLower == 'offres') {
+        name = 'Offers';
+      } else if (trimmedLower == 'offre combo' || trimmedLower == 'combo offre') {
+        name = 'Combo Offer';
+      }
+    }
+    return name;
   }
 
   String _statusFromJson(Map<String, dynamic> map) {
@@ -703,7 +717,7 @@ class _RestaurantManagementScreenState
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "Name",
+                        S.of(context).name,
                         style: GoogleFonts.rubik(
                           color: Colors.grey[600],
                           fontSize: 14,
@@ -713,7 +727,7 @@ class _RestaurantManagementScreenState
                       TextField(
                         controller: nameCtrl,
                         decoration: InputDecoration(
-                          hintText: "Enter Category Name",
+                          hintText: S.of(context).enterCategoryNameHint,
                           hintStyle: GoogleFonts.rubik(
                             color: Colors.grey[400],
                             fontSize: 13,
@@ -923,7 +937,7 @@ class _RestaurantManagementScreenState
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "Name",
+                    S.of(context).name,
                     style: GoogleFonts.rubik(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -933,7 +947,7 @@ class _RestaurantManagementScreenState
                   TextField(
                     controller: nameCtrl,
                     decoration: InputDecoration(
-                      hintText: "Enter the tag name",
+                      hintText: S.of(context).enterTagNameHint,
                       hintStyle: GoogleFonts.rubik(
                         color: Colors.grey[400],
                         fontSize: 13,

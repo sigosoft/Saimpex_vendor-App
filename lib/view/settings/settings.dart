@@ -268,7 +268,7 @@ class _SettingsState extends State<Settings> {
                           children: [
                             _buildMenuItem(
                               context,
-                              "Restaurant Managment",
+                                S.of(context).restaurantManagement,
                               null,
                               () {
                                 Get.to(() => const RestaurantManagementScreen());
@@ -287,7 +287,7 @@ class _SettingsState extends State<Settings> {
                             ),
                             _buildMenuItem(
                               context,
-                              'Earnings',
+                              S.of(context).earnings,
                               const AssetImage(
                                 "lib/assets/images/earnings.png",
                               ),
@@ -297,7 +297,7 @@ class _SettingsState extends State<Settings> {
                             ),
                             _buildMenuItem(
                               context,
-                              'Coupons',
+                              S.of(context).coupons,
                               const AssetImage("lib/assets/images/Coupons.png"),
                               () {
                                 Get.to(() => const CouponsScreen());

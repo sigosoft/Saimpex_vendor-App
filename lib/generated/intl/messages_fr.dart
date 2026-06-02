@@ -155,6 +155,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "attributesReference": MessageLookupByLibrary.simpleMessage(
       "Référence des attributs",
     ),
+    "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Les commandes seront acceptées automatiquement",
+    ),
+    "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
+      "Acceptation automatique des commandes",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("Disponible"),
     "availableAt": MessageLookupByLibrary.simpleMessage("Disponible à"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -389,6 +395,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "email": MessageLookupByLibrary.simpleMessage("E-mail"),
     "emailUs": MessageLookupByLibrary.simpleMessage("Envoyez-nous un e-mail"),
     "endDate": MessageLookupByLibrary.simpleMessage("Date de fin"),
+    "enterCategoryNameHint": MessageLookupByLibrary.simpleMessage(
+      "Saisir le nom de la catégorie",
+    ),
     "enterCount": MessageLookupByLibrary.simpleMessage("Entrez le nombre"),
     "enterCouponCode": MessageLookupByLibrary.simpleMessage(
       "Entrez le code promo",
@@ -429,6 +438,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enterSerialNumberHint": MessageLookupByLibrary.simpleMessage(
       "Entrer le numéro de série",
+    ),
+    "enterTagNameHint": MessageLookupByLibrary.simpleMessage(
+      "Saisir le nom du tag",
     ),
     "enterYourName": MessageLookupByLibrary.simpleMessage("Entrez votre nom"),
     "enterYourPassword": MessageLookupByLibrary.simpleMessage(
@@ -970,6 +982,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "restaurantDetails": MessageLookupByLibrary.simpleMessage(
       "DÉTAILS DU RESTAURANT",
+    ),
+    "restaurantManagement": MessageLookupByLibrary.simpleMessage(
+      "Gestion de restaurant",
     ),
     "restaurantOne": MessageLookupByLibrary.simpleMessage("Restaurant 1"),
     "restaurantReports": MessageLookupByLibrary.simpleMessage(

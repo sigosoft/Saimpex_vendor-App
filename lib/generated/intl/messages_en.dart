@@ -141,6 +141,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "attributesReference": MessageLookupByLibrary.simpleMessage(
       "Attributes Reference",
     ),
+    "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Orders will be accepted automatically",
+    ),
+    "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
+      "Auto-Accept Orders",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("Available"),
     "availableAt": MessageLookupByLibrary.simpleMessage("Available at"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -351,6 +357,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "emailUs": MessageLookupByLibrary.simpleMessage("Email us"),
     "endDate": MessageLookupByLibrary.simpleMessage("End date"),
+    "enterCategoryNameHint": MessageLookupByLibrary.simpleMessage(
+      "Enter category name",
+    ),
     "enterCount": MessageLookupByLibrary.simpleMessage("Enter count"),
     "enterCouponCode": MessageLookupByLibrary.simpleMessage(
       "Enter coupon code",
@@ -390,6 +399,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterSerialNumberHint": MessageLookupByLibrary.simpleMessage(
       "Enter serial number",
     ),
+    "enterTagNameHint": MessageLookupByLibrary.simpleMessage("Enter tag name"),
     "enterYourName": MessageLookupByLibrary.simpleMessage("Enter your name"),
     "enterYourPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
@@ -857,6 +867,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "restaurantDetails": MessageLookupByLibrary.simpleMessage(
       "RESTAURANT DETAILS",
+    ),
+    "restaurantManagement": MessageLookupByLibrary.simpleMessage(
+      "Restaurant Management",
     ),
     "restaurantOne": MessageLookupByLibrary.simpleMessage("Restaurant 1"),
     "restaurantReports": MessageLookupByLibrary.simpleMessage(

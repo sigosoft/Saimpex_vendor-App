@@ -27,7 +27,6 @@ class VendorMembershipCard extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Container(
         width: width,
-        height: height,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,

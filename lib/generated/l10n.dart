@@ -2334,6 +2334,56 @@ class S {
     );
   }
 
+  /// `Restaurant Management`
+  String get restaurantManagement {
+    return Intl.message(
+      'Restaurant Management',
+      name: 'restaurantManagement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-Accept Orders`
+  String get autoAcceptOrdersTitle {
+    return Intl.message(
+      'Auto-Accept Orders',
+      name: 'autoAcceptOrdersTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orders will be accepted automatically`
+  String get autoAcceptOrdersSubtitle {
+    return Intl.message(
+      'Orders will be accepted automatically',
+      name: 'autoAcceptOrdersSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter category name`
+  String get enterCategoryNameHint {
+    return Intl.message(
+      'Enter category name',
+      name: 'enterCategoryNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter tag name`
+  String get enterTagNameHint {
+    return Intl.message(
+      'Enter tag name',
+      name: 'enterTagNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Working Hours`
   String get workingHours {
     return Intl.message(
