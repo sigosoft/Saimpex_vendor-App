@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,14 @@ import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'profile_controller.dart';
 
 class HomeController extends GetxController {
+  final StreamController<void> _refreshStreamController = StreamController<void>.broadcast();
+  Stream<void> get refreshStream => _refreshStreamController.stream;
+
+  void triggerFullRefresh() {
+    if (!_refreshStreamController.isClosed) {
+      _refreshStreamController.add(null);
+    }
+  }
   int currentIndex = 0;
   int selectedcurrentIndex = 0;
   final FlutterLocalization localization = FlutterLocalization.instance;
@@ -33,6 +42,7 @@ class HomeController extends GetxController {
 
   bool badge = false;
   int unreadChatCount = 0;
+  int currentOrderStatus = 1;
 
   bool get isAutoAcceptOrders => (autoAcceptMode ?? 1) == 1;
 
@@ -49,6 +59,7 @@ class HomeController extends GetxController {
   @override
   void dispose() {
     scrollController.dispose();
+    _refreshStreamController.close();
     super.dispose();
   }
 
@@ -138,6 +149,7 @@ class HomeController extends GetxController {
     int page = 1,
     bool isLoadMore = false,
   }) async {
+    currentOrderStatus = orderStatus;
     try {
       if (!isLoadMore) {
         isFirstLoadRunning = true;
@@ -218,6 +230,14 @@ class HomeController extends GetxController {
       fetchUnreadChatCount();
       update();
     }
+  }
+
+  Future<void> refreshHomeData(BuildContext context) async {
+    await fetchHome(
+      context,
+      orderStatus: currentOrderStatus,
+      keyword: searchController.text.trim(),
+    );
   }
 
   Future<void> fetchUnreadChatCount() async {

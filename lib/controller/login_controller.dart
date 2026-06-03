@@ -76,6 +76,8 @@ class LoginController extends GetxController {
       Get.back();
       update();
       if (loginModel.status == true) {
+        await savename("username", userName);
+        await savename("password", password);
         await savename("token", loginModel.data?.details?.token ?? "");
         await savename("loginStatus", loginModel.status?.toString() ?? "false");
         await savename("name", loginModel.data?.details?.name ?? "");

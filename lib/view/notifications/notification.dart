@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
+import 'package:saimpex_vendor/resources/colors.dart';
+import 'package:saimpex_vendor/controller/order_details_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import '../../Utils/Utils.dart';
 import '../Home/Home.dart';
 
@@ -52,6 +59,62 @@ class FCM {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  static String cleanOrderNumber(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    var cleaned = raw.trim();
+    while (cleaned.startsWith('#')) {
+      cleaned = cleaned.substring(1).trim();
+    }
+    return '#$cleaned';
+  }
+
+  static String? extractOrderCodeFromText(String? text) {
+    if (text == null || text.isEmpty) return null;
+    final regExp = RegExp(r'#?[A-Za-z0-9_-]*\d{3,}');
+    final match = regExp.firstMatch(text);
+    return match?.group(0);
+  }
+
+  static Future<void> syncFcmToken(String token) async {
+    try {
+      final isLoggedIn = await isUserLoggedIn();
+      if (!isLoggedIn) return;
+      final savedUsername = await getSavedObject("username");
+      final savedPassword = await getSavedObject("password");
+      if (savedUsername != null && savedPassword != null) {
+        print("Background FCM token sync started...");
+        final response = await DioClient().post(
+          ApiEndPoints.login,
+          body: {
+            "username": savedUsername.toString(),
+            "password": savedPassword.toString(),
+            "fcm": token,
+          },
+        );
+        print("Background FCM token sync completed: ${response.data}");
+      }
+    } catch (e) {
+      print("Background FCM token sync failed: $e");
+    }
+  }
+
+  static Map<String, dynamic> getEffectiveData(Map<String, dynamic> data) {
+    if (data.containsKey('data')) {
+      final nested = data['data'];
+      if (nested is Map) {
+        return Map<String, dynamic>.from(nested);
+      } else if (nested is String) {
+        try {
+          final decoded = jsonDecode(nested);
+          if (decoded is Map) {
+            return Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+    }
+    return data;
+  }
+
   /// Call this in `main()` after Firebase.initializeApp()
   Future<void> setNotifications() async {
     // Init notifications
@@ -66,52 +129,92 @@ class FCM {
     String token = await getDeviceToken();
     print("firebase token $token");
     await savename("fcm", token);
+    await syncFcmToken(token);
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      print("FCM token refreshed: $newToken");
+      await savename("fcm", newToken);
+      await syncFcmToken(newToken);
+    });
 
     // Background handler
     FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
 
     // Foreground messages
     FirebaseMessaging.onMessage.listen((message) async {
+      final effectiveData = getEffectiveData(message.data);
+      final String? notificationType = effectiveData['type']?.toString();
+      
+      final String title = message.notification?.title ?? '';
+      final String body = message.notification?.body ?? '';
+
+      // Diagnostic Toast
+      try {
+        Fluttertoast.showToast(
+          msg: "FCM Received: ${title.isNotEmpty ? title : (notificationType ?? 'Order Notification')}",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.black.withOpacity(0.8),
+          textColor: Colors.white,
+        );
+      } catch (e) {
+        print("Diagnostic Toast Error: $e");
+      }
+
+      final orderData = _extractOrderData(message.data, notificationBody: body);
+      final String? orderId = orderData['orderId'];
+      final String? orderNumber = orderData['orderNumber'];
+      final bool hasOrderInfo = (orderId != null && orderId.isNotEmpty) || (orderNumber != null && orderNumber.isNotEmpty);
+
+      final bool isOrderRequestType = notificationType == 'order_request' || 
+                                       notificationType == 'new_order_request' || 
+                                       notificationType == 'other_order_request' ||
+                                       hasOrderInfo ||
+                                       title.toLowerCase().contains('order') ||
+                                       body.toLowerCase().contains('order');
+
       if (message.data.containsKey('data')) {
-        streamCtlr.sink.add(message.data['data']);
+        streamCtlr.sink.add(message.data['data'].toString());
       }
       if (message.data.containsKey('notification')) {
-        streamCtlr.sink.add(message.data['notification']);
+        streamCtlr.sink.add(message.data['notification'].toString());
       }
 
-      if (message.notification != null) {
-        titleCtlr.sink.add(message.notification!.title ?? "");
-        bodyCtlr.sink.add(message.notification!.body ?? "");
-        print("Message received foreground: ${message.notification!.title}");
-        incrementNotiCount();
+      try {
+        if (message.notification != null) {
+          titleCtlr.sink.add(message.notification!.title ?? "");
+          bodyCtlr.sink.add(message.notification!.body ?? "");
+          print("Message received foreground: ${message.notification!.title}");
+          incrementNotiCount();
 
-        await showNotification(message);
-      }
-      if (message.data.isNotEmpty) {
-        print("Message received data foreground: ${message.data.toString()}");
-        await showNotification(message);
+          await showNotification(message);
+        } else if (message.data.isNotEmpty) {
+          print("Message received data foreground: ${message.data.toString()}");
+          await showNotification(message);
+        }
+      } catch (e) {
+        print("Error presenting notification: $e");
       }
 
       // Store notification data
       await _storeNotificationData(message.data);
 
-      // Check notification type and handle accordingly
-      final String? notificationType = message.data['type']?.toString();
       print(
         "Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}",
       );
 
-      if (notificationType == 'order_request' && message.data.isNotEmpty) {
-        // Navigate to AcceptOrder screen for order_request type (only if data is not empty)
-        await navigateToAcceptOrderIfLoggedIn(notificationData: message.data);
+      if (isOrderRequestType) {
+        // Refresh Home UI & Show In-App Dialog Alert in real-time
+        await refreshHomeUI();
+        showInAppNewOrderAlert(message.data, notificationBody: body);
       } else {
-        // For other types or when data is empty, refresh Home UI if app is in foreground
+        // For other types, refresh Home UI if app is in foreground
         print(
-          "Refreshing Home UI - type: $notificationType, data empty: ${message.data.isEmpty}",
+          "Refreshing Home UI - type: $notificationType",
         );
         if (notificationType == "other_order_request" ||
             notificationType == "new_order_request") {
-          Get.offAll(Home());
+          await refreshHomeUI();
         }
       }
     });
@@ -279,7 +382,13 @@ class FCM {
 
       // Try to find and update HomeController if it exists
       try {
-        //Get.offAll(Home());
+        if (Get.isRegistered<HomeController>()) {
+          final homeController = Get.find<HomeController>();
+          homeController.triggerFullRefresh();
+          if (Get.context != null) {
+            await homeController.refreshHomeData(Get.context!);
+          }
+        }
       } catch (e) {
         print("Error refreshing Home UI: $e");
         print("Stack trace: ${StackTrace.current}");
@@ -343,16 +452,24 @@ class FCM {
 
   /// Extract order data from notification payload
   /// Maps various possible key names to standard field names
-  static Map<String, String?> _extractOrderData(Map<String, dynamic>? data) {
+  static Map<String, String?> _extractOrderData(Map<String, dynamic>? data, {String? notificationBody}) {
     if (data == null || data.isEmpty) {
+      if (notificationBody != null && notificationBody.isNotEmpty) {
+        final orderNumber = extractOrderCodeFromText(notificationBody);
+        if (orderNumber != null) {
+          return {'orderNumber': orderNumber};
+        }
+      }
       return {};
     }
+
+    final effectiveData = getEffectiveData(data);
 
     // Helper function to safely get string value from various key names
     String? getValue(List<String> possibleKeys) {
       for (var key in possibleKeys) {
-        if (data.containsKey(key) && data[key] != null) {
-          return data[key].toString();
+        if (effectiveData.containsKey(key) && effectiveData[key] != null) {
+          return effectiveData[key].toString();
         }
       }
       return null;
@@ -365,7 +482,10 @@ class FCM {
     final requestId = getValue(['request_id']);
 
     // Extract order number/code
-    final orderNumber = getValue(['order_code']);
+    var orderNumber = getValue(['order_code', 'order_number', 'order_id']);
+    if (orderNumber == null || orderNumber.isEmpty) {
+      orderNumber = extractOrderCodeFromText(notificationBody);
+    }
 
     // Extract order date
     final orderDate = getValue(['order_created_at_formatted']);
@@ -493,6 +613,120 @@ class FCM {
     }
   }
 
+  /// Show in-app alert dialog for a new order request when app is in foreground
+  static void showInAppNewOrderAlert(Map<String, dynamic> notificationData, {String? notificationBody}) {
+    if (Get.context == null) return;
+
+    final orderData = _extractOrderData(notificationData, notificationBody: notificationBody);
+    final orderNumber = orderData['orderNumber'] ?? orderData['orderId'] ?? '';
+    final formattedOrderNumber = orderNumber.isNotEmpty ? cleanOrderNumber(orderNumber) : 'New';
+    final amount = orderData['amount'] ?? '';
+
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.notifications_active,
+                      color: Colors.red,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "A new order!",
+                        style: GoogleFonts.rubik(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "New order received: $formattedOrderNumber",
+                  style: GoogleFonts.rubik(fontSize: 15, color: Colors.black87),
+                ),
+                if (amount.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    "Total Amount: $amount",
+                    style: GoogleFonts.rubik(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "Dismiss",
+                        style: GoogleFonts.rubik(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        // Navigate to AcceptOrder / Home Pending tab
+                        navigateToAcceptOrderIfLoggedIn(
+                          notificationData: notificationData,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: Text(
+                        "View Order",
+                        style: GoogleFonts.rubik(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Check for pending notification and navigate if needed
   /// Call this method from Home screen or after app is fully loaded
   static Future<void> checkPendingNotification() async {
@@ -503,7 +737,11 @@ class FCM {
       final storedData = await _getStoredNotificationData();
       if (storedData != null && storedData.isNotEmpty) {
         final String? notificationType = storedData['type']?.toString();
-        if (notificationType == 'order_request') {
+        final bool isOrderRequestType =
+            notificationType == 'order_request' ||
+            notificationType == 'new_order_request' ||
+            notificationType == 'other_order_request';
+        if (isOrderRequestType) {
           await navigateToAcceptOrderIfLoggedIn(notificationData: storedData);
         } else {
           // For other types, refresh Home UI
@@ -527,29 +765,34 @@ class FCM {
 
   /// Show notification on both Android & iOS
   static Future<void> showNotification(RemoteMessage payload) async {
-    // Check notification type from data payload
-    // Firebase might send data in different formats, so check both payload.data and nested structures
-    String? notificationType = payload.data['type']?.toString();
+    final effectiveData = getEffectiveData(payload.data);
+    String? notificationType = effectiveData['type']?.toString();
 
-    // If type is not found directly, try nested data structure
-    if (notificationType == null || notificationType.isEmpty) {
-      if (payload.data.containsKey('data')) {
-        final dataValue = payload.data['data'];
-        if (dataValue is Map) {
-          notificationType = dataValue['type']?.toString();
-        } else if (dataValue is String) {
-          // Try to parse if it's a JSON string
-          try {
-            // For now, just log it
-            print("Data is string: $dataValue");
-          } catch (e) {
-            print("Error parsing data string: $e");
-          }
-        }
+    String title = payload.notification?.title ?? 'New Notification';
+    String body = payload.notification?.body ?? '';
+
+    final orderData = _extractOrderData(payload.data, notificationBody: body);
+    final String? orderId = orderData['orderId'];
+    final String? orderNumberVal = orderData['orderNumber'];
+    final bool hasOrderInfo = (orderId != null && orderId.isNotEmpty) || (orderNumberVal != null && orderNumberVal.isNotEmpty);
+
+    final bool isOrderRequest = notificationType == 'new_order_request' ||
+        notificationType == 'order_request' ||
+        notificationType == 'other_order_request' ||
+        hasOrderInfo ||
+        title.toLowerCase().contains('order') ||
+        body.toLowerCase().contains('order');
+
+    if (isOrderRequest) {
+      var orderNumber = orderNumberVal ?? orderId ?? '';
+      title = "A new order!";
+      if (orderNumber.isNotEmpty) {
+        final formattedOrderNumber = cleanOrderNumber(orderNumber);
+        body = "New order received: $formattedOrderNumber";
+      } else {
+        body = "New order received";
       }
     }
-
-    final bool isOrderRequest = notificationType == 'new_order_request';
 
     print("=== Notification Debug ===");
     print("Full payload.data: ${payload.data}");
@@ -615,8 +858,8 @@ class FCM {
     try {
       await flutterLocalNotificationsPlugin.show(
         0,
-        payload.notification?.title ?? 'New Notification',
-        payload.notification?.body ?? '',
+        title,
+        body,
         platformChannelSpecifics,
       );
       if (isOrderRequest) {
@@ -659,8 +902,8 @@ class FCM {
 
         await flutterLocalNotificationsPlugin.show(
           0,
-          payload.notification?.title ?? 'New Notification',
-          payload.notification?.body ?? '',
+          title,
+          body,
           fallbackDetails,
         );
         print(

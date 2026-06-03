@@ -40,7 +40,7 @@ class VendorHomeScreen extends StatefulWidget {
   State<VendorHomeScreen> createState() => _VendorHomeScreenState();
 }
 
-class _VendorHomeScreenState extends State<VendorHomeScreen> {
+class _VendorHomeScreenState extends State<VendorHomeScreen> with WidgetsBindingObserver {
   final VendorHomeController vendorHomeController =
       const VendorHomeController();
   final HomeController homeController = Get.find<HomeController>();
@@ -48,6 +48,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
     OrderDetailsController(),
   );
   String selectedTab = "Pending";
+  StreamSubscription? _refreshSubscription;
   static const int _defaultLimit = 5;
   final Map<String, int> _tabCounts = {
     "Pending": 0,
@@ -67,7 +68,6 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
     "Delivered",
     "Cancelled",
   ];
-  Timer? _autoRefreshTimer;
 
   String _currentLanguageCode(BuildContext context) {
     return (Localizations.maybeLocaleOf(context)?.languageCode ?? 'en')
@@ -83,20 +83,28 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
     String resolved;
     switch (langCode) {
       case 'ar':
-        resolved = nameAr.isNotEmpty ? nameAr : (nameEn.isNotEmpty ? nameEn : nameFr);
+        resolved = nameAr.isNotEmpty
+            ? nameAr
+            : (nameEn.isNotEmpty ? nameEn : nameFr);
         break;
       case 'fr':
-        resolved = nameFr.isNotEmpty ? nameFr : (nameEn.isNotEmpty ? nameEn : nameAr);
+        resolved = nameFr.isNotEmpty
+            ? nameFr
+            : (nameEn.isNotEmpty ? nameEn : nameAr);
         break;
       default:
-        resolved = nameEn.isNotEmpty ? nameEn : (nameFr.isNotEmpty ? nameFr : nameAr);
+        resolved = nameEn.isNotEmpty
+            ? nameEn
+            : (nameFr.isNotEmpty ? nameFr : nameAr);
     }
 
     if (resolved.trim().isEmpty) return S.of(context).membership;
 
     // Backend sometimes returns French words even for English names.
     // Only normalize "offre -> offer" when UI language is English.
-    return langCode == 'en' ? translateOffreToEnglish(resolved, 'en') : resolved;
+    return langCode == 'en'
+        ? translateOffreToEnglish(resolved, 'en')
+        : resolved;
   }
 
   @override
@@ -106,26 +114,31 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       selectedTab = homeController.targetOrderStatusTab!;
       homeController.targetOrderStatusTab = null;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // final homeController = Get.put(HomeController());
-      maintenance(context);
-    });
-    _startAutoRefresh();
-  }
-
-  void _startAutoRefresh() {
-    _autoRefreshTimer?.cancel();
-    _autoRefreshTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+    _refreshSubscription = homeController.refreshStream.listen((_) {
       if (mounted) {
         _fetchOrders();
       }
+    });
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // final homeController = Get.put(HomeController());
+      maintenance(context);
     });
   }
 
   @override
   void dispose() {
-    _autoRefreshTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshSubscription?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint("=== App resumed, auto-refreshing orders ===");
+      _fetchOrders();
+    }
   }
 
   Future<void> maintenance(BuildContext context) async {
@@ -283,7 +296,8 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       context: context,
       onAccept: () {
         final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
+            "0";
         if (vendorType == "1") {
           detailsController.acceptRestaurantOrder(context, orderId);
         } else {
@@ -292,7 +306,8 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       },
       onAcceptAndPrint: () {
         final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
+            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
+            "0";
         if (vendorType == "1") {
           detailsController.acceptRestaurantOrder(context, orderId);
         } else {
@@ -334,10 +349,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
       );
       debugPrint('ESC/POS bytes generated: ${payload.bytes80mm.length}');
       if (!mounted) return;
-      showToast(
-        context,
-        'Printed successfully',
-      );
+      showToast(context, 'Printed successfully');
       debugPrint(payload.preview);
     } catch (error) {
       if (!mounted) return;
@@ -499,7 +511,9 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          S.of(context).autoAcceptOrdersSubtitle,
+                                          S
+                                              .of(context)
+                                              .autoAcceptOrdersSubtitle,
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color(0xFF9CA3AF),
@@ -520,7 +534,8 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                           statusToSend,
                                         );
                                         if (mounted) {
-                                          if (value && selectedTab == "Pending") {
+                                          if (value &&
+                                              selectedTab == "Pending") {
                                             setState(() {
                                               selectedTab = "Accepted";
                                             });
@@ -585,8 +600,8 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> {
                                         isSelfPickup: order.isSelfPickup,
                                         onMarkSelfPickupCompleted: () =>
                                             _handleMarkSelfPickupCompleted(
-                                          order.id?.toString() ?? "",
-                                        ),
+                                              order.id?.toString() ?? "",
+                                            ),
                                         onAccept: () => _handleAcceptOrder(
                                           order.id?.toString() ?? "",
                                         ),
