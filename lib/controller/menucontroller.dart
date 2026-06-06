@@ -36,6 +36,7 @@ class MenuController extends GetxController {
 
   /// Max quantity allowed for the menu (API: `quantity_allowed`).
   final TextEditingController quantityAllowedCtrl = TextEditingController();
+  final TextEditingController serialNumberCtrl = TextEditingController();
   final List<String> selectedCategoryIds = [];
   String? selectedIsVeg;
   final List<String> selectedTagIds = [];
@@ -357,6 +358,7 @@ class MenuController extends GetxController {
     priceCtrl.dispose();
     discountPriceCtrl.dispose();
     quantityAllowedCtrl.dispose();
+    serialNumberCtrl.dispose();
     super.onClose();
   }
 
@@ -521,6 +523,7 @@ class MenuController extends GetxController {
     priceCtrl.clear();
     discountPriceCtrl.clear();
     quantityAllowedCtrl.clear();
+    serialNumberCtrl.clear();
     selectedCategoryIds.clear();
     selectedIsVeg = null;
     selectedTagIds.clear();

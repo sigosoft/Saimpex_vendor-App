@@ -1470,8 +1470,14 @@ class VendorLeaveTile extends StatelessWidget {
 class VendorSearchRow extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
+  final bool showFilter;
 
-  const VendorSearchRow({super.key, this.controller, this.onChanged});
+  const VendorSearchRow({
+    super.key,
+    this.controller,
+    this.onChanged,
+    this.showFilter = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1485,16 +1491,20 @@ class VendorSearchRow extends StatelessWidget {
             onChanged: onChanged,
           ),
         ),
-        const SizedBox(width: 12),
-        // Container(
-        //   padding: const EdgeInsets.all(12),
-        //   decoration: BoxDecoration(
-        //     color: Colors.white,
-        //     borderRadius: BorderRadius.circular(12),
-        //     border: Border.all(color: const Color(0xFFF1F5F9)),
-        //   ),
-        //   child: const Icon(Icons.tune, color: Color(0xFF64748B), size: 24),
-        // ),
+        if (showFilter) ...[
+          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            height: 41,
+            width: 45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+            ),
+            child: const Icon(Icons.tune, color: Color(0xFF64748B), size: 20),
+          ),
+        ],
       ],
     );
   }
@@ -1662,6 +1672,7 @@ class VendorRichCard extends StatelessWidget {
   final VoidCallback onViewDetails;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onAddItem;
 
   const VendorRichCard({
     super.key,
@@ -1678,6 +1689,7 @@ class VendorRichCard extends StatelessWidget {
     required this.onViewDetails,
     required this.onEdit,
     this.onDelete,
+    this.onAddItem,
   });
 
   String get _displayCategory {
@@ -1834,25 +1846,55 @@ class VendorRichCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               if (isMenu)
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  child: OutlinedButton(
-                    onPressed: onViewDetails,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFFF5216)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 42,
+                        child: OutlinedButton(
+                          onPressed: onViewDetails,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFFF5216)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            S.of(context).viewDetails,
+                            style: GoogleFonts.rubik(
+                              color: const Color(0xFFFF5216),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    child: Text(
-                      S.of(context).viewDetails,
-                      style: GoogleFonts.rubik(
-                        color: const Color(0xFFFF5216),
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 42,
+                        child: ElevatedButton(
+                          onPressed: onAddItem,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF5216),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Add Item',
+                            style: GoogleFonts.rubik(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 )
               else
                 Builder(

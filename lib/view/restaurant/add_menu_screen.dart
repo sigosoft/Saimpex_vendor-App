@@ -441,6 +441,13 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.02),
               ],
+              AddMenuFieldLabel(S.of(context).serialNoLabel),
+              SizedBox(height: screenHeight * 0.007),
+              AddMenuTextField(
+                controller: controller.serialNumberCtrl,
+                hint: S.of(context).enterSerialNumberHint,
+              ),
+              SizedBox(height: screenHeight * 0.02),
               AddMenuFieldLabel(S.of(context).maxAllowedQuantityLabel),
               SizedBox(height: screenHeight * 0.007),
               AddMenuTextField(

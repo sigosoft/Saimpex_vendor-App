@@ -9,7 +9,8 @@ import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/add_items_screen_widgets.dart';
 
 class AddItemsScreen extends StatefulWidget {
-  const AddItemsScreen({super.key});
+  final String? initialMenuName;
+  const AddItemsScreen({super.key, this.initialMenuName});
 
   @override
   State<AddItemsScreen> createState() => _AddItemsScreenState();
@@ -145,6 +146,10 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       final controller = Get.isRegistered<ItemController>()
           ? Get.find<ItemController>()
           : Get.put(ItemController());
+      controller.reset();
+      if (widget.initialMenuName != null) {
+        controller.setSelectedType(widget.initialMenuName);
+      }
       if (controller.restaurantTags.isEmpty &&
           !controller.isRestaurantTagsLoading) {
         controller.getAllTags();

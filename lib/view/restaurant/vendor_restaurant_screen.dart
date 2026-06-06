@@ -611,19 +611,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 20),
                   ] else if (selectedMenu == "Menu") ...[
                     const SizedBox(height: 20),
-                    _buildSearchRow(),
+                    _buildSearchRow(showFilter: true),
                     const SizedBox(height: 16),
-                    _buildCategoryAddRow(),
+                    _buildMenuActionRow(),
+                    const SizedBox(height: 16),
+                    _buildCategoryDropdownOnly(),
                     const SizedBox(height: 20),
                     _buildMenuList(),
                     const SizedBox(height: 20),
                   ] else if (selectedMenu == "Items") ...[
                     const SizedBox(height: 20),
-                    _buildSearchRow(),
-                    const SizedBox(height: 16),
-                    _buildCategoryAddRow(isItemsTab: true),
-                    const SizedBox(height: 16),
-                    _buildItemsActionRow(),
+                    _buildSearchRow(showFilter: false),
                     const SizedBox(height: 16),
                     _buildItemsList(),
                     const SizedBox(height: 20),
@@ -917,9 +915,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  Widget _buildSearchRow() {
+  Widget _buildSearchRow({bool showFilter = false}) {
     return VendorSearchRow(
       controller: _searchController,
+      showFilter: showFilter,
       onChanged: (value) {
         setState(() {
           _searchKeyword = value;
@@ -1080,6 +1079,210 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
+  Widget _buildMenuActionRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {
+              final now = DateTime.now();
+              final last = _lastDownloadTemplateAt;
+              if (last != null &&
+                  now.difference(last) < const Duration(seconds: 20)) {
+                return;
+              }
+              _lastDownloadTemplateAt = now;
+              final menuController =
+                  Get.isRegistered<menu_ctrl.MenuController>()
+                  ? Get.find<menu_ctrl.MenuController>()
+                  : Get.put(menu_ctrl.MenuController(), permanent: false);
+              menuController.downloadItemTemplate(context);
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFFFF5216), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Download',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    color: const Color(0xFFFF5216),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Image.asset(
+                  'lib/assets/images/download_image.png',
+                  width: 12,
+                  height: 12,
+                  fit: BoxFit.contain,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 5),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              final menuController =
+                  Get.isRegistered<menu_ctrl.MenuController>()
+                  ? Get.find<menu_ctrl.MenuController>()
+                  : Get.put(menu_ctrl.MenuController(), permanent: false);
+              menuController.uploadItemTemplate(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFF3B82F6),
+              side: const BorderSide(color: Color(0xFF3B82F6), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            child: Container(
+              margin: const EdgeInsets.only(left: 3, right: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Upload Menu',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.rubik(
+                      fontSize: 12,
+                      color: const Color(0xFF3B82F6),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Image.asset(
+                    'lib/assets/images/upload_button.png',
+                    width: 12,
+                    height: 12,
+                    fit: BoxFit.contain,
+                    color: const Color(0xFF3B82F6),
+                    colorBlendMode: BlendMode.srcIn,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 5),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddMenuScreen()),
+              );
+            },
+            icon: const Icon(Icons.add, color: Colors.white, size: 18),
+            label: Text(
+              'Add Menu',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.rubik(
+                fontSize: 12,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF5216),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryDropdownOnly() {
+    final profileController = Get.find<ProfileController>();
+    return Row(
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.055,
+          width: MediaQuery.of(context).size.width * 0.45,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFF1F5F9)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int?>(
+              value: profileController.selectedRestaurantCategoryId,
+              isExpanded: true,
+              hint: Text(
+                S.of(context).allCategories,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.rubik(
+                  fontSize: 14,
+                  color: const Color(0xFF1F2937),
+                ),
+              ),
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Color(0xFF64748B),
+                size: 18,
+              ),
+              items: [
+                DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text(
+                    S.of(context).allCategories,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.rubik(
+                      fontSize: 14,
+                      color: const Color(0xFF1F2937),
+                    ),
+                  ),
+                ),
+                ...profileController.restaurantCategoriesForDropdown.map(
+                  (c) => DropdownMenuItem<int?>(
+                    value: c.id,
+                    child: Text(
+                      c.name ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.rubik(
+                        fontSize: 14,
+                        color: const Color(0xFF1F2937),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              onChanged: (int? categoryId) {
+                profileController.setSelectedRestaurantCategoryId(categoryId);
+                profileController.fetchRestaurantMenus(keyword: _searchKeyword);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCategoryAddRow({bool isItemsTab = false}) {
     final profileController = Get.find<ProfileController>();
     return VendorCategoryAddRow(
@@ -1229,6 +1432,14 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 restaurantMenuItemId: restaurantMenuItemId,
               );
             },
+      onAddItem: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddItemsScreen(initialMenuName: name),
+          ),
+        );
+      },
     );
   }
 
