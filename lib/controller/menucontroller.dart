@@ -594,6 +594,7 @@ class MenuController extends GetxController {
         "description_en": descEnCtrl.text,
         "is_veg": selectedIsVeg == 'Yes' ? '1' : '2',
         "quantity_allowed": quantityAllowedCtrl.text,
+        "serial_number": serialNumberCtrl.text,
       };
       if (vendorType == "1") {
         formDataMap["attributes[0][price]"] = _cleanPrice(priceCtrl.text);
@@ -624,13 +625,18 @@ class MenuController extends GetxController {
         dio.MultipartFile? uploadFile;
         try {
           debugPrint("[MenuController] Enhancing main menu image...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(mainImagePath, baseName);
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            mainImagePath,
+            baseName,
+          );
           if (enhancedBytes != null) {
             uploadFile = dio.MultipartFile.fromBytes(
               enhancedBytes,
               filename: 'enhanced_$baseName',
             );
-            debugPrint("[MenuController] Main menu image enhanced successfully!");
+            debugPrint(
+              "[MenuController] Main menu image enhanced successfully!",
+            );
           }
         } catch (e) {
           debugPrint("[MenuController] Main menu image enhancement failed: $e");
@@ -669,28 +675,33 @@ class MenuController extends GetxController {
         dio.MultipartFile? uploadFile;
         try {
           debugPrint("[MenuController] Enhancing supplementary image $i...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(jpgPath, jpgFilename);
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            jpgPath,
+            jpgFilename,
+          );
           if (enhancedBytes != null) {
             uploadFile = dio.MultipartFile.fromBytes(
               enhancedBytes,
               filename: 'enhanced_$jpgFilename',
             );
-            debugPrint("[MenuController] Supplementary image $i enhanced successfully!");
+            debugPrint(
+              "[MenuController] Supplementary image $i enhanced successfully!",
+            );
           }
         } catch (e) {
-          debugPrint("[MenuController] Supplementary image $i enhancement failed: $e");
+          debugPrint(
+            "[MenuController] Supplementary image $i enhancement failed: $e",
+          );
         }
 
         if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(jpgPath, filename: jpgFilename);
+          uploadFile = await dio.MultipartFile.fromFile(
+            jpgPath,
+            filename: jpgFilename,
+          );
         }
 
-        formData.files.add(
-          MapEntry(
-            "image[]",
-            uploadFile,
-          ),
-        );
+        formData.files.add(MapEntry("image[]", uploadFile));
       }
       final response = await DioClient().post(
         vendorType == "1"
@@ -1298,20 +1309,28 @@ class MenuController extends GetxController {
         dio.MultipartFile? uploadFile;
         try {
           debugPrint("[MenuController] Enhancing main menu image on update...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(first.key, first.value);
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            first.key,
+            first.value,
+          );
           if (enhancedBytes != null) {
             uploadFile = dio.MultipartFile.fromBytes(
               enhancedBytes,
               filename: 'enhanced_${first.value}',
             );
-            debugPrint("[MenuController] Main menu image enhanced successfully!");
+            debugPrint(
+              "[MenuController] Main menu image enhanced successfully!",
+            );
           }
         } catch (e) {
           debugPrint("[MenuController] Main menu image enhancement failed: $e");
         }
 
         if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(first.key, filename: first.value);
+          uploadFile = await dio.MultipartFile.fromFile(
+            first.key,
+            filename: first.value,
+          );
         }
 
         formDataMap["image"] = uploadFile;
