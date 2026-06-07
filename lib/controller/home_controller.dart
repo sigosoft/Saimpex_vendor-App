@@ -71,7 +71,7 @@ class HomeController extends GetxController {
     try {
       switch (index) {
         case 0: // Home tab
-          await fetchHome(context, orderStatus: 0);
+          await fetchHome(context, orderStatus: currentOrderStatus);
           break;
         case 1: // My Restaurant tab
           // Reload restaurant data if needed
