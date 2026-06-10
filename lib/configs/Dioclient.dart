@@ -1,9 +1,10 @@
 import 'dart:developer';
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
 
@@ -68,7 +69,9 @@ class DioClient {
           "(Status code: ${error.response?.statusCode ?? 'No response'}) "
           "API: $apiName",
         );
-        debugPrint("❌ API ERROR QUERY: ${error.requestOptions.queryParameters}");
+        debugPrint(
+          "❌ API ERROR QUERY: ${error.requestOptions.queryParameters}",
+        );
         debugPrint("❌ API ERROR BODY: ${error.requestOptions.data}");
         debugPrint("❌ API ERROR RESPONSE: ${error.response?.data}");
         return handler.next(error);
@@ -247,7 +250,16 @@ class DioClient {
 
   /// Enhance an image using the imageEnhance endpoint.
   /// Returns the enhanced image bytes, or null if enhancement fails.
-  Future<Uint8List?> enhanceImageBytes(String localPath, String originalFilename) async {
+  Future<Uint8List?> enhanceImageBytes(
+    String localPath,
+    String originalFilename, {
+    String preset = 'general',
+    String prompt =
+        'Enhance image quality, improve sharpness, lighting, colors and details while preserving the original content and composition.',
+    int width = 1024,
+    int height = 1024,
+    String format = 'png',
+  }) async {
     try {
       final enhanceBodyMap = <String, dynamic>{
         'image': await MultipartFile.fromFile(
@@ -258,6 +270,11 @@ class DioClient {
           localPath,
           filename: originalFilename,
         ),
+        'preset': preset,
+        'prompt': prompt,
+        'width': width.toString(),
+        'height': height.toString(),
+        'format': format,
       };
       final enhanceBody = FormData.fromMap(enhanceBodyMap);
 
@@ -265,45 +282,94 @@ class DioClient {
         ApiConfigs.BASE_URL + ApiEndPoints.imageEnhance,
         data: enhanceBody,
         options: Options(
-          responseType: ResponseType.bytes,
+          responseType: ResponseType.json,
+          receiveTimeout: const Duration(seconds: 120),
+          sendTimeout: const Duration(seconds: 120),
           validateStatus: (status) => status != null && status < 500,
         ),
       );
 
-      final bytes = enhanceResponse.data as List<int>?;
-      if (bytes != null && bytes.isNotEmpty) {
-        final isJson = bytes[0] == 123; // '{' in ASCII
-        if (isJson) {
-          final jsonStr = utf8.decode(bytes);
-          final map = jsonDecode(jsonStr);
-          if (map is Map) {
-            final rawPath = map['image'] ??
-                map['data']?['image'] ??
-                map['data'] ??
-                map['enhanced_image'] ??
-                map['url'];
-            if (rawPath != null) {
-              final String imageUrl = rawPath.toString();
-              final fullUrl = imageUrl.startsWith('http')
-                  ? imageUrl
-                  : '${ApiConfigs.IMAGE_URL}$imageUrl';
+      final responseData = enhanceResponse.data;
+      debugPrint(
+        "openai-image-enhance response statusCode: ${enhanceResponse.statusCode}",
+      );
+      debugPrint("openai-image-enhance response data: $responseData");
+      String? base64Str;
 
-              final downloadRes = await dio.get<List<int>>(
-                fullUrl,
-                options: Options(responseType: ResponseType.bytes),
-              );
-              if (downloadRes.data != null) {
-                return Uint8List.fromList(downloadRes.data!);
-              }
-            }
-          }
-        } else {
-          return Uint8List.fromList(bytes);
+      if (responseData is Map) {
+        final dataField = responseData['data'];
+        if (dataField is Map) {
+          base64Str = dataField['enhanced_image_base64']?.toString();
         }
+        base64Str ??= responseData['enhanced_image_base64']?.toString();
+      } else if (responseData is String) {
+        try {
+          final map = jsonDecode(responseData);
+          if (map is Map) {
+            final dataField = map['data'];
+            if (dataField is Map) {
+              base64Str = dataField['enhanced_image_base64']?.toString();
+            }
+            base64Str ??= map['enhanced_image_base64']?.toString();
+          }
+        } catch (_) {}
+      }
+
+      if (base64Str != null && base64Str.isNotEmpty) {
+        final File file = await base64ToFile(base64Str);
+        return await file.readAsBytes();
       }
     } catch (e) {
       debugPrint("DioClient enhanceImageBytes error: $e");
     }
     return null;
   }
+}
+
+/// Helper to convert a base64 string to a File with MIME detection.
+Future<File> base64ToFile(String base64Str) async {
+  // Extract MIME type and cleaner base64 string
+  String mimeType = 'image/jpeg';
+  String cleanBase64 = base64Str;
+
+  if (base64Str.startsWith('data:')) {
+    final int colonIndex = base64Str.indexOf(':');
+    final int semicolonIndex = base64Str.indexOf(';');
+    if (colonIndex != -1 &&
+        semicolonIndex != -1 &&
+        semicolonIndex > colonIndex) {
+      mimeType = base64Str.substring(colonIndex + 1, semicolonIndex);
+    }
+    final int commaIndex = base64Str.indexOf(',');
+    if (commaIndex != -1) {
+      cleanBase64 = base64Str.substring(commaIndex + 1);
+    }
+  }
+
+  // Detect extension
+  String extension = 'jpg';
+  if (mimeType.contains('png')) {
+    extension = 'png';
+  } else if (mimeType.contains('gif')) {
+    extension = 'gif';
+  } else if (mimeType.contains('webp')) {
+    extension = 'webp';
+  } else if (mimeType.contains('jpeg') || mimeType.contains('jpg')) {
+    extension = 'jpg';
+  }
+
+  // Clean whitespaces/newlines from base64 string
+  cleanBase64 = cleanBase64.replaceAll(RegExp(r'\s+'), '');
+  int remainder = cleanBase64.length % 4;
+  if (remainder > 0) {
+    cleanBase64 += '=' * (4 - remainder);
+  }
+  final bytes = base64Decode(cleanBase64);
+
+  final tempDir = await getTemporaryDirectory();
+  final tempFile = File(
+    '${tempDir.path}/enhanced_image_${DateTime.now().millisecondsSinceEpoch}.$extension',
+  );
+  await tempFile.writeAsBytes(bytes);
+  return tempFile;
 }
