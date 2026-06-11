@@ -423,8 +423,13 @@ class ItemController extends GetxController {
 
         dio.MultipartFile? uploadFile;
         try {
-          debugPrint("[ItemController] Enhancing image using imageEnhance endpoint...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(path, jpgFilename);
+          debugPrint(
+            "[ItemController] Enhancing image using imageEnhance endpoint...",
+          );
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            path,
+            jpgFilename,
+          );
           if (enhancedBytes != null) {
             uploadFile = dio.MultipartFile.fromBytes(
               enhancedBytes,
@@ -437,12 +442,7 @@ class ItemController extends GetxController {
           rethrow;
         }
 
-        formData.files.add(
-          MapEntry(
-            'image',
-            uploadFile!,
-          ),
-        );
+        formData.files.add(MapEntry('image', uploadFile!));
       }
       printFormData(formData);
       final response = await DioClient().post(
@@ -803,8 +803,13 @@ class ItemController extends GetxController {
 
         dio.MultipartFile? uploadFile;
         try {
-          debugPrint("[ItemController] Enhancing image using imageEnhance endpoint...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(path, jpgFilename);
+          debugPrint(
+            "[ItemController] Enhancing image using imageEnhance endpoint...",
+          );
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            path,
+            jpgFilename,
+          );
           if (enhancedBytes != null) {
             uploadFile = dio.MultipartFile.fromBytes(
               enhancedBytes,
@@ -817,12 +822,7 @@ class ItemController extends GetxController {
           rethrow;
         }
 
-        formData.files.add(
-          MapEntry(
-            'image',
-            uploadFile!,
-          ),
-        );
+        formData.files.add(MapEntry('image', uploadFile!));
       }
       printFormData(formData);
       final response = await DioClient().post(
