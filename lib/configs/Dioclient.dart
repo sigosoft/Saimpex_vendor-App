@@ -9,7 +9,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
 
-
 class DioClient {
   static final DioClient _instance = DioClient._internal();
   factory DioClient() => _instance;
@@ -251,7 +250,6 @@ class DioClient {
   }
 
   /// Enhance an image using the imageEnhance endpoint.
-  /// Returns the enhanced image bytes, or null if enhancement fails.
   Future<Uint8List?> enhanceImageBytes(
     String localPath,
     String originalFilename, {
@@ -262,14 +260,49 @@ class DioClient {
     int height = 1024,
     String format = 'png',
   }) async {
+    File? tempCompressedOriginal;
     try {
+      String pathToUpload = localPath;
+      try {
+        final originalFile = File(localPath);
+        if (await originalFile.exists()) {
+          final originalSize = await originalFile.length();
+          if (originalSize > 1.5 * 1024 * 1024) {
+            debugPrint(
+              "[DioClient] Original image is large (${(originalSize / 1024 / 1024).toStringAsFixed(1)} MB). Compressing before enhancement...",
+            );
+            final tempDir = await getTemporaryDirectory();
+            final targetPath =
+                '${tempDir.path}/pre_enhance_${DateTime.now().millisecondsSinceEpoch}.jpg';
+            final compressedFile =
+                await FlutterImageCompress.compressAndGetFile(
+                  localPath,
+                  targetPath,
+                  format: CompressFormat.jpeg,
+                  quality: 75,
+                );
+            if (compressedFile != null) {
+              pathToUpload = compressedFile.path;
+              tempCompressedOriginal = File(compressedFile.path);
+              debugPrint(
+                "[DioClient] Compressed original size: ${(await tempCompressedOriginal.length() / 1024).toStringAsFixed(1)} KB",
+              );
+            }
+          }
+        }
+      } catch (compressError) {
+        debugPrint(
+          "[DioClient] Pre-enhancement compression failed: $compressError",
+        );
+      }
+
       final enhanceBodyMap = <String, dynamic>{
         'image': await MultipartFile.fromFile(
-          localPath,
+          pathToUpload,
           filename: originalFilename,
         ),
         'file': await MultipartFile.fromFile(
-          localPath,
+          pathToUpload,
           filename: originalFilename,
         ),
         'preset': preset,
@@ -318,7 +351,9 @@ class DioClient {
       }
 
       if (base64Str == null || base64Str.isEmpty) {
-        throw Exception("Image enhancement failed: API did not return enhanced image base64.");
+        throw Exception(
+          "Image enhancement failed: API did not return enhanced image base64.",
+        );
       }
 
       final File file = await base64ToFile(base64Str);
@@ -358,6 +393,12 @@ class DioClient {
     } catch (e) {
       debugPrint("DioClient enhanceImageBytes error: $e");
       rethrow;
+    } finally {
+      if (tempCompressedOriginal != null) {
+        try {
+          await tempCompressedOriginal.delete();
+        } catch (_) {}
+      }
     }
   }
 }
