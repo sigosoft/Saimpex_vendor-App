@@ -1469,11 +1469,8 @@ class ProfileController extends GetxController {
           debugPrint("[ProfileController] Image enhanced successfully!");
         }
       } catch (e) {
-        debugPrint("[ProfileController] Image enhancement failed: $e. Using original image.");
-      }
-
-      if (uploadFile == null) {
-        uploadFile = await dio.MultipartFile.fromFile(pickedFile.path, filename: filename);
+        debugPrint("[ProfileController] Image enhancement failed: $e.");
+        rethrow;
       }
 
       final formData = dio.FormData.fromMap({

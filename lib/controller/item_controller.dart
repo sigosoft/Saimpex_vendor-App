@@ -433,17 +433,14 @@ class ItemController extends GetxController {
             debugPrint("[ItemController] Image enhanced successfully!");
           }
         } catch (e) {
-          debugPrint("[ItemController] Image enhancement failed: $e. Using original image.");
-        }
-
-        if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(path, filename: jpgFilename);
+          debugPrint("[ItemController] Image enhancement failed: $e.");
+          rethrow;
         }
 
         formData.files.add(
           MapEntry(
             'image',
-            uploadFile,
+            uploadFile!,
           ),
         );
       }
@@ -816,17 +813,14 @@ class ItemController extends GetxController {
             debugPrint("[ItemController] Image enhanced successfully!");
           }
         } catch (e) {
-          debugPrint("[ItemController] Image enhancement failed: $e. Using original image.");
-        }
-
-        if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(path, filename: jpgFilename);
+          debugPrint("[ItemController] Image enhancement failed: $e.");
+          rethrow;
         }
 
         formData.files.add(
           MapEntry(
             'image',
-            uploadFile,
+            uploadFile!,
           ),
         );
       }

@@ -640,13 +640,7 @@ class MenuController extends GetxController {
           }
         } catch (e) {
           debugPrint("[MenuController] Main menu image enhancement failed: $e");
-        }
-
-        if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(
-            mainImagePath,
-            filename: baseName,
-          );
+          rethrow;
         }
 
         formDataMap["image"] = uploadFile;
@@ -692,16 +686,10 @@ class MenuController extends GetxController {
           debugPrint(
             "[MenuController] Supplementary image $i enhancement failed: $e",
           );
+          rethrow;
         }
 
-        if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(
-            jpgPath,
-            filename: jpgFilename,
-          );
-        }
-
-        formData.files.add(MapEntry("image[]", uploadFile));
+        formData.files.add(MapEntry("image[]", uploadFile!));
       }
       final response = await DioClient().post(
         vendorType == "1"
@@ -1324,13 +1312,7 @@ class MenuController extends GetxController {
           }
         } catch (e) {
           debugPrint("[MenuController] Main menu image enhancement failed: $e");
-        }
-
-        if (uploadFile == null) {
-          uploadFile = await dio.MultipartFile.fromFile(
-            first.key,
-            filename: first.value,
-          );
+          rethrow;
         }
 
         formDataMap["image"] = uploadFile;

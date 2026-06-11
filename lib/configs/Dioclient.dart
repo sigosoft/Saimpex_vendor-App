@@ -5,8 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
+
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -315,14 +317,48 @@ class DioClient {
         } catch (_) {}
       }
 
-      if (base64Str != null && base64Str.isNotEmpty) {
-        final File file = await base64ToFile(base64Str);
-        return await file.readAsBytes();
+      if (base64Str == null || base64Str.isEmpty) {
+        throw Exception("Image enhancement failed: API did not return enhanced image base64.");
+      }
+
+      final File file = await base64ToFile(base64Str);
+      try {
+        final targetPath = file.path.replaceFirst(
+          RegExp(r'\.[^\.]+$'),
+          '_compressed.jpg',
+        );
+        debugPrint("[DioClient] Compressing enhanced image...");
+        final compressedFile = await FlutterImageCompress.compressAndGetFile(
+          file.path,
+          targetPath,
+          format: CompressFormat.jpeg,
+          quality: 80,
+        );
+        if (compressedFile != null) {
+          final compressedBytes = await File(compressedFile.path).readAsBytes();
+          debugPrint(
+            "[DioClient] Compression successful: "
+            "original=${((await file.length()) / 1024).toStringAsFixed(1)} KB, "
+            "compressed=${(compressedBytes.length / 1024).toStringAsFixed(1)} KB",
+          );
+          try {
+            await file.delete();
+            await File(compressedFile.path).delete();
+          } catch (_) {}
+          return compressedBytes;
+        } else {
+          throw Exception("Compressor returned null for path: $targetPath");
+        }
+      } catch (compressError) {
+        try {
+          await file.delete();
+        } catch (_) {}
+        throw Exception("Enhanced image compression failed: $compressError");
       }
     } catch (e) {
       debugPrint("DioClient enhanceImageBytes error: $e");
+      rethrow;
     }
-    return null;
   }
 }
 

@@ -543,11 +543,8 @@ class ChatController extends GetxController {
           debugPrint("[ChatController] Chat image enhanced successfully!");
         }
       } catch (e) {
-        debugPrint("[ChatController] Chat image enhancement failed: $e. Using original image.");
-      }
-
-      if (uploadFile == null) {
-        uploadFile = await dio.MultipartFile.fromFile(imageFile.path, filename: filename);
+        debugPrint("[ChatController] Chat image enhancement failed: $e.");
+        rethrow;
       }
 
       Map<String, dynamic> body = {
@@ -592,7 +589,7 @@ class ChatController extends GetxController {
     } catch (error) {
       debugPrint("_sendImage Error: $error");
       if (context.mounted) {
-        showToast(context, "Failed to send image");
+        showToast(context, error.toString());
       }
     } finally {
       isSendingMessage = false;

@@ -350,19 +350,8 @@ class _RestaurantManagementScreenState
             debugPrint("[RestaurantManagement] Image enhanced successfully!");
           }
         } catch (e) {
-          debugPrint("[RestaurantManagement] Image enhancement failed: $e. Using original image.");
-        }
-
-        // Fallback to original image
-        if (imageFile == null) {
-          imageFile = await dio.MultipartFile.fromFile(
-            pickedImage.path,
-            filename: pickedImage.name,
-          );
-          categoryImageFile = await dio.MultipartFile.fromFile(
-            pickedImage.path,
-            filename: pickedImage.name,
-          );
+          debugPrint("[RestaurantManagement] Image enhancement/compression failed: $e.");
+          rethrow;
         }
       } else if (item == null) {
         imageFile = await _defaultCategoryImage();
