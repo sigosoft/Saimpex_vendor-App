@@ -326,7 +326,11 @@ class _RestaurantManagementScreenState
     XFile? pickedImage,
   }) async {
     try {
-      showLoadingDialog(context);
+      if (pickedImage != null) {
+        showImageUploadLoadingDialog(context);
+      } else {
+        showLoadingDialog(context);
+      }
       await _setToken();
 
       dio.MultipartFile? imageFile;

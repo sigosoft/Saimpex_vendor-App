@@ -1,6 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -93,7 +94,41 @@ class ItemController extends GetxController {
       );
       if (cropped == null) return;
 
-      pickedImageFile = XFile(cropped.path);
+      showImageUploadLoadingDialog(context);
+      try {
+        final path = cropped.path;
+        final baseName = path.split(RegExp(r'[/\\]')).last;
+        final jpgFilename =
+            baseName.endsWith('.jpg') ||
+                baseName.endsWith('.jpeg') ||
+                baseName.endsWith('.png')
+            ? baseName
+            : '${baseName.split('.').first}.jpg';
+
+        debugPrint("[ItemController] Enhancing image immediately after crop...");
+        final enhancedBytes = await DioClient().enhanceImageBytes(
+          path,
+          jpgFilename,
+        );
+        if (enhancedBytes != null) {
+          final tempDir = await getTemporaryDirectory();
+          final tempFile = File(
+            '${tempDir.path}/enhanced_${DateTime.now().millisecondsSinceEpoch}_$jpgFilename',
+          );
+          await tempFile.writeAsBytes(enhancedBytes);
+          pickedImageFile = XFile(tempFile.path);
+          debugPrint("[ItemController] Image enhanced and saved to: ${tempFile.path}");
+        } else {
+          pickedImageFile = XFile(cropped.path);
+        }
+      } catch (e) {
+        debugPrint("[ItemController] Immediate image enhancement failed: $e. Fallback to cropped path.");
+        pickedImageFile = XFile(cropped.path);
+      } finally {
+        if (context.mounted) {
+          Get.back();
+        }
+      }
       update();
     } catch (e) {
       debugPrint('pickAndCropImage error: $e');
@@ -414,35 +449,12 @@ class ItemController extends GetxController {
       if (pickedImageFile != null) {
         final path = pickedImageFile!.path;
         final baseName = path.split(RegExp(r'[/\\]')).last;
-        final jpgFilename =
-            baseName.endsWith('.jpg') ||
-                baseName.endsWith('.jpeg') ||
-                baseName.endsWith('.png')
-            ? baseName
-            : '${baseName.split('.').first}.jpg';
-
-        dio.MultipartFile? uploadFile;
-        try {
-          debugPrint(
-            "[ItemController] Enhancing image using imageEnhance endpoint...",
-          );
-          final enhancedBytes = await DioClient().enhanceImageBytes(
-            path,
-            jpgFilename,
-          );
-          if (enhancedBytes != null) {
-            uploadFile = dio.MultipartFile.fromBytes(
-              enhancedBytes,
-              filename: 'enhanced_$jpgFilename',
-            );
-            debugPrint("[ItemController] Image enhanced successfully!");
-          }
-        } catch (e) {
-          debugPrint("[ItemController] Image enhancement failed: $e.");
-          rethrow;
-        }
-
-        formData.files.add(MapEntry('image', uploadFile!));
+        formData.files.add(
+          MapEntry(
+            'image',
+            await dio.MultipartFile.fromFile(path, filename: baseName),
+          ),
+        );
       }
       printFormData(formData);
       final response = await DioClient().post(
@@ -794,35 +806,12 @@ class ItemController extends GetxController {
       if (pickedImageFile != null) {
         final path = pickedImageFile!.path;
         final baseName = path.split(RegExp(r'[/\\]')).last;
-        final jpgFilename =
-            baseName.endsWith('.jpg') ||
-                baseName.endsWith('.jpeg') ||
-                baseName.endsWith('.png')
-            ? baseName
-            : '${baseName.split('.').first}.jpg';
-
-        dio.MultipartFile? uploadFile;
-        try {
-          debugPrint(
-            "[ItemController] Enhancing image using imageEnhance endpoint...",
-          );
-          final enhancedBytes = await DioClient().enhanceImageBytes(
-            path,
-            jpgFilename,
-          );
-          if (enhancedBytes != null) {
-            uploadFile = dio.MultipartFile.fromBytes(
-              enhancedBytes,
-              filename: 'enhanced_$jpgFilename',
-            );
-            debugPrint("[ItemController] Image enhanced successfully!");
-          }
-        } catch (e) {
-          debugPrint("[ItemController] Image enhancement failed: $e.");
-          rethrow;
-        }
-
-        formData.files.add(MapEntry('image', uploadFile!));
+        formData.files.add(
+          MapEntry(
+            'image',
+            await dio.MultipartFile.fromFile(path, filename: baseName),
+          ),
+        );
       }
       printFormData(formData);
       final response = await DioClient().post(

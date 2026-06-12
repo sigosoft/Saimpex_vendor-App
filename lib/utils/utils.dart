@@ -209,6 +209,16 @@ void showLoadingDialog(BuildContext context) {
   );
 }
 
+void showImageUploadLoadingDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return const PixelRevealLoader();
+    },
+  );
+}
+
 void printFormData(FormData formData) {
   debugPrint("FormData (fields):");
   if (formData.fields.isEmpty) {

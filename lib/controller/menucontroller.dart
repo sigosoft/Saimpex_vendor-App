@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuController;
@@ -617,33 +616,12 @@ class MenuController extends GetxController {
         formDataMap["attributes[0][grocery_attribute_id]"] = attributeId;
       }
       if (uploadedImages.isNotEmpty) {
-        final mainImagePath = await _prepareJpegImage(
-          uploadedImages.first.path,
-        );
+        final mainImagePath = uploadedImages.first.path;
         final baseName = mainImagePath.split(RegExp(r'[/\\]')).last;
-
-        dio.MultipartFile? uploadFile;
-        try {
-          debugPrint("[MenuController] Enhancing main menu image...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(
-            mainImagePath,
-            baseName,
-          );
-          if (enhancedBytes != null) {
-            uploadFile = dio.MultipartFile.fromBytes(
-              enhancedBytes,
-              filename: 'enhanced_$baseName',
-            );
-            debugPrint(
-              "[MenuController] Main menu image enhanced successfully!",
-            );
-          }
-        } catch (e) {
-          debugPrint("[MenuController] Main menu image enhancement failed: $e");
-          rethrow;
-        }
-
-        formDataMap["image"] = uploadFile;
+        formDataMap["image"] = await dio.MultipartFile.fromFile(
+          mainImagePath,
+          filename: baseName,
+        );
       }
       final formData = dio.FormData.fromMap(formDataMap);
       for (final id in selectedCategoryIds) {
@@ -659,37 +637,14 @@ class MenuController extends GetxController {
         }
       }
       for (int i = 1; i < uploadedImages.length; i++) {
-        final jpgPath = await _prepareJpegImage(uploadedImages[i].path);
+        final jpgPath = uploadedImages[i].path;
         final baseName = jpgPath.split(RegExp(r'[/\\]')).last;
-        final jpgFilename =
-            baseName.endsWith('.jpg') || baseName.endsWith('.jpeg')
-            ? baseName
-            : '${baseName.split('.').first}.jpg';
-
-        dio.MultipartFile? uploadFile;
-        try {
-          debugPrint("[MenuController] Enhancing supplementary image $i...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(
-            jpgPath,
-            jpgFilename,
-          );
-          if (enhancedBytes != null) {
-            uploadFile = dio.MultipartFile.fromBytes(
-              enhancedBytes,
-              filename: 'enhanced_$jpgFilename',
-            );
-            debugPrint(
-              "[MenuController] Supplementary image $i enhanced successfully!",
-            );
-          }
-        } catch (e) {
-          debugPrint(
-            "[MenuController] Supplementary image $i enhancement failed: $e",
-          );
-          rethrow;
-        }
-
-        formData.files.add(MapEntry("image[]", uploadFile!));
+        formData.files.add(
+          MapEntry(
+            "image[]",
+            await dio.MultipartFile.fromFile(jpgPath, filename: baseName),
+          ),
+        );
       }
       final response = await DioClient().post(
         vendorType == "1"
@@ -791,7 +746,41 @@ class MenuController extends GetxController {
         ],
       );
       if (cropped != null) {
-        uploadedImages.add(XFile(cropped.path));
+        showImageUploadLoadingDialog(context);
+        try {
+          final mainImagePath = await _prepareJpegImage(cropped.path);
+          final baseName = mainImagePath.split(RegExp(r'[/\\]')).last;
+          final jpgFilename =
+              baseName.endsWith('.jpg') || baseName.endsWith('.jpeg')
+              ? baseName
+              : '${baseName.split('.').first}.jpg';
+
+          debugPrint("[MenuController] Enhancing main menu image immediately after crop...");
+          final enhancedBytes = await DioClient().enhanceImageBytes(
+            mainImagePath,
+            jpgFilename,
+          );
+          if (enhancedBytes != null) {
+            final tempDir = await getTemporaryDirectory();
+            final tempFile = File(
+              '${tempDir.path}/enhanced_${DateTime.now().millisecondsSinceEpoch}_$jpgFilename',
+            );
+            await tempFile.writeAsBytes(enhancedBytes);
+            uploadedImages.add(XFile(tempFile.path));
+            debugPrint(
+              "[MenuController] Immediate image enhancement successful and saved to: ${tempFile.path}",
+            );
+          } else {
+            uploadedImages.add(XFile(cropped.path));
+          }
+        } catch (e) {
+          debugPrint("[MenuController] Immediate image enhancement failed: $e. Fallback to cropped path.");
+          uploadedImages.add(XFile(cropped.path));
+        } finally {
+          if (context.mounted) {
+            Get.back();
+          }
+        }
         update();
       }
     } catch (e) {
@@ -1264,58 +1253,13 @@ class MenuController extends GetxController {
           );
         }
       }
-      final List<MapEntry<String, String>> imagePaths = [];
-      for (final url in existingMenuImageUrls) {
-        final tempPath = await _downloadImageToTempFile(url);
-        if (tempPath != null) {
-          try {
-            final jpgPath = await _prepareJpegImage(tempPath);
-            final baseName = jpgPath.split(RegExp(r'[/\\]')).last;
-            final jpgFilename =
-                baseName.endsWith('.jpg') || baseName.endsWith('.jpeg')
-                ? baseName
-                : 'existing_${imagePaths.length}.jpg';
-            imagePaths.add(MapEntry(jpgPath, jpgFilename));
-          } finally {
-            try {
-              await File(tempPath).delete();
-            } catch (_) {}
-          }
-        }
-      }
-      for (int i = 0; i < uploadedImages.length; i++) {
-        final jpgPath = await _prepareJpegImage(uploadedImages[i].path);
-        final baseName = jpgPath.split(RegExp(r'[/\\]')).last;
-        final jpgFilename =
-            baseName.endsWith('.jpg') || baseName.endsWith('.jpeg')
-            ? baseName
-            : '${baseName.split('.').first}.jpg';
-        imagePaths.add(MapEntry(jpgPath, jpgFilename));
-      }
-      if (imagePaths.isNotEmpty) {
-        final first = imagePaths.first;
-        dio.MultipartFile? uploadFile;
-        try {
-          debugPrint("[MenuController] Enhancing main menu image on update...");
-          final enhancedBytes = await DioClient().enhanceImageBytes(
-            first.key,
-            first.value,
-          );
-          if (enhancedBytes != null) {
-            uploadFile = dio.MultipartFile.fromBytes(
-              enhancedBytes,
-              filename: 'enhanced_${first.value}',
-            );
-            debugPrint(
-              "[MenuController] Main menu image enhanced successfully!",
-            );
-          }
-        } catch (e) {
-          debugPrint("[MenuController] Main menu image enhancement failed: $e");
-          rethrow;
-        }
-
-        formDataMap["image"] = uploadFile;
+      if (uploadedImages.isNotEmpty) {
+        final mainImagePath = uploadedImages.first.path;
+        final baseName = mainImagePath.split(RegExp(r'[/\\]')).last;
+        formDataMap["image"] = await dio.MultipartFile.fromFile(
+          mainImagePath,
+          filename: baseName,
+        );
       }
       final formData = dio.FormData.fromMap(formDataMap);
       final List<String> categoryIdsToSend = selectedEditCategoryIds.isNotEmpty
@@ -1353,12 +1297,13 @@ class MenuController extends GetxController {
           formData.fields.add(MapEntry("tags[]", normalized));
         }
       }
-      for (int i = 1; i < imagePaths.length; i++) {
-        final e = imagePaths[i];
+      for (int i = 1; i < uploadedImages.length; i++) {
+        final jpgPath = uploadedImages[i].path;
+        final baseName = jpgPath.split(RegExp(r'[/\\]')).last;
         formData.files.add(
           MapEntry(
             "image[]",
-            await dio.MultipartFile.fromFile(e.key, filename: e.value),
+            await dio.MultipartFile.fromFile(jpgPath, filename: baseName),
           ),
         );
       }
