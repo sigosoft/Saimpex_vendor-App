@@ -2,7 +2,6 @@ import 'package:flutter/material.dart' hide MenuController;
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/menucontroller.dart';
-import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/edit_menu_screen_widgets.dart';
 
@@ -145,130 +144,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
     );
   }
 
-  void _openEditTagMultiSelect(
-    BuildContext context,
-    MenuController controller,
-  ) {
-    if (controller.restaurantTags.isEmpty) return;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) {
-        return StatefulBuilder(
-          builder: (_, setModalState) {
-            void rebuildSheet() => setModalState(() {});
-            return SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 12,
-                  bottom: 12 + MediaQuery.of(sheetContext).viewInsets.bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            S.of(context).tags,
-                            style: GoogleFonts.rubik(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1F1F1F),
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            controller.selectedEditTagIds.clear();
-                            controller.selectedEditTagId = null;
-                            controller.update();
-                            rebuildSheet();
-                          },
-                          child: Text(
-                            S.of(context).reset,
-                            style: GoogleFonts.rubik(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFFFF5216),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: controller.restaurantTags.length,
-                        itemBuilder: (_, index) {
-                          final t = controller.restaurantTags[index];
-                          final id = t.id?.toString() ?? '';
-                          final name = (t.nameEn ?? '').trim();
-                          final checked =
-                              id.isNotEmpty &&
-                              controller.selectedEditTagIds.contains(id);
-                          return CheckboxListTile(
-                            value: checked,
-                            onChanged: id.isEmpty
-                                ? null
-                                : (_) {
-                                    controller.toggleEditTagById(id);
-                                    rebuildSheet();
-                                  },
-                            title: Text(
-                              name.isNotEmpty ? name : '-',
-                              style: GoogleFonts.rubik(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1F1F1F),
-                              ),
-                            ),
-                            activeColor: const Color(0xFFFF5216),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF5216),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          S.of(context).submit,
-                          style: GoogleFonts.rubik(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+
 
   @override
   void initState() {
@@ -490,7 +366,9 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
 */
                 EditMenuFieldLabel(S.of(context).itemImage),
                 const SizedBox(height: 6),
-                EditMenuImageUploadArea(onTap: c.pickImages),
+                EditMenuImageUploadArea(
+                  onTap: () => c.showImageAlertDialog(context),
+                ),
                 const SizedBox(height: 12),
                 EditMenuImageThumbnails(
                   networkImageUrls: c.existingMenuImageUrls,

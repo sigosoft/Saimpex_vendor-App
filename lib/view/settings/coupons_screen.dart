@@ -111,7 +111,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+          child: Divider(height: 1, color: Colors.grey.withAlpha(26)),
         ),
       ),
       body: GetBuilder<CouponController>(
@@ -126,7 +126,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withAlpha(10),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -162,7 +162,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/images/nodata.png',
+                                  'lib/assets/images/nodata.png',
                                   width: 200,
                                   height: 200,
                                 ),
@@ -252,10 +252,10 @@ class _CouponsScreenState extends State<CouponsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withAlpha(26)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withAlpha(8),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -280,7 +280,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 children: [
                   _buildBadge(
                     status,
-                    statusInt == 1 ? lightgreen : Colors.grey.withOpacity(0.2),
+                    statusInt == 1 ? lightgreen : Colors.grey.withAlpha(51),
                     statusInt == 1 ? greenlight : Colors.grey,
                   ),
                   const SizedBox(width: 8),
@@ -325,7 +325,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   ],
                 ),
               ),
-              _buildBadge(type, lightOrange.withOpacity(0.4), colorPrimary),
+              _buildBadge(type, lightOrange.withAlpha(102), colorPrimary),
             ],
           ),
           const SizedBox(height: 12),
@@ -413,7 +413,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
   }
 
   Widget _buildVerticalDivider() {
-    return Container(width: 1, height: 40, color: Colors.grey.withOpacity(0.1));
+    return Container(width: 1, height: 40, color: Colors.grey.withAlpha(26));
   }
 
   Widget _buildDottedDivider() {
@@ -431,7 +431,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               width: dashWidth,
               height: dashHeight,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.3)),
+                decoration: BoxDecoration(color: Colors.grey.withAlpha(76)),
               ),
             );
           }),
@@ -575,7 +575,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        border: Border.all(color: Colors.grey.withAlpha(51)),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -684,7 +684,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        border: Border.all(color: Colors.grey.withAlpha(51)),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
