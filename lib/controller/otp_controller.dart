@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import '../Utils/Utils.dart';
-import '../view/home/home.dart';
+import '../utils/vendor_app_router.dart';
+import '../utils/vendor_app_type.dart';
 
 import 'login_controller.dart';
 
@@ -70,7 +71,13 @@ class OtpController extends GetxController {
       await savename("loginStatus", "true");
       await savename("token", "mock_token");
       await savename("name", "Mock User");
-      Get.offAll(const Home());
+      await savename(
+        VendorAppRouter.storageKey,
+        loginController.selectedAppType.storageValue,
+      );
+      await VendorAppRouter.goToSelectedApp(
+        type: loginController.selectedAppType,
+      );
     } catch (error) {
       if (context.mounted) {
         Get.back();
@@ -88,7 +95,9 @@ class OtpController extends GetxController {
       }
       update();
       await savename("name", nameController.text.toString());
-      Get.offAll(const Home());
+      await VendorAppRouter.goToSelectedApp(
+        type: loginController.selectedAppType,
+      );
     } catch (error) {
       if (context.mounted) {
         Get.back();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import '../../Utils/Utils.dart';
-import '../Home/Home.dart';
+import '../../utils/vendor_app_router.dart';
 import '../Login/Login.dart';
 import '../notifications/notification.dart';
 
@@ -29,7 +29,7 @@ class _SplashState extends State<Splash> {
     debugPrint("loginStatus: $loginStatus");
     debugPrint("token: $token");
     if (loginStatus != null && loginStatus == "true") {
-      Get.offAll(() => const Home());
+      await VendorAppRouter.goToSelectedApp();
     } else {
       Get.offAll(() => LoginScreen());
     }

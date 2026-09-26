@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saimpex_vendor/view/home/home.dart';
+import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 
 import '../../../controller/login_controller.dart';
 import '../../../generated/l10n.dart';
@@ -69,6 +68,47 @@ class LoginFormCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            Text(
+              'Select type',
+              style: GoogleFonts.rubik(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<VendorAppType>(
+              key: ValueKey(loginController.selectedAppType),
+              initialValue: loginController.selectedAppType,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.black12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.orange),
+                ),
+              ),
+              icon: const Icon(Icons.keyboard_arrow_down),
+              style: GoogleFonts.rubik(fontSize: 14, color: Colors.black87),
+              items: VendorAppType.values
+                  .map(
+                    (type) => DropdownMenuItem<VendorAppType>(
+                      value: type,
+                      child: Text(type.label),
+                    ),
+                  )
+                  .toList(),
+              onChanged: loginController.setSelectedAppType,
+            ),
+            const SizedBox(height: 16),
             Text(
               S.of(context).username,
               style: GoogleFonts.rubik(

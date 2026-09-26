@@ -6,7 +6,8 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/login_model.dart';
-import 'package:saimpex_vendor/view/home/home.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
+import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 import '../Utils/Utils.dart';
 import '../view/otp/otp.dart';
 
@@ -17,9 +18,16 @@ class LoginController extends GetxController {
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  VendorAppType selectedAppType = VendorAppType.groceryRestaurant;
 
   void togglePasswordVisibility() {
     isPasswordVisible = !isPasswordVisible;
+    update();
+  }
+
+  void setSelectedAppType(VendorAppType? type) {
+    if (type == null) return;
+    selectedAppType = type;
     update();
   }
 
@@ -59,6 +67,16 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
+    // Water & Pharmacy are UI-design only for now: skip API validation.
+    // Grocery / Restaurant keeps the existing authenticated login flow.
+    if (selectedAppType == VendorAppType.water ||
+        selectedAppType == VendorAppType.pharmacy) {
+      await savename(VendorAppRouter.storageKey, selectedAppType.storageValue);
+      await savename("loginStatus", "true");
+      await VendorAppRouter.goToSelectedApp(type: selectedAppType);
+      return;
+    }
+
     try {
       showLoadingDialog(context);
       String? fcm_token;
@@ -85,6 +103,10 @@ class LoginController extends GetxController {
         await savename("vendorType", loginModel.data?.details?.vendorType.toString() ?? "0");
         await savename("vendorId", loginModel.data?.details?.vendorId ?? 0);
         await savename("userId", loginModel.data?.details?.id ?? 0);
+        await savename(
+          VendorAppRouter.storageKey,
+          selectedAppType.storageValue,
+        );
         final languageCode = localization.currentLocale?.languageCode;
         final message = loginModel.message;
         final toastMessage = languageCode == "fr"
@@ -100,7 +122,7 @@ class LoginController extends GetxController {
                   : null);
 
         showToast(context, toastMessage ?? "Login successful");
-        Get.offAll(const Home());
+        await VendorAppRouter.goToSelectedApp(type: selectedAppType);
       }
     } catch (error) {
       Get.back();

@@ -109,6 +109,8 @@ flutter:
   assets:
       - lib/assets/images/
       - lib/assets/fonts/
+      - lib/water/Assets/Images/
+      - lib/pharmacy/Assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
