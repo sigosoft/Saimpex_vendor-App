@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
-import 'package:saimpex_vendor/water/views/home/home_view.dart';
+import 'package:saimpex_vendor/water/view/home/home_view.dart';
 
 /// Hosts the migrated water UI with the same ThemeData as the
 /// original SaimpexWater-Vendor app, so screens look identical

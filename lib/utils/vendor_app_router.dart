@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:saimpex_vendor/pharmacy/pharmacy_home.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_home.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 import 'package:saimpex_vendor/view/home/home.dart';
