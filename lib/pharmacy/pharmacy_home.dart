@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/pharmacy/pharmacy_chat_screen.dart';
+import 'package:saimpex_vendor/pharmacy/pharmacy_notifications_screen.dart';
 import 'package:saimpex_vendor/pharmacy/order_details_screen.dart';
 import 'package:saimpex_vendor/pharmacy/reject_order_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -26,6 +28,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
     'New Orders',
     'Under Review',
     'Review Completed',
+    'Awaiting Payment',
+    'To Prepare',
+    'Preparing',
+    'Ready',
+    'Delivered',
   ];
 
   final otcFilters = const [
@@ -40,9 +47,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       isOtcTab ? otcFilters : prescriptionFilters;
 
   String get _filterBadgeLabel {
-    if (!isOtcTab && selectedFilterIndex == 1) return '02';
-    final count = isOtcTab ? 2 : 4;
-    return count.toString().padLeft(2, '0');
+    if (isOtcTab) {
+      return selectedFilterIndex == 0 ? '02' : '';
+    }
+    return switch (selectedFilterIndex) {
+      0 => '04',
+      1 || 2 || 3 || 4 || 5 || 6 || 7 => '02',
+      _ => '',
+    };
   }
 
   void _selectOrderType(int index) {
@@ -86,14 +98,18 @@ class _PharmacyHomeState extends State<PharmacyHome> {
           statusBarColor: Colors.transparent,
         ),
         child: Scaffold(
-          backgroundColor: const Color(0xFFF7F7F7),
+          backgroundColor: bottomNavIndex == 2
+              ? Colors.white
+              : const Color(0xFFF7F7F7),
           body: Column(
             children: [
               Expanded(
                 child: switch (bottomNavIndex) {
                   0 => _buildHomeTab(context),
                   1 => _buildOrdersTab(context),
-                  2 => const _PlaceholderTab(title: 'Chat'),
+                  2 => PharmacyMessagesTab(
+                      onBack: () => _onBottomNavSelect(0),
+                    ),
                   3 => const _PlaceholderTab(title: 'Inventory'),
                   _ => const _PharmacyAccountTab(),
                 },
@@ -153,11 +169,23 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 const SizedBox(height: 18),
                 _OrdersHeader(onSeeAll: () => _onBottomNavSelect(1)),
                 const SizedBox(height: 12),
-                if (isOtcTab || selectedFilterIndex == 0) ...[
+                if (isOtcTab ||
+                    selectedFilterIndex == 0 ||
+                    selectedFilterIndex == 3 ||
+                    selectedFilterIndex == 4 ||
+                    selectedFilterIndex == 5 ||
+                    selectedFilterIndex == 6 ||
+                    selectedFilterIndex == 7) ...[
                   _OrderTypeTabs(
                     selectedIndex: selectedOrderType,
                     onSelect: _selectOrderType,
-                    prescriptionBadge: '2',
+                    prescriptionBadge: selectedFilterIndex == 3 ||
+                            selectedFilterIndex == 4 ||
+                            selectedFilterIndex == 5 ||
+                            selectedFilterIndex == 6 ||
+                            selectedFilterIndex == 7
+                        ? '1'
+                        : '2',
                     otcBadge: '2',
                   ),
                   const SizedBox(height: 14),
@@ -212,7 +240,38 @@ class _PharmacyHomeState extends State<PharmacyHome> {
     }
     if (filter == 2) {
       return const [
-        _EmptyOrders(message: 'No review completed orders here'),
+        _PrescriptionOrderCard(
+          customerName: 'Ahmed',
+          status: PharmacyPrescriptionCardStatus.reviewCompleted,
+          notesType: PharmacyOrderNotesType.none,
+        ),
+      ];
+    }
+    if (filter == 3) {
+      return const [
+        _AwaitingPaymentCard(),
+      ];
+    }
+    if (filter == 4) {
+      return const [
+        _ToPrepareCard(),
+        SizedBox(height: 12),
+        _ToPrepareCard(scheduled: true),
+      ];
+    }
+    if (filter == 5) {
+      return const [
+        _PreparingCard(),
+      ];
+    }
+    if (filter == 6) {
+      return const [
+        _ReadyCard(),
+      ];
+    }
+    if (filter == 7) {
+      return const [
+        _DeliveredCard(),
       ];
     }
 
@@ -314,7 +373,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             child: _OrderTypeTabs(
               selectedIndex: selectedOrderType,
               onSelect: _selectOrderType,
-              prescriptionBadge: '2',
+              prescriptionBadge:
+                  selectedFilterIndex == 3 ||
+                          selectedFilterIndex == 4 ||
+                          selectedFilterIndex == 5 ||
+                          selectedFilterIndex == 6 ||
+                          selectedFilterIndex == 7
+                      ? '1'
+                      : '2',
               otcBadge: '2',
             ),
           ),
@@ -358,7 +424,38 @@ class _PharmacyHomeState extends State<PharmacyHome> {
     }
     if (!isOtcTab && filter == 2) {
       return const [
-        _EmptyOrders(message: 'No review completed orders here'),
+        _PrescriptionOrderCard(
+          customerName: 'Ahmed',
+          status: PharmacyPrescriptionCardStatus.reviewCompleted,
+          notesType: PharmacyOrderNotesType.none,
+        ),
+      ];
+    }
+    if (!isOtcTab && filter == 3) {
+      return const [
+        _AwaitingPaymentCard(),
+      ];
+    }
+    if (!isOtcTab && filter == 4) {
+      return const [
+        _ToPrepareCard(),
+        SizedBox(height: 12),
+        _ToPrepareCard(scheduled: true),
+      ];
+    }
+    if (!isOtcTab && filter == 5) {
+      return const [
+        _PreparingCard(),
+      ];
+    }
+    if (!isOtcTab && filter == 6) {
+      return const [
+        _ReadyCard(),
+      ];
+    }
+    if (!isOtcTab && filter == 7) {
+      return const [
+        _DeliveredCard(),
       ];
     }
     if (isOtcTab) {
@@ -410,44 +507,6 @@ class _PharmacyHomeState extends State<PharmacyHome> {
   }
 }
 
-class _EmptyOrders extends StatelessWidget {
-  const _EmptyOrders({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.inbox_outlined,
-            size: 40,
-            color: Color(0xFFB0B0B0),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF6B7280),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _Header extends StatelessWidget {
   const _Header();
 
@@ -487,24 +546,33 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const PharmacyNotificationsScreen(),
               ),
-            ],
-          ),
-          child: const Icon(
-            Icons.notifications_none_rounded,
-            color: AppColors.paymentDivider,
-            size: 22,
+            );
+          },
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.paymentDivider,
+              size: 22,
+            ),
           ),
         ),
       ],
@@ -1053,7 +1121,7 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-class _StatusFilters extends StatelessWidget {
+class _StatusFilters extends StatefulWidget {
   const _StatusFilters({
     required this.filters,
     required this.selectedIndex,
@@ -1067,22 +1135,80 @@ class _StatusFilters extends StatelessWidget {
   final String badgeLabel;
 
   @override
+  State<_StatusFilters> createState() => _StatusFiltersState();
+}
+
+class _StatusFiltersState extends State<_StatusFilters> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _viewportKey = GlobalKey();
+  final Map<int, GlobalKey> _itemKeys = {};
+
+  GlobalKey _keyFor(int index) => _itemKeys.putIfAbsent(index, GlobalKey.new);
+
+  @override
+  void initState() {
+    super.initState();
+    _revealSelected();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatusFilters oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedIndex != widget.selectedIndex) {
+      _revealSelected();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _revealSelected() {
+    if (widget.selectedIndex < 2) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final itemContext = _keyFor(widget.selectedIndex).currentContext;
+      final viewportContext = _viewportKey.currentContext;
+      if (itemContext == null || viewportContext == null) return;
+      final itemBox = itemContext.findRenderObject() as RenderBox?;
+      final viewportBox = viewportContext.findRenderObject() as RenderBox?;
+      if (itemBox == null || viewportBox == null || !itemBox.hasSize) return;
+      final dx = itemBox.localToGlobal(Offset.zero, ancestor: viewportBox).dx;
+      final target = (_scrollController.offset + dx - 108).clamp(
+        0.0,
+        _scrollController.position.maxScrollExtent,
+      );
+      _scrollController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Extra height so the floating "02" badge is not clipped.
     return SizedBox(
+      key: _viewportKey,
       height: 46,
       child: ListView.separated(
+        controller: _scrollController,
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
         padding: const EdgeInsets.only(top: 6, right: 6),
-        itemCount: filters.length,
+        itemCount: widget.filters.length,
         separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final selected = index == selectedIndex;
-          final showBadge = selected && index == 0;
+          final selected = index == widget.selectedIndex;
+          final showBadge = selected && widget.badgeLabel.isNotEmpty;
 
-          return GestureDetector(
-            onTap: () => onSelect(index),
+          return KeyedSubtree(
+            key: _keyFor(index),
+            child: GestureDetector(
+            onTap: () => widget.onSelect(index),
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -1105,7 +1231,7 @@ class _StatusFilters extends StatelessWidget {
                         : Border.all(color: const Color(0xFFE0E0E0)),
                   ),
                   child: Text(
-                    filters[index],
+                    widget.filters[index],
                     style: TextStyle(
                       color: selected ? Colors.white : const Color(0xFF757575),
                       fontWeight: FontWeight.w600,
@@ -1134,7 +1260,7 @@ class _StatusFilters extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        badgeLabel,
+                        widget.badgeLabel,
                         style: const TextStyle(
                           color: Color(0xFFFF8A00),
                           fontSize: 10,
@@ -1146,6 +1272,7 @@ class _StatusFilters extends StatelessWidget {
                   ),
               ],
             ),
+            ),
           );
         },
       ),
@@ -1153,7 +1280,11 @@ class _StatusFilters extends StatelessWidget {
   }
 }
 
-enum PharmacyPrescriptionCardStatus { newOrder, underReview }
+enum PharmacyPrescriptionCardStatus {
+  newOrder,
+  underReview,
+  reviewCompleted,
+}
 
 class _PrescriptionOrderCard extends StatelessWidget {
   const _PrescriptionOrderCard({
@@ -1174,6 +1305,7 @@ class _PrescriptionOrderCard extends StatelessWidget {
   static const Color _metaColor = Color(0xFF6B7280);
   static const Color _newBadge = Color(0xFFF99D1C);
   static const Color _reviewingBadge = Color(0xFF8E6CE0);
+  static const Color _completedBadge = Color(0xFF22C55E);
   static const Color _attachBg = Color(0xFFFAF9F7);
   static const Color _attachBorder = Color(0xFFEAEAEA);
   static const Color _linkOrange = Color(0xFFFF6B2B);
@@ -1182,14 +1314,57 @@ class _PrescriptionOrderCard extends StatelessWidget {
   bool get _isUnderReview =>
       status == PharmacyPrescriptionCardStatus.underReview;
 
+  bool get _isReviewCompleted =>
+      status == PharmacyPrescriptionCardStatus.reviewCompleted;
+
   @override
   Widget build(BuildContext context) {
-    final badgeLabel = _isUnderReview ? 'REVIEWING' : 'NEW';
-    final badgeColor = _isUnderReview ? _reviewingBadge : _newBadge;
-    final primaryLabel =
-        _isUnderReview ? 'Mark as Reviewed' : 'Review Prescription';
+    final badgeLabel = switch (status) {
+      PharmacyPrescriptionCardStatus.underReview => 'REVIEWING',
+      PharmacyPrescriptionCardStatus.reviewCompleted => 'REVIEW COMPLETED',
+      PharmacyPrescriptionCardStatus.newOrder => 'NEW',
+    };
+    final badgeColor = switch (status) {
+      PharmacyPrescriptionCardStatus.underReview => _reviewingBadge,
+      PharmacyPrescriptionCardStatus.reviewCompleted => _completedBadge,
+      PharmacyPrescriptionCardStatus.newOrder => _newBadge,
+    };
+    final primaryLabel = switch (status) {
+      PharmacyPrescriptionCardStatus.underReview => 'Mark as Reviewed',
+      PharmacyPrescriptionCardStatus.reviewCompleted => 'Create Quotation',
+      PharmacyPrescriptionCardStatus.newOrder => 'Review Prescription',
+    };
 
-    return Container(
+    void openDetails() {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PharmacyOrderDetailsScreen(
+            customerName: customerName,
+            notesType: notesType,
+            isSelfPickup: isSelfPickup,
+            isUnderReview: _isUnderReview,
+            isReviewCompleted: _isReviewCompleted,
+          ),
+        ),
+      );
+    }
+
+    void openQuotation() {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PharmacyCreateQuotationScreen(
+            customerName: customerName,
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+      onTap: openDetails,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1233,44 +1408,59 @@ class _PrescriptionOrderCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      customerName,
-                      style: const TextStyle(
-                        color: _nameColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        height: 1.2,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            customerName,
+                            style: const TextStyle(
+                              color: _nameColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: _isReviewCompleted ? 8 : 12,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: badgeColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            badgeLabel,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: _isReviewCompleted ? 9 : 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: _isReviewCompleted ? 0.2 : 0.4,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      '#22789007  •  2 min ago',
-                      style: TextStyle(
-                        color: _metaColor,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
+                    const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '#22789007 • 2 min ago',
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(
+                          color: _metaColor,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          height: 1,
+                        ),
                       ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  badgeLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
-                    height: 1,
-                  ),
                 ),
               ),
             ],
@@ -1305,17 +1495,7 @@ class _PrescriptionOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => PharmacyOrderDetailsScreen(
-                                customerName: customerName,
-                                notesType: notesType,
-                                isSelfPickup: isSelfPickup,
-                              ),
-                            ),
-                          );
-                        },
+                        onTap: openDetails,
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -1392,17 +1572,7 @@ class _PrescriptionOrderCard extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => PharmacyOrderDetailsScreen(
-                              customerName: customerName,
-                              notesType: notesType,
-                              isSelfPickup: isSelfPickup,
-                            ),
-                          ),
-                        );
-                      },
+                      onPressed: _isReviewCompleted ? openQuotation : openDetails,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
@@ -1431,6 +1601,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
           ),
         ],
       ),
+      ),
+      ),
     );
   }
 }
@@ -1438,27 +1610,1495 @@ class _PrescriptionOrderCard extends StatelessWidget {
 class _PrescriptionThumb extends StatelessWidget {
   const _PrescriptionThumb();
 
+  static const _asset = 'lib/pharmacy/Assets/images/prescription_home.png';
+
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.asset(
-        AppAssets.prescriptionHome,
-        width: 48,
-        height: 48,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEAF2FF),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFD6E4FF)),
+    return SizedBox(
+      width: 64,
+      height: 68,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Image.asset(
+          _asset,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
+
+class _ToPrepareCard extends StatelessWidget {
+  const _ToPrepareCard({this.scheduled = false});
+
+  final bool scheduled;
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _blue = Color(0xFF3B82F6);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _muted = Color(0xFF6B7280);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const PharmacyOrderDetailsScreen(
+          customerName: 'Ahmed',
+          requestMeta: 'Today • 10:45 AM',
+          notesType: PharmacyOrderNotesType.none,
+          isToPrepare: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openDetails(context),
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-          child: const Icon(
-            Icons.description_outlined,
-            size: 22,
-            color: Color(0xFF1565C0),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: _avatarBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  'A',
+                  style: TextStyle(
+                    color: _avatarText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Text(
+                    'Ahmed',
+                    style: TextStyle(
+                      color: _name,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _blue,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'TO PREPARE',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image(
+                  image: AssetImage(
+                    'lib/pharmacy/Assets/images/delivery_icon.png',
+                  ),
+                  width: 16,
+                  height: 16,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 4),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Delivery',
+                        style: TextStyle(
+                          color: _orange,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '  • #22789007 • 2 min ago',
+                        style: TextStyle(
+                          color: Color(0xFF6B7280),
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  maxLines: 1,
+                  softWrap: false,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (scheduled)
+            const Row(
+              children: [
+                _ScheduledPill(),
+                Spacer(),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14,
+                  color: _muted,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  '15 Aug 2026',
+                  style: TextStyle(
+                    color: Color(0xFF374151),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(width: 10),
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 15,
+                  color: _muted,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  '6:00 - 7:00 PM',
+                  style: TextStyle(
+                    color: Color(0xFF374151),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            )
+          else
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFFFE4D4)),
+                color: const Color.fromARGB(255, 254, 246, 238),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image(
+                    image: AssetImage(
+                      'lib/pharmacy/Assets/images/online_payment.png',
+                    ),
+                    width: 16,
+                    height: 16,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    'Online Payment',
+                    style: TextStyle(
+                      color: _orange,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      height: 1.1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F6F4),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const _PrescriptionThumb(),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Prescription_Jun25.jpg',
+                        style: TextStyle(
+                          color: _name,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'View Full Prescription',
+                            style: TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.open_in_new_rounded,
+                            size: 14,
+                            color: _orange,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () => _openDetails(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _orange,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: const Text(
+                'Start Preparing',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+      ),
+    );
+  }
+}
+
+class _PreparingCard extends StatelessWidget {
+  const _PreparingCard();
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const PharmacyOrderDetailsScreen(
+          customerName: 'Ahmed',
+          requestMeta: 'Today • 10:45 AM',
+          notesType: PharmacyOrderNotesType.none,
+          isPreparing: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openDetails(context),
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: _avatarBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  'A',
+                  style: TextStyle(
+                    color: _avatarText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Ahmed',
+                            style: TextStyle(
+                              color: _name,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _orange,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'PREPARING',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.3,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image(
+                          image: AssetImage(
+                            'lib/pharmacy/Assets/images/delivery_icon.png',
+                          ),
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Delivery',
+                                  style: TextStyle(
+                                    color: _orange,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '  • #22789007 • 2 min ago',
+                                  style: TextStyle(
+                                    color: _meta,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F6F4),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Row(
+              children: [
+                _PrescriptionThumb(),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Prescription_Jun25.jpg',
+                        style: TextStyle(
+                          color: _name,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'View Full Prescription',
+                            style: TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(
+                            Icons.open_in_new_rounded,
+                            size: 14,
+                            color: _orange,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF4EA),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image(
+                  image: AssetImage(
+                    'lib/pharmacy/Assets/images/online_payment.png',
+                  ),
+                  width: 16,
+                  height: 16,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Online Payment',
+                  style: TextStyle(
+                    color: _orange,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () => _openDetails(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _orange,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: const Text(
+                'Ready for Dispatch',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReadyCard extends StatelessWidget {
+  const _ReadyCard();
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+  static const Color _ready = Color(0xFF22C55E);
+  static const Color _partner = Color(0xFF7C3AED);
+  static const Color _partnerBg = Color(0xFFF3E8FF);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const PharmacyOrderDetailsScreen(
+          customerName: 'Ahmed',
+          requestMeta: 'Today • 10:45 AM',
+          notesType: PharmacyOrderNotesType.none,
+          isReady: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openDetails(context),
+      child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: _avatarBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  'A',
+                  style: TextStyle(
+                    color: _avatarText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Ahmed',
+                            style: TextStyle(
+                              color: _name,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _ready,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'READY',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.3,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image(
+                            image: AssetImage(
+                              'lib/pharmacy/Assets/images/delivery_icon.png',
+                            ),
+                            width: 16,
+                            height: 16,
+                            fit: BoxFit.contain,
+                          ),
+                          SizedBox(width: 4),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Delivery',
+                                  style: TextStyle(
+                                    color: _orange,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '  • #22789007 • 2 min ago',
+                                  style: TextStyle(
+                                    color: _meta,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F6F4),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Row(
+              children: [
+                _PrescriptionThumb(),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Prescription_Jun25.jpg',
+                        style: TextStyle(
+                          color: _name,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'View Full Prescription',
+                            style: TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(
+                            Icons.open_in_new_rounded,
+                            size: 14,
+                            color: _orange,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: _partnerBg,
+                        borderRadius: BorderRadius.all(Radius.circular(28)),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(12, 8, 14, 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                'lib/pharmacy/Assets/images/scooter.png',
+                              ),
+                              width: 24,
+                              height: 24,
+                              fit: BoxFit.contain,
+                            ),
+                            SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Assigned Delivery Partner',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 96, 96, 96),
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  '(Abdallah Ould Ahmed)',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: _partner,
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(width: 8),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFF4EA),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 8, 12, 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image(
+                        image: AssetImage(
+                          'lib/pharmacy/Assets/images/online_payment.png',
+                        ),
+                        width: 16,
+                        height: 16,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Online Payment',
+                        style: TextStyle(
+                          color: _orange,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          height: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+        ),
+    );
+  }
+}
+
+class _DeliveredCard extends StatelessWidget {
+  const _DeliveredCard();
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+  static const Color _delivered = Color(0xFF22C55E);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const PharmacyOrderDetailsScreen(
+          customerName: 'Ahmed',
+          requestMeta: 'Today • 10:45 AM',
+          notesType: PharmacyOrderNotesType.none,
+          isDelivered: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openDetails(context),
+      child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: _avatarBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  'A',
+                  style: TextStyle(
+                    color: _avatarText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Ahmed',
+                            style: TextStyle(
+                              color: _name,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _delivered,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'DELIVERED',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.3,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image(
+                            image: AssetImage(
+                              'lib/pharmacy/Assets/images/delivery_icon.png',
+                            ),
+                            width: 16,
+                            height: 16,
+                            fit: BoxFit.contain,
+                          ),
+                          SizedBox(width: 4),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Delivery',
+                                  style: TextStyle(
+                                    color: _orange,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '  • #22789007 • 2 min ago',
+                                  style: TextStyle(
+                                    color: _meta,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F6F4),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Row(
+              children: [
+                _PrescriptionThumb(),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Prescription_Jun25.jpg',
+                        style: TextStyle(
+                          color: _name,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'View Full Prescription',
+                            style: TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(
+                            Icons.open_in_new_rounded,
+                            size: 14,
+                            color: _orange,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF4EA),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image(
+                  image: AssetImage(
+                    'lib/pharmacy/Assets/images/online_payment.png',
+                  ),
+                  width: 16,
+                  height: 16,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Online Payment',
+                  style: TextStyle(
+                    color: _orange,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+        ),
+    );
+  }
+}
+
+class _ScheduledPill extends StatelessWidget {
+  const _ScheduledPill();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE7F1FF),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.calendar_month_rounded,
+            size: 13,
+            color: Color(0xFF3B82F6),
+          ),
+          SizedBox(width: 4),
+          Text(
+            'SCHEDULED',
+            style: TextStyle(
+              color: Color(0xFF3B82F6),
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.3,
+              height: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AwaitingPaymentCard extends StatelessWidget {
+  const _AwaitingPaymentCard();
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _nameColor = Color(0xFF1A1A1A);
+  static const Color _metaColor = Color(0xFF6B7280);
+  static const Color _badge = Color(0xFFF5C400);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _label = Color(0xFFA3A3A3);
+
+  @override
+  Widget build(BuildContext context) {
+    void openPrescription() {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => const PharmacyOrderDetailsScreen(
+            customerName: 'Ahmed',
+            requestMeta: 'Today • 9:45 AM',
+            notesType: PharmacyOrderNotesType.none,
+            isAwaitingPayment: true,
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: openPrescription,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: _avatarBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Text(
+                      'A',
+                      style: TextStyle(
+                        color: _avatarText,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Ahmed',
+                                style: TextStyle(
+                                  color: _nameColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _badge,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'AWAITING PAYMENT',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.2,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '#22789007 • 2 min ago',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              color: _metaColor,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF7F6F4),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+                    const _PrescriptionThumb(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Prescription_Jun25.jpg',
+                            style: TextStyle(
+                              color: _nameColor,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          GestureDetector(
+                            onTap: openPrescription,
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'View Full Prescription',
+                                  style: TextStyle(
+                                    color: _orange,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.open_in_new_rounded,
+                                  size: 14,
+                                  color: _orange,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'QUOTATION',
+                          style: TextStyle(
+                            color: _label,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.6,
+                            height: 1,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          '50 MRU',
+                          style: TextStyle(
+                            color: _nameColor,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            height: 1.1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'STATUS',
+                        style: TextStyle(
+                          color: _label,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.6,
+                          height: 1,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: _badge,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SizedBox(width: 8, height: 8),
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'Awaiting Payment',
+                            style: TextStyle(
+                              color: Color(0xFF3A3A3A),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '22 Oct 2025  ·  10:42 AM',
+                    style: TextStyle(
+                      color: Color(0xFF3A3A3A),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                  ),
+                  Spacer(),
+                  Image(
+                    image: AssetImage(
+                      'lib/pharmacy/Assets/images/hourglass.png',
+                    ),
+                    width: 16,
+                    height: 16,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    'Expires in 18 min',
+                    style: TextStyle(
+                      color: _orange,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -1728,7 +3368,7 @@ class _BottomNav extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F9F7),
+        color: const Color(0xFFFAF9F5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(

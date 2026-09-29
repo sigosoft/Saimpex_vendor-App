@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/pharmacy/reject_order_sheet.dart';
+
+part 'create_quotation_screen.dart';
 
 enum PharmacyOrderNotesType { none, text, voice }
 
@@ -19,6 +19,13 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
     this.voiceNoteDuration = const Duration(seconds: 15),
     this.isSelfPickup = false,
+    this.isUnderReview = false,
+    this.isReviewCompleted = false,
+    this.isAwaitingPayment = false,
+    this.isToPrepare = false,
+    this.isPreparing = false,
+    this.isReady = false,
+    this.isDelivered = false,
   });
 
   final String customerName;
@@ -29,6 +36,13 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
   final String specialNotes;
   final Duration voiceNoteDuration;
   final bool isSelfPickup;
+  final bool isUnderReview;
+  final bool isReviewCompleted;
+  final bool isAwaitingPayment;
+  final bool isToPrepare;
+  final bool isPreparing;
+  final bool isReady;
+  final bool isDelivered;
 
   @override
   State<PharmacyOrderDetailsScreen> createState() =>
@@ -66,6 +80,369 @@ class _PharmacyOrderDetailsScreenState
     _TimelineStep(
       title: 'Paid',
       icon: Icons.check_rounded,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _underReviewTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      icon: Icons.check_rounded,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      icon: Icons.request_quote_outlined,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      icon: Icons.check_rounded,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _reviewCompletedTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      icon: Icons.request_quote_outlined,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      icon: Icons.check_rounded,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _deliveredTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.inventory_2_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.electric_scooter,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.home_outlined,
+      completed: true,
+    ),
+  ];
+
+  static const _readyTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.inventory_2_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.electric_scooter,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _preparingTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _toPrepareTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Preparing Medicines',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
+    ),
+    _TimelineStep(
+      title: 'Ready for Dispatch',
+      icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
+    ),
+    _TimelineStep(
+      title: 'Delivery Partner Assigned',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
+    ),
+    _TimelineStep(
+      title: 'Order Delivered',
+      icon: Icons.home_outlined,
+    ),
+  ];
+
+  static const _awaitingPaymentTimeline = <_TimelineStep>[
+    _TimelineStep(
+      title: 'Prescription Received',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Under Review',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Review Completed',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Quotation Sent',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.description_outlined,
+      completed: true,
+    ),
+    _TimelineStep(
+      title: 'Paid',
+      subtitle: 'Feb 07, 2026 10:45 AM',
+      icon: Icons.check_rounded,
+      completed: true,
     ),
     _TimelineStep(
       title: 'Preparing Medicines',
@@ -127,8 +504,30 @@ class _PharmacyOrderDetailsScreenState
     ),
   ];
 
-  List<_TimelineStep> get _timeline =>
-      widget.isSelfPickup ? _selfPickupTimeline : _deliveryTimeline;
+  List<_TimelineStep> get _timeline {
+    if (widget.isDelivered) return _deliveredTimeline;
+    if (widget.isReady) return _readyTimeline;
+    if (widget.isPreparing) return _preparingTimeline;
+    if (widget.isToPrepare) return _toPrepareTimeline;
+    if (widget.isAwaitingPayment) return _awaitingPaymentTimeline;
+    if (widget.isReviewCompleted) return _reviewCompletedTimeline;
+    if (widget.isUnderReview) return _underReviewTimeline;
+    if (widget.isSelfPickup) return _selfPickupTimeline;
+    return _deliveryTimeline;
+  }
+
+  void _openCreateQuotation() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PharmacyCreateQuotationScreen(
+          customerName: widget.customerName,
+          phone: widget.phone,
+          requestId: widget.requestId,
+          requestMeta: widget.requestMeta,
+        ),
+      ),
+    );
+  }
 
   void _openFullPrescription() {
     Navigator.of(context).push(
@@ -152,7 +551,7 @@ class _PharmacyOrderDetailsScreenState
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F7F7),
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             Expanded(
@@ -165,7 +564,7 @@ class _PharmacyOrderDetailsScreenState
                     colors: [
                       Color(0xFFFFF0E8),
                       Color(0xFFFFF8F4),
-                      Color(0xFFF7F7F7),
+                      Color(0xFFFFFFFF),
                     ],
                     stops: [0, 0.16, 1],
                   ),
@@ -229,16 +628,38 @@ class _PharmacyOrderDetailsScreenState
                     const SizedBox(height: 12),
                     Expanded(
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                         children: [
-                          _CustomerCard(
-                            initial: initial,
-                            name: widget.customerName,
-                            phone: widget.phone,
-                            requestId: widget.requestId,
-                            requestMeta: widget.requestMeta,
-                          ),
+                          if (widget.isToPrepare ||
+                              widget.isPreparing ||
+                              widget.isReady ||
+                              widget.isDelivered)
+                            _ToPrepareInfoCard(
+                              initial: initial,
+                              name: widget.customerName,
+                              phone: widget.phone,
+                              requestId: widget.requestId,
+                              requestMeta: widget.requestMeta,
+                              preparing: widget.isPreparing,
+                              ready: widget.isReady,
+                              delivered: widget.isDelivered,
+                            )
+                          else
+                            _CustomerCard(
+                              initial: initial,
+                              name: widget.customerName,
+                              phone: widget.phone,
+                              requestId: widget.requestId,
+                              requestMeta: widget.requestMeta,
+                              reviewing: widget.isUnderReview,
+                              reviewCompleted: widget.isReviewCompleted,
+                              awaitingPayment: widget.isAwaitingPayment,
+                            ),
                           const SizedBox(height: 14),
+                          if (widget.isReady || widget.isDelivered) ...[
+                            const _DeliveryPartnerSection(),
+                            const SizedBox(height: 18),
+                          ],
                           _UploadedPrescriptionCard(
                             assetPath: _prescriptionAsset,
                             rotationTurns: _rotationTurns,
@@ -268,6 +689,22 @@ class _PharmacyOrderDetailsScreenState
                               _SpecialNotesTextCard(note: widget.specialNotes),
                             const SizedBox(height: 18),
                           ],
+                          if (widget.isAwaitingPayment) ...[
+                            const _AwaitingPaymentItems(),
+                            const SizedBox(height: 16),
+                            const _AwaitingPaymentSummary(),
+                            const SizedBox(height: 12),
+                            const _AwaitingCustomerPaymentCard(),
+                            const SizedBox(height: 18),
+                          ] else if (widget.isToPrepare ||
+                              widget.isPreparing ||
+                              widget.isReady ||
+                              widget.isDelivered) ...[
+                            const _AwaitingOrderItems(),
+                            const SizedBox(height: 16),
+                            const _QuotationSummaryCard(),
+                            const SizedBox(height: 18),
+                          ],
                           Text(
                             'ORDER TIMELINE',
                             style: GoogleFonts.inter(
@@ -277,7 +714,7 @@ class _PharmacyOrderDetailsScreenState
                               letterSpacing: 0.8,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 12),
                           _TimelineCard(steps: _timeline),
                         ],
                       ),
@@ -286,9 +723,25 @@ class _PharmacyOrderDetailsScreenState
                 ),
               ),
             ),
-            _BottomActions(
+            if (widget.isToPrepare || widget.isPreparing)
+              _StartPreparingBar(
+                label: widget.isPreparing
+                    ? 'Ready for Dispatch'
+                    : 'Start Preparing',
+              )
+            else if (!widget.isAwaitingPayment &&
+                !widget.isReady &&
+                !widget.isDelivered)
+              _BottomActions(
               onReject: () => showPharmacyRejectOrderSheet(context),
-              onReview: _openFullPrescription,
+              onReview: widget.isReviewCompleted
+                  ? _openCreateQuotation
+                  : _openFullPrescription,
+              primaryLabel: widget.isReviewCompleted
+                  ? 'Create Quotation'
+                  : widget.isUnderReview
+                      ? 'Mark as Reviewed'
+                      : 'Review Prescription',
             ),
           ],
         ),
@@ -304,6 +757,9 @@ class _CustomerCard extends StatelessWidget {
     required this.phone,
     required this.requestId,
     required this.requestMeta,
+    this.reviewing = false,
+    this.reviewCompleted = false,
+    this.awaitingPayment = false,
   });
 
   final String initial;
@@ -311,10 +767,17 @@ class _CustomerCard extends StatelessWidget {
   final String phone;
   final String requestId;
   final String requestMeta;
+  final bool reviewing;
+  final bool reviewCompleted;
+  final bool awaitingPayment;
 
-  static const Color _accent = Color(0xFFE65100);
-  static const Color _chatOrange = Color(0xFFFF5C22);
-  static const Color _badge = Color(0xFFF9A825);
+  static const Color _accent = Color(0xFFFF5722);
+  static const Color _avatarLetter = Color(0xFFE64A19);
+  static const Color _chatOrange = Color(0xFFFF5722);
+  static const Color _newBadge = Color(0xFFF9A825);
+  static const Color _reviewingBadge = Color(0xFF7B61FF);
+  static const Color _completedBadge = Color(0xFF22C55E);
+  static const Color _awaitingBadge = Color(0xFFF5C400);
 
   @override
   Widget build(BuildContext context) {
@@ -355,19 +818,45 @@ class _CustomerCard extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: EdgeInsets.symmetric(
+                  horizontal: reviewCompleted || awaitingPayment
+                      ? 8
+                      : reviewing
+                          ? 14
+                          : 12,
+                  vertical: reviewing ? 6 : 5,
+                ),
                 decoration: BoxDecoration(
-                  color: _badge,
+                  color: awaitingPayment
+                      ? _awaitingBadge
+                      : reviewCompleted
+                          ? _completedBadge
+                          : reviewing
+                              ? _reviewingBadge
+                              : _newBadge,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'NEW',
+                  awaitingPayment
+                      ? 'AWAITING PAYMENT'
+                      : reviewCompleted
+                          ? 'REVIEW COMPLETED'
+                          : reviewing
+                              ? 'REVIEWING'
+                              : 'NEW',
                   style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: 10,
+                    fontSize: reviewCompleted || awaitingPayment
+                        ? 9
+                        : reviewing
+                            ? 11
+                            : 10,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                    letterSpacing: reviewCompleted || awaitingPayment
+                        ? 0.2
+                        : reviewing
+                            ? 0.6
+                            : 0.5,
                     height: 1,
                   ),
                 ),
@@ -376,14 +865,14 @@ class _CustomerCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F8),
-              borderRadius: BorderRadius.circular(22),
+              color: const Color(0xFFF6F7F8),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 6,
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -401,7 +890,7 @@ class _CustomerCard extends StatelessWidget {
                   child: Text(
                     initial,
                     style: GoogleFonts.inter(
-                      color: _accent,
+                      color: _avatarLetter,
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
                     ),
@@ -437,21 +926,24 @@ class _CustomerCard extends StatelessWidget {
                 Container(
                   width: 46,
                   height: 46,
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: _chatOrange,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: _chatOrange.withValues(alpha: 0.35),
+                        color: _chatOrange.withValues(alpha: 0.32),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.chat_rounded,
-                    color: Colors.white,
-                    size: 22,
+                  child: const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CustomPaint(
+                      painter: _ChatDotsIconPainter(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
@@ -460,11 +952,10 @@ class _CustomerCard extends StatelessWidget {
           const SizedBox(height: 12),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
             decoration: BoxDecoration(
-              color: const Color(0xFFFBFBFB),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFF0F0F0)),
+              color: const Color(0xFFF7F8F9),
+              borderRadius: BorderRadius.circular(22),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,6 +1002,48 @@ class _CustomerCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Speech bubble with three dots, matching the customer chat button.
+class _ChatDotsIconPainter extends CustomPainter {
+  const _ChatDotsIconPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+
+    final w = size.width;
+    final h = size.height;
+    final bubble = RRect.fromRectAndRadius(
+      Rect.fromLTWH(w * 0.06, h * 0.08, w * 0.88, h * 0.62),
+      Radius.circular(h * 0.18),
+    );
+    canvas.drawRRect(bubble, paint);
+
+    final tail = Path()
+      ..moveTo(w * 0.22, h * 0.68)
+      ..lineTo(w * 0.18, h * 0.92)
+      ..lineTo(w * 0.42, h * 0.68);
+    canvas.drawPath(tail, paint);
+
+    final dot = Paint()..color = color;
+    final cy = h * 0.39;
+    final r = w * 0.055;
+    canvas.drawCircle(Offset(w * 0.32, cy), r, dot);
+    canvas.drawCircle(Offset(w * 0.50, cy), r, dot);
+    canvas.drawCircle(Offset(w * 0.68, cy), r, dot);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ChatDotsIconPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _UploadedPrescriptionCard extends StatelessWidget {
@@ -592,32 +1125,16 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _ImageActionChip(
+                          icon: Icons.zoom_in_rounded,
                           label: 'Zoom',
                           onTap: onZoom,
-                          leading: const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CustomPaint(
-                              painter: _ZoomInIconPainter(
-                                color: Color(0xFFE67E22),
-                              ),
-                            ),
-                          ),
                           color: const Color(0xFFE67E22),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         _ImageActionChip(
+                          icon: Icons.rotate_right_rounded,
                           label: 'Rotate',
                           onTap: onRotate,
-                          leading: const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CustomPaint(
-                              painter: _RotateIconPainter(
-                                color: Color(0xFF544C4C),
-                              ),
-                            ),
-                          ),
                           color: const Color(0xFF544C4C),
                         ),
                       ],
@@ -666,15 +1183,13 @@ class _UploadedPrescriptionCard extends StatelessWidget {
 
 class _ImageActionChip extends StatelessWidget {
   const _ImageActionChip({
-    this.icon,
-    this.leading,
+    required this.icon,
     required this.label,
     required this.onTap,
-    this.color = const Color(0xFFE67E22),
-  }) : assert(icon != null || leading != null);
+    required this.color,
+  });
 
-  final IconData? icon;
-  final Widget? leading;
+  final IconData icon;
   final String label;
   final VoidCallback onTap;
   final Color color;
@@ -683,29 +1198,26 @@ class _ImageActionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(22),
-      elevation: 2,
+      borderRadius: BorderRadius.circular(20),
+      elevation: 3,
       shadowColor: Colors.black26,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: const Color(0xFFE8E8E8)),
-          ),
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              leading ?? Icon(icon, size: 16, color: color),
-              const SizedBox(width: 6),
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 5),
               Text(
                 label,
                 style: GoogleFonts.inter(
                   color: color,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
+                  height: 1,
                 ),
               ),
             ],
@@ -933,107 +1445,920 @@ class _VoiceWaveformPainter extends CustomPainter {
       oldDelegate.idleColor != idleColor;
 }
 
-/// Magnifying glass with centered plus, matching the Zoom chip design.
-class _ZoomInIconPainter extends CustomPainter {
-  const _ZoomInIconPainter({required this.color});
+class _ToPrepareInfoCard extends StatelessWidget {
+  const _ToPrepareInfoCard({
+    required this.initial,
+    required this.name,
+    required this.phone,
+    required this.requestId,
+    required this.requestMeta,
+    this.preparing = false,
+    this.ready = false,
+    this.delivered = false,
+  });
 
-  final Color color;
+  final String initial;
+  final String name;
+  final String phone;
+  final String requestId;
+  final String requestMeta;
+  final bool preparing;
+  final bool ready;
+  final bool delivered;
+
+  static const Color _accent = Color(0xFFFF5722);
+  static const Color _blue = Color(0xFF3B82F6);
+  static const Color _ready = Color(0xFF22C55E);
+  static const Color _panel = Color(0xFFF6F7F8);
+  static const Color _label = Color(0xFFB0B0B0);
+  static const Color _meta = Color(0xFF8E8E8E);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final stroke = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.45
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final w = size.width;
-    final h = size.height;
-
-    final center = Offset(w * 0.42, h * 0.40);
-    final radius = w * 0.30;
-    canvas.drawCircle(center, radius, stroke);
-
-    final plus = radius * 0.42;
-    canvas.drawLine(
-      Offset(center.dx - plus, center.dy),
-      Offset(center.dx + plus, center.dy),
-      stroke,
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF5C22).withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.person_search_rounded, color: _accent, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                'CUSTOMER',
+                style: GoogleFonts.inter(
+                  color: _accent,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  letterSpacing: 0.6,
+                  height: 1.1,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: ready || delivered
+                      ? _ready
+                      : preparing
+                          ? _accent
+                          : _blue,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  delivered
+                      ? 'DELIVERED'
+                      : ready
+                          ? 'READY'
+                          : preparing
+                              ? 'PREPARING'
+                              : 'TO PREPARE',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: delivered ? 9 : 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+            decoration: BoxDecoration(
+              color: _panel,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFF0F0),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    initial,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFE24B3B),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF1A1A1A),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          height: 1.15,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        phone,
+                        style: GoogleFonts.inter(
+                          color: _meta,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 46,
+                  height: 46,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _accent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CustomPaint(
+                      painter: _ChatDotsIconPainter(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+                  decoration: BoxDecoration(
+                    color: _panel,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'REQUEST ID',
+                        style: GoogleFonts.inter(
+                          color: _label,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          letterSpacing: 0.4,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: requestId,
+                              style: GoogleFonts.inter(
+                                color: _accent,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                height: 1.2,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '  •  $requestMeta',
+                              style: GoogleFonts.inter(
+                                color: _meta,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                height: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
+                  decoration: BoxDecoration(
+                    color: _panel,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DELIVERY TYPE',
+                        style: GoogleFonts.inter(
+                          color: _label,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          letterSpacing: 0.3,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'lib/pharmacy/Assets/images/delivery_icon.png',
+                            width: 16,
+                            height: 16,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              'Delivery',
+                              style: GoogleFonts.inter(
+                                color: _accent,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                height: 1.1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Icon(Icons.location_on_rounded, color: _accent, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                'DELIVERY ADDRESS',
+                style: GoogleFonts.inter(
+                  color: _accent,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  letterSpacing: 0.6,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+            decoration: BoxDecoration(
+              color: _panel,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 46,
+                  height: 46,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFF4EA),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.home_outlined,
+                    color: _accent,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sahara View Home',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF1A1A1A),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          height: 1.15,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Near Marhaba Supermarket,Nouakchott',
+                        style: GoogleFonts.inter(
+                          color: _meta,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF4EA),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'lib/pharmacy/Assets/images/online_payment.png',
+                  width: 18,
+                  height: 18,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Online Payment',
+                  style: GoogleFonts.inter(
+                    color: _accent,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
-    canvas.drawLine(
-      Offset(center.dx, center.dy - plus),
-      Offset(center.dx, center.dy + plus),
-      stroke,
-    );
-
-    final handleStart = Offset(
-      center.dx + radius * 0.72,
-      center.dy + radius * 0.72,
-    );
-    final handleEnd = Offset(w * 0.92, h * 0.92);
-    canvas.drawLine(handleStart, handleEnd, stroke);
   }
-
-  @override
-  bool shouldRepaint(covariant _ZoomInIconPainter oldDelegate) =>
-      oldDelegate.color != color;
 }
 
-/// Clockwise rotate arrow with dashed bottom, matching the Rotate chip design.
-class _RotateIconPainter extends CustomPainter {
-  const _RotateIconPainter({required this.color});
-
-  final Color color;
+class _AwaitingPaymentItems extends StatelessWidget {
+  const _AwaitingPaymentItems();
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final stroke = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width * 0.34;
-    final rect = Rect.fromCircle(center: center, radius: radius);
-
-    canvas.drawArc(rect, 2.0, 2.55, false, stroke);
-
-    const dashAngles = <(double, double)>[
-      (0.35, 0.38),
-      (0.95, 0.38),
-      (1.55, 0.38),
-    ];
-    for (final (start, sweep) in dashAngles) {
-      canvas.drawArc(rect, start, sweep, false, stroke);
-    }
-
-    final tipAngle = 2.0 + 2.55;
-    final tip = Offset(
-      center.dx + radius * math.cos(tipAngle),
-      center.dy + radius * math.sin(tipAngle),
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'ORDER ITEMS (2)',
+          style: GoogleFonts.inter(
+            color: const Color(0xFFB0B7C3),
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            letterSpacing: 0.4,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 14),
+        const _AvailabilityStatus(availability: _Availability.limited),
+        const SizedBox(height: 8),
+        Text(
+          'Paracetamol 650 mg',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1A1A1A),
+            fontWeight: FontWeight.w700,
+            fontSize: 15.5,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const _AvailableCountPill(available: 6, prescribed: 10),
+        const SizedBox(height: 12),
+        const _OrderItemTotals(detail: '10 tablets × 50 MRU', total: '500 MRU'),
+        const SizedBox(height: 18),
+        const _AvailabilityStatus(availability: _Availability.outOfStock),
+        const SizedBox(height: 8),
+        Text(
+          'Paracetamol 500 mg',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1A1A1A),
+            fontWeight: FontWeight.w700,
+            fontSize: 15.5,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Suggested Alternative',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF9CA3AF),
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F7FF),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFD4E4FF)),
+          ),
+          child: const Column(
+            children: [
+              _OrderAltRow(name: 'Paracetamol 500 mg', inStock: false),
+              SizedBox(height: 10),
+              _OrderAltRow(name: 'Paracetamol 650 mg', inStock: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        const _OrderItemTotals(detail: '10 tablets × 50 MRU', total: '500 MRU'),
+      ],
     );
-    final tangent = tipAngle + math.pi / 2;
-    final back = Offset(
-      tip.dx - 3.2 * math.cos(tangent) - 1.6 * math.cos(tipAngle),
-      tip.dy - 3.2 * math.sin(tangent) - 1.6 * math.sin(tipAngle),
-    );
-    final wing = Offset(
-      tip.dx - 3.2 * math.cos(tangent) + 1.6 * math.cos(tipAngle),
-      tip.dy - 3.2 * math.sin(tangent) + 1.6 * math.sin(tipAngle),
-    );
-    final arrow = Path()
-      ..moveTo(back.dx, back.dy)
-      ..lineTo(tip.dx, tip.dy)
-      ..lineTo(wing.dx, wing.dy);
-    canvas.drawPath(arrow, stroke);
   }
+}
+
+class _OrderAltRow extends StatelessWidget {
+  const _OrderAltRow({required this.name, required this.inStock});
+
+  final String name;
+  final bool inStock;
 
   @override
-  bool shouldRepaint(covariant _RotateIconPainter oldDelegate) =>
-      oldDelegate.color != color;
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: inStock ? const Color(0xFF22C55E) : const Color(0xFFFF3250),
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            name,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF2C2C2C),
+              fontWeight: FontWeight.w500,
+              fontSize: 14.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OrderItemTotals extends StatelessWidget {
+  const _OrderItemTotals({required this.detail, required this.total});
+
+  final String detail;
+  final String total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Unit',
+              style: GoogleFonts.inter(
+                color: const Color(0xFFB0B0B0),
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              detail,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Total',
+              style: GoogleFonts.inter(
+                color: const Color(0xFFB0B0B0),
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              total,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AwaitingPaymentSummary extends StatelessWidget {
+  const _AwaitingPaymentSummary();
+
+  static const Color _orange = Color(0xFFFF5722);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Image.asset(
+                'lib/pharmacy/Assets/images/quotation_summary.png',
+                width: 22,
+                height: 22,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'QUOTATION SUMMARY',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  letterSpacing: 0.3,
+                  height: 1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          const _AwaitingSummaryLine(label: 'Item total', value: '1500 MRU'),
+          const SizedBox(height: 12),
+          const _AwaitingSummaryLine(label: 'Tax', value: '10'),
+          const SizedBox(height: 14),
+          const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Text(
+                'Total Amount',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '1510 MRU',
+                style: GoogleFonts.inter(
+                  color: _orange,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AwaitingSummaryLine extends StatelessWidget {
+  const _AwaitingSummaryLine({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            color: const Color(0xFFD0D0D0),
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AwaitingOrderItems extends StatelessWidget {
+  const _AwaitingOrderItems();
+
+  static const _items = <(String, String)>[
+    ('Doliprane 500mg', '50 MRU'),
+    ('Augmentin 1g', '50 MRU'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'ORDER ITEMS (2)',
+          style: GoogleFonts.inter(
+            color: const Color(0xFFB0B7C3),
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            letterSpacing: 0.4,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 12),
+        for (var i = 0; i < _items.length; i++) ...[
+          if (i > 0) const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _items[i].$1,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF2C2C2C),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _items[i].$2,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFFF5722),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'Qty: 1 Strip',
+                    style: GoogleFonts.inter(
+                      color: const Color.fromARGB(255, 96, 96, 96),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _QuotationSummaryCard extends StatelessWidget {
+  const _QuotationSummaryCard();
+
+  static const Color _orange = Color(0xFFFF5722);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Image.asset(
+                'lib/pharmacy/Assets/images/quotation_summary.png',
+                width: 22,
+                height: 22,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'QUOTATION SUMMARY',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  letterSpacing: 0.2,
+                  height: 1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Text(
+                'Item total',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFD0D0D0),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '100 MRU',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Text(
+                'Total Amount',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '100 MRU',
+                style: GoogleFonts.inter(
+                  color: _orange,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AwaitingCustomerPaymentCard extends StatelessWidget {
+  const _AwaitingCustomerPaymentCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFEFEFEF)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFF6D4),
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset(
+              'lib/pharmacy/Assets/images/awaiting_payment.png',
+              width: 24,
+              height: 24,
+              fit: BoxFit.contain,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Awaiting Customer Payment',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF1A1A1A),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '23/04/2026 10:45 AM',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF9CA3AF),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TimelineCard extends StatelessWidget {
@@ -1048,14 +2373,23 @@ class _TimelineCard extends StatelessWidget {
   static const Color _inactiveText = Color(0xFF9BA4B5);
   static const double _iconSize = 32;
 
+  int get _completedRun {
+    var count = 0;
+    for (final step in steps) {
+      if (!step.completed) break;
+      count++;
+    }
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+      padding: const EdgeInsets.fromLTRB(22, 26, 20, 26),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F8F6),
-        borderRadius: BorderRadius.circular(32),
+        color: const Color(0xFFF6F5F2),
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Stack(
         children: [
@@ -1066,6 +2400,16 @@ class _TimelineCard extends StatelessWidget {
             bottom: _iconSize / 2,
             child: Container(width: 1.5, color: _line),
           ),
+          if (_completedRun > 1)
+            Positioned(
+              left: (_iconSize / 2) - 0.75,
+              top: _iconSize / 2,
+              child: Container(
+                width: 1.5,
+                height: (_completedRun - 1) * 56.5,
+                color: _orange,
+              ),
+            ),
           Column(
             children: [
               for (var i = 0; i < steps.length; i++) ...[
@@ -1159,8 +2503,12 @@ class _TimelineRow extends StatelessWidget {
                       color: inactiveIcon,
                     )
                   : SizedBox(
-                      width: 15,
-                      height: 15,
+                      width: step.customIcon == _TimelineCustomIcon.openBox
+                          ? 17
+                          : 15,
+                      height: step.customIcon == _TimelineCustomIcon.openBox
+                          ? 17
+                          : 15,
                       child: CustomPaint(
                         painter: switch (step.customIcon!) {
                           _TimelineCustomIcon.capsule =>
@@ -1372,7 +2720,7 @@ class _ScooterIconPainter extends CustomPainter {
       oldDelegate.color != color;
 }
 
-/// Open cardboard box (isometric), for Ready for Pickup / Dispatch.
+/// Open carton seen from the front-right, matching Ready for Dispatch.
 class _OpenBoxIconPainter extends CustomPainter {
   const _OpenBoxIconPainter({required this.color});
 
@@ -1383,53 +2731,51 @@ class _OpenBoxIconPainter extends CustomPainter {
     final stroke = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.3
+      ..strokeWidth = size.shortestSide * 0.065
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    final w = size.width;
-    final h = size.height;
-    final sx = w / 16;
-    final sy = h / 16;
+    final s = size.shortestSide / 24;
+    Offset p(double x, double y) => Offset(x * s, y * s);
 
-    final bottom = Offset(8 * sx, 13.4 * sy);
-    final frontL = Offset(2.4 * sx, 10.2 * sy);
-    final frontR = Offset(13.6 * sx, 10.2 * sy);
-    final midL = Offset(2.4 * sx, 6.6 * sy);
-    final midR = Offset(13.6 * sx, 6.6 * sy);
-    final top = Offset(8 * sx, 3.6 * sy);
-    final innerBottom = Offset(8 * sx, 9.0 * sy);
+    // Left top flap.
+    canvas.drawPath(
+      Path()
+        ..moveTo(p(5.2, 8.6).dx, p(5.2, 8.6).dy)
+        ..lineTo(p(3.2, 4.8).dx, p(3.2, 4.8).dy)
+        ..lineTo(p(10.2, 2.0).dx, p(10.2, 2.0).dy)
+        ..lineTo(p(12.0, 5.6).dx, p(12.0, 5.6).dy),
+      stroke,
+    );
 
-    final body = Path()
-      ..moveTo(frontL.dx, frontL.dy)
-      ..lineTo(bottom.dx, bottom.dy)
-      ..lineTo(frontR.dx, frontR.dy)
-      ..lineTo(midR.dx, midR.dy)
-      ..lineTo(top.dx, top.dy)
-      ..lineTo(midL.dx, midL.dy)
-      ..close();
-    canvas.drawPath(body, stroke);
+    // Right top flap.
+    canvas.drawPath(
+      Path()
+        ..moveTo(p(12.6, 5.6).dx, p(12.6, 5.6).dy)
+        ..lineTo(p(14.4, 2.0).dx, p(14.4, 2.0).dy)
+        ..lineTo(p(21.2, 4.8).dx, p(21.2, 4.8).dy)
+        ..lineTo(p(19.2, 8.6).dx, p(19.2, 8.6).dy),
+      stroke,
+    );
 
-    canvas.drawLine(midL, innerBottom, stroke);
-    canvas.drawLine(midR, innerBottom, stroke);
-    canvas.drawLine(top, innerBottom, stroke);
+    // Box body: front face + right side.
+    canvas.drawPath(
+      Path()
+        ..moveTo(p(5.2, 8.6).dx, p(5.2, 8.6).dy)
+        ..lineTo(p(5.2, 16.6).dx, p(5.2, 16.6).dy)
+        ..lineTo(p(12.2, 19.6).dx, p(12.2, 19.6).dy)
+        ..lineTo(p(19.2, 16.6).dx, p(19.2, 16.6).dy)
+        ..lineTo(p(19.2, 8.6).dx, p(19.2, 8.6).dy)
+        ..lineTo(p(12.2, 5.6).dx, p(12.2, 5.6).dy)
+        ..close(),
+      stroke,
+    );
 
-    canvas.drawLine(frontL, Offset(8 * sx, 7.4 * sy), stroke);
-    canvas.drawLine(frontR, Offset(8 * sx, 7.4 * sy), stroke);
-
-    final flapL = Path()
-      ..moveTo(midL.dx, midL.dy)
-      ..lineTo(0.8 * sx, 4.2 * sy)
-      ..lineTo(top.dx - 1.2 * sx, 2.4 * sy)
-      ..lineTo(top.dx, top.dy);
-    canvas.drawPath(flapL, stroke);
-
-    final flapR = Path()
-      ..moveTo(midR.dx, midR.dy)
-      ..lineTo(15.2 * sx, 4.2 * sy)
-      ..lineTo(top.dx + 1.2 * sx, 2.4 * sy)
-      ..lineTo(top.dx, top.dy);
-    canvas.drawPath(flapR, stroke);
+    // Opening rim and front center seam.
+    canvas.drawLine(p(5.2, 8.6), p(12.2, 11.4), stroke);
+    canvas.drawLine(p(19.2, 8.6), p(12.2, 11.4), stroke);
+    canvas.drawLine(p(12.2, 5.6), p(12.2, 11.4), stroke);
+    canvas.drawLine(p(12.2, 11.4), p(12.2, 19.6), stroke);
   }
 
   @override
@@ -1441,19 +2787,22 @@ class _BottomActions extends StatelessWidget {
   const _BottomActions({
     required this.onReject,
     required this.onReview,
+    this.primaryLabel = 'Review Prescription',
   });
 
   final VoidCallback onReject;
   final VoidCallback onReview;
+  final String primaryLabel;
 
   static const Color _orange = Color(0xFFFF5C22);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: EdgeInsets.fromLTRB(
         16,
-        12,
+        16,
         16,
         12 + MediaQuery.paddingOf(context).bottom,
       ),
@@ -1512,7 +2861,7 @@ class _BottomActions extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Review Prescription',
+                    primaryLabel,
                     maxLines: 1,
                     softWrap: false,
                     style: GoogleFonts.inter(
@@ -1526,6 +2875,200 @@ class _BottomActions extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DeliveryPartnerSection extends StatelessWidget {
+  const _DeliveryPartnerSection();
+
+  static const Color _orange = Color(0xFFFF5722);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'DELIVERY PARTNER',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF9AA6B2),
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            letterSpacing: 0.8,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 56,
+                height: 52,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'lib/water/Assets/Images/delivery_boy1.png',
+                          ),
+                          fit: BoxFit.cover,
+                          alignment: Alignment(0, -0.2),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 2,
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF22C55E),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mohamed Abdallahi',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF1A2332),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: Color(0xFFF5B400),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '4.8',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF1A2332),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '(124 reviews)',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF9CA3AF),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            height: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _orange,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _orange.withValues(alpha: 0.28),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.phone_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StartPreparingBar extends StatelessWidget {
+  const _StartPreparingBar({this.label = 'Start Preparing'});
+
+  final String label;
+
+  static const Color _orange = Color(0xFFFF5722);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        12 + MediaQuery.paddingOf(context).bottom,
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _orange,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }

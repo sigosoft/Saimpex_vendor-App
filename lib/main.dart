@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/Utils.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:saimpex_vendor/view/splash/Splash.dart';
-
 import 'generated/l10n.dart';
 
 // localization.translate('ar');
