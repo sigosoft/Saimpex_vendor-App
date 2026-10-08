@@ -209,7 +209,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                         children: [
                           for (var i = 0; i < _days.length; i++) ...[
                             if (i > 0)
-                              const Divider(height: 1, thickness: 1, color: Color(0xFFF3F3F3), indent: 16, endIndent: 16),
+                              const Divider(height: 1, thickness:.5, color: Color(0xFFF3F3F3)),
                             _DayRow(
                               day: _days[i],
                               hours: _open24 ? _DayHours.allDayHours : null,

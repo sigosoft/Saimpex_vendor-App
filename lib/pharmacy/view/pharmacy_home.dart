@@ -3979,66 +3979,80 @@ class _BottomNav extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            children: List.generate(5, (index) {
-              final selected = selectedIndex == index;
-              final asset = assetIcons[index];
-              return Expanded(
-                child: InkWell(
-                  onTap: () => onSelect(index),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 220),
-                        child: selected
-                            ? Container(
-                                key: const ValueKey('selected'),
-                                width: 40,
-                                height: 40,
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryOrange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: _NavIcon(
-                                  asset: asset,
-                                  fallback: fallbacks[index],
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              )
-                            : SizedBox(
-                                key: const ValueKey('idle'),
-                                width: 40,
-                                height: 40,
-                                child: Center(
-                                  child: _NavIcon(
-                                    asset: asset,
-                                    fallback: fallbacks[index],
-                                    color: AppColors.navInactive,
-                                    size: asset == null ? 28 : 24,
-                                  ),
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        labels[index],
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight:
-                              selected ? FontWeight.w700 : FontWeight.w500,
-                          color: selected
-                              ? AppColors.primaryOrange
-                              : AppColors.navInactive,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final segment = constraints.maxWidth / labels.length;
+              return SizedBox(
+                width: constraints.maxWidth,
+                child: Stack(
+                  children: [
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 280),
+                      curve: Curves.easeOutCubic,
+                      left: selectedIndex * segment + (segment - 40) / 2,
+                      top: 0,
+                      width: 40,
+                      height: 40,
+                      child: const DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryOrange,
+                          shape: BoxShape.circle,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Row(
+                      children: List.generate(labels.length, (index) {
+                        final selected = selectedIndex == index;
+                        return Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              if (index == selectedIndex) return;
+                              HapticFeedback.selectionClick();
+                              onSelect(index);
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 40,
+                                  child: Center(
+                                    child: TweenAnimationBuilder<double>(
+                                      tween: Tween(end: selected ? 1 : 0),
+                                      duration: const Duration(milliseconds: 280),
+                                      curve: Curves.easeOutCubic,
+                                      builder: (context, t, _) {
+                                        return _NavIcon(
+                                          asset: assetIcons[index],
+                                          fallback: fallbacks[index],
+                                          color: Color.lerp(AppColors.navInactive, Colors.white, t)!,
+                                          size: assetIcons[index] == null && !selected ? 28 : 24,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 280),
+                                  curve: Curves.easeOutCubic,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                                    color: selected ? AppColors.primaryOrange : AppColors.navInactive,
+                                  ),
+                                  child: Text(labels[index]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
               );
-            }),
+            },
           ),
         ),
       ),

@@ -252,7 +252,7 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(height: 1, thickness: 1, color: Color(0xFFF1F1F1), indent: 14, endIndent: 14);
+    return const Divider(height: 1, thickness:.5, color: Color(0xFFF1F1F1));
   }
 }
 

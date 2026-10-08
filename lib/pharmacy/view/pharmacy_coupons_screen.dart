@@ -536,16 +536,17 @@ class _CouponConfirmDialog extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(false),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(6),
                 child: Container(
-                  width: 26,
-                  height: 26,
+                  width: 28,
+                  height: 28,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: const Color(0xFFE7E7E7)),
                   ),
-                  child: const Icon(Icons.close, size: 14, color: Color(0xFF7F7F7F)),
+                  child: const Icon(Icons.close, size: 16, color: Color(0xFF7F7F7F)),
                 ),
               ),
             ),

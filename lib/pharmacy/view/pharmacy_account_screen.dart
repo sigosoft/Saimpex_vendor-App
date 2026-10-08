@@ -4,10 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_business_settings_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_coupons_screen.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_delivery_boys_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_earnings_screen.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_help_support_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_leave_management_screen.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_privacy_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_profile_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_received_payouts_screen.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_terms_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_working_hours_screen.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
@@ -241,20 +245,57 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                           );
                         },
                       ),
-                      const _MenuTile(icon: Icons.delivery_dining_outlined, label: 'Delivery Boys'),
+                      _MenuTile(
+                        icon: Icons.delivery_dining_outlined,
+                        label: 'Delivery Boys',
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const PharmacyDeliveryBoysScreen(),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(height: 18),
                   const _SectionLabel('Support & Legal'),
                   const SizedBox(height: 10),
-                  const _MenuCard(
+                  _MenuCard(
                     children: [
-                      _MenuTile(icon: Icons.headset_mic_outlined, label: 'Help & Support'),
-                      _MenuTile(icon: Icons.description_outlined, label: 'Terms & Conditions'),
+                      _MenuTile(
+                        icon: Icons.headset_mic_outlined,
+                        label: 'Help & Support',
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const PharmacyHelpSupportScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _MenuTile(
+                        icon: Icons.description_outlined,
+                        label: 'Terms & Conditions',
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const PharmacyTermsScreen(),
+                            ),
+                          );
+                        },
+                      ),
                       _MenuTile(
                         image: 'lib/pharmacy/Assets/images/privacy_policy.png',
                         imageSize: 20,
                         label: 'Privacy Policy',
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const PharmacyPrivacyScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -608,10 +649,8 @@ class _MenuCard extends StatelessWidget {
       if (divided && i != children.length - 1) {
         rows.add(const Divider(
           height: 1,
-          thickness: 1,
+          thickness:.2,
           color: Color(0xFFF1F1F1),
-          indent: 16,
-          endIndent: 16,
         ));
       }
     }
