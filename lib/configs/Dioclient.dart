@@ -17,7 +17,9 @@ class DioClient {
 
   DioClient._internal() {
     dio
-      ..options.baseUrl = ApiConfigs.BASE_URL
+      ..options.baseUrl = ApiConfigs.BASE_URL.endsWith('/')
+          ? ApiConfigs.BASE_URL
+          : "${ApiConfigs.BASE_URL}/"
       ..options.connectTimeout = Duration(seconds: 20)
       ..options.receiveTimeout = Duration(seconds: 20)
       ..options.headers = {
@@ -80,10 +82,38 @@ class DioClient {
     );
   }
 
+  String _resolvePath(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    final base = (dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : ApiConfigs.BASE_URL).trim();
+    if (base.isEmpty) return path;
+
+    final cleanBase = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    final cleanPath = path.startsWith('/') ? path.substring(1) : path;
+
+    if (cleanBase.endsWith('/vendor') && cleanPath.startsWith('vendor/')) {
+      return '$cleanBase/${cleanPath.substring(7)}';
+    }
+    if (cleanBase.endsWith('/vendorapp') && cleanPath.startsWith('vendorapp/')) {
+      return '$cleanBase/${cleanPath.substring(10)}';
+    }
+    if (cleanBase.endsWith('/vendor') && cleanPath.startsWith('vendorapp/')) {
+      final rootApi = cleanBase.substring(0, cleanBase.length - 7);
+      return '$rootApi/$cleanPath';
+    }
+    if (cleanBase.endsWith('/vendorapp') && cleanPath.startsWith('vendor/')) {
+      final rootApi = cleanBase.substring(0, cleanBase.length - 10);
+      return '$rootApi/$cleanPath';
+    }
+
+    return '$cleanBase/$cleanPath';
+  }
+
   /// Common GET Method
   Future<Response> get(String path, {Map<String, dynamic>? query}) async {
     try {
-      return await dio.get(path, queryParameters: query);
+      return await dio.get(_resolvePath(path), queryParameters: query);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -98,7 +128,7 @@ class DioClient {
     try {
       final isMultipart = body is FormData;
       return await dio.post(
-        path,
+        _resolvePath(path),
         data: body,
         queryParameters: query,
         options: isMultipart

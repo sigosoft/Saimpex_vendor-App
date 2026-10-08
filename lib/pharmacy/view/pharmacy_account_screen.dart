@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/controller/settings_controller.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_business_settings_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_coupons_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_delivery_boys_screen.dart';
@@ -11,10 +19,11 @@ import 'package:saimpex_vendor/pharmacy/view/pharmacy_leave_management_screen.da
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_privacy_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_profile_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_received_payouts_screen.dart';
-import 'package:saimpex_vendor/pharmacy/view/pharmacy_terms_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_working_hours_screen.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
+import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
 
 class PharmacyAccountScreen extends StatefulWidget {
   const PharmacyAccountScreen({super.key, this.onBack});
@@ -32,6 +41,237 @@ class PharmacyAccountScreen extends StatefulWidget {
 class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
   int _language = 0;
   bool _notifications = true;
+  ProfileData? _profileData;
+  Map<String, dynamic>? _rawVendorData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPharmacyProfile();
+  }
+
+  Future<void> _fetchPharmacyProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        debugPrint("⚠️ No auth token found. Skipping profile API call in PharmacyAccountScreen.");
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+
+      final now = DateTime.now();
+      final fromDate =
+          "${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final toDate = fromDate;
+
+      final queryParams = <String, dynamic>{
+        "vendor_type": vendorType,
+        "from_date": fromDate,
+        "to_date": toDate,
+      };
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      if (base.endsWith('/vendor')) {
+        base = base.substring(0, base.length - 7);
+      } else if (base.endsWith('/vendorapp')) {
+        base = base.substring(0, base.length - 10);
+      }
+      final fullUrl =
+          Uri.parse("$base/${ApiEndPoints.pharmacyProfile}")
+              .replace(queryParameters: queryParams);
+
+      debugPrint("==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================");
+      debugPrint("API Call: GET $fullUrl");
+      debugPrint("Header: $headers");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================");
+      print("API Call: GET $fullUrl");
+      print("Header: $headers");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyProfile,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("============================================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("============================================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        try {
+          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+        } catch (_) {}
+      }
+
+      if (dataMap != null) {
+        final profileModel = ProfileModel.fromJson(dataMap);
+        final fetchedData = profileModel.data;
+        final rawData = (dataMap['data'] is Map<String, dynamic>)
+            ? ((dataMap['data']['vendor'] as Map<String, dynamic>?) ??
+                dataMap['data'] as Map<String, dynamic>?)
+            : null;
+
+        if (mounted) {
+          setState(() {
+            _profileData = fetchedData;
+            _rawVendorData = rawData;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================");
+      debugPrint("Error: $e");
+      debugPrint("===================================================================================");
+
+      print("==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================");
+      print("Error: $e");
+      print("===================================================================================");
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _getTermsAndConditionsUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    String base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    String endpoint = ApiEndPoints.pharmacyTermsandConditions.trim();
+    if (endpoint.startsWith('/')) endpoint = endpoint.substring(1);
+
+    if (base.endsWith('/vendorapp') && endpoint.startsWith('vendorapp/')) {
+      return '$base/${endpoint.substring(10)}';
+    }
+    if (base.endsWith('/vendor') && endpoint.startsWith('vendor/')) {
+      return '$base/${endpoint.substring(7)}';
+    }
+    if (base.endsWith('/vendor') && endpoint.startsWith('vendorapp/')) {
+      final rootApi = base.substring(0, base.length - 7);
+      return '$rootApi/$endpoint';
+    }
+    if (base.endsWith('/vendorapp') && endpoint.startsWith('vendor/')) {
+      final rootApi = base.substring(0, base.length - 10);
+      return '$rootApi/$endpoint';
+    }
+    return '$base/$endpoint';
+  }
+
+  Future<void> _onTermsAndConditionsTap() async {
+    final url = _getTermsAndConditionsUrl();
+
+    debugPrint("==================== GET TERMS AND CONDITIONS ====================");
+    debugPrint("API Call: GET $url");
+    debugPrint("Request Body: null (GET request)");
+
+    print("==================== GET TERMS AND CONDITIONS ====================");
+    print("API Call: GET $url");
+    print("Request Body: null (GET request)");
+
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyTermsandConditions,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("==================================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==================================================================");
+
+      if (response.data is Map && response.data['status'] == true) {
+        final terms = response.data['data']?['terms'];
+        if (terms != null) {
+          final settingsController = Get.isRegistered<SettingsController>()
+              ? Get.find<SettingsController>()
+              : Get.put(SettingsController());
+          final localization = FlutterLocalization.instance;
+          final languageCode = localization.currentLocale?.languageCode;
+
+          if (languageCode == 'fr' && terms['content_fr'] != null) {
+            settingsController.htmlData = terms['content_fr'].toString();
+          } else if (languageCode == 'ar' && terms['content_ar'] != null) {
+            settingsController.htmlData = terms['content_ar'].toString();
+          } else {
+            settingsController.htmlData =
+                (terms['content_en'] ?? "No content available").toString();
+          }
+          settingsController.isLoading = false;
+          settingsController.update();
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const TermsandConditions(),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("==================== GET TERMS AND CONDITIONS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("========================================================================");
+
+      print("==================== GET TERMS AND CONDITIONS ERROR ====================");
+      print("Error: $e");
+      print("========================================================================");
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const TermsandConditions(),
+          ),
+        );
+      }
+    }
+  }
 
   void _openMenu() {
     final top = MediaQuery.paddingOf(context).top + 56;
@@ -114,7 +354,26 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 children: [
-                  const _ProfileCard(),
+                  _ProfileCard(
+                    name: _profileData?.name ??
+                        _rawVendorData?['name']?.toString() ??
+                        _rawVendorData?['pharmacy_name']?.toString() ??
+                        'Pharmacy SAIMPEX',
+                    id: _profileData?.id?.toString() ??
+                        _rawVendorData?['id']?.toString() ??
+                        'PH-99283',
+                    rating: _profileData?.rating ??
+                        _rawVendorData?['rating']?.toString() ??
+                        '4.8',
+                    isOpen: (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
+                            _rawVendorData?['status']?.toString() == '1' ||
+                            _profileData?.isBusy == 2) &&
+                        (_profileData?.isBusy != 1),
+                    imageUrl: _profileData?.image ??
+                        _rawVendorData?['image']?.toString(),
+                    isVerified: _profileData?.status?.toUpperCase() == 'ACTIVE' ||
+                        _rawVendorData?['status']?.toString() == '1',
+                  ),
                   const SizedBox(height:10),
                   Text(
                     'Language',
@@ -167,12 +426,15 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                       _MenuTile(
                         icon: Icons.domain_outlined,
                         label: 'Pharmacy Profile',
-                        onTap: () {
-                          Navigator.of(context).push(
+                        onTap: () async {
+                          await Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) => const PharmacyProfileScreen(),
                             ),
                           );
+                          if (mounted) {
+                            _fetchPharmacyProfile();
+                          }
                         },
                       ),
                       _MenuTile(
@@ -277,13 +539,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                       _MenuTile(
                         icon: Icons.description_outlined,
                         label: 'Terms & Conditions',
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyTermsScreen(),
-                            ),
-                          );
-                        },
+                        onTap: _onTermsAndConditionsTap,
                       ),
                       _MenuTile(
                         image: 'lib/pharmacy/Assets/images/privacy_policy.png',
@@ -419,7 +675,21 @@ class _AccountHeader extends StatelessWidget {
 }
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard();
+  const _ProfileCard({
+    this.name = 'Pharmacy SAIMPEX',
+    this.id = 'PH-99283',
+    this.rating = '4.8',
+    this.isOpen = true,
+    this.imageUrl,
+    this.isVerified = true,
+  });
+
+  final String name;
+  final String id;
+  final String rating;
+  final bool isOpen;
+  final String? imageUrl;
+  final bool isVerified;
 
   @override
   Widget build(BuildContext context) {
@@ -445,7 +715,7 @@ class _ProfileCard extends StatelessWidget {
               const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
               const SizedBox(width: 2),
               Text(
-                '4.8',
+                rating,
                 style: GoogleFonts.inter(
                   color: PharmacyAccountScreen.ink,
                   fontWeight: FontWeight.w700,
@@ -456,7 +726,7 @@ class _ProfileCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0FDF4),
+                  color: isOpen ? const Color(0xFFF0FDF4) : const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -465,16 +735,16 @@ class _ProfileCard extends StatelessWidget {
                     Container(
                       width: 6,
                       height: 6,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF22C55E),
+                      decoration: BoxDecoration(
+                        color: isOpen ? const Color(0xFF22C55E) : const Color(0xFFEF4444),
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Open',
+                      isOpen ? 'Open' : 'Closed',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF16A34A),
+                        color: isOpen ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),
@@ -485,10 +755,10 @@ class _ProfileCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          const _LogoBadge(),
+          _LogoBadge(imageUrl: imageUrl),
           const SizedBox(height: 12),
           Text(
-            'Pharmacy SAIMPEX',
+            name,
             style: GoogleFonts.inter(
               color: PharmacyAccountScreen.ink,
               fontWeight: FontWeight.w700,
@@ -500,12 +770,16 @@ class _ProfileCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.verified_rounded, color: Color(0xFF16A34A), size: 16),
+              Icon(
+                isVerified ? Icons.verified_rounded : Icons.info_outline_rounded,
+                color: isVerified ? const Color(0xFF16A34A) : const Color(0xFF9CA3AF),
+                size: 16,
+              ),
               const SizedBox(width: 4),
               Text(
-                'Verified',
+                isVerified ? 'Verified' : 'Unverified',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF16A34A),
+                  color: isVerified ? const Color(0xFF16A34A) : const Color(0xFF9CA3AF),
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -514,7 +788,7 @@ class _ProfileCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'ID: PH-99283',
+            id.startsWith('ID:') ? id : 'ID: $id',
             style: GoogleFonts.inter(
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w500,
@@ -528,10 +802,36 @@ class _ProfileCard extends StatelessWidget {
 }
 
 class _LogoBadge extends StatelessWidget {
-  const _LogoBadge();
+  const _LogoBadge({this.imageUrl});
+
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final String? fullUrl = imageUrl != null && imageUrl!.trim().isNotEmpty
+        ? (imageUrl!.startsWith('http')
+            ? imageUrl
+            : '${ApiConfigs.IMAGE_URL}$imageUrl')
+        : null;
+
+    if (fullUrl != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.network(
+          fullUrl,
+          width: 112,
+          height: 112,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Image.asset(
+            'lib/pharmacy/Assets/images/profile_iconimage.png',
+            width: 112,
+            height: 112,
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    }
+
     return Image.asset(
       'lib/pharmacy/Assets/images/profile_iconimage.png',
       width: 112,

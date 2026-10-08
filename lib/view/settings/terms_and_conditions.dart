@@ -50,7 +50,9 @@ class TermsandConditions extends StatelessWidget {
           init: SettingsController(),
           didChangeDependencies: (state) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              state.controller!.getTerms();
+              if (state.controller!.htmlData.isEmpty) {
+                state.controller!.getTerms();
+              }
             });
           },
           builder: (controller) {

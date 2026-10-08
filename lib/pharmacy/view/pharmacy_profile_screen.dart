@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
-class PharmacyProfileScreen extends StatelessWidget {
+class PharmacyProfileScreen extends StatefulWidget {
   const PharmacyProfileScreen({super.key});
 
   static const _label = Color(0xFF8A97A8);
@@ -11,7 +18,248 @@ class PharmacyProfileScreen extends StatelessWidget {
   static const _orange = Color(0xFFFF5216);
 
   @override
+  State<PharmacyProfileScreen> createState() => _PharmacyProfileScreenState();
+}
+
+class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
+  ProfileData? _profileData;
+  Map<String, dynamic>? _rawVendorData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPharmacyProfile();
+  }
+
+  Future<void> _fetchPharmacyProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        debugPrint("⚠️ No auth token found. Skipping profile API call in PharmacyProfileScreen.");
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+
+      final now = DateTime.now();
+      final fromDate =
+          "${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      final toDate = fromDate;
+
+      final queryParams = <String, dynamic>{
+        "vendor_type": vendorType,
+        "from_date": fromDate,
+        "to_date": toDate,
+      };
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      if (base.endsWith('/vendor')) {
+        base = base.substring(0, base.length - 7);
+      } else if (base.endsWith('/vendorapp')) {
+        base = base.substring(0, base.length - 10);
+      }
+      final fullUrl =
+          Uri.parse("$base/${ApiEndPoints.pharmacyProfile}")
+              .replace(queryParameters: queryParams);
+
+      debugPrint("==================== GET VENDOR PROFILE ====================");
+      debugPrint("API Call: GET $fullUrl");
+      debugPrint("Header: $headers");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== GET VENDOR PROFILE ====================");
+      print("API Call: GET $fullUrl");
+      print("Header: $headers");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyProfile,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("============================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("============================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        try {
+          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+        } catch (_) {}
+      }
+
+      if (dataMap != null) {
+        final profileModel = ProfileModel.fromJson(dataMap);
+        final fetchedData = profileModel.data;
+        final rawData = (dataMap['data'] is Map<String, dynamic>)
+            ? ((dataMap['data']['vendor'] as Map<String, dynamic>?) ??
+                dataMap['data'] as Map<String, dynamic>?)
+            : null;
+
+        if (mounted) {
+          setState(() {
+            _profileData = fetchedData;
+            _rawVendorData = rawData;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("==================== GET VENDOR PROFILE ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("==================================================================");
+
+      print("==================== GET VENDOR PROFILE ERROR ====================");
+      print("Error: $e");
+      print("==================================================================");
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _formatContact(String? code, String? mobile) {
+    if ((mobile == null || mobile.trim().isEmpty) &&
+        (code == null || code.trim().isEmpty)) {
+      return '+22241518211';
+    }
+    final c = (code ?? '').trim();
+    final m = (mobile ?? '').trim();
+    if (c.isEmpty) return m;
+    if (m.isEmpty) return c;
+    return '$c$m';
+  }
+
+  String _formatCommission(String? value) {
+    if (value == null || value.trim().isEmpty) return '5.00%';
+    final trimmed = value.trim();
+    return trimmed.endsWith('%') ? trimmed : '$trimmed%';
+  }
+
+  String _formatProfit(String? value) {
+    if (value == null || value.trim().isEmpty) return '0 MRU';
+    final trimmed = value.trim();
+    return trimmed.contains('MRU') ? trimmed : '$trimmed MRU';
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pharmacyName = _profileData?.name ??
+        _rawVendorData?['name']?.toString() ??
+        _rawVendorData?['pharmacy_name']?.toString() ??
+        'Pharmacy SAIMPEX';
+    final ownerName = _profileData?.owner ??
+        _rawVendorData?['owner']?.toString() ??
+        _rawVendorData?['owner_name']?.toString() ??
+        'Salman';
+    final pharmacyId = _profileData?.id?.toString() ??
+        _rawVendorData?['id']?.toString() ??
+        '1';
+    final contact = _formatContact(
+      _profileData?.countryCode ?? _rawVendorData?['country_code']?.toString(),
+      _profileData?.mobile ?? _rawVendorData?['mobile']?.toString(),
+    );
+    final email = _profileData?.email ??
+        _rawVendorData?['email']?.toString() ??
+        'pharmacy@saimpex.com';
+    final status = _profileData?.status ??
+        (_rawVendorData?['status']?.toString() == '1'
+            ? 'ACTIVE'
+            : (_rawVendorData?['status']?.toString() == '0'
+                ? 'INACTIVE'
+                : _rawVendorData?['status']?.toString())) ??
+        'ACTIVE';
+    final address = _profileData?.address ??
+        _rawVendorData?['address']?.toString() ??
+        'Pharmacy Block 5, Mauritania';
+
+    final holderName = _profileData?.accountHolderName ??
+        _rawVendorData?['account_holder_name']?.toString() ??
+        _rawVendorData?['holder_name']?.toString() ??
+        _rawVendorData?['bank_holder_name']?.toString() ??
+        'Salman H';
+    final ibanNumber = _profileData?.accountNumber ??
+        _rawVendorData?['account_number']?.toString() ??
+        _rawVendorData?['iban']?.toString() ??
+        _rawVendorData?['iban_number']?.toString() ??
+        '12123562189536189111';
+    final swiftCode = _profileData?.ifscCode ??
+        _rawVendorData?['ifsc_code']?.toString() ??
+        _rawVendorData?['swift']?.toString() ??
+        _rawVendorData?['swift_code']?.toString() ??
+        'TESTMRMR001';
+
+    final regNumber = _profileData?.registrationNumber ??
+        _rawVendorData?['registration_number']?.toString() ??
+        _rawVendorData?['reg_number']?.toString() ??
+        'RESTTMAUR13';
+    final regDate = _profileData?.registrationDate ??
+        _rawVendorData?['registration_date']?.toString() ??
+        _rawVendorData?['reg_date']?.toString() ??
+        'Dec 7, 2025';
+    final tinNumber = _profileData?.gstNo ??
+        _rawVendorData?['gst_no']?.toString() ??
+        _rawVendorData?['tin_number']?.toString() ??
+        _rawVendorData?['nif_number']?.toString() ??
+        'MR-TIN-127444';
+
+    final commission = _formatCommission(
+      _profileData?.commissionPercentage ??
+          _rawVendorData?['commission_percentage']?.toString() ??
+          _rawVendorData?['commission']?.toString(),
+    );
+    final totalProfit = _formatProfit(
+      _profileData?.totalProfit ??
+          _rawVendorData?['total_profit']?.toString() ??
+          _rawVendorData?['profit']?.toString(),
+    );
+
+    final ownerIdProof = _profileData?.ownerIdProof ??
+        _rawVendorData?['owner_id_proof']?.toString();
+    final certificate = _profileData?.certificate ??
+        _rawVendorData?['certificate']?.toString();
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
@@ -32,63 +280,63 @@ class PharmacyProfileScreen extends StatelessWidget {
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                  children: const [
-                    _SectionTitle('Pharmacy Details'),
-                    SizedBox(height: 18),
+                  children: [
+                    const _SectionTitle('Pharmacy Details'),
+                    const SizedBox(height: 18),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Name', 'Pharmacy SAIMPEX'),
-                        _InfoRow('Owner', 'Salman'),
-                        _InfoRow('ID', '1'),
-                        _InfoRow('Contact', '+22241518211'),
-                        _InfoRow('Email', 'pharmacy@saimpex.com'),
-                        _InfoRow('Status', 'ACTIVE', badge: true),
-                        _InfoRow('Address', 'Pharmacy Block 5, Mauritania'),
+                        _InfoRow('Name', pharmacyName),
+                        _InfoRow('Owner', ownerName),
+                        _InfoRow('ID', pharmacyId),
+                        _InfoRow('Contact', contact),
+                        _InfoRow('Email', email),
+                        _InfoRow('Status', status, badge: true),
+                        _InfoRow('Address', address),
                       ],
                     ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Bank Details'),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 18),
+                    const _SectionTitle('Bank Details'),
+                    const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Holder Name', 'Salman H'),
-                        _InfoRow('IBAN Number', '12123562189536189111'),
-                        _InfoRow('SWIFT Code', 'TESTMRMR001'),
+                        _InfoRow('Holder Name', holderName),
+                        _InfoRow('IBAN Number', ibanNumber),
+                        _InfoRow('SWIFT Code', swiftCode),
                       ],
                     ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Registration Details'),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 18),
+                    const _SectionTitle('Registration Details'),
+                    const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Reg. Number', 'RESTTMAUR13'),
-                        _InfoRow('Reg. Date', 'Dec 7, 2025'),
-                        _InfoRow('TIN/NIF Number', 'MR-TIN-127444'),
+                        _InfoRow('Reg. Number', regNumber),
+                        _InfoRow('Reg. Date', regDate),
+                        _InfoRow('TIN/NIF Number', tinNumber),
                       ],
                     ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Payment Details'),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 18),
+                    const _SectionTitle('Payment Details'),
+                    const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Commission %', '5.00%'),
-                        _InfoRow('Total Profit', '0 MRU', emphasize: true),
+                        _InfoRow('Commission %', commission),
+                        _InfoRow('Total Profit', totalProfit, emphasize: true),
                       ],
                     ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Owner Identity Proof'),
-                    SizedBox(height: 8),
-                    _EmptyCard(),
-                    SizedBox(height: 18),
-                    _SectionTitle('Certificate'),
-                    SizedBox(height: 8),
-                    _EmptyCard(),
-                    SizedBox(height: 20),
-                    _ReviewsHeader(),
-                    SizedBox(height: 10),
-                    _ReviewCard(),
-                    SizedBox(height: 10),
-                    _ReviewCard(),
+                    const SizedBox(height: 18),
+                    const _SectionTitle('Owner Identity Proof'),
+                    const SizedBox(height: 8),
+                    _EmptyCard(imageUrl: ownerIdProof),
+                    const SizedBox(height: 18),
+                    const _SectionTitle('Certificate'),
+                    const SizedBox(height: 8),
+                    _EmptyCard(imageUrl: certificate),
+                    const SizedBox(height: 20),
+                    const _ReviewsHeader(),
+                    const SizedBox(height: 10),
+                    const _ReviewCard(),
+                    const SizedBox(height: 10),
+                    const _ReviewCard(),
                   ],
                 ),
               ),
@@ -258,10 +506,18 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _EmptyCard extends StatelessWidget {
-  const _EmptyCard();
+  const _EmptyCard({this.imageUrl});
+
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final String? fullUrl = imageUrl != null && imageUrl!.trim().isNotEmpty
+        ? (imageUrl!.startsWith('http')
+            ? imageUrl
+            : '${ApiConfigs.IMAGE_URL}$imageUrl')
+        : null;
+
     return Container(
       width: double.infinity,
       height: 64,
@@ -276,6 +532,16 @@ class _EmptyCard extends StatelessWidget {
           ),
         ],
       ),
+      child: fullUrl != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                fullUrl,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(),
+              ),
+            )
+          : null,
     );
   }
 }

@@ -67,10 +67,9 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
-    // Water & Pharmacy are UI-design only for now: skip API validation.
-    // Grocery / Restaurant keeps the existing authenticated login flow.
-    if (selectedAppType == VendorAppType.water ||
-        selectedAppType == VendorAppType.pharmacy) {
+    // Water is UI-design only for now: skip API validation.
+    // Grocery, Restaurant, and Pharmacy use the authenticated login flow.
+    if (selectedAppType == VendorAppType.water) {
       await savename(VendorAppRouter.storageKey, selectedAppType.storageValue);
       await savename("loginStatus", "true");
       await VendorAppRouter.goToSelectedApp(type: selectedAppType);
@@ -94,9 +93,13 @@ class LoginController extends GetxController {
       Get.back();
       update();
       if (loginModel.status == true) {
+        final authToken = loginModel.data?.details?.token ?? "";
         await savename("username", userName);
         await savename("password", password);
-        await savename("token", loginModel.data?.details?.token ?? "");
+        await savename("token", authToken);
+        if (authToken.isNotEmpty) {
+          DioClient().updateToken(authToken);
+        }
         await savename("loginStatus", loginModel.status?.toString() ?? "false");
         await savename("name", loginModel.data?.details?.name ?? "");
         await savename("roleId", loginModel.data?.details?.roleId ?? 0);
