@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import '../../Utils/Utils.dart';
 import '../../utils/vendor_app_router.dart';
@@ -29,6 +30,9 @@ class _SplashState extends State<Splash> {
     debugPrint("loginStatus: $loginStatus");
     debugPrint("token: $token");
     if (loginStatus != null && loginStatus == "true") {
+      if (token != null && token.toString().isNotEmpty) {
+        DioClient().updateToken(token.toString());
+      }
       await VendorAppRouter.goToSelectedApp();
     } else {
       Get.offAll(() => LoginScreen());

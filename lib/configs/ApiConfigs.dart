@@ -1,6 +1,8 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
-  static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";
+  //static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";  //LIVE
+  static String BASE_URL =
+      "https://dev.saimpexenterprise.com/api/vendorapp"; //DEV/Test
   // "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
@@ -131,4 +133,9 @@ class ApiEndPoints {
   static String updateCoupon = "updateCoupon";
   static String deleteCoupon = "deleteCoupon";
   static String imageEnhance = "openai-image-enhance";
+
+  // Pharmacy api endpoints
+
+  static String pharmacyTermsandConditions = "vendorapp/getTermsandConditions";
+  static String pharmacyProfile = "vendor/profile";
 }

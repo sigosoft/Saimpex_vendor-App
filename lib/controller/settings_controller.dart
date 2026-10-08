@@ -81,12 +81,13 @@ class SettingsController extends GetxController {
     }
   }
 
-  Future<void> getTerms() async {
+  Future<void> getTerms({String? endpoint}) async {
     try {
       isLoading = true;
       update();
 
-      final response = await DioClient().get(ApiEndPoints.getTermsandConditions);
+      final apiEndpoint = endpoint ?? ApiEndPoints.pharmacyTermsandConditions;
+      final response = await DioClient().get(apiEndpoint);
 
       if (response.data['status'] == true) {
         final terms = response.data['data']['terms'];
