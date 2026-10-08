@@ -21,8 +21,11 @@ class PharmacyHomeController extends GetxController {
 
   final otcFilters = const [
     'New Orders',
+    'Accepted',
     'Preparing',
     'Ready',
+    'Delivered',
+    'Cancelled',
   ];
 
   bool get isOtcTab => selectedOrderType == 1;
@@ -32,7 +35,13 @@ class PharmacyHomeController extends GetxController {
 
   String get filterBadgeLabel {
     if (isOtcTab) {
-      return selectedFilterIndex == 0 ? '02' : '';
+      return selectedFilterIndex == 0 ||
+              selectedFilterIndex == 1 ||
+              selectedFilterIndex == 2 ||
+              selectedFilterIndex == 3 ||
+              selectedFilterIndex == 4
+          ? '02'
+          : '';
     }
     return switch (selectedFilterIndex) {
       0 => '04',
@@ -49,6 +58,13 @@ class PharmacyHomeController extends GetxController {
 
   void selectFilter(int index) {
     selectedFilterIndex = index;
+    update();
+  }
+
+  void showReviewCompleted() {
+    bottomNavIndex = 0;
+    selectedOrderType = 0;
+    selectedFilterIndex = 2;
     update();
   }
 

@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_account_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_chat_screen.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_inventory_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_notifications_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
-import 'package:saimpex_vendor/utils/utils.dart';
-import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
@@ -63,8 +63,12 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                   2 => PharmacyMessagesTab(
                       onBack: () => controller.onBottomNavSelect(0),
                     ),
-                  3 => const _PlaceholderTab(title: 'Inventory'),
-                  _ => const _PharmacyAccountTab(),
+                  3 => PharmacyInventoryTab(
+                      onBack: () => controller.onBottomNavSelect(0),
+                    ),
+                  _ => PharmacyAccountScreen(
+                      onBack: () => controller.onBottomNavSelect(0),
+                    ),
                 },
               ),
               _BottomNav(
@@ -140,7 +144,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                             controller.selectedFilterIndex == 7
                         ? '1'
                         : '2',
-                    otcBadge: '2',
+                    otcBadge: '1',
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -165,6 +169,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
 
   List<Widget> _buildHomeOrderCards() {
     if (controller.isOtcTab) {
+      if (controller.selectedFilterIndex == 0) return _otcNewOrderCards();
+      if (controller.selectedFilterIndex == 1) return _otcAcceptedOrderCards();
+      if (controller.selectedFilterIndex == 2) return _otcPreparingOrderCards();
+      if (controller.selectedFilterIndex == 3) return _otcReadyOrderCards();
+      if (controller.selectedFilterIndex == 4) return _otcDeliveredOrderCards();
       return const [
         _OtcOrderCard(
           customerName: 'Fatima',
@@ -335,7 +344,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                           controller.selectedFilterIndex == 7
                       ? '1'
                       : '2',
-              otcBadge: '2',
+              otcBadge: '1',
             ),
           ),
           const SizedBox(height: 14),
@@ -413,6 +422,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       ];
     }
     if (controller.isOtcTab) {
+      if (filter == 0) return _otcNewOrderCards();
+      if (filter == 1) return _otcAcceptedOrderCards();
+      if (filter == 2) return _otcPreparingOrderCards();
+      if (filter == 3) return _otcReadyOrderCards();
+      if (filter == 4) return _otcDeliveredOrderCards();
       return const [
         _OtcOrderCard(
           customerName: 'Fatima',
@@ -456,6 +470,85 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         customerName: 'Ahmed',
         notesType: PharmacyOrderNotesType.none,
         isSelfPickup: true,
+      ),
+    ];
+  }
+
+  List<Widget> _otcNewOrderCards() {
+    return const [
+      _OtcNewOrderCard(
+        customerName: 'Ahmed',
+        timeAgo: '2 min ago',
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(
+        orderId: '#22789007',
+        selfPickup: true,
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(cashOnDelivery: true),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(scheduled: true),
+    ];
+  }
+
+  List<Widget> _otcAcceptedOrderCards() {
+    return const [
+      _OtcNewOrderCard(
+        customerName: 'Ahmed',
+        timeAgo: '2 min ago',
+        accepted: true,
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(
+        cashOnDelivery: true,
+        accepted: true,
+      ),
+    ];
+  }
+
+  List<Widget> _otcPreparingOrderCards() {
+    return const [
+      _OtcNewOrderCard(
+        customerName: 'Ahmed',
+        timeAgo: '2 min ago',
+        preparing: true,
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(
+        cashOnDelivery: true,
+        preparing: true,
+      ),
+    ];
+  }
+
+  List<Widget> _otcReadyOrderCards() {
+    return const [
+      _OtcNewOrderCard(
+        customerName: 'Ahmed',
+        timeAgo: '2 min ago',
+        ready: true,
+        partnerName: 'Abdallahi Ould Ahmed',
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(
+        cashOnDelivery: true,
+        ready: true,
+      ),
+    ];
+  }
+
+  List<Widget> _otcDeliveredOrderCards() {
+    return const [
+      _OtcNewOrderCard(
+        customerName: 'Ahmed',
+        timeAgo: '2 min ago',
+        delivered: true,
+      ),
+      SizedBox(height: 12),
+      _OtcNewOrderCard(
+        cashOnDelivery: true,
+        delivered: true,
       ),
     ];
   }
@@ -1751,7 +1844,7 @@ class _ToPrepareCard extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 14,
-                  color: _muted,
+                  color: _blue,
                 ),
                 SizedBox(width: 4),
                 Text(
@@ -1766,7 +1859,7 @@ class _ToPrepareCard extends StatelessWidget {
                 Icon(
                   Icons.access_time_rounded,
                   size: 15,
-                  color: _muted,
+                  color: _blue,
                 ),
                 SizedBox(width: 4),
                 Text(
@@ -3060,6 +3153,556 @@ class _AwaitingPaymentCard extends StatelessWidget {
   }
 }
 
+class _OtcNewOrderCard extends StatelessWidget {
+  const _OtcNewOrderCard({
+    this.customerName = 'Ahmed',
+    this.orderId = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.selfPickup = false,
+    this.cashOnDelivery = false,
+    this.scheduled = false,
+    this.accepted = false,
+    this.preparing = false,
+    this.ready = false,
+    this.delivered = false,
+    this.partnerName,
+  });
+
+  final String customerName;
+  final String orderId;
+  final String timeAgo;
+  final bool selfPickup;
+  final bool cashOnDelivery;
+  final bool scheduled;
+  final bool accepted;
+  final bool preparing;
+  final bool ready;
+  final bool delivered;
+  final String? partnerName;
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFC62828);
+  static const Color _name = Color(0xFF111827);
+  static const Color _meta = Color(0xFF6B7280);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _newBadge = Color(0xFFF99D1C);
+  static const Color _acceptedBadge = Color(0xFF22C55E);
+  static const Color _rejectBorder = Color(0xFFE0E0E0);
+  static const Color _blue = Color(0xFF3B82F6);
+
+  @override
+  Widget build(BuildContext context) {
+    final initial = customerName.isNotEmpty
+        ? customerName.substring(0, 1).toUpperCase()
+        : 'A';
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => PharmacyOrderDetailsScreen(
+              customerName: customerName,
+              requestId: orderId,
+              isOtc: true,
+              isSelfPickup: selfPickup,
+              cashOnDelivery: cashOnDelivery,
+              isOtcAccepted: accepted,
+              isOtcPreparing: preparing,
+              isOtcReady: ready,
+              isOtcPartnerAssigned: partnerName != null,
+              isOtcDelivered: delivered,
+            ),
+          ),
+        );
+      },
+      child: Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: _avatarBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: _avatarText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            customerName,
+                            style: const TextStyle(
+                              color: _name,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                accepted || preparing || ready || delivered
+                                    ? 8
+                                    : 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ready || delivered
+                                ? const Color(0xFF22C55E)
+                                : preparing
+                                    ? _orange
+                                    : accepted
+                                        ? _acceptedBadge
+                                        : _newBadge,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            delivered
+                                ? 'DELIVERED'
+                                : ready
+                                    ? 'READY'
+                                    : preparing
+                                        ? 'PREPARING'
+                                        : accepted
+                                            ? 'ACCEPTED'
+                                            : 'NEW',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: accepted || preparing || ready || delivered
+                                  ? 10
+                                  : 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.3,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        if (selfPickup) ...[
+                          const Text(
+                            '(',
+                            style: TextStyle(
+                              color: _blue,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          Image.asset(
+                            'lib/water/Assets/Images/selfpickup_icon.png',
+                            width: 15,
+                            height: 15,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Self Pickup',
+                            style: TextStyle(
+                              color: _blue,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          const Text(
+                            ')',
+                            style: TextStyle(
+                              color: _blue,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                            ),
+                          ),
+                        ] else ...[
+                          Image.asset(
+                            'lib/pharmacy/Assets/images/delivery_icon.png',
+                            width: 16,
+                            height: 16,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Delivery',
+                            style: TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            selfPickup || ready || delivered
+                                ? '•  $orderId  •  $timeAgo'
+                                : '$orderId  •  $timeAgo',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: _meta,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          if (scheduled)
+            const Row(
+              children: [
+                _ScheduledPill(),
+                SizedBox(width: 8),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 14,
+                          color: _blue,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '15 Aug 2026',
+                          style: TextStyle(
+                            color: Color(0xFF374151),
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 15,
+                          color: _blue,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '6:00 - 7:00 PM',
+                          style: TextStyle(
+                            color: Color(0xFF374151),
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else if (ready)
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (partnerName != null) ...[
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 14, 10),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF3EEFF),
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'lib/pharmacy/Assets/images/scooter.png',
+                            width: 22,
+                            height: 22,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'Assigned Delivery Partner',
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Color(0xFF5F6274),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.15,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '($partnerName)',
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Color(0xFF6829FF),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  _OtcInfoPill(
+                    icon: Image.asset(
+                      cashOnDelivery
+                          ? 'lib/pharmacy/Assets/images/cashondelivery.png'
+                          : 'lib/pharmacy/Assets/images/online_payment.png',
+                      width: 16,
+                      height: 16,
+                      fit: BoxFit.contain,
+                    ),
+                    label: cashOnDelivery
+                        ? 'Cash on Delivery'
+                        : 'Online Payment',
+                  ),
+                ],
+              ),
+            )
+          else
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const _OtcInfoPill(
+                    icon: Icon(
+                      Icons.inventory_2_outlined,
+                      size: 15,
+                      color: _orange,
+                    ),
+                    label: '2 Items • 80 MRU',
+                  ),
+                  const SizedBox(width: 8),
+                  _OtcInfoPill(
+                    icon: Image.asset(
+                      cashOnDelivery
+                          ? 'lib/pharmacy/Assets/images/cashondelivery.png'
+                          : 'lib/pharmacy/Assets/images/online_payment.png',
+                      width: cashOnDelivery ? 18 : 16,
+                      height: cashOnDelivery ? 18 : 16,
+                      fit: BoxFit.contain,
+                    ),
+                    label: cashOnDelivery
+                        ? 'Cash on Delivery'
+                        : 'Online Payment',
+                  ),
+                ],
+              ),
+            ),
+          if (!ready && !delivered) ...[
+          const SizedBox(height: 16),
+          if (accepted || preparing)
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: _orange,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _orange.withValues(alpha: 0.28),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Text(
+                    preparing ? 'Mark as Ready' : 'Prepare Order',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: SizedBox(
+                  height: 46,
+                  child: OutlinedButton(
+                    onPressed: () => showPharmacyRejectOrderSheet(context),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: _name,
+                      side: const BorderSide(color: _rejectBorder),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text(
+                      'Reject',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 3,
+                child: SizedBox(
+                  height: 46,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: _orange,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _orange.withValues(alpha: 0.28),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'Accept Order',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ],
+        ],
+      ),
+      ),
+    );
+  }
+}
+
+class _OtcInfoPill extends StatelessWidget {
+  const _OtcInfoPill({required this.icon, required this.label});
+
+  final Widget icon;
+  final String label;
+
+  static const Color _orange = Color(0xFFFF5722);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF6EE),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFFFE4D4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icon,
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: _orange,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              height: 1.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _OtcOrderCard extends StatelessWidget {
   const _OtcOrderCard({
     required this.customerName,
@@ -3434,57 +4077,3 @@ class _NavIcon extends StatelessWidget {
   }
 }
 
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: const Color(0xFFF7F7F7),
-      child: Center(
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: AppColors.textDark,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PharmacyAccountTab extends StatelessWidget {
-  const _PharmacyAccountTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: const Color(0xFFF7F7F7),
-      child: Center(
-        child: TextButton.icon(
-          onPressed: () async {
-            await savename('loginStatus', 'false');
-            await savename('token', '');
-            Get.offAll(() => const LoginScreen());
-          },
-          icon: const Icon(Icons.logout_rounded, color: AppColors.primaryOrange),
-          label: const Text(
-            'Logout',
-            style: TextStyle(
-              color: AppColors.primaryOrange,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -62,13 +62,35 @@ class _PharmacyCreateQuotationScreenState
     );
   }
 
-  Future<void> _send() async {
-    if (controller.lines.isEmpty) return;
-    await showDialog<void>(
+  Future<void> _confirmRemove(int index) async {
+    final name = controller.lines[index].medicine.name;
+    final confirmed = await showDialog<bool>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.45),
-      builder: (context) => const _QuotationSentDialog(),
+      builder: (_) => _DeleteMedicineDialog(name: name),
     );
+    if (confirmed == true && mounted) {
+      controller.removeSavedLine(index);
+    }
+  }
+
+  Future<void> _send() async {
+    if (controller.lines.isEmpty) return;
+    showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Quotation sent',
+      barrierColor: Colors.transparent,
+      pageBuilder: (context, _, __) => const _QuotationSentDialog(),
+    );
+    await Future<void>.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+    final navigator = Navigator.of(context);
+    navigator.pop();
+    if (Get.isRegistered<PharmacyHomeController>()) {
+      Get.find<PharmacyHomeController>().showReviewCompleted();
+    }
+    navigator.popUntil((route) => route.isFirst);
   }
 
   @override
@@ -229,7 +251,9 @@ class _PharmacyCreateQuotationScreenState
                               onAddMedicine: controller.focusMedicineSearch,
                               onPick: controller.beginDraft,
                               onEdit: controller.editLine,
-                              onRemove: controller.removeSavedLine,
+                              onRemove: (index) {
+                                _confirmRemove(index);
+                              },
                             ),
                           if (!editing && controller.lines.isNotEmpty) ...[
                             const SizedBox(height: 16),
@@ -324,24 +348,24 @@ class _SavedLinesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _QuoteCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var i = 0; i < lines.length; i++) ...[
-            if (i > 0) ...[
-              const SizedBox(height: 14),
-              const Divider(height: 1, color: Color(0xFFF1F1F1)),
-              const SizedBox(height: 14),
-            ],
-            _SavedLineTile(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < lines.length; i++) ...[
+          _QuoteCard(
+            child: _SavedLineTile(
               index: i,
               line: lines[i],
               onEdit: () => onEdit(i),
               onRemove: () => onRemove(i),
             ),
-          ],
-          if (lines.isNotEmpty) const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 12),
+        ],
+        _QuoteCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           TextButton.icon(
             onPressed: onAddMedicine,
             icon: const Icon(Icons.add, size: 18),
@@ -371,8 +395,10 @@ class _SavedLinesCard extends StatelessWidget {
                 medicine: medicine,
                 onAdd: () => onPick(medicine),
               ),
-        ],
-      ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -434,8 +460,8 @@ class _DraftMedicineCard extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.all(2),
                       child: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Color(0xFFB8B8B8),
+                        Icons.delete,
+                        color: Color(0xFFE53935),
                         size: 22,
                       ),
                     ),
@@ -535,23 +561,20 @@ class _DraftMedicineCard extends StatelessWidget {
           ],
           if (draft.availability == _Availability.outOfStock) ...[
             const SizedBox(height: 18),
-            Text(
-              draft.alternatives.isEmpty
-                  ? 'Suggest Alternative Medicine'
-                  : 'Suggested Alternative',
-              style: GoogleFonts.inter(
-                color: const Color(0xFF9CA3AF),
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-            if (draft.alternatives.isNotEmpty) ...[
-              const SizedBox(height: 10),
+            if (draft.alternatives.isNotEmpty)
               _SuggestedAlternativeBox(
                 original: draft.medicine,
                 medicines: draft.alternatives,
+              )
+            else ...[
+              Text(
+                'Suggest Alternative Medicine',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF9CA3AF),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                ),
               ),
-            ] else ...[
               const SizedBox(height: 12),
               _AltSearchField(
                 controller: altController,
@@ -623,51 +646,52 @@ class _SavedLineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showAlternative = line.availability == _Availability.outOfStock &&
+        line.alternatives.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _AvailabilityStatus(availability: line.availability),
-        const SizedBox(height: 8),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: Text(
-                '${index + 1}. ${line.medicine.name}',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF2C2C2C),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.5,
-                  height: 1.25,
-                ),
-              ),
-            ),
+            _AvailabilityStatus(availability: line.availability),
+            const Spacer(),
             InkWell(
               onTap: onEdit,
               borderRadius: BorderRadius.circular(8),
               child: const Padding(
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.all(4),
                 child: Icon(
                   Icons.edit_outlined,
-                  color: Color(0xFFB0B0B0),
-                  size: 18,
+                  color: Color(0xFF9CA3AF),
+                  size: 20,
                 ),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             InkWell(
               onTap: onRemove,
               borderRadius: BorderRadius.circular(8),
               child: const Padding(
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.all(4),
                 child: Icon(
-                  Icons.delete_outline_rounded,
-                  color: Color(0xFFB0B0B0),
-                  size: 18,
+                  Icons.delete,
+                  color: Color(0xFFE53935),
+                  size: 22,
                 ),
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          '${index + 1}. ${line.medicine.name}',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1E293B),
+            fontWeight: FontWeight.w700,
+            fontSize: 16.5,
+            height: 1.25,
+          ),
         ),
         if (line.availability == _Availability.limited) ...[
           const SizedBox(height: 8),
@@ -676,63 +700,70 @@ class _SavedLineTile extends StatelessWidget {
             prescribed: line.prescribedQty,
           ),
         ],
-        if (line.availability == _Availability.outOfStock &&
-            line.alternatives.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          Text(
-            'Suggested Alternative',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF9CA3AF),
-              fontWeight: FontWeight.w500,
-              fontSize: 12.5,
-            ),
-          ),
-          const SizedBox(height: 8),
+        if (showAlternative) ...[
+          const SizedBox(height: 14),
           _SuggestedAlternativeBox(
             original: line.medicine,
             medicines: line.alternatives,
           ),
         ],
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Row(
           children: [
             Text(
               'Unit',
               style: GoogleFonts.inter(
-                color: const Color(0xFFB0B0B0),
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
+                color: const Color(0xFF9CA3AF),
+                fontWeight: FontWeight.w500,
+                fontSize: 12.5,
               ),
             ),
             const Spacer(),
             Text(
               'Total',
               style: GoogleFonts.inter(
-                color: const Color(0xFFB0B0B0),
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
+                color: const Color(0xFF9CA3AF),
+                fontWeight: FontWeight.w500,
+                fontSize: 12.5,
               ),
             ),
           ],
         ),
         const SizedBox(height: 4),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               '${line.billedQty} tablets × ${line.medicine.priceMru} MRU',
               style: GoogleFonts.inter(
-                color: const Color(0xFF6B7280),
+                color: const Color(0xFF3F2A24),
                 fontWeight: FontWeight.w500,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
             const Spacer(),
-            Text(
-              '${line.lineTotal} MRU',
-              style: GoogleFonts.inter(
-                color: const Color(0xFF1A1A1A),
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${line.lineTotal}',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      height: 1,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' MRU',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFFF5722),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      height: 1,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -749,52 +780,56 @@ class _AvailabilityStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, label) = switch (availability) {
-      _Availability.inStock => (
-          const Color(0xFF16A34A),
-          'Available (In Stock)',
+    final style = switch (availability) {
+      _Availability.inStock => const _StatusPillStyle(
+          label: 'Available (In Stock)',
+          foreground: Color(0xFF16A34A),
+          background: Color(0xFFE8F8EF),
+          border: Color(0xFF86E0A8),
+          dot: Color(0xFF22C55E),
         ),
-      _Availability.limited => (
-          const Color(0xFFE8A317),
-          'Partially Available (Limited)',
+      _Availability.limited => const _StatusPillStyle(
+          label: 'Partially Available (Limited)',
+          foreground: Color(0xFFC4841A),
+          background: Color(0xFFFFF6D8),
+          border: Color(0xFFF0D090),
+          dot: Color(0xFFF5B400),
         ),
-      _Availability.outOfStock => (
-          const Color(0xFFE11D48),
-          'Not Available (Out of Stock)',
+      _Availability.outOfStock => const _StatusPillStyle(
+          label: 'Not Available (Out of Stock)',
+          foreground: Color(0xFF1A1A1A),
+          background: Color(0xFFFFF7F8),
+          border: Color(0xFFFFB3C1),
+          dot: Color(0xFFFF4D6A),
         ),
-      null => (const Color(0xFF9CA3AF), ''),
+      null => null,
     };
-    if (label.isEmpty) return const SizedBox.shrink();
-    final background = switch (availability) {
-      _Availability.inStock => const Color(0xFFE7F8EE),
-      _Availability.limited => const Color(0xFFFFF5CD),
-      _Availability.outOfStock => const Color(0xFFFFF1F3),
-      null => const Color(0xFFF3F4F6),
-    };
+    if (style == null) return const SizedBox.shrink();
     return Container(
-      padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
+      padding: const EdgeInsets.fromLTRB(10, 5, 12, 5),
       decoration: BoxDecoration(
-        color: background,
+        color: style.background,
         borderRadius: BorderRadius.circular(20),
-        border: availability == _Availability.outOfStock
-            ? Border.all(color: const Color(0xFFFFB4BE))
-            : null,
+        border: Border.all(color: style.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 7,
-            height: 7,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: style.dot,
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: 6),
           Text(
-            label,
+            style.label,
             style: GoogleFonts.inter(
-              color: color,
+              color: style.foreground,
               fontWeight: FontWeight.w600,
-              fontSize: 12,
+              fontSize: 12.5,
               height: 1.1,
             ),
           ),
@@ -802,6 +837,22 @@ class _AvailabilityStatus extends StatelessWidget {
       ),
     );
   }
+}
+
+class _StatusPillStyle {
+  const _StatusPillStyle({
+    required this.label,
+    required this.foreground,
+    required this.background,
+    required this.border,
+    required this.dot,
+  });
+
+  final String label;
+  final Color foreground;
+  final Color background;
+  final Color border;
+  final Color dot;
 }
 
 class _AvailabilityRow extends StatelessWidget {
@@ -932,24 +983,64 @@ class _SuggestedAlternativeBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F7FF),
+        color: const Color(0xFFEEF3FF),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFD4E4FF)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SuggestedAlternativeRow(
-            name: original.name,
-            inStock: false,
-            showChevron: true,
-          ),
-          for (final medicine in medicines)
-            _SuggestedAlternativeRow(
-              name: medicine.name,
-              inStock: medicine.inStock,
+          Text(
+            'Suggested Alternative',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF9CA3AF),
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
             ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                _SuggestedAlternativeRow(
+                  name: original.name,
+                  inStock: false,
+                ),
+                for (final medicine in medicines) ...[
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 255, 246, 253),
+                        shape: BoxShape.circle,
+                      ),
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: Icon(
+                          Icons.arrow_downward_rounded,
+                          size: 16,
+                          color: Color(0xFFFF5722),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _SuggestedAlternativeRow(
+                    name: medicine.name,
+                    inStock: medicine.inStock,
+                    bold: true,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -960,53 +1051,37 @@ class _SuggestedAlternativeRow extends StatelessWidget {
   const _SuggestedAlternativeRow({
     required this.name,
     required this.inStock,
-    this.showChevron = false,
+    this.bold = false,
   });
 
   final String name;
   final bool inStock;
-  final bool showChevron;
+  final bool bold;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: inStock
-                      ? const Color(0xFF22C55E)
-                      : const Color(0xFFFF3250),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  name,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF2C2C2C),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.5,
-                  ),
-                ),
-              ),
-              if (!inStock) const _OutOfStockBadge(),
-            ],
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: inStock ? const Color(0xFF22C55E) : const Color(0xFFFF3250),
+            shape: BoxShape.circle,
           ),
-          if (showChevron)
-            const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 18,
-              color: Color(0xFFC5C5C5),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            name,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF1E293B),
+              fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+              fontSize: 15,
             ),
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1571,8 +1646,10 @@ class _QuoteActionBar extends StatelessWidget {
   }
 }
 
-class _QuotationSentDialog extends StatelessWidget {
-  const _QuotationSentDialog();
+class _DeleteMedicineDialog extends StatelessWidget {
+  const _DeleteMedicineDialog({required this.name});
+
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -1581,26 +1658,33 @@ class _QuotationSentDialog extends StatelessWidget {
       insetPadding: const EdgeInsets.symmetric(horizontal: 36),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 56,
               height: 56,
+              alignment: Alignment.center,
               decoration: const BoxDecoration(
-                color: Color(0xFFFF5722),
+                color: Color(0xFFFFF1F3),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.check_rounded,
-                color: Colors.white,
-                size: 34,
-              ),
+              child: const _TrashDropIcon(),
             ),
             const SizedBox(height: 16),
             Text(
-              'Quotation has been sent to the customer\nfor review and approval',
+              'Delete medicine?',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Are you sure you want to remove $name from the quotation?',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 color: const Color(0xFF4B5563),
@@ -1609,7 +1693,284 @@ class _QuotationSentDialog extends StatelessWidget {
                 height: 1.4,
               ),
             ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF1A1A1A),
+                      side: const BorderSide(color: Color(0xFFE5E7EB)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE53935),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      'Delete',
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrashDropIcon extends StatefulWidget {
+  const _TrashDropIcon();
+
+  @override
+  State<_TrashDropIcon> createState() => _TrashDropIconState();
+}
+
+class _TrashDropIconState extends State<_TrashDropIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  double _lidOpen(double t) {
+    if (t < 0.22) return Curves.easeOut.transform(t / 0.22);
+    if (t < 0.62) return 1;
+    if (t < 0.82) {
+      return 1 - Curves.easeIn.transform((t - 0.62) / 0.20);
+    }
+    return 0;
+  }
+
+  double _wasteDrop(double t) {
+    if (t < 0.24 || t > 0.60) return -1;
+    return Curves.easeIn.transform((t - 0.24) / 0.36);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 30,
+      height: 30,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          return CustomPaint(
+            painter: _TrashDropPainter(
+              lidOpen: _lidOpen(_controller.value),
+              wasteDrop: _wasteDrop(_controller.value),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _TrashDropPainter extends CustomPainter {
+  const _TrashDropPainter({required this.lidOpen, required this.wasteDrop});
+
+  final double lidOpen;
+  final double wasteDrop;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const red = Color(0xFFE53935);
+    final binPaint = Paint()..color = red..style = PaintingStyle.fill;
+
+    final body = RRect.fromRectAndCorners(
+      Rect.fromLTWH(
+        size.width * 0.20,
+        size.height * 0.36,
+        size.width * 0.60,
+        size.height * 0.56,
+      ),
+      bottomLeft: const Radius.circular(3.5),
+      bottomRight: const Radius.circular(3.5),
+    );
+    canvas.drawRRect(body, binPaint);
+
+    final slotPaint = Paint()..color = Colors.white;
+    final slotTop = body.top + body.height * 0.16;
+    final slotHeight = body.height * 0.58;
+    final slotWidth = size.width * 0.075;
+    for (final left in [
+      body.left + body.width * 0.30,
+      body.left + body.width * 0.58,
+    ]) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(left, slotTop, slotWidth, slotHeight),
+          const Radius.circular(2),
+        ),
+        slotPaint,
+      );
+    }
+
+    _paintWaste(canvas, size, body.outerRect);
+
+    final lid = Rect.fromLTWH(
+      size.width * 0.10,
+      size.height * 0.26,
+      size.width * 0.80,
+      size.height * 0.10,
+    );
+    final hinge = Offset(lid.left, lid.bottom);
+    canvas.save();
+    canvas.translate(hinge.dx, hinge.dy);
+    canvas.rotate(-0.85 * lidOpen);
+    canvas.translate(-hinge.dx, -hinge.dy);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(lid, const Radius.circular(1.5)),
+      binPaint,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.36,
+          size.height * 0.15,
+          size.width * 0.28,
+          size.height * 0.11,
+        ),
+        const Radius.circular(2),
+      ),
+      binPaint,
+    );
+    canvas.restore();
+  }
+
+  void _paintWaste(Canvas canvas, Size size, Rect bin) {
+    if (wasteDrop < 0) return;
+    final width = size.width * 0.22;
+    final height = size.height * 0.14;
+    final left = (size.width - width) / 2;
+    final startY = size.height * 0.02;
+    final endY = bin.top + bin.height * 0.42;
+    final top = startY + (endY - startY) * wasteDrop;
+    final scrap = Rect.fromLTWH(left, top, width, height);
+    final scrapRadius = RRect.fromRectAndRadius(
+      scrap,
+      const Radius.circular(2),
+    );
+    final rim = bin.top + 1;
+
+    if (scrap.bottom <= rim) {
+      canvas.drawRRect(
+        scrapRadius,
+        Paint()..color = const Color(0xFFFFE4C8),
+      );
+      return;
+    }
+
+    if (scrap.top < rim) {
+      canvas.save();
+      canvas.clipRect(Rect.fromLTWH(0, 0, size.width, rim));
+      canvas.drawRRect(
+        scrapRadius,
+        Paint()..color = const Color(0xFFFFE4C8),
+      );
+      canvas.restore();
+    }
+
+    final fade = ((scrap.top - rim) / (bin.height * 0.4)).clamp(0.0, 1.0);
+    canvas.save();
+    canvas.clipRect(
+      Rect.fromLTWH(bin.left + 2, rim, bin.width - 4, bin.height),
+    );
+    canvas.drawRRect(
+      scrapRadius,
+      Paint()..color = const Color(0xFFFFE4C8).withValues(alpha: 1 - fade),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _TrashDropPainter oldDelegate) {
+    return oldDelegate.lidOpen != lidOpen || oldDelegate.wasteDrop != wasteDrop;
+  }
+}
+
+class _QuotationSentDialog extends StatelessWidget {
+  const _QuotationSentDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: ColoredBox(
+          color: Colors.black.withValues(alpha: 0.25),
+          child: Dialog(
+            backgroundColor: Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'lib/pharmacy/Assets/images/tick.png',
+                    width: 72,
+                    height: 72,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Quotation has been sent to the customer\nfor review and approval',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF4B5563),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.5,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

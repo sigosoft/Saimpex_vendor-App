@@ -173,23 +173,26 @@ class _OrderNotificationCard extends StatelessWidget {
                 flex: 2,
                 child: SizedBox(
                   height: 46,
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    child: InkWell(
-                      onTap: onReject,
-                      borderRadius: BorderRadius.circular(12),
-                      child: Center(
-                        child: Text(
-                          'Reject',
-                          maxLines: 1,
-                          softWrap: false,
-                          style: GoogleFonts.inter(
-                            color: PharmacyNotificationsScreen._name,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
+                  child: OutlinedButton(
+                    onPressed: onReject,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: PharmacyNotificationsScreen._name,
+                      side: const BorderSide(color: Color(0xFFE0E0E0)),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Reject',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: GoogleFonts.inter(
+                        color: PharmacyNotificationsScreen._name,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
                       ),
                     ),
                   ),

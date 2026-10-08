@@ -99,26 +99,18 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 34,
-                      height: 34,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFFD1D5DB),
-                          width: 1,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        size: 18,
-                        color: Color(0xFF6B7280),
-                      ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 22,
+                      color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -133,7 +125,17 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 18),
+              const Text(
+                'Reason For Pausing',
+                style: TextStyle(
+                  color: Color(0xFF1A1A1A),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 12),
               for (var i = 0; i < reasons.length; i++) ...[
                 if (i > 0) const SizedBox(height: 10),
                 _ReasonTile(
@@ -197,26 +199,25 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                   ),
                 ),
               ],
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
               Row(
                 children: [
                   Expanded(
-                    flex: 2,
                     child: SizedBox(
-                      height: 50,
+                      height: 48,
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF333333),
                           backgroundColor: Colors.white,
-                          side: const BorderSide(color: _border, width: 1),
+                          foregroundColor: const Color(0xFF374151),
+                          side: const BorderSide(color: Color(0xFFE5E7EB)),
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
                           'Cancel',
-                          softWrap: false,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -227,42 +228,29 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    flex: 3,
                     child: SizedBox(
-                      height: 50,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: _orange.withValues(alpha: 0.32),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: _canConfirm ? _confirm : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _orange,
-                            disabledBackgroundColor:
-                                _orange.withValues(alpha: 0.45),
-                            foregroundColor: Colors.white,
-                            disabledForegroundColor: Colors.white70,
-                            elevation: 0,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _canConfirm ? _confirm : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _orange,
+                          disabledBackgroundColor:
+                              _orange.withValues(alpha: 0.45),
+                          foregroundColor: Colors.white,
+                          disabledForegroundColor: Colors.white70,
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            'Confirm Reject',
-                            softWrap: false,
-                            maxLines: 1,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                        ),
+                        child: const Text(
+                          'Confirm Reject',
+                          softWrap: false,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
                         ),
                       ),

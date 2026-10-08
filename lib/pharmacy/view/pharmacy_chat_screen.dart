@@ -36,15 +36,15 @@ class PharmacyMessagesTab extends StatefulWidget {
 class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
   late final PharmacyChatController controller;
 
-  static const _threads = <_MessageThread>[
-    _MessageThread(
+  final List<_MessageThread> _threads = [
+    const _MessageThread(
       name: 'Ahmed',
       preview: 'Order #22789007: Is the prescription ready',
       time: '12:45 PM',
       avatar: 'lib/water/Assets/Images/delivery_boy3.png',
       unreadCount: 1,
     ),
-    _MessageThread(
+    const _MessageThread(
       name: 'Ali Ahmed',
       preview: 'Etiam cursus velit non eros eleifenddic',
       time: 'Just now',
@@ -64,6 +64,15 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
   void dispose() {
     Get.delete<PharmacyChatController>();
     super.dispose();
+  }
+
+  Future<void> _confirmDelete(_MessageThread thread) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => _DeleteChatDialog(name: thread.name),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _threads.remove(thread));
   }
 
   List<_MessageThread> get _visibleThreads {
@@ -114,6 +123,7 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
                         context,
                         customerName: thread.name,
                       ),
+                      onDelete: () => _confirmDelete(thread),
                     ),
                     const Divider(
                       height: 1,
@@ -247,10 +257,15 @@ class _MessagesSearchField extends StatelessWidget {
 }
 
 class _MessageTile extends StatelessWidget {
-  const _MessageTile({required this.thread, required this.onTap});
+  const _MessageTile({
+    required this.thread,
+    required this.onTap,
+    required this.onDelete,
+  });
 
   final _MessageThread thread;
   final VoidCallback onTap;
+  final VoidCallback onDelete;
 
   static const _name = Color(0xFF1A1A1A);
   static const _previewRead = Color(0xFF9CA3AF);
@@ -291,10 +306,17 @@ class _MessageTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Icon(
-                        Icons.delete_outline_rounded,
-                        color: _orange,
-                        size: 22,
+                      GestureDetector(
+                        onTap: onDelete,
+                        behavior: HitTestBehavior.opaque,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Icon(
+                            Icons.delete_outline_rounded,
+                            color: _orange,
+                            size: 22,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -820,5 +842,291 @@ class _InputBar extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _DeleteChatDialog extends StatelessWidget {
+  const _DeleteChatDialog({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF1F3),
+                shape: BoxShape.circle,
+              ),
+              child: const _ChatTrashDropIcon(),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Delete chat?',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Are you sure you want to delete the chat with $name?',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF4B5563),
+                fontWeight: FontWeight.w500,
+                fontSize: 14.5,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF1A1A1A),
+                      side: const BorderSide(color: Color(0xFFE5E7EB)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE53935),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      'Delete',
+                      style: GoogleFonts.inter(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatTrashDropIcon extends StatefulWidget {
+  const _ChatTrashDropIcon();
+
+  @override
+  State<_ChatTrashDropIcon> createState() => _ChatTrashDropIconState();
+}
+
+class _ChatTrashDropIconState extends State<_ChatTrashDropIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  double _lidOpen(double t) {
+    if (t < 0.22) return Curves.easeOut.transform(t / 0.22);
+    if (t < 0.62) return 1;
+    if (t < 0.82) {
+      return 1 - Curves.easeIn.transform((t - 0.62) / 0.20);
+    }
+    return 0;
+  }
+
+  double _wasteDrop(double t) {
+    if (t < 0.24 || t > 0.60) return -1;
+    return Curves.easeIn.transform((t - 0.24) / 0.36);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 30,
+      height: 30,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          return CustomPaint(
+            painter: _ChatTrashDropPainter(
+              lidOpen: _lidOpen(_controller.value),
+              wasteDrop: _wasteDrop(_controller.value),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ChatTrashDropPainter extends CustomPainter {
+  const _ChatTrashDropPainter({required this.lidOpen, required this.wasteDrop});
+
+  final double lidOpen;
+  final double wasteDrop;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const red = Color(0xFFE53935);
+    final binPaint = Paint()
+      ..color = red
+      ..style = PaintingStyle.fill;
+
+    final body = RRect.fromRectAndCorners(
+      Rect.fromLTWH(
+        size.width * 0.20,
+        size.height * 0.36,
+        size.width * 0.60,
+        size.height * 0.56,
+      ),
+      bottomLeft: const Radius.circular(3.5),
+      bottomRight: const Radius.circular(3.5),
+    );
+    canvas.drawRRect(body, binPaint);
+
+    final slotPaint = Paint()..color = Colors.white;
+    final slotTop = body.top + body.height * 0.16;
+    final slotHeight = body.height * 0.58;
+    final slotWidth = size.width * 0.075;
+    for (final left in [
+      body.left + body.width * 0.30,
+      body.left + body.width * 0.58,
+    ]) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(left, slotTop, slotWidth, slotHeight),
+          const Radius.circular(2),
+        ),
+        slotPaint,
+      );
+    }
+
+    _paintWaste(canvas, size, body.outerRect);
+
+    final lid = Rect.fromLTWH(
+      size.width * 0.10,
+      size.height * 0.26,
+      size.width * 0.80,
+      size.height * 0.10,
+    );
+    final hinge = Offset(lid.left, lid.bottom);
+    canvas.save();
+    canvas.translate(hinge.dx, hinge.dy);
+    canvas.rotate(-0.85 * lidOpen);
+    canvas.translate(-hinge.dx, -hinge.dy);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(lid, const Radius.circular(1.5)),
+      binPaint,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.36,
+          size.height * 0.15,
+          size.width * 0.28,
+          size.height * 0.11,
+        ),
+        const Radius.circular(2),
+      ),
+      binPaint,
+    );
+    canvas.restore();
+  }
+
+  void _paintWaste(Canvas canvas, Size size, Rect bin) {
+    if (wasteDrop < 0) return;
+    final width = size.width * 0.22;
+    final height = size.height * 0.14;
+    final left = (size.width - width) / 2;
+    final startY = size.height * 0.02;
+    final endY = bin.top + bin.height * 0.42;
+    final top = startY + (endY - startY) * wasteDrop;
+    final scrap = Rect.fromLTWH(left, top, width, height);
+    final scrapRadius = RRect.fromRectAndRadius(
+      scrap,
+      const Radius.circular(2),
+    );
+    final rim = bin.top + 1;
+
+    if (scrap.bottom <= rim) {
+      canvas.drawRRect(
+        scrapRadius,
+        Paint()..color = const Color(0xFFFFE4C8),
+      );
+      return;
+    }
+
+    if (scrap.top < rim) {
+      canvas.save();
+      canvas.clipRect(Rect.fromLTWH(0, 0, size.width, rim));
+      canvas.drawRRect(
+        scrapRadius,
+        Paint()..color = const Color(0xFFFFE4C8),
+      );
+      canvas.restore();
+    }
+
+    final fade = ((scrap.top - rim) / (bin.height * 0.4)).clamp(0.0, 1.0);
+    canvas.save();
+    canvas.clipRect(
+      Rect.fromLTWH(bin.left + 2, rim, bin.width - 4, bin.height),
+    );
+    canvas.drawRRect(
+      scrapRadius,
+      Paint()..color = const Color(0xFFFFE4C8).withValues(alpha: 1 - fade),
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _ChatTrashDropPainter oldDelegate) {
+    return oldDelegate.lidOpen != lidOpen || oldDelegate.wasteDrop != wasteDrop;
   }
 }

@@ -1,13 +1,17 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_order_details_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 
 part 'create_quotation_screen.dart';
 part '../controller/create_quotation_controller.dart';
+part 'otc_order_details_screen.dart';
 
 class PharmacyOrderDetailsScreen extends StatefulWidget {
   const PharmacyOrderDetailsScreen({
@@ -28,6 +32,13 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
     this.isPreparing = false,
     this.isReady = false,
     this.isDelivered = false,
+    this.isOtc = false,
+    this.cashOnDelivery = false,
+    this.isOtcAccepted = false,
+    this.isOtcPreparing = false,
+    this.isOtcReady = false,
+    this.isOtcPartnerAssigned = false,
+    this.isOtcDelivered = false,
   });
 
   final String customerName;
@@ -45,6 +56,13 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
   final bool isPreparing;
   final bool isReady;
   final bool isDelivered;
+  final bool isOtc;
+  final bool cashOnDelivery;
+  final bool isOtcAccepted;
+  final bool isOtcPreparing;
+  final bool isOtcReady;
+  final bool isOtcPartnerAssigned;
+  final bool isOtcDelivered;
 
   @override
   State<PharmacyOrderDetailsScreen> createState() =>
@@ -220,48 +238,51 @@ class _PharmacyOrderDetailsScreenState
     _TimelineStep(
       title: 'Under Review',
       subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.description_outlined,
+      icon: Icons.assignment_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Review Completed',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:47 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Quotation Sent',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:48 AM',
       icon: Icons.description_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Paid',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Preparing Medicines',
-      subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.check_rounded,
+      subtitle: 'Feb 07, 2026 10:50 AM',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
       completed: true,
     ),
     _TimelineStep(
       title: 'Ready for Dispatch',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
       completed: true,
     ),
     _TimelineStep(
       title: 'Delivery Partner Assigned',
-      subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.electric_scooter,
+      subtitle: 'Feb 07, 2026 10:50 AM',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
       completed: true,
     ),
     _TimelineStep(
       title: 'Order Delivered',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.home_outlined,
       completed: true,
     ),
@@ -277,43 +298,46 @@ class _PharmacyOrderDetailsScreenState
     _TimelineStep(
       title: 'Under Review',
       subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.description_outlined,
+      icon: Icons.assignment_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Review Completed',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:47 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Quotation Sent',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:48 AM',
       icon: Icons.description_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Paid',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Preparing Medicines',
-      subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.check_rounded,
+      subtitle: 'Feb 07, 2026 10:50 AM',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
       completed: true,
     ),
     _TimelineStep(
       title: 'Ready for Dispatch',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.inventory_2_outlined,
+      customIcon: _TimelineCustomIcon.openBox,
       completed: true,
     ),
     _TimelineStep(
       title: 'Delivery Partner Assigned',
-      subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.electric_scooter,
+      subtitle: 'Feb 07, 2026 10:50 AM',
+      icon: Icons.delivery_dining,
+      customIcon: _TimelineCustomIcon.scooter,
       completed: true,
     ),
     _TimelineStep(
@@ -332,31 +356,32 @@ class _PharmacyOrderDetailsScreenState
     _TimelineStep(
       title: 'Under Review',
       subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.description_outlined,
+      icon: Icons.assignment_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Review Completed',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:47 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Quotation Sent',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:48 AM',
       icon: Icons.description_outlined,
       completed: true,
     ),
     _TimelineStep(
       title: 'Paid',
-      subtitle: 'Feb 07, 2026 10:45 AM',
+      subtitle: 'Feb 07, 2026 10:50 AM',
       icon: Icons.check_rounded,
       completed: true,
     ),
     _TimelineStep(
       title: 'Preparing Medicines',
-      subtitle: 'Feb 07, 2026 10:45 AM',
-      icon: Icons.check_rounded,
+      subtitle: 'Feb 07, 2026 10:50 AM',
+      icon: Icons.medication_outlined,
+      customIcon: _TimelineCustomIcon.capsule,
       completed: true,
     ),
     _TimelineStep(
@@ -454,9 +479,7 @@ class _PharmacyOrderDetailsScreenState
     ),
     _TimelineStep(
       title: 'Paid',
-      subtitle: 'Feb 07, 2026 10:45 AM',
       icon: Icons.check_rounded,
-      completed: true,
     ),
     _TimelineStep(
       title: 'Preparing Medicines',
@@ -556,6 +579,21 @@ class _PharmacyOrderDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isOtc) {
+      return _OtcOrderDetailsPage(
+        name: widget.customerName,
+        phone: widget.phone,
+        requestId: widget.requestId,
+        requestMeta: widget.requestMeta,
+        selfPickup: widget.isSelfPickup,
+        cashOnDelivery: widget.cashOnDelivery,
+        accepted: widget.isOtcAccepted,
+        preparing: widget.isOtcPreparing,
+        ready: widget.isOtcReady,
+        partnerAssigned: widget.isOtcPartnerAssigned,
+        delivered: widget.isOtcDelivered,
+      );
+    }
     return GetBuilder<PharmacyOrderDetailsController>(
       builder: (_) {
         final initial = widget.customerName.isNotEmpty
@@ -673,7 +711,7 @@ class _PharmacyOrderDetailsScreenState
                             ),
                           const SizedBox(height: 14),
                           if (widget.isReady || widget.isDelivered) ...[
-                            const _DeliveryPartnerSection(),
+                            const _DeliveryPartnerSection(showPhone: true),
                             const SizedBox(height: 18),
                           ],
                           _UploadedPrescriptionCard(
@@ -703,20 +741,18 @@ class _PharmacyOrderDetailsScreenState
                               _SpecialNotesTextCard(note: widget.specialNotes),
                             const SizedBox(height: 18),
                           ],
-                          if (widget.isAwaitingPayment) ...[
-                            const _AwaitingPaymentItems(),
-                            const SizedBox(height: 16),
-                            const _AwaitingPaymentSummary(),
-                            const SizedBox(height: 12),
-                            const _AwaitingCustomerPaymentCard(),
-                            const SizedBox(height: 18),
-                          ] else if (widget.isToPrepare ||
+                          if (widget.isAwaitingPayment ||
+                              widget.isToPrepare ||
                               widget.isPreparing ||
                               widget.isReady ||
                               widget.isDelivered) ...[
-                            const _AwaitingOrderItems(),
+                            const _AwaitingPaymentItems(),
                             const SizedBox(height: 16),
-                            const _QuotationSummaryCard(),
+                            const _AwaitingPaymentSummary(),
+                            if (widget.isAwaitingPayment) ...[
+                              const SizedBox(height: 12),
+                              const _AwaitingCustomerPaymentCard(),
+                            ],
                             const SizedBox(height: 18),
                           ],
                           Text(
@@ -833,7 +869,8 @@ class _CustomerCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Container(
+              if (!awaitingPayment)
+                Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: reviewCompleted || awaitingPayment
                       ? 8
@@ -1863,97 +1900,105 @@ class _AwaitingPaymentItems extends StatelessWidget {
             height: 1.2,
           ),
         ),
-        const SizedBox(height: 14),
-        const _AvailabilityStatus(availability: _Availability.limited),
-        const SizedBox(height: 8),
-        Text(
-          'Paracetamol 650 mg',
-          style: GoogleFonts.inter(
-            color: const Color(0xFF1A1A1A),
-            fontWeight: FontWeight.w700,
-            fontSize: 15.5,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const _AvailableCountPill(available: 6, prescribed: 10),
         const SizedBox(height: 12),
-        const _OrderItemTotals(detail: '10 tablets × 50 MRU', total: '500 MRU'),
-        const SizedBox(height: 18),
-        const _AvailabilityStatus(availability: _Availability.outOfStock),
-        const SizedBox(height: 8),
-        Text(
-          'Paracetamol 500 mg',
-          style: GoogleFonts.inter(
-            color: const Color(0xFF1A1A1A),
-            fontWeight: FontWeight.w700,
-            fontSize: 15.5,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'Suggested Alternative',
-          style: GoogleFonts.inter(
-            color: const Color(0xFF9CA3AF),
-            fontWeight: FontWeight.w500,
-            fontSize: 13,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF3F7FF),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFD4E4FF)),
-          ),
-          child: const Column(
-            children: [
-              _OrderAltRow(name: 'Paracetamol 500 mg', inStock: false),
-              SizedBox(height: 10),
-              _OrderAltRow(name: 'Paracetamol 650 mg', inStock: true),
-            ],
-          ),
+        const _AwaitingItemCard(
+          availability: _Availability.inStock,
+          name: '1. Paracetamol 500 mg',
+          unit: '10 tablets × 50 MRU',
+          total: '500 MRU',
         ),
         const SizedBox(height: 12),
-        const _OrderItemTotals(detail: '10 tablets × 50 MRU', total: '500 MRU'),
+        const _AwaitingItemCard(
+          availability: _Availability.limited,
+          name: '1. Paracetamol 650 mg',
+          available: 6,
+          prescribed: 10,
+          unit: '6 tablets × 50 MRU',
+          total: '500 MRU',
+        ),
+        const SizedBox(height: 12),
+        const _AwaitingItemCard(
+          availability: _Availability.outOfStock,
+          name: '1. Paracetamol 500 mg',
+          showAlternative: true,
+          unit: '10 tablets × 50 MRU',
+          total: '500 MRU',
+        ),
       ],
     );
   }
 }
 
-class _OrderAltRow extends StatelessWidget {
-  const _OrderAltRow({required this.name, required this.inStock});
+class _AwaitingItemCard extends StatelessWidget {
+  const _AwaitingItemCard({
+    required this.availability,
+    required this.name,
+    required this.unit,
+    required this.total,
+    this.available,
+    this.prescribed,
+    this.showAlternative = false,
+  });
 
+  final _Availability availability;
   final String name;
-  final bool inStock;
+  final String unit;
+  final String total;
+  final int? available;
+  final int? prescribed;
+  final bool showAlternative;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: inStock ? const Color(0xFF22C55E) : const Color(0xFFFF3250),
-            shape: BoxShape.circle,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _AvailabilityStatus(availability: availability),
+          const SizedBox(height: 12),
+          Text(
             name,
             style: GoogleFonts.inter(
-              color: const Color(0xFF2C2C2C),
-              fontWeight: FontWeight.w500,
-              fontSize: 14.5,
+              color: const Color(0xFF1E293B),
+              fontWeight: FontWeight.w700,
+              fontSize: 16.5,
+              height: 1.25,
             ),
           ),
-        ),
-      ],
+          if (available != null && prescribed != null) ...[
+            const SizedBox(height: 10),
+            _AvailableCountPill(available: available!, prescribed: prescribed!),
+          ],
+          if (showAlternative) ...[
+            const SizedBox(height: 14),
+            const _SuggestedAlternativeBox(
+              original: _QuotationMedicine(
+                'Paracetamol 500 mg',
+                50,
+                inStock: false,
+              ),
+              medicines: [
+                _QuotationMedicine('Paracetamol 650 mg', 50),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          _OrderItemTotals(detail: unit, total: total),
+        ],
+      ),
     );
   }
 }
@@ -1975,8 +2020,8 @@ class _OrderItemTotals extends StatelessWidget {
             Text(
               'Unit',
               style: GoogleFonts.inter(
-                color: const Color(0xFFB0B0B0),
-                fontWeight: FontWeight.w400,
+                color: const Color.fromARGB(255, 80, 80, 80),
+                fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
             ),
@@ -1984,9 +2029,9 @@ class _OrderItemTotals extends StatelessWidget {
             Text(
               detail,
               style: GoogleFonts.inter(
-                color: const Color(0xFF6B7280),
+                color: const Color(0xFF3F2A24),
                 fontWeight: FontWeight.w500,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ],
@@ -1998,18 +2043,34 @@ class _OrderItemTotals extends StatelessWidget {
             Text(
               'Total',
               style: GoogleFonts.inter(
-                color: const Color(0xFFB0B0B0),
-                fontWeight: FontWeight.w400,
+                color: const Color.fromARGB(255, 85, 85, 85),
+                fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              total,
-              style: GoogleFonts.inter(
-                color: const Color(0xFF1A1A1A),
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: total.replaceAll(' MRU', ''),
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      height: 1,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' MRU',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFFF5722),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                      height: 1,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -2118,191 +2179,6 @@ class _AwaitingSummaryLine extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AwaitingOrderItems extends StatelessWidget {
-  const _AwaitingOrderItems();
-
-  static const _items = <(String, String)>[
-    ('Doliprane 500mg', '50 MRU'),
-    ('Augmentin 1g', '50 MRU'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'ORDER ITEMS (2)',
-          style: GoogleFonts.inter(
-            color: const Color(0xFFB0B7C3),
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-            letterSpacing: 0.4,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        for (var i = 0; i < _items.length; i++) ...[
-          if (i > 0) const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _items[i].$1,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF2C2C2C),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _items[i].$2,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFFF5722),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 7,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    'Qty: 1 Strip',
-                    style: GoogleFonts.inter(
-                      color: const Color.fromARGB(255, 96, 96, 96),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      height: 1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _QuotationSummaryCard extends StatelessWidget {
-  const _QuotationSummaryCard();
-
-  static const Color _orange = Color(0xFFFF5722);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-      decoration: BoxDecoration(
-        color: const Color(0xFF333333),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Image.asset(
-                'lib/pharmacy/Assets/images/quotation_summary.png',
-                width: 22,
-                height: 22,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'QUOTATION SUMMARY',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  letterSpacing: 0.2,
-                  height: 1,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Text(
-                'Item total',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFD0D0D0),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '100 MRU',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Text(
-                'Total Amount',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '100 MRU',
-                style: GoogleFonts.inter(
-                  color: _orange,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }
@@ -2481,10 +2357,10 @@ class _TimelineRow extends StatelessWidget {
               color: orange,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              step.icon,
-              size: 16,
+            child: _TimelineGlyph(
+              step: step,
               color: Colors.white,
+              materialSize: 16,
             ),
           )
         else
@@ -2574,6 +2450,38 @@ class _TimelineRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _TimelineGlyph extends StatelessWidget {
+  const _TimelineGlyph({
+    required this.step,
+    required this.color,
+    this.materialSize = 14,
+  });
+
+  final _TimelineStep step;
+  final Color color;
+  final double materialSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final custom = step.customIcon;
+    if (custom == null) {
+      return Icon(step.icon, size: materialSize, color: color);
+    }
+    final box = custom == _TimelineCustomIcon.openBox ? 18.0 : 16.0;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: CustomPaint(
+        painter: switch (custom) {
+          _TimelineCustomIcon.capsule => _CapsuleIconPainter(color: color),
+          _TimelineCustomIcon.scooter => _ScooterIconPainter(color: color),
+          _TimelineCustomIcon.openBox => _OpenBoxIconPainter(color: color),
+        },
+      ),
     );
   }
 }
@@ -2897,7 +2805,9 @@ class _BottomActions extends StatelessWidget {
 }
 
 class _DeliveryPartnerSection extends StatelessWidget {
-  const _DeliveryPartnerSection();
+  const _DeliveryPartnerSection({this.showPhone = false});
+
+  final bool showPhone;
 
   static const Color _orange = Color(0xFFFF5722);
 
@@ -2985,7 +2895,18 @@ class _DeliveryPartnerSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    if (showPhone)
+                      Text(
+                        '+222 33456789',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF6B7280),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13.5,
+                          height: 1.2,
+                        ),
+                      )
+                    else
+                      Row(
                       children: [
                         const Icon(
                           Icons.star_rounded,
