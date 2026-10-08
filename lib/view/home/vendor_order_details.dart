@@ -23,6 +23,7 @@ import '../../utils/order_fulfillment.dart';
 import '../../utils/utils.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import 'widgets/order_fulfillment_badge.dart';
+import 'widgets/vendor_reject_order_sheet.dart';
 
 class VendorOrderDetails extends StatefulWidget {
   final String orderId;
@@ -1045,18 +1046,31 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 String vendorType =
                                                     await getSavedObject(
                                                       "vendorType",
+                                                    ) ??
+                                                    "0";
+                                                final isRestaurant =
+                                                    vendorType == "1";
+                                                final selectedReason =
+                                                    await showVendorRejectOrderSheet(
+                                                      context,
+                                                      isRestaurant:
+                                                          isRestaurant,
                                                     );
-                                                if (vendorType == "1") {
-                                                  controller
-                                                      .cancelRestaurantOrder(
-                                                        context,
-                                                        widget.orderId,
-                                                      );
-                                                } else {
-                                                  controller.cancelGroceryOrder(
-                                                    context,
-                                                    widget.orderId,
-                                                  );
+                                                if (selectedReason != null &&
+                                                    context.mounted) {
+                                                  if (isRestaurant) {
+                                                    controller
+                                                        .cancelRestaurantOrder(
+                                                          context,
+                                                          widget.orderId,
+                                                        );
+                                                  } else {
+                                                    controller
+                                                        .cancelGroceryOrder(
+                                                          context,
+                                                          widget.orderId,
+                                                        );
+                                                  }
                                                 }
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -1409,7 +1423,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                     ),
                                   ],
                                 )
-                              : controller.orderData!.status.toString() == '4' &&
+                              : controller.orderData!.status.toString() ==
+                                        '4' &&
                                     OrderFulfillment.isSelfPickupFrom(
                                       deliveryType:
                                           controller.orderData?.deliveryType,

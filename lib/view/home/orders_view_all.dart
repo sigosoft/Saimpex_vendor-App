@@ -13,6 +13,7 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_order_list_item.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
+import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 
 import '../../utils/Widgets/custom_app_bar.dart';
 import '../../utils/utils.dart';
@@ -211,13 +212,20 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     );
   }
 
-  void _handleCancelOrder(String orderId) {
+  Future<void> _handleCancelOrder(String orderId) async {
     final vendorType =
         homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
-    if (vendorType == "1") {
-      detailsController.cancelRestaurantOrder(context, orderId);
-    } else {
-      detailsController.cancelGroceryOrder(context, orderId);
+    final isRestaurant = vendorType == "1";
+    final selectedReason = await showVendorRejectOrderSheet(
+      context,
+      isRestaurant: isRestaurant,
+    );
+    if (selectedReason != null && mounted) {
+      if (isRestaurant) {
+        detailsController.cancelRestaurantOrder(context, orderId);
+      } else {
+        detailsController.cancelGroceryOrder(context, orderId);
+      }
     }
   }
 
