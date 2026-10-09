@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DeliveryBoysView extends StatefulWidget {
   const DeliveryBoysView({super.key});
+
+  static const ink = Color(0xFF1E293B);
+  static const orange = Color(0xFFFF5216);
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -16,96 +18,120 @@ class DeliveryBoysView extends StatefulWidget {
   State<DeliveryBoysView> createState() => _DeliveryBoysViewState();
 }
 
-class _DeliveryBoysViewState extends State<DeliveryBoysView> {
-  final searchController = TextEditingController();
+class _Boy {
+  const _Boy({
+    required this.name,
+    required this.phone,
+    required this.address,
+    required this.avatar,
+  });
 
-  static const boys = [
-    _DeliveryBoy(
+  final String name;
+  final String phone;
+  final String address;
+  final String avatar;
+}
+
+class _DeliveryBoysViewState extends State<DeliveryBoysView> {
+  final _search = TextEditingController();
+  final _boys = const [
+    _Boy(
       name: 'Cheikh Ould Ely',
       phone: '+222 22345678',
-      address: 'Apt 3B llot k, Nouakchott',
-      image: AppAssets.deliveryBoy1,
-      active: true,
+      address: 'Apt 3B Ilot k, Nouakchott',
+      avatar: 'lib/water/Assets/Images/delivery_boy1.png',
     ),
-    _DeliveryBoy(
-      name: 'Mohamed Abdallahi',
-      phone: '+222 33456789',
-      address: 'Tevragh Zeina, Nouakchott',
-      image: AppAssets.deliveryBoy2,
-      active: true,
+    _Boy(
+      name: 'Ismail Ould Ahmed',
+      phone: '+222 22345678',
+      address: 'Apt 3B Ilot k, Nouakchott',
+      avatar: 'lib/water/Assets/Images/delivery_boy2.png',
     ),
-    _DeliveryBoy(
-      name: 'Ahmed Salem',
-      phone: '+222 44567890',
-      address: 'Ksar, Nouakchott',
-      image: AppAssets.deliveryBoy3,
-      active: true,
+    _Boy(
+      name: 'Abdallahi Ould Mahmoud',
+      phone: '+222 22345678',
+      address: 'Apt 3B Ilot k, Nouakchott',
+      avatar: 'lib/water/Assets/Images/delivery_boy3.png',
     ),
   ];
 
-  List<_DeliveryBoy> get filtered {
-    final q = searchController.text.trim().toLowerCase();
-    if (q.isEmpty) return boys;
-    return boys
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  List<_Boy> get _visible {
+    final query = _search.text.trim().toLowerCase();
+    if (query.isEmpty) return _boys;
+    return _boys
         .where(
-          (b) =>
-              b.name.toLowerCase().contains(q) ||
-              b.phone.toLowerCase().contains(q) ||
-              b.address.toLowerCase().contains(q),
+          (boy) =>
+              boy.name.toLowerCase().contains(query) ||
+              boy.phone.toLowerCase().contains(query) ||
+              boy.address.toLowerCase().contains(query),
         )
         .toList();
   }
 
   @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final boys = _visible;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFE8E0), Color(0xFFFFF4EF), Colors.white],
+              stops: [0, 0.22, 0.42],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
-                    children: [
-                      _SearchField(
-                        controller: searchController,
-                        onChanged: (_) => setState(() {}),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                  children: [
+                    TextField(
+                      controller: _search,
+                      onChanged: (_) => setState(() {}),
+                      style: GoogleFonts.inter(
+                        color: DeliveryBoysView.ink,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
                       ),
-                      const SizedBox(height: 16),
-                      for (final boy in filtered) ...[
-                        _DeliveryBoyCard(boy: boy),
-                        const SizedBox(height: 12),
-                      ],
+                      decoration: InputDecoration(
+                        hintText: 'Search Coupon',
+                        hintStyle: GoogleFonts.inter(
+                          color: const Color(0xFFA9AEB6),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                        ),
+                        prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFFA9AEB6)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        border: _fieldBorder,
+                        enabledBorder: _fieldBorder,
+                        focusedBorder: _fieldBorder,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    for (final boy in boys) ...[
+                      _BoyCard(boy: boy),
+                      const SizedBox(height: 12),
                     ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -113,21 +139,10 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
   }
 }
 
-class _DeliveryBoy {
-  const _DeliveryBoy({
-    required this.name,
-    required this.phone,
-    required this.address,
-    required this.image,
-    required this.active,
-  });
-
-  final String name;
-  final String phone;
-  final String address;
-  final String image;
-  final bool active;
-}
+const _fieldBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.all(Radius.circular(12)),
+  borderSide: BorderSide(color: Color(0xFFE6E8EC)),
+);
 
 class _Header extends StatelessWidget {
   const _Header({required this.onBack});
@@ -143,12 +158,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Delivery Boys',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -162,19 +177,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.orangeChipBorder),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: DeliveryBoysView.orange,
+                    size: 26,
                   ),
                 ),
               ),
@@ -186,92 +194,25 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.controller,
-    required this.onChanged,
-  });
+class _BoyCard extends StatelessWidget {
+  const _BoyCard({required this.boy});
 
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
+  final _Boy boy;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.search_rounded,
-            color: AppColors.textHint,
-            size: 22,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              style: const TextStyle(
-                color: AppColors.textDark,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-              decoration: const InputDecoration(
-                hintText: 'Search Coupon',
-                hintStyle: TextStyle(
-                  color: AppColors.textHint,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13.5,
-                ),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DeliveryBoyCard extends StatelessWidget {
-  const _DeliveryBoyCard({required this.boy});
-
-  final _DeliveryBoy boy;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
+        boxShadow: const [
+          BoxShadow(color: Color(0x0D000000), blurRadius: 10, offset: Offset(0, 3)),
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _Avatar(image: boy.image, name: boy.name),
+          _Avatar(asset: boy.avatar),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -279,59 +220,23 @@ class _DeliveryBoyCard extends StatelessWidget {
               children: [
                 Text(
                   boy.name,
-                  style: const TextStyle(
-                    color: AppColors.textDark,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: DeliveryBoysView.ink,
                     fontWeight: FontWeight.w700,
-                    fontSize: 15,
+                    fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.phone_outlined,
-                      color: AppColors.textMeta,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        boy.phone,
-                        style: const TextStyle(
-                          color: AppColors.textMeta,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _MetaRow(icon: Icons.phone_outlined, text: boy.phone),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on_outlined,
-                      color: AppColors.textMuted,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        boy.address,
-                        style: const TextStyle(
-                          color: AppColors.textMuted,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _MetaRow(icon: Icons.location_on_outlined, text: boy.address),
               ],
             ),
           ),
           const SizedBox(width: 8),
-          _StatusBadge(active: boy.active),
+          const _ActivePill(),
         ],
       ),
     );
@@ -339,77 +244,70 @@ class _DeliveryBoyCard extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.image, required this.name});
+  const _Avatar({required this.asset});
 
-  final String image;
-  final String name;
-
-  String get initials {
-    final parts = name
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .toList();
-    if (parts.isEmpty) return 'D';
-    return parts.map((p) => p[0].toUpperCase()).join();
-  }
+  final String asset;
 
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      image,
-      width: 58,
-      height: 58,
+      asset,
+      width: 56,
+      height: 56,
       fit: BoxFit.contain,
-      errorBuilder: (_, _, _) {
-        return Container(
-          width: 58,
-          height: 58,
-          decoration: BoxDecoration(
-            color: AppColors.orangeSoftBg,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            initials,
-            style: const TextStyle(
-              color: AppColors.primaryOrange,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
-          ),
-        );
-      },
     );
   }
 }
 
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.active});
-
-  final bool active;
+class _ActivePill extends StatelessWidget {
+  const _ActivePill();
 
   @override
   Widget build(BuildContext context) {
-    final bg = active ? const Color(0xFFE8F5E9) : const Color(0xFFF0F0F0);
-    final fg = active ? const Color(0xFF2D8A56) : AppColors.textMuted;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: bg,
+        color: const Color(0xFFDCFCE7),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        active ? 'ACTIVE' : 'INACTIVE',
-        style: TextStyle(
-          color: fg,
+        'ACTIVE',
+        style: GoogleFonts.inter(
+          color: const Color(0xFF16A34A),
           fontWeight: FontWeight.w700,
-          fontSize: 10,
+          fontSize: 11,
           letterSpacing: 0.2,
-          height: 1.1,
         ),
       ),
+    );
+  }
+}
+
+class _MetaRow extends StatelessWidget {
+  const _MetaRow({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 13, color: const Color(0xFF94A3B8)),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF64748B),
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

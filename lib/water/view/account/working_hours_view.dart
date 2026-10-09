@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/water/view/account/edit_working_hour_dialog.dart';
 
 class WorkingHoursView extends StatefulWidget {
   const WorkingHoursView({super.key});
+
+  static const orange = Color(0xFFFF5216);
+  static const ink = Color(0xFF1C1D1B);
+  static const day = Color(0xFF2A2A2A);
+  static const muted = Color(0xFF5A423B);
+  static const closed = Color(0xFFBA1B1B);
+  static const allDayHours = '12:00 AM - 11:59 PM';
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -76,86 +83,81 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
 
   @override
   Widget build(BuildContext context) {
+    final today = schedule[DateTime.now().weekday - 1];
+    final todayHours = open24Hours ? WorkingHoursView.allDayHours : today.hours;
+    final todayClosed = !open24Hours && today.closed;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFE7DF), Color(0xFFFFF1EB), Colors.white],
+              stops: [0, 0.28, 0.48],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                    children: [
-                      _CurrentStatusCard(
-                        open24Hours: open24Hours,
-                        on24HourChanged: (v) =>
-                            setState(() => open24Hours = v),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                  children: [
+                    _CurrentStatusCard(
+                      todayHours: todayHours,
+                      todayClosed: todayClosed,
+                      open24Hours: open24Hours,
+                      on24HourChanged: (value) {
+                        HapticFeedback.lightImpact();
+                        setState(() => open24Hours = value);
+                      },
+                    ),
+                    const SizedBox(height: 22),
+                    Text(
+                      'Weekly Schedule',
+                      style: GoogleFonts.inter(
+                        color: WorkingHoursView.ink,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Weekly Schedule',
-                        style: TextStyle(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF1A1A1A).withValues(alpha: 0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.06),
-                              blurRadius: 14,
-                              offset: const Offset(0, 4),
+                      child: Column(
+                        children: [
+                          for (var i = 0; i < schedule.length; i++) ...[
+                            if (i > 0)
+                              const Divider(height: 1, thickness: 1, color: Color(0xFFF3F3F3)),
+                            _DayRow(
+                              item: schedule[i],
+                              hours: open24Hours ? WorkingHoursView.allDayHours : null,
+                              onEdit: () => _editDay(i),
                             ),
                           ],
-                        ),
-                        child: Column(
-                          children: [
-                            for (var i = 0; i < schedule.length; i++) ...[
-                              _DayRow(
-                                item: schedule[i],
-                                onEdit: () => _editDay(i),
-                              ),
-                              if (i < schedule.length - 1)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  child: Divider(
-                                    height: 1,
-                                    color: AppColors.divider,
-                                  ),
-                                ),
-                            ],
-                          ],
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -212,12 +214,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Working Hours',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: WorkingHoursView.ink,
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -231,18 +233,11 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: WorkingHoursView.orange,
+                    size: 26,
                   ),
                 ),
               ),
@@ -256,10 +251,14 @@ class _Header extends StatelessWidget {
 
 class _CurrentStatusCard extends StatelessWidget {
   const _CurrentStatusCard({
+    required this.todayHours,
+    required this.todayClosed,
     required this.open24Hours,
     required this.on24HourChanged,
   });
 
+  final String todayHours;
+  final bool todayClosed;
   final bool open24Hours;
   final ValueChanged<bool> on24HourChanged;
 
@@ -267,90 +266,77 @@ class _CurrentStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF1A1A1A).withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'CURRENT STATUS',
-            style: TextStyle(
-              color: AppColors.textMuted,
-              fontWeight: FontWeight.w600,
-              fontSize: 11.5,
-              letterSpacing: 0.4,
+          Text(
+            'Current Status',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF8A7B76),
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
             ),
           ),
           const SizedBox(height: 8),
-          const Text.rich(
+          Text.rich(
             TextSpan(
+              style: GoogleFonts.inter(
+                color: WorkingHoursView.ink,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
               children: [
+                const TextSpan(text: 'Today: '),
                 TextSpan(
-                  text: 'Today: ',
+                  text: todayHours,
                   style: TextStyle(
-                    color: AppColors.textDark,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15.5,
-                  ),
-                ),
-                TextSpan(
-                  text: '08:00 AM - 10:00 PM',
-                  style: TextStyle(
-                    color: AppColors.primaryOrange,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15.5,
+                    color: todayClosed ? WorkingHoursView.closed : WorkingHoursView.orange,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.divider),
-          const SizedBox(height: 4),
+          const SizedBox(height: 16),
           Row(
             children: [
               const Icon(
                 Icons.all_inclusive_rounded,
-                color: AppColors.primaryOrange,
+                color: WorkingHoursView.orange,
                 size: 22,
               ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  '24-Hour Open',
-                  style: TextStyle(
-                    color: AppColors.textDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.5,
-                  ),
+              const SizedBox(width: 8),
+              Text(
+                '24-Hour Open',
+                style: GoogleFonts.inter(
+                  color: WorkingHoursView.ink,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
                 ),
               ),
+              const Spacer(),
               Switch(
                 value: open24Hours,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 thumbColor: const WidgetStatePropertyAll(Colors.white),
                 trackColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return AppColors.primaryOrange;
+                    return WorkingHoursView.orange;
                   }
-                  return const Color(0xFFE2E5E9);
+                  return const Color(0xFFE9E8E4);
                 }),
-                trackOutlineColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return Colors.transparent;
-                  }
-                  return const Color(0xFFC5CAD1);
-                }),
-                trackOutlineWidth: const WidgetStatePropertyAll(1.2),
+                trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
                 onChanged: on24HourChanged,
               ),
             ],
@@ -364,62 +350,68 @@ class _CurrentStatusCard extends StatelessWidget {
 class _DayRow extends StatelessWidget {
   const _DayRow({
     required this.item,
+    this.hours,
     required this.onEdit,
   });
 
   final _DayHours item;
+  final String? hours;
   final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onEdit,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.day,
-                    style: TextStyle(
-                      color: item.closed
-                          ? AppColors.textSecondary
-                          : AppColors.textDark,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
+    final closed = hours == null && item.closed;
+    final label = hours ?? item.hours;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.day,
+                  style: GoogleFonts.inter(
+                    color: WorkingHoursView.day,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.hours,
-                    style: TextStyle(
-                      color: item.closed
-                          ? const Color(0xFFC4452D)
-                          : AppColors.textSecondary,
-                      fontWeight:
-                          item.closed ? FontWeight.w700 : FontWeight.w500,
-                      fontSize: 13.5,
-                    ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  style: GoogleFonts.inter(
+                    color: closed ? WorkingHoursView.closed : WorkingHoursView.muted,
+                    fontWeight: closed ? FontWeight.w700 : FontWeight.w500,
+                    fontSize: 13,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const Icon(
-              Icons.edit_square,
-              color: AppColors.primaryOrange,
-              size: 20,
+          ),
+          GestureDetector(
+            onTap: onEdit,
+            behavior: HitTestBehavior.opaque,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image(
+                  image: AssetImage('lib/water/Assets/Images/edit.png'),
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 2),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: WorkingHoursView.orange,
+                  size: 22,
+                ),
+              ],
             ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: AppColors.primaryOrange.withValues(alpha: 0.55),
-              size: 22,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

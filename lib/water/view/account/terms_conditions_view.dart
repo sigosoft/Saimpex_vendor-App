@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TermsConditionsView extends StatelessWidget {
   const TermsConditionsView({super.key});
 
-  static const _bg = Color(0xFFFEF9F0);
+  static const orange = Color(0xFFFF5216);
+  static const page = Color(0xFFFDF9F0);
 
-  static const _paragraphs = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
-    'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.',
-    'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-    'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.',
-  ];
+  static const _paragraph =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in imperdiet velit. Cras rhoncus semper felis, a venenatis enim aliquam eu. Pellentesque viverra magna eget velit lobortis, in feugiat orci tristique. Aenean dictum euismod tincidunt. Nullam velit ante, euismod ut bibendum vitae, suscipit eu risus. Proin consequat nunc quis diam pretium eleifend. Donec quis pharetra nisl. Aenean vel posuere ex, in hendrerit mauris.';
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -25,36 +20,33 @@ class TermsConditionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: _bg,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 8),
-              _Header(onBack: () => Navigator.of(context).maybePop()),
-              Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
-                  itemCount: _paragraphs.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 18),
-                  itemBuilder: (context, index) {
-                    return Text(
-                      _paragraphs[index],
-                      style: const TextStyle(
-                        color: AppColors.textLabel,
+        backgroundColor: page,
+        body: Column(
+          children: [
+            SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+            _Header(onBack: () => Navigator.of(context).maybePop()),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                children: [
+                  for (var i = 0; i < 6; i++) ...[
+                    Text(
+                      _paragraph,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF333333),
                         fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        height: 1.55,
+                        fontSize: 13,
+                        height: 1.5,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                    if (i < 5) const SizedBox(height: 16),
+                  ],
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -75,12 +67,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Terms & Conditions',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -94,18 +86,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: TermsConditionsView.orange,
+                    size: 26,
                   ),
                 ),
               ),

@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class WaterCouponDraft {
+  const WaterCouponDraft({
+    required this.name,
+    required this.code,
+    required this.kind,
+    required this.discount,
+    required this.count,
+    required this.validUntil,
+    required this.createdOn,
+  });
+
+  final String name;
+  final String code;
+  final String kind;
+  final String discount;
+  final String count;
+  final String validUntil;
+  final String createdOn;
+}
 
 class AddCouponView extends StatefulWidget {
   const AddCouponView({super.key});
 
-  static void open(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const AddCouponView()),
+  static const orange = Color(0xFFFF5317);
+  static const ink = Color(0xFF10182B);
+
+  static Future<WaterCouponDraft?> open(BuildContext context) {
+    return Navigator.of(context).push<WaterCouponDraft>(
+      MaterialPageRoute(builder: (_) => const AddCouponView()),
     );
   }
 
@@ -16,207 +39,291 @@ class AddCouponView extends StatefulWidget {
 }
 
 class _AddCouponViewState extends State<AddCouponView> {
-  final nameController = TextEditingController();
-  final codeController = TextEditingController();
-  final discountController = TextEditingController();
-  final countController = TextEditingController();
+  final _name = TextEditingController();
+  final _code = TextEditingController();
+  final _discount = TextEditingController();
+  final _count = TextEditingController();
+  final _typeKey = GlobalKey();
 
-  String? couponType;
-  DateTime? validUpto;
-
-  static const types = ['Percentage', 'Fixed'];
+  String? _kind;
+  DateTime? _validUntil;
+  String? _error;
 
   @override
   void dispose() {
-    nameController.dispose();
-    codeController.dispose();
-    discountController.dispose();
-    countController.dispose();
+    _name.dispose();
+    _code.dispose();
+    _discount.dispose();
+    _count.dispose();
     super.dispose();
   }
 
-  String get validUptoLabel {
-    if (validUpto == null) return 'dd-mm-yyyy';
-    final d = validUpto!.day.toString().padLeft(2, '0');
-    final m = validUpto!.month.toString().padLeft(2, '0');
-    return '$d-$m-${validUpto!.year}';
+  Future<void> _pickType() async {
+    final box = _typeKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    final origin = box.localToGlobal(Offset.zero);
+    final selected = await showMenu<String>(
+      context: context,
+      color: Colors.white,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      position: RelativeRect.fromLTRB(
+        origin.dx,
+        origin.dy + box.size.height + 4,
+        origin.dx + box.size.width,
+        0,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'PERCENTAGE',
+          child: Text('Percentage', style: _valueStyle),
+        ),
+        PopupMenuItem(
+          value: 'FLAT',
+          child: Text('Flat', style: _valueStyle),
+        ),
+      ],
+    );
+    if (selected == null) return;
+    setState(() {
+      _kind = selected;
+      _error = null;
+    });
   }
 
   Future<void> _pickDate() async {
-    final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: validUpto ?? now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
+      initialDate: _validUntil ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2035),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: AppColors.primaryOrange,
-                ),
+            colorScheme: const ColorScheme.light(
+              primary: AddCouponView.orange,
+              onPrimary: Colors.white,
+              onSurface: AddCouponView.ink,
+            ),
           ),
           child: child!,
         );
       },
     );
     if (picked == null) return;
-    setState(() => validUpto = picked);
+    setState(() {
+      _validUntil = picked;
+      _error = null;
+    });
   }
 
-  Future<void> _pickType() async {
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+  void _submit() {
+    final name = _name.text.trim();
+    final code = _code.text.trim();
+    final discount = double.tryParse(_discount.text.trim());
+    final count = int.tryParse(_count.text.trim());
+    if (name.isEmpty || code.isEmpty || _kind == null || discount == null || count == null || _validUntil == null) {
+      setState(() => _error = 'Fill in every field');
+      return;
+    }
+    HapticFeedback.lightImpact();
+    final suffix = _kind == 'PERCENTAGE' ? '%' : ' MRU';
+    Navigator.of(context).pop(
+      WaterCouponDraft(
+        name: name.toUpperCase(),
+        code: code.toUpperCase(),
+        kind: _kind!,
+        discount: '${discount.toStringAsFixed(2)}$suffix',
+        count: '$count',
+        validUntil: _formatShort(_validUntil!),
+        createdOn: _formatStamp(DateTime.now()),
       ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.fieldBorder,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              const SizedBox(height: 8),
-              for (final type in types)
-                ListTile(
-                  title: Text(
-                    type,
-                    style: const TextStyle(
-                      color: AppColors.textDark,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                  trailing: couponType == type
-                      ? const Icon(
-                          Icons.check_rounded,
-                          color: AppColors.primaryOrange,
-                        )
-                      : null,
-                  onTap: () => Navigator.of(context).pop(type),
-                ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
     );
-    if (selected == null) return;
-    setState(() => couponType = selected);
   }
 
   @override
   Widget build(BuildContext context) {
+    final bottom = MediaQuery.paddingOf(context).bottom;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFEBE4), Color(0xFFFFF4F0), Colors.white],
+              stops: [0, 0.42, 0.7],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
-                    children: [
-                      _LabeledField(
-                        label: 'Coupon Name',
-                        child: _InputField(
-                          controller: nameController,
-                          hint: 'Enter coupon name',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _LabeledField(
-                        label: 'Coupon Code',
-                        child: _InputField(
-                          controller: codeController,
-                          hint: 'Enter coupon code',
-                          textCapitalization: TextCapitalization.characters,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _LabeledField(
-                        label: 'Coupon Type',
-                        child: _SelectField(
-                          value: couponType,
-                          placeholder: 'Select',
-                          onTap: _pickType,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _LabeledField(
-                        label: 'Discount',
-                        child: _InputField(
-                          controller: discountController,
-                          hint: 'Enter discount',
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _LabeledField(
-                        label: 'Count',
-                        child: _InputField(
-                          controller: countController,
-                          hint: 'Enter count',
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _LabeledField(
-                        label: 'Valid Upto',
-                        child: _DateField(
-                          value: validUptoLabel,
-                          onTap: _pickDate,
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              const _Header(),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
+                  children: [
+                    _Field(
+                      label: 'Coupon Name',
+                      controller: _name,
+                      hint: 'Enter coupon name',
+                      onChanged: _clearError,
+                    ),
+                    const SizedBox(height: 16),
+                    _Field(
+                      label: 'Coupon Code',
+                      controller: _code,
+                      hint: 'Enter coupon code',
+                      onChanged: _clearError,
+                    ),
+                    const SizedBox(height: 16),
+                    _label('Coupon Type'),
+                    const SizedBox(height: 8),
+                    _SelectBox(
+                      key: _typeKey,
+                      text: _kind == null ? 'Select' : (_kind == 'PERCENTAGE' ? 'Percentage' : 'Flat'),
+                      filled: _kind != null,
+                      icon: Icons.keyboard_arrow_down_rounded,
+                      onTap: _pickType,
+                    ),
+                    const SizedBox(height: 16),
+                    _Field(
+                      label: 'Discount',
+                      controller: _discount,
+                      hint: 'Enter discount',
+                      keyboard: const TextInputType.numberWithOptions(decimal: true),
+                      onChanged: _clearError,
+                    ),
+                    const SizedBox(height: 16),
+                    _Field(
+                      label: 'Count',
+                      controller: _count,
+                      hint: 'Enter count',
+                      keyboard: TextInputType.number,
+                      onChanged: _clearError,
+                    ),
+                    const SizedBox(height: 16),
+                    _label('Valid Upto'),
+                    const SizedBox(height: 8),
+                    _SelectBox(
+                      text: _validUntil == null ? 'dd-mm-yyyy' : _formatInput(_validUntil!),
+                      filled: _validUntil != null,
+                      calendar: true,
+                      onTap: _pickDate,
+                    ),
+                    if (_error != null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        _error!,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFBA1B1B),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
                         ),
                       ),
                     ],
-                  ),
+                  ],
                 ),
-                _FooterBar(
-                  onCancel: () => Navigator.of(context).maybePop(),
-                  onAdd: () => Navigator.of(context).maybePop(),
+              ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.fromLTRB(16, 12, 16, bottom + 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF1F5F9),
+                            foregroundColor: const Color(0xFF4C586A),
+                            side: BorderSide.none,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: _submit,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AddCouponView.orange,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Text(
+                            'Add Coupon',
+                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  void _clearError(String _) {
+    if (_error != null) setState(() => _error = null);
+  }
+}
+
+TextStyle get _valueStyle => GoogleFonts.inter(
+      color: const Color(0xFF3F4555),
+      fontWeight: FontWeight.w500,
+      fontSize: 13,
+    );
+
+Widget _label(String text) {
+  return Text(
+    text,
+    style: GoogleFonts.inter(
+      color: const Color(0xFF404250),
+      fontWeight: FontWeight.w500,
+      fontSize: 14,
+    ),
+  );
+}
+
+const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+String _formatInput(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  return '$day-$month-${date.year}';
+}
+
+String _formatShort(DateTime date) {
+  return '${_months[date.month - 1]} ${date.day},${date.year}';
+}
+
+String _formatStamp(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  var hour = date.hour % 12;
+  if (hour == 0) hour = 12;
+  final minute = date.minute.toString().padLeft(2, '0');
+  final suffix = date.hour < 12 ? 'AM' : 'PM';
+  return '${_months[date.month - 1]} $day, ${date.year} $hour:$minute $suffix, Today';
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
-
-  final VoidCallback onBack;
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
@@ -227,18 +334,18 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Add Coupon',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: AddCouponView.ink,
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                onTap: onBack,
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   width: 40,
@@ -246,19 +353,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.orangeChipBorder),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: Color(0xFFFF5216),
+                    size: 26,
                   ),
                 ),
               ),
@@ -270,254 +370,113 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _LabeledField extends StatelessWidget {
-  const _LabeledField({required this.label, required this.child});
+class _Field extends StatelessWidget {
+  const _Field({
+    required this.label,
+    required this.controller,
+    required this.hint,
+    required this.onChanged,
+    this.keyboard,
+  });
 
   final String label;
-  final Widget child;
+  final TextEditingController controller;
+  final String hint;
+  final ValueChanged<String> onChanged;
+  final TextInputType? keyboard;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.textDark,
-            fontWeight: FontWeight.w600,
-            fontSize: 13.5,
+        _label(label),
+        const SizedBox(height: 8),
+        Container(
+          height: 44,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFD7DDE4)),
+          ),
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            keyboardType: keyboard,
+            style: _valueStyle,
+            textAlignVertical: TextAlignVertical.center,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: _hintStyle,
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
-        child,
       ],
     );
   }
 }
 
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.controller,
-    required this.hint,
-    this.keyboardType,
-    this.textCapitalization = TextCapitalization.none,
-  });
-
-  final TextEditingController controller;
-  final String hint;
-  final TextInputType? keyboardType;
-  final TextCapitalization textCapitalization;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.fieldBorder),
-      ),
-      alignment: Alignment.centerLeft,
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        textCapitalization: textCapitalization,
-        style: const TextStyle(
-          color: AppColors.textDark,
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(
-            color: AppColors.textHint,
-            fontWeight: FontWeight.w400,
-            fontSize: 13.5,
-          ),
-          border: InputBorder.none,
-          isDense: true,
-          contentPadding: EdgeInsets.zero,
-        ),
-      ),
-    );
-  }
-}
-
-class _SelectField extends StatelessWidget {
-  const _SelectField({
-    required this.value,
-    required this.placeholder,
+class _SelectBox extends StatelessWidget {
+  const _SelectBox({
+    super.key,
+    required this.text,
+    required this.filled,
     required this.onTap,
+    this.icon,
+    this.calendar = false,
   });
 
-  final String? value;
-  final String placeholder;
+  final String text;
+  final bool filled;
   final VoidCallback onTap;
+  final IconData? icon;
+  final bool calendar;
 
   @override
   Widget build(BuildContext context) {
-    final hasValue = value != null && value!.isNotEmpty;
-    return InkWell(
-      onTap: onTap,
+    return Material(
+      color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.fieldBorder),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                hasValue ? value! : placeholder,
-                style: TextStyle(
-                  color: hasValue ? AppColors.textDark : AppColors.textHint,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13.5,
-                ),
-              ),
-            ),
-            const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: AppColors.textMuted,
-              size: 22,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  const _DateField({required this.value, required this.onTap});
-
-  final String value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final isPlaceholder = value == 'dd-mm-yyyy';
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.fieldBorder),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                value,
-                style: TextStyle(
-                  color:
-                      isPlaceholder ? AppColors.textHint : AppColors.textDark,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13.5,
-                ),
-              ),
-            ),
-            const Icon(
-              Icons.calendar_today_outlined,
-              color: AppColors.textDark,
-              size: 18,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FooterBar extends StatelessWidget {
-  const _FooterBar({required this.onCancel, required this.onAdd});
-
-  final VoidCallback onCancel;
-  final VoidCallback onAdd;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 44,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFD7DDE4)),
           ),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: onCancel,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.inventoryResetBtn,
-                    foregroundColor: AppColors.textDark,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(text, style: filled ? _valueStyle : _hintStyle),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 3,
-              child: SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: onAdd,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryOrange,
-                    foregroundColor: Colors.white,
-                    elevation: 2,
-                    shadowColor:
-                        AppColors.primaryOrange.withValues(alpha: 0.35),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: const Text(
-                    'Add Coupon',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+              if (calendar)
+                Image.asset(
+                  'lib/pharmacy/Assets/images/calender.png',
+                  width: 18,
+                  height: 18,
+                  fit: BoxFit.contain,
+                )
+              else
+                Icon(icon, size: 20, color: const Color(0xFF9AA3B2)),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+final _hintStyle = GoogleFonts.inter(
+  color: const Color(0xFF9BA9BD),
+  fontWeight: FontWeight.w500,
+  fontSize: 13,
+);

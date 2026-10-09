@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/water/controller/subscription_calendar_controller.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 
 class SubscriptionCalendarView extends StatefulWidget {
   const SubscriptionCalendarView({super.key});
@@ -15,10 +16,6 @@ class SubscriptionCalendarView extends StatefulWidget {
 
 class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
   late final WaterSubscriptionCalendarController controller;
-
-  static const Color _morningBlue = Color(0xFF2F80ED);
-  static const Color _afternoonOrange = Color(0xFFFF5E21);
-  static const Color _pausedBrown = Color(0xFF8D4B3A);
 
   @override
   void initState() {
@@ -32,7 +29,7 @@ class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
     super.dispose();
   }
 
-  final weekDays = const [
+  static const weekDays = [
     _DayItem(day: 'MON', date: '12', count: '12'),
     _DayItem(day: 'TUE', date: '13', count: '8'),
     _DayItem(day: 'WED', date: '14', count: '18'),
@@ -42,10 +39,10 @@ class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
     _DayItem(day: 'SUN', date: '18', count: '5'),
   ];
 
-  final slots = const [
+  static const slots = [
     _SlotGroup(
-      timeLabel: '8:00 – 10:00 AM',
-      iconColor: Color(0xFF5B8DEF),
+      timeLabel: '8:00 - 10:00 AM',
+      iconColor: Color(0xFFFF9800),
       deliveries: [
         _DeliveryItem(
           name: 'Ahmed Mohamed',
@@ -57,8 +54,8 @@ class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
       ],
     ),
     _SlotGroup(
-      timeLabel: '10:00 – 12:00 PM',
-      iconColor: Color(0xFFF2A000),
+      timeLabel: '10:00 - 12:00 PM',
+      iconColor: Color(0xFFFFB74D),
       deliveries: [
         _DeliveryItem(
           name: 'Mariem Ali',
@@ -76,110 +73,93 @@ class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
     return GetBuilder<WaterSubscriptionCalendarController>(
       init: controller,
       global: false,
-      builder: (_) => _buildScreen(context),
-    );
-  }
-
-  Widget _buildScreen(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFFF8F4),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFFFF0E8),
-                Color(0xFFFFF8F4),
-                Color(0xFFF7F7F7),
-              ],
-              stops: [0, 0.22, 1],
-            ),
+      builder: (_) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(
-                  onBack: () => Navigator.of(context).maybePop(),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFFF9F6),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFFFF1EB),
+                    Color(0xFFFFF9F6),
+                    Color(0xFFFFF9F6),
+                  ],
+                  stops: [0, 0.22, 1],
                 ),
-                const SizedBox(height: 14),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                    children: [
-                      const _StatsGrid(
-                        total: '18',
-                        morning: '10',
-                        afternoon: '6',
-                        paused: '2',
-                        morningColor: _morningBlue,
-                        afternoonColor: _afternoonOrange,
-                        pausedColor: _pausedBrown,
-                      ),
-                      const SizedBox(height: 18),
-                      _WeeklyPlannerHeader(
-                        monthLabel: 'AUG 2026',
-                        onPrev: () {},
-                        onNext: () {},
-                      ),
-                      const SizedBox(height: 12),
-                      _WeekStrip(
-                        days: weekDays,
-                        selectedIndex: controller.selectedDayIndex,
-                        onSelect: controller.selectDay,
-                      ),
-                      const SizedBox(height: 16),
-                      _SearchField(controller: controller.searchController),
-                      const SizedBox(height: 12),
-                      _FilterChips(
-                        filters: controller.filters,
-                        selectedIndex: controller.selectedFilterIndex,
-                        onSelect: controller.selectFilter,
-                      ),
-                      const SizedBox(height: 18),
-                      const Text(
-                        'Wednesday, 14 Aug 2026',
-                        style: TextStyle(
-                          color: Color(0xFF1E212C),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '18 Scheduled Deliveries',
-                        style: TextStyle(
-                          color: Color(0xFF8E8E8E),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      for (final slot in slots) ...[
-                        _SlotHeader(
-                          timeLabel: slot.timeLabel,
-                          iconColor: slot.iconColor,
-                        ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+                  _Header(onBack: () => Navigator.of(context).maybePop()),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      children: [
+                        const _StatsGrid(),
+                        const SizedBox(height: 18),
+                        const _WeeklyPlannerHeader(),
                         const SizedBox(height: 10),
-                        for (final d in slot.deliveries) ...[
-                          _SubscriptionCard(item: d),
-                          const SizedBox(height: 12),
-                        ],
+                        _WeekStrip(
+                          days: weekDays,
+                          selectedIndex: controller.selectedDayIndex,
+                          onSelect: controller.selectDay,
+                        ),
+                        const SizedBox(height: 14),
+                        _SearchField(controller: controller.searchController),
+                        const SizedBox(height: 12),
+                        _FilterChips(
+                          filters: controller.filters,
+                          selectedIndex: controller.selectedFilterIndex,
+                          onSelect: controller.selectFilter,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Wednesday, 14 Aug 2026',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF1A1A1A),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            height: 1.2,
+                          ),
+                        ),
                         const SizedBox(height: 4),
+                        Text(
+                          '18 Scheduled Deliveries',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF9E9E9E),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        for (final slot in slots) ...[
+                          _SlotHeader(
+                            timeLabel: slot.timeLabel,
+                            iconColor: slot.iconColor,
+                          ),
+                          const SizedBox(height: 10),
+                          for (final delivery in slot.deliveries) ...[
+                            _SubscriptionCard(item: delivery),
+                            const SizedBox(height: 12),
+                          ],
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -238,12 +218,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Subscription Calendar',
-              style: TextStyle(
-                color: Color(0xFF1E212C),
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -257,19 +237,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFFFD8C8)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: Color(0xFFFF5E21),
-                    size: 28,
+                    color: Color(0xFFFF5216),
+                    size: 26,
                   ),
                 ),
               ),
@@ -282,67 +255,48 @@ class _Header extends StatelessWidget {
 }
 
 class _StatsGrid extends StatelessWidget {
-  const _StatsGrid({
-    required this.total,
-    required this.morning,
-    required this.afternoon,
-    required this.paused,
-    required this.morningColor,
-    required this.afternoonColor,
-    required this.pausedColor,
-  });
-
-  final String total;
-  final String morning;
-  final String afternoon;
-  final String paused;
-  final Color morningColor;
-  final Color afternoonColor;
-  final Color pausedColor;
+  const _StatsGrid();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _StatCard(
                 label: 'TOTAL',
-                value: total,
-                labelColor: const Color(0xFF9E9E9E),
-                valueColor: const Color(0xFF1A1A1A),
+                value: '18',
+                color: Color(0xFF1A1A1A),
+                labelColor: Color(0xFF9E9E9E),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: _StatCard(
                 label: 'MORNING',
-                value: morning,
-                labelColor: morningColor,
-                valueColor: morningColor,
+                value: '10',
+                color: Color(0xFF2196F3),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _StatCard(
                 label: 'AFTERNOON',
-                value: afternoon,
-                labelColor: afternoonColor,
-                valueColor: afternoonColor,
+                value: '6',
+                color: Color(0xFFFF5722),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: _StatCard(
                 label: 'PAUSED',
-                value: paused,
-                labelColor: pausedColor,
-                valueColor: pausedColor,
+                value: '2',
+                color: Color(0xFF5D4037),
               ),
             ),
           ],
@@ -356,27 +310,28 @@ class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.label,
     required this.value,
-    required this.labelColor,
-    required this.valueColor,
+    required this.color,
+    this.labelColor,
   });
 
   final String label;
   final String value;
-  final Color labelColor;
-  final Color valueColor;
+  final Color color;
+  final Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -385,21 +340,22 @@ class _StatCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              color: labelColor,
-              fontWeight: FontWeight.w700,
+            style: GoogleFonts.inter(
+              color: labelColor ?? color,
+              fontWeight: FontWeight.w600,
               fontSize: 11,
-              letterSpacing: 0.4,
+              letterSpacing: 0.6,
+              height: 1.1,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              color: valueColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 28,
-              height: 1,
+            style: GoogleFonts.inter(
+              color: color,
+              fontWeight: FontWeight.w700,
+              fontSize: 26,
+              height: 1.05,
             ),
           ),
         ],
@@ -409,46 +365,32 @@ class _StatCard extends StatelessWidget {
 }
 
 class _WeeklyPlannerHeader extends StatelessWidget {
-  const _WeeklyPlannerHeader({
-    required this.monthLabel,
-    required this.onPrev,
-    required this.onNext,
-  });
-
-  final String monthLabel;
-  final VoidCallback onPrev;
-  final VoidCallback onNext;
+  const _WeeklyPlannerHeader();
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
+        Text(
           'WEEKLY PLANNER',
-          style: TextStyle(
-            color: Color(0xFF1E212C),
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-            letterSpacing: 0.3,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF1A1A1A),
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            letterSpacing: 0.4,
           ),
         ),
         const Spacer(),
-        InkWell(
-          onTap: onPrev,
-          child: const Icon(Icons.chevron_left, size: 20, color: Color(0xFF757575)),
-        ),
+        const Icon(Icons.chevron_left, size: 18, color: Color(0xFF9E9E9E)),
         Text(
-          monthLabel,
-          style: const TextStyle(
-            color: Color(0xFF5A5A5A),
-            fontWeight: FontWeight.w700,
+          'AUG 2026',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF757575),
+            fontWeight: FontWeight.w600,
             fontSize: 12,
           ),
         ),
-        InkWell(
-          onTap: onNext,
-          child: const Icon(Icons.chevron_right, size: 20, color: Color(0xFF757575)),
-        ),
+        const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9E9E9E)),
       ],
     );
   }
@@ -467,86 +409,109 @@ class _WeekStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 88,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: days.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final day = days[index];
-          final selected = index == selectedIndex;
-          return GestureDetector(
-            onTap: () => onSelect(index),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 160),
-              width: 56,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: selected ? const Color(0xFFFF5E21) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: selected ? 0.12 : 0.04),
-                    blurRadius: selected ? 10 : 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    day.day,
-                    style: TextStyle(
-                      color: selected ? Colors.white : const Color(0xFF8E8E8E),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    day.date,
-                    style: TextStyle(
-                      color: selected ? Colors.white : const Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  if (selected)
-                    Container(
-                      width: 22,
-                      height: 22,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.22),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        day.count,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10,
-                        ),
-                      ),
-                    )
-                  else
-                    Text(
-                      day.count,
-                      style: const TextStyle(
-                        color: Color(0xFFB0B0B0),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
-                      ),
-                    ),
-                ],
+    return Row(
+      children: [
+        for (var index = 0; index < days.length; index++) ...[
+          if (index > 0) const SizedBox(width: 6),
+          Expanded(
+            child: _DayCard(
+              day: days[index],
+              selected: index == selectedIndex,
+              onTap: () => onSelect(index),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DayCard extends StatelessWidget {
+  const _DayCard({
+    required this.day,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final _DayItem day;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = selected ? Colors.white : const Color(0xFF9E9E9E);
+    final date = selected ? Colors.white : const Color(0xFF1A1A1A);
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        height: 86,
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFFF5722) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: selected ? 0.12 : 0.04),
+              blurRadius: selected ? 10 : 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              day.day,
+              style: GoogleFonts.inter(
+                color: label,
+                fontWeight: FontWeight.w600,
+                fontSize: 10,
+                height: 1,
               ),
             ),
-          );
-        },
+            const SizedBox(height: 6),
+            Text(
+              day.date,
+              style: GoogleFonts.inter(
+                color: date,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                height: 1,
+              ),
+            ),
+            const SizedBox(height: 6),
+            if (selected)
+              Container(
+                width: 22,
+                height: 22,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  day.count,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    height: 1,
+                  ),
+                ),
+              )
+            else
+              Text(
+                day.count,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFBDBDBD),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 11,
+                  height: 1,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -559,25 +524,38 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: 'Search by subscription ID, name',
-        hintStyle: const TextStyle(
-          color: Color(0xFFB0B0B0),
-          fontSize: 13.5,
+    return SizedBox(
+      height: 48,
+      child: TextField(
+        controller: controller,
+        style: GoogleFonts.inter(
+          color: const Color(0xFF1A1A1A),
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
         ),
-        prefixIcon: const Icon(Icons.search, color: Color(0xFFB0B0B0)),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFFFF5E21)),
+        decoration: InputDecoration(
+          hintText: 'Search by subscription ID, name',
+          hintStyle: GoogleFonts.inter(
+            color: const Color(0xFFBDBDBD),
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Color(0xFFBDBDBD),
+            size: 20,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
         ),
       ),
     );
@@ -598,7 +576,7 @@ class _FilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36,
+      height: 34,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
@@ -611,18 +589,19 @@ class _FilterChips extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: selected ? const Color(0xFFFF5E21) : Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                color: selected ? const Color(0xFFFF5722) : Colors.white,
+                borderRadius: BorderRadius.circular(18),
                 border: selected
                     ? null
                     : Border.all(color: const Color(0xFFE0E0E0)),
               ),
               child: Text(
                 filters[index],
-                style: TextStyle(
-                  color: selected ? Colors.white : const Color(0xFF333333),
+                style: GoogleFonts.inter(
+                  color: selected ? Colors.white : const Color(0xFF424242),
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
+                  height: 1,
                 ),
               ),
             ),
@@ -650,15 +629,15 @@ class _SlotHeader extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           timeLabel,
-          style: const TextStyle(
-            color: Color(0xFF8E8E8E),
-            fontWeight: FontWeight.w700,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF757575),
+            fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
         ),
         const SizedBox(width: 10),
         const Expanded(
-          child: Divider(color: Color(0xFFE6E6E6), thickness: 1),
+          child: Divider(color: Color(0xFFEEEEEE), thickness: 1, height: 1),
         ),
       ],
     );
@@ -670,12 +649,12 @@ class _SubscriptionCard extends StatelessWidget {
 
   final _DeliveryItem item;
 
-  static const Color _orange = Color(0xFFFF5E21);
+  static const Color _orange = Color(0xFFFF5722);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -694,14 +673,14 @@ class _SubscriptionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                radius: 22,
-                backgroundColor: AppColors.avatarPink,
+                radius: 20,
+                backgroundColor: const Color(0xFFF8BBD0),
                 child: Text(
                   item.name[0].toUpperCase(),
-                  style: const TextStyle(
-                    color: AppColors.avatarText,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFE91E63),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
                   ),
                 ),
               ),
@@ -712,48 +691,43 @@ class _SubscriptionCard extends StatelessWidget {
                   children: [
                     Text(
                       item.name,
-                      style: const TextStyle(
-                        color: Color(0xFF1E212C),
-                        fontWeight: FontWeight.w600,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w700,
                         fontSize: 15,
+                        height: 1.2,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        ColorFiltered(
-                          colorFilter: const ColorFilter.matrix(<double>[
-                            1, 0, 0, 0, 0,
-                            0, 1, 0, 0, 0,
-                            0, 0, 1, 0, 0,
-                            1, 1, 1, 0, 0,
-                          ]),
-                          child: Image.asset(
-                            AppAssets.deliveryIcon,
-                            width: 14,
-                            height: 14,
-                            fit: BoxFit.contain,
-                            errorBuilder: (_, _, _) => const Icon(
-                              Icons.delivery_dining_rounded,
-                              size: 14,
-                              color: _orange,
-                            ),
+                        Image.asset(
+                          AppAssets.deliveryIcon,
+                          width: 14,
+                          height: 14,
+                          color: _orange,
+                          colorBlendMode: BlendMode.srcIn,
+                          errorBuilder: (_, _, _) => const Icon(
+                            Icons.delivery_dining_rounded,
+                            size: 14,
+                            color: _orange,
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text(
+                        Text(
                           'Delivery',
-                          style: TextStyle(
+                          style: GoogleFonts.inter(
                             color: _orange,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             fontSize: 12,
                           ),
                         ),
+                        const SizedBox(width: 6),
                         Text(
-                          '  ${item.orderId}',
-                          style: const TextStyle(
-                            color: Color(0xFF8E8E8E),
-                            fontWeight: FontWeight.w500,
+                          item.orderId,
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF9E9E9E),
+                            fontWeight: FontWeight.w400,
                             fontSize: 12,
                           ),
                         ),
@@ -766,35 +740,55 @@ class _SubscriptionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8F5E9),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      '• Active',
-                      style: TextStyle(
-                        color: Color(0xFF2E7D32),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF4CAF50),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Active',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF4CAF50),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                            height: 1.1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 6),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF3E5F5),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       item.frequency,
-                      style: const TextStyle(
-                        color: Color(0xFF7B1FA2),
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF9C27B0),
+                        fontWeight: FontWeight.w600,
                         fontSize: 11,
+                        height: 1.1,
                       ),
                     ),
                   ),
@@ -815,10 +809,11 @@ class _SubscriptionCard extends StatelessWidget {
               children: [
                 Text(
                   item.product,
-                  style: const TextStyle(
-                    color: Color(0xFF1E212C),
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF1A1A1A),
                     fontWeight: FontWeight.w700,
-                    fontSize: 13.5,
+                    fontSize: 14,
+                    height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -827,13 +822,13 @@ class _SubscriptionCard extends StatelessWidget {
                     const Icon(
                       Icons.access_time_rounded,
                       size: 14,
-                      color: Color(0xFF8E8E8E),
+                      color: Color.fromARGB(255, 100, 99, 99),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       item.slotLabel,
-                      style: const TextStyle(
-                        color: Color(0xFF8E8E8E),
+                      style: GoogleFonts.inter(
+                        color: const Color.fromARGB(255, 100, 99, 99),
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
@@ -844,65 +839,38 @@ class _SubscriptionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 44,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: _orange,
-                      side: const BorderSide(color: _orange),
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Chat With Customer',
-                      softWrap: false,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12.5,
-                        height: 1.1,
-                      ),
-                    ),
-                  ),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                ChatView.open(context, customerName: item.name);
+              },
+              icon: Image.asset(
+                'lib/water/Assets/Images/chat.png',
+                width: 18,
+                height: 18,
+                color: Colors.white,
+                colorBlendMode: BlendMode.srcIn,
+              ),
+              label: Text(
+                'Chat with Customer',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  height: 1,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: SizedBox(
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _orange,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Call Customer',
-                      softWrap: false,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12.5,
-                        height: 1.1,
-                      ),
-                    ),
-                  ),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: _orange,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),

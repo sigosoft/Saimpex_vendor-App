@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LeaveManagementView extends StatefulWidget {
   const LeaveManagementView({super.key});
+
+  static const orange = Color(0xFFFF5216);
+  static const ink = Color(0xFF1C1D1B);
+  static const button = Color(0xFFFF5317);
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -15,64 +19,49 @@ class LeaveManagementView extends StatefulWidget {
   State<LeaveManagementView> createState() => _LeaveManagementViewState();
 }
 
+class _Leave {
+  _Leave({required this.from, required this.to, required this.reason, required this.completed});
+
+  final DateTime from;
+  final DateTime to;
+  final String reason;
+  final bool completed;
+}
+
 class _LeaveManagementViewState extends State<LeaveManagementView> {
-  DateTime? fromDate;
-  DateTime? toDate;
-  final reasonController = TextEditingController();
+  DateTime? _from;
+  DateTime? _to;
+  final _reason = TextEditingController();
+  String? _error;
 
-  final upcoming = [
-    const _LeaveItem(
-      range: 'Feb 20 - Feb 25, 2026',
-      reason: 'Renovation Work',
-      status: _LeaveStatus.scheduled,
-    ),
-    const _LeaveItem(
-      range: 'Feb 20 - Feb 25, 2026',
-      reason: 'Renovation Work',
-      status: _LeaveStatus.scheduled,
-    ),
-  ];
-
-  final completed = [
-    const _LeaveItem(
-      range: 'Jan 20 - Jan 25, 2025',
-      reason: 'Renovation Work',
-      status: _LeaveStatus.completed,
-    ),
-    const _LeaveItem(
-      range: 'Jan 20 - Jan 25, 2025',
-      reason: 'Renovation Work',
-      status: _LeaveStatus.completed,
-    ),
+  final List<_Leave> _leaves = [
+    _Leave(from: DateTime(2026, 2, 20), to: DateTime(2026, 2, 25), reason: 'Renovation Work', completed: false),
+    _Leave(from: DateTime(2026, 2, 20), to: DateTime(2026, 2, 25), reason: 'Renovation Work', completed: false),
+    _Leave(from: DateTime(2025, 1, 20), to: DateTime(2025, 1, 25), reason: 'Renovation Work', completed: true),
+    _Leave(from: DateTime(2025, 1, 20), to: DateTime(2025, 1, 25), reason: 'Renovation Work', completed: true),
   ];
 
   @override
   void dispose() {
-    reasonController.dispose();
+    _reason.dispose();
     super.dispose();
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'dd-mm-yyyy';
-    final d = date.day.toString().padLeft(2, '0');
-    final m = date.month.toString().padLeft(2, '0');
-    return '$d-$m-${date.year}';
-  }
-
-  Future<void> _pickDate({required bool isFrom}) async {
-    final now = DateTime.now();
-    final initial = isFrom ? (fromDate ?? now) : (toDate ?? fromDate ?? now);
+  Future<void> _pickDate({required bool from}) async {
+    final initial = (from ? _from : _to) ?? DateTime.now();
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 3),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: AppColors.primaryOrange,
-                ),
+            colorScheme: const ColorScheme.light(
+              primary: LeaveManagementView.button,
+              onPrimary: Colors.white,
+              onSurface: LeaveManagementView.ink,
+            ),
           ),
           child: child!,
         );
@@ -80,142 +69,214 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
     );
     if (picked == null) return;
     setState(() {
-      if (isFrom) {
-        fromDate = picked;
-        if (toDate != null && toDate!.isBefore(picked)) {
-          toDate = picked;
-        }
+      if (from) {
+        _from = picked;
       } else {
-        toDate = picked;
+        _to = picked;
       }
+      _error = null;
     });
   }
 
-  void _submitLeave() {
-    if (fromDate == null || toDate == null) return;
-    final reason = reasonController.text.trim().isEmpty
-        ? 'Renovation Work'
-        : reasonController.text.trim();
-    final range =
-        '${_shortRange(fromDate!)} - ${_shortRange(toDate!)}, ${toDate!.year}';
+  void _markLeave() {
+    final reason = _reason.text.trim();
+    if (_from == null || _to == null) {
+      setState(() => _error = 'Select from and to dates');
+      return;
+    }
+    if (_to!.isBefore(_from!)) {
+      setState(() => _error = 'To date must be after from date');
+      return;
+    }
+    if (reason.isEmpty) {
+      setState(() => _error = 'Enter a reason');
+      return;
+    }
+    HapticFeedback.lightImpact();
     setState(() {
-      upcoming.insert(
-        0,
-        _LeaveItem(
-          range: range,
-          reason: reason,
-          status: _LeaveStatus.scheduled,
-        ),
-      );
-      fromDate = null;
-      toDate = null;
-      reasonController.clear();
+      _leaves.insert(0, _Leave(from: _from!, to: _to!, reason: reason, completed: false));
+      _from = null;
+      _to = null;
+      _reason.clear();
+      _error = null;
     });
-  }
-
-  String _shortRange(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final upcoming = _leaves.where((leave) => !leave.completed).toList();
+    final completed = _leaves.where((leave) => leave.completed).toList();
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFE8E0), Color(0xFFFFF6F2), Colors.white],
+              stops: [0, 0.2, 0.38],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
-                    children: [
-                      const Text(
-                        'Mark Leave',
-                        style: TextStyle(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                  children: [
+                    Text(
+                      'Mark Leave',
+                      style: GoogleFonts.inter(
+                        color: LeaveManagementView.ink,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF1A1A1A).withValues(alpha: 0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: _fieldLabel('From Date')),
+                              const SizedBox(width: 12),
+                              Expanded(child: _fieldLabel('To Date')),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _DateBox(
+                                  value: _from,
+                                  onTap: () => _pickDate(from: true),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _DateBox(
+                                  value: _to,
+                                  onTap: () => _pickDate(from: false),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          _fieldLabel('Reason For Leave'),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _reason,
+                            maxLines: 3,
+                            onChanged: (_) {
+                              if (_error != null) setState(() => _error = null);
+                            },
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF3F4555),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'e.g. Annual vacation, renovation...',
+                              hintStyle: GoogleFonts.inter(
+                                color: const Color(0xFFB7C2D0),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                              filled: true,
+                              fillColor: const Color(0xFFF3F5F7),
+                              contentPadding: const EdgeInsets.all(12),
+                              border: _reasonBorder,
+                              enabledBorder: _reasonBorder,
+                              focusedBorder: _reasonBorder,
+                            ),
+                          ),
+                          if (_error != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              _error!,
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFBA1B1B),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 16),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: const [
+                                BoxShadow(color: Color(0x33FF5317), blurRadius: 12, offset: Offset(0, 6)),
+                              ],
+                            ),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: FilledButton(
+                                onPressed: _markLeave,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: LeaveManagementView.button,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(
+                                  'Mark Leave',
+                                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const _HistoryHeader(),
+                    const SizedBox(height: 14),
+                    const _GroupTitle('Upcoming Leaves', color: Color(0xFF3B82F6)),
+                    const SizedBox(height: 10),
+                    for (final leave in upcoming) ...[
+                      _LeaveCard(
+                        leave: leave,
+                        onCancel: () {
+                          HapticFeedback.lightImpact();
+                          setState(() => _leaves.remove(leave));
+                        },
                       ),
                       const SizedBox(height: 12),
-                      _MarkLeaveCard(
-                        fromLabel: _formatDate(fromDate),
-                        toLabel: _formatDate(toDate),
-                        reasonController: reasonController,
-                        onPickFrom: () => _pickDate(isFrom: true),
-                        onPickTo: () => _pickDate(isFrom: false),
-                        onSubmit: _submitLeave,
-                      ),
-                      const SizedBox(height: 22),
-                      const _SectionHeader(
-                        title: 'LEAVES HISTORY',
-                        showSeeAll: true,
-                      ),
-                      const SizedBox(height: 14),
-                      const Text(
-                        'Upcoming Leaves',
-                        style: TextStyle(
-                          color: AppColors.scheduledText,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14.5,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      for (var i = 0; i < upcoming.length; i++) ...[
-                        _LeaveCard(
-                          item: upcoming[i],
-                          onCancel: () => setState(() => upcoming.removeAt(i)),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                      const SizedBox(height: 8),
-                      const _SectionHeader(
-                        title: 'Completed Leaves',
-                        titleColor: AppColors.inventoryAvailable,
-                        showSeeAll: true,
-                      ),
-                      const SizedBox(height: 10),
-                      for (final item in completed) ...[
-                        _LeaveCard(item: item),
-                        const SizedBox(height: 10),
-                      ],
                     ],
-                  ),
+                    const SizedBox(height: 6),
+                    const Row(
+                      children: [
+                        _GroupTitle('Completed Leaves', color: Color(0xFF16A34A)),
+                        Spacer(),
+                        _SeeAll(),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    for (final leave in completed) ...[
+                      _LeaveCard(leave: leave),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -223,18 +284,20 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
   }
 }
 
-enum _LeaveStatus { scheduled, completed }
+const _reasonBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.all(Radius.circular(12)),
+  borderSide: BorderSide.none,
+);
 
-class _LeaveItem {
-  const _LeaveItem({
-    required this.range,
-    required this.reason,
-    required this.status,
-  });
-
-  final String range;
-  final String reason;
-  final _LeaveStatus status;
+Widget _fieldLabel(String text) {
+  return Text(
+    text,
+    style: GoogleFonts.inter(
+      color: const Color(0xFF8A97A8),
+      fontWeight: FontWeight.w500,
+      fontSize: 12,
+    ),
+  );
 }
 
 class _Header extends StatelessWidget {
@@ -251,12 +314,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Leave Management',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: LeaveManagementView.ink,
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -270,18 +333,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: LeaveManagementView.orange,
+                    size: 26,
                   ),
                 ),
               ),
@@ -293,276 +350,133 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _MarkLeaveCard extends StatelessWidget {
-  const _MarkLeaveCard({
-    required this.fromLabel,
-    required this.toLabel,
-    required this.reasonController,
-    required this.onPickFrom,
-    required this.onPickTo,
-    required this.onSubmit,
-  });
+class _DateBox extends StatelessWidget {
+  const _DateBox({required this.value, required this.onTap});
 
-  final String fromLabel;
-  final String toLabel;
-  final TextEditingController reasonController;
-  final VoidCallback onPickFrom;
-  final VoidCallback onPickTo;
-  final VoidCallback onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _DateField(
-                  label: 'From Date',
-                  value: fromLabel,
-                  onTap: onPickFrom,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _DateField(
-                  label: 'To Date',
-                  value: toLabel,
-                  onTap: onPickTo,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          const Text(
-            'Reason For Leave',
-            style: TextStyle(
-              color: AppColors.textMuted,
-              fontWeight: FontWeight.w500,
-              fontSize: 12.5,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: reasonController,
-            maxLines: 3,
-            style: const TextStyle(
-              color: AppColors.textDark,
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
-            decoration: InputDecoration(
-              hintText: 'e.g. Annual vacation, renovation...',
-              hintStyle: const TextStyle(
-                color: AppColors.textHint,
-                fontWeight: FontWeight.w400,
-                fontSize: 13.5,
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF5F6F8),
-              contentPadding: const EdgeInsets.all(14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: AppColors.primaryOrange,
-                  width: 1.2,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: onSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryOrange,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shadowColor: AppColors.primaryOrange.withValues(alpha: 0.35),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text(
-                'Mark Leave',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15.5,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  const _DateField({
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  final String label;
-  final String value;
+  final DateTime? value;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final isPlaceholder = value == 'dd-mm-yyyy';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.textMuted,
-            fontWeight: FontWeight.w500,
-            fontSize: 12.5,
+    final text = value == null
+        ? 'dd-mm-yyyy'
+        : '${value!.day.toString().padLeft(2, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.year}';
+    return Material(
+      color: const Color(0xFFF8FAFC),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFD7DDE4)),
           ),
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 46,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F6F8),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    style: TextStyle(
-                      color: isPlaceholder
-                          ? AppColors.textHint
-                          : AppColors.textDark,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13.5,
-                    ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  text,
+                  style: GoogleFonts.inter(
+                    color: value == null ? const Color(0xFF9AA8B8) : const Color(0xFF29324C),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
                   ),
                 ),
-                const Icon(
-                  Icons.calendar_today_outlined,
-                  color: AppColors.textDark,
-                  size: 16,
-                ),
-              ],
-            ),
+              ),
+              Image.asset(
+                'lib/pharmacy/Assets/images/calender.png',
+                width: 18,
+                height: 18,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    this.titleColor = AppColors.textDark,
-    this.showSeeAll = false,
-  });
-
-  final String title;
-  final Color titleColor;
-  final bool showSeeAll;
+class _HistoryHeader extends StatelessWidget {
+  const _HistoryHeader();
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: titleColor,
-              fontWeight: FontWeight.w600,
-              fontSize: title == title.toUpperCase() ? 14 : 14.5,
-              letterSpacing: title == title.toUpperCase() ? 0.3 : 0,
-            ),
+        Text(
+          'LEAVES HISTORY',
+          style: GoogleFonts.inter(
+            color: const Color(0xFF3F4454),
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            letterSpacing: 0.6,
           ),
         ),
-        if (showSeeAll)
-          GestureDetector(
-            onTap: () {},
-            child: const Text(
-              'See All',
-              style: TextStyle(
-                color: AppColors.primaryOrange,
-                fontWeight: FontWeight.w700,
-                fontSize: 13.5,
-              ),
-            ),
-          ),
+        const Spacer(),
+        const _SeeAll(),
       ],
     );
   }
 }
 
-class _LeaveCard extends StatelessWidget {
-  const _LeaveCard({
-    required this.item,
-    this.onCancel,
-  });
-
-  final _LeaveItem item;
-  final VoidCallback? onCancel;
-
-  bool get isScheduled => item.status == _LeaveStatus.scheduled;
+class _SeeAll extends StatelessWidget {
+  const _SeeAll();
 
   @override
   Widget build(BuildContext context) {
-    final badgeBg =
-        isScheduled ? AppColors.scheduledBg : AppColors.inventoryAvailableBg;
-    final badgeColor =
-        isScheduled ? AppColors.scheduledText : AppColors.inventoryAvailable;
-    final badgeLabel = isScheduled ? 'SCHEDULED' : 'COMPLETED';
+    return Text(
+      'See All',
+      style: GoogleFonts.inter(
+        color: LeaveManagementView.orange,
+        fontWeight: FontWeight.w600,
+        fontSize: 13,
+      ),
+    );
+  }
+}
 
+class _GroupTitle extends StatelessWidget {
+  const _GroupTitle(this.text, {required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: GoogleFonts.inter(
+        color: color,
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+      ),
+    );
+  }
+}
+
+class _LeaveCard extends StatelessWidget {
+  const _LeaveCard({required this.leave, this.onCancel});
+
+  final _Leave leave;
+  final VoidCallback? onCancel;
+
+  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  String _date(DateTime date) => '${_months[date.month - 1]} ${date.day}';
+
+  @override
+  Widget build(BuildContext context) {
+    final scheduled = onCancel != null;
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFE8EDF3)),
       ),
       child: Column(
         children: [
@@ -574,19 +488,19 @@ class _LeaveCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.range,
-                      style: const TextStyle(
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w700,  
-                        fontSize: 14.5,
+                      '${_date(leave.from)} - ${_date(leave.to)}, ${leave.to.year}',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF3F4555),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      item.reason,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w400,
+                      leave.reason,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF8B97A8),
+                        fontWeight: FontWeight.w500,
                         fontSize: 13,
                       ),
                     ),
@@ -594,46 +508,38 @@ class _LeaveCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: badgeBg,
+                  color: scheduled ? const Color(0xFFDBEAFE) : const Color(0xFFE6F3EB),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  badgeLabel,
-                  style: TextStyle(
-                    color: badgeColor,
+                  scheduled ? 'SCHEDULED' : 'COMPLETED',
+                  style: GoogleFonts.inter(
+                    color: scheduled ? const Color(0xFF3B82F6) : const Color(0xFF16A34A),
                     fontWeight: FontWeight.w700,
-                    fontSize: 11,
+                    fontSize: 10,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ),
             ],
           ),
-          if (isScheduled && onCancel != null) ...[
+          if (scheduled) ...[
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
-              height: 40,
+              height: 42,
               child: OutlinedButton(
                 onPressed: onCancel,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primaryOrange,
-                  side: const BorderSide(
-                    color: AppColors.primaryOrange,
-                    width: 1.2,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  foregroundColor: LeaveManagementView.orange,
+                  side: const BorderSide(color: LeaveManagementView.orange, width: 1.2),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text(
+                child: Text(
                   'Cancel Leave',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13.5,
-                  ),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),
             ),

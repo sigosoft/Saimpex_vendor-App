@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
-
-class _PayoutHistoryItem {
-  const _PayoutHistoryItem({
-    required this.id,
-    required this.timestamp,
-    required this.amount,
-    required this.balanceAfter,
-  });
-
-  final String id;
-  final String timestamp;
-  final String amount;
-  final String balanceAfter;
-}
+import 'package:google_fonts/google_fonts.dart';
 
 class ReceivedPayoutsView extends StatefulWidget {
   const ReceivedPayoutsView({super.key});
+
+  static const orange = Color(0xFFFF5216);
+  static const ink = Color(0xFF111111);
+  static const muted = Color(0xFF918E94);
+  static const label = Color(0xFFA8B4C2);
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -29,115 +20,143 @@ class ReceivedPayoutsView extends StatefulWidget {
   State<ReceivedPayoutsView> createState() => _ReceivedPayoutsViewState();
 }
 
-class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
-  final searchController = TextEditingController();
+class _Payout {
+  const _Payout({
+    required this.id,
+    required this.when,
+    required this.amount,
+    required this.balance,
+  });
 
-  static const history = [
-    _PayoutHistoryItem(
+  final String id;
+  final String when;
+  final String amount;
+  final String balance;
+}
+
+class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
+  final _search = TextEditingController();
+
+  static const _payouts = [
+    _Payout(
       id: '#PYT240',
-      timestamp: 'Feb 07, 2026 10:45 AM, Today',
+      when: 'Feb 07, 2026 10:45 AM, Today',
       amount: '400.00 MRU',
-      balanceAfter: '1,000.00 MRU',
+      balance: '1,000.00 MRU',
     ),
-    _PayoutHistoryItem(
-      id: '#PYT239',
-      timestamp: 'Feb 05, 2026 03:20 PM',
-      amount: '750.00 MRU',
-      balanceAfter: '1,400.00 MRU',
+    _Payout(
+      id: '#PYT240',
+      when: 'Feb 07, 2026 10:45 AM, Today',
+      amount: '400.00 MRU',
+      balance: '1,000.00 MRU',
     ),
-    _PayoutHistoryItem(
-      id: '#PYT238',
-      timestamp: 'Feb 02, 2026 11:10 AM',
-      amount: '1,200.00 MRU',
-      balanceAfter: '2,150.00 MRU',
-    ),
-    _PayoutHistoryItem(
-      id: '#PYT237',
-      timestamp: 'Jan 28, 2026 09:05 AM',
-      amount: '980.00 MRU',
-      balanceAfter: '3,350.00 MRU',
+    _Payout(
+      id: '#PYT240',
+      when: 'Feb 07, 2026 10:45 AM, Today',
+      amount: '400.00 MRU',
+      balance: '1,000.00 MRU',
     ),
   ];
 
-  List<_PayoutHistoryItem> get filtered {
-    final q = searchController.text.trim().toLowerCase();
-    if (q.isEmpty) return history;
-    return history
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  List<_Payout> get _visible {
+    final query = _search.text.trim().toLowerCase();
+    if (query.isEmpty) return _payouts;
+    return _payouts
         .where(
-          (item) =>
-              item.id.toLowerCase().contains(q) ||
-              item.amount.toLowerCase().contains(q),
+          (payout) =>
+              payout.id.toLowerCase().contains(query) ||
+              payout.amount.toLowerCase().contains(query) ||
+              payout.balance.toLowerCase().contains(query),
         )
         .toList();
   }
 
   @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final payouts = _visible;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFE8E0), Color(0xFFFFF4EF), Colors.white],
+              stops: [0, 0.22, 0.4],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
-                    children: [
-                      const _BalanceCard(),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'History',
-                        style: TextStyle(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                  children: [
+                    const _BalanceCard(),
+                    const SizedBox(height: 18),
+                    Text(
+                      'History',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF3F4251),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _search,
+                      onChanged: (_) => setState(() {}),
+                      style: GoogleFonts.inter(
+                        color: ReceivedPayoutsView.ink,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search amount or Transaction ID',
+                        hintStyle: GoogleFonts.inter(
+                          color: const Color(0xFFA9AEB6),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
                         ),
+                        prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFFA9AEB6)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        border: _searchBorder,
+                        enabledBorder: _searchBorder,
+                        focusedBorder: _searchBorder,
                       ),
+                    ),
+                    const SizedBox(height: 14),
+                    for (final payout in payouts) ...[
+                      _PayoutCard(payout: payout),
                       const SizedBox(height: 12),
-                      _SearchField(
-                        controller: searchController,
-                        onChanged: (_) => setState(() {}),
-                      ),
-                      const SizedBox(height: 14),
-                      for (final item in filtered) ...[
-                        _HistoryCard(item: item),
-                        const SizedBox(height: 12),
-                      ],
                     ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+
+const _searchBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.all(Radius.circular(12)),
+  borderSide: BorderSide(color: Color(0xFFE6E8EC)),
+);
 
 class _Header extends StatelessWidget {
   const _Header({required this.onBack});
@@ -153,12 +172,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Received Payouts',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -172,21 +191,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primaryOrange.withValues(alpha: 0.35),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: ReceivedPayoutsView.orange,
+                    size: 26,
                   ),
                 ),
               ),
@@ -203,97 +213,54 @@ class _BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryOrange.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 128),
-          color: AppColors.primaryOrange,
-          child: Stack(
-            clipBehavior: Clip.hardEdge,
-            children: [
-              // Large soft orb filling the right side of the card.
-              Positioned(
-                right: -70,
-                top: -55,
-                child: Container(
-                  width: 230,
-                  height: 230,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.14),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: CustomPaint(
+        painter: const _BalanceBackdropPainter(),
+        child: SizedBox(
+          height: 120,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Total Payout Balance',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
                   ),
                 ),
-              ),
-              // Smaller orb peeking from the bottom-left.
-              Positioned(
-                left: -55,
-                bottom: -65,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.12),
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(22, 28, 22, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                const SizedBox(height:5),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Total Payout Balance',
-                      style: TextStyle(
+                      '10,140.00',
+                      style: GoogleFonts.inter(
                         color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.5,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 28,
+                        height: 1,
                       ),
                     ),
-                    SizedBox(height: 14),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '10,140.00',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 36,
-                            height: 1,
-                          ),
+                    const SizedBox(width: 6),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 3),
+                      child: Text(
+                        'MRU',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
-                        SizedBox(width: 8),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            'MRU',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -301,174 +268,132 @@ class _BalanceCard extends StatelessWidget {
   }
 }
 
-class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.controller,
-    required this.onChanged,
-  });
-
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
+class _BalanceBackdropPainter extends CustomPainter {
+  const _BalanceBackdropPainter();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.fieldBorder),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.search_rounded,
-            color: AppColors.textHint,
-            size: 22,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              style: const TextStyle(
-                color: AppColors.textDark,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-              decoration: const InputDecoration(
-                hintText: 'Search amount or Transaction ID',
-                hintStyle: TextStyle(
-                  color: AppColors.textHint,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13.5,
-                ),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFFF5317));
+    final lighter = Paint()..color = const Color(0xFFFF642E);
+    canvas.drawCircle(Offset(size.width * 0.98, size.height * 0.46), size.height * 0.78, lighter);
+    canvas.drawCircle(Offset(size.width * -0.02, size.height * 0.9), size.height * 0.58, lighter);
   }
+
+  @override
+  bool shouldRepaint(covariant _BalanceBackdropPainter oldDelegate) => false;
 }
 
-class _HistoryCard extends StatelessWidget {
-  const _HistoryCard({required this.item});
+class _PayoutCard extends StatelessWidget {
+  const _PayoutCard({required this.payout});
 
-  final _PayoutHistoryItem item;
+  final _Payout payout;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFF0F1F3)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.id,
-                      style: const TextStyle(
-                        color: AppColors.primaryOrange,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time_rounded,
-                          color: AppColors.textMuted,
-                          size: 14,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        payout.id,
+                        style: GoogleFonts.inter(
+                          color: ReceivedPayoutsView.orange,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                         ),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            item.timestamp,
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time_outlined,
+                            size: 13,
+                            color: ReceivedPayoutsView.muted,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              payout.when,
+                              style: GoogleFonts.inter(
+                                color: ReceivedPayoutsView.muted,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'AMOUNT',
+                      style: GoogleFonts.inter(
+                        color: ReceivedPayoutsView.label,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      payout.amount,
+                      style: GoogleFonts.inter(
+                        color: ReceivedPayoutsView.ink,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              ],
+            ),
+          ),
+          const Divider(height: 1, thickness: 1, color: Color(0xFFF1F1F1)),
+          ColoredBox(
+            color: const Color(0xFFF4F5F7),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              child: Row(
                 children: [
-                  const Text(
-                    'AMOUNT',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
+                  Text(
+                    'BALANCE AFTER PAYOUT',
+                    style: GoogleFonts.inter(
+                      color: ReceivedPayoutsView.label,
                       fontWeight: FontWeight.w600,
-                      fontSize: 10.5,
+                      fontSize: 10,
                       letterSpacing: 0.4,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const Spacer(),
                   Text(
-                    item.amount,
-                    style: const TextStyle(
-                      color: AppColors.textDark,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14.5,
+                    payout.balance,
+                    style: GoogleFonts.inter(
+                      color: ReceivedPayoutsView.ink,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Divider(height: 1, color: AppColors.divider),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'BALANCE AFTER PAYOUT',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 10.5,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ),
-              Text(
-                item.balanceAfter,
-                style: const TextStyle(
-                  color: AppColors.textDark,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13.5,
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),

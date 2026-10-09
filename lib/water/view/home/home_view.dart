@@ -135,18 +135,12 @@ class _HomeViewState extends State<HomeView> {
                 onSeeAll: () => controller.onBottomNavSelect(1),
               ),
               const SizedBox(height: 12),
-              if (controller.isSubscriptionTab || controller.selectedFilterIndex == 0) ...[
-                _OrderTypeTabs(
-                  selectedIndex: controller.selectedTabIndex,
-                  onSelect: controller.selectOrderType,
-                ),
-                const SizedBox(height: 14),
-              ],
-              _SearchBlock(
-                controller: controller.searchController,
-                showSubscriptionCalendar:
-                    !controller.isSubscriptionTab && controller.selectedFilterIndex == 0,
+              _OrderTypeTabs(
+                selectedIndex: controller.selectedTabIndex,
+                onSelect: controller.selectOrderType,
               ),
+              const SizedBox(height: 14),
+              _SearchBlock(controller: controller.searchController),
               const SizedBox(height: 12),
               _StatusFilters(
                 filters: controller.activeFilters,
@@ -154,6 +148,11 @@ class _HomeViewState extends State<HomeView> {
                     controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1),
                 onSelect: controller.selectFilter,
                 badgeLabel: _filterBadgeLabel,
+              ),
+              const SizedBox(height: 10),
+              const Align(
+                alignment: Alignment.centerRight,
+                child: _SubscriptionCalendarLink(),
               ),
               const SizedBox(height: 12),
               if (controller.isSubscriptionTab)
@@ -189,9 +188,13 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildOrdersTab(BuildContext context) {
-    final list = controller.filteredOrders;
+    final subscription = controller.isSubscriptionTab;
+    final filters = controller.activeFilters;
     final filterIndex =
-        controller.selectedFilterIndex.clamp(0, controller.filters.length - 1);
+        controller.selectedFilterIndex.clamp(0, filters.length - 1);
+    final oneTime = controller.filteredOrders;
+    final subscriptions = controller.filteredSubscriptionOrders;
+    final count = subscription ? subscriptions.length : oneTime.length;
 
     return Container(
       width: double.infinity,
@@ -262,29 +265,64 @@ class _HomeViewState extends State<HomeView> {
           ),
           const SizedBox(height: 14),
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _OrderTypeTabs(
+                  selectedIndex: controller.selectedTabIndex,
+                  onSelect: controller.selectOrderType,
+                ),
+                const SizedBox(height: 14),
+                _SearchBlock(controller: controller.searchController),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
             padding: const EdgeInsets.only(left: 16),
             child: _StatusFilters(
-              filters: controller.filters,
+              filters: filters,
               selectedIndex: filterIndex,
               onSelect: controller.selectFilter,
-              badgeLabel: list.length.toString().padLeft(2, '0'),
+              badgeLabel: count.toString().padLeft(2, '0'),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _SubscriptionCalendarLink(),
             ),
           ),
           const SizedBox(height: 14),
           Expanded(
-            child: list.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-                    child: _EmptyOrders(message: 'No orders here'),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                    itemCount: list.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      return _OrderCard(order: list[index]);
-                    },
-                  ),
+            child: subscription
+                ? (subscriptions.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        child: _EmptyOrders(message: 'No subscription orders here'),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        itemCount: subscriptions.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          return _SubscriptionOrderCard(order: subscriptions[index]);
+                        },
+                      ))
+                : (oneTime.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        child: _EmptyOrders(message: 'No orders here'),
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        itemCount: oneTime.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          return _OrderCard(order: oneTime[index]);
+                        },
+                      )),
           ),
         ],
       ),
@@ -520,7 +558,10 @@ class _StoreStatusCard extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => onToggle(!isOpen),
+            onTap: () {
+              HapticFeedback.lightImpact();
+              onToggle(!isOpen);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               width: 52,
@@ -863,6 +904,8 @@ class _OrderTypeTabs extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
+  static const _labels = ['One-Time Orders', 'Subscription Orders'];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -881,25 +924,49 @@ class _OrderTypeTabs extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _Seg(
-              label: 'One-Time Orders',
-              selected: selectedIndex == 0,
-              badge: '1',
-              onTap: () => onSelect(0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final segment = constraints.maxWidth / _labels.length;
+          return SizedBox(
+            height: 40,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 420),
+                  curve: Curves.easeInOutCubic,
+                  left: selectedIndex * segment,
+                  top: 0,
+                  bottom: 0,
+                  width: segment,
+                  child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: List.generate(_labels.length, (index) {
+                    final selected = selectedIndex == index;
+                    return Expanded(
+                      child: _Seg(
+                        label: _labels[index],
+                        selected: selected,
+                        badge: selected ? '1' : null,
+                        onTap: () {
+                          if (index == selectedIndex) return;
+                          HapticFeedback.selectionClick();
+                          onSelect(index);
+                        },
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: _Seg(
-              label: 'Subscription Orders',
-              selected: selectedIndex == 1,
-              badge: '1',
-              onTap: () => onSelect(1),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -926,25 +993,20 @@ class _Seg extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            width: double.infinity,
-            height: double.infinity,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: selected ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          Center(
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 360),
+              curve: Curves.easeInOutCubic,
               style: TextStyle(
                 color: selected ? const Color(0xFF1A1A1A) : Colors.white,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 13,
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -977,56 +1039,55 @@ class _Seg extends StatelessWidget {
   }
 }
 
-class _SearchBlock extends StatelessWidget {
-  const _SearchBlock({
-    required this.controller,
-    this.showSubscriptionCalendar = true,
-  });
-
-  final TextEditingController controller;
-  final bool showSubscriptionCalendar;
+class _SubscriptionCalendarLink extends StatelessWidget {
+  const _SubscriptionCalendarLink();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (showSubscriptionCalendar)
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const SubscriptionCalendarView(),
-                ),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.calendarPurple),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.calendar_month_outlined,
-                      size: 14, color: AppColors.calendarPurple),
-                  SizedBox(width: 4),
-                  Text(
-                    'Subscription Calendar',
-                    style: TextStyle(
-                      color: AppColors.calendarPurple,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const SubscriptionCalendarView(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.calendarPurple),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.calendar_month_outlined,
+                size: 14, color: AppColors.calendarPurple),
+            SizedBox(width: 4),
+            Text(
+              'Subscription Calendar',
+              style: TextStyle(
+                color: AppColors.calendarPurple,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ),
-        Container(
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchBlock extends StatelessWidget {
+  const _SearchBlock({required this.controller});
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(28),
@@ -1073,8 +1134,6 @@ class _SearchBlock extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
     );
   }
 }
@@ -2470,85 +2529,86 @@ class _BottomNav extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            children: List.generate(5, (index) {
-              final selected = selectedIndex == index;
-              final asset = assetIcons[index];
-              return Expanded(
-                child: InkWell(
-                  onTap: () => onSelect(index),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 220),
-                        switchInCurve: Curves.easeOutBack,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (child, animation) {
-                          return ScaleTransition(
-                            scale: animation,
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: selected
-                            ? Container(
-                                key: const ValueKey('selected'),
-                                width: 40,
-                                height: 40,
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryOrange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: _NavIcon(
-                                  asset: asset,
-                                  fallback: Icons.home_rounded,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              )
-                            : SizedBox(
-                                key: const ValueKey('idle'),
-                                width: 40,
-                                height: 40,
-                                child: Center(
-                                  child: _NavIcon(
-                                    asset: asset,
-                                    fallback: Icons.home_rounded,
-                                    color: AppColors.navInactive,
-                                    size: asset == null ? 28 : 24,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final segment = constraints.maxWidth / labels.length;
+              return SizedBox(
+                width: constraints.maxWidth,
+                child: Stack(
+                  children: [
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 280),
+                      curve: Curves.easeOutCubic,
+                      left: selectedIndex * segment + (segment - 40) / 2,
+                      top: 0,
+                      width: 40,
+                      height: 40,
+                      child: const DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryOrange,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: List.generate(labels.length, (index) {
+                        final selected = selectedIndex == index;
+                        final asset = assetIcons[index];
+                        return Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              if (index == selectedIndex) return;
+                              HapticFeedback.selectionClick();
+                              onSelect(index);
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 40,
+                                  child: Center(
+                                    child: TweenAnimationBuilder<double>(
+                                      tween: Tween(end: selected ? 1 : 0),
+                                      duration: const Duration(milliseconds: 280),
+                                      curve: Curves.easeOutCubic,
+                                      builder: (context, t, _) {
+                                        return _NavIcon(
+                                          asset: asset,
+                                          fallback: Icons.home_rounded,
+                                          color: Color.lerp(AppColors.navInactive, Colors.white, t)!,
+                                          size: asset == null && !selected ? 28 : 24,
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                      ),
-                      const SizedBox(height: 2),
-                      AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeOut,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight:
-                              selected ? FontWeight.w700 : FontWeight.w500,
-                          color: selected
-                              ? AppColors.primaryOrange
-                              : AppColors.navInactive,
-                        ),
-                        child: Text(
-                          labels[index],
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
+                                const SizedBox(height: 2),
+                                AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 280),
+                                  curve: Curves.easeOutCubic,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                                    color: selected ? AppColors.primaryOrange : AppColors.navInactive,
+                                  ),
+                                  child: Text(
+                                    labels[index],
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
               );
-            }),
+            },
           ),
         ),
       ),
