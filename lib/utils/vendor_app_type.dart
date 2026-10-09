@@ -9,6 +9,9 @@ enum VendorAppType {
 
   /// Pharmacy vendor experience.
   pharmacy,
+
+  /// Home cleaning vendor experience.
+  homeCleaning,
 }
 
 extension VendorAppTypeX on VendorAppType {
@@ -21,6 +24,8 @@ extension VendorAppTypeX on VendorAppType {
         return '2';
       case VendorAppType.pharmacy:
         return '3';
+      case VendorAppType.homeCleaning:
+        return '4';
     }
   }
 
@@ -32,6 +37,8 @@ extension VendorAppTypeX on VendorAppType {
         return 'Water';
       case VendorAppType.pharmacy:
         return 'Pharmacy';
+      case VendorAppType.homeCleaning:
+        return 'Home Cleaning';
     }
   }
 
@@ -41,6 +48,8 @@ extension VendorAppTypeX on VendorAppType {
         return VendorAppType.water;
       case '3':
         return VendorAppType.pharmacy;
+      case '4':
+        return VendorAppType.homeCleaning;
       case '1':
       default:
         return VendorAppType.groceryRestaurant;
