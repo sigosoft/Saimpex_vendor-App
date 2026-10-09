@@ -149,11 +149,13 @@ class _HomeViewState extends State<HomeView> {
                 onSelect: controller.selectFilter,
                 badgeLabel: _filterBadgeLabel,
               ),
-              const SizedBox(height: 10),
-              const Align(
-                alignment: Alignment.centerRight,
-                child: _SubscriptionCalendarLink(),
-              ),
+              if (controller.isSubscriptionTab) ...[
+                const SizedBox(height: 10),
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: _SubscriptionCalendarLink(),
+                ),
+              ],
               const SizedBox(height: 12),
               if (controller.isSubscriptionTab)
                 if (controller.filteredSubscriptionOrders.isEmpty)
@@ -287,13 +289,14 @@ class _HomeViewState extends State<HomeView> {
               badgeLabel: count.toString().padLeft(2, '0'),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: _SubscriptionCalendarLink(),
+          if (subscription)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: _SubscriptionCalendarLink(),
+              ),
             ),
-          ),
           const SizedBox(height: 14),
           Expanded(
             child: subscription
