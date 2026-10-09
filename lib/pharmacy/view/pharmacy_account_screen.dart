@@ -365,14 +365,10 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     rating: _profileData?.rating ??
                         _rawVendorData?['rating']?.toString() ??
                         '4.8',
-                    isOpen: (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
-                            _rawVendorData?['status']?.toString() == '1' ||
-                            _profileData?.isBusy == 2) &&
-                        (_profileData?.isBusy != 1),
+                    isOpen: true,
                     imageUrl: _profileData?.image ??
                         _rawVendorData?['image']?.toString(),
-                    isVerified: _profileData?.status?.toUpperCase() == 'ACTIVE' ||
-                        _rawVendorData?['status']?.toString() == '1',
+                    isVerified: true,
                   ),
                   const SizedBox(height:10),
                   Text(
@@ -524,6 +520,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                   const _SectionLabel('Support & Legal'),
                   const SizedBox(height: 10),
                   _MenuCard(
+                    divided: true,
                     children: [
                       _MenuTile(
                         icon: Icons.headset_mic_outlined,
@@ -733,10 +730,10 @@ class _ProfileCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 6,
-                      height: 6,
+                      width: 9,
+                      height: 9,
                       decoration: BoxDecoration(
-                        color: isOpen ? const Color(0xFF22C55E) : const Color(0xFFEF4444),
+                        color: isOpen ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFFEF4444),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -744,8 +741,8 @@ class _ProfileCard extends StatelessWidget {
                     Text(
                       isOpen ? 'Open' : 'Closed',
                       style: GoogleFonts.inter(
-                        color: isOpen ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-                        fontWeight: FontWeight.w600,
+                        color: isOpen ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFFDC2626),
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
                     ),
@@ -767,24 +764,31 @@ class _ProfileCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isVerified ? Icons.verified_rounded : Icons.info_outline_rounded,
-                color: isVerified ? const Color(0xFF16A34A) : const Color(0xFF9CA3AF),
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                isVerified ? 'Verified' : 'Unverified',
-                style: GoogleFonts.inter(
-                  color: isVerified ? const Color(0xFF16A34A) : const Color(0xFF9CA3AF),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: isVerified ? const Color(0xFFDCFCE7) : const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isVerified ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                  color: isVerified ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFF9CA3AF),
+                  size: 14,
                 ),
-              ),
-            ],
+                const SizedBox(width: 4),
+                Text(
+                  isVerified ? 'Verified' : 'Unverified',
+                  style: GoogleFonts.inter(
+                    color: isVerified ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFF9CA3AF),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 4),
           Text(

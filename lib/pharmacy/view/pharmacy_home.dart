@@ -1009,8 +1009,11 @@ class _OrderTypeTabs extends StatelessWidget {
   final String? prescriptionBadge;
   final String? otcBadge;
 
+  static const _labels = ['Prescription', 'OTC'];
+
   @override
   Widget build(BuildContext context) {
+    final badges = [prescriptionBadge, otcBadge];
     return Container(
       height: 48,
       padding: const EdgeInsets.all(4),
@@ -1027,25 +1030,49 @@ class _OrderTypeTabs extends StatelessWidget {
           ],
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _TypeTab(
-              label: 'Prescription',
-              selected: selectedIndex == 0,
-              badge: selectedIndex == 0 ? prescriptionBadge : null,
-              onTap: () => onSelect(0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final segment = constraints.maxWidth / _labels.length;
+          return SizedBox(
+            height: 40,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 420),
+                  curve: Curves.easeInOutCubic,
+                  left: selectedIndex * segment,
+                  top: 0,
+                  bottom: 0,
+                  width: segment,
+                  child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: List.generate(_labels.length, (index) {
+                    final selected = selectedIndex == index;
+                    return Expanded(
+                      child: _TypeTab(
+                        label: _labels[index],
+                        selected: selected,
+                        badge: selected ? badges[index] : null,
+                        onTap: () {
+                          if (index == selectedIndex) return;
+                          HapticFeedback.selectionClick();
+                          onSelect(index);
+                        },
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: _TypeTab(
-              label: 'OTC',
-              selected: selectedIndex == 1,
-              badge: selectedIndex == 1 ? otcBadge : null,
-              onTap: () => onSelect(1),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -1072,25 +1099,20 @@ class _TypeTab extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            width: double.infinity,
-            height: double.infinity,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: selected ? Colors.white : Colors.transparent,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          Center(
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 360),
+              curve: Curves.easeInOutCubic,
               style: TextStyle(
                 color: selected ? const Color(0xFF1A1A1A) : Colors.white,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 13,
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
