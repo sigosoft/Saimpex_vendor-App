@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
 
-class BookingDetailsView extends StatelessWidget {
+class BookingDetailsView extends StatefulWidget {
   const BookingDetailsView({
     super.key,
     required this.customerName,
@@ -18,24 +19,59 @@ class BookingDetailsView extends StatelessWidget {
   static const _orange = Color(0xFFFF5722);
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF9E9E9E);
-  static const _page = Color(0xFFFFF9F6);
+
+  @override
+  State<BookingDetailsView> createState() => _BookingDetailsViewState();
+}
+
+class _BookingDetailsViewState extends State<BookingDetailsView> {
+  final _serviceKey = GlobalKey();
+  double _fadeEnd = 360;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measureFade());
+  }
+
+  void _measureFade() {
+    final box = _serviceKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize || !mounted) return;
+    final mid = box.localToGlobal(Offset.zero).dy + box.size.height / 2;
+    if ((mid - _fadeEnd).abs() > 1) {
+      setState(() => _fadeEnd = mid);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: _page,
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFFFF1EB), Color(0xFFFFF9F6), Color(0xFFFFF9F6)],
-              stops: [0, 0.22, 1],
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: _fadeEnd,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFFFE8DC),
+                      Color(0xFFFFF3EC),
+                      Color(0xFFFFFFFF),
+                    ],
+                    stops: [0, 0.5, 1],
+                  ),
+                ),
+              ),
             ),
-          ),
-          child: Column(
+            Column(
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               Padding(
@@ -48,7 +84,7 @@ class BookingDetailsView extends StatelessWidget {
                       Text(
                         'Booking Details',
                         style: GoogleFonts.inter(
-                          color: _ink,
+                          color: BookingDetailsView._ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
                         ),
@@ -68,7 +104,7 @@ class BookingDetailsView extends StatelessWidget {
                             ),
                             child: const Icon(
                               Icons.chevron_left_rounded,
-                              color: _orange,
+                              color: BookingDetailsView._orange,
                               size: 26,
                             ),
                           ),
@@ -83,11 +119,14 @@ class BookingDetailsView extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                   children: [
                     _CustomerCard(
-                      name: customerName,
-                      orderId: orderId,
+                      name: widget.customerName,
+                      orderId: widget.orderId,
                     ),
                     const SizedBox(height: 12),
-                    _ServiceCard(serviceName: serviceName),
+                    _ServiceCard(
+                      key: _serviceKey,
+                      serviceName: widget.serviceName,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'SPACES',
@@ -142,7 +181,7 @@ class BookingDetailsView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Icon(
-                            Icons.sticky_note_2,
+                            Icons.sticky_note_2_outlined,
                             color: Color(0xFFFF5722),
                             size: 22,
                           ),
@@ -162,11 +201,17 @@ class BookingDetailsView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const _MapCard(),
-                    const SizedBox(height: 12),
-                    const _AddressCard(),
+                    const _LocationCard(),
                     const SizedBox(height: 16),
-                    const _SectionLabel('PAYMENT SUMMARY'),
+                    Text(
+                      'PAYMENT SUMMARY',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF9AA3B2),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     const _PaymentCard(),
                     const SizedBox(height: 16),
@@ -181,7 +226,7 @@ class BookingDetailsView extends StatelessWidget {
                                 showRejectBookingSheet(context);
                               },
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: _ink,
+                                foregroundColor: BookingDetailsView._ink,
                                 backgroundColor: Colors.white,
                                 side: const BorderSide(color: Color(0xFFE0E0E0)),
                                 shape: RoundedRectangleBorder(
@@ -207,7 +252,7 @@ class BookingDetailsView extends StatelessWidget {
                               onPressed: () => HapticFeedback.lightImpact(),
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
-                                backgroundColor: _orange,
+                                backgroundColor: BookingDetailsView._orange,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -230,26 +275,8 @@ class BookingDetailsView extends StatelessWidget {
               ),
             ],
           ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: GoogleFonts.inter(
-        color: BookingDetailsView._orange,
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-        letterSpacing: 0.4,
       ),
     );
   }
@@ -450,7 +477,7 @@ class _CustomerCard extends StatelessWidget {
 }
 
 class _ServiceCard extends StatelessWidget {
-  const _ServiceCard({required this.serviceName});
+  const _ServiceCard({super.key, required this.serviceName});
 
   final String serviceName;
 
@@ -654,100 +681,115 @@ class _ProductsCard extends StatelessWidget {
   }
 }
 
-class _MapCard extends StatelessWidget {
-  const _MapCard();
+class _LocationCard extends StatelessWidget {
+  const _LocationCard();
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: SizedBox(
-        height: 140,
-        width: double.infinity,
-        child: ColoredBox(
-          color: const Color(0xFFE8EEF2),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: CustomPaint(painter: _MapPainter()),
-              ),
-              const Center(
-                child: Icon(Icons.location_on, color: BookingDetailsView._orange, size: 36),
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8E0EE)),
       ),
-    );
-  }
-}
-
-class _MapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final road = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 10
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(Offset(0, size.height * 0.35), Offset(size.width, size.height * 0.55), road);
-    canvas.drawLine(Offset(size.width * 0.3, 0), Offset(size.width * 0.45, size.height), road);
-    final block = Paint()..color = const Color(0xFFD5E0C8);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.55, size.height * 0.15, size.width * 0.28, size.height * 0.28),
-        const Radius.circular(6),
-      ),
-      block,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _AddressCard extends StatelessWidget {
-  const _AddressCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return _WhiteCard(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF0EB),
-              borderRadius: BorderRadius.circular(10),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(19)),
+            child: SizedBox(
+              height: 140,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  const Positioned.fill(child: _BookingMap()),
+                  const Align(
+                    alignment: Alignment(0.12, -0.28),
+                    child: Icon(Icons.location_on, color: Color(0xFFFF5722), size: 50),
+                  ),
+                  Positioned(
+                    left: 12,
+                    bottom: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4EEF8),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.location_on_outlined, color: Color(0xFF7E57C2), size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Sahara View Home',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF1D1B20),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: const Icon(Icons.location_on, color: BookingDetailsView._orange, size: 18),
           ),
-          const SizedBox(width: 10),
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Sahara View Home',
                   style: GoogleFonts.inter(
-                    color: BookingDetailsView._ink,
+                    color: const Color(0xFF1D1B20),
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '123 Desert Rose Blvd, Suite 4B',
                   style: GoogleFonts.inter(
-                    color: BookingDetailsView._muted,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
+                    color: const Color(0xFF494551),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+class _BookingMap extends StatelessWidget {
+  const _BookingMap();
+
+  @override
+  Widget build(BuildContext context) {
+    return const IgnorePointer(
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(18.0885, -15.9782),
+          zoom: 15.2,
+        ),
+        zoomControlsEnabled: false,
+        scrollGesturesEnabled: false,
+        zoomGesturesEnabled: false,
+        rotateGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+        myLocationButtonEnabled: false,
+        mapToolbarEnabled: false,
+        compassEnabled: false,
+        liteModeEnabled: true,
       ),
     );
   }
@@ -760,10 +802,10 @@ class _PaymentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -771,21 +813,21 @@ class _PaymentCard extends StatelessWidget {
           Text(
             'PAYMENT DETAILS',
             style: GoogleFonts.inter(
-              color: const Color(0xFF9E9E9E),
-              fontWeight: FontWeight.w600,
-              fontSize: 11,
-              letterSpacing: 0.4,
+              color: const Color(0xFFFF5722),
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 0.8,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           const _PayRow('Total', '730 MRU'),
-          const SizedBox(height: 10),
-          const _PayRow('Payment type', 'Online Payment', valueColor: Color(0xFF4CAF50)),
-          const SizedBox(height: 10),
-          const _PayRow('Payment on', 'Aug 25, 2026 10:45 AM Today'),
+          const SizedBox(height: 12),
+          const _PayRow('Payment type', 'Online Payment', valueColor: Color(0xFFFF5722)),
+          const SizedBox(height: 12),
+          const _PayRow('Payment on', 'Aug 25, 2026 10:45 AM, Today'),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, color: Color(0xFF3A3A3A)),
+            padding: EdgeInsets.symmetric(vertical: 14),
+            child: Divider(height: 1, thickness: 1, color: Color(0xFF3A3A3A)),
           ),
           const _PayRow('Total paid', '730 MRU', emphasize: true),
         ],
@@ -809,24 +851,22 @@ class _PayRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = GoogleFonts.inter(
+      color: emphasize ? Colors.white : const Color(0xFFE4E4E4),
+      fontWeight: emphasize ? FontWeight.w700 : FontWeight.w400,
+      fontSize: emphasize ? 15 : 13.5,
+    );
+    final valueStyle = GoogleFonts.inter(
+      color: valueColor,
+      fontWeight: emphasize || valueColor != Colors.white ? FontWeight.w700 : FontWeight.w600,
+      fontSize: emphasize ? 16 : 13.5,
+    );
     return Row(
       children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: emphasize ? Colors.white : const Color(0xFFBDBDBD),
-            fontWeight: emphasize ? FontWeight.w700 : FontWeight.w400,
-            fontSize: emphasize ? 14 : 13,
-          ),
-        ),
-        const Spacer(),
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            color: valueColor,
-            fontWeight: emphasize ? FontWeight.w700 : FontWeight.w600,
-            fontSize: emphasize ? 16 : 13,
-          ),
+        Text(label, style: labelStyle),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(value, textAlign: TextAlign.right, style: valueStyle),
         ),
       ],
     );
