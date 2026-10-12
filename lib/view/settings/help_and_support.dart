@@ -48,7 +48,10 @@ class HelpAndSupport extends StatelessWidget {
             init: SettingsController(),
             didChangeDependencies: (state) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                state.controller!.getHelpAndSupport();
+                if (state.controller!.contactEmail.isEmpty &&
+                    state.controller!.contactMobile.isEmpty) {
+                  state.controller!.getHelpAndSupport();
+                }
               });
             },
             builder: (controller) => controller.isLoading

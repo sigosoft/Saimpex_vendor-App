@@ -92,6 +92,13 @@ class DioClient {
     final cleanBase = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
     final cleanPath = path.startsWith('/') ? path.substring(1) : path;
 
+    if (cleanBase.endsWith('/api')) {
+      if (!cleanPath.startsWith('vendor/') && !cleanPath.startsWith('vendorapp/')) {
+        return '$cleanBase/vendorapp/$cleanPath';
+      }
+      return '$cleanBase/$cleanPath';
+    }
+
     if (cleanBase.endsWith('/vendor') && cleanPath.startsWith('vendor/')) {
       return '$cleanBase/${cleanPath.substring(7)}';
     }

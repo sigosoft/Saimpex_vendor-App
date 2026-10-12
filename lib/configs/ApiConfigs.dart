@@ -1,8 +1,7 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
   //static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";  //LIVE
-  static String BASE_URL =
-      "https://dev.saimpexenterprise.com/api/vendorapp"; //DEV/Test
+  static String BASE_URL = "https://dev.saimpexenterprise.com/api/"; //DEV/Test
   // "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
@@ -138,4 +137,37 @@ class ApiEndPoints {
 
   static String pharmacyTermsandConditions = "vendorapp/getTermsandConditions";
   static String pharmacyProfile = "vendor/profile";
+  static String pharmacyHelpSupport = "vendorapp/getContact";
+  static String pharmacyPrivacyPolicy = "vendorapp/getPrivacyPolicy";
+  static String pharmacyCoupons = "vendor/coupons";
+  static String pharmacyAddCoupons = "vendor/addCoupon";
+  static String pharmacyUpdateCoupon = "vendorapp/updateCoupon";
+  static String pharmacyUpdateCouponStatus = "vendorapp/updateCouponStatus";
+  static String pharmacyDeliveryBoys = "vendorapp/deliveryBoys";
+  static String pharmacyAddDeliveryBoys = "vendorapp/addDeliveryBoy";
+  static String pharmacyUpdateDeliveryBoy = "vendorapp/updateDeliveryBoy";
+  static String pharmacyUpdateWorkingHours = "vendor/updateWorkingHours";
+  static String pharmacyBusinessSettings = "vendorapp/businessSettings";
+  static String pharmacyMarkLeave = "vendor/markLeave";
+  static String pharmacyUnmarkLeave = "vendorapp/unmarkLeave";
+  static String pharmacyEarningsSummary = "vendor/earnings/summary";
+  static String pharmacyEarningsOrders = "vendor/earnings/orders";
+  static String pharmacyEarningsPendingOrderPayment =
+      "vendor/earnings/pendingOrderPayments";
+  static String pharmacyEarningsPayoutHistory = "vendor/earnings/payoutHistory";
+  static String pharmacyEarningsPayoutDetails = "vendor/earnings/payoutDetail";
+  static String pharmacyReceivedPayouts = "vendor/receivedPayouts";
+  static String pharmacyNotifications = "vendor/notifications";
+  static String pharmacyHome = "vendor/home";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
+  // static String pharmacyEarningsSummary = "";
 }

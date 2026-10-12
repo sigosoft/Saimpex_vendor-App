@@ -1,11 +1,20 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
+import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 
-class PharmacyNotificationsScreen extends StatelessWidget {
+class PharmacyNotificationsScreen extends StatefulWidget {
   const PharmacyNotificationsScreen({super.key});
 
   static const _orange = Color(0xFFFF5317);
@@ -14,6 +23,269 @@ class PharmacyNotificationsScreen extends StatelessWidget {
   static const _meta = Color(0xFF6B7280);
   static const _badge = Color(0xFFF59E0B);
   static const _payBg = Color(0xFFF4F4F0);
+
+  @override
+  State<PharmacyNotificationsScreen> createState() =>
+      _PharmacyNotificationsScreenState();
+}
+
+class _NotificationItemData {
+  _NotificationItemData({
+    required this.id,
+    this.titleEn,
+    this.titleAr,
+    this.titleFr,
+    this.contentEn,
+    this.contentAr,
+    this.contentFr,
+    this.type,
+    this.orderId,
+    this.date,
+    this.time,
+    this.createdAt,
+    this.raw,
+  });
+
+  final dynamic id;
+  final String? titleEn;
+  final String? titleAr;
+  final String? titleFr;
+  final String? contentEn;
+  final String? contentAr;
+  final String? contentFr;
+  final int? type;
+  final dynamic orderId;
+  final String? date;
+  final String? time;
+  final String? createdAt;
+  final dynamic raw;
+
+  factory _NotificationItemData.fromMap(Map<String, dynamic> map) {
+    return _NotificationItemData(
+      id: map['id'],
+      titleEn: map['title_en']?.toString(),
+      titleAr: map['title_ar']?.toString(),
+      titleFr: map['title_fr']?.toString(),
+      contentEn: map['content_en']?.toString(),
+      contentAr: map['content_ar']?.toString(),
+      contentFr: map['content_fr']?.toString(),
+      type: int.tryParse(map['type']?.toString() ?? ''),
+      orderId: map['order_id'],
+      date: map['date']?.toString(),
+      time: map['time']?.toString(),
+      createdAt: map['created_at']?.toString(),
+      raw: map,
+    );
+  }
+
+  String getTitle(BuildContext context) {
+    final lang =
+        FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+    if (lang == 'ar' && titleAr != null && titleAr!.trim().isNotEmpty) {
+      return titleAr!.trim();
+    }
+    if (lang == 'fr' && titleFr != null && titleFr!.trim().isNotEmpty) {
+      return titleFr!.trim();
+    }
+    if (titleEn != null && titleEn!.trim().isNotEmpty) {
+      return titleEn!.trim();
+    }
+    for (final t in [titleFr, titleAr]) {
+      if (t != null && t.trim().isNotEmpty) return t.trim();
+    }
+    return '';
+  }
+
+  String getContent(BuildContext context) {
+    final lang =
+        FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+    if (lang == 'ar' && contentAr != null && contentAr!.trim().isNotEmpty) {
+      return contentAr!.trim();
+    }
+    if (lang == 'fr' && contentFr != null && contentFr!.trim().isNotEmpty) {
+      return contentFr!.trim();
+    }
+    if (contentEn != null && contentEn!.trim().isNotEmpty) {
+      return contentEn!.trim();
+    }
+    for (final c in [contentFr, contentAr]) {
+      if (c != null && c.trim().isNotEmpty) return c.trim();
+    }
+    return '';
+  }
+}
+
+class _PharmacyNotificationsScreenState
+    extends State<PharmacyNotificationsScreen> {
+  List<_NotificationItemData> _notifications = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+  }
+
+  String _getNotificationsUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint =
+        ApiEndPoints.pharmacyNotifications.trim().replaceFirst(RegExp(r'^/'), '');
+    var url = '$base/$endpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map((e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}')
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<void> _fetchNotifications() async {
+    setState(() => _isLoading = true);
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+
+      final queryParams = <String, dynamic>{
+        'vendor_type': vendorType,
+        'limit': 50,
+        'page': 1,
+      };
+
+      final url = _getNotificationsUrl(queryParams);
+      debugPrint(
+          "==================== GET PHARMACY NOTIFICATIONS ====================");
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyNotifications}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print(
+          "==================== GET PHARMACY NOTIFICATIONS ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyNotifications}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyNotifications,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+          "====================================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+          "====================================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')) {
+        List rawList = [];
+        final dataField = dataMap['data'];
+        if (dataField is Map) {
+          final innerData = dataField['data'] ?? dataField['notifications'];
+          if (innerData is List) {
+            rawList = innerData;
+          }
+        } else if (dataField is List) {
+          rawList = dataField;
+        }
+
+        final List<_NotificationItemData> parsed = [];
+        for (final item in rawList) {
+          if (item is! Map) continue;
+          final map = Map<String, dynamic>.from(item);
+          parsed.add(_NotificationItemData.fromMap(map));
+        }
+
+        if (mounted) {
+          setState(() {
+            _notifications = parsed;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _notifications = [];
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint(
+          "==================== GET PHARMACY NOTIFICATIONS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint(
+          "========================================================================");
+
+      print(
+          "==================== GET PHARMACY NOTIFICATIONS ERROR ====================");
+      print("Error: $e");
+      print(
+          "========================================================================");
+
+      if (mounted) {
+        setState(() {
+          _notifications = [];
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _openDetails(BuildContext context, {String? orderId}) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PharmacyOrderDetailsScreen(
+          customerName: 'Customer',
+          requestId: orderId != null ? '#$orderId' : '#22789007',
+          requestMeta: 'Today',
+          notesType: PharmacyOrderNotesType.none,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,27 +316,52 @@ class PharmacyNotificationsScreen extends StatelessWidget {
                 _Header(onBack: () => Navigator.of(context).maybePop()),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                    children: [
-                      _OrderNotificationCard(
-                        onReject: () => showPharmacyRejectOrderSheet(context),
-                        onPrimary: () => _openDetails(context),
-                        primaryLabel: 'Review Prescription',
-                        middle: _PrescriptionBox(
-                          onView: () => _openDetails(context),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      _OrderNotificationCard(
-                        onReject: () => showPharmacyRejectOrderSheet(context),
-                        onPrimary: () => _openDetails(context),
-                        primaryLabel: 'Accept Order',
-                        middle: const _OtcPills(),
-                      ),
-                      const SizedBox(height: 14),
-                      const _PaymentVerifiedCard(),
-                    ],
+                  child: RefreshIndicator(
+                    color: PharmacyNotificationsScreen._orange,
+                    onRefresh: _fetchNotifications,
+                    child: _isLoading
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: CircularProgressIndicator(
+                                color: PharmacyNotificationsScreen._orange,
+                              ),
+                            ),
+                          )
+                        : _notifications.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 40),
+                                  child: NoDataWidget(
+                                    context,
+                                    S.of(context).noNotifications,
+                                    S.of(context).noNotificationsFound,
+                                    "lib/assets/images/nonotifications.png",
+                                  ),
+                                ),
+                              )
+                            : ListView.separated(
+                                physics:
+                                    const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                                itemCount: _notifications.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 14),
+                                itemBuilder: (context, index) {
+                                  final item = _notifications[index];
+                                  return _NotificationItemCard(
+                                    item: item,
+                                    onTap: item.orderId != null
+                                        ? () => _openDetails(
+                                              context,
+                                              orderId: item.orderId.toString(),
+                                            )
+                                        : null,
+                                  );
+                                },
+                              ),
                   ),
                 ),
               ],
@@ -74,14 +371,184 @@ class PharmacyNotificationsScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const PharmacyOrderDetailsScreen(
-          customerName: 'Ahmed',
-          requestMeta: 'Today • 10:45 AM',
-          notesType: PharmacyOrderNotesType.none,
+class _NotificationItemCard extends StatelessWidget {
+  const _NotificationItemCard({
+    required this.item,
+    this.onTap,
+  });
+
+  final _NotificationItemData item;
+  final VoidCallback? onTap;
+
+  String _formatNotificationTime(
+      String? createdAt, String? time, String? date) {
+    try {
+      DateTime? dt;
+      if (createdAt != null && createdAt.trim().isNotEmpty) {
+        dt = DateTime.tryParse(createdAt.trim());
+      }
+      if (dt == null &&
+          date != null &&
+          date.trim().isNotEmpty &&
+          time != null &&
+          time.trim().isNotEmpty) {
+        dt = DateTime.tryParse('${date.trim()} ${time.trim()}');
+      }
+      if (dt == null && date != null && date.trim().isNotEmpty) {
+        dt = DateTime.tryParse(date.trim());
+      }
+
+      if (dt != null) {
+        final now = DateTime.now();
+        final diff = now.difference(dt);
+        if (diff.inSeconds < 60 && diff.inSeconds >= 0) {
+          return 'Just now';
+        } else if (diff.inMinutes < 60 && diff.inMinutes > 0) {
+          return '${diff.inMinutes}m ago';
+        } else if (diff.inHours < 24 && diff.inHours > 0) {
+          return '${diff.inHours}h ago';
+        } else if (diff.inDays < 7 && diff.inDays > 0) {
+          return '${diff.inDays}d ago';
+        } else {
+          return DateFormat('MMM dd, yyyy').format(dt);
+        }
+      }
+      return time?.isNotEmpty == true
+          ? time!
+          : (date?.isNotEmpty == true ? date! : '');
+    } catch (_) {
+      return time?.isNotEmpty == true
+          ? time!
+          : (date?.isNotEmpty == true ? date! : '');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final title = item.getTitle(context);
+    final content = item.getContent(context);
+    final timeStr =
+        _formatNotificationTime(item.createdAt, item.time, item.date);
+
+    final lowerTitle = title.toLowerCase();
+    final lowerContent = content.toLowerCase();
+    final isVerified = lowerTitle.contains('verif') ||
+        lowerContent.contains('verified') ||
+        lowerTitle.contains('payment');
+    final isOrder = item.orderId != null ||
+        lowerTitle.contains('order') ||
+        lowerContent.contains('order');
+
+    final Color cardBg = isVerified
+        ? const Color.fromARGB(255, 255, 255, 243)
+        : Colors.white;
+
+    final Widget iconWidget = isVerified
+        ? Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Color(0xFF9AF7A8),
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset(
+              'lib/pharmacy/Assets/images/verified.png',
+              width: 22,
+              height: 22,
+              fit: BoxFit.contain,
+            ),
+          )
+        : isOrder
+            ? Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFE8E0),
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'lib/pharmacy/Assets/images/delivery_icon.png',
+                  width: 20,
+                  height: 20,
+                  fit: BoxFit.contain,
+                ),
+              )
+            : Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFE8E0),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: PharmacyNotificationsScreen._orange,
+                  size: 22,
+                ),
+              );
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: _AccentCard(
+        background: cardBg,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            iconWidget,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title.isNotEmpty ? title : 'Notification',
+                          style: GoogleFonts.inter(
+                            color: PharmacyNotificationsScreen._name,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            height: 1.2,
+                          ),
+                        ),
+                      ),
+                      if (timeStr.isNotEmpty) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          timeStr,
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF9CA3AF),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            height: 1.1,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (content.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      content,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF6B7280),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

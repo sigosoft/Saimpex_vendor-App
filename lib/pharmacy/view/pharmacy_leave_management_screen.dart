@@ -1,6 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
 class PharmacyLeaveManagementScreen extends StatefulWidget {
   const PharmacyLeaveManagementScreen({super.key});
@@ -14,8 +21,15 @@ class PharmacyLeaveManagementScreen extends StatefulWidget {
 }
 
 class _Leave {
-  _Leave({required this.from, required this.to, required this.reason, required this.completed});
+  _Leave({
+    this.id,
+    required this.from,
+    required this.to,
+    required this.reason,
+    required this.completed,
+  });
 
+  final String? id;
   final DateTime from;
   final DateTime to;
   final String reason;
@@ -28,17 +42,182 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
   final _reason = TextEditingController();
   String? _error;
 
-  final List<_Leave> _leaves = [
-    _Leave(from: DateTime(2026, 2, 20), to: DateTime(2026, 2, 25), reason: 'Renovation Work', completed: false),
-    _Leave(from: DateTime(2026, 2, 20), to: DateTime(2026, 2, 25), reason: 'Renovation Work', completed: false),
-    _Leave(from: DateTime(2025, 1, 20), to: DateTime(2025, 1, 25), reason: 'Renovation Work', completed: true),
-    _Leave(from: DateTime(2025, 1, 20), to: DateTime(2025, 1, 25), reason: 'Renovation Work', completed: true),
-  ];
+  List<_Leave> _leaves = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLeaves();
+  }
 
   @override
   void dispose() {
     _reason.dispose();
     super.dispose();
+  }
+
+  String _formatDate(DateTime d) {
+    return "${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
+  }
+
+  String _getMarkLeaveUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyMarkLeave.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  String _getPharmacyUnmarkLeaveUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyUnmarkLeave.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  String _extractMessage(dynamic resData, String defaultMessage) {
+    if (resData is Map && resData['message'] != null) {
+      final msg = resData['message'];
+      if (msg is Map) {
+        final lang = FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+        final key = lang == 'ar'
+            ? 'message_ar'
+            : lang == 'fr'
+                ? 'message_fr'
+                : 'message_en';
+        if (msg[key] != null) {
+          final raw = msg[key];
+          if (raw is List && raw.isNotEmpty) {
+            return raw.first.toString();
+          }
+          return raw.toString();
+        }
+        if (msg['message_en'] != null) {
+          final raw = msg['message_en'];
+          if (raw is List && raw.isNotEmpty) {
+            return raw.first.toString();
+          }
+          return raw.toString();
+        }
+      } else if (msg is String) {
+        return msg;
+      }
+    }
+    return defaultMessage;
+  }
+
+  (DateTime, DateTime)? _parseDateRange(String? dateStr) {
+    if (dateStr == null || dateStr.trim().isEmpty) return null;
+    try {
+      final s = dateStr.trim();
+      if (s.contains(' to ')) {
+        final parts = s.split(' to ');
+        final f = DateTime.tryParse(parts[0].trim());
+        final t = DateTime.tryParse(parts[1].trim());
+        if (f != null && t != null) return (f, t);
+        if (f != null) return (f, f);
+      }
+      if (s.contains(' - ')) {
+        final parts = s.split(' - ');
+        final f = DateTime.tryParse(parts[0].trim());
+        final t = DateTime.tryParse(parts[1].trim());
+        if (f != null && t != null) return (f, t);
+        if (f != null) return (f, f);
+      }
+      final dt = DateTime.tryParse(s);
+      if (dt != null) return (dt, dt);
+    } catch (_) {}
+    return null;
+  }
+
+  Future<void> _fetchLeaves() async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+
+      final now = DateTime.now();
+      final fromDate =
+          "${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+      final queryParams = <String, dynamic>{
+        "vendor_type": vendorType,
+        "from_date": fromDate,
+        "to_date": fromDate,
+      };
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyProfile,
+        query: queryParams,
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        try {
+          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+        } catch (_) {}
+      }
+
+      if (dataMap != null && mounted) {
+        final profileModel = ProfileModel.fromJson(dataMap);
+        final upcoming = profileModel.upcomingLeaves;
+        final history = profileModel.leaveHistory;
+
+        final List<_Leave> fetched = [];
+        if (upcoming != null && upcoming.isNotEmpty) {
+          for (final item in upcoming) {
+            final parsed = _parseDateRange(item.date);
+            if (parsed != null) {
+              fetched.add(_Leave(
+                id: item.id?.toString(),
+                from: parsed.$1,
+                to: parsed.$2,
+                reason: (item.reason != null && item.reason!.isNotEmpty)
+                    ? item.reason!
+                    : 'Leave',
+                completed: false,
+              ));
+            }
+          }
+        }
+        if (history != null && history.isNotEmpty) {
+          for (final item in history) {
+            final parsed = _parseDateRange(item.date);
+            if (parsed != null) {
+              fetched.add(_Leave(
+                id: item.id?.toString(),
+                from: parsed.$1,
+                to: parsed.$2,
+                reason: (item.reason != null && item.reason!.isNotEmpty)
+                    ? item.reason!
+                    : 'Leave',
+                completed: true,
+              ));
+            }
+          }
+        }
+
+        setState(() {
+          _leaves = fetched;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching leaves: $e");
+    }
   }
 
   Future<void> _pickDate({required bool from}) async {
@@ -72,7 +251,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
     });
   }
 
-  void _markLeave() {
+  Future<void> _markLeave() async {
     final reason = _reason.text.trim();
     if (_from == null || _to == null) {
       setState(() => _error = 'Select from and to dates');
@@ -86,14 +265,315 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
       setState(() => _error = 'Enter a reason');
       return;
     }
+
+    setState(() => _error = null);
+    showLoadingDialog(context);
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+
+      final fromDate = _formatDate(_from!);
+      final toDate = _formatDate(_to!);
+
+      final Map<String, dynamic> body = {
+        "vendor_type": vendorType,
+        "from_date": fromDate,
+        "to_date": toDate,
+        "reason": reason,
+      };
+
+      final url = _getMarkLeaveUrl();
+      debugPrint("==================== POST MARK LEAVE ====================");
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyMarkLeave}");
+      debugPrint("Body: ${jsonEncode(body)}");
+
+      print("==================== POST MARK LEAVE ====================");
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyMarkLeave}");
+      print("Body: ${jsonEncode(body)}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.pharmacyMarkLeave,
+        body: body,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("=========================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("=========================================================");
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      final resData = response.data;
+      final bool isSuccess = resData is Map &&
+          (resData['status'] == true ||
+              resData['status'].toString() == 'true' ||
+              resData['status'] == 1 ||
+              resData['status'] == '1');
+
+      if (isSuccess) {
+        HapticFeedback.lightImpact();
+        if (mounted) {
+          String message = _extractMessage(resData, 'Leave marked successfully');
+          showToast(context, message);
+          final fromSaved = _from!;
+          final toSaved = _to!;
+          setState(() {
+            _leaves.insert(
+              0,
+              _Leave(
+                from: fromSaved,
+                to: toSaved,
+                reason: reason,
+                completed: false,
+              ),
+            );
+            _from = null;
+            _to = null;
+            _reason.clear();
+            _error = null;
+          });
+          _fetchLeaves();
+        }
+      } else {
+        if (mounted) {
+          String message = _extractMessage(resData, 'Failed to mark leave');
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      debugPrint("==================== POST MARK LEAVE ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("===============================================================");
+
+      print("==================== POST MARK LEAVE ERROR ====================");
+      print("Error: $e");
+      print("===============================================================");
+
+      if (mounted) {
+        showErrorMessage(e);
+      }
+    }
+  }
+
+  Future<bool?> _showCancelConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 6,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFECE5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.event_busy_rounded,
+                    color: PharmacyLeaveManagementScreen.orange,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Cancel Leave',
+                  style: GoogleFonts.inter(
+                    color: PharmacyLeaveManagementScreen.ink,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Are you sure you want to cancel this leave?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF454E5D),
+                            side: const BorderSide(color: Color(0xFFE5E7EB)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'No',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: FilledButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: PharmacyLeaveManagementScreen.button,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Yes',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _cancelLeave(_Leave leave) async {
+    final confirmed = await _showCancelConfirmationDialog();
+    if (confirmed != true || !mounted) return;
+
     HapticFeedback.lightImpact();
-    setState(() {
-      _leaves.insert(0, _Leave(from: _from!, to: _to!, reason: reason, completed: false));
-      _from = null;
-      _to = null;
-      _reason.clear();
-      _error = null;
-    });
+    if (leave.id == null || leave.id!.isEmpty) {
+      setState(() => _leaves.remove(leave));
+      showToast(context, 'Leave cancelled successfully');
+      return;
+    }
+
+    showLoadingDialog(context);
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final body = {
+        "leave_id": leave.id,
+      };
+
+      final url = _getPharmacyUnmarkLeaveUrl();
+      debugPrint("==================== POST UNMARK LEAVE ====================");
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyUnmarkLeave}");
+      debugPrint("Body: ${jsonEncode(body)}");
+
+      print("==================== POST UNMARK LEAVE ====================");
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyUnmarkLeave}");
+      print("Body: ${jsonEncode(body)}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.pharmacyUnmarkLeave,
+        body: body,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("==========================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==========================================================");
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      final resData = response.data;
+      final bool isSuccess = resData is Map &&
+          (resData['status'] == true ||
+              resData['status'].toString() == 'true' ||
+              resData['status'] == 1 ||
+              resData['status'] == '1');
+
+      if (isSuccess) {
+        if (mounted) {
+          String message = _extractMessage(resData, 'Leave unmarked successfully');
+          showToast(context, message);
+          setState(() {
+            _leaves.remove(leave);
+          });
+          _fetchLeaves();
+        }
+      } else {
+        if (mounted) {
+          String message = _extractMessage(resData, 'Failed to unmark leave');
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      debugPrint("==================== POST UNMARK LEAVE ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("================================================================");
+
+      print("==================== POST UNMARK LEAVE ERROR ====================");
+      print("Error: $e");
+      print("================================================================");
+
+      if (mounted) {
+        showErrorMessage(e);
+      }
+    }
   }
 
   @override
@@ -118,149 +598,150 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).pop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-                  children: [
-                    Text(
-                      'Mark Leave',
-                      style: GoogleFonts.inter(
-                        color: PharmacyLeaveManagementScreen.ink,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                child: RefreshIndicator(
+                  color: PharmacyLeaveManagementScreen.orange,
+                  onRefresh: _fetchLeaves,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                    children: [
+                      Text(
+                        'Mark Leave',
+                        style: GoogleFonts.inter(
+                          color: PharmacyLeaveManagementScreen.ink,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(child: _fieldLabel('From Date')),
-                              const SizedBox(width: 12),
-                              Expanded(child: _fieldLabel('To Date')),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _DateBox(
-                                  value: _from,
-                                  onTap: () => _pickDate(from: true),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _DateBox(
-                                  value: _to,
-                                  onTap: () => _pickDate(from: false),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          _fieldLabel('Reason For Leave'),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _reason,
-                            maxLines: 3,
-                            onChanged: (_) {
-                              if (_error != null) setState(() => _error = null);
-                            },
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFF3F4555),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: _fieldLabel('From Date')),
+                                const SizedBox(width: 12),
+                                Expanded(child: _fieldLabel('To Date')),
+                              ],
                             ),
-                            decoration: InputDecoration(
-                              hintText: 'e.g. Annual vacation, renovation...',
-                              hintStyle: GoogleFonts.inter(
-                                color: const Color(0xFFB7C2D0),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _DateBox(
+                                    value: _from,
+                                    onTap: () => _pickDate(from: true),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _DateBox(
+                                    value: _to,
+                                    onTap: () => _pickDate(from: false),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 14),
+                            _fieldLabel('Reason For Leave'),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: _reason,
+                              maxLines: 3,
+                              onChanged: (_) {
+                                if (_error != null) setState(() => _error = null);
+                              },
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF3F4555),
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
-                              filled: true,
-                              fillColor: const Color(0xFFF3F5F7),
-                              contentPadding: const EdgeInsets.all(12),
-                              border: _reasonBorder,
-                              enabledBorder: _reasonBorder,
-                              focusedBorder: _reasonBorder,
+                              decoration: InputDecoration(
+                                hintText: 'e.g. Annual vacation, renovation...',
+                                hintStyle: GoogleFonts.inter(
+                                  color: const Color(0xFFB7C2D0),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFF3F5F7),
+                                contentPadding: const EdgeInsets.all(12),
+                                border: _reasonBorder,
+                                enabledBorder: _reasonBorder,
+                                focusedBorder: _reasonBorder,
+                              ),
                             ),
-                          ),
-                          if (_error != null) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              _error!,
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFBA1B1B),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
+                            if (_error != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                _error!,
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFFBA1B1B),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(color: Color(0x33FF5317), blurRadius: 12, offset: Offset(0, 6)),
+                                ],
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 48,
+                                child: FilledButton(
+                                  onPressed: _markLeave,
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: PharmacyLeaveManagementScreen.button,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  child: Text(
+                                    'Mark Leave',
+                                    style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
-                          const SizedBox(height: 16),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: const [
-                                BoxShadow(color: Color(0x33FF5317), blurRadius: 12, offset: Offset(0, 6)),
-                              ],
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 48,
-                              child: FilledButton(
-                                onPressed: _markLeave,
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: PharmacyLeaveManagementScreen.button,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                ),
-                                child: Text(
-                                  'Mark Leave',
-                                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const _HistoryHeader(),
+                      const SizedBox(height: 14),
+                      const _GroupTitle('Upcoming Leaves', color: Color(0xFF3B82F6)),
+                      const SizedBox(height: 10),
+                      for (final leave in upcoming) ...[
+                        _LeaveCard(
+                          leave: leave,
+                          onCancel: () => _cancelLeave(leave),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      const SizedBox(height: 6),
+                      const Row(
+                        children: [
+                          _GroupTitle('Completed Leaves', color: Color(0xFF16A34A)),
+                          Spacer(),
+                          _SeeAll(),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    const _HistoryHeader(),
-                    const SizedBox(height: 14),
-                    const _GroupTitle('Upcoming Leaves', color: Color(0xFF3B82F6)),
-                    const SizedBox(height: 10),
-                    for (final leave in upcoming) ...[
-                      _LeaveCard(
-                        leave: leave,
-                        onCancel: () {
-                          HapticFeedback.lightImpact();
-                          setState(() => _leaves.remove(leave));
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    const SizedBox(height: 6),
-                    const Row(
-                      children: [
-                        _GroupTitle('Completed Leaves', color: Color(0xFF16A34A)),
-                        Spacer(),
-                        _SeeAll(),
+                      const SizedBox(height: 10),
+                      for (final leave in completed) ...[
+                        _LeaveCard(leave: leave),
+                        const SizedBox(height: 12),
                       ],
-                    ),
-                    const SizedBox(height: 10),
-                    for (final leave in completed) ...[
-                      _LeaveCard(leave: leave),
-                      const SizedBox(height: 12),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -475,7 +956,11 @@ class _LeaveCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_date(leave.from)} - ${_date(leave.to)}, ${leave.to.year}',
+                      leave.from.year == leave.to.year &&
+                              leave.from.month == leave.to.month &&
+                              leave.from.day == leave.to.day
+                          ? '${_date(leave.from)}, ${leave.from.year}'
+                          : '${_date(leave.from)} - ${_date(leave.to)}, ${leave.to.year}',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF3F4555),
                         fontWeight: FontWeight.w700,

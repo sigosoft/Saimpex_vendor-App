@@ -19,7 +19,12 @@ import 'package:saimpex_vendor/pharmacy/view/pharmacy_received_payouts_screen.da
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_working_hours_screen.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
+import 'package:saimpex_vendor/controller/delivery_boys_controller.dart';
+import 'package:saimpex_vendor/model/delivery_boys_model.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
+import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
+import 'package:saimpex_vendor/view/settings/help_and_support.dart';
+import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
 
 class PharmacyAccountScreen extends StatefulWidget {
@@ -95,13 +100,9 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       String base = ApiConfigs.BASE_URL.trim();
       if (base.endsWith('/')) base = base.substring(0, base.length - 1);
-      if (base.endsWith('/vendor')) {
-        base = base.substring(0, base.length - 7);
-      } else if (base.endsWith('/vendorapp')) {
-        base = base.substring(0, base.length - 10);
-      }
+      final cleanEndpoint = ApiEndPoints.pharmacyProfile.replaceFirst(RegExp(r'^/'), '');
       final fullUrl =
-          Uri.parse("$base/${ApiEndPoints.pharmacyProfile}")
+          Uri.parse("$base/$cleanEndpoint")
               .replace(queryParameters: queryParams);
 
       debugPrint("==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================");
@@ -177,24 +178,8 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
   String _getTermsAndConditionsUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    String base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    String endpoint = ApiEndPoints.pharmacyTermsandConditions.trim();
-    if (endpoint.startsWith('/')) endpoint = endpoint.substring(1);
-
-    if (base.endsWith('/vendorapp') && endpoint.startsWith('vendorapp/')) {
-      return '$base/${endpoint.substring(10)}';
-    }
-    if (base.endsWith('/vendor') && endpoint.startsWith('vendor/')) {
-      return '$base/${endpoint.substring(7)}';
-    }
-    if (base.endsWith('/vendor') && endpoint.startsWith('vendorapp/')) {
-      final rootApi = base.substring(0, base.length - 7);
-      return '$rootApi/$endpoint';
-    }
-    if (base.endsWith('/vendorapp') && endpoint.startsWith('vendor/')) {
-      final rootApi = base.substring(0, base.length - 10);
-      return '$rootApi/$endpoint';
-    }
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyTermsandConditions.trim().replaceFirst(RegExp(r'^/'), '');
     return '$base/$endpoint';
   }
 
@@ -264,6 +249,313 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => const TermsandConditions(),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getHelpSupportUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyHelpSupport.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  Future<void> _onHelpAndSupportTap() async {
+    final url = _getHelpSupportUrl();
+
+    debugPrint("==================== GET HELP & SUPPORT ====================");
+    debugPrint("API Call: GET $url");
+    debugPrint("Request Body: null (GET request)");
+
+    print("==================== GET HELP & SUPPORT ====================");
+    print("API Call: GET $url");
+    print("Request Body: null (GET request)");
+
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyHelpSupport,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("============================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("============================================================");
+
+      if (response.data is Map && response.data['status'] == true) {
+        final contact = response.data['data']?['contact'];
+        if (contact != null) {
+          final settingsController = Get.isRegistered<SettingsController>()
+              ? Get.find<SettingsController>()
+              : Get.put(SettingsController());
+          settingsController.contactEmail = (contact['email'] ?? "").toString();
+          final countryCode = (contact['country_code'] ?? "").toString().trim();
+          final mobile = (contact['mobile'] ?? "").toString().trim();
+          settingsController.contactMobile = "$countryCode $mobile".trim();
+          settingsController.isLoading = false;
+          settingsController.update();
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const HelpAndSupport(),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("==================== GET HELP & SUPPORT ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("==================================================================");
+
+      print("==================== GET HELP & SUPPORT ERROR ====================");
+      print("Error: $e");
+      print("==================================================================");
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const HelpAndSupport(),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getPrivacyPolicyUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyPrivacyPolicy.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  Future<void> _onPrivacyPolicyTap() async {
+    final url = _getPrivacyPolicyUrl();
+
+    debugPrint("==================== GET PRIVACY POLICY ====================");
+    debugPrint("API Call: GET $url");
+    debugPrint("Request Body: null (GET request)");
+
+    print("==================== GET PRIVACY POLICY ====================");
+    print("API Call: GET $url");
+    print("Request Body: null (GET request)");
+
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyPrivacyPolicy,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("============================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("============================================================");
+
+      if (response.data is Map && response.data['status'] == true) {
+        final privacy = response.data['data']?['privacy_policy'];
+        if (privacy != null) {
+          final settingsController = Get.isRegistered<SettingsController>()
+              ? Get.find<SettingsController>()
+              : Get.put(SettingsController());
+          final localization = FlutterLocalization.instance;
+          final languageCode = localization.currentLocale?.languageCode;
+
+          if (languageCode == 'fr' && privacy['content_fr'] != null) {
+            settingsController.htmlData = privacy['content_fr'].toString();
+          } else if (languageCode == 'ar' && privacy['content_ar'] != null) {
+            settingsController.htmlData = privacy['content_ar'].toString();
+          } else {
+            settingsController.htmlData =
+                (privacy['content_en'] ?? "No content available").toString();
+          }
+          settingsController.isLoading = false;
+          settingsController.update();
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const PrivacyPolicy(),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("==================== GET PRIVACY POLICY ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("==================================================================");
+
+      print("==================== GET PRIVACY POLICY ERROR ====================");
+      print("Error: $e");
+      print("==================================================================");
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const PrivacyPolicy(),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getCouponsUrl(Map<String, dynamic> query) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyCoupons.trim().replaceFirst(RegExp(r'^/'), '');
+    final q = query.entries.map((e) => "${e.key}=${e.value}").join('&');
+    return '$base/$endpoint?$q';
+  }
+
+  Future<void> _onCouponsTap() async {
+    final queryParams = <String, dynamic>{
+      "limit": 10,
+      "keyword": "",
+      "status": 1,
+    };
+    final url = _getCouponsUrl(queryParams);
+
+    debugPrint("==================== GET COUPONS ====================");
+    debugPrint("API Call: GET $url");
+    debugPrint("Query: $queryParams");
+    debugPrint("Request Body: null (GET request)");
+
+    print("==================== GET COUPONS ====================");
+    print("API Call: GET $url");
+    print("Query: $queryParams");
+    print("Request Body: null (GET request)");
+
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyCoupons,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("=====================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("=====================================================");
+
+      List<dynamic> couponsData = [];
+      if (response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status'].toString() == 'true')) {
+        final data = response.data['data'];
+        if (data is Map) {
+          final coupons = data['coupons'];
+          if (coupons is List) {
+            couponsData = coupons;
+          } else if (coupons is Map && coupons['data'] is List) {
+            couponsData = coupons['data'] as List;
+          }
+        } else if (data is List) {
+          couponsData = data;
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => PharmacyCouponsScreen(
+              initialCoupons: couponsData,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("==================== GET COUPONS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("===========================================================");
+
+      print("==================== GET COUPONS ERROR ====================");
+      print("Error: $e");
+      print("===========================================================");
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const PharmacyCouponsScreen(),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getDeliveryBoysUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyDeliveryBoys.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  Future<void> _onDeliveryBoysTap() async {
+    final url = _getDeliveryBoysUrl();
+
+    debugPrint("==================== GET DELIVERY BOYS ====================");
+    debugPrint("API Call: GET $url");
+    debugPrint("Request Body: null (GET request)");
+
+    print("==================== GET DELIVERY BOYS ====================");
+    print("API Call: GET $url");
+    print("Request Body: null (GET request)");
+
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyDeliveryBoys,
+        query: {"limit": 10},
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("===========================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("===========================================================");
+
+      if (response.data is Map) {
+        final model = DeliveryBoysModel.fromJson(response.data);
+        if (model.status == true && model.data?.deliveryStaffs?.data != null) {
+          final controller = Get.isRegistered<DeliveryBoysController>()
+              ? Get.find<DeliveryBoysController>()
+              : Get.put(DeliveryBoysController());
+          controller.deliveryBoysList = model.data!.deliveryStaffs!.data!;
+          controller.filteredList = controller.deliveryBoysList;
+          controller.isLoading = false;
+          controller.update();
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const DeliveryBoysScreen(isPharmacy: true),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("==================== GET DELIVERY BOYS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("=================================================================");
+
+      print("==================== GET DELIVERY BOYS ERROR ====================");
+      print("Error: $e");
+      print("=================================================================");
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const DeliveryBoysScreen(),
           ),
         );
       }
@@ -355,13 +647,13 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     name: _profileData?.name ??
                         _rawVendorData?['name']?.toString() ??
                         _rawVendorData?['pharmacy_name']?.toString() ??
-                        'Pharmacy SAIMPEX',
+                        '',
                     id: _profileData?.id?.toString() ??
                         _rawVendorData?['id']?.toString() ??
-                        'PH-99283',
+                        '',
                     rating: _profileData?.rating ??
                         _rawVendorData?['rating']?.toString() ??
-                        '4.8',
+                        '',
                     isOpen: (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
                             _rawVendorData?['status']?.toString() == '1' ||
                             _profileData?.isBusy == 2) &&
@@ -496,15 +788,13 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                       _MenuTile(
                         icon: Icons.sell_outlined,
                         label: 'Coupons',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyCouponsScreen(),
-                            ),
-                          );
-                        },
+                        onTap: _onCouponsTap,
                       ),
-                      const _MenuTile(icon: Icons.delivery_dining_outlined, label: 'Delivery Boys'),
+                      _MenuTile(
+                        icon: Icons.delivery_dining_outlined,
+                        label: 'Delivery Boys',
+                        onTap: _onDeliveryBoysTap,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 18),
@@ -512,16 +802,21 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                   const SizedBox(height: 10),
                   _MenuCard(
                     children: [
-                      const _MenuTile(icon: Icons.headset_mic_outlined, label: 'Help & Support'),
+                      _MenuTile(
+                        icon: Icons.headset_mic_outlined,
+                        label: 'Help & Support',
+                        onTap: _onHelpAndSupportTap,
+                      ),
                       _MenuTile(
                         icon: Icons.description_outlined,
                         label: 'Terms & Conditions',
                         onTap: _onTermsAndConditionsTap,
                       ),
-                      const _MenuTile(
+                      _MenuTile(
                         image: 'lib/pharmacy/Assets/images/privacy_policy.png',
                         imageSize: 20,
                         label: 'Privacy Policy',
+                        onTap: _onPrivacyPolicyTap,
                       ),
                     ],
                   ),
@@ -646,9 +941,9 @@ class _AccountHeader extends StatelessWidget {
 
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard({
-    this.name = 'Pharmacy SAIMPEX',
-    this.id = 'PH-99283',
-    this.rating = '4.8',
+    this.name = '',
+    this.id = '',
+    this.rating = '',
     this.isOpen = true,
     this.imageUrl,
     this.isVerified = true,
@@ -682,17 +977,19 @@ class _ProfileCard extends StatelessWidget {
           Row(
             children: [
               const Spacer(),
-              const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
-              const SizedBox(width: 2),
-              Text(
-                rating,
-                style: GoogleFonts.inter(
-                  color: PharmacyAccountScreen.ink,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+              if (rating.isNotEmpty) ...[
+                const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
+                const SizedBox(width: 2),
+                Text(
+                  rating,
+                  style: GoogleFonts.inter(
+                    color: PharmacyAccountScreen.ink,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
+                const SizedBox(width: 8),
+              ],
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -756,15 +1053,17 @@ class _ProfileCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            id.startsWith('ID:') ? id : 'ID: $id',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF9CA3AF),
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
+          if (id.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              id.startsWith('ID:') ? id : 'ID: $id',
+              style: GoogleFonts.inter(
+                color: const Color(0xFF9CA3AF),
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

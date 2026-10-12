@@ -15,7 +15,7 @@ class DeliveryBoysController extends GetxController {
     super.onInit();
   }
 
-  Future<void> getDeliveryBoys() async {
+  Future<void> getDeliveryBoys({bool isPharmacy = false}) async {
     try {
       isLoading = true;
       update();
@@ -27,8 +27,12 @@ class DeliveryBoysController extends GetxController {
         DioClient().updateToken("");
       }
 
+      final endpoint = isPharmacy
+          ? ApiEndPoints.pharmacyDeliveryBoys
+          : ApiEndPoints.deliveryBoys;
+
       final response = await DioClient().get(
-        ApiEndPoints.deliveryBoys,
+        endpoint,
         query: {"limit": 10},
       );
 

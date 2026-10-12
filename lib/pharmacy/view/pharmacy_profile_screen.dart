@@ -79,14 +79,8 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
 
       String base = ApiConfigs.BASE_URL.trim();
       if (base.endsWith('/')) base = base.substring(0, base.length - 1);
-      if (base.endsWith('/vendor')) {
-        base = base.substring(0, base.length - 7);
-      } else if (base.endsWith('/vendorapp')) {
-        base = base.substring(0, base.length - 10);
-      }
-      final fullUrl =
-          Uri.parse("$base/${ApiEndPoints.pharmacyProfile}")
-              .replace(queryParameters: queryParams);
+      final cleanEndpoint = ApiEndPoints.pharmacyProfile.replaceFirst(RegExp(r'^/'), '');
+      final fullUrl = Uri.parse("$base/$cleanEndpoint").replace(queryParameters: queryParams);
 
       debugPrint("==================== GET VENDOR PROFILE ====================");
       debugPrint("API Call: GET $fullUrl");
@@ -160,25 +154,22 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
   }
 
   String _formatContact(String? code, String? mobile) {
-    if ((mobile == null || mobile.trim().isEmpty) &&
-        (code == null || code.trim().isEmpty)) {
-      return '+22241518211';
-    }
     final c = (code ?? '').trim();
     final m = (mobile ?? '').trim();
+    if (c.isEmpty && m.isEmpty) return '';
     if (c.isEmpty) return m;
     if (m.isEmpty) return c;
     return '$c$m';
   }
 
   String _formatCommission(String? value) {
-    if (value == null || value.trim().isEmpty) return '5.00%';
+    if (value == null || value.trim().isEmpty) return '';
     final trimmed = value.trim();
     return trimmed.endsWith('%') ? trimmed : '$trimmed%';
   }
 
   String _formatProfit(String? value) {
-    if (value == null || value.trim().isEmpty) return '0 MRU';
+    if (value == null || value.trim().isEmpty) return '';
     final trimmed = value.trim();
     return trimmed.contains('MRU') ? trimmed : '$trimmed MRU';
   }
@@ -188,61 +179,61 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
     final pharmacyName = _profileData?.name ??
         _rawVendorData?['name']?.toString() ??
         _rawVendorData?['pharmacy_name']?.toString() ??
-        'Pharmacy SAIMPEX';
+        '';
     final ownerName = _profileData?.owner ??
         _rawVendorData?['owner']?.toString() ??
         _rawVendorData?['owner_name']?.toString() ??
-        'Salman';
+        '';
     final pharmacyId = _profileData?.id?.toString() ??
         _rawVendorData?['id']?.toString() ??
-        '1';
+        '';
     final contact = _formatContact(
       _profileData?.countryCode ?? _rawVendorData?['country_code']?.toString(),
       _profileData?.mobile ?? _rawVendorData?['mobile']?.toString(),
     );
     final email = _profileData?.email ??
         _rawVendorData?['email']?.toString() ??
-        'pharmacy@saimpex.com';
+        '';
     final status = _profileData?.status ??
         (_rawVendorData?['status']?.toString() == '1'
             ? 'ACTIVE'
             : (_rawVendorData?['status']?.toString() == '0'
                 ? 'INACTIVE'
                 : _rawVendorData?['status']?.toString())) ??
-        'ACTIVE';
+        '';
     final address = _profileData?.address ??
         _rawVendorData?['address']?.toString() ??
-        'Pharmacy Block 5, Mauritania';
+        '';
 
     final holderName = _profileData?.accountHolderName ??
         _rawVendorData?['account_holder_name']?.toString() ??
         _rawVendorData?['holder_name']?.toString() ??
         _rawVendorData?['bank_holder_name']?.toString() ??
-        'Salman H';
+        '';
     final ibanNumber = _profileData?.accountNumber ??
         _rawVendorData?['account_number']?.toString() ??
         _rawVendorData?['iban']?.toString() ??
         _rawVendorData?['iban_number']?.toString() ??
-        '12123562189536189111';
+        '';
     final swiftCode = _profileData?.ifscCode ??
         _rawVendorData?['ifsc_code']?.toString() ??
         _rawVendorData?['swift']?.toString() ??
         _rawVendorData?['swift_code']?.toString() ??
-        'TESTMRMR001';
+        '';
 
     final regNumber = _profileData?.registrationNumber ??
         _rawVendorData?['registration_number']?.toString() ??
         _rawVendorData?['reg_number']?.toString() ??
-        'RESTTMAUR13';
+        '';
     final regDate = _profileData?.registrationDate ??
         _rawVendorData?['registration_date']?.toString() ??
         _rawVendorData?['reg_date']?.toString() ??
-        'Dec 7, 2025';
+        '';
     final tinNumber = _profileData?.gstNo ??
         _rawVendorData?['gst_no']?.toString() ??
         _rawVendorData?['tin_number']?.toString() ??
         _rawVendorData?['nif_number']?.toString() ??
-        'MR-TIN-127444';
+        '';
 
     final commission = _formatCommission(
       _profileData?.commissionPercentage ??
@@ -467,21 +458,23 @@ class _InfoCard extends StatelessWidget {
                     ),
                   ),
                   if (row.badge)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0FDF4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        row.value,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF16A34A),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )
+                    row.value.isNotEmpty
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF0FDF4),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              row.value,
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF16A34A),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()
                   else
                     Expanded(
                       flex: 6,

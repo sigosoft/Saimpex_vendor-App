@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_account_screen.dart';
@@ -9,6 +10,7 @@ import 'package:saimpex_vendor/pharmacy/view/pharmacy_inventory_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_notifications_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
+import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
@@ -38,48 +40,48 @@ class _PharmacyHomeState extends State<PharmacyHome> {
   Widget build(BuildContext context) {
     return GetBuilder<PharmacyHomeController>(
       builder: (_) => Theme(
-      data: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.backgroundTop,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primaryOrange,
-          surface: AppColors.card,
+        data: ThemeData(
+          useMaterial3: true,
+          scaffoldBackgroundColor: AppColors.backgroundTop,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.primaryOrange,
+            surface: AppColors.card,
+          ),
         ),
-      ),
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.transparent,
-        ),
-        child: Scaffold(
-          backgroundColor: controller.bottomNavIndex == 2
-              ? Colors.white
-              : const Color(0xFFF7F7F7),
-          body: Column(
-            children: [
-              Expanded(
-                child: switch (controller.bottomNavIndex) {
-                  0 => _buildHomeTab(context),
-                  1 => _buildOrdersTab(context),
-                  2 => PharmacyMessagesTab(
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: controller.bottomNavIndex == 2
+                ? Colors.white
+                : const Color(0xFFF7F7F7),
+            body: Column(
+              children: [
+                Expanded(
+                  child: switch (controller.bottomNavIndex) {
+                    0 => _buildHomeTab(context),
+                    1 => _buildOrdersTab(context),
+                    2 => PharmacyMessagesTab(
                       onBack: () => controller.onBottomNavSelect(0),
                     ),
-                  3 => PharmacyInventoryTab(
+                    3 => PharmacyInventoryTab(
                       onBack: () => controller.onBottomNavSelect(0),
                     ),
-                  _ => PharmacyAccountScreen(
+                    _ => PharmacyAccountScreen(
                       onBack: () => controller.onBottomNavSelect(0),
                     ),
-                },
-              ),
-              _BottomNav(
-                selectedIndex: controller.bottomNavIndex,
-                onSelect: controller.onBottomNavSelect,
-              ),
-            ],
+                  },
+                ),
+                _BottomNav(
+                  selectedIndex: controller.bottomNavIndex,
+                  onSelect: controller.onBottomNavSelect,
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -91,175 +93,96 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFFFF0E8),
-            Color(0xFFFFF8F4),
-            Color(0xFFF7F7F7),
-          ],
+          colors: [Color(0xFFFFF0E8), Color(0xFFFFF8F4), Color(0xFFF7F7F7)],
           stops: [0, 0.22, 1],
         ),
       ),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-              top: MediaQuery.paddingOf(context).top + 8,
-              left: 16,
-              right: 16,
-              bottom: 8,
+      child: RefreshIndicator(
+        color: AppColors.primaryOrange,
+        onRefresh: controller.fetchPharmacyHome,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.paddingOf(context).top + 8,
+                left: 16,
+                right: 16,
+                bottom: 8,
+              ),
+              child: const _Header(),
             ),
-            child: const _Header(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _StoreStatusCard(
-                  isOpen: controller.isStoreOpen,
-                  onToggle: controller.toggleStore,
-                ),
-                const SizedBox(height: 12),
-                const _MetricsGrid(),
-                const SizedBox(height: 16),
-                const _TotalsRow(),
-                const SizedBox(height: 18),
-                _OrdersHeader(onSeeAll: () => controller.onBottomNavSelect(1)),
-                const SizedBox(height: 12),
-                if (controller.isOtcTab ||
-                    controller.selectedFilterIndex == 0 ||
-                    controller.selectedFilterIndex == 3 ||
-                    controller.selectedFilterIndex == 4 ||
-                    controller.selectedFilterIndex == 5 ||
-                    controller.selectedFilterIndex == 6 ||
-                    controller.selectedFilterIndex == 7) ...[
-                  _OrderTypeTabs(
-                    selectedIndex: controller.selectedOrderType,
-                    onSelect: controller.selectOrderType,
-                    prescriptionBadge: controller.selectedFilterIndex == 3 ||
-                            controller.selectedFilterIndex == 4 ||
-                            controller.selectedFilterIndex == 5 ||
-                            controller.selectedFilterIndex == 6 ||
-                            controller.selectedFilterIndex == 7
-                        ? '1'
-                        : '2',
-                    otcBadge: '1',
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _StoreStatusCard(
+                    isOpen: controller.isStoreOpen,
+                    onToggle: controller.toggleStore,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
+                  _MetricsGrid(
+                    newPrescriptions: controller.newPrescriptionsCount,
+                    newOtcOrders: controller.newOtcCount,
+                    preparing: controller.preparingCount,
+                    ready: controller.readyCount,
+                  ),
+                  const SizedBox(height: 16),
+                  _TotalsRow(
+                    orders: controller.totalOrdersValue,
+                    completed: controller.completedOrdersValue,
+                    revenue: controller.revenueValue,
+                  ),
+                  const SizedBox(height: 18),
+                  _OrdersHeader(
+                    onSeeAll: () => controller.onBottomNavSelect(1),
+                  ),
+                  const SizedBox(height: 12),
+                  if (controller.isOtcTab ||
+                      controller.selectedFilterIndex == 0 ||
+                      controller.selectedFilterIndex == 3 ||
+                      controller.selectedFilterIndex == 4 ||
+                      controller.selectedFilterIndex == 5 ||
+                      controller.selectedFilterIndex == 6 ||
+                      controller.selectedFilterIndex == 7) ...[
+                    _OrderTypeTabs(
+                      selectedIndex: controller.selectedOrderType,
+                      onSelect: controller.selectOrderType,
+                      prescriptionBadge: controller.prescriptionBadge,
+                      otcBadge: controller.otcBadge,
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                  _SearchField(
+                    controller: controller.searchController,
+                    onSubmitted: (val) =>
+                        controller.fetchPharmacyHome(keyword: val),
+                  ),
+                  const SizedBox(height: 12),
+                  _StatusFilters(
+                    filters: controller.activeFilters,
+                    selectedIndex: controller.selectedFilterIndex.clamp(
+                      0,
+                      controller.activeFilters.length - 1,
+                    ),
+                    onSelect: controller.selectFilter,
+                    badgeLabel: controller.filterBadgeLabel,
+                  ),
+                  const SizedBox(height: 12),
+                  ..._buildHomeOrderCards(context),
                 ],
-                _SearchField(controller: controller.searchController),
-                const SizedBox(height: 12),
-                _StatusFilters(
-                  filters: controller.activeFilters,
-                  selectedIndex:
-                      controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1),
-                  onSelect: controller.selectFilter,
-                  badgeLabel: controller.filterBadgeLabel,
-                ),
-                const SizedBox(height: 12),
-                ..._buildHomeOrderCards(),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  List<Widget> _buildHomeOrderCards() {
-    if (controller.isOtcTab) {
-      if (controller.selectedFilterIndex == 0) return _otcNewOrderCards();
-      if (controller.selectedFilterIndex == 1) return _otcAcceptedOrderCards();
-      if (controller.selectedFilterIndex == 2) return _otcPreparingOrderCards();
-      if (controller.selectedFilterIndex == 3) return _otcReadyOrderCards();
-      if (controller.selectedFilterIndex == 4) return _otcDeliveredOrderCards();
-      return const [
-        _OtcOrderCard(
-          customerName: 'Fatima',
-          orderId: '#22789021',
-          timeAgo: '5 min ago',
-          items: 'Paracetamol 500mg ×2  •  Cough Syrup ×1',
-        ),
-        SizedBox(height: 12),
-        _OtcOrderCard(
-          customerName: 'Mohamed',
-          orderId: '#22789022',
-          timeAgo: '12 min ago',
-          items: 'Vitamin C ×1  •  Bandages ×2',
-        ),
-      ];
-    }
-
-    final filter = controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1);
-    if (filter == 1) {
-      return const [
-        _PrescriptionOrderCard(
-          customerName: 'Ahmed',
-          status: PharmacyPrescriptionCardStatus.underReview,
-          notesType: PharmacyOrderNotesType.none,
-        ),
-      ];
-    }
-    if (filter == 2) {
-      return const [
-        _PrescriptionOrderCard(
-          customerName: 'Ahmed',
-          status: PharmacyPrescriptionCardStatus.reviewCompleted,
-          notesType: PharmacyOrderNotesType.none,
-        ),
-      ];
-    }
-    if (filter == 3) {
-      return const [
-        _AwaitingPaymentCard(),
-      ];
-    }
-    if (filter == 4) {
-      return const [
-        _ToPrepareCard(),
-        SizedBox(height: 12),
-        _ToPrepareCard(scheduled: true),
-      ];
-    }
-    if (filter == 5) {
-      return const [
-        _PreparingCard(),
-      ];
-    }
-    if (filter == 6) {
-      return const [
-        _ReadyCard(),
-      ];
-    }
-    if (filter == 7) {
-      return const [
-        _DeliveredCard(),
-      ];
-    }
-
-    return const [
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.voice,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Sidi Ahmed',
-        notesType: PharmacyOrderNotesType.text,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.none,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.none,
-        isSelfPickup: true,
-      ),
-    ];
+  List<Widget> _buildHomeOrderCards(BuildContext context) {
+    return _buildDynamicOrderCards(context);
   }
 
   Widget _buildOrdersTab(BuildContext context) {
@@ -270,11 +193,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFFFF0E8),
-            Color(0xFFFFF8F4),
-            Color(0xFFF7F7F7),
-          ],
+          colors: [Color(0xFFFFF0E8), Color(0xFFFFF8F4), Color(0xFFF7F7F7)],
           stops: [0, 0.18, 1],
         ),
       ),
@@ -307,9 +226,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFFFFE0D0),
-                          ),
+                          border: Border.all(color: const Color(0xFFFFE0D0)),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.05),
@@ -336,37 +253,40 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             child: _OrderTypeTabs(
               selectedIndex: controller.selectedOrderType,
               onSelect: controller.selectOrderType,
-              prescriptionBadge:
-                  controller.selectedFilterIndex == 3 ||
-                          controller.selectedFilterIndex == 4 ||
-                          controller.selectedFilterIndex == 5 ||
-                          controller.selectedFilterIndex == 6 ||
-                          controller.selectedFilterIndex == 7
-                      ? '1'
-                      : '2',
-              otcBadge: '1',
+              prescriptionBadge: controller.prescriptionBadge,
+              otcBadge: controller.otcBadge,
             ),
           ),
           const SizedBox(height: 14),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _SearchField(controller: controller.searchController),
+            child: _SearchField(
+              controller: controller.searchController,
+              onSubmitted: (val) => controller.fetchPharmacyHome(keyword: val),
+            ),
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              children: [
-                _StatusFilters(
-                  filters: controller.activeFilters,
-                  selectedIndex:
-                      controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1),
-                  onSelect: controller.selectFilter,
-                  badgeLabel: controller.filterBadgeLabel,
-                ),
-                const SizedBox(height: 12),
-                ..._buildOrdersTabCards(),
-              ],
+            child: RefreshIndicator(
+              color: AppColors.primaryOrange,
+              onRefresh: controller.fetchPharmacyHome,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                children: [
+                  _StatusFilters(
+                    filters: controller.activeFilters,
+                    selectedIndex: controller.selectedFilterIndex.clamp(
+                      0,
+                      controller.activeFilters.length - 1,
+                    ),
+                    onSelect: controller.selectFilter,
+                    badgeLabel: controller.filterBadgeLabel,
+                  ),
+                  const SizedBox(height: 12),
+                  ..._buildOrdersTabCards(context),
+                ],
+              ),
             ),
           ),
         ],
@@ -374,183 +294,170 @@ class _PharmacyHomeState extends State<PharmacyHome> {
     );
   }
 
-  List<Widget> _buildOrdersTabCards() {
-    final filter = controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1);
-    if (!controller.isOtcTab && filter == 1) {
+  List<Widget> _buildOrdersTabCards(BuildContext context) {
+    return _buildDynamicOrderCards(context);
+  }
+
+  List<Widget> _buildDynamicOrderCards(BuildContext context) {
+    if (controller.isLoadingHome) {
       return const [
-        _PrescriptionOrderCard(
-          customerName: 'Ahmed',
-          status: PharmacyPrescriptionCardStatus.underReview,
-          notesType: PharmacyOrderNotesType.none,
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 40),
+          child: Center(
+            child: CircularProgressIndicator(color: AppColors.primaryOrange),
+          ),
         ),
       ];
     }
-    if (!controller.isOtcTab && filter == 2) {
-      return const [
-        _PrescriptionOrderCard(
-          customerName: 'Ahmed',
-          status: PharmacyPrescriptionCardStatus.reviewCompleted,
-          notesType: PharmacyOrderNotesType.none,
+
+    if (controller.ordersList.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: NoDataWidget(
+            context,
+            S.of(context).noOrdersFound,
+            "",
+            "lib/assets/images/nodata.png",
+          ),
         ),
       ];
     }
-    if (!controller.isOtcTab && filter == 3) {
-      return const [
-        _AwaitingPaymentCard(),
-      ];
-    }
-    if (!controller.isOtcTab && filter == 4) {
-      return const [
-        _ToPrepareCard(),
-        SizedBox(height: 12),
-        _ToPrepareCard(scheduled: true),
-      ];
-    }
-    if (!controller.isOtcTab && filter == 5) {
-      return const [
-        _PreparingCard(),
-      ];
-    }
-    if (!controller.isOtcTab && filter == 6) {
-      return const [
-        _ReadyCard(),
-      ];
-    }
-    if (!controller.isOtcTab && filter == 7) {
-      return const [
-        _DeliveredCard(),
-      ];
-    }
-    if (controller.isOtcTab) {
-      if (filter == 0) return _otcNewOrderCards();
-      if (filter == 1) return _otcAcceptedOrderCards();
-      if (filter == 2) return _otcPreparingOrderCards();
-      if (filter == 3) return _otcReadyOrderCards();
-      if (filter == 4) return _otcDeliveredOrderCards();
-      return const [
-        _OtcOrderCard(
-          customerName: 'Fatima',
-          orderId: '#22789021',
-          timeAgo: '5 min ago',
-          items: 'Paracetamol 500mg ×2  •  Cough Syrup ×1',
-        ),
-        SizedBox(height: 12),
-        _OtcOrderCard(
-          customerName: 'Mohamed',
-          orderId: '#22789022',
-          timeAgo: '12 min ago',
-          items: 'Vitamin C ×1  •  Bandages ×2',
-        ),
-        SizedBox(height: 12),
-        _OtcOrderCard(
-          customerName: 'Aisha',
-          orderId: '#22789023',
-          timeAgo: '28 min ago',
-          items: 'Ibuprofen 400mg ×1',
-        ),
-      ];
-    }
-    return const [
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.voice,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Sidi Ahmed',
-        notesType: PharmacyOrderNotesType.text,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.none,
-      ),
-      SizedBox(height: 12),
-      _PrescriptionOrderCard(
-        customerName: 'Ahmed',
-        notesType: PharmacyOrderNotesType.none,
-        isSelfPickup: true,
-      ),
-    ];
-  }
 
-  List<Widget> _otcNewOrderCards() {
-    return const [
-      _OtcNewOrderCard(
-        customerName: 'Ahmed',
-        timeAgo: '2 min ago',
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(
-        orderId: '#22789007',
-        selfPickup: true,
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(cashOnDelivery: true),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(scheduled: true),
-    ];
-  }
+    final filter = controller.selectedFilterIndex.clamp(
+      0,
+      controller.activeFilters.length - 1,
+    );
+    final isOtc = controller.isOtcTab;
+    final widgets = <Widget>[];
 
-  List<Widget> _otcAcceptedOrderCards() {
-    return const [
-      _OtcNewOrderCard(
-        customerName: 'Ahmed',
-        timeAgo: '2 min ago',
-        accepted: true,
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(
-        cashOnDelivery: true,
-        accepted: true,
-      ),
-    ];
-  }
+    for (int i = 0; i < controller.ordersList.length; i++) {
+      if (i > 0) {
+        widgets.add(const SizedBox(height: 12));
+      }
+      final order = controller.ordersList[i];
+      final orderCode = order.orderCode?.isNotEmpty == true
+          ? (order.orderCode!.startsWith('#')
+                ? order.orderCode!
+                : '#${order.orderCode}')
+          : '#${order.id ?? ''}';
+      final customerName = order.userName?.isNotEmpty == true
+          ? order.userName!
+          : 'Customer';
+      final timeAgo = order.placedAtFormatted?.isNotEmpty == true
+          ? order.placedAtFormatted!
+          : (order.placedAt ?? '');
+      final isSelfPickup =
+          order.isSelfPickup == 1 ||
+          order.isSelfPickup == true ||
+          order.isSelfPickup?.toString() == '1' ||
+          order.isSelfPickup?.toString().toLowerCase() == 'true';
+      final partnerName = order.deliveryBoyName;
 
-  List<Widget> _otcPreparingOrderCards() {
-    return const [
-      _OtcNewOrderCard(
-        customerName: 'Ahmed',
-        timeAgo: '2 min ago',
-        preparing: true,
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(
-        cashOnDelivery: true,
-        preparing: true,
-      ),
-    ];
-  }
+      if (isOtc) {
+        final isAccepted = filter == 1 || order.status == 2;
+        final isPreparing = filter == 2 || order.status == 3;
+        final isReady = filter == 3 || order.status == 4;
+        final isDelivered = filter == 4 || order.status == 9;
 
-  List<Widget> _otcReadyOrderCards() {
-    return const [
-      _OtcNewOrderCard(
-        customerName: 'Ahmed',
-        timeAgo: '2 min ago',
-        ready: true,
-        partnerName: 'Abdallahi Ould Ahmed',
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(
-        cashOnDelivery: true,
-        ready: true,
-      ),
-    ];
-  }
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: customerName,
+            orderId: orderCode,
+            timeAgo: timeAgo,
+            selfPickup: isSelfPickup,
+            accepted: isAccepted,
+            preparing: isPreparing,
+            ready: isReady,
+            delivered: isDelivered,
+            partnerName: partnerName,
+          ),
+        );
+      } else {
+        if (filter == 1) {
+          widgets.add(
+            _PrescriptionOrderCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+              status: PharmacyPrescriptionCardStatus.underReview,
+              notesType: PharmacyOrderNotesType.none,
+            ),
+          );
+        } else if (filter == 2) {
+          widgets.add(
+            _PrescriptionOrderCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+              status: PharmacyPrescriptionCardStatus.reviewCompleted,
+              notesType: PharmacyOrderNotesType.none,
+            ),
+          );
+        } else if (filter == 3) {
+          widgets.add(
+            _AwaitingPaymentCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              quotationAmount: order.total?.toString(),
+            ),
+          );
+        } else if (filter == 4) {
+          widgets.add(
+            _ToPrepareCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+            ),
+          );
+        } else if (filter == 5) {
+          widgets.add(
+            _PreparingCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+            ),
+          );
+        } else if (filter == 6) {
+          widgets.add(
+            _ReadyCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+              partnerName: partnerName,
+            ),
+          );
+        } else if (filter == 7) {
+          widgets.add(
+            _DeliveredCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+            ),
+          );
+        } else {
+          widgets.add(
+            _PrescriptionOrderCard(
+              customerName: customerName,
+              orderCode: orderCode,
+              timeAgo: timeAgo,
+              isSelfPickup: isSelfPickup,
+              status: PharmacyPrescriptionCardStatus.newOrder,
+              notesType: PharmacyOrderNotesType.none,
+            ),
+          );
+        }
+      }
+    }
 
-  List<Widget> _otcDeliveredOrderCards() {
-    return const [
-      _OtcNewOrderCard(
-        customerName: 'Ahmed',
-        timeAgo: '2 min ago',
-        delivered: true,
-      ),
-      SizedBox(height: 12),
-      _OtcNewOrderCard(
-        cashOnDelivery: true,
-        delivered: true,
-      ),
-    ];
+    return widgets;
   }
 }
 
@@ -726,19 +633,29 @@ class _StoreStatusCard extends StatelessWidget {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  const _MetricsGrid();
+  const _MetricsGrid({
+    this.newPrescriptions = '0',
+    this.newOtcOrders = '0',
+    this.preparing = '0',
+    this.ready = '0',
+  });
+
+  final String newPrescriptions;
+  final String newOtcOrders;
+  final String preparing;
+  final String ready;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: newPrescriptions,
                 label: 'New prescriptions',
-                badgeGradient: LinearGradient(
+                badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Color(0xFFFF8A3D), Color(0xFFFF5722)],
@@ -746,34 +663,34 @@ class _MetricsGrid extends StatelessWidget {
                 countColor: Colors.white,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: newOtcOrders,
                 label: 'New OTC orders',
-                badgeColor: Color(0xFFB2DFDB),
-                countColor: Color(0xFF00695C),
+                badgeColor: const Color(0xFFB2DFDB),
+                countColor: const Color(0xFF00695C),
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: preparing,
                 label: 'Preparing',
-                badgeColor: Color(0xFFFFB300),
+                badgeColor: const Color(0xFFFFB300),
                 countColor: Colors.white,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: ready,
                 label: 'Ready',
-                badgeColor: Color(0xFF43A047),
+                badgeColor: const Color(0xFF43A047),
                 countColor: Colors.white,
               ),
             ),
@@ -855,22 +772,34 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _TotalsRow extends StatelessWidget {
-  const _TotalsRow();
+  const _TotalsRow({
+    this.orders = '0',
+    this.completed = '0',
+    this.revenue = '0',
+  });
+
+  final String orders;
+  final String completed;
+  final String revenue;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(child: _TotalItem(title: 'ORDERS', value: '15')),
-          _VDivider(),
-          Expanded(child: _TotalItem(title: 'COMPLETED', value: '2')),
-          _VDivider(),
+          Expanded(
+            child: _TotalItem(title: 'ORDERS', value: orders),
+          ),
+          const _VDivider(),
+          Expanded(
+            child: _TotalItem(title: 'COMPLETED', value: completed),
+          ),
+          const _VDivider(),
           Expanded(
             child: _TotalItem(
               title: 'REVENUE',
-              value: '830',
+              value: revenue,
               suffix: 'MRU',
               showTrend: true,
             ),
@@ -1020,11 +949,7 @@ class _OrderTypeTabs extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [
-            Color(0xFFFF5722),
-            Color(0xFFFF8F3D),
-            Color(0xFFFFC04D),
-          ],
+          colors: [Color(0xFFFF5722), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
         ),
       ),
       child: Row(
@@ -1124,9 +1049,15 @@ class _TypeTab extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller});
+  const _SearchField({
+    required this.controller,
+    this.onSubmitted,
+    this.onChanged,
+  });
 
   final TextEditingController controller;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1145,6 +1076,9 @@ class _SearchField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              onSubmitted: onSubmitted,
+              onChanged: onChanged,
+              textInputAction: TextInputAction.search,
               decoration: const InputDecoration(
                 hintText: 'Search by ID, name',
                 hintStyle: TextStyle(
@@ -1156,10 +1090,7 @@ class _SearchField extends StatelessWidget {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-              style: const TextStyle(
-                color: AppColors.textDark,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: AppColors.textDark, fontSize: 14),
             ),
           ),
         ],
@@ -1255,70 +1186,72 @@ class _StatusFiltersState extends State<_StatusFilters> {
           return KeyedSubtree(
             key: _keyFor(index),
             child: GestureDetector(
-            onTap: () => widget.onSelect(index),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 36,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: selected
-                        ? const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFFF5421), Color(0xFFFFB800)],
-                          )
-                        : null,
-                    color: selected ? null : Colors.white,
-                    border: selected
-                        ? null
-                        : Border.all(color: const Color(0xFFE0E0E0)),
-                  ),
-                  child: Text(
-                    widget.filters[index],
-                    style: TextStyle(
-                      color: selected ? Colors.white : const Color(0xFF757575),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+              onTap: () => widget.onSelect(index),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    height: 36,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: selected
+                          ? const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Color(0xFFFF5421), Color(0xFFFFB800)],
+                            )
+                          : null,
+                      color: selected ? null : Colors.white,
+                      border: selected
+                          ? null
+                          : Border.all(color: const Color(0xFFE0E0E0)),
+                    ),
+                    child: Text(
+                      widget.filters[index],
+                      style: TextStyle(
+                        color: selected
+                            ? Colors.white
+                            : const Color(0xFF757575),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
-                ),
-                if (showBadge)
-                  Positioned(
-                    // Top-right corner of the pill, slightly overlapping outside.
-                    top: -6,
-                    right: -4,
-                    child: Container(
-                      width: 22,
-                      height: 22,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 3,
-                            offset: const Offset(0, 1),
+                  if (showBadge)
+                    Positioned(
+                      // Top-right corner of the pill, slightly overlapping outside.
+                      top: -6,
+                      right: -4,
+                      child: Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 3,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          widget.badgeLabel,
+                          style: const TextStyle(
+                            color: Color(0xFFFF8A00),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            height: 1,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        widget.badgeLabel,
-                        style: const TextStyle(
-                          color: Color(0xFFFF8A00),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          height: 1,
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              ),
             ),
           );
         },
@@ -1327,21 +1260,21 @@ class _StatusFiltersState extends State<_StatusFilters> {
   }
 }
 
-enum PharmacyPrescriptionCardStatus {
-  newOrder,
-  underReview,
-  reviewCompleted,
-}
+enum PharmacyPrescriptionCardStatus { newOrder, underReview, reviewCompleted }
 
 class _PrescriptionOrderCard extends StatelessWidget {
   const _PrescriptionOrderCard({
     this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
     this.notesType = PharmacyOrderNotesType.none,
     this.isSelfPickup = false,
     this.status = PharmacyPrescriptionCardStatus.newOrder,
   });
 
   final String customerName;
+  final String orderCode;
+  final String timeAgo;
   final PharmacyOrderNotesType notesType;
   final bool isSelfPickup;
   final PharmacyPrescriptionCardStatus status;
@@ -1387,6 +1320,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
         MaterialPageRoute<void>(
           builder: (_) => PharmacyOrderDetailsScreen(
             customerName: customerName,
+            requestId: orderCode,
+            requestMeta: timeAgo,
             notesType: notesType,
             isSelfPickup: isSelfPickup,
             isUnderReview: _isUnderReview,
@@ -1399,9 +1334,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
     void openQuotation() {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => PharmacyCreateQuotationScreen(
-            customerName: customerName,
-          ),
+          builder: (_) =>
+              PharmacyCreateQuotationScreen(customerName: customerName),
         ),
       );
     }
@@ -1409,246 +1343,253 @@ class _PrescriptionOrderCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-      onTap: openDetails,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
+        onTap: openDetails,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFF0F0F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  customerName.isNotEmpty
-                      ? customerName.substring(0, 1).toUpperCase()
-                      : 'A',
-                  style: const TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: _avatarBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      customerName.isNotEmpty
+                          ? customerName.substring(0, 1).toUpperCase()
+                          : 'A',
+                      style: const TextStyle(
+                        color: _avatarText,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            customerName,
-                            style: const TextStyle(
-                              color: _nameColor,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              height: 1.2,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                customerName,
+                                style: const TextStyle(
+                                  color: _nameColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  height: 1.2,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: _isReviewCompleted ? 8 : 12,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: badgeColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                badgeLabel,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: _isReviewCompleted ? 9 : 11,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: _isReviewCompleted ? 0.2 : 0.4,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: _isReviewCompleted ? 8 : 12,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: badgeColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                        const SizedBox(height: 4),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
                           child: Text(
-                            badgeLabel,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: _isReviewCompleted ? 9 : 11,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: _isReviewCompleted ? 0.2 : 0.4,
+                            timeAgo.isNotEmpty
+                                ? '$orderCode • $timeAgo'
+                                : orderCode,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(
+                              color: _metaColor,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
                               height: 1,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    const FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '#22789007 • 2 min ago',
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
-                          color: _metaColor,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          height: 1,
-                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _attachBg,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: _attachBorder),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const _PrescriptionThumb(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Prescription_Jun25.jpg',
+                            style: TextStyle(
+                              color: _nameColor,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          GestureDetector(
+                            onTap: openDetails,
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'View Full Prescription',
+                                  style: TextStyle(
+                                    color: _linkOrange,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.open_in_new_rounded,
+                                  size: 14,
+                                  color: _linkOrange,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _attachBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _attachBorder),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const _PrescriptionThumb(),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Prescription_Jun25.jpg',
-                        style: TextStyle(
-                          color: _nameColor,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: () => showPharmacyRejectOrderSheet(context),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: _nameColor,
+                          side: const BorderSide(
+                            color: _rejectBorder,
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                         ),
-                        overflow: TextOverflow.ellipsis,
+                        child: const Text(
+                          'Reject',
+                          maxLines: 1,
+                          softWrap: false,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13.5,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 6),
-                      GestureDetector(
-                        onTap: openDetails,
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'View Full Prescription',
-                              style: TextStyle(
-                                color: _linkOrange,
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                height: 1.2,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.open_in_new_rounded,
-                              size: 14,
-                              color: _linkOrange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 3,
+                    child: SizedBox(
+                      height: 48,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: _linkOrange,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _linkOrange.withValues(alpha: 0.28),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 48,
-                  child: OutlinedButton(
-                    onPressed: () => showPharmacyRejectOrderSheet(context),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: _nameColor,
-                      side: const BorderSide(color: _rejectBorder, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    child: const Text(
-                      'Reject',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 3,
-                child: SizedBox(
-                  height: 48,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: _linkOrange,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _linkOrange.withValues(alpha: 0.28),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _isReviewCompleted ? openQuotation : openDetails,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        primaryLabel,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13.5,
+                        child: ElevatedButton(
+                          onPressed: _isReviewCompleted
+                              ? openQuotation
+                              : openDetails,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            primaryLabel,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-      ),
+        ),
       ),
     );
   }
@@ -1674,19 +1615,26 @@ class _PrescriptionThumb extends StatelessWidget {
             ),
           ],
         ),
-        child: Image.asset(
-          _asset,
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset(_asset, fit: BoxFit.contain),
       ),
     );
   }
 }
 
 class _ToPrepareCard extends StatelessWidget {
-  const _ToPrepareCard({this.scheduled = false});
+  const _ToPrepareCard({
+    this.scheduled = false,
+    this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.isSelfPickup = false,
+  });
 
   final bool scheduled;
+  final String customerName;
+  final String orderCode;
+  final String timeAgo;
+  final bool isSelfPickup;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -1698,11 +1646,13 @@ class _ToPrepareCard extends StatelessWidget {
   void _openDetails(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => const PharmacyOrderDetailsScreen(
-          customerName: 'Ahmed',
-          requestMeta: 'Today • 10:45 AM',
+        builder: (_) => PharmacyOrderDetailsScreen(
+          customerName: customerName,
+          requestId: orderCode,
+          requestMeta: timeAgo,
           notesType: PharmacyOrderNotesType.none,
           isToPrepare: true,
+          isSelfPickup: isSelfPickup,
         ),
       ),
     );
@@ -1716,168 +1666,1131 @@ class _ToPrepareCard extends StatelessWidget {
         onTap: () => _openDetails(context),
         borderRadius: BorderRadius.circular(22),
         child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: const Text(
-                  'A',
-                  style: TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Text(
-                    'Ahmed',
-                    style: TextStyle(
-                      color: _name,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      height: 1.2,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: _avatarBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      customerName.isNotEmpty
+                          ? customerName.substring(0, 1).toUpperCase()
+                          : 'A',
+                      style: const TextStyle(
+                        color: _avatarText,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        customerName,
+                        style: const TextStyle(
+                          color: _name,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _blue,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'TO PREPARE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image(
+                      image: AssetImage(
+                        isSelfPickup
+                            ? 'lib/water/Assets/Images/selfpickup_icon.png'
+                            : 'lib/pharmacy/Assets/images/delivery_icon.png',
+                      ),
+                      width: 16,
+                      height: 16,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(width: 4),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: isSelfPickup ? 'Self Pickup' : 'Delivery',
+                            style: const TextStyle(
+                              color: _orange,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              height: 1,
+                            ),
+                          ),
+                          TextSpan(
+                            text: timeAgo.isNotEmpty
+                                ? '  • $orderCode • $timeAgo'
+                                : '  • $orderCode',
+                            style: const TextStyle(
+                              color: Color(0xFF6B7280),
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 10),
+              if (scheduled)
+                const Row(
+                  children: [
+                    _ScheduledPill(),
+                    Spacer(),
+                    Icon(Icons.calendar_today_outlined, size: 14, color: _blue),
+                    SizedBox(width: 4),
+                    Text(
+                      '15 Aug 2026',
+                      style: TextStyle(
+                        color: Color(0xFF374151),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(Icons.access_time_rounded, size: 15, color: _blue),
+                    SizedBox(width: 4),
+                    Text(
+                      '6:00 - 7:00 PM',
+                      style: TextStyle(
+                        color: Color(0xFF374151),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFFFFE4D4)),
+                    color: const Color.fromARGB(255, 254, 246, 238),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image(
+                        image: AssetImage(
+                          'lib/pharmacy/Assets/images/online_payment.png',
+                        ),
+                        width: 16,
+                        height: 16,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Online Payment',
+                        style: TextStyle(
+                          color: _orange,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          height: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: _blue,
-                  borderRadius: BorderRadius.circular(20),
+                  color: const Color(0xFFF7F6F4),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Text(
-                  'TO PREPARE',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
-                    height: 1,
+                child: Row(
+                  children: [
+                    const _PrescriptionThumb(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Prescription_Jun25.jpg',
+                            style: TextStyle(
+                              color: _name,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'View Full Prescription',
+                                style: TextStyle(
+                                  color: _orange,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.open_in_new_rounded,
+                                size: 14,
+                                color: _orange,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () => _openDetails(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _orange,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text(
+                    'Start Preparing',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image(
-                  image: AssetImage(
-                    'lib/pharmacy/Assets/images/delivery_icon.png',
-                  ),
-                  width: 16,
-                  height: 16,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 4),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Delivery',
-                        style: TextStyle(
-                          color: _orange,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
-                          height: 1,
-                        ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PreparingCard extends StatelessWidget {
+  const _PreparingCard({
+    this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.isSelfPickup = false,
+  });
+
+  final String customerName;
+  final String orderCode;
+  final String timeAgo;
+  final bool isSelfPickup;
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PharmacyOrderDetailsScreen(
+          customerName: customerName,
+          requestId: orderCode,
+          requestMeta: timeAgo,
+          notesType: PharmacyOrderNotesType.none,
+          isPreparing: true,
+          isSelfPickup: isSelfPickup,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openDetails(context),
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: _avatarBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      customerName.isNotEmpty
+                          ? customerName.substring(0, 1).toUpperCase()
+                          : 'A',
+                      style: const TextStyle(
+                        color: _avatarText,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
                       ),
-                      TextSpan(
-                        text: '  • #22789007 • 2 min ago',
-                        style: TextStyle(
-                          color: Color(0xFF6B7280),
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          height: 1,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                customerName,
+                                style: const TextStyle(
+                                  color: _name,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _orange,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'PREPARING',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                isSelfPickup
+                                    ? 'lib/water/Assets/Images/selfpickup_icon.png'
+                                    : 'lib/pharmacy/Assets/images/delivery_icon.png',
+                              ),
+                              width: 16,
+                              height: 16,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: isSelfPickup
+                                          ? 'Self Pickup'
+                                          : 'Delivery',
+                                      style: const TextStyle(
+                                        color: _orange,
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: timeAgo.isNotEmpty
+                                          ? '  • $orderCode • $timeAgo'
+                                          : '  • $orderCode',
+                                      style: const TextStyle(
+                                        color: _meta,
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF7F6F4),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Row(
+                  children: [
+                    _PrescriptionThumb(),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Prescription_Jun25.jpg',
+                            style: TextStyle(
+                              color: _name,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 6),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'View Full Prescription',
+                                style: TextStyle(
+                                  color: _orange,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.open_in_new_rounded,
+                                size: 14,
+                                color: _orange,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF4EA),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image(
+                      image: AssetImage(
+                        'lib/pharmacy/Assets/images/online_payment.png',
+                      ),
+                      width: 16,
+                      height: 16,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Online Payment',
+                      style: TextStyle(
+                        color: _orange,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () => _openDetails(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _orange,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text(
+                    'Ready for Dispatch',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReadyCard extends StatelessWidget {
+  const _ReadyCard({
+    this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.partnerName,
+    this.isSelfPickup = false,
+  });
+
+  final String customerName;
+  final String orderCode;
+  final String timeAgo;
+  final String? partnerName;
+  final bool isSelfPickup;
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+  static const Color _ready = Color(0xFF22C55E);
+  static const Color _partner = Color(0xFF7C3AED);
+  static const Color _partnerBg = Color(0xFFF3E8FF);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PharmacyOrderDetailsScreen(
+          customerName: customerName,
+          requestId: orderCode,
+          requestMeta: timeAgo,
+          notesType: PharmacyOrderNotesType.none,
+          isReady: true,
+          isSelfPickup: isSelfPickup,
+          isOtcPartnerAssigned: partnerName != null,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openDetails(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: _avatarBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    customerName.isNotEmpty
+                        ? customerName.substring(0, 1).toUpperCase()
+                        : 'A',
+                    style: const TextStyle(
+                      color: _avatarText,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              customerName,
+                              style: const TextStyle(
+                                color: _name,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _ready,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'READY',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                                height: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                isSelfPickup
+                                    ? 'lib/water/Assets/Images/selfpickup_icon.png'
+                                    : 'lib/pharmacy/Assets/images/delivery_icon.png',
+                              ),
+                              width: 16,
+                              height: 16,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 4),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: isSelfPickup
+                                        ? 'Self Pickup'
+                                        : 'Delivery',
+                                    style: const TextStyle(
+                                      color: _orange,
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: timeAgo.isNotEmpty
+                                        ? '  • $orderCode • $timeAgo'
+                                        : '  • $orderCode',
+                                    style: const TextStyle(
+                                      color: _meta,
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              softWrap: false,
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  maxLines: 1,
-                  softWrap: false,
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 10),
-          if (scheduled)
-            const Row(
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F6F4),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Row(
+                children: [
+                  _PrescriptionThumb(),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Prescription_Jun25.jpg',
+                          style: TextStyle(
+                            color: _name,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'View Full Prescription',
+                              style: TextStyle(
+                                color: _orange,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.open_in_new_rounded,
+                              size: 14,
+                              color: _orange,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _ScheduledPill(),
-                Spacer(),
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 14,
-                  color: _blue,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '15 Aug 2026',
-                  style: TextStyle(
-                    color: Color(0xFF374151),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: DecoratedBox(
+                      decoration: const BoxDecoration(
+                        color: _partnerBg,
+                        borderRadius: BorderRadius.all(Radius.circular(28)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 14, 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Image(
+                              image: AssetImage(
+                                'lib/pharmacy/Assets/images/scooter.png',
+                              ),
+                              width: 24,
+                              height: 24,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Assigned Delivery Partner',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 96, 96, 96),
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  '(${partnerName ?? 'Abdallah Ould Ahmed'})',
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: _partner,
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(width: 10),
-                Icon(
-                  Icons.access_time_rounded,
-                  size: 15,
-                  color: _blue,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  '6:00 - 7:00 PM',
-                  style: TextStyle(
-                    color: Color(0xFF374151),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                SizedBox(width: 8),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFFF4EA),
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 8, 12, 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image(
+                          image: AssetImage(
+                            'lib/pharmacy/Assets/images/online_payment.png',
+                          ),
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Online Payment',
+                          style: TextStyle(
+                            color: _orange,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            height: 1.1,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
-            )
-          else
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DeliveredCard extends StatelessWidget {
+  const _DeliveredCard({
+    this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.isSelfPickup = false,
+  });
+
+  final String customerName;
+  final String orderCode;
+  final String timeAgo;
+  final bool isSelfPickup;
+
+  static const Color _avatarBg = Color(0xFFFDEAEA);
+  static const Color _avatarText = Color(0xFFE24B3B);
+  static const Color _name = Color(0xFF1A1A1A);
+  static const Color _orange = Color(0xFFFF5722);
+  static const Color _meta = Color(0xFF6B7280);
+  static const Color _delivered = Color(0xFF22C55E);
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PharmacyOrderDetailsScreen(
+          customerName: customerName,
+          requestId: orderCode,
+          requestMeta: timeAgo,
+          notesType: PharmacyOrderNotesType.none,
+          isDelivered: true,
+          isSelfPickup: isSelfPickup,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openDetails(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: _avatarBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    customerName.isNotEmpty
+                        ? customerName.substring(0, 1).toUpperCase()
+                        : 'A',
+                    style: const TextStyle(
+                      color: _avatarText,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              customerName,
+                              style: const TextStyle(
+                                color: _name,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _delivered,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'DELIVERED',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                                height: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                isSelfPickup
+                                    ? 'lib/water/Assets/Images/selfpickup_icon.png'
+                                    : 'lib/pharmacy/Assets/images/delivery_icon.png',
+                              ),
+                              width: 16,
+                              height: 16,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 4),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: isSelfPickup
+                                        ? 'Self Pickup'
+                                        : 'Delivery',
+                                    style: const TextStyle(
+                                      color: _orange,
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: timeAgo.isNotEmpty
+                                        ? '  • $orderCode • $timeAgo'
+                                        : '  • $orderCode',
+                                    style: const TextStyle(
+                                      color: _meta,
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              softWrap: false,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F6F4),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Row(
+                children: [
+                  _PrescriptionThumb(),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Prescription_Jun25.jpg',
+                          style: TextStyle(
+                            color: _name,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'View Full Prescription',
+                              style: TextStyle(
+                                color: _orange,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.open_in_new_rounded,
+                              size: 14,
+                              color: _orange,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFFFE4D4)),
-                color: const Color.fromARGB(255, 254, 246, 238),
+                color: const Color(0xFFFFF4EA),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Row(
@@ -1904,917 +2817,9 @@ class _ToPrepareCard extends StatelessWidget {
                 ],
               ),
             ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F6F4),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                const _PrescriptionThumb(),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Prescription_Jun25.jpg',
-                        style: TextStyle(
-                          color: _name,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'View Full Prescription',
-                            style: TextStyle(
-                              color: _orange,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.open_in_new_rounded,
-                            size: 14,
-                            color: _orange,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => _openDetails(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _orange,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text(
-                'Start Preparing',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-      ),
-    );
-  }
-}
-
-class _PreparingCard extends StatelessWidget {
-  const _PreparingCard();
-
-  static const Color _avatarBg = Color(0xFFFDEAEA);
-  static const Color _avatarText = Color(0xFFE24B3B);
-  static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
-  static const Color _meta = Color(0xFF6B7280);
-
-  void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const PharmacyOrderDetailsScreen(
-          customerName: 'Ahmed',
-          requestMeta: 'Today • 10:45 AM',
-          notesType: PharmacyOrderNotesType.none,
-          isPreparing: true,
+          ],
         ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _openDetails(context),
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: const Text(
-                  'A',
-                  style: TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Ahmed',
-                            style: TextStyle(
-                              color: _name,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              height: 1.2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _orange,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'PREPARING',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.3,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image(
-                          image: AssetImage(
-                            'lib/pharmacy/Assets/images/delivery_icon.png',
-                          ),
-                          width: 16,
-                          height: 16,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(width: 4),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Delivery',
-                                  style: TextStyle(
-                                    color: _orange,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '  • #22789007 • 2 min ago',
-                                  style: TextStyle(
-                                    color: _meta,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F6F4),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Row(
-              children: [
-                _PrescriptionThumb(),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Prescription_Jun25.jpg',
-                        style: TextStyle(
-                          color: _name,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 6),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'View Full Prescription',
-                            style: TextStyle(
-                              color: _orange,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.open_in_new_rounded,
-                            size: 14,
-                            color: _orange,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4EA),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image(
-                  image: AssetImage(
-                    'lib/pharmacy/Assets/images/online_payment.png',
-                  ),
-                  width: 16,
-                  height: 16,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 6),
-                Text(
-                  'Online Payment',
-                  style: TextStyle(
-                    color: _orange,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => _openDetails(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _orange,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text(
-                'Ready for Dispatch',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ReadyCard extends StatelessWidget {
-  const _ReadyCard();
-
-  static const Color _avatarBg = Color(0xFFFDEAEA);
-  static const Color _avatarText = Color(0xFFE24B3B);
-  static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
-  static const Color _meta = Color(0xFF6B7280);
-  static const Color _ready = Color(0xFF22C55E);
-  static const Color _partner = Color(0xFF7C3AED);
-  static const Color _partnerBg = Color(0xFFF3E8FF);
-
-  void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const PharmacyOrderDetailsScreen(
-          customerName: 'Ahmed',
-          requestMeta: 'Today • 10:45 AM',
-          notesType: PharmacyOrderNotesType.none,
-          isReady: true,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _openDetails(context),
-      child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: const Text(
-                  'A',
-                  style: TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Ahmed',
-                            style: TextStyle(
-                              color: _name,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              height: 1.2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _ready,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'READY',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.3,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image(
-                            image: AssetImage(
-                              'lib/pharmacy/Assets/images/delivery_icon.png',
-                            ),
-                            width: 16,
-                            height: 16,
-                            fit: BoxFit.contain,
-                          ),
-                          SizedBox(width: 4),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Delivery',
-                                  style: TextStyle(
-                                    color: _orange,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '  • #22789007 • 2 min ago',
-                                  style: TextStyle(
-                                    color: _meta,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            maxLines: 1,
-                            softWrap: false,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F6F4),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Row(
-              children: [
-                _PrescriptionThumb(),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Prescription_Jun25.jpg',
-                        style: TextStyle(
-                          color: _name,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 6),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'View Full Prescription',
-                            style: TextStyle(
-                              color: _orange,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.open_in_new_rounded,
-                            size: 14,
-                            color: _orange,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: _partnerBg,
-                        borderRadius: BorderRadius.all(Radius.circular(28)),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(12, 8, 14, 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image(
-                              image: AssetImage(
-                                'lib/pharmacy/Assets/images/scooter.png',
-                              ),
-                              width: 24,
-                              height: 24,
-                              fit: BoxFit.contain,
-                            ),
-                            SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Assigned Delivery Partner',
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 96, 96, 96),
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.1,
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  '(Abdallah Ould Ahmed)',
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: _partner,
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              SizedBox(width: 8),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Color(0xFFFFF4EA),
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 8, 12, 8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image(
-                        image: AssetImage(
-                          'lib/pharmacy/Assets/images/online_payment.png',
-                        ),
-                        width: 16,
-                        height: 16,
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        'Online Payment',
-                        style: TextStyle(
-                          color: _orange,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          height: 1.1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-        ),
-    );
-  }
-}
-
-class _DeliveredCard extends StatelessWidget {
-  const _DeliveredCard();
-
-  static const Color _avatarBg = Color(0xFFFDEAEA);
-  static const Color _avatarText = Color(0xFFE24B3B);
-  static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
-  static const Color _meta = Color(0xFF6B7280);
-  static const Color _delivered = Color(0xFF22C55E);
-
-  void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const PharmacyOrderDetailsScreen(
-          customerName: 'Ahmed',
-          requestMeta: 'Today • 10:45 AM',
-          notesType: PharmacyOrderNotesType.none,
-          isDelivered: true,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _openDetails(context),
-      child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: const Text(
-                  'A',
-                  style: TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Ahmed',
-                            style: TextStyle(
-                              color: _name,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              height: 1.2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _delivered,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'DELIVERED',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.3,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image(
-                            image: AssetImage(
-                              'lib/pharmacy/Assets/images/delivery_icon.png',
-                            ),
-                            width: 16,
-                            height: 16,
-                            fit: BoxFit.contain,
-                          ),
-                          SizedBox(width: 4),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Delivery',
-                                  style: TextStyle(
-                                    color: _orange,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '  • #22789007 • 2 min ago',
-                                  style: TextStyle(
-                                    color: _meta,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            maxLines: 1,
-                            softWrap: false,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F6F4),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Row(
-              children: [
-                _PrescriptionThumb(),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Prescription_Jun25.jpg',
-                        style: TextStyle(
-                          color: _name,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 6),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'View Full Prescription',
-                            style: TextStyle(
-                              color: _orange,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              height: 1.2,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.open_in_new_rounded,
-                            size: 14,
-                            color: _orange,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4EA),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image(
-                  image: AssetImage(
-                    'lib/pharmacy/Assets/images/online_payment.png',
-                  ),
-                  width: 16,
-                  height: 16,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 6),
-                Text(
-                  'Online Payment',
-                  style: TextStyle(
-                    color: _orange,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-        ),
     );
   }
 }
@@ -2856,7 +2861,17 @@ class _ScheduledPill extends StatelessWidget {
 }
 
 class _AwaitingPaymentCard extends StatelessWidget {
-  const _AwaitingPaymentCard();
+  const _AwaitingPaymentCard({
+    this.customerName = 'Ahmed',
+    this.orderCode = '#22789007',
+    this.timeAgo = '2 min ago',
+    this.quotationAmount,
+  });
+
+  final String customerName;
+  final String orderCode;
+  final String timeAgo;
+  final String? quotationAmount;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -2871,9 +2886,10 @@ class _AwaitingPaymentCard extends StatelessWidget {
     void openPrescription() {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => const PharmacyOrderDetailsScreen(
-            customerName: 'Ahmed',
-            requestMeta: 'Today • 9:45 AM',
+          builder: (_) => PharmacyOrderDetailsScreen(
+            customerName: customerName,
+            requestId: orderCode,
+            requestMeta: timeAgo,
             notesType: PharmacyOrderNotesType.none,
             isAwaitingPayment: true,
           ),
@@ -2913,9 +2929,11 @@ class _AwaitingPaymentCard extends StatelessWidget {
                       color: _avatarBg,
                       shape: BoxShape.circle,
                     ),
-                    child: const Text(
-                      'A',
-                      style: TextStyle(
+                    child: Text(
+                      customerName.isNotEmpty
+                          ? customerName.substring(0, 1).toUpperCase()
+                          : 'A',
+                      style: const TextStyle(
                         color: _avatarText,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -2929,10 +2947,10 @@ class _AwaitingPaymentCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Expanded(
+                            Expanded(
                               child: Text(
-                                'Ahmed',
-                                style: TextStyle(
+                                customerName,
+                                style: const TextStyle(
                                   color: _nameColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
@@ -2964,14 +2982,16 @@ class _AwaitingPaymentCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        const FittedBox(
+                        FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            '#22789007 • 2 min ago',
+                            timeAgo.isNotEmpty
+                                ? '$orderCode • $timeAgo'
+                                : orderCode,
                             maxLines: 1,
                             softWrap: false,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: _metaColor,
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
@@ -3041,14 +3061,14 @@ class _AwaitingPaymentCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Row(
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'QUOTATION',
                           style: TextStyle(
                             color: _label,
@@ -3058,10 +3078,10 @@ class _AwaitingPaymentCard extends StatelessWidget {
                             height: 1,
                           ),
                         ),
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
                         Text(
-                          '50 MRU',
-                          style: TextStyle(
+                          '${quotationAmount ?? '0'} MRU',
+                          style: const TextStyle(
                             color: _nameColor,
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
@@ -3215,408 +3235,340 @@ class _OtcNewOrderCard extends StatelessWidget {
         );
       },
       child: Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  initial,
-                  style: const TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17,
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: _avatarBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    initial,
+                    style: const TextStyle(
+                      color: _avatarText,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            customerName,
-                            style: const TextStyle(
-                              color: _name,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              height: 1.2,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              customerName,
+                              style: const TextStyle(
+                                color: _name,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                height: 1.2,
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                accepted || preparing || ready || delivered
-                                    ? 8
-                                    : 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ready || delivered
-                                ? const Color(0xFF22C55E)
-                                : preparing
-                                    ? _orange
-                                    : accepted
-                                        ? _acceptedBadge
-                                        : _newBadge,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            delivered
-                                ? 'DELIVERED'
-                                : ready
-                                    ? 'READY'
-                                    : preparing
-                                        ? 'PREPARING'
-                                        : accepted
-                                            ? 'ACCEPTED'
-                                            : 'NEW',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: accepted || preparing || ready || delivered
-                                  ? 10
-                                  : 11,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.3,
-                              height: 1,
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  accepted || preparing || ready || delivered
+                                  ? 8
+                                  : 10,
+                              vertical: 5,
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        if (selfPickup) ...[
-                          const Text(
-                            '(',
-                            style: TextStyle(
-                              color: _blue,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              height: 1,
+                            decoration: BoxDecoration(
+                              color: ready || delivered
+                                  ? const Color(0xFF22C55E)
+                                  : preparing
+                                  ? _orange
+                                  : accepted
+                                  ? _acceptedBadge
+                                  : _newBadge,
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ),
-                          const SizedBox(width: 3),
-                          Image.asset(
-                            'lib/water/Assets/Images/selfpickup_icon.png',
-                            width: 15,
-                            height: 15,
-                            fit: BoxFit.contain,
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Self Pickup',
-                            style: TextStyle(
-                              color: _blue,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              height: 1.1,
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          const Text(
-                            ')',
-                            style: TextStyle(
-                              color: _blue,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            ),
-                          ),
-                        ] else ...[
-                          Image.asset(
-                            'lib/pharmacy/Assets/images/delivery_icon.png',
-                            width: 16,
-                            height: 16,
-                            fit: BoxFit.contain,
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Delivery',
-                            style: TextStyle(
-                              color: _orange,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              height: 1.1,
+                            child: Text(
+                              delivered
+                                  ? 'DELIVERED'
+                                  : ready
+                                  ? 'READY'
+                                  : preparing
+                                  ? 'PREPARING'
+                                  : accepted
+                                  ? 'ACCEPTED'
+                                  : 'NEW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize:
+                                    accepted || preparing || ready || delivered
+                                    ? 10
+                                    : 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.3,
+                                height: 1,
+                              ),
                             ),
                           ),
                         ],
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            selfPickup || ready || delivered
-                                ? '•  $orderId  •  $timeAgo'
-                                : '$orderId  •  $timeAgo',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: _meta,
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              height: 1.1,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          if (selfPickup) ...[
+                            const Text(
+                              '(',
+                              style: TextStyle(
+                                color: _blue,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                height: 1,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            Image.asset(
+                              'lib/water/Assets/Images/selfpickup_icon.png',
+                              width: 15,
+                              height: 15,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'Self Pickup',
+                              style: TextStyle(
+                                color: _blue,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                height: 1.1,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            const Text(
+                              ')',
+                              style: TextStyle(
+                                color: _blue,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                height: 1,
+                              ),
+                            ),
+                          ] else ...[
+                            Image.asset(
+                              'lib/pharmacy/Assets/images/delivery_icon.png',
+                              width: 16,
+                              height: 16,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'Delivery',
+                              style: TextStyle(
+                                color: _orange,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              selfPickup || ready || delivered
+                                  ? '•  $orderId  •  $timeAgo'
+                                  : '$orderId  •  $timeAgo',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: _meta,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                height: 1.1,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          if (scheduled)
-            const Row(
-              children: [
-                _ScheduledPill(),
-                SizedBox(width: 8),
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.calendar_today_outlined,
-                          size: 14,
-                          color: _blue,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          '15 Aug 2026',
-                          style: TextStyle(
-                            color: Color(0xFF374151),
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Icon(
-                          Icons.access_time_rounded,
-                          size: 15,
-                          color: _blue,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          '6:00 - 7:00 PM',
-                          style: TextStyle(
-                            color: Color(0xFF374151),
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
-            )
-          else if (ready)
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            ),
+            const SizedBox(height: 14),
+            if (scheduled)
+              const Row(
                 children: [
-                  if (partnerName != null) ...[
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(12, 10, 14, 10),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF3EEFF),
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
+                  _ScheduledPill(),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Image.asset(
-                            'lib/pharmacy/Assets/images/scooter.png',
-                            width: 22,
-                            height: 22,
-                            fit: BoxFit.contain,
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            size: 14,
+                            color: _blue,
                           ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text(
-                                'Assigned Delivery Partner',
-                                maxLines: 1,
-                                style: TextStyle(
-                                  color: Color(0xFF5F6274),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.15,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '($partnerName)',
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: Color(0xFF6829FF),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.15,
-                                ),
-                              ),
-                            ],
+                          SizedBox(width: 4),
+                          Text(
+                            '15 Aug 2026',
+                            style: TextStyle(
+                              color: Color(0xFF374151),
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Icon(
+                            Icons.access_time_rounded,
+                            size: 15,
+                            color: _blue,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            '6:00 - 7:00 PM',
+                            style: TextStyle(
+                              color: Color(0xFF374151),
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
                     ),
+                  ),
+                ],
+              )
+            else if (ready)
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (partnerName != null) ...[
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 14, 10),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF3EEFF),
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              'lib/pharmacy/Assets/images/scooter.png',
+                              width: 22,
+                              height: 22,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Assigned Delivery Partner',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: Color(0xFF5F6274),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.15,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '($partnerName)',
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: Color(0xFF6829FF),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    _OtcInfoPill(
+                      icon: Image.asset(
+                        cashOnDelivery
+                            ? 'lib/pharmacy/Assets/images/cashondelivery.png'
+                            : 'lib/pharmacy/Assets/images/online_payment.png',
+                        width: 16,
+                        height: 16,
+                        fit: BoxFit.contain,
+                      ),
+                      label: cashOnDelivery
+                          ? 'Cash on Delivery'
+                          : 'Online Payment',
+                    ),
+                  ],
+                ),
+              )
+            else
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const _OtcInfoPill(
+                      icon: Icon(
+                        Icons.inventory_2_outlined,
+                        size: 15,
+                        color: _orange,
+                      ),
+                      label: '2 Items • 80 MRU',
+                    ),
                     const SizedBox(width: 8),
-                  ],
-                  _OtcInfoPill(
-                    icon: Image.asset(
-                      cashOnDelivery
-                          ? 'lib/pharmacy/Assets/images/cashondelivery.png'
-                          : 'lib/pharmacy/Assets/images/online_payment.png',
-                      width: 16,
-                      height: 16,
-                      fit: BoxFit.contain,
-                    ),
-                    label: cashOnDelivery
-                        ? 'Cash on Delivery'
-                        : 'Online Payment',
-                  ),
-                ],
-              ),
-            )
-          else
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _OtcInfoPill(
-                    icon: Icon(
-                      Icons.inventory_2_outlined,
-                      size: 15,
-                      color: _orange,
-                    ),
-                    label: '2 Items • 80 MRU',
-                  ),
-                  const SizedBox(width: 8),
-                  _OtcInfoPill(
-                    icon: Image.asset(
-                      cashOnDelivery
-                          ? 'lib/pharmacy/Assets/images/cashondelivery.png'
-                          : 'lib/pharmacy/Assets/images/online_payment.png',
-                      width: cashOnDelivery ? 18 : 16,
-                      height: cashOnDelivery ? 18 : 16,
-                      fit: BoxFit.contain,
-                    ),
-                    label: cashOnDelivery
-                        ? 'Cash on Delivery'
-                        : 'Online Payment',
-                  ),
-                ],
-              ),
-            ),
-          if (!ready && !delivered) ...[
-          const SizedBox(height: 16),
-          if (accepted || preparing)
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: _orange,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _orange.withValues(alpha: 0.28),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                    _OtcInfoPill(
+                      icon: Image.asset(
+                        cashOnDelivery
+                            ? 'lib/pharmacy/Assets/images/cashondelivery.png'
+                            : 'lib/pharmacy/Assets/images/online_payment.png',
+                        width: cashOnDelivery ? 18 : 16,
+                        height: cashOnDelivery ? 18 : 16,
+                        fit: BoxFit.contain,
+                      ),
+                      label: cashOnDelivery
+                          ? 'Cash on Delivery'
+                          : 'Online Payment',
                     ),
                   ],
                 ),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: Text(
-                    preparing ? 'Mark as Ready' : 'Prepare Order',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
               ),
-            )
-          else
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 46,
-                  child: OutlinedButton(
-                    onPressed: () => showPharmacyRejectOrderSheet(context),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: _name,
-                      side: const BorderSide(color: _rejectBorder),
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: const Text(
-                      'Reject',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 3,
-                child: SizedBox(
+            if (!ready && !delivered) ...[
+              const SizedBox(height: 16),
+              if (accepted || preparing)
+                SizedBox(
+                  width: double.infinity,
                   height: 46,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -3637,30 +3589,102 @@ class _OtcNewOrderCard extends StatelessWidget {
                         shadowColor: Colors.transparent,
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
-                        'Accept Order',
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
+                      child: Text(
+                        preparing ? 'Mark as Ready' : 'Prepare Order',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                     ),
                   ),
+                )
+              else
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 46,
+                        child: OutlinedButton(
+                          onPressed: () =>
+                              showPharmacyRejectOrderSheet(context),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: _name,
+                            side: const BorderSide(color: _rejectBorder),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: const Text(
+                            'Reject',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 3,
+                      child: SizedBox(
+                        height: 46,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: _orange,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: _orange.withValues(alpha: 0.28),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: const Text(
+                              'Accept Order',
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
             ],
-          ),
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -3795,8 +3819,10 @@ class _OtcOrderCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: _newBadge,
                   borderRadius: BorderRadius.circular(20),
@@ -3937,10 +3963,7 @@ class _OtcOrderCard extends StatelessWidget {
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({
-    required this.selectedIndex,
-    required this.onSelect,
-  });
+  const _BottomNav({required this.selectedIndex, required this.onSelect});
 
   final int selectedIndex;
   final ValueChanged<int> onSelect;
@@ -4027,8 +4050,9 @@ class _BottomNav extends StatelessWidget {
                         labels[index],
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight:
-                              selected ? FontWeight.w700 : FontWeight.w500,
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                           color: selected
                               ? AppColors.primaryOrange
                               : AppColors.navInactive,
@@ -4076,4 +4100,3 @@ class _NavIcon extends StatelessWidget {
     );
   }
 }
-

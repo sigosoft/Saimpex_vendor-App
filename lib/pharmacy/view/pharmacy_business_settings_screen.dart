@@ -1,6 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
 class PharmacyBusinessSettingsScreen extends StatefulWidget {
   const PharmacyBusinessSettingsScreen({super.key});
@@ -17,7 +23,393 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
   bool _acceptingOrders = true;
   bool _storeBusy = false;
   bool _expressAvailable = true;
-  final List<_Distance> _ranges = [_Distance(min: 0, max: 5, price: 15)];
+  List<_Distance> _ranges = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBusinessSettings();
+  }
+
+  String _getBusinessSettingsUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
+    final endpoint = ApiEndPoints.pharmacyBusinessSettings.trim().replaceFirst(RegExp(r'^/'), '');
+    return '$base/$endpoint';
+  }
+
+  Future<void> _fetchBusinessSettings() async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorTypeStr = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+      final vendorType = int.tryParse(vendorTypeStr) ?? 3;
+
+      final queryParams = <String, dynamic>{
+        "vendor_type": vendorType,
+      };
+
+      final url = _getBusinessSettingsUrl();
+      debugPrint("==================== GET BUSINESS SETTINGS ====================");
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== GET BUSINESS SETTINGS ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyBusinessSettings,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("===============================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("===============================================================");
+
+      if (mounted) {
+        _parseAndApplySettings(response.data);
+      }
+    } catch (e) {
+      debugPrint("==================== GET BUSINESS SETTINGS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("=====================================================================");
+
+      print("==================== GET BUSINESS SETTINGS ERROR ====================");
+      print("Error: $e");
+      print("=====================================================================");
+    }
+  }
+
+  void _parseAndApplySettings(dynamic rawData) {
+    Map<String, dynamic>? dataMap;
+    if (rawData is Map<String, dynamic>) {
+      dataMap = rawData;
+    } else if (rawData is Map) {
+      dataMap = Map<String, dynamic>.from(rawData);
+    } else if (rawData is String) {
+      try {
+        final decoded = jsonDecode(rawData);
+        if (decoded is Map) {
+          dataMap = Map<String, dynamic>.from(decoded);
+        }
+      } catch (_) {}
+    }
+
+    if (dataMap == null) return;
+
+    Map<String, dynamic> target = dataMap;
+    if (dataMap['data'] is Map) {
+      final inner = Map<String, dynamic>.from(dataMap['data'] as Map);
+      target = inner;
+      if (inner['business_settings'] is Map) {
+        target = Map<String, dynamic>.from(inner['business_settings'] as Map);
+      } else if (inner['settings'] is Map) {
+        target = Map<String, dynamic>.from(inner['settings'] as Map);
+      } else if (inner['vendor'] is Map) {
+        target = Map<String, dynamic>.from(inner['vendor'] as Map);
+      }
+    }
+
+    setState(() {
+      // 1. Store Status (Open)
+      final dynamic storeOpenVal = target['store_open'] ??
+          target['store_status'] ??
+          target['is_store_open'] ??
+          target['is_open'] ??
+          target['open_status'] ??
+          target['open'];
+      if (storeOpenVal != null) {
+        if (storeOpenVal is bool) {
+          _storeOpen = storeOpenVal;
+        } else {
+          final s = storeOpenVal.toString().trim().toLowerCase();
+          _storeOpen = s == '1' || s == 'true' || s == 'open';
+        }
+      }
+
+      // 2. Accepting Orders
+      final dynamic acceptVal = target['accepting_orders'] ??
+          target['is_accepting_orders'] ??
+          target['accept_orders'] ??
+          target['orders_accepted'];
+      if (acceptVal != null) {
+        if (acceptVal is bool) {
+          _acceptingOrders = acceptVal;
+        } else {
+          final s = acceptVal.toString().trim().toLowerCase();
+          _acceptingOrders = s == '1' || s == 'true';
+        }
+      }
+
+      // 3. Mark Store Busy (1 = Busy, 2/0 = Not Busy)
+      final dynamic busyVal = target['is_busy'] ??
+          target['store_busy'] ??
+          target['is_store_busy'] ??
+          target['busy'];
+      if (busyVal != null) {
+        if (busyVal is bool) {
+          _storeBusy = busyVal;
+        } else {
+          final s = busyVal.toString().trim().toLowerCase();
+          _storeBusy = s == '1' || s == 'true';
+        }
+      }
+
+      // 4. Express Delivery Available
+      final dynamic expressVal = target['express_delivery'] ??
+          target['is_express'] ??
+          target['express_available'] ??
+          target['express_delivery_status'] ??
+          target['is_express_delivery'];
+      if (expressVal != null) {
+        if (expressVal is bool) {
+          _expressAvailable = expressVal;
+        } else {
+          final s = expressVal.toString().trim().toLowerCase();
+          _expressAvailable = s == '1' || s == 'true';
+        }
+      }
+
+      // 5. Distance Ranges / Pricing
+      final dynamic rangesVal = target['pricing'] ??
+          target['distance_ranges'] ??
+          target['ranges'] ??
+          target['express_pricing'] ??
+          target['distance_pricing'] ??
+          target['delivery_ranges'] ??
+          dataMap?['data']?['pricing'] ??
+          dataMap?['data']?['distance_ranges'];
+
+      if (rangesVal is List) {
+        final List<_Distance> parsedRanges = [];
+        for (final item in rangesVal) {
+          if (item is Map) {
+            final minVal = item['min'] ??
+                item['min_distance'] ??
+                item['from'] ??
+                item['min_km'] ??
+                item['start'];
+            final maxVal = item['max'] ??
+                item['max_distance'] ??
+                item['to'] ??
+                item['max_km'] ??
+                item['end'];
+            final priceVal = item['price'] ??
+                item['delivery_charge'] ??
+                item['amount'] ??
+                item['cost'] ??
+                item['rate'];
+
+            final min = int.tryParse(minVal?.toString() ?? '') ??
+                double.tryParse(minVal?.toString() ?? '')?.toInt();
+            final max = int.tryParse(maxVal?.toString() ?? '') ??
+                double.tryParse(maxVal?.toString() ?? '')?.toInt();
+            final price = int.tryParse(priceVal?.toString() ?? '') ??
+                double.tryParse(priceVal?.toString() ?? '')?.toInt();
+
+            if (min != null && max != null && price != null) {
+              parsedRanges.add(_Distance(min: min, max: max, price: price));
+            }
+          }
+        }
+        _ranges = parsedRanges;
+      }
+    });
+  }
+
+  Future<bool> _updateBusinessSettings() async {
+    showLoadingDialog(context);
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorTypeStr = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "3");
+      final vendorType = int.tryParse(vendorTypeStr) ?? 3;
+
+      final pricingPayload = _ranges
+          .map((r) => {
+                "min": r.min,
+                "max": r.max,
+                "price": r.price,
+                "min_distance": r.min,
+                "max_distance": r.max,
+              })
+          .toList();
+
+      final Map<String, dynamic> body = {
+        "vendor_type": vendorType,
+        "store_status": _storeOpen ? 1 : 0,
+        "store_open": _storeOpen ? 1 : 0,
+        "is_store_open": _storeOpen ? 1 : 0,
+        "accepting_orders": _acceptingOrders ? 1 : 0,
+        "is_accepting_orders": _acceptingOrders ? 1 : 0,
+        "is_busy": _storeBusy ? 1 : 2,
+        "store_busy": _storeBusy ? 1 : 0,
+        "express_available": _expressAvailable ? 1 : 0,
+        "express_delivery": _expressAvailable ? 1 : 0,
+        "is_express": _expressAvailable ? 1 : 0,
+        "pricing": pricingPayload,
+        "distance_ranges": pricingPayload,
+      };
+
+      final url = _getBusinessSettingsUrl();
+      debugPrint("==================== POST BUSINESS SETTINGS ====================");
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
+      debugPrint("Body: ${jsonEncode(body)}");
+
+      print("==================== POST BUSINESS SETTINGS ====================");
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
+      print("Body: ${jsonEncode(body)}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.pharmacyBusinessSettings,
+        body: body,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("================================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("================================================================");
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      final resData = response.data;
+      final bool isSuccess = resData is Map &&
+          (resData['status'] == true ||
+              resData['status'].toString() == 'true' ||
+              resData['status'] == 1 ||
+              resData['status'] == '1');
+
+      if (isSuccess) {
+        HapticFeedback.lightImpact();
+        if (mounted) {
+          String message = 'Business settings updated successfully';
+          if (resData['message'] != null) {
+            final msg = resData['message'];
+            if (msg is Map) {
+              final lang = FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+              final key = lang == 'ar'
+                  ? 'message_ar'
+                  : lang == 'fr'
+                      ? 'message_fr'
+                      : 'message_en';
+              if (msg[key] != null) {
+                final raw = msg[key];
+                if (raw is List && raw.isNotEmpty) {
+                  message = raw.first.toString();
+                } else {
+                  message = raw.toString();
+                }
+              }
+            } else if (msg is String) {
+              message = msg;
+            }
+          }
+          showToast(context, message);
+        }
+        return true;
+      } else {
+        if (mounted) {
+          final message = resData is Map
+              ? resData['message']?.toString() ?? 'Failed to update business settings'
+              : 'Failed to update business settings';
+          showToast(context, message);
+        }
+        return false;
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      debugPrint("==================== POST BUSINESS SETTINGS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("======================================================================");
+
+      print("==================== POST BUSINESS SETTINGS ERROR ====================");
+      print("Error: $e");
+      print("======================================================================");
+
+      if (mounted) {
+        showErrorMessage(e);
+      }
+      return false;
+    }
+  }
+
+  Future<void> _onStoreOpenChanged(bool value) async {
+    final previous = _storeOpen;
+    setState(() => _storeOpen = value);
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _storeOpen = previous);
+    }
+  }
+
+  Future<void> _onAcceptingOrdersChanged(bool value) async {
+    final previous = _acceptingOrders;
+    setState(() => _acceptingOrders = value);
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _acceptingOrders = previous);
+    }
+  }
+
+  Future<void> _onStoreBusyChanged(bool value) async {
+    final previous = _storeBusy;
+    setState(() => _storeBusy = value);
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _storeBusy = previous);
+    }
+  }
+
+  Future<void> _onExpressAvailableChanged(bool value) async {
+    final previous = _expressAvailable;
+    setState(() => _expressAvailable = value);
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _expressAvailable = previous);
+    }
+  }
 
   Future<_Distance?> _openSheet({_Distance? current, int? editingIndex}) {
     final last = _ranges.isEmpty ? null : _ranges.last;
@@ -42,13 +434,23 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
   Future<void> _openAddRange() async {
     final added = await _openSheet();
     if (added == null || !mounted) return;
+    final previous = List<_Distance>.from(_ranges);
     setState(() => _ranges.add(added));
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _ranges = previous);
+    }
   }
 
   Future<void> _openEditRange(int index) async {
     final edited = await _openSheet(current: _ranges[index], editingIndex: index);
     if (edited == null || !mounted) return;
+    final previous = List<_Distance>.from(_ranges);
     setState(() => _ranges[index] = edited);
+    final success = await _updateBusinessSettings();
+    if (!success && mounted) {
+      setState(() => _ranges = previous);
+    }
   }
 
   @override
@@ -71,79 +473,83 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).pop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                  children: [
-                    const _SectionTitle('Store Availability'),
-                    const SizedBox(height: 10),
-                    _Card(
-                      children: [
-                        _SwitchRow(
-                          label: 'Store Status (Open)',
-                          value: _storeOpen,
-                          onChanged: (value) => setState(() => _storeOpen = value),
-                        ),
-                        const _Divider(),
-                        _SwitchRow(
-                          label: 'Accepting Orders',
-                          value: _acceptingOrders,
-                          onChanged: (value) => setState(() => _acceptingOrders = value),
-                        ),
-                        const _Divider(),
-                        _SwitchRow(
-                          label: 'Mark Store Busy',
-                          value: _storeBusy,
-                          onChanged: (value) => setState(() => _storeBusy = value),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const _SectionTitle('Express Delivery'),
-                    const SizedBox(height: 10),
-                    _Card(
-                      children: [
-                        _SwitchRow(
-                          label: 'Available',
-                          value: _expressAvailable,
-                          onChanged: (value) => setState(() => _expressAvailable = value),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Pricing',
-                              style: GoogleFonts.inter(
-                                color: PharmacyBusinessSettingsScreen.ink,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
+                child: RefreshIndicator(
+                  color: PharmacyBusinessSettingsScreen.orange,
+                  onRefresh: _fetchBusinessSettings,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                    children: [
+                      const _SectionTitle('Store Availability'),
+                      const SizedBox(height: 10),
+                      _Card(
+                        children: [
+                          _SwitchRow(
+                            label: 'Store Status (Open)',
+                            value: _storeOpen,
+                            onChanged: _onStoreOpenChanged,
+                          ),
+                          const _Divider(),
+                          _SwitchRow(
+                            label: 'Accepting Orders',
+                            value: _acceptingOrders,
+                            onChanged: _onAcceptingOrdersChanged,
+                          ),
+                          const _Divider(),
+                          _SwitchRow(
+                            label: 'Mark Store Busy',
+                            value: _storeBusy,
+                            onChanged: _onStoreBusyChanged,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const _SectionTitle('Express Delivery'),
+                      const SizedBox(height: 10),
+                      _Card(
+                        children: [
+                          _SwitchRow(
+                            label: 'Available',
+                            value: _expressAvailable,
+                            onChanged: _onExpressAvailableChanged,
+                          ),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Pricing',
+                                style: GoogleFonts.inter(
+                                  color: PharmacyBusinessSettingsScreen.ink,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          child: Column(
-                            children: [
-                              for (var i = 0; i < _ranges.length; i++) ...[
-                                if (i > 0) const SizedBox(height: 8),
-                                _DistanceRange(
-                                  range: _ranges[i],
-                                  onEdit: () => _openEditRange(i),
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Column(
+                              children: [
+                                for (var i = 0; i < _ranges.length; i++) ...[
+                                  if (i > 0) const SizedBox(height: 8),
+                                  _DistanceRange(
+                                    range: _ranges[i],
+                                    onEdit: () => _openEditRange(i),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                          child: _AddRangeButton(onTap: _openAddRange),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                            child: _AddRangeButton(onTap: _openAddRange),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

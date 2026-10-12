@@ -240,6 +240,7 @@ class LeaveData {
           ? int.tryParse(json['vendor_id'].toString())
           : null,
       date: json['date']?.toString(),
+      reason: json['reason']?.toString(),
     );
   }
 }
