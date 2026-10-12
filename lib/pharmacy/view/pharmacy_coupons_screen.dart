@@ -959,15 +959,11 @@ class _CouponConfirmDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: const Color(0xFFE7E7E7)),
                   ),
-<<<<<<< HEAD
                   child: const Icon(
                     Icons.close,
-                    size: 14,
+                    size: 16,
                     color: Color(0xFF7F7F7F),
                   ),
-=======
-                  child: const Icon(Icons.close, size: 16, color: Color(0xFF7F7F7F)),
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                 ),
               ),
             ),

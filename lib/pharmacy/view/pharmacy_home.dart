@@ -955,49 +955,25 @@ class _OrderTypeTabs extends StatelessWidget {
           colors: [Color(0xFFFF5722), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
         ),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final segment = constraints.maxWidth / _labels.length;
-          return SizedBox(
-            height: 40,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 420),
-                  curve: Curves.easeInOutCubic,
-                  left: selectedIndex * segment,
-                  top: 0,
-                  bottom: 0,
-                  width: segment,
-                  child: const DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(24)),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: List.generate(_labels.length, (index) {
-                    final selected = selectedIndex == index;
-                    return Expanded(
-                      child: _TypeTab(
-                        label: _labels[index],
-                        selected: selected,
-                        badge: selected ? badges[index] : null,
-                        onTap: () {
-                          if (index == selectedIndex) return;
-                          HapticFeedback.selectionClick();
-                          onSelect(index);
-                        },
-                      ),
-                    );
-                  }),
-                ),
-              ],
+      child: Row(
+        children: [
+          Expanded(
+            child: _TypeTab(
+              label: 'Prescription',
+              selected: selectedIndex == 0,
+              badge: selectedIndex == 0 ? prescriptionBadge : null,
+              onTap: () => onSelect(0),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: _TypeTab(
+              label: 'OTC',
+              selected: selectedIndex == 1,
+              badge: selectedIndex == 1 ? otcBadge : null,
+              onTap: () => onSelect(1),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -4024,7 +4000,6 @@ class _BottomNav extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-<<<<<<< HEAD
           child: Row(
             children: List.generate(5, (index) {
               final selected = selectedIndex == index;
@@ -4079,82 +4054,13 @@ class _BottomNav extends StatelessWidget {
                           color: selected
                               ? AppColors.primaryOrange
                               : AppColors.navInactive,
-=======
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final segment = constraints.maxWidth / labels.length;
-              return SizedBox(
-                width: constraints.maxWidth,
-                child: Stack(
-                  children: [
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 280),
-                      curve: Curves.easeOutCubic,
-                      left: selectedIndex * segment + (segment - 40) / 2,
-                      top: 0,
-                      width: 40,
-                      height: 40,
-                      child: const DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryOrange,
-                          shape: BoxShape.circle,
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                         ),
                       ),
-                    ),
-                    Row(
-                      children: List.generate(labels.length, (index) {
-                        final selected = selectedIndex == index;
-                        return Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {
-                              if (index == selectedIndex) return;
-                              HapticFeedback.selectionClick();
-                              onSelect(index);
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  height: 40,
-                                  child: Center(
-                                    child: TweenAnimationBuilder<double>(
-                                      tween: Tween(end: selected ? 1 : 0),
-                                      duration: const Duration(milliseconds: 280),
-                                      curve: Curves.easeOutCubic,
-                                      builder: (context, t, _) {
-                                        return _NavIcon(
-                                          asset: assetIcons[index],
-                                          fallback: fallbacks[index],
-                                          color: Color.lerp(AppColors.navInactive, Colors.white, t)!,
-                                          size: assetIcons[index] == null && !selected ? 28 : 24,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 280),
-                                  curve: Curves.easeOutCubic,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                                    color: selected ? AppColors.primaryOrange : AppColors.navInactive,
-                                  ),
-                                  child: Text(labels[index]),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
-            },
+            }),
           ),
         ),
       ),

@@ -12,11 +12,8 @@ import 'package:saimpex_vendor/controller/settings_controller.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_business_settings_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_coupons_screen.dart';
-import 'package:saimpex_vendor/pharmacy/view/pharmacy_delivery_boys_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_earnings_screen.dart';
-import 'package:saimpex_vendor/pharmacy/view/pharmacy_help_support_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_leave_management_screen.dart';
-import 'package:saimpex_vendor/pharmacy/view/pharmacy_privacy_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_profile_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_received_payouts_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_working_hours_screen.dart';
@@ -656,16 +653,11 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         '',
                     rating: _profileData?.rating ??
                         _rawVendorData?['rating']?.toString() ??
-<<<<<<< HEAD
                         '',
                     isOpen: (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
                             _rawVendorData?['status']?.toString() == '1' ||
                             _profileData?.isBusy == 2) &&
                         (_profileData?.isBusy != 1),
-=======
-                        '4.8',
-                    isOpen: true,
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                     imageUrl: _profileData?.image ??
                         _rawVendorData?['image']?.toString(),
                     isVerified: true,
@@ -802,20 +794,6 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         label: 'Delivery Boys',
                         onTap: _onDeliveryBoysTap,
                       ),
-<<<<<<< HEAD
-=======
-                      _MenuTile(
-                        icon: Icons.delivery_dining_outlined,
-                        label: 'Delivery Boys',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyDeliveryBoysScreen(),
-                            ),
-                          );
-                        },
-                      ),
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                     ],
                   ),
                   const SizedBox(height: 18),
@@ -827,17 +805,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                       _MenuTile(
                         icon: Icons.headset_mic_outlined,
                         label: 'Help & Support',
-<<<<<<< HEAD
                         onTap: _onHelpAndSupportTap,
-=======
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyHelpSupportScreen(),
-                            ),
-                          );
-                        },
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                       ),
                       _MenuTile(
                         icon: Icons.description_outlined,
@@ -848,17 +816,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         image: 'lib/pharmacy/Assets/images/privacy_policy.png',
                         imageSize: 20,
                         label: 'Privacy Policy',
-<<<<<<< HEAD
                         onTap: _onPrivacyPolicyTap,
-=======
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyPrivacyScreen(),
-                            ),
-                          );
-                        },
->>>>>>> ae13de2fec950b97714d4168ea8e90bed44aa021
                       ),
                     ],
                   ),
