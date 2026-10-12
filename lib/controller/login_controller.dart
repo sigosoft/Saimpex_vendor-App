@@ -67,9 +67,10 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
-    // Water is UI-design only for now: skip API validation.
+    // Water and Home Cleaning are UI-design only for now: skip API validation.
     // Grocery, Restaurant, and Pharmacy use the authenticated login flow.
-    if (selectedAppType == VendorAppType.water) {
+    if (selectedAppType == VendorAppType.water ||
+        selectedAppType == VendorAppType.homeCleaning) {
       await savename(VendorAppRouter.storageKey, selectedAppType.storageValue);
       await savename("loginStatus", "true");
       await VendorAppRouter.goToSelectedApp(type: selectedAppType);

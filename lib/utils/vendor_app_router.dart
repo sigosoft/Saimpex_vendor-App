@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_home.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
@@ -18,6 +19,8 @@ class VendorAppRouter {
         return const WaterAppShell();
       case VendorAppType.pharmacy:
         return const PharmacyHome();
+      case VendorAppType.homeCleaning:
+        return const HomeCleaningHome();
     }
   }
 

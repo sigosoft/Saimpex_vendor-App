@@ -1,42 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:saimpex_vendor/water/controller/earnings_controller.dart';
-import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/water/view/account/payout_details_view.dart';
-
-enum _EarningStatus { available, pending, cancelled }
-
-class _EarningOrder {
-  const _EarningOrder({
-    required this.id,
-    required this.timestamp,
-    required this.amount,
-    required this.status,
-  });
-
-  final String id;
-  final String timestamp;
-  final String amount;
-  final _EarningStatus status;
-}
-
-class _PayoutTxn {
-  const _PayoutTxn({
-    required this.id,
-    required this.timestamp,
-    required this.amount,
-    required this.status,
-  });
-
-  final String id;
-  final String timestamp;
-  final String amount;
-  final String status;
-}
 
 class EarningsView extends StatefulWidget {
   const EarningsView({super.key});
+
+  static const orange = Color(0xFFFF5216);
+  static const button = Color(0xFFFF5317);
+  static const ink = Color(0xFF1C1D1B);
+  static const muted = Color(0xFF918E94);
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -48,176 +21,144 @@ class EarningsView extends StatefulWidget {
   State<EarningsView> createState() => _EarningsViewState();
 }
 
+enum _EarnTab { orders, payouts }
+
+enum _OrderFilter { all, available, pending, cancelled }
+
+enum _OrderStatus { available, pending, cancelled }
+
+class _Order {
+  const _Order({
+    required this.id,
+    required this.when,
+    required this.amount,
+    required this.status,
+  });
+
+  final String id;
+  final String when;
+  final String amount;
+  final _OrderStatus status;
+}
+
 class _EarningsViewState extends State<EarningsView> {
-  late final WaterEarningsController controller;
+  _EarnTab _tab = _EarnTab.orders;
+  _OrderFilter _filter = _OrderFilter.all;
 
-  @override
-  void initState() {
-    super.initState();
-    controller = WaterEarningsController();
-  }
-
-  static const orders = [
-    _EarningOrder(
+  static const _orders = [
+    _Order(
       id: '#ORD-000246',
-      timestamp: 'Feb 07, 2026 11:45 AM, Today',
+      when: 'Feb 07, 2026 11:45 AM, Today',
       amount: '450.00 MRU',
-      status: _EarningStatus.available,
+      status: _OrderStatus.available,
     ),
-    _EarningOrder(
-      id: '#ORD-000245',
-      timestamp: 'Feb 07, 2026 10:20 AM, Today',
-      amount: '320.00 MRU',
-      status: _EarningStatus.pending,
+    _Order(
+      id: '#ORD-000241',
+      when: 'Feb 07, 2026 10:45 AM, Today',
+      amount: '550.00 MRU',
+      status: _OrderStatus.available,
     ),
-    _EarningOrder(
-      id: '#ORD-000244',
-      timestamp: 'Feb 06, 2026 04:15 PM',
-      amount: '180.00 MRU',
-      status: _EarningStatus.cancelled,
+    _Order(
+      id: '#ORD-000230',
+      when: 'Feb 07, 2026 09:45 AM, Today',
+      amount: '300.00 MRU',
+      status: _OrderStatus.available,
     ),
-    _EarningOrder(
-      id: '#ORD-000243',
-      timestamp: 'Feb 06, 2026 01:05 PM',
-      amount: '275.00 MRU',
-      status: _EarningStatus.available,
+    _Order(
+      id: '#ORD-000225',
+      when: 'Feb 07, 2026 09:15 AM, Today',
+      amount: '400.00 MRU',
+      status: _OrderStatus.pending,
     ),
-    _EarningOrder(
-      id: '#ORD-000242',
-      timestamp: 'Feb 05, 2026 09:30 AM',
-      amount: '510.00 MRU',
-      status: _EarningStatus.pending,
-    ),
-  ];
-
-  static const _payouts = [
-    _PayoutTxn(
-      id: '#TRX002',
-      timestamp: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '1000.00 MRU',
-      status: 'CREDITED',
+    _Order(
+      id: '#ORD-000202',
+      when: 'Feb 07, 2026 08:30 AM, Today',
+      amount: '0.00 MRU',
+      status: _OrderStatus.cancelled,
     ),
   ];
 
-  List<_EarningOrder> get filteredOrders {
-    switch (controller.filterIndex) {
-      case 1:
-        return orders
-            .where((o) => o.status == _EarningStatus.available)
-            .toList();
-      case 2:
-        return orders
-            .where((o) => o.status == _EarningStatus.pending)
-            .toList();
-      case 3:
-        return orders
-            .where((o) => o.status == _EarningStatus.cancelled)
-            .toList();
-      default:
-        return orders;
-    }
+  List<_Order> get _visible {
+    if (_filter == _OrderFilter.all) return _orders;
+    final status = switch (_filter) {
+      _OrderFilter.available => _OrderStatus.available,
+      _OrderFilter.pending => _OrderStatus.pending,
+      _OrderFilter.cancelled => _OrderStatus.cancelled,
+      _OrderFilter.all => _OrderStatus.available,
+    };
+    return _orders.where((order) => order.status == status).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<WaterEarningsController>(
-      init: controller,
-      global: false,
-      builder: (_) => _buildScreen(context),
-    );
-  }
-
-  Widget _buildScreen(BuildContext context) {
+    final ordersTab = _tab == _EarnTab.orders;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundMid,
+        backgroundColor: Colors.white,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.backgroundTop,
-                AppColors.backgroundMid,
-                Colors.white,
-              ],
-              stops: [0, 0.2, 1],
+              colors: [Color(0xFFFFE8E0), Color(0xFFFFF4EF), Colors.white],
+              stops: [0, 0.22, 0.42],
             ),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
-                    children: [
-                      _TabSwitcher(
-                        selectedIndex: controller.tabIndex,
-                        onSelect: controller.selectTab,
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                  children: [
+                    _TabSwitch(
+                      orders: ordersTab,
+                      onChanged: (orders) {
+                        setState(() => _tab = orders ? _EarnTab.orders : _EarnTab.payouts);
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    _SummaryCard(
+                      rows: ordersTab
+                          ? const [
+                              ('Pending Order Balance', '400.00 MRU'),
+                              ('Available Order Balance', '1300.00 MRU'),
+                              ('Total Payout Received', '00.00 MRU'),
+                            ]
+                          : const [
+                              ('Total Sale Amount', '1300.00 MRU'),
+                              ('Available Payout Balance', '300.00 MRU'),
+                              ('Total Payout Received', '00.00 MRU'),
+                            ],
+                    ),
+                    const SizedBox(height: 14),
+                    if (ordersTab) ...[
+                      _Filters(
+                        selected: _filter,
+                        onSelected: (filter) => setState(() => _filter = filter),
                       ),
                       const SizedBox(height: 14),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 320),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) {
-                          final slide = Tween<Offset>(
-                            begin: Offset(controller.tabIndex == 1 ? 0.06 : -0.06, 0),
-                            end: Offset.zero,
-                          ).animate(animation);
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: slide,
-                              child: child,
-                            ),
+                      for (final order in _visible) ...[
+                        _OrderCard(order: order),
+                        const SizedBox(height: 12),
+                      ],
+                    ] else
+                      _PayoutCard(
+                        onDetails: () {
+                          PayoutDetailsView.open(
+                            context,
+                            transactionId: '#TRX002',
+                            timestamp: 'Feb 07, 2026 10:45 AM, Today',
+                            amount: '1000.00 MRU',
                           );
                         },
-                        child: KeyedSubtree(
-                          key: ValueKey<int>(controller.tabIndex),
-                          child: controller.tabIndex == 0
-                              ? Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    const _SummaryCard(isPayouts: false),
-                                    const SizedBox(height: 14),
-                                    _FilterChips(
-                                      selectedIndex: controller.filterIndex,
-                                      labels: WaterEarningsController.filters,
-                                      onSelect: controller.selectFilter,
-                                    ),
-                                    const SizedBox(height: 14),
-                                    for (final order in filteredOrders) ...[
-                                      _OrderCard(order: order),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ],
-                                )
-                              : Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    const _SummaryCard(isPayouts: true),
-                                    const SizedBox(height: 14),
-                                    for (final payout in _payouts) ...[
-                                      _PayoutCard(payout: payout),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ],
-                                ),
-                        ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -239,12 +180,12 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
+            Text(
               'Earnings',
-              style: TextStyle(
-                color: AppColors.textDark,
+              style: GoogleFonts.inter(
+                color: EarningsView.ink,
                 fontWeight: FontWeight.w700,
-                fontSize: 17,
+                fontSize: 18,
               ),
             ),
             Align(
@@ -258,18 +199,12 @@ class _Header extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.primaryOrange,
-                    size: 28,
+                    color: EarningsView.orange,
+                    size: 26,
                   ),
                 ),
               ),
@@ -281,78 +216,75 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _TabSwitcher extends StatelessWidget {
-  const _TabSwitcher({
-    required this.selectedIndex,
-    required this.onSelect,
-  });
+class _TabSwitch extends StatelessWidget {
+  const _TabSwitch({required this.orders, required this.onChanged});
 
-  final int selectedIndex;
-  final ValueChanged<int> onSelect;
+  final bool orders;
+  final ValueChanged<bool> onChanged;
+
+  static const _labels = ['Order Amount', 'Payouts'];
 
   @override
   Widget build(BuildContext context) {
-    const tabs = ['Order Amount', 'Payouts'];
+    final selected = orders ? 0 : 1;
     return Container(
-      height: 48,
-      padding: const EdgeInsets.all(4),
+      height: 44,
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.fieldBorder),
+        borderRadius: BorderRadius.circular(22),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final tabWidth = constraints.maxWidth / tabs.length;
-          return Stack(
-            children: [
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 280),
-                curve: Curves.easeOutCubic,
-                left: selectedIndex * tabWidth,
-                top: 0,
-                bottom: 0,
-                width: tabWidth,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryOrange,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryOrange.withValues(alpha: 0.28),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+          final segment = constraints.maxWidth / _labels.length;
+          return SizedBox(
+            height: 38,
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutCubic,
+                  left: selected * segment,
+                  top: 0,
+                  bottom: 0,
+                  width: segment,
+                  child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: EarningsView.orange,
+                      borderRadius: BorderRadius.all(Radius.circular(19)),
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  for (var i = 0; i < tabs.length; i++)
-                    Expanded(
+                Row(
+                  children: List.generate(_labels.length, (index) {
+                    final isSelected = selected == index;
+                    return Expanded(
                       child: GestureDetector(
+                        onTap: () {
+                          if (index == selected) return;
+                          HapticFeedback.selectionClick();
+                          onChanged(index == 0);
+                        },
                         behavior: HitTestBehavior.opaque,
-                        onTap: () => onSelect(i),
                         child: Center(
                           child: AnimatedDefaultTextStyle(
                             duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOut,
-                            style: TextStyle(
-                              color: selectedIndex == i
-                                  ? Colors.white
-                                  : AppColors.textDark,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13.5,
+                            curve: Curves.easeOutCubic,
+                            style: GoogleFonts.inter(
+                              color: isSelected ? Colors.white : const Color(0xFF585D6B),
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontSize: 14,
+                              height: 1.1,
                             ),
-                            child: Text(tabs[i]),
+                            child: Text(_labels[index]),
                           ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-            ],
+                    );
+                  }),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -361,178 +293,134 @@ class _TabSwitcher extends StatelessWidget {
 }
 
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.isPayouts});
+  const _SummaryCard({required this.rows});
 
-  final bool isPayouts;
+  final List<(String, String)> rows;
 
   @override
   Widget build(BuildContext context) {
-    final rows = isPayouts
-        ? const [
-            _SummaryRow(
-              label: 'Total Sale Amount',
-              value: '1300.00 MRU',
-            ),
-            _SummaryRow(
-              label: 'Available Payout Balance',
-              value: '300.00 MRU',
-            ),
-            _SummaryRow(
-              label: 'Total Payout Received',
-              value: '00.00 MRU',
-            ),
-          ]
-        : const [
-            _SummaryRow(
-              label: 'Pending Order Balance',
-              value: '400.00 MRU',
-            ),
-            _SummaryRow(
-              label: 'Available Order Balance',
-              value: '1300.00 MRU',
-            ),
-            _SummaryRow(
-              label: 'Total Payout Received',
-              value: '00.00 MRU',
-            ),
-          ];
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-      decoration: BoxDecoration(
-        color: AppColors.primaryOrange,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryOrange.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -30,
-            top: -20,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
-              ),
-            ),
-          ),
-          Positioned(
-            right: -10,
-            bottom: -40,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
-            ),
-          ),
-          Column(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: CustomPaint(
+        painter: const _SummaryBackdropPainter(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
             children: [
               for (var i = 0; i < rows.length; i++) ...[
-                if (i > 0) const SizedBox(height: 14),
-                rows[i],
+                if (i > 0) const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        rows[i].$1,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      rows[i].$2,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
+class _SummaryBackdropPainter extends CustomPainter {
+  const _SummaryBackdropPainter();
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.95),
-              fontWeight: FontWeight.w500,
-              fontSize: 13.5,
-            ),
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 14.5,
-          ),
-        ),
-      ],
-    );
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFFF5317));
+    final lighter = Paint()..color = const Color(0xFFFF642E);
+    canvas.drawCircle(Offset(size.width * 0.98, size.height * 0.46), size.height * 0.78, lighter);
+    canvas.drawCircle(Offset(size.width * -0.02, size.height * 0.9), size.height * 0.58, lighter);
   }
+
+  @override
+  bool shouldRepaint(covariant _SummaryBackdropPainter oldDelegate) => false;
 }
 
-class _FilterChips extends StatelessWidget {
-  const _FilterChips({
-    required this.selectedIndex,
-    required this.labels,
-    required this.onSelect,
-  });
+class _Filters extends StatelessWidget {
+  const _Filters({required this.selected, required this.onSelected});
 
-  final int selectedIndex;
-  final List<String> labels;
-  final ValueChanged<int> onSelect;
+  final _OrderFilter selected;
+  final ValueChanged<_OrderFilter> onSelected;
 
   @override
   Widget build(BuildContext context) {
+    const items = [
+      (_OrderFilter.all, 'All'),
+      (_OrderFilter.available, 'Available'),
+      (_OrderFilter.pending, 'Pending'),
+      (_OrderFilter.cancelled, 'Cancelled'),
+    ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          for (var i = 0; i < labels.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () => onSelect(i),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                decoration: BoxDecoration(
-                  color: selectedIndex == i
-                      ? AppColors.primaryOrange
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: selectedIndex == i
-                        ? AppColors.primaryOrange
-                        : AppColors.fieldBorder,
-                  ),
-                ),
-                child: Text(
-                  labels[i],
-                  style: TextStyle(
-                    color: selectedIndex == i
-                        ? Colors.white
-                        : AppColors.textDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
+          for (final item in items) ...[
+            _Chip(
+              label: item.$2,
+              selected: selected == item.$1,
+              onTap: () => onSelected(item.$1),
             ),
+            const SizedBox(width: 8),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 34,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? EarningsView.button : Colors.white,
+          borderRadius: BorderRadius.circular(17),
+          border: Border.all(
+            color: selected ? EarningsView.button : const Color(0xFFE6E8EC),
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            color: selected ? Colors.white : const Color(0xFF6B7280),
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
       ),
     );
   }
@@ -541,97 +429,77 @@ class _FilterChips extends StatelessWidget {
 class _OrderCard extends StatelessWidget {
   const _OrderCard({required this.order});
 
-  final _EarningOrder order;
-
-  Color get _statusColor {
-    switch (order.status) {
-      case _EarningStatus.available:
-        return AppColors.inventoryAvailable;
-      case _EarningStatus.pending:
-        return AppColors.primaryOrange;
-      case _EarningStatus.cancelled:
-        return AppColors.inventoryOutOfStock;
-    }
-  }
-
-  String get _statusLabel {
-    switch (order.status) {
-      case _EarningStatus.available:
-        return 'AVAILABLE';
-      case _EarningStatus.pending:
-        return 'PENDING';
-      case _EarningStatus.cancelled:
-        return 'CANCELLED';
-    }
-  }
+  final _Order order;
 
   @override
   Widget build(BuildContext context) {
+    final status = switch (order.status) {
+      _OrderStatus.available => ('AVAILABLE', const Color(0xFF16A34A)),
+      _OrderStatus.pending => ('PENDING', const Color(0xFFF59E0B)),
+      _OrderStatus.cancelled => ('CANCELLED', const Color(0xFFF01E1E)),
+    };
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFF0F1F3)),
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   order.id,
-                  style: const TextStyle(
-                    color: AppColors.primaryOrange,
+                  style: GoogleFonts.inter(
+                    color: EarningsView.orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
                 ),
-              ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(Icons.access_time_outlined, size: 13, color: EarningsView.muted),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        order.when,
+                        style: GoogleFonts.inter(
+                          color: EarningsView.muted,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
               Text(
-                _statusLabel,
-                style: TextStyle(
-                  color: _statusColor,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 11.5,
+                status.$1,
+                style: GoogleFonts.inter(
+                  color: status.$2,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
                   letterSpacing: 0.3,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Icon(
-                Icons.access_time_rounded,
-                color: AppColors.textMuted,
-                size: 14,
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: Text(
-                  order.timestamp,
-                  style: const TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
+              const SizedBox(height: 6),
               Text(
                 order.amount,
-                style: const TextStyle(
-                  color: AppColors.textDark,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14.5,
+                style: GoogleFonts.inter(
+                  color: EarningsView.ink,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -643,26 +511,18 @@ class _OrderCard extends StatelessWidget {
 }
 
 class _PayoutCard extends StatelessWidget {
-  const _PayoutCard({required this.payout});
+  const _PayoutCard({required this.onDetails});
 
-  final _PayoutTxn payout;
+  final VoidCallback onDetails;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFF0F1F3)),
       ),
       child: Column(
         children: [
@@ -674,30 +534,24 @@ class _PayoutCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      payout.id,
-                      style: const TextStyle(
-                        color: AppColors.primaryOrange,
+                      '#TRX002',
+                      style: GoogleFonts.inter(
+                        color: EarningsView.orange,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.access_time_rounded,
-                          color: AppColors.textMuted,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            payout.timestamp,
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                            ),
+                        const Icon(Icons.access_time_outlined, size: 13, color: EarningsView.muted),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Feb 07, 2026 10:45 AM, Today',
+                          style: GoogleFonts.inter(
+                            color: EarningsView.muted,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -709,54 +563,41 @@ class _PayoutCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    payout.status,
-                    style: const TextStyle(
-                      color: AppColors.inventoryAvailable,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11.5,
+                    'CREDITED',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF16A34A),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
                       letterSpacing: 0.3,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   Text(
-                    payout.amount,
-                    style: const TextStyle(
-                      color: AppColors.textDark,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
+                    '1000.00 MRU',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF16A34A),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           SizedBox(
             width: double.infinity,
-            height: 40,
+            height: 44,
             child: OutlinedButton(
-              onPressed: () => PayoutDetailsView.open(
-                context,
-                transactionId: payout.id,
-                timestamp: payout.timestamp,
-                amount: payout.amount,
-              ),
+              onPressed: onDetails,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primaryOrange,
-                side: const BorderSide(
-                  color: AppColors.primaryOrange,
-                  width: 1.2,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                foregroundColor: EarningsView.orange,
+                side: const BorderSide(color: EarningsView.orange, width: 1.2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text(
+              child: Text(
                 'View Details',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.5,
-                ),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
               ),
             ),
           ),

@@ -83,7 +83,9 @@ class _AccountViewState extends State<AccountView> {
               _SettingsCard(
                 children: [
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.notifications_none_rounded,
+                    iconSize: 26,
                     title: 'Notification',
                     trailing: Switch(
                       value: controller.notificationsEnabled,
@@ -102,40 +104,53 @@ class _AccountViewState extends State<AccountView> {
                           return const Color(0xFFC5CAD1);
                         },
                       ),
-                      onChanged: controller.setNotifications,
+                      onChanged: (value) {
+                        HapticFeedback.lightImpact();
+                        controller.setNotifications(value);
+                      },
                     ),
                   ),
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.apartment_rounded,
                     title: 'Store Profile',
                     onTap: () => StoreProfileView.open(context),
                   ),
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.access_time_rounded,
                     title: 'Working hours',
                     onTap: () => WorkingHoursView.open(context),
                   ),
                   _SettingsTile(
-                    icon: Icons.storefront_outlined,
+                    edgeDivider: true,
+                    imageAsset: 'lib/water/Assets/Images/business_settings.png',
+                    imageSize: 20,
                     title: 'Business settings',
                     onTap: () => BusinessSettingsView.open(context),
                   ),
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.event_busy_outlined,
                     title: 'Leave Management',
                     onTap: () => LeaveManagementView.open(context),
                   ),
                   _SettingsTile(
-                    icon: Icons.payments_outlined,
+                    edgeDivider: true,
+                    imageAsset: 'lib/water/Assets/Images/currency.png',
+                    imageSize: 20,
                     title: 'Earnings',
                     onTap: () => EarningsView.open(context),
                   ),
                   _SettingsTile(
-                    icon: Icons.account_balance_wallet_outlined,
+                    edgeDivider: true,
+                    imageAsset: 'lib/water/Assets/Images/received_payouts.png',
+                    imageSize: 22,
                     title: 'Received Payouts',
                     onTap: () => ReceivedPayoutsView.open(context),
                   ),
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.local_offer_outlined,
                     title: 'Coupons',
                     onTap: () => CouponsView.open(context),
@@ -154,11 +169,13 @@ class _AccountViewState extends State<AccountView> {
               _SettingsCard(
                 children: [
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.help_outline_rounded,
                     title: 'Help & Support',
                     onTap: () => HelpSupportView.open(context),
                   ),
                   _SettingsTile(
+                    edgeDivider: true,
                     icon: Icons.description_outlined,
                     title: 'Terms & Conditions',
                     onTap: () => TermsConditionsView.open(context),
@@ -477,45 +494,62 @@ class _LanguageSelector extends StatelessWidget {
         color: AppColors.orangeSoftBg,
         borderRadius: BorderRadius.circular(28),
       ),
-      child: Row(
-        children: [
-          for (var i = 0; i < languages.length; i++)
-            Expanded(
-              child: GestureDetector(
-                onTap: () => onSelect(i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  alignment: Alignment.center,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final segment = constraints.maxWidth / languages.length;
+          return Stack(
+            children: [
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.easeOutCubic,
+                left: selectedIndex * segment,
+                top: 0,
+                bottom: 0,
+                width: segment,
+                child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: selectedIndex == i
-                        ? AppColors.primaryOrange
-                        : Colors.transparent,
+                    color: AppColors.primaryOrange,
                     borderRadius: BorderRadius.circular(24),
-                    boxShadow: selectedIndex == i
-                        ? [
-                            BoxShadow(
-                              color: AppColors.primaryOrange
-                                  .withValues(alpha: 0.28),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Text(
-                    languages[i],
-                    style: TextStyle(
-                      color: selectedIndex == i
-                          ? Colors.white
-                          : AppColors.textDark,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13.5,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryOrange.withValues(alpha: 0.28),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-        ],
+              Row(
+                children: List.generate(languages.length, (index) {
+                  final selected = selectedIndex == index;
+                  return Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (index == selectedIndex) return;
+                        HapticFeedback.selectionClick();
+                        onSelect(index);
+                      },
+                      child: Center(
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                          style: TextStyle(
+                            color: selected ? Colors.white : AppColors.textDark,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13.5,
+                          ),
+                          child: Text(languages[index]),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -548,17 +582,25 @@ class _SettingsCard extends StatelessWidget {
 
 class _SettingsTile extends StatelessWidget {
   const _SettingsTile({
-    required this.icon,
+    this.icon,
+    this.iconSize = 22,
+    this.imageAsset,
+    this.imageSize = 20,
     required this.title,
     this.trailing,
     this.showDivider = true,
+    this.edgeDivider = false,
     this.onTap,
   });
 
-  final IconData icon;
+  final IconData? icon;
+  final double iconSize;
+  final String? imageAsset;
+  final double imageSize;
   final String title;
   final Widget? trailing;
   final bool showDivider;
+  final bool edgeDivider;
   final VoidCallback? onTap;
 
   @override
@@ -579,11 +621,20 @@ class _SettingsTile extends StatelessWidget {
                     color: AppColors.orangeSoftBg,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    color: AppColors.primaryOrange,
-                    size: 20,
-                  ),
+                  child: imageAsset != null
+                      ? Center(
+                          child: Image.asset(
+                            imageAsset!,
+                            width: imageSize,
+                            height: imageSize,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : Icon(
+                          icon,
+                          color: AppColors.primaryOrange,
+                          size: iconSize,
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -607,10 +658,12 @@ class _SettingsTile extends StatelessWidget {
           ),
         ),
         if (showDivider)
-          const Padding(
-            padding: EdgeInsets.only(left: 64),
-            child: Divider(height: 1, color: AppColors.divider),
-          ),
+          edgeDivider
+              ? const Divider(height: 1, thickness: .2, color: AppColors.divider)
+              : const Padding(
+                  padding: EdgeInsets.only(left: 64),
+                  child: Divider(height: 1, color: AppColors.divider),
+                ),
       ],
     );
   }

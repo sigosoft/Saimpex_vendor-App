@@ -322,11 +322,6 @@ class WaterHomeController extends GetxController {
   void onBottomNavSelect(int index) {
     if (index == bottomNavIndex) return;
     bottomNavIndex = index;
-    if (index == 1) {
-      // Orders screen is one-time orders only (matches design).
-      selectedTabIndex = 0;
-      selectedFilterIndex = 0;
-    }
     update();
   }
 
