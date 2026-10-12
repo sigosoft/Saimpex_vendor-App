@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
+import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_account_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_chat_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_inventory_screen.dart';
@@ -99,7 +100,12 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       ),
       child: RefreshIndicator(
         color: AppColors.primaryOrange,
-        onRefresh: controller.fetchPharmacyHome,
+        onRefresh: () async {
+          if (!controller.isOtcTab && controller.selectedFilterIndex == 0) {
+            await controller.fetchPharmacyPrescriptions();
+          }
+          await controller.fetchPharmacyHome();
+        },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
@@ -157,8 +163,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                   ],
                   _SearchField(
                     controller: controller.searchController,
-                    onSubmitted: (val) =>
-                        controller.fetchPharmacyHome(keyword: val),
+                    onSubmitted: (val) async {
+                      if (!controller.isOtcTab &&
+                          controller.selectedFilterIndex == 0) {
+                        controller.fetchPharmacyPrescriptions(keyword: val);
+                      }
+                      controller.fetchPharmacyHome(keyword: val);
+                    },
                   ),
                   const SizedBox(height: 12),
                   _StatusFilters(
@@ -262,14 +273,26 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _SearchField(
               controller: controller.searchController,
-              onSubmitted: (val) => controller.fetchPharmacyHome(keyword: val),
+              onSubmitted: (val) async {
+                if (!controller.isOtcTab &&
+                    controller.selectedFilterIndex == 0) {
+                  controller.fetchPharmacyPrescriptions(keyword: val);
+                }
+                controller.fetchPharmacyHome(keyword: val);
+              },
             ),
           ),
           const SizedBox(height: 12),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.primaryOrange,
-              onRefresh: controller.fetchPharmacyHome,
+              onRefresh: () async {
+                if (!controller.isOtcTab &&
+                    controller.selectedFilterIndex == 0) {
+                  await controller.fetchPharmacyPrescriptions();
+                }
+                await controller.fetchPharmacyHome();
+              },
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
@@ -299,6 +322,60 @@ class _PharmacyHomeState extends State<PharmacyHome> {
   }
 
   List<Widget> _buildDynamicOrderCards(BuildContext context) {
+    final isPrescriptionNew =
+        !controller.isOtcTab && controller.selectedFilterIndex == 0;
+
+    if (isPrescriptionNew) {
+      if (controller.isLoadingPrescriptions) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.prescriptionsList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.prescriptionsList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final item = controller.prescriptionsList[i];
+        widgets.add(
+          _PrescriptionOrderCard(
+            customerName: item.displayCustomerName,
+            orderCode: item.displayOrderCode,
+            timeAgo: item.displayTimeAgo,
+            isSelfPickup: item.isSelfPickupBool,
+            status: PharmacyPrescriptionCardStatus.newOrder,
+            notesType: item.notesType,
+            prescriptionFileName: item.displayFileName,
+            prescriptionImageUrl: item.displayImageUrl,
+            specialNotes: item.note,
+            phone: item.displayPhone,
+            prescriptionId: item.prescriptionId ?? item.id,
+          ),
+        );
+      }
+      return widgets;
+    }
+
     if (controller.isLoadingHome) {
       return const [
         Padding(
@@ -1268,6 +1345,11 @@ class _PrescriptionOrderCard extends StatelessWidget {
     this.notesType = PharmacyOrderNotesType.none,
     this.isSelfPickup = false,
     this.status = PharmacyPrescriptionCardStatus.newOrder,
+    this.prescriptionFileName,
+    this.prescriptionImageUrl,
+    this.specialNotes,
+    this.phone,
+    this.prescriptionId,
   });
 
   final String customerName;
@@ -1276,6 +1358,11 @@ class _PrescriptionOrderCard extends StatelessWidget {
   final PharmacyOrderNotesType notesType;
   final bool isSelfPickup;
   final PharmacyPrescriptionCardStatus status;
+  final String? prescriptionFileName;
+  final String? prescriptionImageUrl;
+  final String? specialNotes;
+  final String? phone;
+  final int? prescriptionId;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFC62828);
@@ -1318,9 +1405,14 @@ class _PrescriptionOrderCard extends StatelessWidget {
         MaterialPageRoute<void>(
           builder: (_) => PharmacyOrderDetailsScreen(
             customerName: customerName,
+            phone: (phone != null && phone!.isNotEmpty)
+                ? phone!
+                : '+222 45 12 34 56',
             requestId: orderCode,
             requestMeta: timeAgo,
             notesType: notesType,
+            specialNotes: specialNotes ??
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
             isSelfPickup: isSelfPickup,
             isUnderReview: _isUnderReview,
             isReviewCompleted: _isReviewCompleted,
@@ -1458,15 +1550,18 @@ class _PrescriptionOrderCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const _PrescriptionThumb(),
+                    _PrescriptionThumb(imageUrl: prescriptionImageUrl),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Prescription_Jun25.jpg',
-                            style: TextStyle(
+                          Text(
+                            (prescriptionFileName != null &&
+                                    prescriptionFileName!.isNotEmpty)
+                                ? prescriptionFileName!
+                                : 'Prescription.jpg',
+                            style: const TextStyle(
                               color: _nameColor,
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
@@ -1594,8 +1689,9 @@ class _PrescriptionOrderCard extends StatelessWidget {
 }
 
 class _PrescriptionThumb extends StatelessWidget {
-  const _PrescriptionThumb();
+  const _PrescriptionThumb({this.imageUrl});
 
+  final String? imageUrl;
   static const _asset = 'lib/pharmacy/Assets/images/prescription_home.png';
 
   @override
@@ -1613,7 +1709,14 @@ class _PrescriptionThumb extends StatelessWidget {
             ),
           ],
         ),
-        child: Image.asset(_asset, fit: BoxFit.contain),
+        child: (imageUrl != null && imageUrl!.startsWith('http'))
+            ? Image.network(
+                imageUrl!,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) =>
+                    Image.asset(_asset, fit: BoxFit.contain),
+              )
+            : Image.asset(_asset, fit: BoxFit.contain),
       ),
     );
   }

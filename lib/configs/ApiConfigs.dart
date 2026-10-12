@@ -1,7 +1,8 @@
 class ApiConfigs {
   // //  // This is the Test Server URL
   //static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";  //LIVE
-  static String BASE_URL = "https://dev.saimpexenterprise.com/api/"; //DEV/Test
+  static String BASE_URL =
+      "https://dev.saimpexenterprise.com/api/vendorapp/"; //DEV/Test
   // "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
 
   // // // // This is the Live Server URL
@@ -135,32 +136,31 @@ class ApiEndPoints {
 
   // Pharmacy api endpoints
 
-  static String pharmacyTermsandConditions = "vendorapp/getTermsandConditions";
-  static String pharmacyProfile = "vendor/profile";
-  static String pharmacyHelpSupport = "vendorapp/getContact";
-  static String pharmacyPrivacyPolicy = "vendorapp/getPrivacyPolicy";
-  static String pharmacyCoupons = "vendor/coupons";
-  static String pharmacyAddCoupons = "vendor/addCoupon";
-  static String pharmacyUpdateCoupon = "vendorapp/updateCoupon";
-  static String pharmacyUpdateCouponStatus = "vendorapp/updateCouponStatus";
-  static String pharmacyDeliveryBoys = "vendorapp/deliveryBoys";
-  static String pharmacyAddDeliveryBoys = "vendorapp/addDeliveryBoy";
-  static String pharmacyUpdateDeliveryBoy = "vendorapp/updateDeliveryBoy";
-  static String pharmacyUpdateWorkingHours = "vendor/updateWorkingHours";
-  static String pharmacyBusinessSettings = "vendorapp/businessSettings";
-  static String pharmacyMarkLeave = "vendor/markLeave";
-  static String pharmacyUnmarkLeave = "vendorapp/unmarkLeave";
-  static String pharmacyEarningsSummary = "vendor/earnings/summary";
-  static String pharmacyEarningsOrders = "vendor/earnings/orders";
+  static String pharmacyTermsandConditions = "getTermsandConditions";
+  static String pharmacyProfile = "profile";
+  static String pharmacyHelpSupport = "getContact";
+  static String pharmacyPrivacyPolicy = "getPrivacyPolicy";
+  static String pharmacyCoupons = "coupons";
+  static String pharmacyAddCoupons = "addCoupon";
+  static String pharmacyUpdateCoupon = "updateCoupon";
+  static String pharmacyUpdateCouponStatus = "updateCouponStatus";
+  static String pharmacyDeliveryBoys = "deliveryBoys";
+  static String pharmacyAddDeliveryBoys = "addDeliveryBoy";
+  static String pharmacyUpdateDeliveryBoy = "updateDeliveryBoy";
+  static String pharmacyUpdateWorkingHours = "updateWorkingHours";
+  static String pharmacyBusinessSettings = "businessSettings";
+  static String pharmacyMarkLeave = "markLeave";
+  static String pharmacyUnmarkLeave = "unmarkLeave";
+  static String pharmacyEarningsSummary = "earnings/summary";
+  static String pharmacyEarningsOrders = "earnings/orders";
   static String pharmacyEarningsPendingOrderPayment =
-      "vendor/earnings/pendingOrderPayments";
-  static String pharmacyEarningsPayoutHistory = "vendor/earnings/payoutHistory";
-  static String pharmacyEarningsPayoutDetails = "vendor/earnings/payoutDetail";
-  static String pharmacyReceivedPayouts = "vendor/receivedPayouts";
-  static String pharmacyNotifications = "vendor/notifications";
-  static String pharmacyHome = "vendor/home";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
+      "earnings/pendingOrderPayments";
+  static String pharmacyEarningsPayoutHistory = "earnings/payoutHistory";
+  static String pharmacyEarningsPayoutDetails = "earnings/payoutDetail";
+  static String pharmacyReceivedPayouts = "receivedPayouts";
+  static String pharmacyNotifications = "notifications";
+  static String pharmacyHome = "home";
+  static String pharmacyPrescriptions = "pharmacyPrescriptions";
   // static String pharmacyEarningsSummary = "";
   // static String pharmacyEarningsSummary = "";
   // static String pharmacyEarningsSummary = "";

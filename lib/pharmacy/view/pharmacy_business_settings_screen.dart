@@ -15,10 +15,12 @@ class PharmacyBusinessSettingsScreen extends StatefulWidget {
   static const ink = Color(0xFF2E3545);
 
   @override
-  State<PharmacyBusinessSettingsScreen> createState() => _PharmacyBusinessSettingsScreenState();
+  State<PharmacyBusinessSettingsScreen> createState() =>
+      _PharmacyBusinessSettingsScreenState();
 }
 
-class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSettingsScreen> {
+class _PharmacyBusinessSettingsScreenState
+    extends State<PharmacyBusinessSettingsScreen> {
   bool _storeOpen = true;
   bool _acceptingOrders = true;
   bool _storeBusy = false;
@@ -33,8 +35,13 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
 
   String _getBusinessSettingsUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyBusinessSettings.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyBusinessSettings.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     return '$base/$endpoint';
   }
 
@@ -49,21 +56,22 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
 
       final savedVendorType = await getSavedObject("vendorType");
       final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
-      final vendorTypeStr = (savedVendorType != null &&
+      final vendorTypeStr =
+          (savedVendorType != null &&
               savedVendorType.toString().isNotEmpty &&
               savedVendorType.toString() != "0")
           ? savedVendorType.toString()
           : (savedAppType?.toString().isNotEmpty == true
-              ? savedAppType.toString()
-              : "3");
+                ? savedAppType.toString()
+                : "3");
       final vendorType = int.tryParse(vendorTypeStr) ?? 3;
 
-      final queryParams = <String, dynamic>{
-        "vendor_type": vendorType,
-      };
+      final queryParams = <String, dynamic>{"vendor_type": vendorType};
 
       final url = _getBusinessSettingsUrl();
-      debugPrint("==================== GET BUSINESS SETTINGS ====================");
+      debugPrint(
+        "==================== GET BUSINESS SETTINGS ====================",
+      );
       debugPrint("API Call: GET $url");
       debugPrint("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
       debugPrint("Query: $queryParams");
@@ -82,7 +90,9 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("===============================================================");
+      debugPrint(
+        "===============================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
@@ -92,13 +102,21 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
         _parseAndApplySettings(response.data);
       }
     } catch (e) {
-      debugPrint("==================== GET BUSINESS SETTINGS ERROR ====================");
+      debugPrint(
+        "==================== GET BUSINESS SETTINGS ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("=====================================================================");
+      debugPrint(
+        "=====================================================================",
+      );
 
-      print("==================== GET BUSINESS SETTINGS ERROR ====================");
+      print(
+        "==================== GET BUSINESS SETTINGS ERROR ====================",
+      );
       print("Error: $e");
-      print("=====================================================================");
+      print(
+        "=====================================================================",
+      );
     }
   }
 
@@ -134,7 +152,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
 
     setState(() {
       // 1. Store Status (Open)
-      final dynamic storeOpenVal = target['store_open'] ??
+      final dynamic storeOpenVal =
+          target['store_open'] ??
           target['store_status'] ??
           target['is_store_open'] ??
           target['is_open'] ??
@@ -150,7 +169,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       }
 
       // 2. Accepting Orders
-      final dynamic acceptVal = target['accepting_orders'] ??
+      final dynamic acceptVal =
+          target['accepting_orders'] ??
           target['is_accepting_orders'] ??
           target['accept_orders'] ??
           target['orders_accepted'];
@@ -164,7 +184,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       }
 
       // 3. Mark Store Busy (1 = Busy, 2/0 = Not Busy)
-      final dynamic busyVal = target['is_busy'] ??
+      final dynamic busyVal =
+          target['is_busy'] ??
           target['store_busy'] ??
           target['is_store_busy'] ??
           target['busy'];
@@ -178,7 +199,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       }
 
       // 4. Express Delivery Available
-      final dynamic expressVal = target['express_delivery'] ??
+      final dynamic expressVal =
+          target['express_delivery'] ??
           target['is_express'] ??
           target['express_available'] ??
           target['express_delivery_status'] ??
@@ -193,7 +215,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       }
 
       // 5. Distance Ranges / Pricing
-      final dynamic rangesVal = target['pricing'] ??
+      final dynamic rangesVal =
+          target['pricing'] ??
           target['distance_ranges'] ??
           target['ranges'] ??
           target['express_pricing'] ??
@@ -206,27 +229,33 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
         final List<_Distance> parsedRanges = [];
         for (final item in rangesVal) {
           if (item is Map) {
-            final minVal = item['min'] ??
+            final minVal =
+                item['min'] ??
                 item['min_distance'] ??
                 item['from'] ??
                 item['min_km'] ??
                 item['start'];
-            final maxVal = item['max'] ??
+            final maxVal =
+                item['max'] ??
                 item['max_distance'] ??
                 item['to'] ??
                 item['max_km'] ??
                 item['end'];
-            final priceVal = item['price'] ??
+            final priceVal =
+                item['price'] ??
                 item['delivery_charge'] ??
                 item['amount'] ??
                 item['cost'] ??
                 item['rate'];
 
-            final min = int.tryParse(minVal?.toString() ?? '') ??
+            final min =
+                int.tryParse(minVal?.toString() ?? '') ??
                 double.tryParse(minVal?.toString() ?? '')?.toInt();
-            final max = int.tryParse(maxVal?.toString() ?? '') ??
+            final max =
+                int.tryParse(maxVal?.toString() ?? '') ??
                 double.tryParse(maxVal?.toString() ?? '')?.toInt();
-            final price = int.tryParse(priceVal?.toString() ?? '') ??
+            final price =
+                int.tryParse(priceVal?.toString() ?? '') ??
                 double.tryParse(priceVal?.toString() ?? '')?.toInt();
 
             if (min != null && max != null && price != null) {
@@ -249,23 +278,26 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
 
       final savedVendorType = await getSavedObject("vendorType");
       final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
-      final vendorTypeStr = (savedVendorType != null &&
+      final vendorTypeStr =
+          (savedVendorType != null &&
               savedVendorType.toString().isNotEmpty &&
               savedVendorType.toString() != "0")
           ? savedVendorType.toString()
           : (savedAppType?.toString().isNotEmpty == true
-              ? savedAppType.toString()
-              : "3");
+                ? savedAppType.toString()
+                : "3");
       final vendorType = int.tryParse(vendorTypeStr) ?? 3;
 
       final pricingPayload = _ranges
-          .map((r) => {
-                "min": r.min,
-                "max": r.max,
-                "price": r.price,
-                "min_distance": r.min,
-                "max_distance": r.max,
-              })
+          .map(
+            (r) => {
+              "min": r.min,
+              "max": r.max,
+              "price": r.price,
+              "min_distance": r.min,
+              "max_distance": r.max,
+            },
+          )
           .toList();
 
       final Map<String, dynamic> body = {
@@ -285,7 +317,9 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       };
 
       final url = _getBusinessSettingsUrl();
-      debugPrint("==================== POST BUSINESS SETTINGS ====================");
+      debugPrint(
+        "==================== POST BUSINESS SETTINGS ====================",
+      );
       debugPrint("API Call: POST $url");
       debugPrint("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
       debugPrint("Body: ${jsonEncode(body)}");
@@ -295,14 +329,16 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       print("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
       print("Body: ${jsonEncode(body)}");
 
-      final response = await DioClient().post(
+      final response = await DioClient().get(
         ApiEndPoints.pharmacyBusinessSettings,
-        body: body,
+        //body: body,
       );
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("================================================================");
+      debugPrint(
+        "================================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
@@ -313,7 +349,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       }
 
       final resData = response.data;
-      final bool isSuccess = resData is Map &&
+      final bool isSuccess =
+          resData is Map &&
           (resData['status'] == true ||
               resData['status'].toString() == 'true' ||
               resData['status'] == 1 ||
@@ -326,12 +363,14 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
           if (resData['message'] != null) {
             final msg = resData['message'];
             if (msg is Map) {
-              final lang = FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+              final lang =
+                  FlutterLocalization.instance.currentLocale?.languageCode ??
+                  'en';
               final key = lang == 'ar'
                   ? 'message_ar'
                   : lang == 'fr'
-                      ? 'message_fr'
-                      : 'message_en';
+                  ? 'message_fr'
+                  : 'message_en';
               if (msg[key] != null) {
                 final raw = msg[key];
                 if (raw is List && raw.isNotEmpty) {
@@ -350,7 +389,8 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       } else {
         if (mounted) {
           final message = resData is Map
-              ? resData['message']?.toString() ?? 'Failed to update business settings'
+              ? resData['message']?.toString() ??
+                    'Failed to update business settings'
               : 'Failed to update business settings';
           showToast(context, message);
         }
@@ -360,13 +400,21 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      debugPrint("==================== POST BUSINESS SETTINGS ERROR ====================");
+      debugPrint(
+        "==================== POST BUSINESS SETTINGS ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("======================================================================");
+      debugPrint(
+        "======================================================================",
+      );
 
-      print("==================== POST BUSINESS SETTINGS ERROR ====================");
+      print(
+        "==================== POST BUSINESS SETTINGS ERROR ====================",
+      );
       print("Error: $e");
-      print("======================================================================");
+      print(
+        "======================================================================",
+      );
 
       if (mounted) {
         showErrorMessage(e);
@@ -443,7 +491,10 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
   }
 
   Future<void> _openEditRange(int index) async {
-    final edited = await _openSheet(current: _ranges[index], editingIndex: index);
+    final edited = await _openSheet(
+      current: _ranges[index],
+      editingIndex: index,
+    );
     if (edited == null || !mounted) return;
     final previous = List<_Distance>.from(_ranges);
     setState(() => _ranges[index] = edited);
@@ -456,7 +507,9 @@ class _PharmacyBusinessSettingsScreenState extends State<PharmacyBusinessSetting
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Container(
@@ -658,12 +711,16 @@ class _Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(height: 1, thickness:.5, color: Color(0xFFF1F1F1));
+    return const Divider(height: 1, thickness: .5, color: Color(0xFFF1F1F1));
   }
 }
 
 class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({required this.label, required this.value, required this.onChanged});
+  const _SwitchRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
 
   final String label;
   final bool value;
@@ -764,7 +821,11 @@ class _DistanceRange extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: const Padding(
               padding: EdgeInsets.all(4),
-              child: Icon(Icons.edit_outlined, color: PharmacyBusinessSettingsScreen.orange, size: 16),
+              child: Icon(
+                Icons.edit_outlined,
+                color: PharmacyBusinessSettingsScreen.orange,
+                size: 16,
+              ),
             ),
           ),
         ],
@@ -783,27 +844,27 @@ class _AddRangeButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: CustomPaint(
-      painter: const _DashedBorderPainter(
-        color: Color(0xFFFF8A5B),
-        radius: 12,
-      ),
-      child: Container(
-        height: 46,
-        width: double.infinity,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFF5F0),
-          borderRadius: BorderRadius.circular(12),
+        painter: const _DashedBorderPainter(
+          color: Color(0xFFFF8A5B),
+          radius: 12,
         ),
-        child: Text(
-          '+ Add Distance Range',
-          style: GoogleFonts.inter(
-            color: PharmacyBusinessSettingsScreen.orange,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+        child: Container(
+          height: 46,
+          width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF5F0),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            '+ Add Distance Range',
+            style: GoogleFonts.inter(
+              color: PharmacyBusinessSettingsScreen.orange,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -821,9 +882,10 @@ class _DashedBorderPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
-    final path = Path()..addRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
-    );
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
+      );
     const dash = 5.0;
     const gap = 4.0;
     for (final metric in path.computeMetrics()) {
@@ -870,7 +932,9 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
     super.initState();
     _min = TextEditingController(text: '${widget.initialMin}');
     _max = TextEditingController(text: '${widget.initialMax}');
-    _price = TextEditingController(text: widget.initialPrice == null ? '' : '${widget.initialPrice}');
+    _price = TextEditingController(
+      text: widget.initialPrice == null ? '' : '${widget.initialPrice}',
+    );
   }
 
   @override
@@ -892,7 +956,9 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
       error = 'Maximum must be greater than minimum';
     } else if (price == null) {
       error = 'Enter a price';
-    } else if (widget.others.any((range) => min < range.max && max > range.min)) {
+    } else if (widget.others.any(
+      (range) => min < range.max && max > range.min,
+    )) {
       error = 'This range overlaps an existing range';
     }
     if (error != null) {
@@ -909,137 +975,172 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
       padding: EdgeInsets.only(bottom: bottom),
       child: SingleChildScrollView(
         child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.paddingOf(context).bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  widget.editing ? 'Edit Distance Range' : 'Add Distance Range',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF111827),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                ),
-                const Spacer(),
-                InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFFE3E3E3)),
-                    ),
-                    child: const Icon(Icons.close, size: 16, color: Color(0xFF7F7F7F)),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: _Field(label: 'Minimum Distance', controller: _min, suffix: 'Km')),
-                const SizedBox(width: 12),
-                Expanded(child: _Field(label: 'Maximum Distance', controller: _max, suffix: 'Km')),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Text(
-              'Price',
-              style: GoogleFonts.inter(
-                color: const Color(0xFF6B7280),
-                fontWeight: FontWeight.w500,
-                fontSize: 13,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(child: _Field(controller: _price, hint: 'e.g. 50')),
-                const SizedBox(width: 12),
-                Container(
-                  width: 96,
-                  height: 48,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F6),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'MRU',
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + MediaQuery.paddingOf(context).bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    widget.editing
+                        ? 'Edit Distance Range'
+                        : 'Add Distance Range',
                     style: GoogleFonts.inter(
-                      color: const Color.fromARGB(255, 71, 73, 78),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      color: const Color(0xFF111827),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
                     ),
+                  ),
+                  const Spacer(),
+                  InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFE3E3E3)),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Color(0xFF7F7F7F),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _Field(
+                      label: 'Minimum Distance',
+                      controller: _min,
+                      suffix: 'Km',
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _Field(
+                      label: 'Maximum Distance',
+                      controller: _max,
+                      suffix: 'Km',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Price',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF6B7280),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _Field(controller: _price, hint: 'e.g. 50'),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 96,
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2F4F6),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'MRU',
+                      style: GoogleFonts.inter(
+                        color: const Color.fromARGB(255, 71, 73, 78),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  _error!,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFDC2626),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
                 ),
               ],
-            ),
-            if (_error != null) ...[
-              const SizedBox(height: 10),
-              Text(
-                _error!,
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFDC2626),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF454E5D),
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(color: Color(0xFFE5E7EB)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: FilledButton(
+                        onPressed: _submit,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5317),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          widget.editing ? 'Update' : 'Add',
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 48,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF454E5D),
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 48,
-                    child: FilledButton(
-                      onPressed: _submit,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF5317),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text(
-                        widget.editing ? 'Update' : 'Add',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
         ),
       ),
     );
@@ -1074,7 +1175,10 @@ class _Field extends StatelessWidget {
         filled: true,
         fillColor: const Color(0xFFF2F4F6),
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
         suffixText: suffix,
         suffixStyle: GoogleFonts.inter(
           color: const Color(0xFF9CA3AF),

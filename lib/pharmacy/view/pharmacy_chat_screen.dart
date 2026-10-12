@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_chat_controller.dart';
+import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 
 class _MessageThread {
   const _MessageThread({
@@ -13,6 +17,8 @@ class _MessageThread {
     this.unreadCount = 0,
     this.isOnline = false,
     this.showReadReceipt = false,
+    this.conversationId = 1,
+    this.customerId = 1,
   });
 
   final String name;
@@ -22,6 +28,32 @@ class _MessageThread {
   final int unreadCount;
   final bool isOnline;
   final bool showReadReceipt;
+  final int conversationId;
+  final int customerId;
+
+  _MessageThread copyWith({
+    String? name,
+    String? preview,
+    String? time,
+    String? avatar,
+    int? unreadCount,
+    bool? isOnline,
+    bool? showReadReceipt,
+    int? conversationId,
+    int? customerId,
+  }) {
+    return _MessageThread(
+      name: name ?? this.name,
+      preview: preview ?? this.preview,
+      time: time ?? this.time,
+      avatar: avatar ?? this.avatar,
+      unreadCount: unreadCount ?? this.unreadCount,
+      isOnline: isOnline ?? this.isOnline,
+      showReadReceipt: showReadReceipt ?? this.showReadReceipt,
+      conversationId: conversationId ?? this.conversationId,
+      customerId: customerId ?? this.customerId,
+    );
+  }
 }
 
 class PharmacyMessagesTab extends StatefulWidget {
@@ -36,28 +68,97 @@ class PharmacyMessagesTab extends StatefulWidget {
 class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
   late final PharmacyChatController controller;
 
-  final List<_MessageThread> _threads = [
-    const _MessageThread(
-      name: 'Ahmed',
-      preview: 'Order #22789007: Is the prescription ready',
-      time: '12:45 PM',
-      avatar: 'lib/water/Assets/Images/delivery_boy3.png',
-      unreadCount: 1,
-    ),
-    const _MessageThread(
-      name: 'Ali Ahmed',
-      preview: 'Etiam cursus velit non eros eleifenddic',
-      time: 'Just now',
-      avatar: 'lib/water/Assets/Images/delivery_boy1.png',
-      isOnline: true,
-      showReadReceipt: true,
-    ),
-  ];
+  final List<_MessageThread> _threads = [];
 
   @override
   void initState() {
     super.initState();
     controller = Get.put(PharmacyChatController());
+    _fetchThreads();
+  }
+
+  Future<void> _fetchThreads() async {
+    await controller.fetchConversations();
+    if (!mounted) return;
+    _populateThreadsFromController();
+  }
+
+  void _populateThreadsFromController() {
+    final list = <_MessageThread>[];
+    for (final conv in controller.conversations) {
+      final name = conv.customer?.name?.trim();
+      final displayName = (name != null && name.isNotEmpty)
+          ? name
+          : (conv.orderId != null ? 'Order #${conv.orderId}' : 'Customer');
+
+      String preview = '';
+      if (conv.lastMessage != null) {
+        if (conv.lastMessage?.messageType == 'image') {
+          preview = '📷 Image';
+        } else if (conv.lastMessage?.messageType == 'voice') {
+          preview = '🎤 Voice message';
+        } else {
+          preview = conv.lastMessage?.message ?? '';
+        }
+      } else if (conv.orderId != null) {
+        preview = 'Order #${conv.orderId}';
+      }
+
+      String avatar = 'lib/water/Assets/Images/delivery_boy3.png';
+      final custImage = conv.customer?.image;
+      if (custImage != null && custImage.isNotEmpty) {
+        if (custImage.startsWith('http://') || custImage.startsWith('https://')) {
+          avatar = custImage;
+        } else {
+          avatar = '${ApiConfigs.IMAGE_URL}$custImage';
+        }
+      }
+
+      final timeStr = conv.lastMessageAt ??
+          conv.lastMessage?.createdAt ??
+          conv.updatedAt ??
+          conv.createdAt;
+
+      list.add(
+        _MessageThread(
+          name: displayName,
+          preview: preview,
+          time: _formatChatTime(timeStr),
+          avatar: avatar,
+          unreadCount: conv.unreadCount ?? 0,
+          isOnline: false,
+          showReadReceipt: conv.lastMessage?.isRead ?? false,
+          conversationId: conv.id ?? 1,
+          customerId: conv.customerId ?? conv.customer?.id ?? 1,
+        ),
+      );
+    }
+    setState(() {
+      _threads
+        ..clear()
+        ..addAll(list);
+    });
+  }
+
+  String _formatChatTime(String? timeStr) {
+    if (timeStr == null || timeStr.trim().isEmpty) return '';
+    try {
+      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
+      if (timeStr.contains('-') && !timeStr.contains('T')) {
+        try {
+          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
+        } catch (_) {}
+      }
+      dt = dt.toLocal();
+      final now = DateTime.now();
+      if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
+        return DateFormat('hh:mm a').format(dt);
+      } else {
+        return DateFormat('dd/MM/yyyy').format(dt);
+      }
+    } catch (_) {
+      return timeStr ?? '';
+    }
   }
 
   @override
@@ -92,52 +193,102 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
     return GetBuilder<PharmacyChatController>(
       builder: (_) {
         final threads = _visibleThreads;
-    return ColoredBox(
-      color: const Color(0xFFFFFFFF),
-      child: Column(
-        children: [
-          SizedBox(height: MediaQuery.paddingOf(context).top + 6),
-          _MessagesHeader(
-            onBack: widget.onBack ?? () => Navigator.of(context).maybePop(),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _MessagesSearchField(
-              controller: controller.searchController,
-              onChanged: controller.onQueryChanged,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: threads.length,
-              itemBuilder: (context, index) {
-                final thread = threads[index];
-                return Column(
-                  children: [
-                    _MessageTile(
-                      thread: thread,
-                      onTap: () => PharmacyChatScreen.open(
-                        context,
-                        customerName: thread.name,
+        return ColoredBox(
+          color: const Color(0xFFFFFFFF),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 6),
+              _MessagesHeader(
+                onBack: widget.onBack ?? () => Navigator.of(context).maybePop(),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _MessagesSearchField(
+                  controller: controller.searchController,
+                  onChanged: controller.onQueryChanged,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: controller.isLoadingConversations && _threads.isEmpty
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFF5722),
+                        ),
+                      )
+                    : RefreshIndicator(
+                        color: const Color(0xFFFF5722),
+                        onRefresh: _fetchThreads,
+                        child: threads.isEmpty
+                            ? Center(
+                                child: SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 40,
+                                    ),
+                                    child: NoDataWidget(
+                                      context,
+                                      'No messages found',
+                                      '',
+                                      'lib/assets/images/nodata.png',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                                itemCount: threads.length,
+                                itemBuilder: (context, index) {
+                                  final thread = threads[index];
+                                  return Column(
+                                    children: [
+                                      _MessageTile(
+                                        thread: thread,
+                                        onTap: () async {
+                                          await PharmacyChatScreen.open(
+                                            context,
+                                            customerName: thread.name,
+                                            conversationId:
+                                                thread.conversationId,
+                                            customerId: thread.customerId,
+                                            avatar: thread.avatar,
+                                            onMessageSent: (newMessage) {
+                                              setState(() {
+                                                final idx =
+                                                    _threads.indexOf(thread);
+                                                if (idx != -1) {
+                                                  _threads[idx] =
+                                                      _threads[idx].copyWith(
+                                                    preview: newMessage,
+                                                    time: 'Just now',
+                                                  );
+                                                }
+                                              });
+                                            },
+                                          );
+                                          _fetchThreads();
+                                        },
+                                        onDelete: () => _confirmDelete(thread),
+                                      ),
+                                      const Divider(
+                                        height: 1,
+                                        thickness: 1,
+                                        color: Color(0xFFF0F0F0),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                       ),
-                      onDelete: () => _confirmDelete(thread),
-                    ),
-                    const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFF0F0F0),
-                    ),
-                  ],
-                );
-              },
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
       },
     );
   }
@@ -397,6 +548,8 @@ class _ThreadAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isNetwork =
+        asset.startsWith('http://') || asset.startsWith('https://');
     return SizedBox(
       width: 52,
       height: 52,
@@ -404,13 +557,30 @@ class _ThreadAvatar extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           ClipOval(
-            child: Image.asset(
-              asset,
-              width: 52,
-              height: 52,
-              fit: BoxFit.cover,
-              alignment: const Alignment(0, -0.35),
-            ),
+            child: isNetwork
+                ? Image.network(
+                    asset,
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, -0.35),
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'lib/water/Assets/Images/delivery_boy3.png',
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
+                      alignment: const Alignment(0, -0.35),
+                    ),
+                  )
+                : Image.asset(
+                    asset.isNotEmpty
+                        ? asset
+                        : 'lib/water/Assets/Images/delivery_boy3.png',
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, -0.35),
+                  ),
           ),
           if (isOnline)
             Positioned(
@@ -433,13 +603,45 @@ class _ThreadAvatar extends StatelessWidget {
 }
 
 
-class PharmacyChatScreen extends StatelessWidget {
+class _ChatItem {
+  final String? text;
+  final String time;
+  final bool isIncoming;
+  final bool isAudio;
+  final String? audioDuration;
+
+  const _ChatItem.incoming({required this.text, required this.time})
+      : isIncoming = true,
+        isAudio = false,
+        audioDuration = null;
+
+  const _ChatItem.outgoing({required this.text, required this.time})
+      : isIncoming = false,
+        isAudio = false,
+        audioDuration = null;
+
+  const _ChatItem.audio({required String duration, required this.time})
+      : isIncoming = false,
+        isAudio = true,
+        audioDuration = duration,
+        text = null;
+}
+
+class PharmacyChatScreen extends StatefulWidget {
   const PharmacyChatScreen({
     super.key,
     this.customerName = 'Ahmed',
+    this.conversationId = 1,
+    this.customerId = 1,
+    this.avatar = _avatar,
+    this.onMessageSent,
   });
 
   final String customerName;
+  final int conversationId;
+  final int customerId;
+  final String avatar;
+  final ValueChanged<String>? onMessageSent;
 
   static const _bg = Color(0xFFFBF6F0);
   static const _name = Color(0xFF1A1A1A);
@@ -450,12 +652,189 @@ class PharmacyChatScreen extends StatelessWidget {
   static const _input = Color(0xFFF3EEE6);
   static const _avatar = 'lib/water/Assets/Images/delivery_boy3.png';
 
-  static void open(BuildContext context, {String customerName = 'Ahmed'}) {
-    Navigator.of(context).push(
+  static Future<void> open(
+    BuildContext context, {
+    String customerName = 'Ahmed',
+    int conversationId = 1,
+    int customerId = 1,
+    String avatar = _avatar,
+    ValueChanged<String>? onMessageSent,
+  }) {
+    return Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => PharmacyChatScreen(customerName: customerName),
+        builder: (_) => PharmacyChatScreen(
+          customerName: customerName,
+          conversationId: conversationId,
+          customerId: customerId,
+          avatar: avatar,
+          onMessageSent: onMessageSent,
+        ),
       ),
     );
+  }
+
+  @override
+  State<PharmacyChatScreen> createState() => _PharmacyChatScreenState();
+}
+
+class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
+  late final PharmacyChatController _chatController;
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _isSending = false;
+
+  final List<_ChatItem> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _chatController = Get.isRegistered<PharmacyChatController>()
+        ? Get.find<PharmacyChatController>()
+        : Get.put(PharmacyChatController());
+
+    _fetchConversationMessages();
+  }
+
+  Future<void> _fetchConversationMessages() async {
+    await _chatController.getConversationDetails(widget.conversationId);
+    if (!mounted) return;
+    _populateMessagesFromController();
+  }
+
+  void _populateMessagesFromController() {
+    final rawMessages =
+        List<LastMessage>.from(_chatController.conversationMessages);
+    rawMessages.sort((a, b) {
+      final aTime = _parseDateTime(a.createdAt);
+      final bTime = _parseDateTime(b.createdAt);
+      if (aTime != null && bTime != null) {
+        return aTime.compareTo(bTime);
+      }
+      return (a.id ?? 0).compareTo(b.id ?? 0);
+    });
+
+    final list = <_ChatItem>[];
+    for (final msg in rawMessages) {
+      list.add(_mapMessageToChatItem(msg));
+    }
+
+    setState(() {
+      _messages
+        ..clear()
+        ..addAll(list);
+    });
+    _scrollToBottom();
+  }
+
+  _ChatItem _mapMessageToChatItem(LastMessage msg) {
+    final isVendor = msg.senderType == 'vendor';
+    final isAudio = msg.messageType == 'voice' || msg.messageType == 'audio';
+    final timeStr = _formatMessageTime(msg.createdAt);
+
+    if (isAudio) {
+      return _ChatItem.audio(
+        duration: '0:12',
+        time: timeStr,
+      );
+    } else if (isVendor) {
+      return _ChatItem.outgoing(
+        text: msg.message ?? '',
+        time: timeStr,
+      );
+    } else {
+      return _ChatItem.incoming(
+        text: msg.message ?? '',
+        time: timeStr,
+      );
+    }
+  }
+
+  DateTime? _parseDateTime(String? timeStr) {
+    if (timeStr == null || timeStr.trim().isEmpty) return null;
+    try {
+      if (timeStr.contains('-') && !timeStr.contains('T')) {
+        try {
+          return DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr).toLocal();
+        } catch (_) {}
+      }
+      return DateTime.tryParse(timeStr)?.toLocal();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _formatMessageTime(String? timeStr) {
+    if (timeStr == null || timeStr.trim().isEmpty) return '';
+    try {
+      final dt = _parseDateTime(timeStr);
+      if (dt != null) {
+        return DateFormat('hh:mm a').format(dt);
+      }
+      return timeStr;
+    } catch (_) {
+      return timeStr ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  String _formatCurrentTime() {
+    final now = DateTime.now();
+    final hour = now.hour % 12 == 0 ? 12 : now.hour % 12;
+    final minute = now.minute.toString().padLeft(2, '0');
+    final period = now.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> _handleSend() async {
+    final text = _textController.text.trim();
+    if (text.isEmpty || _isSending) return;
+
+    setState(() => _isSending = true);
+
+    final success = await _chatController.sendChatMessage(
+      text: text,
+      conversationId: widget.conversationId,
+      customerId: widget.customerId,
+    );
+
+    if (!mounted) return;
+
+    setState(() => _isSending = false);
+
+    if (success) {
+      _textController.clear();
+      final timeStr = _formatCurrentTime();
+      setState(() {
+        _messages.add(_ChatItem.outgoing(text: text, time: timeStr));
+      });
+      widget.onMessageSent?.call(text);
+      _scrollToBottom();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to send message. Please try again.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -465,38 +844,90 @@ class PharmacyChatScreen extends StatelessWidget {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        backgroundColor: _bg,
+        backgroundColor: PharmacyChatScreen._bg,
         body: SafeArea(
           child: Column(
             children: [
               const SizedBox(height: 8),
               _Header(
-                name: customerName,
+                name: widget.customerName,
+                avatar: widget.avatar,
                 onBack: () => Navigator.of(context).maybePop(),
               ),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
-                  children: const [
-                    Center(child: _DatePill(label: 'Today')),
-                    SizedBox(height: 18),
-                    _IncomingBubble(
-                      text:
-                          'Hello Ahmed! Your order #22789000 is being ready. Would you like to add anything else?',
-                      time: '12:42 PM',
-                    ),
-                    SizedBox(height: 16),
-                    _AudioBubble(duration: '0:12', time: '12:44 PM'),
-                    SizedBox(height: 16),
-                    _IncomingBubble(
-                      text:
-                          'Perfect, thank you! How long until the delivery starts?',
-                      time: '12:42 PM',
-                    ),
-                  ],
-                ),
+                child: _chatController.isLoadingConversationDetails &&
+                        _messages.isEmpty
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: PharmacyChatScreen._orange,
+                        ),
+                      )
+                    : RefreshIndicator(
+                        color: PharmacyChatScreen._orange,
+                        onRefresh: _fetchConversationMessages,
+                        child: _messages.isEmpty
+                            ? Center(
+                                child: SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 40,
+                                    ),
+                                    child: NoDataWidget(
+                                      context,
+                                      'No messages found',
+                                      '',
+                                      'lib/assets/images/nodata.png',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 18, 16, 12),
+                                itemCount: _messages.length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == 0) {
+                                    return const Padding(
+                                      padding: EdgeInsets.only(bottom: 18),
+                                      child: Center(
+                                          child: _DatePill(label: 'Today')),
+                                    );
+                                  }
+                                  final msg = _messages[index - 1];
+                                  Widget bubble;
+                                  if (msg.isAudio) {
+                                    bubble = _AudioBubble(
+                                      duration: msg.audioDuration ?? '0:12',
+                                      time: msg.time,
+                                    );
+                                  } else if (msg.isIncoming) {
+                                    bubble = _IncomingBubble(
+                                      text: msg.text ?? '',
+                                      time: msg.time,
+                                    );
+                                  } else {
+                                    bubble = _OutgoingBubble(
+                                      text: msg.text ?? '',
+                                      time: msg.time,
+                                    );
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: bubble,
+                                  );
+                                },
+                              ),
+                      ),
               ),
-              const _InputBar(),
+              _InputBar(
+                controller: _textController,
+                onSend: _handleSend,
+                isSending: _isSending,
+              ),
             ],
           ),
         ),
@@ -506,10 +937,15 @@ class PharmacyChatScreen extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.name, required this.onBack});
+  const _Header({
+    required this.name,
+    required this.onBack,
+    this.avatar = PharmacyChatScreen._avatar,
+  });
 
   final String name;
   final VoidCallback onBack;
+  final String avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -542,13 +978,28 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           ClipOval(
-            child: Image.asset(
-              PharmacyChatScreen._avatar,
-              width: 42,
-              height: 42,
-              fit: BoxFit.cover,
-              alignment: const Alignment(0, -0.25),
-            ),
+            child: (avatar.startsWith('http://') || avatar.startsWith('https://'))
+                ? Image.network(
+                    avatar,
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, -0.25),
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      PharmacyChatScreen._avatar,
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.cover,
+                      alignment: const Alignment(0, -0.25),
+                    ),
+                  )
+                : Image.asset(
+                    avatar.isNotEmpty ? avatar : PharmacyChatScreen._avatar,
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, -0.25),
+                  ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -661,6 +1112,69 @@ class _IncomingBubble extends StatelessWidget {
   }
 }
 
+class _OutgoingBubble extends StatelessWidget {
+  const _OutgoingBubble({required this.text, required this.time});
+
+  final String text;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.sizeOf(context).width * 0.78,
+          ),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          decoration: BoxDecoration(
+            color: PharmacyChatScreen._bubble,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            text,
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+              fontSize: 14.5,
+              height: 1.35,
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              time,
+              style: GoogleFonts.inter(
+                color: PharmacyChatScreen._time,
+                fontWeight: FontWeight.w400,
+                fontSize: 11.5,
+                height: 1,
+              ),
+            ),
+            const SizedBox(width: 3),
+            const Icon(
+              Icons.done_all_rounded,
+              size: 15,
+              color: PharmacyChatScreen._orange,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _AudioBubble extends StatelessWidget {
   const _AudioBubble({required this.duration, required this.time});
 
@@ -767,7 +1281,15 @@ class _AudioBubble extends StatelessWidget {
 }
 
 class _InputBar extends StatelessWidget {
-  const _InputBar();
+  const _InputBar({
+    required this.controller,
+    required this.onSend,
+    this.isSending = false,
+  });
+
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  final bool isSending;
 
   @override
   Widget build(BuildContext context) {
@@ -791,13 +1313,27 @@ class _InputBar extends StatelessWidget {
                     size: 22,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Type a message...',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFFC5C5C5),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
-                      height: 1,
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => onSend(),
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        border: InputBorder.none,
+                        hintText: 'Type a message...',
+                        hintStyle: GoogleFonts.inter(
+                          color: const Color(0xFFC5C5C5),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          height: 1,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -819,24 +1355,38 @@ class _InputBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: PharmacyChatScreen._orange,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: PharmacyChatScreen._orange.withValues(alpha: 0.35),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 28,
+          GestureDetector(
+            onTap: isSending ? null : onSend,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: PharmacyChatScreen._orange,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: PharmacyChatScreen._orange.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: isSending
+                  ? const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : const Icon(
+                      Icons.play_arrow_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
             ),
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
+import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
@@ -19,6 +20,9 @@ class PharmacyHomeController extends GetxController {
   List<OrderData> ordersList = [];
   Map<String, dynamic>? rawSummary;
   Map<String, dynamic>? rawVendor;
+
+  bool isLoadingPrescriptions = false;
+  List<PrescriptionItem> prescriptionsList = [];
 
   final prescriptionFilters = const [
     'New Orders',
@@ -43,6 +47,7 @@ class PharmacyHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchPharmacyPrescriptions();
     fetchPharmacyHome();
   }
 
@@ -94,6 +99,14 @@ class PharmacyHomeController extends GetxController {
   }
 
   String get filterBadgeLabel {
+    if (!isOtcTab && selectedFilterIndex == 0) {
+      if (prescriptionsList.isNotEmpty) {
+        return prescriptionsList.length < 10
+            ? '0${prescriptionsList.length}'
+            : '${prescriptionsList.length}';
+      }
+      return '';
+    }
     if (ordersList.isNotEmpty) {
       return ordersList.length < 10
           ? '0${ordersList.length}'
@@ -102,15 +115,26 @@ class PharmacyHomeController extends GetxController {
     return '';
   }
 
-  String? get prescriptionBadge => !isOtcTab && ordersList.isNotEmpty
-      ? ordersList.length.toString()
-      : null;
+  String? get prescriptionBadge {
+    if (!isOtcTab) {
+      if (selectedFilterIndex == 0 && prescriptionsList.isNotEmpty) {
+        return prescriptionsList.length.toString();
+      }
+      if (ordersList.isNotEmpty) {
+        return ordersList.length.toString();
+      }
+    }
+    return null;
+  }
 
   String? get otcBadge => isOtcTab && ordersList.isNotEmpty
       ? ordersList.length.toString()
       : null;
 
   String get newPrescriptionsCount {
+    if (prescriptionsList.isNotEmpty) {
+      return prescriptionsList.length.toString();
+    }
     if (rawSummary != null) {
       final v = rawSummary!['new_prescriptions'] ??
           rawSummary!['prescriptions'] ??
@@ -319,17 +343,156 @@ class PharmacyHomeController extends GetxController {
     }
   }
 
+  String _getPharmacyPrescriptionsUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyPrescriptions
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map((e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}')
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<void> fetchPharmacyPrescriptions({String? keyword}) async {
+    isLoadingPrescriptions = true;
+    update();
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        isLoadingPrescriptions = false;
+        update();
+        return;
+      }
+
+      final queryParams = <String, dynamic>{
+        'limit': 10,
+      };
+
+      final searchKey = keyword ?? searchController.text.trim();
+      if (searchKey.isNotEmpty) {
+        queryParams['keyword'] = searchKey;
+      }
+
+      final url = _getPharmacyPrescriptionsUrl(queryParams);
+      debugPrint("==================== GET PHARMACY PRESCRIPTIONS ====================");
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyPrescriptions}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== GET PHARMACY PRESCRIPTIONS ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyPrescriptions}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyPrescriptions,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("===================================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("===================================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      List<PrescriptionItem> loaded = [];
+      if (dataMap != null &&
+          (dataMap['status'] == true || dataMap['status'].toString() == 'true')) {
+        final d = dataMap['data'];
+        if (d is Map) {
+          final prescriptionsObj = d['prescriptions'];
+          if (prescriptionsObj is Map && prescriptionsObj['data'] is List) {
+            loaded = (prescriptionsObj['data'] as List)
+                .map((e) =>
+                    PrescriptionItem.fromJson(Map<String, dynamic>.from(e as Map)))
+                .toList();
+          } else if (d['data'] is List) {
+            loaded = (d['data'] as List)
+                .map((e) =>
+                    PrescriptionItem.fromJson(Map<String, dynamic>.from(e as Map)))
+                .toList();
+          } else if (d['prescriptions'] is List) {
+            loaded = (d['prescriptions'] as List)
+                .map((e) =>
+                    PrescriptionItem.fromJson(Map<String, dynamic>.from(e as Map)))
+                .toList();
+          }
+        } else if (dataMap['prescriptions'] is List) {
+          loaded = (dataMap['prescriptions'] as List)
+              .map((e) =>
+                  PrescriptionItem.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList();
+        }
+      }
+      prescriptionsList = loaded;
+    } catch (e) {
+      debugPrint("==================== GET PHARMACY PRESCRIPTIONS ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("=========================================================================");
+
+      print("==================== GET PHARMACY PRESCRIPTIONS ERROR ====================");
+      print("Error: $e");
+      print("=========================================================================");
+      prescriptionsList = [];
+    } finally {
+      isLoadingPrescriptions = false;
+      update();
+    }
+  }
+
   void selectOrderType(int index) {
     selectedOrderType = index;
     selectedFilterIndex = 0;
     update();
-    fetchPharmacyHome();
+    if (!isOtcTab && selectedFilterIndex == 0) {
+      fetchPharmacyPrescriptions();
+      fetchPharmacyHome();
+    } else {
+      fetchPharmacyHome();
+    }
   }
 
   void selectFilter(int index) {
     selectedFilterIndex = index;
     update();
-    fetchPharmacyHome();
+    if (!isOtcTab && selectedFilterIndex == 0) {
+      fetchPharmacyPrescriptions();
+      fetchPharmacyHome();
+    } else {
+      fetchPharmacyHome();
+    }
   }
 
   void showReviewCompleted() {
@@ -351,6 +514,7 @@ class PharmacyHomeController extends GetxController {
     if (index == 0 || index == 1) {
       selectedOrderType = 0;
       selectedFilterIndex = 0;
+      fetchPharmacyPrescriptions();
       fetchPharmacyHome();
     }
     update();
