@@ -60,6 +60,7 @@ class Conversation {
   LastMessage? lastMessage;
   Customer? customer;
   List<LastMessage>? messages;
+  String? image;
 
   Conversation(
       {this.id,
@@ -74,7 +75,8 @@ class Conversation {
       this.unreadCount,
       this.lastMessage,
       this.customer,
-      this.messages});
+      this.messages,
+      this.image});
 
   Conversation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -87,6 +89,8 @@ class Conversation {
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
     unreadCount = json['unread_count'];
+    image = json['image']?.toString() ??
+        (json['customer'] is Map ? json['customer']['image']?.toString() : null);
     lastMessage = json['last_message'] != null
         ? LastMessage.fromJson(json['last_message'])
         : null;

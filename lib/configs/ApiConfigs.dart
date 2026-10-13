@@ -9,7 +9,9 @@ class ApiConfigs {
   //   static String BASE_URL = "";
 
   // This is the base Image URL
-  static String IMAGE_URL = "https://api.saimpexenterprise.com/storage/";
+  static String IMAGE_URL =
+      "https://dev.saimpexenterprise.com/storage/"; //DEV/TEST
+  // static String IMAGE_URL = "https://api.saimpexenterprise.com/storage/"; // Live
   // "https://ourworks.co.in/saimpex-backend/public/storage/";
 
   /// Android package name for Play Store link
@@ -161,9 +163,9 @@ class ApiEndPoints {
   static String pharmacyNotifications = "notifications";
   static String pharmacyHome = "home";
   static String pharmacyPrescriptions = "pharmacyPrescriptions";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
+  static String pharmacyOrders = "pharmacyOrders";
+  static String pharmacyOrderDetail = "pharmacyOrderDetail";
+  static String pharmacyPrescriptionDetails = "pharmacyPrescriptionDetails";
   // static String pharmacyEarningsSummary = "";
   // static String pharmacyEarningsSummary = "";
   // static String pharmacyEarningsSummary = "";

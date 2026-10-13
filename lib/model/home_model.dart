@@ -141,12 +141,14 @@ class OrderData {
   final dynamic deliveryType;
   final dynamic isSelfPickup;
   final List<BasketOrder>? basketOrders;
+  final int? prescriptionId;
 
   OrderData({
     this.orderCode,
     this.status,
     this.placedAt,
     this.id,
+    this.prescriptionId,
     this.total,
     this.userName,
     this.userEmail,
@@ -185,6 +187,12 @@ class OrderData {
       id: (json['id'] is int)
           ? json['id']
           : int.tryParse(json['id']?.toString() ?? ''),
+      prescriptionId: (json['prescription_id'] is int)
+          ? json['prescription_id']
+          : (int.tryParse(json['prescription_id']?.toString() ?? '') ??
+              ((json['id'] is int)
+                  ? json['id']
+                  : int.tryParse(json['id']?.toString() ?? ''))),
       total: json['total']?.toString(),
       userName: json['user_name']?.toString(),
       userEmail: json['user_email']?.toString(),

@@ -267,13 +267,13 @@ class PharmacyChatController extends GetxController {
 
       final convId = (conversationId != null && conversationId > 0)
           ? conversationId.toString()
-          : "1";
+          : null;
       final custId = (customerId != null && customerId > 0)
           ? customerId.toString()
           : "1";
 
       final bodyMap = <String, dynamic>{
-        "conversation_id": convId,
+        if (convId != null) "conversation_id": convId,
         "customer_id": custId,
         "message": trimmed,
         "message_type": "text",

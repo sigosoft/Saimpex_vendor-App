@@ -5,16 +5,20 @@ enum _Availability { inStock, limited, outOfStock }
 class PharmacyCreateQuotationScreen extends StatefulWidget {
   const PharmacyCreateQuotationScreen({
     super.key,
-    this.customerName = 'Ahmed',
-    this.phone = '+222 45 12 34 56',
-    this.requestId = '#22789007',
-    this.requestMeta = 'Today • 10:45 AM',
+    this.customerName = '',
+    this.phone = '',
+    this.requestId = '',
+    this.requestMeta = '',
+    this.imageUrl,
+    this.imageBytes,
   });
 
   final String customerName;
   final String phone;
   final String requestId;
   final String requestMeta;
+  final String? imageUrl;
+  final Uint8List? imageBytes;
 
   @override
   State<PharmacyCreateQuotationScreen> createState() =>
@@ -26,8 +30,6 @@ class _PharmacyCreateQuotationScreenState
   static const Color _orange = Color(0xFFFF5722);
   static const Color _disabled = Color(0xFFFFCDBA);
   static const int _tax = 10;
-  static const String _prescriptionAsset =
-      'lib/pharmacy/Assets/images/Prescription Upload.png';
 
   static const _validityOptions = <String>[
     '1 Day',
@@ -52,10 +54,21 @@ class _PharmacyCreateQuotationScreenState
   }
 
   void _openFullPrescription() {
+    final effectiveImageUrl = widget.imageUrl ??
+        (Get.isRegistered<PharmacyOrderDetailsController>()
+            ? Get.find<PharmacyOrderDetailsController>()
+                .prescriptionDetailData
+                ?.primaryImageUrl
+            : null);
+    final effectiveBytes = widget.imageBytes ??
+        (Get.isRegistered<PharmacyOrderDetailsController>()
+            ? Get.find<PharmacyOrderDetailsController>().prescriptionImageBytes
+            : null);
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => _FullPrescriptionViewer(
-          assetPath: _prescriptionAsset,
+          imageUrl: effectiveImageUrl,
+          imageBytes: effectiveBytes,
           rotationTurns: controller.rotationTurns,
         ),
       ),
@@ -193,10 +206,32 @@ class _PharmacyCreateQuotationScreenState
                             requestId: widget.requestId,
                             requestMeta: widget.requestMeta,
                             reviewCompleted: true,
+                            onChatTap: () => _openCustomerChat(
+                              context,
+                              customerName: widget.customerName,
+                              customerId: Get.isRegistered<PharmacyOrderDetailsController>()
+                                  ? Get.find<PharmacyOrderDetailsController>()
+                                      .prescriptionObj
+                                      ?.userId
+                                  : null,
+                            ),
                           ),
                           const SizedBox(height: 14),
                           _UploadedPrescriptionCard(
-                            assetPath: _prescriptionAsset,
+                            imageUrl: widget.imageUrl ??
+                                (Get.isRegistered<PharmacyOrderDetailsController>()
+                                    ? Get.find<PharmacyOrderDetailsController>()
+                                        .prescriptionDetailData
+                                        ?.primaryImageUrl
+                                    : null),
+                            imageBytes: widget.imageBytes ??
+                                (Get.isRegistered<PharmacyOrderDetailsController>()
+                                    ? Get.find<PharmacyOrderDetailsController>()
+                                        .prescriptionImageBytes
+                                    : null),
+                            isLoading: (Get.isRegistered<PharmacyOrderDetailsController>()
+                                ? Get.find<PharmacyOrderDetailsController>().isLoadingPrescriptionImage
+                                : false),
                             rotationTurns: controller.rotationTurns,
                             onZoom: _openFullPrescription,
                             onRotate: controller.rotatePrescription,

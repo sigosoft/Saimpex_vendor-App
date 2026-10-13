@@ -13,6 +13,11 @@ class _OtcOrderDetailsPage extends StatelessWidget {
     this.ready = false,
     this.partnerAssigned = false,
     this.delivered = false,
+    this.cancelled = false,
+    this.isLoading = false,
+    this.orderDetailData,
+    this.orderId,
+    this.orderRawId,
   });
 
   final String name;
@@ -26,6 +31,11 @@ class _OtcOrderDetailsPage extends StatelessWidget {
   final bool ready;
   final bool partnerAssigned;
   final bool delivered;
+  final bool cancelled;
+  final bool isLoading;
+  final PharmacyOrderDetailData? orderDetailData;
+  final dynamic orderId;
+  final dynamic orderRawId;
 
   static const Color _orange = Color(0xFFFF5722);
   static const Color _badge = Color(0xFFF99D1C);
@@ -39,10 +49,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.check_rounded,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Order Accepted',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Order Accepted', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -58,14 +65,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Picked Up by Rider',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Picked Up by Rider', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _acceptedDeliveryTimeline = <_TimelineStep>[
@@ -96,14 +97,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Picked Up by Rider',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Picked Up by Rider', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _preparingDeliveryTimeline = <_TimelineStep>[
@@ -136,14 +131,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Picked Up by Rider',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Picked Up by Rider', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _readyDeliveryTimeline = <_TimelineStep>[
@@ -178,14 +167,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Picked Up by Rider',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Picked Up by Rider', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _assignedPartnerTimeline = <_TimelineStep>[
@@ -222,14 +205,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       customIcon: _TimelineCustomIcon.scooter,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Picked Up by Rider',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Picked Up by Rider', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _deliveredTimeline = <_TimelineStep>[
@@ -287,27 +264,123 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       icon: Icons.check_rounded,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Order Accepted',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Preparing',
-      icon: Icons.assignment_outlined,
-    ),
-    _TimelineStep(
-      title: 'Ready for Pickup',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Picked Up by Customer',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Order Accepted', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Preparing', icon: Icons.assignment_outlined),
+    _TimelineStep(title: 'Ready for Pickup', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Picked Up by Customer', icon: Icons.check_rounded),
   ];
+
+  List<_TimelineStep> _buildTimelineSteps() {
+    final logs = orderDetailData?.statusLogs ?? [];
+    String? getLogTime(int status) {
+      for (final log in logs) {
+        if (log.status == status &&
+            log.createdAt != null &&
+            log.createdAt!.trim().isNotEmpty) {
+          return log.createdAt;
+        }
+      }
+      return null;
+    }
+
+    final receivedSubtitle =
+        getLogTime(1) ?? (requestMeta.isNotEmpty ? requestMeta : null);
+    final acceptedSubtitle = getLogTime(2);
+    final preparingSubtitle = getLogTime(3);
+    final readySubtitle = getLogTime(4);
+    final deliveredSubtitle = getLogTime(9);
+
+    if (selfPickup) {
+      return [
+        _TimelineStep(
+          title: 'Order Received',
+          subtitle: receivedSubtitle,
+          icon: Icons.check_rounded,
+          completed: true,
+        ),
+        _TimelineStep(
+          title: 'Order Accepted',
+          subtitle: acceptedSubtitle,
+          icon: Icons.check_rounded,
+          completed: accepted || preparing || ready || delivered,
+        ),
+        _TimelineStep(
+          title: 'Preparing',
+          subtitle: preparingSubtitle,
+          icon: Icons.assignment_outlined,
+          completed: preparing || ready || delivered,
+        ),
+        _TimelineStep(
+          title: 'Ready for Pickup',
+          subtitle: readySubtitle,
+          icon: Icons.check_rounded,
+          completed: ready || delivered,
+        ),
+        _TimelineStep(
+          title: 'Picked Up by Customer',
+          subtitle: deliveredSubtitle,
+          icon: Icons.check_rounded,
+          completed: delivered,
+        ),
+      ];
+    }
+
+    return [
+      _TimelineStep(
+        title: 'Order Received',
+        subtitle: receivedSubtitle,
+        icon: Icons.check_rounded,
+        completed: true,
+      ),
+      _TimelineStep(
+        title: 'Order Accepted',
+        subtitle: acceptedSubtitle,
+        icon: Icons.check_rounded,
+        completed:
+            accepted || preparing || ready || partnerAssigned || delivered,
+      ),
+      _TimelineStep(
+        title: 'Preparing Medicines',
+        subtitle: preparingSubtitle,
+        icon: Icons.medication_outlined,
+        customIcon: _TimelineCustomIcon.capsule,
+        completed: preparing || ready || partnerAssigned || delivered,
+      ),
+      _TimelineStep(
+        title: 'Ready for Dispatch',
+        subtitle: readySubtitle,
+        icon: Icons.inventory_2_outlined,
+        customIcon: _TimelineCustomIcon.openBox,
+        completed: ready || partnerAssigned || delivered,
+      ),
+      _TimelineStep(
+        title: 'Delivery Partner Assigned',
+        subtitle: readySubtitle,
+        icon: Icons.delivery_dining,
+        customIcon: _TimelineCustomIcon.scooter,
+        completed: partnerAssigned || delivered,
+      ),
+      _TimelineStep(
+        title: 'Picked Up by Rider',
+        subtitle: readySubtitle,
+        icon: Icons.check_rounded,
+        completed: delivered,
+      ),
+      _TimelineStep(
+        title: 'Order Delivered',
+        subtitle: deliveredSubtitle,
+        icon: Icons.home_outlined,
+        completed: delivered,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     final initial = name.isNotEmpty ? name.substring(0, 1).toUpperCase() : 'A';
+    final items = orderDetailData?.items ?? [];
+    final order = orderDetailData?.order;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
@@ -337,113 +410,171 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                     const _OtcDetailsHeader(),
                     const SizedBox(height: 12),
                     Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        children: [
-                          _OtcCustomerCard(
-                            initial: initial,
-                            name: name,
-                            phone: phone,
-                            requestId: requestId,
-                            requestMeta: requestMeta,
-                            selfPickup: selfPickup,
-                            accepted: accepted,
-                            preparing: preparing,
-                            ready: ready,
-                            delivered: delivered,
-                          ),
-                          if (partnerAssigned) ...[
-                            const SizedBox(height: 18),
-                            const _DeliveryPartnerSection(),
-                          ],
-                          const SizedBox(height: 18),
-                          Text(
-                            'ORDER ITEMS (2)',
-                            style: GoogleFonts.inter(
-                              color: _section,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              letterSpacing: 0.6,
+                      child: isLoading && orderDetailData == null
+                          ? const Center(
+                              child: CircularProgressIndicator(color: _orange),
+                            )
+                          : ListView(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              children: [
+                                _OtcCustomerCard(
+                                  initial: initial,
+                                  name: name,
+                                  phone: phone,
+                                  requestId: requestId,
+                                  requestMeta: requestMeta,
+                                  selfPickup: selfPickup,
+                                  accepted: accepted,
+                                  preparing: preparing,
+                                  ready: ready,
+                                  delivered: delivered,
+                                  cancelled: cancelled,
+                                  address: order?.displayLocation,
+                                  onChatTap: () => _openCustomerChat(
+                                    context,
+                                    customerName: (order?.customerName?.trim().isNotEmpty == true)
+                                        ? order!.customerName!.trim()
+                                        : (name.isNotEmpty ? name : 'Customer'),
+                                    customerId: order?.userId,
+                                  ),
+                                ),
+                                if (partnerAssigned) ...[
+                                  const SizedBox(height: 18),
+                                  const _DeliveryPartnerSection(),
+                                ],
+                                const SizedBox(height: 18),
+                                Text(
+                                  'ORDER ITEMS (${items.isNotEmpty ? items.length : (orderDetailData != null ? 0 : 2)})',
+                                  style: GoogleFonts.inter(
+                                    color: _section,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                if (items.isNotEmpty) ...[
+                                  for (int i = 0; i < items.length; i++) ...[
+                                    if (i > 0) const SizedBox(height: 10),
+                                    _OtcItemCard(
+                                      name: items[i].displayName,
+                                      price: items[i].totalPrice != null
+                                          ? (items[i].totalPrice!.contains(
+                                                  'MRU',
+                                                )
+                                                ? items[i].totalPrice!
+                                                : '${items[i].totalPrice} MRU')
+                                          : (items[i].unitPrice != null
+                                                ? (items[i].unitPrice!.contains(
+                                                        'MRU',
+                                                      )
+                                                      ? items[i].unitPrice!
+                                                      : '${items[i].unitPrice} MRU')
+                                                : '0.00 MRU'),
+                                      image: items[i].displayImageUrl ?? '',
+                                      quantity: items[i].quantity ?? 1,
+                                    ),
+                                  ],
+                                ] else if (orderDetailData != null &&
+                                    items.isEmpty) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'No items found',
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFF8E8E8E),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ] else ...[
+                                  const _OtcItemCard(
+                                    name: 'Digital Thermometer',
+                                    price: '50 MRU',
+                                    image:
+                                        'lib/pharmacy/Assets/images/digital_thermometer.jpg',
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const _OtcItemCard(
+                                    name: 'Baby Diapers',
+                                    price: '50 MRU',
+                                    image:
+                                        'lib/pharmacy/Assets/images/baby_diapers.jpg',
+                                  ),
+                                ],
+                                const SizedBox(height: 18),
+                                Text(
+                                  'PAYMENT SUMMARY',
+                                  style: GoogleFonts.inter(
+                                    color: _section,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                _OtcPaymentSummary(
+                                  cashOnDelivery: cashOnDelivery,
+                                  itemTotal: order?.subtotal,
+                                  deliveryFee: order?.deliveryFee,
+                                  tax: order?.tax,
+                                  paymentOn: order?.placedAt,
+                                  totalPaid: order?.total,
+                                ),
+                                const SizedBox(height: 18),
+                                Text(
+                                  selfPickup ||
+                                          accepted ||
+                                          preparing ||
+                                          ready ||
+                                          delivered ||
+                                          cancelled
+                                      ? 'Order Timeline'
+                                      : 'ORDER TIMELINE',
+                                  style: GoogleFonts.inter(
+                                    color:
+                                        selfPickup ||
+                                            accepted ||
+                                            preparing ||
+                                            ready ||
+                                            delivered ||
+                                            cancelled
+                                        ? const Color(0xFF1A1A1A)
+                                        : _section,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize:
+                                        selfPickup ||
+                                            accepted ||
+                                            preparing ||
+                                            ready ||
+                                            delivered ||
+                                            cancelled
+                                        ? 16
+                                        : 12,
+                                    letterSpacing:
+                                        selfPickup ||
+                                            accepted ||
+                                            preparing ||
+                                            ready ||
+                                            delivered ||
+                                            cancelled
+                                        ? 0
+                                        : 0.6,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                _TimelineCard(steps: _buildTimelineSteps()),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          const _OtcItemCard(
-                            name: 'Digital Thermometer',
-                            price: '50 MRU',
-                            image: 'lib/pharmacy/Assets/images/digital_thermometer.jpg',
-                          ),
-                          const SizedBox(height: 10),
-                          const _OtcItemCard(
-                            name: 'Baby Diapers',
-                            price: '50 MRU',
-                            image: 'lib/pharmacy/Assets/images/baby_diapers.jpg',
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            'PAYMENT SUMMARY',
-                            style: GoogleFonts.inter(
-                              color: _section,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          _OtcPaymentSummary(cashOnDelivery: cashOnDelivery),
-                          const SizedBox(height: 18),
-                          Text(
-                            selfPickup || accepted || preparing || ready || delivered
-                                ? 'Order Timeline'
-                                : 'ORDER TIMELINE',
-                            style: GoogleFonts.inter(
-                              color: selfPickup ||
-                                      accepted ||
-                                      preparing ||
-                                      ready ||
-                                      delivered
-                                  ? const Color(0xFF1A1A1A)
-                                  : _section,
-                              fontWeight: FontWeight.w700,
-                              fontSize: selfPickup ||
-                                      accepted ||
-                                      preparing ||
-                                      ready ||
-                                      delivered
-                                  ? 16
-                                  : 12,
-                              letterSpacing: selfPickup ||
-                                      accepted ||
-                                      preparing ||
-                                      ready ||
-                                      delivered
-                                  ? 0
-                                  : 0.6,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          _TimelineCard(
-                            steps: selfPickup
-                                ? _selfPickupTimeline
-                                : delivered
-                                    ? _deliveredTimeline
-                                    : partnerAssigned
-                                        ? _assignedPartnerTimeline
-                                        : ready
-                                            ? _readyDeliveryTimeline
-                                            : preparing
-                                                ? _preparingDeliveryTimeline
-                                                : accepted
-                                                    ? _acceptedDeliveryTimeline
-                                                    : _timeline,
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            if (!ready && !delivered)
+            if (!ready && !delivered && !cancelled)
               _OtcDetailsActions(accepted: accepted, preparing: preparing),
           ],
         ),
@@ -521,6 +652,9 @@ class _OtcCustomerCard extends StatelessWidget {
     this.preparing = false,
     this.ready = false,
     this.delivered = false,
+    this.cancelled = false,
+    this.address,
+    this.onChatTap,
   });
 
   final String initial;
@@ -533,6 +667,9 @@ class _OtcCustomerCard extends StatelessWidget {
   final bool preparing;
   final bool ready;
   final bool delivered;
+  final bool cancelled;
+  final String? address;
+  final VoidCallback? onChatTap;
 
   static const Color _accent = Color(0xFFFF5722);
   static const Color _blue = Color(0xFF3B82F6);
@@ -581,32 +718,38 @@ class _OtcCustomerCard extends StatelessWidget {
               const Spacer(),
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: accepted || preparing || ready || delivered
+                  horizontal:
+                      accepted || preparing || ready || delivered || cancelled
                       ? 10
                       : 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: delivered || ready || accepted
-                      ? _OtcOrderDetailsPage._acceptedBadge
-                      : preparing
-                          ? _OtcOrderDetailsPage._orange
-                          : _OtcOrderDetailsPage._badge,
+                  color: cancelled
+                      ? const Color(0xFFEF4444)
+                      : (delivered || ready || accepted
+                            ? _OtcOrderDetailsPage._acceptedBadge
+                            : preparing
+                            ? _OtcOrderDetailsPage._orange
+                            : _OtcOrderDetailsPage._badge),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  delivered
-                      ? 'DELIVERED'
-                      : ready
-                          ? 'READY'
-                          : preparing
-                              ? 'PREPARING'
-                              : accepted
-                                  ? 'ACCEPTED'
-                                  : 'NEW',
+                  cancelled
+                      ? 'CANCELLED'
+                      : (delivered
+                            ? 'DELIVERED'
+                            : ready
+                            ? 'READY'
+                            : preparing
+                            ? 'PREPARING'
+                            : accepted
+                            ? 'ACCEPTED'
+                            : 'NEW'),
                   style: GoogleFonts.inter(
                     color: Colors.white,
-                    fontSize: accepted || preparing || ready || delivered
+                    fontSize:
+                        accepted || preparing || ready || delivered || cancelled
                         ? 10
                         : 11,
                     fontWeight: FontWeight.w800,
@@ -670,19 +813,23 @@ class _OtcCustomerCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  width: 46,
-                  height: 46,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _accent,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CustomPaint(
-                      painter: _ChatDotsIconPainter(color: Colors.white),
+                GestureDetector(
+                  onTap: onChatTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 46,
+                    height: 46,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _accent,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CustomPaint(
+                        painter: _ChatDotsIconPainter(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -769,46 +916,46 @@ class _OtcCustomerCard extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '(',
-                              style: GoogleFonts.inter(
-                                color: _blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                height: 1,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '(',
+                                style: GoogleFonts.inter(
+                                  color: _blue,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 3),
-                            Image.asset(
-                              'lib/water/Assets/Images/selfpickup_icon.png',
-                              width: 16,
-                              height: 16,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Self Pickup',
-                              style: GoogleFonts.inter(
-                                color: _blue,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                height: 1.1,
+                              const SizedBox(width: 3),
+                              Image.asset(
+                                'lib/water/Assets/Images/selfpickup_icon.png',
+                                width: 16,
+                                height: 16,
+                                fit: BoxFit.contain,
                               ),
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              ')',
-                              style: GoogleFonts.inter(
-                                color: _blue,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                height: 1,
+                              const SizedBox(width: 4),
+                              Text(
+                                'Self Pickup',
+                                style: GoogleFonts.inter(
+                                  color: _blue,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  height: 1.1,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                              const SizedBox(width: 3),
+                              Text(
+                                ')',
+                                style: GoogleFonts.inter(
+                                  color: _blue,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         )
                       else
                         Row(
@@ -840,76 +987,80 @@ class _OtcCustomerCard extends StatelessWidget {
             ],
           ),
           if (!selfPickup) ...[
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              const Icon(Icons.location_on_rounded, color: _accent, size: 18),
-              const SizedBox(width: 6),
-              Text(
-                'DELIVERY ADDRESS',
-                style: GoogleFonts.inter(
-                  color: _accent,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  letterSpacing: 0.6,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
-            decoration: BoxDecoration(
-              color: _panel,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: Row(
+            const SizedBox(height: 16),
+            Row(
               children: [
-                Container(
-                  width: 46,
-                  height: 46,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFFF4EA),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.home_outlined,
+                const Icon(Icons.location_on_rounded, color: _accent, size: 18),
+                const SizedBox(width: 6),
+                Text(
+                  'DELIVERY ADDRESS',
+                  style: GoogleFonts.inter(
                     color: _accent,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Sahara View Home',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          height: 1.15,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Near Marhaba Supermarket, Nouakchott',
-                        style: GoogleFonts.inter(
-                          color: _meta,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    letterSpacing: 0.6,
                   ),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+              decoration: BoxDecoration(
+                color: _panel,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFF4EA),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.home_outlined,
+                      color: _accent,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          address != null && address!.trim().isNotEmpty
+                              ? address!
+                              : 'Delivery Address',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF1A1A1A),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            height: 1.15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          address != null && address!.trim().isNotEmpty
+                              ? ''
+                              : 'Near customer location',
+                          style: GoogleFonts.inter(
+                            color: _meta,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ],
       ),
@@ -922,11 +1073,48 @@ class _OtcItemCard extends StatelessWidget {
     required this.name,
     required this.price,
     required this.image,
+    this.quantity = 1,
   });
 
   final String name;
   final String price;
   final String image;
+  final int quantity;
+
+  Widget _buildItemImage(String img) {
+    if (img.startsWith('http://') || img.startsWith('https://')) {
+      return Image.network(
+        img,
+        width: 56,
+        height: 56,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    } else if (img.isNotEmpty) {
+      return Image.asset(
+        img,
+        width: 56,
+        height: 56,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    }
+    return _placeholder();
+  }
+
+  Widget _placeholder() {
+    return Container(
+      width: 56,
+      height: 56,
+      color: const Color(0xFFF3F4F6),
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.medication_outlined,
+        color: Color(0xFF9CA3AF),
+        size: 26,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -948,12 +1136,7 @@ class _OtcItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: Image.asset(
-              image,
-              width: 56,
-              height: 56,
-              fit: BoxFit.cover,
-            ),
+            child: _buildItemImage(image),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -989,7 +1172,7 @@ class _OtcItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Qty: 1',
+              'Qty: $quantity',
               style: GoogleFonts.inter(
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w600,
@@ -1005,12 +1188,30 @@ class _OtcItemCard extends StatelessWidget {
 }
 
 class _OtcPaymentSummary extends StatelessWidget {
-  const _OtcPaymentSummary({required this.cashOnDelivery});
+  const _OtcPaymentSummary({
+    required this.cashOnDelivery,
+    this.itemTotal,
+    this.deliveryFee,
+    this.tax,
+    this.paymentOn,
+    this.totalPaid,
+  });
 
   final bool cashOnDelivery;
+  final String? itemTotal;
+  final String? deliveryFee;
+  final String? tax;
+  final String? paymentOn;
+  final String? totalPaid;
 
   static const Color _muted = Color(0xFFD0D0D0);
   static const Color _orange = Color(0xFFFF5722);
+
+  String _formatAmount(String? val) {
+    if (val == null || val.trim().isEmpty) return '0.00 MRU';
+    final s = val.trim();
+    return s.contains('MRU') ? s : '$s MRU';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1023,23 +1224,21 @@ class _OtcPaymentSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const _OtcPayRow(label: 'Item total', value: '100 MRU'),
+          _OtcPayRow(label: 'Item total', value: _formatAmount(itemTotal)),
           const SizedBox(height: 12),
-          const _OtcPayRow(label: 'Delivery fee', value: '20 MRU'),
+          _OtcPayRow(label: 'Delivery fee', value: _formatAmount(deliveryFee)),
           const SizedBox(height: 12),
-          const _OtcPayRow(label: 'Tax', value: '10 MRU'),
+          _OtcPayRow(label: 'Tax', value: _formatAmount(tax)),
           const SizedBox(height: 12),
           _OtcPayRow(
             label: 'Payment type',
             value: cashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
             valueColor: _orange,
           ),
-          const SizedBox(height: 12),
-          const _OtcPayRow(
-            label: 'Payment on',
-            value: 'Feb 07, 2026 10:40 AM, Today',
-            valueSize: 12,
-          ),
+          if (paymentOn != null && paymentOn!.trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _OtcPayRow(label: 'Payment on', value: paymentOn!, valueSize: 12),
+          ],
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
           const SizedBox(height: 14),
@@ -1055,7 +1254,7 @@ class _OtcPaymentSummary extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '80 MRU',
+                _formatAmount(totalPaid),
                 style: GoogleFonts.inter(
                   color: _orange,
                   fontWeight: FontWeight.w700,
@@ -1138,12 +1337,9 @@ class _OtcDetailsActions extends StatelessWidget {
           preparing
               ? 'Mark as Ready'
               : accepted
-                  ? 'Prepare Order'
-                  : 'Accept Order',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-          ),
+              ? 'Prepare Order'
+              : 'Accept Order',
+          style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
         ),
       ),
     );
@@ -1159,35 +1355,35 @@ class _OtcDetailsActions extends StatelessWidget {
       child: accepted || preparing
           ? SizedBox(width: double.infinity, child: prepare)
           : Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: SizedBox(
-              height: 50,
-              child: OutlinedButton(
-                onPressed: () => showPharmacyRejectOrderSheet(context),
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF1A1A1A),
-                  side: const BorderSide(color: Color(0xFFE5E7EB)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: () => showPharmacyRejectOrderSheet(context),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF1A1A1A),
+                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: Text(
+                        'Reject',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: Text(
-                  'Reject',
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(flex: 3, child: prepare),
+              ],
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(flex: 3, child: prepare),
-        ],
-      ),
     );
   }
 }

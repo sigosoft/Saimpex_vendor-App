@@ -1,17 +1,59 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/pharmacy/controller/pharmacy_chat_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_order_details_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
+import 'package:saimpex_vendor/pharmacy/model/pharmacy_order_detail_model.dart';
+import 'package:saimpex_vendor/pharmacy/view/pharmacy_chat_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 
 part 'create_quotation_screen.dart';
 part '../controller/create_quotation_controller.dart';
 part 'otc_order_details_screen.dart';
+
+void _openCustomerChat(
+  BuildContext context, {
+  required String customerName,
+  required int? customerId,
+  String? avatar,
+}) {
+  final int validCustomerId =
+      (customerId != null && customerId > 0) ? customerId : 1;
+
+  int initialConvId = 0;
+  String initialAvatar = avatar ?? '';
+  if (Get.isRegistered<PharmacyChatController>()) {
+    final chatCtrl = Get.find<PharmacyChatController>();
+    for (final c in chatCtrl.conversations) {
+      if (c.customerId == validCustomerId ||
+          c.customer?.id == validCustomerId) {
+        if (c.id != null && c.id! > 0) {
+          initialConvId = c.id!;
+        }
+        final img = c.customer?.image?.trim();
+        if (img != null && img.isNotEmpty && initialAvatar.isEmpty) {
+          initialAvatar = img;
+        }
+        break;
+      }
+    }
+  }
+
+  PharmacyChatScreen.open(
+    context,
+    customerName: customerName.isNotEmpty ? customerName : 'Customer',
+    customerId: validCustomerId,
+    conversationId: initialConvId,
+    avatar: initialAvatar,
+  );
+}
 
 class PharmacyOrderDetailsScreen extends StatefulWidget {
   const PharmacyOrderDetailsScreen({
@@ -39,6 +81,11 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
     this.isOtcReady = false,
     this.isOtcPartnerAssigned = false,
     this.isOtcDelivered = false,
+    this.isOtcCancelled = false,
+    this.orderId,
+    this.orderRawId,
+    this.prescriptionId,
+    this.prescriptionImageUrl,
   });
 
   final String customerName;
@@ -63,6 +110,14 @@ class PharmacyOrderDetailsScreen extends StatefulWidget {
   final bool isOtcReady;
   final bool isOtcPartnerAssigned;
   final bool isOtcDelivered;
+  final bool isOtcCancelled;
+  final int? orderId;
+  final int? orderRawId;
+  final int? prescriptionId;
+  final String? prescriptionImageUrl;
+
+  int? get effectiveOrderId => orderId ?? orderRawId ?? prescriptionId;
+  int? get effectivePrescriptionId => prescriptionId ?? orderId ?? orderRawId;
 
   @override
   State<PharmacyOrderDetailsScreen> createState() =>
@@ -82,6 +137,25 @@ class _PharmacyOrderDetailsScreenState
   void initState() {
     super.initState();
     _detailsController = Get.put(PharmacyOrderDetailsController());
+    if (widget.isOtc) {
+      final id =
+          widget.effectiveOrderId ??
+          int.tryParse(
+            widget.requestId.replaceAll(RegExp(r'[^0-9]'), '').trim(),
+          );
+      if (id != null) {
+        _detailsController.fetchPharmacyOrderDetail(id);
+      }
+    } else {
+      final prescId =
+          widget.effectivePrescriptionId ??
+          int.tryParse(
+            widget.requestId.replaceAll(RegExp(r'[^0-9]'), '').trim(),
+          );
+      if (prescId != null) {
+        _detailsController.fetchPharmacyPrescriptionDetails(prescId);
+      }
+    }
   }
 
   @override
@@ -97,22 +171,10 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.check_rounded,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Under Review',
-      icon: Icons.assignment_outlined,
-    ),
-    _TimelineStep(
-      title: 'Review Completed',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Quotation Sent',
-      icon: Icons.request_quote_outlined,
-    ),
-    _TimelineStep(
-      title: 'Paid',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Under Review', icon: Icons.assignment_outlined),
+    _TimelineStep(title: 'Review Completed', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Quotation Sent', icon: Icons.request_quote_outlined),
+    _TimelineStep(title: 'Paid', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -128,10 +190,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _underReviewTimeline = <_TimelineStep>[
@@ -147,18 +206,9 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.description_outlined,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Review Completed',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Quotation Sent',
-      icon: Icons.request_quote_outlined,
-    ),
-    _TimelineStep(
-      title: 'Paid',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Review Completed', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Quotation Sent', icon: Icons.request_quote_outlined),
+    _TimelineStep(title: 'Paid', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -174,10 +224,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _reviewCompletedTimeline = <_TimelineStep>[
@@ -199,14 +246,8 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.check_rounded,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Quotation Sent',
-      icon: Icons.request_quote_outlined,
-    ),
-    _TimelineStep(
-      title: 'Paid',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Quotation Sent', icon: Icons.request_quote_outlined),
+    _TimelineStep(title: 'Paid', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -222,10 +263,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _deliveredTimeline = <_TimelineStep>[
@@ -340,10 +378,7 @@ class _PharmacyOrderDetailsScreenState
       customIcon: _TimelineCustomIcon.scooter,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _preparingTimeline = <_TimelineStep>[
@@ -394,10 +429,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _toPrepareTimeline = <_TimelineStep>[
@@ -446,10 +478,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _awaitingPaymentTimeline = <_TimelineStep>[
@@ -477,10 +506,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.description_outlined,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Paid',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Paid', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -496,10 +522,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.delivery_dining,
       customIcon: _TimelineCustomIcon.scooter,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   static const _selfPickupTimeline = <_TimelineStep>[
@@ -509,22 +532,10 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.check_rounded,
       completed: true,
     ),
-    _TimelineStep(
-      title: 'Under Review',
-      icon: Icons.assignment_outlined,
-    ),
-    _TimelineStep(
-      title: 'Review Completed',
-      icon: Icons.check_rounded,
-    ),
-    _TimelineStep(
-      title: 'Quotation Sent',
-      icon: Icons.request_quote_outlined,
-    ),
-    _TimelineStep(
-      title: 'Paid',
-      icon: Icons.check_rounded,
-    ),
+    _TimelineStep(title: 'Under Review', icon: Icons.assignment_outlined),
+    _TimelineStep(title: 'Review Completed', icon: Icons.check_rounded),
+    _TimelineStep(title: 'Quotation Sent', icon: Icons.request_quote_outlined),
+    _TimelineStep(title: 'Paid', icon: Icons.check_rounded),
     _TimelineStep(
       title: 'Preparing Medicines',
       icon: Icons.medication_outlined,
@@ -535,10 +546,7 @@ class _PharmacyOrderDetailsScreenState
       icon: Icons.inventory_2_outlined,
       customIcon: _TimelineCustomIcon.openBox,
     ),
-    _TimelineStep(
-      title: 'Order Delivered',
-      icon: Icons.home_outlined,
-    ),
+    _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
   List<_TimelineStep> get _timeline {
@@ -553,24 +561,63 @@ class _PharmacyOrderDetailsScreenState
     return _deliveryTimeline;
   }
 
+  List<_TimelineStep> _buildTimeline(String? createdTime) {
+    final baseSteps = _timeline;
+    if (createdTime == null || createdTime.isEmpty) return baseSteps;
+    return baseSteps.asMap().entries.map((entry) {
+      if (entry.key == 0) {
+        return _TimelineStep(
+          title: entry.value.title,
+          subtitle: createdTime,
+          icon: entry.value.icon,
+          customIcon: entry.value.customIcon,
+          completed: entry.value.completed,
+        );
+      }
+      return entry.value;
+    }).toList();
+  }
+
   void _openCreateQuotation() {
+    final presc = _detailsController.prescriptionObj;
+    final customerName = presc?.customerName?.trim().isNotEmpty == true
+        ? presc!.customerName!
+        : (widget.customerName != 'Ahmed' ? widget.customerName : 'Customer');
+    final phone = presc?.displayPhone.trim().isNotEmpty == true
+        ? presc!.displayPhone
+        : (widget.phone != '+222 45 12 34 56' ? widget.phone : '');
+    final requestId = presc?.prescriptionId != null
+        ? '#${presc!.prescriptionId}'
+        : (widget.requestId != '#22789007' ? widget.requestId : '');
+    final requestMeta = presc?.createdAt?.trim().isNotEmpty == true
+        ? presc!.createdAt!
+        : (widget.requestMeta != 'Today • 10:45 AM' ? widget.requestMeta : '');
+    final primaryImageUrl =
+        _detailsController.prescriptionDetailData?.primaryImageUrl ??
+        widget.prescriptionImageUrl;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyCreateQuotationScreen(
-          customerName: widget.customerName,
-          phone: widget.phone,
-          requestId: widget.requestId,
-          requestMeta: widget.requestMeta,
+          customerName: customerName,
+          phone: phone,
+          requestId: requestId,
+          requestMeta: requestMeta,
+          imageUrl: primaryImageUrl,
+          imageBytes: _detailsController.prescriptionImageBytes,
         ),
       ),
     );
   }
 
   void _openFullPrescription() {
+    final primaryImageUrl =
+        _detailsController.prescriptionDetailData?.primaryImageUrl ??
+        widget.prescriptionImageUrl;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => _FullPrescriptionViewer(
-          assetPath: _prescriptionAsset,
+          imageUrl: primaryImageUrl,
+          imageBytes: _detailsController.prescriptionImageBytes,
           rotationTurns: _detailsController.rotationTurns,
         ),
       ),
@@ -580,223 +627,321 @@ class _PharmacyOrderDetailsScreenState
   @override
   Widget build(BuildContext context) {
     if (widget.isOtc) {
-      return _OtcOrderDetailsPage(
-        name: widget.customerName,
-        phone: widget.phone,
-        requestId: widget.requestId,
-        requestMeta: widget.requestMeta,
-        selfPickup: widget.isSelfPickup,
-        cashOnDelivery: widget.cashOnDelivery,
-        accepted: widget.isOtcAccepted,
-        preparing: widget.isOtcPreparing,
-        ready: widget.isOtcReady,
-        partnerAssigned: widget.isOtcPartnerAssigned,
-        delivered: widget.isOtcDelivered,
+      return GetBuilder<PharmacyOrderDetailsController>(
+        builder: (detailsCtrl) {
+          return _OtcOrderDetailsPage(
+            orderId: widget.effectiveOrderId,
+            orderRawId: widget.effectiveOrderId,
+            isLoading: detailsCtrl.isLoadingOrderDetail,
+            orderDetailData: detailsCtrl.orderDetailData,
+            name: widget.customerName,
+            phone: widget.phone,
+            requestId: widget.requestId,
+            requestMeta: widget.requestMeta,
+            selfPickup: widget.isSelfPickup,
+            cashOnDelivery: widget.cashOnDelivery,
+            accepted: widget.isOtcAccepted,
+            preparing: widget.isOtcPreparing,
+            ready: widget.isOtcReady,
+            partnerAssigned: widget.isOtcPartnerAssigned,
+            delivered: widget.isOtcDelivered,
+            cancelled: widget.isOtcCancelled,
+          );
+        },
       );
     }
     return GetBuilder<PharmacyOrderDetailsController>(
-      builder: (_) {
-        final initial = widget.customerName.isNotEmpty
-            ? widget.customerName.substring(0, 1).toUpperCase()
-            : 'A';
+      builder: (controller) {
+        final prescObj = controller.prescriptionObj;
+        final prescData = controller.prescriptionDetailData;
+        final primaryImageUrl =
+            prescData?.primaryImageUrl ?? widget.prescriptionImageUrl;
+
+        final rawCustName = prescObj?.customerName?.trim();
+        final effectiveCustomerName = (rawCustName != null && rawCustName.isNotEmpty)
+            ? rawCustName
+            : (widget.customerName != 'Ahmed'
+                ? widget.customerName
+                : (rawCustName ?? 'Customer'));
+
+        final initial = effectiveCustomerName.isNotEmpty
+            ? effectiveCustomerName.substring(0, 1).toUpperCase()
+            : 'C';
+
+        final rawPhone = prescObj?.displayPhone.trim();
+        final effectivePhone = (rawPhone != null && rawPhone.isNotEmpty)
+            ? rawPhone
+            : (widget.phone != '+222 45 12 34 56' ? widget.phone : (rawPhone ?? ''));
+
+        final effectiveRequestId = prescObj?.prescriptionId != null
+            ? '#${prescObj!.prescriptionId}'
+            : (widget.requestId != '#22789007'
+                ? widget.requestId
+                : (prescObj?.displayOrderCode ?? widget.requestId));
+
+        final rawCreatedAt = prescObj?.createdAt?.trim();
+        final effectiveRequestMeta = (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
+            ? rawCreatedAt
+            : (widget.requestMeta != 'Today • 10:45 AM'
+                ? widget.requestMeta
+                : (rawCreatedAt ?? ''));
+
+        final rawNote = prescObj?.note?.trim();
+        final effectiveNote = (rawNote != null && rawNote.isNotEmpty)
+            ? rawNote
+            : (widget.specialNotes !=
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis'
+                ? widget.specialNotes
+                : (rawNote ?? ''));
+
+        final hasNote = effectiveNote.isNotEmpty ||
+            widget.notesType == PharmacyOrderNotesType.voice;
+
+        final statusStr = prescObj?.status?.trim().toLowerCase();
+        final isEffectiveReviewing = widget.isUnderReview ||
+            statusStr == 'uploaded' ||
+            statusStr == 'under_review' ||
+            statusStr == 'under review' ||
+            statusStr == 'reviewing';
+        final isEffectiveReviewCompleted = widget.isReviewCompleted ||
+            statusStr == 'review_completed' ||
+            statusStr == 'reviewed';
+        final isEffectiveAwaitingPayment = widget.isAwaitingPayment ||
+            statusStr == 'awaiting_payment' ||
+            statusStr == 'quoted';
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFFFF0E8),
-                      Color(0xFFFFF8F4),
-                      Color(0xFFFFFFFF),
-                    ],
-                    stops: [0, 0.16, 1],
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: SizedBox(
-                        height: 44,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Text(
-                              'Order Details',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFF1A1A1A),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18,
-                                letterSpacing: -0.2,
-                                height: 1.2,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: InkWell(
-                                onTap: () => Navigator.of(context).maybePop(),
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: const Color(0xFFFFE0D0),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.04,
-                                        ),
-                                        blurRadius: 6,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Icon(
-                                    Icons.chevron_left_rounded,
-                                    color: _orange,
-                                    size: 26,
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFFFFF0E8),
+                          Color(0xFFFFF8F4),
+                          Color(0xFFFFFFFF),
+                        ],
+                        stops: [0, 0.16, 1],
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            height: 44,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  'Order Details',
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFF1A1A1A),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 18,
+                                    letterSpacing: -0.2,
+                                    height: 1.2,
                                   ),
                                 ),
-                              ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: InkWell(
+                                    onTap: () =>
+                                        Navigator.of(context).maybePop(),
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: const Color(0xFFFFE0D0),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.04,
+                                            ),
+                                            blurRadius: 6,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Icon(
+                                        Icons.chevron_left_rounded,
+                                        color: _orange,
+                                        size: 26,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                        children: [
-                          if (widget.isToPrepare ||
-                              widget.isPreparing ||
-                              widget.isReady ||
-                              widget.isDelivered)
-                            _ToPrepareInfoCard(
-                              initial: initial,
-                              name: widget.customerName,
-                              phone: widget.phone,
-                              requestId: widget.requestId,
-                              requestMeta: widget.requestMeta,
-                              preparing: widget.isPreparing,
-                              ready: widget.isReady,
-                              delivered: widget.isDelivered,
-                            )
-                          else
-                            _CustomerCard(
-                              initial: initial,
-                              name: widget.customerName,
-                              phone: widget.phone,
-                              requestId: widget.requestId,
-                              requestMeta: widget.requestMeta,
-                              reviewing: widget.isUnderReview,
-                              reviewCompleted: widget.isReviewCompleted,
-                              awaitingPayment: widget.isAwaitingPayment,
+                        const SizedBox(height: 12),
+                        if (controller.isLoadingPrescriptionDetail &&
+                            controller.prescriptionDetailData == null)
+                          const Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(color: _orange),
                             ),
-                          const SizedBox(height: 14),
-                          if (widget.isReady || widget.isDelivered) ...[
-                            const _DeliveryPartnerSection(showPhone: true),
-                            const SizedBox(height: 18),
-                          ],
-                          _UploadedPrescriptionCard(
-                            assetPath: _prescriptionAsset,
-                            rotationTurns: _detailsController.rotationTurns,
-                            onZoom: _openFullPrescription,
-                            onRotate: _detailsController.rotatePrescription,
-                            onViewFull: _openFullPrescription,
+                          )
+                        else
+                          Expanded(
+                            child: ListView(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                              children: [
+                                if (widget.isToPrepare ||
+                                    widget.isPreparing ||
+                                    widget.isReady ||
+                                    widget.isDelivered)
+                                  _ToPrepareInfoCard(
+                                    initial: initial,
+                                    name: effectiveCustomerName,
+                                    phone: effectivePhone,
+                                    requestId: effectiveRequestId,
+                                    requestMeta: effectiveRequestMeta,
+                                    preparing: widget.isPreparing,
+                                    ready: widget.isReady,
+                                    delivered: widget.isDelivered,
+                                    onChatTap: () => _openCustomerChat(
+                                      context,
+                                      customerName: effectiveCustomerName,
+                                      customerId: prescObj?.userId,
+                                    ),
+                                  )
+                                else
+                                  _CustomerCard(
+                                    initial: initial,
+                                    name: effectiveCustomerName,
+                                    phone: effectivePhone,
+                                    requestId: effectiveRequestId,
+                                    requestMeta: effectiveRequestMeta,
+                                    reviewing: isEffectiveReviewing,
+                                    reviewCompleted: isEffectiveReviewCompleted,
+                                    awaitingPayment: isEffectiveAwaitingPayment,
+                                    onChatTap: () => _openCustomerChat(
+                                      context,
+                                      customerName: effectiveCustomerName,
+                                      customerId: prescObj?.userId,
+                                    ),
+                                  ),
+                                const SizedBox(height: 14),
+                                if (widget.isReady || widget.isDelivered) ...[
+                                  const _DeliveryPartnerSection(showPhone: true),
+                                  const SizedBox(height: 18),
+                                ],
+                                _UploadedPrescriptionCard(
+                                  imageUrl: primaryImageUrl,
+                                  imageBytes: controller.prescriptionImageBytes,
+                                  isLoading: controller.isLoadingPrescriptionImage ||
+                                      controller.isLoadingPrescriptionDetail,
+                                  rotationTurns: controller.rotationTurns,
+                                  onZoom: _openFullPrescription,
+                                  onRotate: controller.rotatePrescription,
+                                  onViewFull: _openFullPrescription,
+                                ),
+                                const SizedBox(height: 18),
+                                if (hasNote) ...[
+                                  Text(
+                                    'SPECIAL NOTES',
+                                    style: GoogleFonts.inter(
+                                      color: const Color(0xFFA0A9B8),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 11,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  if (widget.notesType ==
+                                      PharmacyOrderNotesType.voice)
+                                    _SpecialNotesVoiceCard(
+                                      duration: widget.voiceNoteDuration,
+                                    )
+                                  else
+                                    _SpecialNotesTextCard(
+                                      note: effectiveNote,
+                                    ),
+                                  const SizedBox(height: 18),
+                                ],
+                                if (isEffectiveAwaitingPayment ||
+                                    widget.isToPrepare ||
+                                    widget.isPreparing ||
+                                    widget.isReady ||
+                                    widget.isDelivered) ...[
+                                  const _AwaitingPaymentItems(),
+                                  const SizedBox(height: 16),
+                                  _AwaitingPaymentSummary(
+                                    totalAmount: prescObj?.quoteAmount != null
+                                        ? '${prescObj!.quoteAmount} MRU'
+                                        : null,
+                                  ),
+                                  if (isEffectiveAwaitingPayment) ...[
+                                    const SizedBox(height: 12),
+                                    _AwaitingCustomerPaymentCard(
+                                      time: effectiveRequestMeta.isNotEmpty
+                                          ? effectiveRequestMeta
+                                          : null,
+                                    ),
+                                  ],
+                                  const SizedBox(height: 18),
+                                ],
+                                Text(
+                                  'ORDER TIMELINE',
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFFA0A9B8),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 11,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                _TimelineCard(
+                                  steps: _buildTimeline(effectiveRequestMeta),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 18),
-                          if (widget.notesType != PharmacyOrderNotesType.none) ...[
-                            Text(
-                              'SPECIAL NOTES',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFFA0A9B8),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 11,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            if (widget.notesType == PharmacyOrderNotesType.voice)
-                              _SpecialNotesVoiceCard(
-                                duration: widget.voiceNoteDuration,
-                              )
-                            else
-                              _SpecialNotesTextCard(note: widget.specialNotes),
-                            const SizedBox(height: 18),
-                          ],
-                          if (widget.isAwaitingPayment ||
-                              widget.isToPrepare ||
-                              widget.isPreparing ||
-                              widget.isReady ||
-                              widget.isDelivered) ...[
-                            const _AwaitingPaymentItems(),
-                            const SizedBox(height: 16),
-                            const _AwaitingPaymentSummary(),
-                            if (widget.isAwaitingPayment) ...[
-                              const SizedBox(height: 12),
-                              const _AwaitingCustomerPaymentCard(),
-                            ],
-                            const SizedBox(height: 18),
-                          ],
-                          Text(
-                            'ORDER TIMELINE',
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFA0A9B8),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _TimelineCard(steps: _timeline),
-                        ],
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                if (widget.isToPrepare || widget.isPreparing)
+                  _StartPreparingBar(
+                    label: widget.isPreparing
+                        ? 'Ready for Dispatch'
+                        : 'Start Preparing',
+                  )
+                else if (!isEffectiveAwaitingPayment &&
+                    !widget.isReady &&
+                    !widget.isDelivered)
+                  _BottomActions(
+                    onReject: () => showPharmacyRejectOrderSheet(context),
+                    onReview: isEffectiveReviewCompleted
+                        ? _openCreateQuotation
+                        : _openFullPrescription,
+                    primaryLabel: isEffectiveReviewCompleted
+                        ? 'Create Quotation'
+                        : isEffectiveReviewing
+                        ? 'Mark as Reviewed'
+                        : 'Review Prescription',
+                  ),
+              ],
             ),
-            if (widget.isToPrepare || widget.isPreparing)
-              _StartPreparingBar(
-                label: widget.isPreparing
-                    ? 'Ready for Dispatch'
-                    : 'Start Preparing',
-              )
-            else if (!widget.isAwaitingPayment &&
-                !widget.isReady &&
-                !widget.isDelivered)
-              _BottomActions(
-              onReject: () => showPharmacyRejectOrderSheet(context),
-              onReview: widget.isReviewCompleted
-                  ? _openCreateQuotation
-                  : _openFullPrescription,
-              primaryLabel: widget.isReviewCompleted
-                  ? 'Create Quotation'
-                  : widget.isUnderReview
-                      ? 'Mark as Reviewed'
-                      : 'Review Prescription',
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
       },
     );
   }
@@ -812,6 +957,7 @@ class _CustomerCard extends StatelessWidget {
     this.reviewing = false,
     this.reviewCompleted = false,
     this.awaitingPayment = false,
+    this.onChatTap,
   });
 
   final String initial;
@@ -822,6 +968,7 @@ class _CustomerCard extends StatelessWidget {
   final bool reviewing;
   final bool reviewCompleted;
   final bool awaitingPayment;
+  final VoidCallback? onChatTap;
 
   static const Color _accent = Color(0xFFFF5722);
   static const Color _avatarLetter = Color(0xFFE64A19);
@@ -871,49 +1018,49 @@ class _CustomerCard extends StatelessWidget {
               const Spacer(),
               if (!awaitingPayment)
                 Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: reviewCompleted || awaitingPayment
-                      ? 8
-                      : reviewing
-                          ? 14
-                          : 12,
-                  vertical: reviewing ? 6 : 5,
-                ),
-                decoration: BoxDecoration(
-                  color: awaitingPayment
-                      ? _awaitingBadge
-                      : reviewCompleted
-                          ? _completedBadge
-                          : reviewing
-                              ? _reviewingBadge
-                              : _newBadge,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  awaitingPayment
-                      ? 'AWAITING PAYMENT'
-                      : reviewCompleted
-                          ? 'REVIEW COMPLETED'
-                          : reviewing
-                              ? 'REVIEWING'
-                              : 'NEW',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: reviewCompleted || awaitingPayment
-                        ? 9
+                  padding: EdgeInsets.symmetric(
+                    horizontal: reviewCompleted || awaitingPayment
+                        ? 8
                         : reviewing
-                            ? 11
-                            : 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: reviewCompleted || awaitingPayment
-                        ? 0.2
+                        ? 14
+                        : 12,
+                    vertical: reviewing ? 6 : 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: awaitingPayment
+                        ? _awaitingBadge
+                        : reviewCompleted
+                        ? _completedBadge
                         : reviewing
-                            ? 0.6
-                            : 0.5,
-                    height: 1,
+                        ? _reviewingBadge
+                        : _newBadge,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    awaitingPayment
+                        ? 'AWAITING PAYMENT'
+                        : reviewCompleted
+                        ? 'REVIEW COMPLETED'
+                        : reviewing
+                        ? 'REVIEWING'
+                        : 'NEW',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: reviewCompleted || awaitingPayment
+                          ? 9
+                          : reviewing
+                          ? 11
+                          : 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: reviewCompleted || awaitingPayment
+                          ? 0.2
+                          : reviewing
+                          ? 0.6
+                          : 0.5,
+                      height: 1,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -976,26 +1123,30 @@ class _CustomerCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  width: 46,
-                  height: 46,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _chatOrange,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _chatOrange.withValues(alpha: 0.32),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                GestureDetector(
+                  onTap: onChatTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 46,
+                    height: 46,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _chatOrange,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _chatOrange.withValues(alpha: 0.32),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CustomPaint(
+                        painter: _ChatDotsIconPainter(color: Colors.white),
                       ),
-                    ],
-                  ),
-                  child: const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CustomPaint(
-                      painter: _ChatDotsIconPainter(color: Colors.white),
                     ),
                   ),
                 ),
@@ -1101,14 +1252,20 @@ class _ChatDotsIconPainter extends CustomPainter {
 
 class _UploadedPrescriptionCard extends StatelessWidget {
   const _UploadedPrescriptionCard({
-    required this.assetPath,
+    this.assetPath,
+    this.imageUrl,
+    this.imageBytes,
+    this.isLoading = false,
     required this.rotationTurns,
     required this.onZoom,
     required this.onRotate,
     required this.onViewFull,
   });
 
-  final String assetPath;
+  final String? assetPath;
+  final String? imageUrl;
+  final Uint8List? imageBytes;
+  final bool isLoading;
   final double rotationTurns;
   final VoidCallback onZoom;
   final VoidCallback onRotate;
@@ -1157,17 +1314,80 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                     child: AnimatedRotation(
                       turns: rotationTurns,
                       duration: const Duration(milliseconds: 280),
-                      child: Image.asset(
-                        assetPath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const Center(
-                          child: Icon(
-                            Icons.description_outlined,
-                            size: 48,
-                            color: Color(0xFF9E9E9E),
-                          ),
-                        ),
-                      ),
+                      child: (imageBytes != null && imageBytes!.isNotEmpty)
+                          ? Image.memory(
+                              imageBytes!,
+                              fit: BoxFit.cover,
+                            )
+                          : (imageUrl != null && imageUrl!.trim().isNotEmpty)
+                              ? Image.network(
+                                  imageUrl!,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
+                                    return const Center(
+                                      child: SizedBox(
+                                        width: 32,
+                                        height: 32,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: _orange,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (_, error, __) => const Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.broken_image_outlined,
+                                          size: 44,
+                                          color: Color(0xFF9E9E9E),
+                                        ),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          'Failed to load prescription',
+                                          style: TextStyle(
+                                            color: Color(0xFF9E9E9E),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : (isLoading
+                                  ? const Center(
+                                      child: SizedBox(
+                                        width: 32,
+                                        height: 32,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: _orange,
+                                        ),
+                                      ),
+                                    )
+                                  : const Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.description_outlined,
+                                            size: 44,
+                                            color: Color(0xFF9E9E9E),
+                                          ),
+                                          SizedBox(height: 6),
+                                          Text(
+                                            'No Prescription Image',
+                                            style: TextStyle(
+                                              color: Color(0xFF9E9E9E),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
                     ),
                   ),
                   Positioned(
@@ -1214,7 +1434,11 @@ class _UploadedPrescriptionCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.open_in_new_rounded, size: 17, color: _orange),
+                  const Icon(
+                    Icons.open_in_new_rounded,
+                    size: 17,
+                    color: _orange,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'View Full Prescription',
@@ -1302,11 +1526,7 @@ class _SpecialNotesTextCard extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.only(top: 1),
-            child: Icon(
-              Icons.description_outlined,
-              color: _orange,
-              size: 20,
-            ),
+            child: Icon(Icons.description_outlined, color: _orange, size: 20),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1341,10 +1561,42 @@ class _SpecialNotesVoiceCardState extends State<_SpecialNotesVoiceCard>
   static const Color _waveIdle = Color(0xFFC9D0DB);
 
   static const _heights = <double>[
-    0.35, 0.55, 0.42, 0.78, 0.50, 0.92, 0.60, 0.70, 0.45, 0.85,
-    0.38, 0.62, 0.90, 0.48, 0.72, 0.40, 0.68, 0.55, 0.82, 0.46,
-    0.74, 0.58, 0.36, 0.80, 0.52, 0.66, 0.44, 0.76, 0.50, 0.60,
-    0.42, 0.70, 0.48, 0.64, 0.38, 0.72,
+    0.35,
+    0.55,
+    0.42,
+    0.78,
+    0.50,
+    0.92,
+    0.60,
+    0.70,
+    0.45,
+    0.85,
+    0.38,
+    0.62,
+    0.90,
+    0.48,
+    0.72,
+    0.40,
+    0.68,
+    0.55,
+    0.82,
+    0.46,
+    0.74,
+    0.58,
+    0.36,
+    0.80,
+    0.52,
+    0.66,
+    0.44,
+    0.76,
+    0.50,
+    0.60,
+    0.42,
+    0.70,
+    0.48,
+    0.64,
+    0.38,
+    0.72,
   ];
 
   late final AnimationController _controller;
@@ -1353,10 +1605,8 @@ class _SpecialNotesVoiceCardState extends State<_SpecialNotesVoiceCard>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..addStatusListener((status) {
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           setState(() => _playing = false);
           _controller.value = 0;
@@ -1508,6 +1758,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
     this.preparing = false,
     this.ready = false,
     this.delivered = false,
+    this.onChatTap,
   });
 
   final String initial;
@@ -1518,6 +1769,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
   final bool preparing;
   final bool ready;
   final bool delivered;
+  final VoidCallback? onChatTap;
 
   static const Color _accent = Color(0xFFFF5722);
   static const Color _blue = Color(0xFF3B82F6);
@@ -1574,18 +1826,18 @@ class _ToPrepareInfoCard extends StatelessWidget {
                   color: ready || delivered
                       ? _ready
                       : preparing
-                          ? _accent
-                          : _blue,
+                      ? _accent
+                      : _blue,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   delivered
                       ? 'DELIVERED'
                       : ready
-                          ? 'READY'
-                          : preparing
-                              ? 'PREPARING'
-                              : 'TO PREPARE',
+                      ? 'READY'
+                      : preparing
+                      ? 'PREPARING'
+                      : 'TO PREPARE',
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: delivered ? 9 : 10,
@@ -1650,19 +1902,23 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  width: 46,
-                  height: 46,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _accent,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CustomPaint(
-                      painter: _ChatDotsIconPainter(color: Colors.white),
+                GestureDetector(
+                  onTap: onChatTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 46,
+                    height: 46,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: _accent,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CustomPaint(
+                        painter: _ChatDotsIconPainter(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -1990,9 +2246,7 @@ class _AwaitingItemCard extends StatelessWidget {
                 50,
                 inStock: false,
               ),
-              medicines: [
-                _QuotationMedicine('Paracetamol 650 mg', 50),
-              ],
+              medicines: [_QuotationMedicine('Paracetamol 650 mg', 50)],
             ),
           ],
           const SizedBox(height: 16),
@@ -2081,7 +2335,15 @@ class _OrderItemTotals extends StatelessWidget {
 }
 
 class _AwaitingPaymentSummary extends StatelessWidget {
-  const _AwaitingPaymentSummary();
+  const _AwaitingPaymentSummary({
+    this.totalAmount,
+    this.itemTotal,
+    this.tax,
+  });
+
+  final String? totalAmount;
+  final String? itemTotal;
+  final String? tax;
 
   static const Color _orange = Color(0xFFFF5722);
 
@@ -2118,9 +2380,15 @@ class _AwaitingPaymentSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          const _AwaitingSummaryLine(label: 'Item total', value: '1500 MRU'),
+          _AwaitingSummaryLine(
+            label: 'Item total',
+            value: itemTotal ?? totalAmount ?? '1500 MRU',
+          ),
           const SizedBox(height: 12),
-          const _AwaitingSummaryLine(label: 'Tax', value: '10'),
+          _AwaitingSummaryLine(
+            label: 'Tax',
+            value: tax ?? '0',
+          ),
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
           const SizedBox(height: 14),
@@ -2136,7 +2404,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '1510 MRU',
+                totalAmount ?? '1510 MRU',
                 style: GoogleFonts.inter(
                   color: _orange,
                   fontWeight: FontWeight.w700,
@@ -2184,7 +2452,9 @@ class _AwaitingSummaryLine extends StatelessWidget {
 }
 
 class _AwaitingCustomerPaymentCard extends StatelessWidget {
-  const _AwaitingCustomerPaymentCard();
+  const _AwaitingCustomerPaymentCard({this.time});
+
+  final String? time;
 
   @override
   Widget build(BuildContext context) {
@@ -2236,7 +2506,7 @@ class _AwaitingCustomerPaymentCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '23/04/2026 10:45 AM',
+                  time ?? '23/04/2026 10:45 AM',
                   style: GoogleFonts.inter(
                     color: const Color(0xFF9CA3AF),
                     fontWeight: FontWeight.w500,
@@ -2345,18 +2615,16 @@ class _TimelineRow extends StatelessWidget {
     final hasSubtitle = step.subtitle != null;
 
     return Row(
-      crossAxisAlignment:
-          hasSubtitle ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      crossAxisAlignment: hasSubtitle
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
       children: [
         if (step.completed)
           Container(
             width: iconSize,
             height: iconSize,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: orange,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: orange, shape: BoxShape.circle),
             child: _TimelineGlyph(
               step: step,
               color: Colors.white,
@@ -2389,11 +2657,7 @@ class _TimelineRow extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: step.customIcon == null
-                  ? Icon(
-                      step.icon,
-                      size: 14,
-                      color: inactiveIcon,
-                    )
+                  ? Icon(step.icon, size: 14, color: inactiveIcon)
                   : SizedBox(
                       width: step.customIcon == _TimelineCustomIcon.openBox
                           ? 17
@@ -2403,12 +2667,15 @@ class _TimelineRow extends StatelessWidget {
                           : 15,
                       child: CustomPaint(
                         painter: switch (step.customIcon!) {
-                          _TimelineCustomIcon.capsule =>
-                            _CapsuleIconPainter(color: inactiveIcon),
-                          _TimelineCustomIcon.scooter =>
-                            _ScooterIconPainter(color: inactiveIcon),
-                          _TimelineCustomIcon.openBox =>
-                            _OpenBoxIconPainter(color: inactiveIcon),
+                          _TimelineCustomIcon.capsule => _CapsuleIconPainter(
+                            color: inactiveIcon,
+                          ),
+                          _TimelineCustomIcon.scooter => _ScooterIconPainter(
+                            color: inactiveIcon,
+                          ),
+                          _TimelineCustomIcon.openBox => _OpenBoxIconPainter(
+                            color: inactiveIcon,
+                          ),
                         },
                       ),
                     ),
@@ -2427,8 +2694,9 @@ class _TimelineRow extends StatelessWidget {
                     color: step.completed
                         ? const Color(0xFF1A1A1A)
                         : inactiveText,
-                    fontWeight:
-                        step.completed ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: step.completed
+                        ? FontWeight.w700
+                        : FontWeight.w400,
                     fontSize: 14.5,
                     height: 1.25,
                   ),
@@ -2542,11 +2810,7 @@ class _CapsuleIconPainter extends CustomPainter {
     canvas.restore();
 
     // Divider seam in the middle.
-    canvas.drawLine(
-      Offset(0, -h / 2 + 0.5),
-      Offset(0, h / 2 - 0.5),
-      stroke,
-    );
+    canvas.drawLine(Offset(0, -h / 2 + 0.5), Offset(0, h / 2 - 0.5), stroke);
 
     canvas.restore();
   }
@@ -2581,9 +2845,21 @@ class _ScooterIconPainter extends CustomPainter {
     final sy = h / 16;
 
     // Speed lines behind the box.
-    canvas.drawLine(Offset(0.6 * sx, 5.2 * sy), Offset(2.4 * sx, 5.2 * sy), stroke);
-    canvas.drawLine(Offset(0.4 * sx, 6.8 * sy), Offset(2.2 * sx, 6.8 * sy), stroke);
-    canvas.drawLine(Offset(0.8 * sx, 8.4 * sy), Offset(2.4 * sx, 8.4 * sy), stroke);
+    canvas.drawLine(
+      Offset(0.6 * sx, 5.2 * sy),
+      Offset(2.4 * sx, 5.2 * sy),
+      stroke,
+    );
+    canvas.drawLine(
+      Offset(0.4 * sx, 6.8 * sy),
+      Offset(2.2 * sx, 6.8 * sy),
+      stroke,
+    );
+    canvas.drawLine(
+      Offset(0.8 * sx, 8.4 * sy),
+      Offset(2.4 * sx, 8.4 * sy),
+      stroke,
+    );
 
     // Delivery box on rear.
     final box = RRect.fromRectAndRadius(
@@ -2805,9 +3081,17 @@ class _BottomActions extends StatelessWidget {
 }
 
 class _DeliveryPartnerSection extends StatelessWidget {
-  const _DeliveryPartnerSection({this.showPhone = false});
+  const _DeliveryPartnerSection({
+    this.showPhone = false,
+    this.name,
+    this.phone,
+    this.image,
+  });
 
   final bool showPhone;
+  final String? name;
+  final String? phone;
+  final String? image;
 
   static const Color _orange = Color(0xFFFF5722);
 
@@ -2886,7 +3170,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mohamed Abdallahi',
+                      name?.isNotEmpty == true ? name! : '',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF1A2332),
                         fontWeight: FontWeight.w700,
@@ -2897,7 +3181,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                     const SizedBox(height: 4),
                     if (showPhone)
                       Text(
-                        '+222 33456789',
+                        phone?.isNotEmpty == true ? phone! : '',
                         style: GoogleFonts.inter(
                           color: const Color(0xFF6B7280),
                           fontWeight: FontWeight.w500,
@@ -2907,34 +3191,34 @@ class _DeliveryPartnerSection extends StatelessWidget {
                       )
                     else
                       Row(
-                      children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 16,
-                          color: Color(0xFFF5B400),
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          '4.8',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF1A2332),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                            height: 1,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 16,
+                            color: Color(0xFFF5B400),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '(124 reviews)',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF9CA3AF),
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            height: 1,
+                          const SizedBox(width: 2),
+                          Text(
+                            '4.8',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF1A2332),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                              height: 1,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '(124 reviews)',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF9CA3AF),
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -3013,11 +3297,15 @@ class _StartPreparingBar extends StatelessWidget {
 
 class _FullPrescriptionViewer extends StatelessWidget {
   const _FullPrescriptionViewer({
-    required this.assetPath,
+    this.assetPath,
+    this.imageUrl,
+    this.imageBytes,
     required this.rotationTurns,
   });
 
-  final String assetPath;
+  final String? assetPath;
+  final String? imageUrl;
+  final Uint8List? imageBytes;
   final double rotationTurns;
 
   @override
@@ -3036,15 +3324,35 @@ class _FullPrescriptionViewer extends StatelessWidget {
           child: AnimatedRotation(
             turns: rotationTurns,
             duration: Duration.zero,
-            child: Image.asset(
-              assetPath,
-              fit: BoxFit.contain,
-              errorBuilder: (_, _, _) => const Icon(
-                Icons.broken_image_outlined,
-                color: Colors.white54,
-                size: 64,
-              ),
-            ),
+            child: (imageBytes != null && imageBytes!.isNotEmpty)
+                ? Image.memory(
+                    imageBytes!,
+                    fit: BoxFit.contain,
+                  )
+                : (imageUrl != null && imageUrl!.trim().isNotEmpty)
+                    ? Image.network(
+                        imageUrl!,
+                        fit: BoxFit.contain,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, error, __) => const Icon(
+                          Icons.broken_image_outlined,
+                          color: Colors.white54,
+                          size: 64,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.broken_image_outlined,
+                        color: Colors.white54,
+                        size: 64,
+                      ),
           ),
         ),
       ),

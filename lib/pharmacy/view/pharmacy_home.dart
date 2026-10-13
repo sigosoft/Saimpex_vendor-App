@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
@@ -103,6 +104,24 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         onRefresh: () async {
           if (!controller.isOtcTab && controller.selectedFilterIndex == 0) {
             await controller.fetchPharmacyPrescriptions();
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 0) {
+            await controller.fetchPharmacyOrders(status: 1);
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 1) {
+            await controller.fetchPharmacyOrders(status: 2);
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 2) {
+            await controller.fetchPharmacyOrders(status: 3);
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 3) {
+            await controller.fetchPharmacyOrders(status: 4);
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 4) {
+            await controller.fetchPharmacyOrders(status: 9);
+          } else if (controller.isOtcTab &&
+              controller.selectedFilterIndex == 5) {
+            await controller.fetchPharmacyOrders(status: 10);
           }
           await controller.fetchPharmacyHome();
         },
@@ -167,6 +186,27 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                       if (!controller.isOtcTab &&
                           controller.selectedFilterIndex == 0) {
                         controller.fetchPharmacyPrescriptions(keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 0) {
+                        controller.fetchPharmacyOrders(status: 1, keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 1) {
+                        controller.fetchPharmacyOrders(status: 2, keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 2) {
+                        controller.fetchPharmacyOrders(status: 3, keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 3) {
+                        controller.fetchPharmacyOrders(status: 4, keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 4) {
+                        controller.fetchPharmacyOrders(status: 9, keyword: val);
+                      } else if (controller.isOtcTab &&
+                          controller.selectedFilterIndex == 5) {
+                        controller.fetchPharmacyOrders(
+                          status: 10,
+                          keyword: val,
+                        );
                       }
                       controller.fetchPharmacyHome(keyword: val);
                     },
@@ -277,6 +317,24 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 if (!controller.isOtcTab &&
                     controller.selectedFilterIndex == 0) {
                   controller.fetchPharmacyPrescriptions(keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 0) {
+                  controller.fetchPharmacyOrders(status: 1, keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 1) {
+                  controller.fetchPharmacyOrders(status: 2, keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 2) {
+                  controller.fetchPharmacyOrders(status: 3, keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 3) {
+                  controller.fetchPharmacyOrders(status: 4, keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 4) {
+                  controller.fetchPharmacyOrders(status: 9, keyword: val);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 5) {
+                  controller.fetchPharmacyOrders(status: 10, keyword: val);
                 }
                 controller.fetchPharmacyHome(keyword: val);
               },
@@ -290,6 +348,24 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 if (!controller.isOtcTab &&
                     controller.selectedFilterIndex == 0) {
                   await controller.fetchPharmacyPrescriptions();
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 0) {
+                  await controller.fetchPharmacyOrders(status: 1);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 1) {
+                  await controller.fetchPharmacyOrders(status: 2);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 2) {
+                  await controller.fetchPharmacyOrders(status: 3);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 3) {
+                  await controller.fetchPharmacyOrders(status: 4);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 4) {
+                  await controller.fetchPharmacyOrders(status: 9);
+                } else if (controller.isOtcTab &&
+                    controller.selectedFilterIndex == 5) {
+                  await controller.fetchPharmacyOrders(status: 10);
                 }
                 await controller.fetchPharmacyHome();
               },
@@ -376,6 +452,342 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       return widgets;
     }
 
+    final isOtcNew = controller.isOtcTab && controller.selectedFilterIndex == 0;
+
+    if (isOtcNew) {
+      if (controller.isLoadingOtcOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: false,
+            preparing: false,
+            ready: false,
+            delivered: false,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
+    final isOtcAccepted =
+        controller.isOtcTab && controller.selectedFilterIndex == 1;
+
+    if (isOtcAccepted) {
+      if (controller.isLoadingOtcAcceptedOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcAcceptedOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcAcceptedOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcAcceptedOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: true,
+            preparing: false,
+            ready: false,
+            delivered: false,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
+    final isOtcPreparing =
+        controller.isOtcTab && controller.selectedFilterIndex == 2;
+
+    if (isOtcPreparing) {
+      if (controller.isLoadingOtcPreparingOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcPreparingOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcPreparingOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcPreparingOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: false,
+            preparing: true,
+            ready: false,
+            delivered: false,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
+    final isOtcReady =
+        controller.isOtcTab && controller.selectedFilterIndex == 3;
+
+    if (isOtcReady) {
+      if (controller.isLoadingOtcReadyOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcReadyOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcReadyOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcReadyOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: false,
+            preparing: false,
+            ready: true,
+            delivered: false,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
+    final isOtcDelivered =
+        controller.isOtcTab && controller.selectedFilterIndex == 4;
+
+    if (isOtcDelivered) {
+      if (controller.isLoadingOtcDeliveredOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcDeliveredOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcDeliveredOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcDeliveredOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: false,
+            preparing: false,
+            ready: false,
+            delivered: true,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
+    final isOtcCancelled =
+        controller.isOtcTab && controller.selectedFilterIndex == 5;
+
+    if (isOtcCancelled) {
+      if (controller.isLoadingOtcCancelledOrders) {
+        return const [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          ),
+        ];
+      }
+
+      if (controller.otcCancelledOrdersList.isEmpty) {
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: NoDataWidget(
+              context,
+              S.of(context).noOrdersFound,
+              "",
+              "lib/assets/images/nodata.png",
+            ),
+          ),
+        ];
+      }
+
+      final widgets = <Widget>[];
+      for (int i = 0; i < controller.otcCancelledOrdersList.length; i++) {
+        if (i > 0) {
+          widgets.add(const SizedBox(height: 12));
+        }
+        final order = controller.otcCancelledOrdersList[i];
+        widgets.add(
+          _OtcNewOrderCard(
+            customerName: order.displayCustomerName,
+            orderId: order.displayOrderCode,
+            timeAgo: order.displayTimeAgo,
+            selfPickup: order.isSelfPickupBool,
+            cashOnDelivery: order.isCashOnDeliveryBool,
+            accepted: false,
+            preparing: false,
+            ready: false,
+            delivered: false,
+            cancelled: true,
+            partnerName: order.deliveryBoyName,
+            itemsSummary: order.displayItemsSummary,
+            phone: order.phone,
+            orderRawId: order.resolvedId,
+          ),
+        );
+      }
+      return widgets;
+    }
+
     if (controller.isLoadingHome) {
       return const [
         Padding(
@@ -437,6 +849,16 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         final isReady = filter == 3 || order.status == 4;
         final isDelivered = filter == 4 || order.status == 9;
 
+        final itemCount = order.orderItemsCount ?? order.totalItems ?? 0;
+        final totalStr = order.total?.toString().trim() ?? '';
+        final dynamicItemsSummary = itemCount > 0 && totalStr.isNotEmpty
+            ? '$itemCount ${itemCount == 1 ? 'Item' : 'Items'} • ${totalStr.contains('MRU') ? totalStr : '$totalStr MRU'}'
+            : (totalStr.isNotEmpty
+                  ? (totalStr.contains('MRU') ? totalStr : '$totalStr MRU')
+                  : (itemCount > 0
+                        ? '$itemCount ${itemCount == 1 ? 'Item' : 'Items'}'
+                        : null));
+
         widgets.add(
           _OtcNewOrderCard(
             customerName: customerName,
@@ -448,6 +870,9 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: isReady,
             delivered: isDelivered,
             partnerName: partnerName,
+            itemsSummary: dynamicItemsSummary,
+            phone: order.userMobile,
+            orderRawId: order.id,
           ),
         );
       } else {
@@ -460,6 +885,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               isSelfPickup: isSelfPickup,
               status: PharmacyPrescriptionCardStatus.underReview,
               notesType: PharmacyOrderNotesType.none,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 2) {
@@ -471,6 +898,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               isSelfPickup: isSelfPickup,
               status: PharmacyPrescriptionCardStatus.reviewCompleted,
               notesType: PharmacyOrderNotesType.none,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 3) {
@@ -480,6 +909,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               orderCode: orderCode,
               timeAgo: timeAgo,
               quotationAmount: order.total?.toString(),
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 4) {
@@ -489,6 +920,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               orderCode: orderCode,
               timeAgo: timeAgo,
               isSelfPickup: isSelfPickup,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 5) {
@@ -498,6 +931,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               orderCode: orderCode,
               timeAgo: timeAgo,
               isSelfPickup: isSelfPickup,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 6) {
@@ -508,6 +943,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               timeAgo: timeAgo,
               isSelfPickup: isSelfPickup,
               partnerName: partnerName,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else if (filter == 7) {
@@ -517,6 +954,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               orderCode: orderCode,
               timeAgo: timeAgo,
               isSelfPickup: isSelfPickup,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         } else {
@@ -528,6 +967,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               isSelfPickup: isSelfPickup,
               status: PharmacyPrescriptionCardStatus.newOrder,
               notesType: PharmacyOrderNotesType.none,
+              prescriptionId: order.id,
+              phone: order.userMobile,
             ),
           );
         }
@@ -1405,17 +1846,18 @@ class _PrescriptionOrderCard extends StatelessWidget {
         MaterialPageRoute<void>(
           builder: (_) => PharmacyOrderDetailsScreen(
             customerName: customerName,
-            phone: (phone != null && phone!.isNotEmpty)
-                ? phone!
-                : '+222 45 12 34 56',
+            phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
             requestId: orderCode,
             requestMeta: timeAgo,
             notesType: notesType,
-            specialNotes: specialNotes ??
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
+            specialNotes: specialNotes ?? '',
             isSelfPickup: isSelfPickup,
             isUnderReview: _isUnderReview,
             isReviewCompleted: _isReviewCompleted,
+            prescriptionId: prescriptionId,
+            orderId: prescriptionId,
+            orderRawId: prescriptionId,
+            prescriptionImageUrl: prescriptionImageUrl,
           ),
         ),
       );
@@ -1424,8 +1866,10 @@ class _PrescriptionOrderCard extends StatelessWidget {
     void openQuotation() {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              PharmacyCreateQuotationScreen(customerName: customerName),
+          builder: (_) => PharmacyCreateQuotationScreen(
+            customerName: customerName,
+            imageUrl: prescriptionImageUrl,
+          ),
         ),
       );
     }
@@ -1729,6 +2173,8 @@ class _ToPrepareCard extends StatelessWidget {
     this.orderCode = '#22789007',
     this.timeAgo = '2 min ago',
     this.isSelfPickup = false,
+    this.prescriptionId,
+    this.phone,
   });
 
   final bool scheduled;
@@ -1736,6 +2182,8 @@ class _ToPrepareCard extends StatelessWidget {
   final String orderCode;
   final String timeAgo;
   final bool isSelfPickup;
+  final int? prescriptionId;
+  final String? phone;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -1749,11 +2197,15 @@ class _ToPrepareCard extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
           customerName: customerName,
+          phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
           notesType: PharmacyOrderNotesType.none,
           isToPrepare: true,
           isSelfPickup: isSelfPickup,
+          prescriptionId: prescriptionId,
+          orderId: prescriptionId,
+          orderRawId: prescriptionId,
         ),
       ),
     );
@@ -2040,12 +2492,16 @@ class _PreparingCard extends StatelessWidget {
     this.orderCode = '#22789007',
     this.timeAgo = '2 min ago',
     this.isSelfPickup = false,
+    this.prescriptionId,
+    this.phone,
   });
 
   final String customerName;
   final String orderCode;
   final String timeAgo;
   final bool isSelfPickup;
+  final int? prescriptionId;
+  final String? phone;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -2058,11 +2514,15 @@ class _PreparingCard extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
           customerName: customerName,
+          phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
           notesType: PharmacyOrderNotesType.none,
           isPreparing: true,
           isSelfPickup: isSelfPickup,
+          prescriptionId: prescriptionId,
+          orderId: prescriptionId,
+          orderRawId: prescriptionId,
         ),
       ),
     );
@@ -2328,6 +2788,8 @@ class _ReadyCard extends StatelessWidget {
     this.timeAgo = '2 min ago',
     this.partnerName,
     this.isSelfPickup = false,
+    this.prescriptionId,
+    this.phone,
   });
 
   final String customerName;
@@ -2335,6 +2797,8 @@ class _ReadyCard extends StatelessWidget {
   final String timeAgo;
   final String? partnerName;
   final bool isSelfPickup;
+  final int? prescriptionId;
+  final String? phone;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -2350,12 +2814,16 @@ class _ReadyCard extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
           customerName: customerName,
+          phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
           notesType: PharmacyOrderNotesType.none,
           isReady: true,
           isSelfPickup: isSelfPickup,
           isOtcPartnerAssigned: partnerName != null,
+          prescriptionId: prescriptionId,
+          orderId: prescriptionId,
+          orderRawId: prescriptionId,
         ),
       ),
     );
@@ -2660,16 +3128,20 @@ class _ReadyCard extends StatelessWidget {
 
 class _DeliveredCard extends StatelessWidget {
   const _DeliveredCard({
-    this.customerName = 'Ahmed',
-    this.orderCode = '#22789007',
-    this.timeAgo = '2 min ago',
+    this.customerName = '',
+    this.orderCode = '',
+    this.timeAgo = '',
     this.isSelfPickup = false,
+    this.prescriptionId,
+    this.phone,
   });
 
   final String customerName;
   final String orderCode;
   final String timeAgo;
   final bool isSelfPickup;
+  final int? prescriptionId;
+  final String? phone;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -2683,11 +3155,15 @@ class _DeliveredCard extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
           customerName: customerName,
+          phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
           notesType: PharmacyOrderNotesType.none,
           isDelivered: true,
           isSelfPickup: isSelfPickup,
+          prescriptionId: prescriptionId,
+          orderId: prescriptionId,
+          orderRawId: prescriptionId,
         ),
       ),
     );
@@ -2963,16 +3439,20 @@ class _ScheduledPill extends StatelessWidget {
 
 class _AwaitingPaymentCard extends StatelessWidget {
   const _AwaitingPaymentCard({
-    this.customerName = 'Ahmed',
-    this.orderCode = '#22789007',
-    this.timeAgo = '2 min ago',
+    this.customerName = '',
+    this.orderCode = '',
+    this.timeAgo = '',
     this.quotationAmount,
+    this.prescriptionId,
+    this.phone,
   });
 
   final String customerName;
   final String orderCode;
   final String timeAgo;
   final String? quotationAmount;
+  final int? prescriptionId;
+  final String? phone;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -2989,10 +3469,14 @@ class _AwaitingPaymentCard extends StatelessWidget {
         MaterialPageRoute<void>(
           builder: (_) => PharmacyOrderDetailsScreen(
             customerName: customerName,
+            phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
             requestId: orderCode,
             requestMeta: timeAgo,
             notesType: PharmacyOrderNotesType.none,
             isAwaitingPayment: true,
+            prescriptionId: prescriptionId,
+            orderId: prescriptionId,
+            orderRawId: prescriptionId,
           ),
         ),
       );
@@ -3276,9 +3760,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
 
 class _OtcNewOrderCard extends StatelessWidget {
   const _OtcNewOrderCard({
-    this.customerName = 'Ahmed',
-    this.orderId = '#22789007',
-    this.timeAgo = '2 min ago',
+    this.customerName = '',
+    this.orderId = '',
+    this.timeAgo = '',
     this.selfPickup = false,
     this.cashOnDelivery = false,
     this.scheduled = false,
@@ -3286,7 +3770,11 @@ class _OtcNewOrderCard extends StatelessWidget {
     this.preparing = false,
     this.ready = false,
     this.delivered = false,
+    this.cancelled = false,
     this.partnerName,
+    this.itemsSummary,
+    this.phone,
+    this.orderRawId,
   });
 
   final String customerName;
@@ -3299,7 +3787,11 @@ class _OtcNewOrderCard extends StatelessWidget {
   final bool preparing;
   final bool ready;
   final bool delivered;
+  final bool cancelled;
   final String? partnerName;
+  final String? itemsSummary;
+  final String? phone;
+  final int? orderRawId;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFC62828);
@@ -3315,13 +3807,14 @@ class _OtcNewOrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final initial = customerName.isNotEmpty
         ? customerName.substring(0, 1).toUpperCase()
-        : 'A';
+        : 'C';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => PharmacyOrderDetailsScreen(
-              customerName: customerName,
+              customerName: customerName.isNotEmpty ? customerName : 'Customer',
+              phone: phone ?? '+222 45 12 34 56',
               requestId: orderId,
               isOtc: true,
               isSelfPickup: selfPickup,
@@ -3331,6 +3824,9 @@ class _OtcNewOrderCard extends StatelessWidget {
               isOtcReady: ready,
               isOtcPartnerAssigned: partnerName != null,
               isOtcDelivered: delivered,
+              isOtcCancelled: cancelled,
+              orderId: orderRawId,
+              orderRawId: orderRawId,
             ),
           ),
         );
@@ -3392,35 +3888,47 @@ class _OtcNewOrderCard extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal:
-                                  accepted || preparing || ready || delivered
+                                  accepted ||
+                                      preparing ||
+                                      ready ||
+                                      delivered ||
+                                      cancelled
                                   ? 8
                                   : 10,
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              color: ready || delivered
-                                  ? const Color(0xFF22C55E)
-                                  : preparing
-                                  ? _orange
-                                  : accepted
-                                  ? _acceptedBadge
-                                  : _newBadge,
+                              color: cancelled
+                                  ? const Color(0xFFEF4444)
+                                  : (ready || delivered
+                                        ? const Color(0xFF22C55E)
+                                        : preparing
+                                        ? _orange
+                                        : accepted
+                                        ? _acceptedBadge
+                                        : _newBadge),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              delivered
-                                  ? 'DELIVERED'
-                                  : ready
-                                  ? 'READY'
-                                  : preparing
-                                  ? 'PREPARING'
-                                  : accepted
-                                  ? 'ACCEPTED'
-                                  : 'NEW',
+                              cancelled
+                                  ? 'CANCELLED'
+                                  : (delivered
+                                        ? 'DELIVERED'
+                                        : ready
+                                        ? 'READY'
+                                        : preparing
+                                        ? 'PREPARING'
+                                        : accepted
+                                        ? 'ACCEPTED'
+                                        : 'NEW'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize:
-                                    accepted || preparing || ready || delivered
+                                    accepted ||
+                                        preparing ||
+                                        ready ||
+                                        delivered ||
+                                        cancelled
                                     ? 10
                                     : 11,
                                 fontWeight: FontWeight.w800,
@@ -3492,7 +4000,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              selfPickup || ready || delivered
+                              selfPickup || ready || delivered || cancelled
                                   ? '•  $orderId  •  $timeAgo'
                                   : '$orderId  •  $timeAgo',
                               maxLines: 1,
@@ -3617,6 +4125,18 @@ class _OtcNewOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                     ],
+                    if (itemsSummary != null &&
+                        itemsSummary!.trim().isNotEmpty) ...[
+                      _OtcInfoPill(
+                        icon: const Icon(
+                          Icons.inventory_2_outlined,
+                          size: 15,
+                          color: _orange,
+                        ),
+                        label: itemsSummary!,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
                     _OtcInfoPill(
                       icon: Image.asset(
                         cashOnDelivery
@@ -3640,15 +4160,18 @@ class _OtcNewOrderCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const _OtcInfoPill(
-                      icon: Icon(
-                        Icons.inventory_2_outlined,
-                        size: 15,
-                        color: _orange,
+                    if (itemsSummary != null &&
+                        itemsSummary!.trim().isNotEmpty) ...[
+                      _OtcInfoPill(
+                        icon: const Icon(
+                          Icons.inventory_2_outlined,
+                          size: 15,
+                          color: _orange,
+                        ),
+                        label: itemsSummary!,
                       ),
-                      label: '2 Items • 80 MRU',
-                    ),
-                    const SizedBox(width: 8),
+                      const SizedBox(width: 8),
+                    ],
                     _OtcInfoPill(
                       icon: Image.asset(
                         cashOnDelivery
@@ -3665,7 +4188,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                   ],
                 ),
               ),
-            if (!ready && !delivered) ...[
+            if (!ready && !delivered && !cancelled) ...[
               const SizedBox(height: 16),
               if (accepted || preparing)
                 SizedBox(
