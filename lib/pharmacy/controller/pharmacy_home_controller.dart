@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -28,14 +29,22 @@ class PharmacyHomeController extends GetxController {
   bool isLoadingOtcOrders = false;
   List<PharmacyPendingOrderItem> otcOrdersList = [];
   PharmacyPendingOrdersModel? otcOrdersData;
+  bool isAcceptingOrder = false;
+  int? acceptingOrderId;
+  bool isCancellingOrder = false;
+  int? cancellingOrderId;
 
   bool isLoadingOtcAcceptedOrders = false;
   List<PharmacyPendingOrderItem> otcAcceptedOrdersList = [];
   PharmacyPendingOrdersModel? otcAcceptedOrdersData;
+  bool isPreparingOrder = false;
+  int? preparingOrderId;
 
   bool isLoadingOtcPreparingOrders = false;
   List<PharmacyPendingOrderItem> otcPreparingOrdersList = [];
   PharmacyPendingOrdersModel? otcPreparingOrdersData;
+  bool isMarkingReadyOrder = false;
+  int? markingReadyOrderId;
 
   bool isLoadingOtcReadyOrders = false;
   List<PharmacyPendingOrderItem> otcReadyOrdersList = [];
@@ -888,6 +897,625 @@ class PharmacyHomeController extends GetxController {
       } else {
         isLoadingOtcOrders = false;
       }
+      update();
+    }
+  }
+
+  String _getAcceptPharmacyOrderUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.acceptPharmacyOrder.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> acceptPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+    if (orderId == null) return false;
+    final parsedId =
+        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    if (parsedId == null) return false;
+
+    isAcceptingOrder = true;
+    acceptingOrderId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final queryParams = <String, dynamic>{
+        'order_id': parsedId,
+      };
+
+      final url = _getAcceptPharmacyOrderUrl(queryParams);
+      debugPrint(
+        "==================== ACCEPT PHARMACY ORDER ====================",
+      );
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.acceptPharmacyOrder}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== ACCEPT PHARMACY ORDER ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.acceptPharmacyOrder}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.acceptPharmacyOrder,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "==============================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==============================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      final message = dataMap?['message']?.toString() ??
+          (isSuccess ? 'Order accepted successfully' : 'Failed to accept order');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyOrders(status: 1);
+        await fetchPharmacyOrders(status: 2);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== ACCEPT PHARMACY ORDER ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "====================================================================",
+      );
+      print(
+        "==================== ACCEPT PHARMACY ORDER ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "====================================================================",
+      );
+
+      final errorMsg = e.toString();
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isAcceptingOrder = false;
+      acceptingOrderId = null;
+      update();
+    }
+  }
+
+  String _getCancelPharmacyOrderUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.cancelPharmacyOrder.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> cancelPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+    if (orderId == null) return false;
+    final parsedId =
+        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    if (parsedId == null) return false;
+
+    isCancellingOrder = true;
+    cancellingOrderId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final queryParams = <String, dynamic>{
+        'order_id': parsedId,
+      };
+
+      final url = _getCancelPharmacyOrderUrl(queryParams);
+      debugPrint(
+        "==================== CANCEL PHARMACY ORDER ====================",
+      );
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.cancelPharmacyOrder}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== CANCEL PHARMACY ORDER ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.cancelPharmacyOrder}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.cancelPharmacyOrder,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "==============================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==============================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      final message = dataMap?['message']?.toString() ??
+          (isSuccess ? 'Order cancelled successfully' : 'Failed to cancel order');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyOrders(status: 1);
+        await fetchPharmacyOrders(status: 10);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== CANCEL PHARMACY ORDER ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "====================================================================",
+      );
+      print(
+        "==================== CANCEL PHARMACY ORDER ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "====================================================================",
+      );
+
+      final errorMsg = e.toString();
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isCancellingOrder = false;
+      cancellingOrderId = null;
+      update();
+    }
+  }
+
+  String _getPreparePharmacyOrderUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.preparePharmacyOrder.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> preparePharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+    if (orderId == null) return false;
+    final parsedId =
+        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    if (parsedId == null) return false;
+
+    isPreparingOrder = true;
+    preparingOrderId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final queryParams = <String, dynamic>{
+        'order_id': parsedId,
+      };
+
+      final url = _getPreparePharmacyOrderUrl(queryParams);
+      debugPrint(
+        "==================== PREPARE PHARMACY ORDER ====================",
+      );
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.preparePharmacyOrder}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print("==================== PREPARE PHARMACY ORDER ====================");
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.preparePharmacyOrder}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.preparePharmacyOrder,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "==============================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==============================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      final message = dataMap?['message']?.toString() ??
+          (isSuccess ? 'Order preparation started' : 'Failed to prepare order');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyOrders(status: 2);
+        await fetchPharmacyOrders(status: 3);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== PREPARE PHARMACY ORDER ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "====================================================================",
+      );
+      print(
+        "==================== PREPARE PHARMACY ORDER ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "====================================================================",
+      );
+
+      final errorMsg = e.toString();
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isPreparingOrder = false;
+      preparingOrderId = null;
+      update();
+    }
+  }
+
+  String _getMarkAsReadyPharmacyOrderUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint =
+        ApiEndPoints.markAsReadyPharmacyOrder.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> markAsReadyPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+    if (orderId == null) return false;
+    final parsedId =
+        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    if (parsedId == null) return false;
+
+    isMarkingReadyOrder = true;
+    markingReadyOrderId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final queryParams = <String, dynamic>{
+        'order_id': parsedId,
+      };
+
+      final url = _getMarkAsReadyPharmacyOrderUrl(queryParams);
+      debugPrint(
+        "==================== MARK AS READY PHARMACY ORDER ====================",
+      );
+      debugPrint("API Call: GET $url");
+      debugPrint("Endpoint: ${ApiEndPoints.markAsReadyPharmacyOrder}");
+      debugPrint("Query: $queryParams");
+      debugPrint("Request Body: null (GET request)");
+
+      print(
+        "==================== MARK AS READY PHARMACY ORDER ====================",
+      );
+      print("API Call: GET $url");
+      print("Endpoint: ${ApiEndPoints.markAsReadyPharmacyOrder}");
+      print("Query: $queryParams");
+      print("Request Body: null (GET request)");
+
+      final response = await DioClient().get(
+        ApiEndPoints.markAsReadyPharmacyOrder,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "==============================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("==============================================================");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      final message = dataMap?['message']?.toString() ??
+          (isSuccess ? 'Order marked as ready' : 'Failed to mark order as ready');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyOrders(status: 3);
+        await fetchPharmacyOrders(status: 4);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== MARK AS READY PHARMACY ORDER ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "====================================================================",
+      );
+      print(
+        "==================== MARK AS READY PHARMACY ORDER ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "====================================================================",
+      );
+
+      final errorMsg = e.toString();
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isMarkingReadyOrder = false;
+      markingReadyOrderId = null;
       update();
     }
   }

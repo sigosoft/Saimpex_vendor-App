@@ -12,6 +12,8 @@ class ChatMessageItem extends StatelessWidget {
     required this.message,
     required this.timestamp,
     required this.isSent,
+    this.isRead = false,
+    this.isDelivered = true,
     this.showCheckmark = true,
     this.messageType = 'text',
     this.attachmentUrl,
@@ -20,6 +22,8 @@ class ChatMessageItem extends StatelessWidget {
   final String message;
   final String timestamp;
   final bool isSent;
+  final bool isRead;
+  final bool isDelivered;
   final bool showCheckmark;
   final String messageType;
   final String? attachmentUrl;
@@ -99,9 +103,13 @@ class ChatMessageItem extends StatelessWidget {
                   if (isSent && showCheckmark) ...[
                     const SizedBox(width: 4),
                     Icon(
-                      Icons.check,
+                      (isRead || isDelivered)
+                          ? Icons.done_all_rounded
+                          : Icons.check_rounded,
                       size: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: isRead
+                          ? const Color(0xFFFFD4C6)
+                          : Colors.white70,
                     ),
                   ],
                 ],

@@ -56,6 +56,8 @@ class SearchCustomerDialog extends StatelessWidget {
                 Expanded(
                   child: controller.isLoadingSearch
                       ? const Center(child: AppLoader())
+                      : controller.customerSearchController.text.trim().isEmpty
+                      ? const SizedBox.shrink()
                       : controller.customerResults.isEmpty
                       ? Center(
                           child: Column(

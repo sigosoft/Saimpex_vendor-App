@@ -166,10 +166,10 @@ class ApiEndPoints {
   static String pharmacyOrders = "pharmacyOrders";
   static String pharmacyOrderDetail = "pharmacyOrderDetail";
   static String pharmacyPrescriptionDetails = "pharmacyPrescriptionDetails";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
+  static String acceptPharmacyOrder = "acceptPharmacyOrder";
+  static String cancelPharmacyOrder = "cancelPharmacyOrder";
+  static String preparePharmacyOrder = "preparePharmacyOrder";
+  static String markAsReadyPharmacyOrder = "markAsReadyPharmacyOrder";
   // static String pharmacyEarningsSummary = "";
   // static String pharmacyEarningsSummary = "";
 }

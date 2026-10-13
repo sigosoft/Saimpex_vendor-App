@@ -15,8 +15,33 @@ import 'ChatDetails.dart';
 
 import 'search_customer_dialog.dart';
 
-class ChatListing extends StatelessWidget {
+class ChatListing extends StatefulWidget {
   const ChatListing({super.key});
+
+  @override
+  State<ChatListing> createState() => _ChatListingState();
+}
+
+class _ChatListingState extends State<ChatListing> {
+  bool _isFirstLoad = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    _isFirstLoad = controller.conversations.isEmpty;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getAllConversations(context).then((_) {
+        if (mounted) {
+          setState(() {
+            _isFirstLoad = false;
+          });
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +53,11 @@ class ChatListing extends StatelessWidget {
       child: GetBuilder<ChatController>(
         init: ChatController(),
         builder: (controller) {
+          final isLoading = controller.isLoading ||
+              (_isFirstLoad && controller.conversations.isEmpty);
           return CommonBackground(
             appBar: _buildAppBar(context, isRtl, controller),
-            child: controller.isLoading
+            child: isLoading
                 ? const Center(child: AppLoader())
                 : controller.conversations.isEmpty
                 ? Center(

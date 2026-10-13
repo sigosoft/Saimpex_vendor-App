@@ -486,6 +486,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
           widgets.add(const SizedBox(height: 12));
         }
         final order = controller.otcOrdersList[i];
+        final rawId = order.resolvedId;
         widgets.add(
           _OtcNewOrderCard(
             customerName: order.displayCustomerName,
@@ -500,7 +501,19 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             partnerName: order.deliveryBoyName,
             itemsSummary: order.displayItemsSummary,
             phone: order.phone,
-            orderRawId: order.resolvedId,
+            orderRawId: rawId,
+            isAccepting:
+                controller.isAcceptingOrder &&
+                controller.acceptingOrderId == rawId,
+            onAccept: rawId != null
+                ? () => controller.acceptPharmacyOrder(rawId, context: context)
+                : null,
+            isRejecting:
+                controller.isCancellingOrder &&
+                controller.cancellingOrderId == rawId,
+            onReject: rawId != null
+                ? () => controller.cancelPharmacyOrder(rawId, context: context)
+                : null,
           ),
         );
       }
@@ -542,6 +555,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
           widgets.add(const SizedBox(height: 12));
         }
         final order = controller.otcAcceptedOrdersList[i];
+        final rawId = order.resolvedId;
         widgets.add(
           _OtcNewOrderCard(
             customerName: order.displayCustomerName,
@@ -556,7 +570,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             partnerName: order.deliveryBoyName,
             itemsSummary: order.displayItemsSummary,
             phone: order.phone,
-            orderRawId: order.resolvedId,
+            orderRawId: rawId,
+            isPreparingAction:
+                controller.isPreparingOrder &&
+                controller.preparingOrderId == rawId,
+            onPrepare: rawId != null
+                ? () => controller.preparePharmacyOrder(rawId, context: context)
+                : null,
           ),
         );
       }
@@ -598,6 +618,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
           widgets.add(const SizedBox(height: 12));
         }
         final order = controller.otcPreparingOrdersList[i];
+        final rawId = order.resolvedId;
         widgets.add(
           _OtcNewOrderCard(
             customerName: order.displayCustomerName,
@@ -612,7 +633,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             partnerName: order.deliveryBoyName,
             itemsSummary: order.displayItemsSummary,
             phone: order.phone,
-            orderRawId: order.resolvedId,
+            orderRawId: rawId,
+            isMarkingReadyAction: controller.isMarkingReadyOrder &&
+                controller.markingReadyOrderId == rawId,
+            onMarkAsReady: rawId != null
+                ? () => controller.markAsReadyPharmacyOrder(rawId,
+                    context: context)
+                : null,
           ),
         );
       }
@@ -859,6 +886,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                         ? '$itemCount ${itemCount == 1 ? 'Item' : 'Items'}'
                         : null));
 
+        final rawId = order.id;
         widgets.add(
           _OtcNewOrderCard(
             customerName: customerName,
@@ -872,7 +900,42 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             partnerName: partnerName,
             itemsSummary: dynamicItemsSummary,
             phone: order.userMobile,
-            orderRawId: order.id,
+            orderRawId: rawId,
+            isAccepting:
+                controller.isAcceptingOrder &&
+                controller.acceptingOrderId == rawId,
+            onAccept:
+                (!isAccepted &&
+                    !isPreparing &&
+                    !isReady &&
+                    !isDelivered &&
+                    rawId != null)
+                ? () => controller.acceptPharmacyOrder(rawId, context: context)
+                : null,
+            isRejecting:
+                controller.isCancellingOrder &&
+                controller.cancellingOrderId == rawId,
+            onReject:
+                (!isAccepted &&
+                    !isPreparing &&
+                    !isReady &&
+                    !isDelivered &&
+                    rawId != null)
+                ? () => controller.cancelPharmacyOrder(rawId, context: context)
+                : null,
+            isPreparingAction:
+                controller.isPreparingOrder &&
+                controller.preparingOrderId == rawId,
+            onPrepare: (isAccepted && rawId != null)
+                ? () => controller.preparePharmacyOrder(rawId, context: context)
+                : null,
+            isMarkingReadyAction:
+                controller.isMarkingReadyOrder &&
+                controller.markingReadyOrderId == rawId,
+            onMarkAsReady: (isPreparing && rawId != null)
+                ? () => controller.markAsReadyPharmacyOrder(rawId,
+                    context: context)
+                : null,
           ),
         );
       } else {
@@ -3775,6 +3838,14 @@ class _OtcNewOrderCard extends StatelessWidget {
     this.itemsSummary,
     this.phone,
     this.orderRawId,
+    this.onAccept,
+    this.isAccepting = false,
+    this.onReject,
+    this.isRejecting = false,
+    this.onPrepare,
+    this.isPreparingAction = false,
+    this.onMarkAsReady,
+    this.isMarkingReadyAction = false,
   });
 
   final String customerName;
@@ -3792,6 +3863,14 @@ class _OtcNewOrderCard extends StatelessWidget {
   final String? itemsSummary;
   final String? phone;
   final int? orderRawId;
+  final VoidCallback? onAccept;
+  final bool isAccepting;
+  final VoidCallback? onReject;
+  final bool isRejecting;
+  final VoidCallback? onPrepare;
+  final bool isPreparingAction;
+  final VoidCallback? onMarkAsReady;
+  final bool isMarkingReadyAction;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFC62828);
@@ -3814,7 +3893,7 @@ class _OtcNewOrderCard extends StatelessWidget {
           MaterialPageRoute<void>(
             builder: (_) => PharmacyOrderDetailsScreen(
               customerName: customerName.isNotEmpty ? customerName : 'Customer',
-              phone: phone ?? '+222 45 12 34 56',
+              phone: phone ?? '',
               requestId: orderId,
               isOtc: true,
               isSelfPickup: selfPickup,
@@ -4207,7 +4286,21 @@ class _OtcNewOrderCard extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: preparing
+                          ? (isMarkingReadyAction
+                              ? null
+                              : () {
+                                  if (onMarkAsReady != null) {
+                                    onMarkAsReady!();
+                                  }
+                                })
+                          : (isPreparingAction
+                              ? null
+                              : () {
+                                  if (onPrepare != null) {
+                                    onPrepare!();
+                                  }
+                                }),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
@@ -4217,13 +4310,22 @@ class _OtcNewOrderCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: Text(
-                        preparing ? 'Mark as Ready' : 'Prepare Order',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
+                      child: (preparing ? isMarkingReadyAction : isPreparingAction)
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              preparing ? 'Mark as Ready' : 'Prepare Order',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
                     ),
                   ),
                 )
@@ -4235,8 +4337,13 @@ class _OtcNewOrderCard extends StatelessWidget {
                       child: SizedBox(
                         height: 46,
                         child: OutlinedButton(
-                          onPressed: () =>
-                              showPharmacyRejectOrderSheet(context),
+                          onPressed: (isRejecting || isAccepting)
+                              ? null
+                              : () {
+                                  if (onReject != null) {
+                                    onReject!();
+                                  }
+                                },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: _name,
@@ -4247,15 +4354,24 @@ class _OtcNewOrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
-                          child: const Text(
-                            'Reject',
-                            maxLines: 1,
-                            softWrap: false,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                            ),
-                          ),
+                          child: isRejecting
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: _name,
+                                  ),
+                                )
+                              : const Text(
+                                  'Reject',
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -4277,7 +4393,13 @@ class _OtcNewOrderCard extends StatelessWidget {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: isAccepting
+                                ? null
+                                : () {
+                                    if (onAccept != null) {
+                                      onAccept!();
+                                    }
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
@@ -4290,16 +4412,25 @@ class _OtcNewOrderCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                             ),
-                            child: const Text(
-                              'Accept Order',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              softWrap: false,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              ),
-                            ),
+                            child: isAccepting
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Accept Order',
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),

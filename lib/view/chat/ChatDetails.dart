@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/chat/chat_message_item.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
@@ -28,18 +29,27 @@ class ChatDetails extends StatefulWidget {
 }
 
 class _ChatDetailsState extends State<ChatDetails> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    _isLoading = widget.conversationId != 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.conversationId != 0) {
-        Get.find<ChatController>().getConversationDetails(
-          context,
-          widget.conversationId,
-        );
+        Get.find<ChatController>()
+            .getConversationDetails(context, widget.conversationId)
+            .then((_) {
+              if (mounted) {
+                setState(() => _isLoading = false);
+              }
+            });
       } else {
         Get.find<ChatController>().currentConversation = null;
         Get.find<ChatController>().update();
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     });
   }
@@ -53,26 +63,35 @@ class _ChatDetailsState extends State<ChatDetails> {
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
       child: GetBuilder<ChatController>(
         builder: (controller) {
-          final messages = controller.currentConversation?.messages ?? [];
+          final isCurrentlyLoading =
+              _isLoading ||
+              controller.isLoadingMessages ||
+              (widget.conversationId != 0 &&
+                  (controller.currentConversation == null ||
+                      controller.currentConversation?.id !=
+                          widget.conversationId));
+          final messages = isCurrentlyLoading
+              ? <LastMessage>[]
+              : (controller.currentConversation?.messages ?? []);
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: _buildAppBar(context, isRtl),
             body: SafeArea(
-              child: controller.isLoadingMessages
+              child: isCurrentlyLoading
                   ? const Center(child: AppLoader())
                   : Column(
                       children: [
                         Expanded(
                           child: messages.isEmpty
                               ? Center(
-                                  // child: Text(
-                                  //   S
-                                  //       .of(context)
-                                  //       .currentlyNoContactsFoundPleaseTryLater,
-                                  //   style: GoogleFonts.rubik(
-                                  //     color: Colors.grey,
-                                  //   ),
-                                  // ),
+                                  child: Text(
+                                    S
+                                        .of(context)
+                                        .currentlyNoContactsFoundPleaseTryLater,
+                                    style: GoogleFonts.rubik(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 )
                               : ListView.builder(
                                   controller:
@@ -100,7 +119,9 @@ class _ChatDetailsState extends State<ChatDetails> {
                                         item.createdAt,
                                       ),
                                       isSent: item.senderType == 'vendor',
-                                      showCheckmark: item.isRead ?? false,
+                                      isRead: item.isRead ?? false,
+                                      isDelivered: item.id != null && item.id! > 0,
+                                      showCheckmark: true,
                                       messageType: item.messageType ?? 'text',
                                       attachmentUrl: item.attachmentUrl,
                                     );
@@ -211,8 +232,11 @@ class _ChatDetailsState extends State<ChatDetails> {
                     children: [
                       IconButton(
                         onPressed: () => controller.cancelRecording(),
-                        icon: const Icon(Icons.delete_outline,
-                            color: Colors.grey, size: 28),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.grey,
+                          size: 28,
+                        ),
                       ),
                       const Spacer(),
                       GestureDetector(
@@ -251,8 +275,11 @@ class _ChatDetailsState extends State<ChatDetails> {
                             color: colorPrimary,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.send_rounded,
-                              color: Colors.white, size: 24),
+                          child: const Icon(
+                            Icons.send_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ],
@@ -277,8 +304,10 @@ class _ChatDetailsState extends State<ChatDetails> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               ListTile(
-                                leading: const Icon(Icons.image,
-                                    color: colorPrimary),
+                                leading: const Icon(
+                                  Icons.image,
+                                  color: colorPrimary,
+                                ),
                                 title: Text(
                                   S.of(context).uploadImage,
                                   style: GoogleFonts.rubik(
@@ -335,19 +364,22 @@ class _ChatDetailsState extends State<ChatDetails> {
                           color: Colors.grey.shade600,
                         ),
                         border: InputBorder.none,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        disabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
                         filled: true,
                         fillColor: boxColor1,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: boxColor1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: boxColor1),
                         ),
                       ),
                     ),
@@ -387,11 +419,13 @@ class _ChatDetailsState extends State<ChatDetails> {
                             color: Colors.white,
                           ),
                           padding: const EdgeInsets.all(10),
-                          child: controller.messageController.text
-                                  .trim()
-                                  .isEmpty
-                              ? const Icon(Icons.mic,
-                                  color: colorPrimary, size: 20)
+                          child:
+                              controller.messageController.text.trim().isEmpty
+                              ? const Icon(
+                                  Icons.mic,
+                                  color: colorPrimary,
+                                  size: 20,
+                                )
                               : Image.asset(
                                   'lib/assets/images/send.png',
                                   height: 20,
