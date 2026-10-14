@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
 class PharmacyPendingOrdersModel {
   final bool? status;
@@ -240,6 +241,151 @@ class PharmacyPendingOrderItem {
       return '${numVal.toStringAsFixed(2)} MRU';
     }
     return '$s MRU';
+  }
+
+  static String? _resolveUrl(String? raw) {
+    if (raw == null) return null;
+    var str = raw.trim();
+    if (str.isEmpty) return null;
+    str = str.replaceAll(r'\', '/');
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      return str;
+    }
+    if (str.startsWith('//')) {
+      return 'https:$str';
+    }
+    final base = ApiConfigs.IMAGE_URL.trim();
+    final uri = Uri.tryParse(base);
+    final origin = (uri != null && uri.hasScheme)
+        ? '${uri.scheme}://${uri.host}'
+        : 'https://dev.saimpexenterprise.com';
+    if (str.startsWith('/storage/')) {
+      return '$origin$str';
+    }
+    if (str.startsWith('storage/')) {
+      return '$origin/$str';
+    }
+    if (str.startsWith('/')) {
+      final cleanBase =
+          base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+      return '$cleanBase$str';
+    }
+    final cleanBase = base.endsWith('/') ? base : '$base/';
+    return '$cleanBase$str';
+  }
+
+  String? get prescriptionFileName {
+    if (rawJson != null) {
+      final directName = rawJson!['file_name'] ??
+          rawJson!['filename'] ??
+          rawJson!['original_file_name'] ??
+          rawJson!['original_name'] ??
+          rawJson!['client_name'];
+      if (directName != null && directName.toString().trim().isNotEmpty) {
+        return directName.toString().trim();
+      }
+      final p = rawJson!['prescription'] ?? rawJson!['prescriptions'];
+      if (p is Map) {
+        final f = p['file_name'] ??
+            p['filename'] ??
+            p['original_file_name'] ??
+            p['original_name'] ??
+            p['client_name'];
+        if (f != null && f.toString().trim().isNotEmpty) {
+          return f.toString().trim();
+        }
+      }
+    }
+
+    final imgUrl = prescriptionImageUrl;
+    if (imgUrl != null && imgUrl.isNotEmpty) {
+      final name = imgUrl.split('?').first.split('/').last;
+      if (name.isNotEmpty) return name;
+    }
+
+    if (rawJson != null) {
+      final p = rawJson!['prescription'] ?? rawJson!['prescriptions'];
+      if (p is Map) {
+        final f = p['file'] ??
+            p['image_path'] ??
+            p['image'] ??
+            p['file_path'] ??
+            p['prescription_file'] ??
+            p['attachment'];
+        if (f != null && f.toString().isNotEmpty) {
+          final s = f.toString();
+          return s.contains('/') ? s.split('/').last : s;
+        }
+      }
+      final directFile = rawJson!['prescription_file'] ??
+          rawJson!['file'] ??
+          rawJson!['image_path'] ??
+          rawJson!['file_path'] ??
+          rawJson!['attachment'] ??
+          rawJson!['image'] ??
+          rawJson!['prescription_image'];
+      if (directFile != null && directFile.toString().isNotEmpty) {
+        final s = directFile.toString();
+        return s.contains('/') ? s.split('/').last : s;
+      }
+    }
+    return 'Prescription';
+  }
+
+  String? get prescriptionImageUrl {
+    String? raw;
+    if (rawJson != null) {
+      final p = rawJson!['prescription'] ?? rawJson!['prescriptions'];
+      if (p is Map) {
+        final f = p['file_url'] ??
+            p['image_url'] ??
+            p['image_path'] ??
+            p['image'] ??
+            p['prescription_image'] ??
+            p['file_path'] ??
+            p['file'] ??
+            p['url'];
+        if (f != null && f.toString().trim().isNotEmpty) {
+          raw = f.toString().trim();
+        }
+      }
+      if (raw == null) {
+        final directUrl = rawJson!['image_path'] ??
+            rawJson!['file_path'] ??
+            rawJson!['image'] ??
+            rawJson!['prescription_image'] ??
+            rawJson!['image_url'] ??
+            rawJson!['file_url'] ??
+            rawJson!['prescription_file_url'] ??
+            rawJson!['file'] ??
+            rawJson!['url'];
+        if (directUrl != null && directUrl.toString().trim().isNotEmpty) {
+          raw = directUrl.toString().trim();
+        }
+      }
+      if (raw == null &&
+          rawJson!['images'] is List &&
+          (rawJson!['images'] as List).isNotEmpty) {
+        for (final item in (rawJson!['images'] as List)) {
+          if (item is String && item.trim().isNotEmpty) {
+            raw = item.trim();
+            break;
+          } else if (item is Map) {
+            final v = item['image_path'] ??
+                item['url'] ??
+                item['file_url'] ??
+                item['image'] ??
+                item['file_path'] ??
+                item['file'];
+            if (v != null && v.toString().trim().isNotEmpty) {
+              raw = v.toString().trim();
+              break;
+            }
+          }
+        }
+      }
+    }
+    return _resolveUrl(raw);
   }
 
   String get displayItemsSummary {

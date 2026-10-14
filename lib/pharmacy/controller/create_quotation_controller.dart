@@ -2,11 +2,11 @@ part of '../view/order_details_screen.dart';
 
 class CreateQuotationController extends GetxController {
   static const medicineCatalog = <_QuotationMedicine>[
-    _QuotationMedicine('Paracetamol 500 mg', 50),
-    _QuotationMedicine('Paracetamol 650 mg', 50),
-    _QuotationMedicine('Ibuprofen 400 mg', 65),
-    _QuotationMedicine('Ferrous Sulfate Syrup', 220, inStock: false),
-    _QuotationMedicine('Baby Diapers Size M', 380),
+    _QuotationMedicine('Paracetamol 500 mg', 50, id: 4),
+    _QuotationMedicine('Paracetamol 650 mg', 50, id: 4),
+    _QuotationMedicine('Ibuprofen 400 mg', 65, id: 4),
+    _QuotationMedicine('Ferrous Sulfate Syrup', 220, inStock: false, id: 4),
+    _QuotationMedicine('Baby Diapers Size M', 380, id: 4),
   ];
 
   final medicineController = TextEditingController();
@@ -19,6 +19,7 @@ class CreateQuotationController extends GetxController {
   int? editingIndex;
   String? quoteValid;
   double rotationTurns = 0;
+  bool isSubmitting = false;
 
   int get subtotal => lines.fold(0, (sum, line) => sum + line.lineTotal);
 
@@ -38,19 +39,126 @@ class CreateQuotationController extends GetxController {
   List<_QuotationMedicine> filter(String query) {
     final text = query.trim().toLowerCase();
     if (text.isEmpty) return const [];
-    return medicineCatalog
+    final matches = medicineCatalog
         .where((item) => item.name.toLowerCase().contains(text))
         .toList();
+    if (matches.isEmpty) {
+      return [_QuotationMedicine(query.trim(), 50, id: 4)];
+    }
+    return matches;
   }
 
   List<_QuotationMedicine> filterAlternatives(String query) {
     final text = query.trim().toLowerCase();
     if (text.isEmpty) return const [];
     final current = draft?.medicine.name.toLowerCase();
-    return medicineCatalog.where((item) {
+    final matches = medicineCatalog.where((item) {
       final name = item.name.toLowerCase();
       return name.contains(text) && name != current;
     }).toList();
+    if (matches.isEmpty) {
+      return [_QuotationMedicine(query.trim(), 50, id: 4)];
+    }
+    return matches;
+  }
+
+  Future<bool> submitQuotation({
+    required dynamic prescriptionId,
+    int tax = 10,
+    BuildContext? context,
+  }) async {
+    if (lines.isEmpty) {
+      if (context != null && context.mounted) {
+        showToast(context, 'Please add at least one medicine');
+      } else {
+        Fluttertoast.showToast(msg: 'Please add at least one medicine');
+      }
+      return false;
+    }
+
+    final parsedPrescriptionId = (prescriptionId is int)
+        ? prescriptionId
+        : int.tryParse(prescriptionId?.toString() ?? '');
+
+    if (parsedPrescriptionId == null || parsedPrescriptionId <= 0) {
+      if (context != null && context.mounted) {
+        showToast(context, 'Prescription ID is required');
+      } else {
+        Fluttertoast.showToast(msg: 'Prescription ID is required');
+      }
+      return false;
+    }
+
+    isSubmitting = true;
+    update();
+
+    try {
+      final int totalAmount = subtotal + tax;
+
+      int days = 1;
+      if (quoteValid != null && quoteValid!.isNotEmpty) {
+        final match = RegExp(r'\d+').firstMatch(quoteValid!);
+        if (match != null) {
+          days = int.tryParse(match.group(0) ?? '') ?? 1;
+        }
+      }
+      final expiryDate = DateTime.now().add(Duration(days: days));
+      final quoteExpiresAt =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(expiryDate);
+
+      final List<Map<String, dynamic>> itemsList = [];
+      for (final line in lines) {
+        _QuotationMedicine med = line.medicine;
+        if (line.availability == _Availability.outOfStock &&
+            line.alternatives.isNotEmpty &&
+            line.selectedAlternative < line.alternatives.length) {
+          med = line.alternatives[line.selectedAlternative];
+        }
+        final qty = line.billedQty > 0 ? line.billedQty : line.prescribedQty;
+        itemsList.add({
+          'product_id': med.effectiveProductId,
+          'name_en': med.effectiveNameEn,
+          'name_ar': med.effectiveNameAr,
+          'name_fr': med.effectiveNameFr,
+          'quantity': qty > 0 ? qty : 1,
+          'unit_price': med.priceMru,
+        });
+      }
+
+      if (Get.isRegistered<PharmacyHomeController>()) {
+        final homeCtrl = Get.find<PharmacyHomeController>();
+        final ok = await homeCtrl.submitPharmacyPrescriptionQuote(
+          prescriptionId: parsedPrescriptionId,
+          quoteAmount: totalAmount,
+          items: itemsList,
+          quoteExpiresAt: quoteExpiresAt,
+          context: context,
+        );
+        return ok;
+      } else {
+        final token = (await getSavedObject("token"))?.toString() ?? "";
+        if (token.isNotEmpty) {
+          DioClient().updateToken(token);
+        }
+        final formData = FormData.fromMap({
+          'prescription_id': parsedPrescriptionId,
+          'quote_amount': totalAmount,
+          'items': jsonEncode(itemsList),
+          'quote_expires_at': quoteExpiresAt,
+        });
+        final response = await DioClient().post(
+          ApiEndPoints.submitPharmacyPrescriptionQuote,
+          body: formData,
+        );
+        return response.statusCode == 200;
+      }
+    } catch (e) {
+      debugPrint("Error submitting quote: $e");
+      return false;
+    } finally {
+      isSubmitting = false;
+      update();
+    }
   }
 
   void onAltQueryChanged(String value) {

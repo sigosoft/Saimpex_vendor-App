@@ -1,4 +1,5 @@
 import 'OrderDetailsModel.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
 class HomeModel {
   final bool? status;
@@ -25,8 +26,15 @@ class HomeData {
   final Summary? summary;
   final Orders? orders;
   final Vendor? vendor;
+  final Map<String, dynamic>? screen;
 
-  HomeData({this.membership, this.summary, this.orders, this.vendor});
+  HomeData({
+    this.membership,
+    this.summary,
+    this.orders,
+    this.vendor,
+    this.screen,
+  });
 
   factory HomeData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return HomeData();
@@ -40,6 +48,9 @@ class HomeData {
           : null,
       orders: json['orders'] != null ? Orders.fromJson(json['orders']) : null,
       vendor: json['vendor'] != null ? Vendor.fromJson(json['vendor']) : null,
+      screen: json['screen'] is Map
+          ? Map<String, dynamic>.from(json['screen'])
+          : null,
     );
   }
 }
@@ -78,22 +89,47 @@ class Summary {
   final int? todayOrders;
   final int? totalOrders;
   final int? totalProducts;
+  final int? pendingOrdersCount;
+  final int? acceptedOrdersCount;
+  final int? processedOrdersCount;
+  final int? readyOrdersCount;
+  final int? ongoingOrdersCount;
+  final int? completedOrdersCount;
+  final int? cancelledOrdersCount;
 
-  Summary({this.todayOrders, this.totalOrders, this.totalProducts});
+  Summary({
+    this.todayOrders,
+    this.totalOrders,
+    this.totalProducts,
+    this.pendingOrdersCount,
+    this.acceptedOrdersCount,
+    this.processedOrdersCount,
+    this.readyOrdersCount,
+    this.ongoingOrdersCount,
+    this.completedOrdersCount,
+    this.cancelledOrdersCount,
+  });
 
   factory Summary.fromJson(Map<String, dynamic>? json) {
     if (json == null) return Summary();
 
+    int? parseInt(dynamic val) {
+      if (val is int) return val;
+      if (val != null) return int.tryParse(val.toString());
+      return null;
+    }
+
     return Summary(
-      todayOrders: (json['today_orders'] is int)
-          ? json['today_orders']
-          : int.tryParse(json['today_orders']?.toString() ?? ''),
-      totalOrders: (json['total_orders'] is int)
-          ? json['total_orders']
-          : int.tryParse(json['total_orders']?.toString() ?? ''),
-      totalProducts: (json['total_products'] is int)
-          ? json['total_products']
-          : int.tryParse(json['total_products']?.toString() ?? ''),
+      todayOrders: parseInt(json['today_orders']),
+      totalOrders: parseInt(json['total_orders']),
+      totalProducts: parseInt(json['total_products']),
+      pendingOrdersCount: parseInt(json['pending_orders_count']),
+      acceptedOrdersCount: parseInt(json['accepted_orders_count']),
+      processedOrdersCount: parseInt(json['processed_orders_count']),
+      readyOrdersCount: parseInt(json['ready_orders_count']),
+      ongoingOrdersCount: parseInt(json['ongoing_orders_count']),
+      completedOrdersCount: parseInt(json['completed_orders_count']),
+      cancelledOrdersCount: parseInt(json['cancelled_orders_count']),
     );
   }
 }
@@ -142,6 +178,9 @@ class OrderData {
   final dynamic isSelfPickup;
   final List<BasketOrder>? basketOrders;
   final int? prescriptionId;
+  final String? prescriptionImageUrl;
+  final String? prescriptionFileName;
+  final Map<String, dynamic>? rawJson;
 
   OrderData({
     this.orderCode,
@@ -163,6 +202,9 @@ class OrderData {
     this.deliveryType,
     this.isSelfPickup,
     this.basketOrders,
+    this.prescriptionImageUrl,
+    this.prescriptionFileName,
+    this.rawJson,
   });
 
   factory OrderData.fromJson(Map<String, dynamic>? json) {
@@ -234,7 +276,140 @@ class OrderData {
                   json['driver_name']?.toString() ??
                   json['delivery_boy']?.toString())
               ?.trim(),
+      prescriptionImageUrl: _resolveOrderPrescriptionUrl(json),
+      prescriptionFileName: _resolveOrderPrescriptionFileName(json),
+      rawJson: json,
     );
+  }
+
+  static String? _resolveOrderPrescriptionUrl(Map<String, dynamic> json) {
+    String? raw;
+    final p = json['prescription'] ?? json['prescriptions'];
+    if (p is Map) {
+      final f = p['file_url'] ??
+          p['image_url'] ??
+          p['image_path'] ??
+          p['image'] ??
+          p['prescription_image'] ??
+          p['file_path'] ??
+          p['file'] ??
+          p['url'];
+      if (f != null && f.toString().trim().isNotEmpty) {
+        raw = f.toString().trim();
+      }
+    }
+    if (raw == null) {
+      final direct = json['image_path'] ??
+          json['file_path'] ??
+          json['image'] ??
+          json['prescription_image'] ??
+          json['image_url'] ??
+          json['file_url'] ??
+          json['prescription_file_url'] ??
+          json['file'] ??
+          json['url'];
+      if (direct != null && direct.toString().trim().isNotEmpty) {
+        raw = direct.toString().trim();
+      }
+    }
+    if (raw == null && json['images'] is List && (json['images'] as List).isNotEmpty) {
+      for (final item in (json['images'] as List)) {
+        if (item is String && item.trim().isNotEmpty) {
+          raw = item.trim();
+          break;
+        } else if (item is Map) {
+          final v = item['image_path'] ??
+              item['url'] ??
+              item['file_url'] ??
+              item['image'] ??
+              item['file_path'] ??
+              item['file'];
+          if (v != null && v.toString().trim().isNotEmpty) {
+            raw = v.toString().trim();
+            break;
+          }
+        }
+      }
+    }
+    if (raw == null) return null;
+    var str = raw.trim();
+    if (str.isEmpty) return null;
+    str = str.replaceAll(r'\', '/');
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      return str;
+    }
+    if (str.startsWith('//')) {
+      return 'https:$str';
+    }
+    final base = ApiConfigs.IMAGE_URL.trim();
+    final uri = Uri.tryParse(base);
+    final origin = (uri != null && uri.hasScheme)
+        ? '${uri.scheme}://${uri.host}'
+        : 'https://dev.saimpexenterprise.com';
+    if (str.startsWith('/storage/')) {
+      return '$origin$str';
+    }
+    if (str.startsWith('storage/')) {
+      return '$origin/$str';
+    }
+    if (str.startsWith('/')) {
+      final cleanBase =
+          base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+      return '$cleanBase$str';
+    }
+    final cleanBase = base.endsWith('/') ? base : '$base/';
+    return '$cleanBase$str';
+  }
+
+  static String? _resolveOrderPrescriptionFileName(Map<String, dynamic> json) {
+    final directName = json['file_name'] ??
+        json['filename'] ??
+        json['original_file_name'] ??
+        json['original_name'] ??
+        json['client_name'];
+    if (directName != null && directName.toString().trim().isNotEmpty) {
+      return directName.toString().trim();
+    }
+    final p = json['prescription'] ?? json['prescriptions'];
+    if (p is Map) {
+      final f = p['file_name'] ??
+          p['filename'] ??
+          p['original_file_name'] ??
+          p['original_name'] ??
+          p['client_name'];
+      if (f != null && f.toString().trim().isNotEmpty) {
+        return f.toString().trim();
+      }
+    }
+    final url = _resolveOrderPrescriptionUrl(json);
+    if (url != null && url.isNotEmpty) {
+      final name = url.split('?').first.split('/').last;
+      if (name.isNotEmpty) return name;
+    }
+    if (p is Map) {
+      final f = p['file'] ??
+          p['image_path'] ??
+          p['image'] ??
+          p['file_path'] ??
+          p['prescription_file'] ??
+          p['attachment'];
+      if (f != null && f.toString().isNotEmpty) {
+        final s = f.toString();
+        return s.contains('/') ? s.split('/').last : s;
+      }
+    }
+    final direct = json['prescription_file'] ??
+        json['file'] ??
+        json['image_path'] ??
+        json['file_path'] ??
+        json['attachment'] ??
+        json['image'] ??
+        json['prescription_image'];
+    if (direct != null && direct.toString().isNotEmpty) {
+      final s = direct.toString();
+      return s.contains('/') ? s.split('/').last : s;
+    }
+    return 'Prescription';
   }
 }
 

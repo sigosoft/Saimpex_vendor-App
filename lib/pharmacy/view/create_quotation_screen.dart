@@ -11,6 +11,7 @@ class PharmacyCreateQuotationScreen extends StatefulWidget {
     this.requestMeta = '',
     this.imageUrl,
     this.imageBytes,
+    this.prescriptionId,
   });
 
   final String customerName;
@@ -19,6 +20,7 @@ class PharmacyCreateQuotationScreen extends StatefulWidget {
   final String requestMeta;
   final String? imageUrl;
   final Uint8List? imageBytes;
+  final int? prescriptionId;
 
   @override
   State<PharmacyCreateQuotationScreen> createState() =>
@@ -30,6 +32,7 @@ class _PharmacyCreateQuotationScreenState
   static const Color _orange = Color(0xFFFF5722);
   static const Color _disabled = Color(0xFFFFCDBA);
   static const int _tax = 10;
+  bool _isSending = false;
 
   static const _validityOptions = <String>[
     '1 Day',
@@ -89,30 +92,90 @@ class _PharmacyCreateQuotationScreenState
 
   Future<void> _send() async {
     if (controller.lines.isEmpty) return;
-    showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: 'Quotation sent',
-      barrierColor: Colors.transparent,
-      pageBuilder: (context, _, __) => const _QuotationSentDialog(),
-    );
-    await Future<void>.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
-    final navigator = Navigator.of(context);
-    navigator.pop();
-    if (Get.isRegistered<PharmacyHomeController>()) {
-      Get.find<PharmacyHomeController>().showReviewCompleted();
+    if (_isSending || controller.isSubmitting) return;
+
+    final effectivePrescriptionId = widget.prescriptionId ??
+        (Get.isRegistered<PharmacyOrderDetailsController>()
+            ? Get.find<PharmacyOrderDetailsController>()
+                .prescriptionObj
+                ?.prescriptionId
+            : null);
+
+    if (effectivePrescriptionId == null) {
+      Fluttertoast.showToast(msg: 'Prescription ID is required');
+      return;
     }
-    navigator.popUntil((route) => route.isFirst);
+
+    setState(() {
+      _isSending = true;
+    });
+
+    final success = await controller.submitQuotation(
+      prescriptionId: effectivePrescriptionId,
+      tax: _tax,
+      context: context,
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _isSending = false;
+    });
+
+    if (success) {
+      showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        barrierLabel: 'Quotation sent',
+        barrierColor: Colors.transparent,
+        pageBuilder: (context, _, __) => const _QuotationSentDialog(),
+      );
+      await Future<void>.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      if (Get.isRegistered<PharmacyHomeController>()) {
+        Get.find<PharmacyHomeController>().showReviewCompleted();
+      }
+      navigator.popUntil((route) => route.isFirst);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<CreateQuotationController>(
       builder: (_) {
-        final initial = widget.customerName.isNotEmpty
-            ? widget.customerName.substring(0, 1).toUpperCase()
-            : 'A';
+        final prescObj = Get.isRegistered<PharmacyOrderDetailsController>()
+            ? Get.find<PharmacyOrderDetailsController>().prescriptionObj
+            : null;
+        final rawCustName = widget.customerName.trim();
+        final effectiveCustomerName = rawCustName.isNotEmpty && rawCustName != 'Ahmed'
+            ? rawCustName
+            : (prescObj?.customerName?.trim().isNotEmpty == true
+                ? prescObj!.customerName!
+                : (rawCustName.isNotEmpty ? rawCustName : 'Customer'));
+        final initial = effectiveCustomerName.isNotEmpty
+            ? effectiveCustomerName.substring(0, 1).toUpperCase()
+            : 'C';
+        final rawPhone = widget.phone.trim();
+        final effectivePhone = rawPhone.isNotEmpty && rawPhone != '+222 45 12 34 56'
+            ? rawPhone
+            : (prescObj?.displayPhone.trim().isNotEmpty == true
+                ? prescObj!.displayPhone
+                : (rawPhone.isNotEmpty ? rawPhone : ''));
+        final rawRequestId = widget.requestId.trim();
+        final effectiveRequestId = rawRequestId.isNotEmpty && rawRequestId != '#22789007'
+            ? rawRequestId
+            : (widget.prescriptionId != null
+                ? '#${widget.prescriptionId}'
+                : (prescObj?.prescriptionId != null
+                    ? '#${prescObj!.prescriptionId}'
+                    : (rawRequestId.isNotEmpty ? rawRequestId : '')));
+        final rawRequestMeta = widget.requestMeta.trim();
+        final effectiveRequestMeta = rawRequestMeta.isNotEmpty && rawRequestMeta != 'Today • 10:45 AM'
+            ? rawRequestMeta
+            : (prescObj?.createdAt?.trim().isNotEmpty == true
+                ? prescObj!.createdAt!
+                : (rawRequestMeta.isNotEmpty ? rawRequestMeta : ''));
         final editing = controller.draft != null;
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -201,19 +264,15 @@ class _PharmacyCreateQuotationScreenState
                         children: [
                           _CustomerCard(
                             initial: initial,
-                            name: widget.customerName,
-                            phone: widget.phone,
-                            requestId: widget.requestId,
-                            requestMeta: widget.requestMeta,
+                            name: effectiveCustomerName,
+                            phone: effectivePhone,
+                            requestId: effectiveRequestId,
+                            requestMeta: effectiveRequestMeta,
                             reviewCompleted: true,
                             onChatTap: () => _openCustomerChat(
                               context,
-                              customerName: widget.customerName,
-                              customerId: Get.isRegistered<PharmacyOrderDetailsController>()
-                                  ? Get.find<PharmacyOrderDetailsController>()
-                                      .prescriptionObj
-                                      ?.userId
-                                  : null,
+                              customerName: effectiveCustomerName,
+                              customerId: prescObj?.userId,
                             ),
                           ),
                           const SizedBox(height: 14),
@@ -307,7 +366,12 @@ class _PharmacyCreateQuotationScreenState
             if (!editing || controller.canSaveDraft)
               _QuoteActionBar(
                 label: editing ? 'Save & Add Next Medicine' : 'Send Quotation',
-                enabled: editing ? controller.canSaveDraft : controller.lines.isNotEmpty,
+                enabled: editing
+                    ? controller.canSaveDraft
+                    : (controller.lines.isNotEmpty &&
+                        !_isSending &&
+                        !controller.isSubmitting),
+                isLoading: !editing && (_isSending || controller.isSubmitting),
                 enabledColor: _orange,
                 disabledColor: _disabled,
                 onPressed: editing ? controller.saveDraft : _send,
@@ -322,11 +386,31 @@ class _PharmacyCreateQuotationScreenState
 }
 
 class _QuotationMedicine {
-  const _QuotationMedicine(this.name, this.priceMru, {this.inStock = true});
+  const _QuotationMedicine(
+    this.name,
+    this.priceMru, {
+    this.inStock = true,
+    this.id,
+    this.productId,
+    this.nameEn,
+    this.nameAr,
+    this.nameFr,
+  });
 
   final String name;
   final int priceMru;
   final bool inStock;
+  final int? id;
+  final int? productId;
+  final String? nameEn;
+  final String? nameAr;
+  final String? nameFr;
+
+  int get effectiveProductId => productId ?? id ?? 4;
+  String get effectiveNameEn =>
+      (nameEn != null && nameEn!.isNotEmpty) ? nameEn! : name;
+  String get effectiveNameAr => nameAr ?? '';
+  String get effectiveNameFr => nameFr ?? '';
 }
 
 class _QuotationLine {
@@ -1618,6 +1702,7 @@ class _QuoteActionBar extends StatelessWidget {
     required this.enabledColor,
     required this.disabledColor,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   final String label;
@@ -1625,6 +1710,7 @@ class _QuoteActionBar extends StatelessWidget {
   final Color enabledColor;
   final Color disabledColor;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -1654,7 +1740,7 @@ class _QuoteActionBar extends StatelessWidget {
                 : null,
           ),
           child: ElevatedButton(
-            onPressed: enabled ? onPressed : null,
+            onPressed: (enabled && !isLoading) ? onPressed : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               disabledBackgroundColor: Colors.transparent,
@@ -1666,14 +1752,23 @@ class _QuoteActionBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: Text(
-              label,
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
+            child: isLoading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                : Text(
+                    label,
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       ),

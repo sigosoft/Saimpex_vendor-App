@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart' hide FormData;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_chat_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_order_details_controller.dart';
@@ -13,6 +18,7 @@ import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order_detail_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_chat_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 part 'create_quotation_screen.dart';
 part '../controller/create_quotation_controller.dart';
@@ -24,8 +30,9 @@ void _openCustomerChat(
   required int? customerId,
   String? avatar,
 }) {
-  final int validCustomerId =
-      (customerId != null && customerId > 0) ? customerId : 1;
+  final int validCustomerId = (customerId != null && customerId > 0)
+      ? customerId
+      : 1;
 
   int initialConvId = 0;
   String initialAvatar = avatar ?? '';
@@ -595,6 +602,11 @@ class _PharmacyOrderDetailsScreenState
     final primaryImageUrl =
         _detailsController.prescriptionDetailData?.primaryImageUrl ??
         widget.prescriptionImageUrl;
+    final int? effectivePrescriptionId =
+        presc?.prescriptionId ??
+        widget.prescriptionId ??
+        widget.orderRawId ??
+        int.tryParse(widget.orderId?.toString() ?? '');
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyCreateQuotationScreen(
@@ -604,6 +616,7 @@ class _PharmacyOrderDetailsScreenState
           requestMeta: requestMeta,
           imageUrl: primaryImageUrl,
           imageBytes: _detailsController.prescriptionImageBytes,
+          prescriptionId: effectivePrescriptionId,
         ),
       ),
     );
@@ -658,11 +671,12 @@ class _PharmacyOrderDetailsScreenState
             prescData?.primaryImageUrl ?? widget.prescriptionImageUrl;
 
         final rawCustName = prescObj?.customerName?.trim();
-        final effectiveCustomerName = (rawCustName != null && rawCustName.isNotEmpty)
+        final effectiveCustomerName =
+            (rawCustName != null && rawCustName.isNotEmpty)
             ? rawCustName
             : (widget.customerName != 'Ahmed'
-                ? widget.customerName
-                : (rawCustName ?? 'Customer'));
+                  ? widget.customerName
+                  : (rawCustName ?? 'Customer'));
 
         final initial = effectiveCustomerName.isNotEmpty
             ? effectiveCustomerName.substring(0, 1).toUpperCase()
@@ -671,42 +685,49 @@ class _PharmacyOrderDetailsScreenState
         final rawPhone = prescObj?.displayPhone.trim();
         final effectivePhone = (rawPhone != null && rawPhone.isNotEmpty)
             ? rawPhone
-            : (widget.phone != '+222 45 12 34 56' ? widget.phone : (rawPhone ?? ''));
+            : (widget.phone != '+222 45 12 34 56'
+                  ? widget.phone
+                  : (rawPhone ?? ''));
 
         final effectiveRequestId = prescObj?.prescriptionId != null
             ? '#${prescObj!.prescriptionId}'
             : (widget.requestId != '#22789007'
-                ? widget.requestId
-                : (prescObj?.displayOrderCode ?? widget.requestId));
+                  ? widget.requestId
+                  : (prescObj?.displayOrderCode ?? widget.requestId));
 
         final rawCreatedAt = prescObj?.createdAt?.trim();
-        final effectiveRequestMeta = (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
+        final effectiveRequestMeta =
+            (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
             ? rawCreatedAt
             : (widget.requestMeta != 'Today • 10:45 AM'
-                ? widget.requestMeta
-                : (rawCreatedAt ?? ''));
+                  ? widget.requestMeta
+                  : (rawCreatedAt ?? ''));
 
         final rawNote = prescObj?.note?.trim();
         final effectiveNote = (rawNote != null && rawNote.isNotEmpty)
             ? rawNote
             : (widget.specialNotes !=
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis'
-                ? widget.specialNotes
-                : (rawNote ?? ''));
+                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis'
+                  ? widget.specialNotes
+                  : (rawNote ?? ''));
 
-        final hasNote = effectiveNote.isNotEmpty ||
+        final hasNote =
+            effectiveNote.isNotEmpty ||
             widget.notesType == PharmacyOrderNotesType.voice;
 
         final statusStr = prescObj?.status?.trim().toLowerCase();
-        final isEffectiveReviewing = widget.isUnderReview ||
+        final isEffectiveReviewing =
+            widget.isUnderReview ||
             statusStr == 'uploaded' ||
             statusStr == 'under_review' ||
             statusStr == 'under review' ||
             statusStr == 'reviewing';
-        final isEffectiveReviewCompleted = widget.isReviewCompleted ||
+        final isEffectiveReviewCompleted =
+            widget.isReviewCompleted ||
             statusStr == 'review_completed' ||
             statusStr == 'reviewed';
-        final isEffectiveAwaitingPayment = widget.isAwaitingPayment ||
+        final isEffectiveAwaitingPayment =
+            widget.isAwaitingPayment ||
             statusStr == 'awaiting_payment' ||
             statusStr == 'quoted';
 
@@ -840,13 +861,16 @@ class _PharmacyOrderDetailsScreenState
                                   ),
                                 const SizedBox(height: 14),
                                 if (widget.isReady || widget.isDelivered) ...[
-                                  const _DeliveryPartnerSection(showPhone: true),
+                                  const _DeliveryPartnerSection(
+                                    showPhone: true,
+                                  ),
                                   const SizedBox(height: 18),
                                 ],
                                 _UploadedPrescriptionCard(
                                   imageUrl: primaryImageUrl,
                                   imageBytes: controller.prescriptionImageBytes,
-                                  isLoading: controller.isLoadingPrescriptionImage ||
+                                  isLoading:
+                                      controller.isLoadingPrescriptionImage ||
                                       controller.isLoadingPrescriptionDetail,
                                   rotationTurns: controller.rotationTurns,
                                   onZoom: _openFullPrescription,
@@ -871,9 +895,7 @@ class _PharmacyOrderDetailsScreenState
                                       duration: widget.voiceNoteDuration,
                                     )
                                   else
-                                    _SpecialNotesTextCard(
-                                      note: effectiveNote,
-                                    ),
+                                    _SpecialNotesTextCard(note: effectiveNote),
                                   const SizedBox(height: 18),
                                 ],
                                 if (isEffectiveAwaitingPayment ||
@@ -1315,39 +1337,68 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                       turns: rotationTurns,
                       duration: const Duration(milliseconds: 280),
                       child: (imageBytes != null && imageBytes!.isNotEmpty)
-                          ? Image.memory(
-                              imageBytes!,
-                              fit: BoxFit.cover,
-                            )
+                          ? Image.memory(imageBytes!, fit: BoxFit.cover)
                           : (imageUrl != null && imageUrl!.trim().isNotEmpty)
-                              ? Image.network(
-                                  imageUrl!,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, progress) {
-                                    if (progress == null) return child;
-                                    return const Center(
-                                      child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2.5,
-                                          color: _orange,
-                                        ),
+                          ? Image.network(
+                              imageUrl!,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, progress) {
+                                if (progress == null) return child;
+                                return const Center(
+                                  child: SizedBox(
+                                    width: 32,
+                                    height: 32,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: _orange,
+                                    ),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (_, error, __) => const Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.broken_image_outlined,
+                                      size: 44,
+                                      color: Color(0xFF9E9E9E),
+                                    ),
+                                    SizedBox(height: 6),
+                                    Text(
+                                      'Failed to load prescription',
+                                      style: TextStyle(
+                                        color: Color(0xFF9E9E9E),
+                                        fontSize: 12,
                                       ),
-                                    );
-                                  },
-                                  errorBuilder: (_, error, __) => const Center(
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : (isLoading
+                                ? const Center(
+                                    child: SizedBox(
+                                      width: 32,
+                                      height: 32,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: _orange,
+                                      ),
+                                    ),
+                                  )
+                                : const Center(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
-                                          Icons.broken_image_outlined,
+                                          Icons.description_outlined,
                                           size: 44,
                                           color: Color(0xFF9E9E9E),
                                         ),
                                         SizedBox(height: 6),
                                         Text(
-                                          'Failed to load prescription',
+                                          'No Prescription Image',
                                           style: TextStyle(
                                             color: Color(0xFF9E9E9E),
                                             fontSize: 12,
@@ -1355,39 +1406,7 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                  ),
-                                )
-                              : (isLoading
-                                  ? const Center(
-                                      child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2.5,
-                                          color: _orange,
-                                        ),
-                                      ),
-                                    )
-                                  : const Center(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.description_outlined,
-                                            size: 44,
-                                            color: Color(0xFF9E9E9E),
-                                          ),
-                                          SizedBox(height: 6),
-                                          Text(
-                                            'No Prescription Image',
-                                            style: TextStyle(
-                                              color: Color(0xFF9E9E9E),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
+                                  )),
                     ),
                   ),
                   Positioned(
@@ -2335,11 +2354,7 @@ class _OrderItemTotals extends StatelessWidget {
 }
 
 class _AwaitingPaymentSummary extends StatelessWidget {
-  const _AwaitingPaymentSummary({
-    this.totalAmount,
-    this.itemTotal,
-    this.tax,
-  });
+  const _AwaitingPaymentSummary({this.totalAmount, this.itemTotal, this.tax});
 
   final String? totalAmount;
   final String? itemTotal;
@@ -2385,10 +2400,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
             value: itemTotal ?? totalAmount ?? '1500 MRU',
           ),
           const SizedBox(height: 12),
-          _AwaitingSummaryLine(
-            label: 'Tax',
-            value: tax ?? '0',
-          ),
+          _AwaitingSummaryLine(label: 'Tax', value: tax ?? '0'),
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
           const SizedBox(height: 14),
@@ -3325,34 +3337,31 @@ class _FullPrescriptionViewer extends StatelessWidget {
             turns: rotationTurns,
             duration: Duration.zero,
             child: (imageBytes != null && imageBytes!.isNotEmpty)
-                ? Image.memory(
-                    imageBytes!,
-                    fit: BoxFit.contain,
-                  )
+                ? Image.memory(imageBytes!, fit: BoxFit.contain)
                 : (imageUrl != null && imageUrl!.trim().isNotEmpty)
-                    ? Image.network(
-                        imageUrl!,
-                        fit: BoxFit.contain,
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          );
-                        },
-                        errorBuilder: (_, error, __) => const Icon(
-                          Icons.broken_image_outlined,
-                          color: Colors.white54,
-                          size: 64,
+                ? Image.network(
+                    imageUrl!,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
                         ),
-                      )
-                    : const Icon(
-                        Icons.broken_image_outlined,
-                        color: Colors.white54,
-                        size: 64,
-                      ),
+                      );
+                    },
+                    errorBuilder: (_, error, __) => const Icon(
+                      Icons.broken_image_outlined,
+                      color: Colors.white54,
+                      size: 64,
+                    ),
+                  )
+                : const Icon(
+                    Icons.broken_image_outlined,
+                    color: Colors.white54,
+                    size: 64,
+                  ),
           ),
         ),
       ),

@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
@@ -22,9 +23,39 @@ class PharmacyHomeController extends GetxController {
   List<OrderData> ordersList = [];
   Map<String, dynamic>? rawSummary;
   Map<String, dynamic>? rawVendor;
+  Map<String, dynamic>? rawScreen;
+  Map<String, dynamic>? rawPharmacy;
+  Map<String, dynamic>? rawKpis;
+  Map<String, dynamic>? rawAtAGlance;
 
   bool isLoadingPrescriptions = false;
   List<PrescriptionItem> prescriptionsList = [];
+  bool isLoadingUnderReviewPrescriptions = false;
+  List<PrescriptionItem> underReviewPrescriptionsList = [];
+  bool isLoadingReviewedPrescriptions = false;
+  List<PrescriptionItem> reviewedPrescriptionsList = [];
+  bool isLoadingQuotedPrescriptions = false;
+  List<PrescriptionItem> quotedPrescriptionsList = [];
+  bool isReviewingPrescription = false;
+  int? reviewingPrescriptionId;
+  bool isMarkingPrescriptionReviewed = false;
+  int? markingPrescriptionReviewedId;
+  bool isRejectingPrescription = false;
+  int? rejectingPrescriptionId;
+  bool isSubmittingQuote = false;
+  int? submittingQuotePrescriptionId;
+  bool isLoadingPrescriptionToPrepareOrders = false;
+  List<PharmacyPendingOrderItem> prescriptionToPrepareOrdersList = [];
+  PharmacyPendingOrdersModel? prescriptionToPrepareOrdersData;
+  bool isLoadingPrescriptionPreparingOrders = false;
+  List<PharmacyPendingOrderItem> prescriptionPreparingOrdersList = [];
+  PharmacyPendingOrdersModel? prescriptionPreparingOrdersData;
+  bool isLoadingPrescriptionReadyOrders = false;
+  List<PharmacyPendingOrderItem> prescriptionReadyOrdersList = [];
+  PharmacyPendingOrdersModel? prescriptionReadyOrdersData;
+  bool isLoadingPrescriptionDeliveredOrders = false;
+  List<PharmacyPendingOrderItem> prescriptionDeliveredOrdersList = [];
+  PharmacyPendingOrdersModel? prescriptionDeliveredOrdersData;
 
   bool isLoadingOtcOrders = false;
   List<PharmacyPendingOrderItem> otcOrdersList = [];
@@ -82,6 +113,13 @@ class PharmacyHomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchPharmacyPrescriptions();
+    fetchPharmacyPrescriptions(status: 'under_review');
+    fetchPharmacyPrescriptions(status: 'reviewed');
+    fetchPharmacyPrescriptions(status: 'quoted');
+    fetchPharmacyOrders(tab: 'prescription', status: 2);
+    fetchPharmacyOrders(tab: 'prescription', status: 3);
+    fetchPharmacyOrders(tab: 'prescription', status: 4);
+    fetchPharmacyOrders(tab: 'prescription', status: 9);
     fetchPharmacyOrders(status: 1);
     fetchPharmacyOrders(status: 2);
     fetchPharmacyOrders(status: 3);
@@ -146,6 +184,62 @@ class PharmacyHomeController extends GetxController {
       }
       return '';
     }
+    if (!isOtcTab && selectedFilterIndex == 1) {
+      if (underReviewPrescriptionsList.isNotEmpty) {
+        return underReviewPrescriptionsList.length < 10
+            ? '0${underReviewPrescriptionsList.length}'
+            : '${underReviewPrescriptionsList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 2) {
+      if (reviewedPrescriptionsList.isNotEmpty) {
+        return reviewedPrescriptionsList.length < 10
+            ? '0${reviewedPrescriptionsList.length}'
+            : '${reviewedPrescriptionsList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 3) {
+      if (quotedPrescriptionsList.isNotEmpty) {
+        return quotedPrescriptionsList.length < 10
+            ? '0${quotedPrescriptionsList.length}'
+            : '${quotedPrescriptionsList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 4) {
+      if (prescriptionToPrepareOrdersList.isNotEmpty) {
+        return prescriptionToPrepareOrdersList.length < 10
+            ? '0${prescriptionToPrepareOrdersList.length}'
+            : '${prescriptionToPrepareOrdersList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 5) {
+      if (prescriptionPreparingOrdersList.isNotEmpty) {
+        return prescriptionPreparingOrdersList.length < 10
+            ? '0${prescriptionPreparingOrdersList.length}'
+            : '${prescriptionPreparingOrdersList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 6) {
+      if (prescriptionReadyOrdersList.isNotEmpty) {
+        return prescriptionReadyOrdersList.length < 10
+            ? '0${prescriptionReadyOrdersList.length}'
+            : '${prescriptionReadyOrdersList.length}';
+      }
+      return '';
+    }
+    if (!isOtcTab && selectedFilterIndex == 7) {
+      if (prescriptionDeliveredOrdersList.isNotEmpty) {
+        return prescriptionDeliveredOrdersList.length < 10
+            ? '0${prescriptionDeliveredOrdersList.length}'
+            : '${prescriptionDeliveredOrdersList.length}';
+      }
+      return '';
+    }
     if (isOtcTab && selectedFilterIndex == 0) {
       if (otcOrdersList.isNotEmpty) {
         return otcOrdersList.length < 10
@@ -207,6 +301,31 @@ class PharmacyHomeController extends GetxController {
       if (selectedFilterIndex == 0 && prescriptionsList.isNotEmpty) {
         return prescriptionsList.length.toString();
       }
+      if (selectedFilterIndex == 1 && underReviewPrescriptionsList.isNotEmpty) {
+        return underReviewPrescriptionsList.length.toString();
+      }
+      if (selectedFilterIndex == 2 && reviewedPrescriptionsList.isNotEmpty) {
+        return reviewedPrescriptionsList.length.toString();
+      }
+      if (selectedFilterIndex == 3 && quotedPrescriptionsList.isNotEmpty) {
+        return quotedPrescriptionsList.length.toString();
+      }
+      if (selectedFilterIndex == 4 &&
+          prescriptionToPrepareOrdersList.isNotEmpty) {
+        return prescriptionToPrepareOrdersList.length.toString();
+      }
+      if (selectedFilterIndex == 5 &&
+          prescriptionPreparingOrdersList.isNotEmpty) {
+        return prescriptionPreparingOrdersList.length.toString();
+      }
+      if (selectedFilterIndex == 6 &&
+          prescriptionReadyOrdersList.isNotEmpty) {
+        return prescriptionReadyOrdersList.length.toString();
+      }
+      if (selectedFilterIndex == 7 &&
+          prescriptionDeliveredOrdersList.isNotEmpty) {
+        return prescriptionDeliveredOrdersList.length.toString();
+      }
       if (ordersList.isNotEmpty) {
         return ordersList.length.toString();
       }
@@ -242,98 +361,96 @@ class PharmacyHomeController extends GetxController {
   }
 
   String get newPrescriptionsCount {
+    final v =
+        rawPharmacy?['new_prescriptions'] ??
+        rawKpis?['new_prescriptions'] ??
+        rawSummary?['new_prescriptions'] ??
+        rawScreen?['new_prescriptions'];
+    if (v != null) return v.toString();
     if (prescriptionsList.isNotEmpty) {
       return prescriptionsList.length.toString();
     }
-    if (rawSummary != null) {
-      final v =
-          rawSummary!['new_prescriptions'] ??
-          rawSummary!['prescriptions'] ??
-          rawSummary!['new_orders'];
-      if (v != null) return v.toString();
-    }
-    if (!isOtcTab && selectedFilterIndex == 0) {
-      return ordersList.length.toString();
-    }
-    return (homeData?.data?.summary?.todayOrders ?? 0).toString();
+    return '0';
   }
 
   String get newOtcCount {
+    final v =
+        rawPharmacy?['new_otc'] ??
+        rawAtAGlance?['new_otc'] ??
+        rawKpis?['new_otc'] ??
+        rawSummary?['new_otc'] ??
+        rawSummary?['new_otc_orders'];
+    if (v != null) return v.toString();
     if (otcOrdersList.isNotEmpty) {
       return otcOrdersList.length.toString();
-    }
-    if (rawSummary != null) {
-      final v =
-          rawSummary!['new_otc_orders'] ??
-          rawSummary!['otc_orders'] ??
-          rawSummary!['otc'];
-      if (v != null) return v.toString();
-    }
-    if (isOtcTab && selectedFilterIndex == 0) {
-      return ordersList.length.toString();
     }
     return '0';
   }
 
   String get preparingCount {
+    final v =
+        rawPharmacy?['preparing'] ??
+        rawKpis?['preparing'] ??
+        rawSummary?['preparing_orders_count'] ??
+        rawSummary?['preparing_orders'] ??
+        rawSummary?['preparing'];
+    if (v != null) return v.toString();
     if (otcPreparingOrdersList.isNotEmpty) {
       return otcPreparingOrdersList.length.toString();
-    }
-    if (rawSummary != null) {
-      final v = rawSummary!['preparing_orders'] ?? rawSummary!['preparing'];
-      if (v != null) return v.toString();
     }
     return '0';
   }
 
   String get readyCount {
+    final v =
+        rawPharmacy?['ready'] ??
+        rawKpis?['ready'] ??
+        rawSummary?['ready_orders_count'] ??
+        rawSummary?['ready_orders'] ??
+        rawSummary?['ready'];
+    if (v != null) return v.toString();
     if (otcReadyOrdersList.isNotEmpty) {
       return otcReadyOrdersList.length.toString();
-    }
-    if (rawSummary != null) {
-      final v = rawSummary!['ready_orders'] ?? rawSummary!['ready'];
-      if (v != null) return v.toString();
     }
     return '0';
   }
 
   String get totalOrdersValue {
-    if (rawSummary != null) {
-      final v =
-          rawSummary!['today_orders'] ??
-          rawSummary!['total_orders'] ??
-          rawSummary!['orders'];
-      if (v != null) return v.toString();
-    }
-    return (homeData?.data?.summary?.todayOrders ??
-            homeData?.data?.summary?.totalOrders ??
-            ordersList.length)
-        .toString();
+    final v =
+        rawSummary?['total_orders'] ??
+        homeData?.data?.summary?.totalOrders ??
+        rawKpis?['orders'] ??
+        rawAtAGlance?['orders'] ??
+        rawSummary?['orders'];
+    if (v != null) return v.toString();
+    return ordersList.length.toString();
   }
 
   String get completedOrdersValue {
+    final v =
+        rawSummary?['completed_orders_count'] ??
+        homeData?.data?.summary?.completedOrdersCount ??
+        rawKpis?['completed'] ??
+        rawAtAGlance?['completed'] ??
+        rawSummary?['completed_orders'] ??
+        rawSummary?['completed'];
+    if (v != null) return v.toString();
     if (otcDeliveredOrdersList.isNotEmpty) {
       return otcDeliveredOrdersList.length.toString();
-    }
-    if (rawSummary != null) {
-      final v =
-          rawSummary!['completed_orders'] ??
-          rawSummary!['completed'] ??
-          rawSummary!['delivered_orders'];
-      if (v != null) return v.toString();
     }
     return '0';
   }
 
   String get revenueValue {
-    if (rawSummary != null) {
-      final v =
-          rawSummary!['revenue_total'] ??
-          rawSummary!['revenue'] ??
-          rawSummary!['total_revenue'] ??
-          rawSummary!['today_revenue'];
-      if (v != null) return v.toString();
-    }
+    final v =
+        rawSummary?['revenue'] ??
+        rawKpis?['revenue'] ??
+        rawAtAGlance?['revenue'] ??
+        rawPharmacy?['revenue'] ??
+        rawScreen?['revenue'] ??
+        rawSummary?['revenue_total'] ??
+        rawSummary?['total_revenue'];
+    if (v != null) return v.toString();
     return '0';
   }
 
@@ -448,6 +565,26 @@ class PharmacyHomeController extends GetxController {
           if (vendorMap is Map) {
             rawVendor = Map<String, dynamic>.from(vendorMap);
           }
+          final screenMap = d['screen'];
+          if (screenMap is Map) {
+            rawScreen = Map<String, dynamic>.from(screenMap);
+            final pharmacyMap = rawScreen!['pharmacy'];
+            if (pharmacyMap is Map) {
+              rawPharmacy = Map<String, dynamic>.from(pharmacyMap);
+            }
+            final kpisMap = rawScreen!['kpis'];
+            if (kpisMap is Map) {
+              rawKpis = Map<String, dynamic>.from(kpisMap);
+            }
+            final glanceMap = rawScreen!['at_a_glance'];
+            if (glanceMap is Map) {
+              rawAtAGlance = Map<String, dynamic>.from(glanceMap);
+            }
+            final welcomeMap = rawScreen!['welcome'];
+            if (welcomeMap is Map && welcomeMap['is_open'] is bool) {
+              isStoreOpen = welcomeMap['is_open'] as bool;
+            }
+          }
         }
         ordersList = homeData?.data?.orders?.data ?? [];
       } else {
@@ -455,6 +592,10 @@ class PharmacyHomeController extends GetxController {
         ordersList = [];
         rawSummary = null;
         rawVendor = null;
+        rawScreen = null;
+        rawPharmacy = null;
+        rawKpis = null;
+        rawAtAGlance = null;
       }
     } catch (e) {
       debugPrint(
@@ -475,6 +616,10 @@ class PharmacyHomeController extends GetxController {
       ordersList = [];
       rawSummary = null;
       rawVendor = null;
+      rawScreen = null;
+      rawPharmacy = null;
+      rawKpis = null;
+      rawAtAGlance = null;
     } finally {
       isLoadingHome = false;
       update();
@@ -506,20 +651,45 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<void> fetchPharmacyPrescriptions({String? keyword}) async {
-    isLoadingPrescriptions = true;
+  Future<void> fetchPharmacyPrescriptions({
+    String? status,
+    String? keyword,
+  }) async {
+    final isUnderReview = status == 'under_review';
+    final isReviewed = status == 'reviewed';
+    final isQuoted = status == 'quoted';
+    if (isUnderReview) {
+      isLoadingUnderReviewPrescriptions = true;
+    } else if (isReviewed) {
+      isLoadingReviewedPrescriptions = true;
+    } else if (isQuoted) {
+      isLoadingQuotedPrescriptions = true;
+    } else {
+      isLoadingPrescriptions = true;
+    }
     update();
     try {
       final token = (await getSavedObject("token"))?.toString() ?? "";
       if (token.isNotEmpty) {
         DioClient().updateToken(token);
       } else {
-        isLoadingPrescriptions = false;
+        if (isUnderReview) {
+          isLoadingUnderReviewPrescriptions = false;
+        } else if (isReviewed) {
+          isLoadingReviewedPrescriptions = false;
+        } else if (isQuoted) {
+          isLoadingQuotedPrescriptions = false;
+        } else {
+          isLoadingPrescriptions = false;
+        }
         update();
         return;
       }
 
       final queryParams = <String, dynamic>{'limit': 10};
+      if (status != null && status.isNotEmpty) {
+        queryParams['status'] = status;
+      }
 
       final searchKey = keyword ?? searchController.text.trim();
       if (searchKey.isNotEmpty) {
@@ -616,7 +786,21 @@ class PharmacyHomeController extends GetxController {
               .toList();
         }
       }
-      prescriptionsList = loaded;
+      // Filter out rejected prescriptions so they do not show in pharmacy prescriptions lists and screens
+      loaded = loaded.where((item) {
+        final s = item.status?.trim().toLowerCase();
+        return s != 'rejected' && s != 'reject';
+      }).toList();
+
+      if (isUnderReview) {
+        underReviewPrescriptionsList = loaded;
+      } else if (isReviewed) {
+        reviewedPrescriptionsList = loaded;
+      } else if (isQuoted) {
+        quotedPrescriptionsList = loaded;
+      } else {
+        prescriptionsList = loaded;
+      }
     } catch (e) {
       debugPrint(
         "==================== GET PHARMACY PRESCRIPTIONS ERROR ====================",
@@ -633,9 +817,25 @@ class PharmacyHomeController extends GetxController {
       print(
         "=========================================================================",
       );
-      prescriptionsList = [];
+      if (isUnderReview) {
+        underReviewPrescriptionsList = [];
+      } else if (isReviewed) {
+        reviewedPrescriptionsList = [];
+      } else if (isQuoted) {
+        quotedPrescriptionsList = [];
+      } else {
+        prescriptionsList = [];
+      }
     } finally {
-      isLoadingPrescriptions = false;
+      if (isUnderReview) {
+        isLoadingUnderReviewPrescriptions = false;
+      } else if (isReviewed) {
+        isLoadingReviewedPrescriptions = false;
+      } else if (isQuoted) {
+        isLoadingQuotedPrescriptions = false;
+      } else {
+        isLoadingPrescriptions = false;
+      }
       update();
     }
   }
@@ -665,30 +865,53 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<void> fetchPharmacyOrders({int? status, String? keyword}) async {
-    final orderStatus =
-        status ??
-        (selectedFilterIndex == 5
-            ? 10
-            : (selectedFilterIndex == 4
-                  ? 9
-                  : (selectedFilterIndex == 3
+  Future<void> fetchPharmacyOrders({
+    int? status,
+    String? keyword,
+    String? tab,
+  }) async {
+    final effectiveTab = tab ?? (isOtcTab ? 'otc' : 'prescription');
+    final isPrescription = effectiveTab == 'prescription';
+    final orderStatus = status ??
+        (isPrescription
+            ? (selectedFilterIndex == 7
+                ? 9
+                : (selectedFilterIndex == 6
+                    ? 4
+                    : (selectedFilterIndex == 5 ? 3 : 2)))
+            : (selectedFilterIndex == 5
+                ? 10
+                : (selectedFilterIndex == 4
+                    ? 9
+                    : (selectedFilterIndex == 3
                         ? 4
                         : (selectedFilterIndex == 2
-                              ? 3
-                              : (selectedFilterIndex == 1 ? 2 : 1)))));
-    if (orderStatus == 10) {
-      isLoadingOtcCancelledOrders = true;
-    } else if (orderStatus == 9) {
-      isLoadingOtcDeliveredOrders = true;
-    } else if (orderStatus == 4) {
-      isLoadingOtcReadyOrders = true;
-    } else if (orderStatus == 3) {
-      isLoadingOtcPreparingOrders = true;
-    } else if (orderStatus == 2) {
-      isLoadingOtcAcceptedOrders = true;
+                            ? 3
+                            : (selectedFilterIndex == 1 ? 2 : 1))))));
+    if (isPrescription) {
+      if (orderStatus == 9) {
+        isLoadingPrescriptionDeliveredOrders = true;
+      } else if (orderStatus == 4) {
+        isLoadingPrescriptionReadyOrders = true;
+      } else if (orderStatus == 3) {
+        isLoadingPrescriptionPreparingOrders = true;
+      } else if (orderStatus == 2) {
+        isLoadingPrescriptionToPrepareOrders = true;
+      }
     } else {
-      isLoadingOtcOrders = true;
+      if (orderStatus == 10) {
+        isLoadingOtcCancelledOrders = true;
+      } else if (orderStatus == 9) {
+        isLoadingOtcDeliveredOrders = true;
+      } else if (orderStatus == 4) {
+        isLoadingOtcReadyOrders = true;
+      } else if (orderStatus == 3) {
+        isLoadingOtcPreparingOrders = true;
+      } else if (orderStatus == 2) {
+        isLoadingOtcAcceptedOrders = true;
+      } else {
+        isLoadingOtcOrders = true;
+      }
     }
     update();
     try {
@@ -696,18 +919,30 @@ class PharmacyHomeController extends GetxController {
       if (token.isNotEmpty) {
         DioClient().updateToken(token);
       } else {
-        if (orderStatus == 10) {
-          isLoadingOtcCancelledOrders = false;
-        } else if (orderStatus == 9) {
-          isLoadingOtcDeliveredOrders = false;
-        } else if (orderStatus == 4) {
-          isLoadingOtcReadyOrders = false;
-        } else if (orderStatus == 3) {
-          isLoadingOtcPreparingOrders = false;
-        } else if (orderStatus == 2) {
-          isLoadingOtcAcceptedOrders = false;
+        if (isPrescription) {
+          if (orderStatus == 9) {
+            isLoadingPrescriptionDeliveredOrders = false;
+          } else if (orderStatus == 4) {
+            isLoadingPrescriptionReadyOrders = false;
+          } else if (orderStatus == 3) {
+            isLoadingPrescriptionPreparingOrders = false;
+          } else if (orderStatus == 2) {
+            isLoadingPrescriptionToPrepareOrders = false;
+          }
         } else {
-          isLoadingOtcOrders = false;
+          if (orderStatus == 10) {
+            isLoadingOtcCancelledOrders = false;
+          } else if (orderStatus == 9) {
+            isLoadingOtcDeliveredOrders = false;
+          } else if (orderStatus == 4) {
+            isLoadingOtcReadyOrders = false;
+          } else if (orderStatus == 3) {
+            isLoadingOtcPreparingOrders = false;
+          } else if (orderStatus == 2) {
+            isLoadingOtcAcceptedOrders = false;
+          } else {
+            isLoadingOtcOrders = false;
+          }
         }
         update();
         return;
@@ -717,7 +952,7 @@ class PharmacyHomeController extends GetxController {
       final queryParams = <String, dynamic>{
         'limit': 10,
         'keyword': searchKey,
-        'tab': 'otc',
+        'tab': effectiveTab,
         'status': orderStatus,
       };
 
@@ -808,44 +1043,76 @@ class PharmacyHomeController extends GetxController {
               .toList();
         }
 
-        if (orderStatus == 10) {
-          otcCancelledOrdersData = parsedModel;
-          otcCancelledOrdersList = loaded;
-        } else if (orderStatus == 9) {
-          otcDeliveredOrdersData = parsedModel;
-          otcDeliveredOrdersList = loaded;
-        } else if (orderStatus == 4) {
-          otcReadyOrdersData = parsedModel;
-          otcReadyOrdersList = loaded;
-        } else if (orderStatus == 3) {
-          otcPreparingOrdersData = parsedModel;
-          otcPreparingOrdersList = loaded;
-        } else if (orderStatus == 2) {
-          otcAcceptedOrdersData = parsedModel;
-          otcAcceptedOrdersList = loaded;
+        if (isPrescription) {
+          if (orderStatus == 9) {
+            prescriptionDeliveredOrdersData = parsedModel;
+            prescriptionDeliveredOrdersList = loaded;
+          } else if (orderStatus == 4) {
+            prescriptionReadyOrdersData = parsedModel;
+            prescriptionReadyOrdersList = loaded;
+          } else if (orderStatus == 3) {
+            prescriptionPreparingOrdersData = parsedModel;
+            prescriptionPreparingOrdersList = loaded;
+          } else if (orderStatus == 2) {
+            prescriptionToPrepareOrdersData = parsedModel;
+            prescriptionToPrepareOrdersList = loaded;
+          }
         } else {
-          otcOrdersData = parsedModel;
-          otcOrdersList = loaded;
+          if (orderStatus == 10) {
+            otcCancelledOrdersData = parsedModel;
+            otcCancelledOrdersList = loaded;
+          } else if (orderStatus == 9) {
+            otcDeliveredOrdersData = parsedModel;
+            otcDeliveredOrdersList = loaded;
+          } else if (orderStatus == 4) {
+            otcReadyOrdersData = parsedModel;
+            otcReadyOrdersList = loaded;
+          } else if (orderStatus == 3) {
+            otcPreparingOrdersData = parsedModel;
+            otcPreparingOrdersList = loaded;
+          } else if (orderStatus == 2) {
+            otcAcceptedOrdersData = parsedModel;
+            otcAcceptedOrdersList = loaded;
+          } else {
+            otcOrdersData = parsedModel;
+            otcOrdersList = loaded;
+          }
         }
       } else {
-        if (orderStatus == 10) {
-          otcCancelledOrdersData = null;
-          otcCancelledOrdersList = [];
-        } else if (orderStatus == 9) {
-          otcDeliveredOrdersData = null;
-          otcDeliveredOrdersList = [];
-        } else if (orderStatus == 4) {
-          otcReadyOrdersData = null;
-          otcReadyOrdersList = [];
-        } else if (orderStatus == 3) {
-          otcPreparingOrdersData = null;
-          otcPreparingOrdersList = [];
-        } else if (orderStatus == 2) {
-          otcAcceptedOrdersData = null;
-          otcAcceptedOrdersList = [];
+        if (isPrescription) {
+          if (orderStatus == 9) {
+            prescriptionDeliveredOrdersData = null;
+            prescriptionDeliveredOrdersList = [];
+          } else if (orderStatus == 4) {
+            prescriptionReadyOrdersData = null;
+            prescriptionReadyOrdersList = [];
+          } else if (orderStatus == 3) {
+            prescriptionPreparingOrdersData = null;
+            prescriptionPreparingOrdersList = [];
+          } else if (orderStatus == 2) {
+            prescriptionToPrepareOrdersData = null;
+            prescriptionToPrepareOrdersList = [];
+          }
         } else {
-          otcOrdersData = null;
-          otcOrdersList = [];
+          if (orderStatus == 10) {
+            otcCancelledOrdersData = null;
+            otcCancelledOrdersList = [];
+          } else if (orderStatus == 9) {
+            otcDeliveredOrdersData = null;
+            otcDeliveredOrdersList = [];
+          } else if (orderStatus == 4) {
+            otcReadyOrdersData = null;
+            otcReadyOrdersList = [];
+          } else if (orderStatus == 3) {
+            otcPreparingOrdersData = null;
+            otcPreparingOrdersList = [];
+          } else if (orderStatus == 2) {
+            otcAcceptedOrdersData = null;
+            otcAcceptedOrdersList = [];
+          } else {
+            otcOrdersData = null;
+            otcOrdersList = [];
+          }
         }
       }
     } catch (e) {
@@ -864,39 +1131,803 @@ class PharmacyHomeController extends GetxController {
       print(
         "==================================================================",
       );
-      if (orderStatus == 10) {
-        otcCancelledOrdersList = [];
-        otcCancelledOrdersData = null;
-      } else if (orderStatus == 9) {
-        otcDeliveredOrdersList = [];
-        otcDeliveredOrdersData = null;
-      } else if (orderStatus == 4) {
-        otcReadyOrdersList = [];
-        otcReadyOrdersData = null;
-      } else if (orderStatus == 3) {
-        otcPreparingOrdersList = [];
-        otcPreparingOrdersData = null;
-      } else if (orderStatus == 2) {
-        otcAcceptedOrdersList = [];
-        otcAcceptedOrdersData = null;
+      if (isPrescription) {
+        if (orderStatus == 9) {
+          prescriptionDeliveredOrdersList = [];
+          prescriptionDeliveredOrdersData = null;
+        } else if (orderStatus == 4) {
+          prescriptionReadyOrdersList = [];
+          prescriptionReadyOrdersData = null;
+        } else if (orderStatus == 3) {
+          prescriptionPreparingOrdersList = [];
+          prescriptionPreparingOrdersData = null;
+        } else if (orderStatus == 2) {
+          prescriptionToPrepareOrdersList = [];
+          prescriptionToPrepareOrdersData = null;
+        }
       } else {
-        otcOrdersList = [];
-        otcOrdersData = null;
+        if (orderStatus == 10) {
+          otcCancelledOrdersList = [];
+          otcCancelledOrdersData = null;
+        } else if (orderStatus == 9) {
+          otcDeliveredOrdersList = [];
+          otcDeliveredOrdersData = null;
+        } else if (orderStatus == 4) {
+          otcReadyOrdersList = [];
+          otcReadyOrdersData = null;
+        } else if (orderStatus == 3) {
+          otcPreparingOrdersList = [];
+          otcPreparingOrdersData = null;
+        } else if (orderStatus == 2) {
+          otcAcceptedOrdersList = [];
+          otcAcceptedOrdersData = null;
+        } else {
+          otcOrdersList = [];
+          otcOrdersData = null;
+        }
       }
     } finally {
-      if (orderStatus == 10) {
-        isLoadingOtcCancelledOrders = false;
-      } else if (orderStatus == 9) {
-        isLoadingOtcDeliveredOrders = false;
-      } else if (orderStatus == 4) {
-        isLoadingOtcReadyOrders = false;
-      } else if (orderStatus == 3) {
-        isLoadingOtcPreparingOrders = false;
-      } else if (orderStatus == 2) {
-        isLoadingOtcAcceptedOrders = false;
+      if (isPrescription) {
+        if (orderStatus == 9) {
+          isLoadingPrescriptionDeliveredOrders = false;
+        } else if (orderStatus == 4) {
+          isLoadingPrescriptionReadyOrders = false;
+        } else if (orderStatus == 3) {
+          isLoadingPrescriptionPreparingOrders = false;
+        } else if (orderStatus == 2) {
+          isLoadingPrescriptionToPrepareOrders = false;
+        }
       } else {
-        isLoadingOtcOrders = false;
+        if (orderStatus == 10) {
+          isLoadingOtcCancelledOrders = false;
+        } else if (orderStatus == 9) {
+          isLoadingOtcDeliveredOrders = false;
+        } else if (orderStatus == 4) {
+          isLoadingOtcReadyOrders = false;
+        } else if (orderStatus == 3) {
+          isLoadingOtcPreparingOrders = false;
+        } else if (orderStatus == 2) {
+          isLoadingOtcAcceptedOrders = false;
+        } else {
+          isLoadingOtcOrders = false;
+        }
       }
+      update();
+    }
+  }
+
+  String _getReviewPharmacyPrescriptionUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.reviewPharmacyPrescription
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> reviewPharmacyPrescription(
+    dynamic prescriptionId, {
+    BuildContext? context,
+  }) async {
+    if (prescriptionId == null) return false;
+    final parsedId = (prescriptionId is int)
+        ? prescriptionId
+        : int.tryParse(prescriptionId.toString());
+    if (parsedId == null) return false;
+
+    isReviewingPrescription = true;
+    reviewingPrescriptionId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final formData = FormData.fromMap({'prescription_id': parsedId});
+
+      final url = _getReviewPharmacyPrescriptionUrl();
+      debugPrint(
+        "==================== REVIEW PHARMACY PRESCRIPTION ====================",
+      );
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.reviewPharmacyPrescription}");
+      debugPrint("Body: {'prescription_id': $parsedId}");
+
+      print(
+        "==================== REVIEW PHARMACY PRESCRIPTION ====================",
+      );
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.reviewPharmacyPrescription}");
+      print("Body: {'prescription_id': $parsedId}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.reviewPharmacyPrescription,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "=====================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "=====================================================================",
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+                dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      String? message;
+      if (dataMap != null && dataMap['message'] != null) {
+        final m = dataMap['message'];
+        if (m is Map) {
+          message =
+              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
+              ? m['message_en'].first.toString()
+              : m['message_en']?.toString();
+          if (message == null || message.isEmpty) {
+            message = m.values.first?.toString();
+          }
+        } else if (m is List && m.isNotEmpty) {
+          message = m.first.toString();
+        } else {
+          message = m.toString();
+        }
+      }
+      message ??= (isSuccess
+          ? 'Prescription marked for review successfully'
+          : 'Failed to review prescription');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyPrescriptions();
+        await fetchPharmacyPrescriptions(status: 'under_review');
+        await fetchPharmacyPrescriptions(status: 'reviewed');
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== REVIEW PHARMACY PRESCRIPTION ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "===========================================================================",
+      );
+
+      print(
+        "==================== REVIEW PHARMACY PRESCRIPTION ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "===========================================================================",
+      );
+
+      final errorMsg = e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isReviewingPrescription = false;
+      reviewingPrescriptionId = null;
+      update();
+    }
+  }
+
+  String _getMarkPharmacyPrescriptionReviewedUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.markPharmacyPrescriptionReviewed
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> markPharmacyPrescriptionReviewed(
+    dynamic prescriptionId, {
+    BuildContext? context,
+  }) async {
+    if (prescriptionId == null) return false;
+    final parsedId = (prescriptionId is int)
+        ? prescriptionId
+        : int.tryParse(prescriptionId.toString());
+    if (parsedId == null) return false;
+
+    isMarkingPrescriptionReviewed = true;
+    markingPrescriptionReviewedId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final formData = FormData.fromMap({'prescription_id': parsedId});
+
+      final url = _getMarkPharmacyPrescriptionReviewedUrl();
+      debugPrint(
+        "==================== MARK PHARMACY PRESCRIPTION REVIEWED ====================",
+      );
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.markPharmacyPrescriptionReviewed}");
+      debugPrint("Body: {'prescription_id': $parsedId}");
+
+      print(
+        "==================== MARK PHARMACY PRESCRIPTION REVIEWED ====================",
+      );
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.markPharmacyPrescriptionReviewed}");
+      print("Body: {'prescription_id': $parsedId}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.markPharmacyPrescriptionReviewed,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "============================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "============================================================================",
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+                dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      String? message;
+      if (dataMap != null && dataMap['message'] != null) {
+        final m = dataMap['message'];
+        if (m is Map) {
+          message =
+              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
+              ? m['message_en'].first.toString()
+              : m['message_en']?.toString();
+          if (message == null || message.isEmpty) {
+            message = m.values.first?.toString();
+          }
+        } else if (m is List && m.isNotEmpty) {
+          message = m.first.toString();
+        } else {
+          message = m.toString();
+        }
+      }
+      message ??= (isSuccess
+          ? 'Prescription marked as reviewed successfully'
+          : 'Failed to mark prescription as reviewed');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyPrescriptions();
+        await fetchPharmacyPrescriptions(status: 'under_review');
+        await fetchPharmacyPrescriptions(status: 'reviewed');
+        await fetchPharmacyOrders(tab: 'prescription', status: 2);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== MARK PHARMACY PRESCRIPTION REVIEWED ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "==================================================================================",
+      );
+
+      print(
+        "==================== MARK PHARMACY PRESCRIPTION REVIEWED ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "==================================================================================",
+      );
+
+      final errorMsg = e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isMarkingPrescriptionReviewed = false;
+      markingPrescriptionReviewedId = null;
+      update();
+    }
+  }
+
+  String _getRejectPharmacyPrescriptionUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.rejectPharmacyPrescription
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> rejectPharmacyPrescription(
+    dynamic prescriptionId, {
+    BuildContext? context,
+  }) async {
+    if (prescriptionId == null) return false;
+    final parsedId = (prescriptionId is int)
+        ? prescriptionId
+        : int.tryParse(prescriptionId.toString());
+    if (parsedId == null) return false;
+
+    isRejectingPrescription = true;
+    rejectingPrescriptionId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final formData = FormData.fromMap({'prescription_id': parsedId});
+
+      final url = _getRejectPharmacyPrescriptionUrl();
+      debugPrint(
+        "==================== REJECT PHARMACY PRESCRIPTION ====================",
+      );
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.rejectPharmacyPrescription}");
+      debugPrint("Body: {'prescription_id': $parsedId}");
+
+      print(
+        "==================== REJECT PHARMACY PRESCRIPTION ====================",
+      );
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.rejectPharmacyPrescription}");
+      print("Body: {'prescription_id': $parsedId}");
+
+      final response = await DioClient().post(
+        ApiEndPoints.rejectPharmacyPrescription,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "=====================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "=====================================================================",
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+                dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      String? message;
+      if (dataMap != null && dataMap['message'] != null) {
+        final m = dataMap['message'];
+        if (m is Map) {
+          message =
+              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
+              ? m['message_en'].first.toString()
+              : m['message_en']?.toString();
+          if (message == null || message.isEmpty) {
+            message = m.values.first?.toString();
+          }
+        } else if (m is List && m.isNotEmpty) {
+          message = m.first.toString();
+        } else {
+          message = m.toString();
+        }
+      }
+      message ??= (isSuccess
+          ? 'Prescription rejected successfully'
+          : 'Failed to reject prescription');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        prescriptionsList.removeWhere(
+          (item) => (item.prescriptionId ?? item.id) == parsedId,
+        );
+        underReviewPrescriptionsList.removeWhere(
+          (item) => (item.prescriptionId ?? item.id) == parsedId,
+        );
+        reviewedPrescriptionsList.removeWhere(
+          (item) => (item.prescriptionId ?? item.id) == parsedId,
+        );
+        update();
+
+        await fetchPharmacyPrescriptions();
+        await fetchPharmacyPrescriptions(status: 'under_review');
+        await fetchPharmacyPrescriptions(status: 'reviewed');
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== REJECT PHARMACY PRESCRIPTION ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "===========================================================================",
+      );
+
+      print(
+        "==================== REJECT PHARMACY PRESCRIPTION ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "===========================================================================",
+      );
+
+      final errorMsg = e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isRejectingPrescription = false;
+      rejectingPrescriptionId = null;
+      update();
+    }
+  }
+
+  String _getSubmitPharmacyPrescriptionQuoteUrl([Map<String, dynamic>? query]) {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.submitPharmacyPrescriptionQuote
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    final cleanEndpoint = endpoint.startsWith('vendorapp/')
+        ? endpoint
+        : 'vendorapp/$endpoint';
+    var url = '$base/$cleanEndpoint';
+    if (query != null && query.isNotEmpty) {
+      final queryString = query.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value?.toString() ?? '')}',
+          )
+          .join('&');
+      url = '$url?$queryString';
+    }
+    return url;
+  }
+
+  Future<bool> submitPharmacyPrescriptionQuote({
+    required dynamic prescriptionId,
+    required dynamic quoteAmount,
+    required dynamic items,
+    required String quoteExpiresAt,
+    BuildContext? context,
+  }) async {
+    if (prescriptionId == null) return false;
+    final parsedId = (prescriptionId is int)
+        ? prescriptionId
+        : int.tryParse(prescriptionId.toString());
+    if (parsedId == null) return false;
+
+    isSubmittingQuote = true;
+    submittingQuotePrescriptionId = parsedId;
+    update();
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final itemsStr = items is String ? items : jsonEncode(items);
+
+      final formData = FormData.fromMap({
+        'prescription_id': parsedId,
+        'quote_amount': quoteAmount,
+        'items': itemsStr,
+        'quote_expires_at': quoteExpiresAt,
+      });
+
+      final url = _getSubmitPharmacyPrescriptionQuoteUrl();
+      debugPrint(
+        "==================== SUBMIT PHARMACY PRESCRIPTION QUOTE ====================",
+      );
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.submitPharmacyPrescriptionQuote}");
+      debugPrint(
+        "Body: {'prescription_id': $parsedId, 'quote_amount': $quoteAmount, 'items': $itemsStr, 'quote_expires_at': $quoteExpiresAt}",
+      );
+
+      print(
+        "==================== SUBMIT PHARMACY PRESCRIPTION QUOTE ====================",
+      );
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.submitPharmacyPrescriptionQuote}");
+      print(
+        "Body: {'prescription_id': $parsedId, 'quote_amount': $quoteAmount, 'items': $itemsStr, 'quote_expires_at': $quoteExpiresAt}",
+      );
+
+      final response = await DioClient().post(
+        ApiEndPoints.submitPharmacyPrescriptionQuote,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "============================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "============================================================================",
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      final isSuccess = dataMap != null
+          ? (dataMap['status'] == true ||
+                dataMap['status'].toString() == 'true')
+          : (response.statusCode == 200);
+
+      String? message;
+      if (dataMap != null && dataMap['message'] != null) {
+        final m = dataMap['message'];
+        if (m is Map) {
+          message =
+              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
+              ? m['message_en'].first.toString()
+              : m['message_en']?.toString();
+          if (message == null || message.isEmpty) {
+            message = m.values.first?.toString();
+          }
+        } else if (m is List && m.isNotEmpty) {
+          message = m.first.toString();
+        } else {
+          message = m.toString();
+        }
+      }
+      message ??= (isSuccess
+          ? 'Quotation created successfully'
+          : 'Failed to create quotation');
+
+      if (context != null && context.mounted) {
+        showToast(context, message);
+      } else {
+        Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+
+      if (isSuccess) {
+        await fetchPharmacyPrescriptions();
+        await fetchPharmacyPrescriptions(status: 'under_review');
+        await fetchPharmacyPrescriptions(status: 'reviewed');
+        await fetchPharmacyPrescriptions(status: 'quoted');
+        await fetchPharmacyOrders(tab: 'prescription', status: 2);
+        await fetchPharmacyHome();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint(
+        "==================== SUBMIT PHARMACY PRESCRIPTION QUOTE ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "==================================================================================",
+      );
+
+      print(
+        "==================== SUBMIT PHARMACY PRESCRIPTION QUOTE ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "==================================================================================",
+      );
+
+      final errorMsg = e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+      if (context != null && context.mounted) {
+        showToast(context, errorMsg);
+      } else {
+        Fluttertoast.showToast(
+          msg: errorMsg,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+      return false;
+    } finally {
+      isSubmittingQuote = false;
+      submittingQuotePrescriptionId = null;
       update();
     }
   }
@@ -926,10 +1957,14 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<bool> acceptPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+  Future<bool> acceptPharmacyOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
     if (orderId == null) return false;
-    final parsedId =
-        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    final parsedId = (orderId is int)
+        ? orderId
+        : int.tryParse(orderId.toString());
     if (parsedId == null) return false;
 
     isAcceptingOrder = true;
@@ -942,9 +1977,7 @@ class PharmacyHomeController extends GetxController {
         DioClient().updateToken(token);
       }
 
-      final queryParams = <String, dynamic>{
-        'order_id': parsedId,
-      };
+      final queryParams = <String, dynamic>{'order_id': parsedId};
 
       final url = _getAcceptPharmacyOrderUrl(queryParams);
       debugPrint(
@@ -992,11 +2025,14 @@ class PharmacyHomeController extends GetxController {
 
       final isSuccess = dataMap != null
           ? (dataMap['status'] == true ||
-              dataMap['status'].toString() == 'true')
+                dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      final message = dataMap?['message']?.toString() ??
-          (isSuccess ? 'Order accepted successfully' : 'Failed to accept order');
+      final message =
+          dataMap?['message']?.toString() ??
+          (isSuccess
+              ? 'Order accepted successfully'
+              : 'Failed to accept order');
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1080,10 +2116,17 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<bool> cancelPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
-    if (orderId == null) return false;
-    final parsedId =
-        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+  Future<bool> cancelPharmacyOrder(
+    dynamic orderId, {
+    bool isPrescription = false,
+    dynamic prescriptionId,
+    BuildContext? context,
+  }) async {
+    final targetId = prescriptionId ?? orderId;
+    if (targetId == null) return false;
+    final parsedId = (targetId is int)
+        ? targetId
+        : int.tryParse(targetId.toString());
     if (parsedId == null) return false;
 
     isCancellingOrder = true;
@@ -1097,7 +2140,10 @@ class PharmacyHomeController extends GetxController {
       }
 
       final queryParams = <String, dynamic>{
-        'order_id': parsedId,
+        if (isPrescription || prescriptionId != null)
+          'prescription_id': parsedId
+        else
+          'order_id': parsedId,
       };
 
       final url = _getCancelPharmacyOrderUrl(queryParams);
@@ -1146,11 +2192,33 @@ class PharmacyHomeController extends GetxController {
 
       final isSuccess = dataMap != null
           ? (dataMap['status'] == true ||
-              dataMap['status'].toString() == 'true')
+                dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      final message = dataMap?['message']?.toString() ??
-          (isSuccess ? 'Order cancelled successfully' : 'Failed to cancel order');
+      String? message;
+      if (dataMap != null && dataMap['message'] != null) {
+        final m = dataMap['message'];
+        if (m is Map) {
+          message =
+              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
+              ? m['message_en'].first.toString()
+              : m['message_en']?.toString();
+          if (message == null || message.isEmpty) {
+            message = m.values.first?.toString();
+          }
+        } else if (m is List && m.isNotEmpty) {
+          message = m.first.toString();
+        } else {
+          message = m.toString();
+        }
+      }
+      message ??= (isSuccess
+          ? (isPrescription || prescriptionId != null
+                ? 'Prescription cancelled successfully'
+                : 'Order cancelled successfully')
+          : (isPrescription || prescriptionId != null
+                ? 'Failed to cancel prescription'
+                : 'Failed to cancel order'));
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1166,8 +2234,14 @@ class PharmacyHomeController extends GetxController {
       }
 
       if (isSuccess) {
-        await fetchPharmacyOrders(status: 1);
-        await fetchPharmacyOrders(status: 10);
+        if (isPrescription || prescriptionId != null) {
+          await fetchPharmacyPrescriptions();
+          await fetchPharmacyPrescriptions(status: 'under_review');
+          await fetchPharmacyPrescriptions(status: 'reviewed');
+        } else {
+          await fetchPharmacyOrders(status: 1);
+          await fetchPharmacyOrders(status: 10);
+        }
         await fetchPharmacyHome();
         return true;
       }
@@ -1234,10 +2308,14 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<bool> preparePharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+  Future<bool> preparePharmacyOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
     if (orderId == null) return false;
-    final parsedId =
-        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    final parsedId = (orderId is int)
+        ? orderId
+        : int.tryParse(orderId.toString());
     if (parsedId == null) return false;
 
     isPreparingOrder = true;
@@ -1250,9 +2328,7 @@ class PharmacyHomeController extends GetxController {
         DioClient().updateToken(token);
       }
 
-      final queryParams = <String, dynamic>{
-        'order_id': parsedId,
-      };
+      final queryParams = <String, dynamic>{'order_id': parsedId};
 
       final url = _getPreparePharmacyOrderUrl(queryParams);
       debugPrint(
@@ -1300,10 +2376,11 @@ class PharmacyHomeController extends GetxController {
 
       final isSuccess = dataMap != null
           ? (dataMap['status'] == true ||
-              dataMap['status'].toString() == 'true')
+                dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      final message = dataMap?['message']?.toString() ??
+      final message =
+          dataMap?['message']?.toString() ??
           (isSuccess ? 'Order preparation started' : 'Failed to prepare order');
 
       if (context != null && context.mounted) {
@@ -1368,8 +2445,7 @@ class PharmacyHomeController extends GetxController {
     final base = rawBase.endsWith('/')
         ? rawBase.substring(0, rawBase.length - 1)
         : rawBase;
-    final endpoint =
-        ApiEndPoints.markAsReadyPharmacyOrder.trim().replaceFirst(
+    final endpoint = ApiEndPoints.markAsReadyPharmacyOrder.trim().replaceFirst(
       RegExp(r'^/'),
       '',
     );
@@ -1389,10 +2465,14 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
-  Future<bool> markAsReadyPharmacyOrder(dynamic orderId, {BuildContext? context}) async {
+  Future<bool> markAsReadyPharmacyOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
     if (orderId == null) return false;
-    final parsedId =
-        (orderId is int) ? orderId : int.tryParse(orderId.toString());
+    final parsedId = (orderId is int)
+        ? orderId
+        : int.tryParse(orderId.toString());
     if (parsedId == null) return false;
 
     isMarkingReadyOrder = true;
@@ -1405,9 +2485,7 @@ class PharmacyHomeController extends GetxController {
         DioClient().updateToken(token);
       }
 
-      final queryParams = <String, dynamic>{
-        'order_id': parsedId,
-      };
+      final queryParams = <String, dynamic>{'order_id': parsedId};
 
       final url = _getMarkAsReadyPharmacyOrderUrl(queryParams);
       debugPrint(
@@ -1457,11 +2535,14 @@ class PharmacyHomeController extends GetxController {
 
       final isSuccess = dataMap != null
           ? (dataMap['status'] == true ||
-              dataMap['status'].toString() == 'true')
+                dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      final message = dataMap?['message']?.toString() ??
-          (isSuccess ? 'Order marked as ready' : 'Failed to mark order as ready');
+      final message =
+          dataMap?['message']?.toString() ??
+          (isSuccess
+              ? 'Order marked as ready'
+              : 'Failed to mark order as ready');
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1541,6 +2622,27 @@ class PharmacyHomeController extends GetxController {
     if (!isOtcTab && selectedFilterIndex == 0) {
       fetchPharmacyPrescriptions();
       fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 1) {
+      fetchPharmacyPrescriptions(status: 'under_review');
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 2) {
+      fetchPharmacyPrescriptions(status: 'reviewed');
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 3) {
+      fetchPharmacyPrescriptions(status: 'quoted');
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 4) {
+      fetchPharmacyOrders(tab: 'prescription', status: 2);
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 5) {
+      fetchPharmacyOrders(tab: 'prescription', status: 3);
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 6) {
+      fetchPharmacyOrders(tab: 'prescription', status: 4);
+      fetchPharmacyHome();
+    } else if (!isOtcTab && selectedFilterIndex == 7) {
+      fetchPharmacyOrders(tab: 'prescription', status: 9);
+      fetchPharmacyHome();
     } else if (isOtcTab && selectedFilterIndex == 0) {
       fetchPharmacyOrders(status: 1);
       fetchPharmacyHome();
@@ -1569,6 +2671,7 @@ class PharmacyHomeController extends GetxController {
     selectedOrderType = 0;
     selectedFilterIndex = 2;
     update();
+    fetchPharmacyPrescriptions(status: 'reviewed');
     fetchPharmacyHome();
   }
 
@@ -1584,6 +2687,13 @@ class PharmacyHomeController extends GetxController {
       selectedOrderType = 0;
       selectedFilterIndex = 0;
       fetchPharmacyPrescriptions();
+      fetchPharmacyPrescriptions(status: 'under_review');
+      fetchPharmacyPrescriptions(status: 'reviewed');
+      fetchPharmacyPrescriptions(status: 'quoted');
+      fetchPharmacyOrders(tab: 'prescription', status: 2);
+      fetchPharmacyOrders(tab: 'prescription', status: 3);
+      fetchPharmacyOrders(tab: 'prescription', status: 4);
+      fetchPharmacyOrders(tab: 'prescription', status: 9);
       fetchPharmacyOrders(status: 1);
       fetchPharmacyOrders(status: 2);
       fetchPharmacyOrders(status: 3);

@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class PharmacyAddProductScreen extends StatefulWidget {
@@ -12,7 +14,8 @@ class PharmacyAddProductScreen extends StatefulWidget {
   static const Color field = Color(0xFFF3F4F6);
 
   @override
-  State<PharmacyAddProductScreen> createState() => _PharmacyAddProductScreenState();
+  State<PharmacyAddProductScreen> createState() =>
+      _PharmacyAddProductScreenState();
 }
 
 class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
@@ -30,6 +33,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
   String? _dosage;
   String _unit = 'Strip';
   bool _prescription = false;
+  final List<XFile> _selectedImages = [];
 
   @override
   void dispose() {
@@ -52,6 +56,129 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
     setState(() => _barcode.text = code);
   }
 
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sc) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select Image Source',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF1F2937),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFEBE4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt_outlined,
+                    color: PharmacyAddProductScreen.orange,
+                    size: 22,
+                  ),
+                ),
+                title: Text(
+                  'Camera',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: const Color(0xFF1F2937),
+                  ),
+                ),
+                subtitle: Text(
+                  'Take a new photo',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+                onTap: () => Navigator.of(sc).pop(ImageSource.camera),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFEBE4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.photo_library_outlined,
+                    color: PharmacyAddProductScreen.orange,
+                    size: 22,
+                  ),
+                ),
+                title: Text(
+                  'Gallery',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: const Color(0xFF1F2937),
+                  ),
+                ),
+                subtitle: Text(
+                  'Pick one or more images from gallery',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+                onTap: () => Navigator.of(sc).pop(ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    try {
+      if (source == ImageSource.gallery) {
+        final List<XFile> pickedList = await picker.pickMultiImage(
+          imageQuality: 85,
+        );
+        if (pickedList.isNotEmpty) {
+          setState(() {
+            _selectedImages.addAll(pickedList);
+          });
+        }
+      } else {
+        final XFile? picked = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 85,
+        );
+        if (picked != null) {
+          setState(() {
+            _selectedImages.add(picked);
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking images: $e');
+    }
+  }
+
   void _reset() {
     setState(() {
       _name.clear();
@@ -67,13 +194,16 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
       _dosage = null;
       _unit = 'Strip';
       _prescription = false;
+      _selectedImages.clear();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Container(
@@ -81,185 +211,222 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFFFEBE4),
-                Color(0xFFFFF4F0),
-                Color(0xFFFFFFFF),
-              ],
+              colors: [Color(0xFFFFEBE4), Color(0xFFFFF4F0), Color(0xFFFFFFFF)],
               stops: [0, 0.22, 0.42],
             ),
           ),
           child: Column(
-          children: [
-            SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-            _Header(onBack: () => Navigator.of(context).maybePop()),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                children: [
-                  const _FieldLabel('Product Image', color: Color(0xFF4B5563)),
-                  const SizedBox(height: 8),
-                  const _UploadBox(),
-                  const SizedBox(height: 14),
-                  _SectionCard(
-                    icon: Icons.info_outline,
-                    title: 'BASIC INFORMATION',
-                    child: Column(
+            children: [
+              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+              _Header(onBack: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _Labeled(
-                                label: 'Category',
-                                child: _SelectCategoryField(
-                                  value: _category,
-                                  items: const [
-                                    'Analgesics & Antipyretics',
-                                    'Medical Devices',
-                                    'Vitamins',
-                                  ],
-                                  onChanged: (value) => setState(() => _category = value),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _Labeled(
-                                label: 'Form',
-                                child: _SelectCategoryField(
-                                  value: _form,
-                                  items: const ['Tablet', 'Capsule', 'Syrup', 'Device'],
-                                  onChanged: (value) {
-                                    if (value != null) setState(() => _form = value);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
+                        const _FieldLabel(
+                          'Product Image',
+                          color: Color(0xFF4B5563),
                         ),
-                        const SizedBox(height: 12),
-                        _Labeled(
-                          label: 'Product Name (English)',
-                          child: _InputField(
-                            controller: _name,
-                            hint: 'e.g. Paracetamol 500mg',
+                        if (_selectedImages.isNotEmpty)
+                          Text(
+                            '${_selectedImages.length} image${_selectedImages.length > 1 ? "s" : ""} selected',
+                            style: GoogleFonts.inter(
+                              color: PharmacyAddProductScreen.orange,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _Labeled(
-                                label: 'Dosage',
-                                child: _SelectCategoryField(
-                                  value: _dosage,
-                                  items: const ['250mg', '500mg', '1000mg'],
-                                  onChanged: (value) => setState(() => _dosage = value),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _Labeled(
-                                label: 'Unit',
-                                child: _SelectCategoryField(
-                                  value: _unit,
-                                  items: const ['Strip', 'Box', 'Bottle', 'Piece'],
-                                  onChanged: (value) {
-                                    if (value != null) setState(() => _unit = value);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        _Labeled(
-                          label: 'Expiry Date',
-                          child: _InputField(
-                            controller: _expiry,
-                            hint: 'mm/dd/yyyy',
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _Labeled(
-                          label: 'Barcode',
-                          child: _InputField(
-                            controller: _barcode,
-                            hint: 'Scan or enter barcode',
-                            trailing: _BarcodeMark(onTap: _scanBarcode),
-                          ),
-                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  _PrescriptionCard(
-                    value: _prescription,
-                    onChanged: (value) => setState(() => _prescription = value),
-                  ),
-                  const SizedBox(height: 14),
-                  _DescriptionCard(controller: _description),
-                  const SizedBox(height: 14),
-                  _SectionCard(
-                    image: 'lib/pharmacy/Assets/images/currency.png',
-                    title: 'PRICING (MRU)',
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _Labeled(
-                            label: 'Selling Price',
-                            child: _PriceField(controller: _selling),
+                    const SizedBox(height: 8),
+                    if (_selectedImages.isEmpty)
+                      _UploadBox(onTap: _pickImages)
+                    else
+                      _ImagesPreviewList(
+                        images: _selectedImages,
+                        onAddMore: _pickImages,
+                        onRemove: (idx) {
+                          setState(() => _selectedImages.removeAt(idx));
+                        },
+                      ),
+                    const SizedBox(height: 14),
+                    _SectionCard(
+                      icon: Icons.info_outline,
+                      title: 'BASIC INFORMATION',
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _Labeled(
+                                  label: 'Category',
+                                  child: _SelectCategoryField(
+                                    value: _category,
+                                    items: const [
+                                      'Analgesics & Antipyretics',
+                                      'Medical Devices',
+                                      'Vitamins',
+                                    ],
+                                    onChanged: (value) =>
+                                        setState(() => _category = value),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _Labeled(
+                                  label: 'Form',
+                                  child: _SelectCategoryField(
+                                    value: _form,
+                                    items: const [
+                                      'Tablet',
+                                      'Capsule',
+                                      'Syrup',
+                                      'Device',
+                                    ],
+                                    onChanged: (value) {
+                                      if (value != null)
+                                        setState(() => _form = value);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _Labeled(
-                            label: 'Offer Price',
-                            child: _PriceField(controller: _offer),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _SectionCard(
-                    leading: const _InventoryIcon(),
-                    background: const Color(0xFFFFF8F6),
-                    titleColor: const Color(0xFF3F4753),
-                    title: 'INVENTORY CONTROL',
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _Labeled(
-                            label: 'Available Stock',
+                          const SizedBox(height: 12),
+                          _Labeled(
+                            label: 'Product Name (English)',
                             child: _InputField(
-                              controller: _stock,
-                              suffix: _unit,
-                              suffixColor: const Color(0xFF1F2937),
-                              keyboard: TextInputType.number,
+                              controller: _name,
+                              hint: 'e.g. Paracetamol 500mg',
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _Labeled(
-                            label: 'Low Stock Alert',
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _Labeled(
+                                  label: 'Dosage',
+                                  child: _SelectCategoryField(
+                                    value: _dosage,
+                                    items: const ['250mg', '500mg', '1000mg'],
+                                    onChanged: (value) =>
+                                        setState(() => _dosage = value),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _Labeled(
+                                  label: 'Unit',
+                                  child: _SelectCategoryField(
+                                    value: _unit,
+                                    items: const [
+                                      'Strip',
+                                      'Box',
+                                      'Bottle',
+                                      'Piece',
+                                    ],
+                                    onChanged: (value) {
+                                      if (value != null)
+                                        setState(() => _unit = value);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          _Labeled(
+                            label: 'Expiry Date',
                             child: _InputField(
-                              controller: _lowStock,
-                              keyboard: TextInputType.number,
+                              controller: _expiry,
+                              hint: 'mm/dd/yyyy',
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          _Labeled(
+                            label: 'Barcode',
+                            child: _InputField(
+                              controller: _barcode,
+                              hint: 'Scan or enter barcode',
+                              trailing: _BarcodeMark(onTap: _scanBarcode),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    _PrescriptionCard(
+                      value: _prescription,
+                      onChanged: (value) =>
+                          setState(() => _prescription = value),
+                    ),
+                    const SizedBox(height: 14),
+                    _DescriptionCard(controller: _description),
+                    const SizedBox(height: 14),
+                    _SectionCard(
+                      image: 'lib/pharmacy/Assets/images/currency.png',
+                      title: 'PRICING (MRU)',
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _Labeled(
+                              label: 'Selling Price',
+                              child: _PriceField(controller: _selling),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _Labeled(
+                              label: 'Offer Price',
+                              child: _PriceField(controller: _offer),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _SectionCard(
+                      leading: const _InventoryIcon(),
+                      background: const Color(0xFFFFF8F6),
+                      titleColor: const Color(0xFF3F4753),
+                      title: 'INVENTORY CONTROL',
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _Labeled(
+                              label: 'Available Stock',
+                              child: _InputField(
+                                controller: _stock,
+                                suffix: _unit,
+                                suffixColor: const Color(0xFF1F2937),
+                                keyboard: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _Labeled(
+                              label: 'Low Stock Alert',
+                              child: _InputField(
+                                controller: _lowStock,
+                                keyboard: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            _BottomActions(onReset: _reset),
-          ],
-        ),
+              _BottomActions(onReset: _reset),
+            ],
+          ),
         ),
       ),
     );
@@ -299,11 +466,16 @@ class _BottomActions extends StatelessWidget {
                   foregroundColor: const Color(0xFF334155),
                   elevation: 0,
                   shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: Text(
                   'Reset',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ),
@@ -319,11 +491,16 @@ class _BottomActions extends StatelessWidget {
                   foregroundColor: Colors.white,
                   elevation: 4,
                   shadowColor: const Color(0xFFFF5317).withValues(alpha: 0.35),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: Text(
                   'Save Product',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ),
@@ -386,39 +563,164 @@ class _Header extends StatelessWidget {
 }
 
 class _UploadBox extends StatelessWidget {
-  const _UploadBox();
+  const _UploadBox({this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: const _DashedPainter(),
-      child: SizedBox(
-        width: double.infinity,
-        height: 156,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const _UploadIcon(),
-            const SizedBox(height: 12),
-            Text(
-              'Tap to upload image',
-              style: GoogleFonts.inter(
-                color: const Color(0xFF394452),
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
-              ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: CustomPaint(
+          painter: const _DashedPainter(),
+          child: SizedBox(
+            width: double.infinity,
+            height: 156,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const _UploadIcon(),
+                const SizedBox(height: 12),
+                Text(
+                  'Tap to upload image',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF394452),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'PNG, JPG up to 5MB',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF8A8B98),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              'PNG, JPG up to 5MB',
-              style: GoogleFonts.inter(
-                color: const Color(0xFF8A8B98),
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
-              ),
-            ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _ImagesPreviewList extends StatelessWidget {
+  const _ImagesPreviewList({
+    required this.images,
+    required this.onAddMore,
+    required this.onRemove,
+  });
+
+  final List<XFile> images;
+  final VoidCallback onAddMore;
+  final ValueChanged<int> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 110,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: images.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          if (index == images.length) {
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onAddMore,
+                borderRadius: BorderRadius.circular(14),
+                child: CustomPaint(
+                  painter: const _DashedPainter(radius: 14),
+                  child: Container(
+                    width: 95,
+                    height: 110,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF8F6),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFD7E9F8),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.add_a_photo_outlined,
+                            color: PharmacyAddProductScreen.orange,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Add More',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF394452),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          final img = images[index];
+          return Stack(
+            children: [
+              Container(
+                width: 95,
+                height: 110,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.file(
+                    File(img.path),
+                    width: 95,
+                    height: 110,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: () => onRemove(index),
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -446,7 +748,9 @@ class _UploadIcon extends StatelessWidget {
 }
 
 class _DashedPainter extends CustomPainter {
-  const _DashedPainter();
+  const _DashedPainter({this.radius = 18});
+
+  final double radius;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -458,7 +762,7 @@ class _DashedPainter extends CustomPainter {
       ..addRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(1, 1, size.width - 2, size.height - 2),
-          const Radius.circular(18),
+          Radius.circular(radius),
         ),
       );
     for (final metric in path.computeMetrics()) {
@@ -614,11 +918,7 @@ class _Labeled extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _FieldLabel(label),
-        const SizedBox(height: 6),
-        child,
-      ],
+      children: [_FieldLabel(label), const SizedBox(height: 6), child],
     );
   }
 }
@@ -684,33 +984,35 @@ class _SelectCategoryField extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: InputDecorator(
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Color(0xFFF2F4F6),
-          isDense: true,
-          contentPadding: EdgeInsets.fromLTRB(14, 13, 8, 13),
-          suffixIcon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 18,
-            color: Color(0xFF7C828F),
+          decoration: const InputDecoration(
+            filled: true,
+            fillColor: Color(0xFFF2F4F6),
+            isDense: true,
+            contentPadding: EdgeInsets.fromLTRB(14, 13, 8, 13),
+            suffixIcon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 18,
+              color: Color(0xFF7C828F),
+            ),
+            suffixIconConstraints: BoxConstraints(minWidth: 28, minHeight: 18),
+            border: _border,
+            enabledBorder: _border,
+            focusedBorder: _border,
           ),
-          suffixIconConstraints: BoxConstraints(minWidth: 28, minHeight: 18),
-          border: _border,
-          enabledBorder: _border,
-          focusedBorder: _border,
-        ),
-        child: Text(
-          value ?? 'Select Category',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.inter(
-            color: value == null ? const Color(0xFF7C828F) : const Color(0xFF1F2937),
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            height: 1.2,
+          child: Text(
+            value ?? 'Select Category',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              color: value == null
+                  ? const Color(0xFF7C828F)
+                  : const Color(0xFF1F2937),
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              height: 1.2,
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -845,7 +1147,9 @@ class _PriceField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               style: GoogleFonts.inter(
                 color: const Color(0xFF3F4753),
                 fontWeight: FontWeight.w700,
@@ -999,7 +1303,10 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
               width: 260,
               height: 160,
               decoration: BoxDecoration(
-                border: Border.all(color: PharmacyAddProductScreen.orange, width: 2),
+                border: Border.all(
+                  color: PharmacyAddProductScreen.orange,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
@@ -1043,11 +1350,21 @@ class _InventoryIconPainter extends CustomPainter {
       ..strokeWidth = 1.3
       ..strokeJoin = StrokeJoin.round;
     final lid = RRect.fromRectAndRadius(
-      Rect.fromLTWH(size.width * 0.06, size.height * 0.04, size.width * 0.88, size.height * 0.30),
+      Rect.fromLTWH(
+        size.width * 0.06,
+        size.height * 0.04,
+        size.width * 0.88,
+        size.height * 0.30,
+      ),
       const Radius.circular(1.2),
     );
     final body = RRect.fromRectAndRadius(
-      Rect.fromLTWH(size.width * 0.12, size.height * 0.40, size.width * 0.76, size.height * 0.54),
+      Rect.fromLTWH(
+        size.width * 0.12,
+        size.height * 0.40,
+        size.width * 0.76,
+        size.height * 0.54,
+      ),
       const Radius.circular(1.2),
     );
     canvas.drawRRect(lid, paint);
