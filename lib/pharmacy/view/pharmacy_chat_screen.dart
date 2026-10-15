@@ -234,7 +234,8 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
               ),
               const SizedBox(height: 6),
               Expanded(
-                child: (_isLoading || controller.isLoadingConversations) &&
+                child:
+                    (_isLoading || controller.isLoadingConversations) &&
                         _threads.isEmpty
                     ? const Center(
                         child: CircularProgressIndicator(
@@ -278,6 +279,12 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
                                       _MessageTile(
                                         thread: thread,
                                         onTap: () async {
+                                          if (thread.conversationId > 0) {
+                                            controller.markAsRead(
+                                              conversationId:
+                                                  thread.conversationId,
+                                            );
+                                          }
                                           await PharmacyChatScreen.open(
                                             context,
                                             customerName: thread.name,
@@ -681,19 +688,27 @@ class _ChatItem {
   final String? audioDuration;
   final bool isRead;
   final bool isDelivered;
+  final int? id;
+  final int? conversationId;
 
-  const _ChatItem.incoming({required this.text, required this.time})
-    : isIncoming = true,
-      isAudio = false,
-      audioDuration = null,
-      isRead = false,
-      isDelivered = true;
+  const _ChatItem.incoming({
+    required this.text,
+    required this.time,
+    this.id,
+    this.conversationId,
+  }) : isIncoming = true,
+       isAudio = false,
+       audioDuration = null,
+       isRead = false,
+       isDelivered = true;
 
   const _ChatItem.outgoing({
     required this.text,
     required this.time,
     this.isRead = false,
     this.isDelivered = true,
+    this.id,
+    this.conversationId,
   }) : isIncoming = false,
        isAudio = false,
        audioDuration = null;
@@ -703,6 +718,8 @@ class _ChatItem {
     required this.time,
     this.isRead = false,
     this.isDelivered = true,
+    this.id,
+    this.conversationId,
   }) : isIncoming = false,
        isAudio = true,
        audioDuration = duration,
@@ -770,6 +787,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
   String? _customerName;
 
   final List<_ChatItem> _messages = [];
+  final Set<int> _markedMessageIds = {};
 
   @override
   void initState() {
@@ -864,6 +882,21 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
       list.add(_mapMessageToChatItem(msg));
     }
 
+    // Use 'markAsRead' api to mark incoming messages as read
+    for (final msg in rawMessages) {
+      final msgId = msg.id;
+      final convId = msg.conversationId ?? _activeConversationId;
+      if (msg.senderType != 'vendor') {
+        if (msgId != null && msgId > 0 && !_markedMessageIds.contains(msgId)) {
+          _markedMessageIds.add(msgId);
+          _chatController.markAsRead(conversationId: convId, messageId: msgId);
+        }
+      }
+    }
+    if (_activeConversationId > 0) {
+      _chatController.markAsRead(conversationId: _activeConversationId);
+    }
+
     setState(() {
       _messages
         ..clear()
@@ -886,6 +919,8 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
         time: timeStr,
         isRead: isRead,
         isDelivered: isDelivered,
+        id: msg.id,
+        conversationId: msg.conversationId,
       );
     } else if (isVendor) {
       return _ChatItem.outgoing(
@@ -893,9 +928,16 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
         time: timeStr,
         isRead: isRead,
         isDelivered: isDelivered,
+        id: msg.id,
+        conversationId: msg.conversationId,
       );
     } else {
-      return _ChatItem.incoming(text: msg.message ?? '', time: timeStr);
+      return _ChatItem.incoming(
+        text: msg.message ?? '',
+        time: timeStr,
+        id: msg.id,
+        conversationId: msg.conversationId,
+      );
     }
   }
 
@@ -1059,6 +1101,21 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
                                     );
                                   }
                                   final msg = _messages[index - 1];
+                                  if (msg.isIncoming &&
+                                      msg.id != null &&
+                                      msg.id! > 0 &&
+                                      !_markedMessageIds.contains(msg.id!)) {
+                                    _markedMessageIds.add(msg.id!);
+                                    final convId =
+                                        msg.conversationId ??
+                                        _activeConversationId;
+                                    if (convId > 0) {
+                                      _chatController.markAsRead(
+                                        conversationId: convId,
+                                        messageId: msg.id!,
+                                      );
+                                    }
+                                  }
                                   Widget bubble;
                                   if (msg.isAudio) {
                                     bubble = _AudioBubble(
@@ -1380,11 +1437,7 @@ class _OutgoingBubble extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 3),
-            Icon(
-              tickIcon,
-              size: 15,
-              color: tickColor,
-            ),
+            Icon(tickIcon, size: 15, color: tickColor),
           ],
         ),
       ],
@@ -1528,11 +1581,7 @@ class _AudioBubble extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 3),
-            Icon(
-              tickIcon,
-              size: 15,
-              color: tickColor,
-            ),
+            Icon(tickIcon, size: 15, color: tickColor),
           ],
         ),
       ],

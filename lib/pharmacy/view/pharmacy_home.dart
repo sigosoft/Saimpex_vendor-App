@@ -16,6 +16,7 @@ import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 
 class PharmacyHome extends StatefulWidget {
   const PharmacyHome({super.key});
@@ -42,45 +43,49 @@ class _PharmacyHomeState extends State<PharmacyHome> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<PharmacyHomeController>(
-      builder: (_) => Theme(
-        data: ThemeData(
-          useMaterial3: true,
-          scaffoldBackgroundColor: AppColors.backgroundTop,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primaryOrange,
-            surface: AppColors.card,
+      builder: (_) => Directionality(
+        textDirection: LocalizationService().getTextDirection(),
+        child: Theme(
+          data: ThemeData(
+            useMaterial3: true,
+            scaffoldBackgroundColor: AppColors.backgroundTop,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.primaryOrange,
+              surface: AppColors.card,
+            ),
           ),
-        ),
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.dark.copyWith(
-            statusBarColor: Colors.transparent,
-          ),
-          child: Scaffold(
-            backgroundColor: controller.bottomNavIndex == 2
-                ? Colors.white
-                : const Color(0xFFF7F7F7),
-            body: Column(
-              children: [
-                Expanded(
-                  child: switch (controller.bottomNavIndex) {
-                    0 => _buildHomeTab(context),
-                    1 => _buildOrdersTab(context),
-                    2 => PharmacyMessagesTab(
-                      onBack: () => controller.onBottomNavSelect(0),
-                    ),
-                    3 => PharmacyInventoryTab(
-                      onBack: () => controller.onBottomNavSelect(0),
-                    ),
-                    _ => PharmacyAccountScreen(
-                      onBack: () => controller.onBottomNavSelect(0),
-                    ),
-                  },
-                ),
-                _BottomNav(
-                  selectedIndex: controller.bottomNavIndex,
-                  onSelect: controller.onBottomNavSelect,
-                ),
-              ],
+          child: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.dark.copyWith(
+              statusBarColor: Colors.transparent,
+            ),
+            child: Scaffold(
+              backgroundColor: controller.bottomNavIndex == 2
+                  ? Colors.white
+                  : const Color(0xFFF7F7F7),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: switch (controller.bottomNavIndex) {
+                      0 => _buildHomeTab(context),
+                      1 => _buildOrdersTab(context),
+                      2 => PharmacyMessagesTab(
+                        onBack: () => controller.onBottomNavSelect(0),
+                      ),
+                      3 => PharmacyInventoryTab(
+                        onBack: () => controller.onBottomNavSelect(0),
+                      ),
+                      _ => PharmacyAccountScreen(
+                        onBack: () => controller.onBottomNavSelect(0),
+                      ),
+                    },
+                  ),
+                  _BottomNav(
+                    selectedIndex: controller.bottomNavIndex,
+                    onSelect: controller.onBottomNavSelect,
+                    unreadChatCount: controller.unreadChatCount,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -338,9 +343,9 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Text(
-                    'Orders',
-                    style: TextStyle(
+                  Text(
+                    LocalizationService.tr('Orders'),
+                    style: const TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w700,
                       fontSize: 17,
@@ -486,9 +491,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                   );
                 } else if (!controller.isOtcTab &&
                     controller.selectedFilterIndex == 3) {
-                  await controller.fetchPharmacyPrescriptions(
-                    status: 'quoted',
-                  );
+                  await controller.fetchPharmacyPrescriptions(status: 'quoted');
                 } else if (!controller.isOtcTab &&
                     controller.selectedFilterIndex == 4) {
                   await controller.fetchPharmacyOrders(
@@ -685,7 +688,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             specialNotes: item.note,
             phone: item.displayPhone,
             prescriptionId: rawPrescriptionId,
-            isMarkingReviewedAction: controller.isMarkingPrescriptionReviewed &&
+            isMarkingReviewedAction:
+                controller.isMarkingPrescriptionReviewed &&
                 controller.markingPrescriptionReviewedId == rawPrescriptionId,
             onMarkAsReviewed: rawPrescriptionId != null
                 ? () => controller.markPharmacyPrescriptionReviewed(
@@ -856,9 +860,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       }
 
       final widgets = <Widget>[];
-      for (int i = 0;
-          i < controller.prescriptionToPrepareOrdersList.length;
-          i++) {
+      for (
+        int i = 0;
+        i < controller.prescriptionToPrepareOrdersList.length;
+        i++
+      ) {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
@@ -911,9 +917,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       }
 
       final widgets = <Widget>[];
-      for (int i = 0;
-          i < controller.prescriptionPreparingOrdersList.length;
-          i++) {
+      for (
+        int i = 0;
+        i < controller.prescriptionPreparingOrdersList.length;
+        i++
+      ) {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
@@ -966,9 +974,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       }
 
       final widgets = <Widget>[];
-      for (int i = 0;
-          i < controller.prescriptionReadyOrdersList.length;
-          i++) {
+      for (int i = 0; i < controller.prescriptionReadyOrdersList.length; i++) {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
@@ -1022,9 +1028,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       }
 
       final widgets = <Widget>[];
-      for (int i = 0;
-          i < controller.prescriptionDeliveredOrdersList.length;
-          i++) {
+      for (
+        int i = 0;
+        i < controller.prescriptionDeliveredOrdersList.length;
+        i++
+      ) {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
@@ -1810,7 +1818,9 @@ class _StoreStatusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isOpen ? 'Open • Accepting orders' : 'Closed • Not accepting',
+                  isOpen
+                      ? LocalizationService.tr('Open • Accepting orders')
+                      : LocalizationService.tr('Closed • Not accepting'),
                   style: TextStyle(
                     color: isOpen ? AppColors.iconGreen : AppColors.error,
                     fontWeight: FontWeight.w700,
@@ -1818,9 +1828,9 @@ class _StoreStatusCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'Today: 08:00 - 22:00',
-                  style: TextStyle(
+                Text(
+                  LocalizationService.tr('Today: 08:00 - 22:00'),
+                  style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -1881,7 +1891,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: newPrescriptions,
-                label: 'New prescriptions',
+                label: LocalizationService.tr('New prescriptions'),
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -1894,7 +1904,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: newOtcOrders,
-                label: 'New OTC orders',
+                label: LocalizationService.tr('New OTC orders'),
                 badgeColor: const Color(0xFFB2DFDB),
                 countColor: const Color(0xFF00695C),
               ),
@@ -1907,7 +1917,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: preparing,
-                label: 'Preparing',
+                label: LocalizationService.tr('Preparing'),
                 badgeColor: const Color(0xFFFFB300),
                 countColor: Colors.white,
               ),
@@ -1916,7 +1926,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: ready,
-                label: 'Ready',
+                label: LocalizationService.tr('Ready'),
                 badgeColor: const Color(0xFF43A047),
                 countColor: Colors.white,
               ),
@@ -2016,16 +2026,22 @@ class _TotalsRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _TotalItem(title: 'ORDERS', value: orders),
-          ),
-          const _VDivider(),
-          Expanded(
-            child: _TotalItem(title: 'COMPLETED', value: completed),
+            child: _TotalItem(
+              title: LocalizationService.tr('ORDERS'),
+              value: orders,
+            ),
           ),
           const _VDivider(),
           Expanded(
             child: _TotalItem(
-              title: 'REVENUE',
+              title: LocalizationService.tr('COMPLETED'),
+              value: completed,
+            ),
+          ),
+          const _VDivider(),
+          Expanded(
+            child: _TotalItem(
+              title: LocalizationService.tr('REVENUE'),
               value: revenue,
               suffix: 'MRU',
               showTrend: true,
@@ -2126,9 +2142,9 @@ class _OrdersHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
-          'ORDERS',
-          style: TextStyle(
+        Text(
+          LocalizationService.tr('ORDERS'),
+          style: const TextStyle(
             color: AppColors.textDark,
             fontSize: 15,
             fontWeight: FontWeight.w800,
@@ -2138,9 +2154,9 @@ class _OrdersHeader extends StatelessWidget {
         const Spacer(),
         GestureDetector(
           onTap: onSeeAll,
-          child: const Text(
-            'See All',
-            style: TextStyle(
+          child: Text(
+            LocalizationService.tr('See All'),
+            style: const TextStyle(
               color: AppColors.primaryOrange,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -2186,7 +2202,7 @@ class _OrderTypeTabs extends StatelessWidget {
         children: [
           Expanded(
             child: _TypeTab(
-              label: 'Prescription',
+              label: LocalizationService.tr('Prescription'),
               selected: selectedIndex == 0,
               badge: selectedIndex == 0 ? prescriptionBadge : null,
               onTap: () => onSelect(0),
@@ -2194,7 +2210,7 @@ class _OrderTypeTabs extends StatelessWidget {
           ),
           Expanded(
             child: _TypeTab(
-              label: 'OTC',
+              label: LocalizationService.tr('OTC'),
               selected: selectedIndex == 1,
               badge: selectedIndex == 1 ? otcBadge : null,
               onTap: () => onSelect(1),
@@ -2434,7 +2450,7 @@ class _StatusFiltersState extends State<_StatusFilters> {
                           : Border.all(color: const Color(0xFFE0E0E0)),
                     ),
                     child: Text(
-                      widget.filters[index],
+                      LocalizationService.tr(widget.filters[index]),
                       style: TextStyle(
                         color: selected
                             ? Colors.white
@@ -2784,8 +2800,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed:
                             (isRejectingAction ||
-                             isReviewingAction ||
-                             isMarkingReviewedAction)
+                                isReviewingAction ||
+                                isMarkingReviewedAction)
                             ? null
                             : () {
                                 if (onReject != null) {
@@ -2849,11 +2865,13 @@ class _PrescriptionOrderCard extends StatelessWidget {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: (isReviewingAction || isMarkingReviewedAction)
+                          onPressed:
+                              (isReviewingAction || isMarkingReviewedAction)
                               ? null
                               : (_isReviewCompleted
                                     ? openQuotation
-                                    : (_isUnderReview && onMarkAsReviewed != null)
+                                    : (_isUnderReview &&
+                                          onMarkAsReviewed != null)
                                     ? onMarkAsReviewed
                                     : (status ==
                                               PharmacyPrescriptionCardStatus
@@ -2933,8 +2951,9 @@ class _PrescriptionThumb extends StatelessWidget {
       return '$origin/$str';
     }
     if (str.startsWith('/')) {
-      final cleanBase =
-          base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+      final cleanBase = base.endsWith('/')
+          ? base.substring(0, base.length - 1)
+          : base;
       return '$cleanBase$str';
     }
     final cleanBase = base.endsWith('/') ? base : '$base/';
@@ -3157,10 +3176,11 @@ class _ToPrepareCard extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: [
-                              if (orderCode.isNotEmpty) orderCode,
-                              if (timeAgo.isNotEmpty) timeAgo,
-                            ].isNotEmpty
+                            text:
+                                [
+                                  if (orderCode.isNotEmpty) orderCode,
+                                  if (timeAgo.isNotEmpty) timeAgo,
+                                ].isNotEmpty
                                 ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
                                 : '',
                             style: const TextStyle(
@@ -3276,8 +3296,8 @@ class _ToPrepareCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                    ? 'Prescription $orderCode'
-                                    : 'Prescription'),
+                                      ? 'Prescription $orderCode'
+                                      : 'Prescription'),
                             style: const TextStyle(
                               color: _name,
                               fontSize: 13.5,
@@ -3513,10 +3533,11 @@ class _PreparingCard extends StatelessWidget {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: [
-                                        if (orderCode.isNotEmpty) orderCode,
-                                        if (timeAgo.isNotEmpty) timeAgo,
-                                      ].isNotEmpty
+                                      text:
+                                          [
+                                            if (orderCode.isNotEmpty) orderCode,
+                                            if (timeAgo.isNotEmpty) timeAgo,
+                                          ].isNotEmpty
                                           ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
                                           : '',
                                       style: const TextStyle(
@@ -3560,8 +3581,8 @@ class _PreparingCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                    ? 'Prescription $orderCode'
-                                    : 'Prescription'),
+                                      ? 'Prescription $orderCode'
+                                      : 'Prescription'),
                             style: const TextStyle(
                               color: _name,
                               fontSize: 13.5,
@@ -3622,9 +3643,7 @@ class _PreparingCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      isCashOnDelivery
-                          ? 'Cash on Delivery'
-                          : 'Online Payment',
+                      isCashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
                       style: const TextStyle(
                         color: _orange,
                         fontSize: 13,
@@ -3838,12 +3857,13 @@ class _ReadyCard extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: [
-                                        if (orderCode.isNotEmpty) orderCode,
-                                        if (timeAgo.isNotEmpty) timeAgo,
-                                      ].isNotEmpty
-                                          ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
-                                          : '',
+                                    text:
+                                        [
+                                          if (orderCode.isNotEmpty) orderCode,
+                                          if (timeAgo.isNotEmpty) timeAgo,
+                                        ].isNotEmpty
+                                        ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
+                                        : '',
                                     style: const TextStyle(
                                       color: _meta,
                                       fontSize: 12.5,
@@ -3885,8 +3905,8 @@ class _ReadyCard extends StatelessWidget {
                                   prescriptionFileName!.trim().isNotEmpty)
                               ? prescriptionFileName!.trim()
                               : (orderCode.trim().isNotEmpty
-                                  ? 'Prescription $orderCode'
-                                  : 'Prescription'),
+                                    ? 'Prescription $orderCode'
+                                    : 'Prescription'),
                           style: const TextStyle(
                             color: _name,
                             fontSize: 13.5,
@@ -4204,12 +4224,13 @@ class _DeliveredCard extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: [
-                                        if (orderCode.isNotEmpty) orderCode,
-                                        if (timeAgo.isNotEmpty) timeAgo,
-                                      ].isNotEmpty
-                                          ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
-                                          : '',
+                                    text:
+                                        [
+                                          if (orderCode.isNotEmpty) orderCode,
+                                          if (timeAgo.isNotEmpty) timeAgo,
+                                        ].isNotEmpty
+                                        ? '  • ${[if (orderCode.isNotEmpty) orderCode, if (timeAgo.isNotEmpty) timeAgo].join(' • ')}'
+                                        : '',
                                     style: const TextStyle(
                                       color: _meta,
                                       fontSize: 12.5,
@@ -4251,8 +4272,8 @@ class _DeliveredCard extends StatelessWidget {
                                   prescriptionFileName!.trim().isNotEmpty)
                               ? prescriptionFileName!.trim()
                               : (orderCode.trim().isNotEmpty
-                                  ? 'Prescription $orderCode'
-                                  : 'Prescription'),
+                                    ? 'Prescription $orderCode'
+                                    : 'Prescription'),
                           style: const TextStyle(
                             color: _name,
                             fontSize: 13.5,
@@ -4313,9 +4334,7 @@ class _DeliveredCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    isCashOnDelivery
-                        ? 'Cash on Delivery'
-                        : 'Online Payment',
+                    isCashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
                     style: const TextStyle(
                       color: _orange,
                       fontSize: 13,
@@ -4515,9 +4534,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             [
-                              if (orderCode.isNotEmpty) orderCode,
-                              if (timeAgo.isNotEmpty) timeAgo,
-                            ].isNotEmpty
+                                  if (orderCode.isNotEmpty) orderCode,
+                                  if (timeAgo.isNotEmpty) timeAgo,
+                                ].isNotEmpty
                                 ? [
                                     if (orderCode.isNotEmpty) orderCode,
                                     if (timeAgo.isNotEmpty) timeAgo,
@@ -4559,8 +4578,8 @@ class _AwaitingPaymentCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                    ? 'Prescription $orderCode'
-                                    : 'Prescription'),
+                                      ? 'Prescription $orderCode'
+                                      : 'Prescription'),
                             style: const TextStyle(
                               color: _nameColor,
                               fontSize: 13.5,
@@ -4622,8 +4641,8 @@ class _AwaitingPaymentCard extends StatelessWidget {
                           (quotationAmount != null &&
                                   quotationAmount!.isNotEmpty)
                               ? (quotationAmount!.contains('MRU')
-                                  ? quotationAmount!
-                                  : '$quotationAmount MRU')
+                                    ? quotationAmount!
+                                    : '$quotationAmount MRU')
                               : '0 MRU',
                           style: const TextStyle(
                             color: _nameColor,
@@ -5620,10 +5639,15 @@ class _OtcOrderCard extends StatelessWidget {
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.selectedIndex, required this.onSelect});
+  const _BottomNav({
+    required this.selectedIndex,
+    required this.onSelect,
+    this.unreadChatCount = 0,
+  });
 
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+  final int unreadChatCount;
 
   @override
   Widget build(BuildContext context) {
@@ -5669,42 +5693,79 @@ class _BottomNav extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 220),
-                        child: selected
-                            ? Container(
-                                key: const ValueKey('selected'),
-                                width: 40,
-                                height: 40,
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryOrange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: _NavIcon(
-                                  asset: asset,
-                                  fallback: fallbacks[index],
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              )
-                            : SizedBox(
-                                key: const ValueKey('idle'),
-                                width: 40,
-                                height: 40,
-                                child: Center(
-                                  child: _NavIcon(
-                                    asset: asset,
-                                    fallback: fallbacks[index],
-                                    color: AppColors.navInactive,
-                                    size: asset == null ? 28 : 24,
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 220),
+                            child: selected
+                                ? Container(
+                                    key: const ValueKey('selected'),
+                                    width: 40,
+                                    height: 40,
+                                    alignment: Alignment.center,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryOrange,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: _NavIcon(
+                                      asset: asset,
+                                      fallback: fallbacks[index],
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  )
+                                : SizedBox(
+                                    key: const ValueKey('idle'),
+                                    width: 40,
+                                    height: 40,
+                                    child: Center(
+                                      child: _NavIcon(
+                                        asset: asset,
+                                        fallback: fallbacks[index],
+                                        color: AppColors.navInactive,
+                                        size: asset == null ? 28 : 24,
+                                      ),
+                                    ),
                                   ),
+                          ),
+                          if (index == 2 && unreadChatCount > 0)
+                            Positioned(
+                              top: -2,
+                              right: -4,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEF4444),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  unreadChatCount > 99
+                                      ? '99+'
+                                      : unreadChatCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    height: 1,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        labels[index],
+                        LocalizationService.tr(labels[index]),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: selected

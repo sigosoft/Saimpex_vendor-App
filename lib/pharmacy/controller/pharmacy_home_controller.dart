@@ -16,6 +16,7 @@ class PharmacyHomeController extends GetxController {
   int selectedOrderType = 0;
   int selectedFilterIndex = 0;
   int bottomNavIndex = 0;
+  int unreadChatCount = 0;
   final searchController = TextEditingController();
 
   HomeModel? homeData;
@@ -127,6 +128,7 @@ class PharmacyHomeController extends GetxController {
     fetchPharmacyOrders(status: 9);
     fetchPharmacyOrders(status: 10);
     fetchPharmacyHome();
+    fetchUnreadChatCount();
   }
 
   bool get isOtcTab => selectedOrderType == 1;
@@ -2680,9 +2682,71 @@ class PharmacyHomeController extends GetxController {
     update();
   }
 
+  Future<void> fetchUnreadChatCount() async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isEmpty || token == "null") return;
+      DioClient().updateToken(token);
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      final cleanEndpoint = ApiEndPoints.totalUnreadMessagesCount.replaceFirst(
+        RegExp(r'^/'),
+        '',
+      );
+      final fullUrl = "$base/$cleanEndpoint";
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      debugPrint(
+        "==================== GET VENDOR CHAT TOTAL UNREAD MESSAGES COUNT ====================",
+      );
+      debugPrint("API Call: GET $fullUrl");
+      debugPrint("Header: $headers");
+
+      print(
+        "==================== GET VENDOR CHAT TOTAL UNREAD MESSAGES COUNT ====================",
+      );
+      print("API Call: GET $fullUrl");
+      print("Header: $headers");
+
+      final response = await DioClient().get(
+        ApiEndPoints.totalUnreadMessagesCount,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "====================================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "====================================================================================",
+      );
+
+      if (response.data != null &&
+          response.data is Map &&
+          response.data['status'] == true) {
+        final count = response.data['data']?['total_unread_messages_count'];
+        unreadChatCount = (count is int)
+            ? count
+            : int.tryParse(count?.toString() ?? '0') ?? 0;
+        update();
+      }
+    } catch (e) {
+      debugPrint("fetchUnreadChatCount error: $e");
+    }
+  }
+
   void onBottomNavSelect(int index) {
     if (index == bottomNavIndex) return;
     bottomNavIndex = index;
+    fetchUnreadChatCount();
     if (index == 0 || index == 1) {
       selectedOrderType = 0;
       selectedFilterIndex = 0;

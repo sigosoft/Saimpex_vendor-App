@@ -12,6 +12,7 @@ import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/Utils.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:saimpex_vendor/view/splash/Splash.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'generated/l10n.dart';
 
 // localization.translate('ar');
@@ -26,6 +27,10 @@ void main() async {
 
   String? langCode = await getSavedObject("selected_locale") ?? "en";
   Locale locale = Locale(langCode!);
+  LocalizationService.init(langCode);
+  try {
+    await S.load(locale);
+  } catch (_) {}
   // print("locale: "+langCode);
   FlutterLocalization.instance.init(
     mapLocales: [
@@ -77,6 +82,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    LocalizationService.init(widget.initialLocale.languageCode);
+    FlutterLocalization.instance.onTranslatedLanguage = (loc) {
+      if (loc != null) {
+        LocalizationService.init(loc.languageCode);
+        Get.updateLocale(loc);
+        try {
+          S.load(loc);
+        } catch (_) {}
+      }
+    };
   }
 
   @override
@@ -86,13 +101,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
+    return ValueListenableBuilder<Locale>(
+      valueListenable: LocalizationService.localeNotifier,
+      builder: (context, currentLocale, _) {
         return GetMaterialApp(
-          // routerDelegate: router.routerDelegate,
-          // routeInformationParser: router.routeInformationParser,
-          locale: widget.initialLocale,
-          fallbackLocale: Locale('en'),
+          locale: currentLocale,
+          fallbackLocale: const Locale('en'),
           localizationsDelegates: [
             S.delegate,
             CountryLocalizations.delegate,
@@ -103,6 +117,14 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: S.delegate.supportedLocales,
           debugShowCheckedModeBanner: false,
           title: 'Saimpex SA',
+          builder: (context, child) {
+            return Directionality(
+              textDirection: currentLocale.languageCode == 'ar'
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              child: child ?? const SizedBox(),
+            );
+          },
           theme: ThemeData(
             appBarTheme: const AppBarTheme(
               elevation: 0,

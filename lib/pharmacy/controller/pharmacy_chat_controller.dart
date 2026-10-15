@@ -6,6 +6,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/model/get_conversation_model.dart';
+import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyChatController extends GetxController {
@@ -243,6 +244,11 @@ class PharmacyChatController extends GetxController {
         isLoadingConversations = false;
       }
       update();
+      try {
+        if (Get.isRegistered<PharmacyHomeController>()) {
+          Get.find<PharmacyHomeController>().fetchUnreadChatCount();
+        }
+      } catch (_) {}
     }
   }
 
@@ -363,6 +369,97 @@ class PharmacyChatController extends GetxController {
     } finally {
       isSendingMessage = false;
       update();
+    }
+  }
+
+  Future<void> markAsRead({
+    required int conversationId,
+    int? messageId,
+  }) async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      } else {
+        debugPrint("⚠️ No auth token found. Skipping markAsRead.");
+      }
+
+      final idx = conversations.indexWhere((c) => c.id == conversationId);
+      if (idx != -1) {
+        conversations[idx].unreadCount = 0;
+        update();
+      }
+
+      final bodyMap = <String, dynamic>{
+        "conversation_id": conversationId,
+        if (messageId != null && messageId > 0) "message_id": messageId,
+      };
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      final cleanEndpoint = ApiEndPoints.markAsRead.replaceFirst(
+        RegExp(r'^/'),
+        '',
+      );
+      final fullUrl = "$base/$cleanEndpoint";
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      debugPrint(
+        "==================== POST VENDOR CHAT MARK AS READ ====================",
+      );
+      debugPrint("API Call: POST $fullUrl");
+      debugPrint("Header: $headers");
+      debugPrint("Request Body: $bodyMap");
+
+      print(
+        "==================== POST VENDOR CHAT MARK AS READ ====================",
+      );
+      print("API Call: POST $fullUrl");
+      print("Header: $headers");
+      print("Request Body: $bodyMap");
+
+      final response = await DioClient().post(
+        ApiEndPoints.markAsRead,
+        body: dio.FormData.fromMap(bodyMap),
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "=======================================================================",
+      );
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "=======================================================================",
+      );
+
+      try {
+        if (Get.isRegistered<PharmacyHomeController>()) {
+          Get.find<PharmacyHomeController>().fetchUnreadChatCount();
+        }
+      } catch (_) {}
+    } catch (e) {
+      debugPrint(
+        "==================== POST VENDOR CHAT MARK AS READ ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "=============================================================================",
+      );
+
+      print(
+        "==================== POST VENDOR CHAT MARK AS READ ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "=============================================================================",
+      );
     }
   }
 

@@ -50,10 +50,7 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
   String? _error;
   bool _isSubmitting = false;
 
-  bool get _isEditing =>
-      widget.initialData != null &&
-      (widget.initialData!['id'] != null ||
-          widget.initialData!['coupon_id'] != null);
+  bool get _isEditing => widget.initialData != null;
 
   @override
   void initState() {
@@ -76,8 +73,10 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
           typeVal.contains('flat') ||
           typeVal.contains('amount')) {
         _kind = 'FLAT';
-      } else if (init['kind'] == 'PERCENTAGE' || init['kind'] == 'FLAT') {
-        _kind = init['kind'];
+      } else if (init['kind'] == 'PERCENTAGE' ||
+          init['kind'] == 'FLAT' ||
+          init['kind'] == 'AMOUNT') {
+        _kind = init['kind'] == 'AMOUNT' ? 'FLAT' : init['kind'];
       }
 
       final rawDiscount = init['discount_value']?.toString() ??
@@ -122,7 +121,8 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
       }
     }
 
-    final mMatch = RegExp(r'([A-Za-z]{3})\s+(\d{1,2}),?\s*(\d{4})').firstMatch(s);
+    final mMatch =
+        RegExp(r'([A-Za-z]{3})\s+(\d{1,2}),?\s*(\d{4})').firstMatch(s);
     if (mMatch != null) {
       const months = [
         'jan', 'feb', 'mar', 'apr', 'may', 'jun',
@@ -132,6 +132,22 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
       final mIdx = months.indexOf(monthName);
       final day = int.tryParse(mMatch.group(2)!);
       final year = int.tryParse(mMatch.group(3)!);
+      if (mIdx != -1 && day != null && year != null) {
+        return DateTime(year, mIdx + 1, day);
+      }
+    }
+
+    final dMatch =
+        RegExp(r'(\d{1,2})\s+([A-Za-z]{3}),?\s*(\d{4})').firstMatch(s);
+    if (dMatch != null) {
+      const months = [
+        'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+        'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+      ];
+      final day = int.tryParse(dMatch.group(1)!);
+      final monthName = dMatch.group(2)!.toLowerCase();
+      final mIdx = months.indexOf(monthName);
+      final year = int.tryParse(dMatch.group(3)!);
       if (mIdx != -1 && day != null && year != null) {
         return DateTime(year, mIdx + 1, day);
       }
@@ -216,14 +232,20 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
     final rawBase = ApiConfigs.BASE_URL.trim();
     final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
     final endpoint = ApiEndPoints.pharmacyAddCoupons.trim().replaceFirst(RegExp(r'^/'), '');
-    return '$base/$endpoint';
+    if (endpoint.startsWith('vendorapp/')) {
+      return '$base/$endpoint';
+    }
+    return '$base/vendorapp/$endpoint';
   }
 
   String _getUpdateCouponUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
     final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
     final endpoint = ApiEndPoints.pharmacyUpdateCoupon.trim().replaceFirst(RegExp(r'^/'), '');
-    return '$base/$endpoint';
+    if (endpoint.startsWith('vendorapp/')) {
+      return '$base/$endpoint';
+    }
+    return '$base/vendorapp/$endpoint';
   }
 
   Future<void> _submit() async {
@@ -231,13 +253,34 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
     final code = _code.text.trim();
     final discount = double.tryParse(_discount.text.trim());
     final count = int.tryParse(_count.text.trim());
-    if (name.isEmpty ||
-        code.isEmpty ||
-        _kind == null ||
-        discount == null ||
-        count == null ||
-        _validUntil == null) {
-      setState(() => _error = 'Fill in every field');
+    if (name.isEmpty) {
+      setState(() => _error = 'Please enter coupon name');
+      showToast(context, 'Please enter coupon name');
+      return;
+    }
+    if (code.isEmpty) {
+      setState(() => _error = 'Please enter coupon code');
+      showToast(context, 'Please enter coupon code');
+      return;
+    }
+    if (_kind == null) {
+      setState(() => _error = 'Please select coupon type');
+      showToast(context, 'Please select coupon type');
+      return;
+    }
+    if (discount == null) {
+      setState(() => _error = 'Please enter valid discount');
+      showToast(context, 'Please enter valid discount');
+      return;
+    }
+    if (count == null) {
+      setState(() => _error = 'Please enter valid count');
+      showToast(context, 'Please enter valid count');
+      return;
+    }
+    if (_validUntil == null) {
+      setState(() => _error = 'Please select valid until date');
+      showToast(context, 'Please select valid until date');
       return;
     }
 
@@ -259,28 +302,42 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
       Response response;
 
       if (_isEditing) {
-        final couponId = widget.initialData!['id'] ??
-            widget.initialData!['coupon_id'];
+        final couponId = widget.initialData?['coupon_id'] ??
+            widget.initialData?['id'] ??
+            widget.initialData?['couponId'];
 
-        final formData = FormData.fromMap({
+        if (couponId == null) {
+          setState(() {
+            _isSubmitting = false;
+            _error = 'Coupon ID not found';
+          });
+          showToast(context, 'Coupon ID not found');
+          return;
+        }
+
+        final Map<String, dynamic> formMap = {
+          "coupon_id": couponId.toString(),
+          "id": couponId.toString(),
           "code": code,
           "name": name,
           "type": type.toString(),
           "discount_value": _discount.text.trim(),
           "count": count.toString(),
           "valid_upto": validUpto,
-          "coupon_id": couponId.toString(),
-        });
+        };
 
+        final formData = FormData.fromMap(formMap);
         final url = _getUpdateCouponUrl();
 
         debugPrint("==================== POST UPDATE COUPON ====================");
         debugPrint("API Call: POST $url");
-        debugPrint("FormData fields: code: $code, name: $name, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto, coupon_id: $couponId");
+        debugPrint("Endpoint: ${ApiEndPoints.pharmacyUpdateCoupon}");
+        debugPrint("FormData fields: coupon_id: $couponId, name: $name, code: $code, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto");
 
         print("==================== POST UPDATE COUPON ====================");
         print("API Call: POST $url");
-        print("FormData fields: code: $code, name: $name, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto, coupon_id: $couponId");
+        print("Endpoint: ${ApiEndPoints.pharmacyUpdateCoupon}");
+        print("FormData fields: coupon_id: $couponId, name: $name, code: $code, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto");
 
         response = await DioClient().post(
           ApiEndPoints.pharmacyUpdateCoupon,
@@ -298,25 +355,28 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
         final Map<String, dynamic> body = {
           "name": name,
           "code": code,
-          "type": type,
+          "type": type.toString(),
           "discount_value": _discount.text.trim(),
           "count": count.toString(),
           "valid_upto": validUpto,
         };
 
+        final formData = FormData.fromMap(body);
         final url = _getAddCouponUrl();
 
         debugPrint("==================== POST ADD COUPON ====================");
         debugPrint("API Call: POST $url");
-        debugPrint("Body: $body");
+        debugPrint("Endpoint: ${ApiEndPoints.pharmacyAddCoupons}");
+        debugPrint("FormData fields: name: $name, code: $code, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto");
 
         print("==================== POST ADD COUPON ====================");
         print("API Call: POST $url");
-        print("Body: $body");
+        print("Endpoint: ${ApiEndPoints.pharmacyAddCoupons}");
+        print("FormData fields: name: $name, code: $code, type: $type, discount_value: ${_discount.text.trim()}, count: $count, valid_upto: $validUpto");
 
         response = await DioClient().post(
           ApiEndPoints.pharmacyAddCoupons,
-          body: body,
+          body: formData,
         );
 
         debugPrint("Response Status Code: ${response.statusCode}");
@@ -359,17 +419,21 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
         }
       } else {
         if (mounted) {
+          final errorMsg = resData is Map
+              ? resData['message']?.toString() ??
+                  (_isEditing
+                      ? 'Failed to update coupon'
+                      : 'Failed to add coupon')
+              : (_isEditing
+                  ? 'Failed to update coupon'
+                  : 'Failed to add coupon');
           setState(() {
             _isSubmitting = false;
-            _error = resData is Map
-                ? resData['message']?.toString() ??
-                    (_isEditing
-                        ? 'Failed to update coupon'
-                        : 'Failed to add coupon')
-                : (_isEditing
-                    ? 'Failed to update coupon'
-                    : 'Failed to add coupon');
+            _error = errorMsg;
           });
+          try {
+            showToast(context, errorMsg);
+          } catch (_) {}
         }
       }
     } catch (e) {
@@ -383,10 +447,14 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
       print("===============================================================");
 
       if (mounted) {
+        final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
         setState(() {
           _isSubmitting = false;
-          _error = e.toString();
+          _error = errorMsg;
         });
+        try {
+          showToast(context, errorMsg);
+        } catch (_) {}
       }
     }
   }

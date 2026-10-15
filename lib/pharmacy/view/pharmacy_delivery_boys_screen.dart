@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 
 class PharmacyDeliveryBoysScreen extends StatefulWidget {
   const PharmacyDeliveryBoysScreen({super.key});
@@ -153,7 +154,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Delivery Boys',
+              LocalizationService.tr('Delivery Boys'),
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -298,7 +299,7 @@ class _ActivePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        'ACTIVE',
+        LocalizationService.tr('Active').toUpperCase(),
         style: GoogleFonts.inter(
           color: const Color(0xFF16A34A),
           fontWeight: FontWeight.w700,

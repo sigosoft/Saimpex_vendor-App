@@ -142,10 +142,12 @@ class ApiEndPoints {
   static String pharmacyProfile = "profile";
   static String pharmacyHelpSupport = "getContact";
   static String pharmacyPrivacyPolicy = "getPrivacyPolicy";
+  static String pharmacyLogout = "logout";
   static String pharmacyCoupons = "coupons";
   static String pharmacyAddCoupons = "addCoupon";
   static String pharmacyUpdateCoupon = "updateCoupon";
   static String pharmacyUpdateCouponStatus = "updateCouponStatus";
+  static String pharmacyDeleteCoupon = "deleteCoupon";
   static String pharmacyDeliveryBoys = "deliveryBoys";
   static String pharmacyAddDeliveryBoys = "addDeliveryBoy";
   static String pharmacyUpdateDeliveryBoy = "updateDeliveryBoy";
@@ -176,10 +178,15 @@ class ApiEndPoints {
   static String rejectPharmacyPrescription = "rejectPharmacyPrescription";
   static String submitPharmacyPrescriptionQuote =
       "submitPharmacyPrescriptionQuote";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
-  // static String pharmacyEarningsSummary = "";
+  static String pharmacyMenuItems = "pharmacyMenuItems";
+  static String updatePharmacyItemStock = "updatePharmacyItemStock";
+  static String pharmacyMenuItemDetail = "pharmacyMenuItemDetail";
+  static String updatePharmacyItemAvailabilityStatus =
+      "updatePharmacyItemAvailabilityStatus";
+  static String updatePharmacyMenuItem = "updatePharmacyMenuItem";
+  static String addPharmacyMenuItem = "addPharmacyMenuItem";
+  static String deletePharmacyMenuItem = "deletePharmacyMenuItem";
+  static String deliveryBoyDetail = "deliveryBoyDetail";
+  static String deleteDeliveryBoy = "deleteDeliveryBoy";
   // static String pharmacyEarningsSummary = "";
 }

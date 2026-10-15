@@ -9,6 +9,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/settings_controller.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_business_settings_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_coupons_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_earnings_screen.dart';
@@ -25,6 +26,12 @@ import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String _t(String key) {
+  return LocalizationService.tr(key);
+}
 
 class PharmacyAccountScreen extends StatefulWidget {
   const PharmacyAccountScreen({super.key, this.onBack});
@@ -49,7 +56,53 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
   @override
   void initState() {
     super.initState();
+    _initSelectedLanguage();
     _fetchPharmacyProfile();
+  }
+
+  void _initSelectedLanguage() {
+    final lang = LocalizationService.currentLanguageCode;
+    if (lang == 'fr') {
+      _language = 1;
+    } else if (lang == 'ar') {
+      _language = 2;
+    } else {
+      _language = 0;
+    }
+    _loadSavedLanguage();
+  }
+
+  Future<void> _loadSavedLanguage() async {
+    final dynamic lang = await getSavedObject("selected_locale");
+    if (lang != null && mounted) {
+      final code = lang.toString();
+      setState(() {
+        if (code == 'fr') {
+          _language = 1;
+        } else if (code == 'ar') {
+          _language = 2;
+        } else {
+          _language = 0;
+        }
+      });
+    }
+  }
+
+  Future<void> _onLanguageSelected(int index) async {
+    setState(() => _language = index);
+    String langCode = 'en';
+    if (index == 1) {
+      langCode = 'fr';
+    } else if (index == 2) {
+      langCode = 'ar';
+    }
+    await LocalizationService().updateLocale(langCode);
+    if (mounted) {
+      setState(() {});
+    }
+    if (Get.isRegistered<PharmacyHomeController>()) {
+      Get.find<PharmacyHomeController>().update();
+    }
   }
 
   Future<void> _fetchPharmacyProfile() async {
@@ -62,7 +115,9 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
       if (token.isNotEmpty) {
         DioClient().updateToken(token);
       } else {
-        debugPrint("⚠️ No auth token found. Skipping profile API call in PharmacyAccountScreen.");
+        debugPrint(
+          "⚠️ No auth token found. Skipping profile API call in PharmacyAccountScreen.",
+        );
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -73,13 +128,14 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       final savedVendorType = await getSavedObject("vendorType");
       final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
-      final vendorType = (savedVendorType != null &&
+      final vendorType =
+          (savedVendorType != null &&
               savedVendorType.toString().isNotEmpty &&
               savedVendorType.toString() != "0")
           ? savedVendorType.toString()
           : (savedAppType?.toString().isNotEmpty == true
-              ? savedAppType.toString()
-              : "3");
+                ? savedAppType.toString()
+                : "3");
 
       final now = DateTime.now();
       final fromDate =
@@ -99,17 +155,24 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       String base = ApiConfigs.BASE_URL.trim();
       if (base.endsWith('/')) base = base.substring(0, base.length - 1);
-      final cleanEndpoint = ApiEndPoints.pharmacyProfile.replaceFirst(RegExp(r'^/'), '');
-      final fullUrl =
-          Uri.parse("$base/$cleanEndpoint")
-              .replace(queryParameters: queryParams);
+      final cleanEndpoint = ApiEndPoints.pharmacyProfile.replaceFirst(
+        RegExp(r'^/'),
+        '',
+      );
+      final fullUrl = Uri.parse(
+        "$base/$cleanEndpoint",
+      ).replace(queryParameters: queryParams);
 
-      debugPrint("==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================");
+      debugPrint(
+        "==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================",
+      );
       debugPrint("API Call: GET $fullUrl");
       debugPrint("Header: $headers");
       debugPrint("Request Body: null (GET request)");
 
-      print("==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================");
+      print(
+        "==================== GET VENDOR PROFILE (ACCOUNT SCREEN) ====================",
+      );
       print("API Call: GET $fullUrl");
       print("Header: $headers");
       print("Request Body: null (GET request)");
@@ -121,18 +184,23 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("============================================================================");
+      debugPrint(
+        "============================================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
-      print("============================================================================");
+      print(
+        "============================================================================",
+      );
 
       Map<String, dynamic>? dataMap;
       if (response.data is Map<String, dynamic>) {
         dataMap = response.data as Map<String, dynamic>;
       } else if (response.data is String) {
         try {
-          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+          dataMap =
+              jsonDecode(response.data as String) as Map<String, dynamic>?;
         } catch (_) {}
       }
 
@@ -141,7 +209,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
         final fetchedData = profileModel.data;
         final rawData = (dataMap['data'] is Map<String, dynamic>)
             ? ((dataMap['data']['vendor'] as Map<String, dynamic>?) ??
-                dataMap['data'] as Map<String, dynamic>?)
+                  dataMap['data'] as Map<String, dynamic>?)
             : null;
 
         if (mounted) {
@@ -159,13 +227,21 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
         }
       }
     } catch (e) {
-      debugPrint("==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================");
+      debugPrint(
+        "==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("===================================================================================");
+      debugPrint(
+        "===================================================================================",
+      );
 
-      print("==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================");
+      print(
+        "==================== GET VENDOR PROFILE ERROR (ACCOUNT SCREEN) ====================",
+      );
       print("Error: $e");
-      print("===================================================================================");
+      print(
+        "===================================================================================",
+      );
 
       if (mounted) {
         setState(() {
@@ -177,15 +253,21 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
   String _getTermsAndConditionsUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyTermsandConditions.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyTermsandConditions
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
     return '$base/$endpoint';
   }
 
   Future<void> _onTermsAndConditionsTap() async {
     final url = _getTermsAndConditionsUrl();
 
-    debugPrint("==================== GET TERMS AND CONDITIONS ====================");
+    debugPrint(
+      "==================== GET TERMS AND CONDITIONS ====================",
+    );
     debugPrint("API Call: GET $url");
     debugPrint("Request Body: null (GET request)");
 
@@ -200,11 +282,15 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("==================================================================");
+      debugPrint(
+        "==================================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
-      print("==================================================================");
+      print(
+        "==================================================================",
+      );
 
       if (response.data is Map && response.data['status'] == true) {
         final terms = response.data['data']?['terms'];
@@ -230,25 +316,29 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       if (mounted) {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const TermsandConditions(),
-          ),
+          MaterialPageRoute<void>(builder: (_) => const TermsandConditions()),
         );
       }
     } catch (e) {
-      debugPrint("==================== GET TERMS AND CONDITIONS ERROR ====================");
+      debugPrint(
+        "==================== GET TERMS AND CONDITIONS ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("========================================================================");
+      debugPrint(
+        "========================================================================",
+      );
 
-      print("==================== GET TERMS AND CONDITIONS ERROR ====================");
+      print(
+        "==================== GET TERMS AND CONDITIONS ERROR ====================",
+      );
       print("Error: $e");
-      print("========================================================================");
+      print(
+        "========================================================================",
+      );
 
       if (mounted) {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const TermsandConditions(),
-          ),
+          MaterialPageRoute<void>(builder: (_) => const TermsandConditions()),
         );
       }
     }
@@ -256,8 +346,13 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
   String _getHelpSupportUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyHelpSupport.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyHelpSupport.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     return '$base/$endpoint';
   }
 
@@ -273,13 +368,13 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     print("Request Body: null (GET request)");
 
     try {
-      final response = await DioClient().get(
-        ApiEndPoints.pharmacyHelpSupport,
-      );
+      final response = await DioClient().get(ApiEndPoints.pharmacyHelpSupport);
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("============================================================");
+      debugPrint(
+        "============================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
@@ -301,35 +396,44 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
       }
 
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const HelpAndSupport(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const HelpAndSupport()));
       }
     } catch (e) {
-      debugPrint("==================== GET HELP & SUPPORT ERROR ====================");
+      debugPrint(
+        "==================== GET HELP & SUPPORT ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("==================================================================");
+      debugPrint(
+        "==================================================================",
+      );
 
-      print("==================== GET HELP & SUPPORT ERROR ====================");
+      print(
+        "==================== GET HELP & SUPPORT ERROR ====================",
+      );
       print("Error: $e");
-      print("==================================================================");
+      print(
+        "==================================================================",
+      );
 
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const HelpAndSupport(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const HelpAndSupport()));
       }
     }
   }
 
   String _getPrivacyPolicyUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyPrivacyPolicy.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyPrivacyPolicy.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     return '$base/$endpoint';
   }
 
@@ -351,7 +455,9 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
       debugPrint("Response Status Code: ${response.statusCode}");
       debugPrint("Response Body: ${response.data}");
-      debugPrint("============================================================");
+      debugPrint(
+        "============================================================",
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.data}");
@@ -380,35 +486,44 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
       }
 
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const PrivacyPolicy(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const PrivacyPolicy()));
       }
     } catch (e) {
-      debugPrint("==================== GET PRIVACY POLICY ERROR ====================");
+      debugPrint(
+        "==================== GET PRIVACY POLICY ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("==================================================================");
+      debugPrint(
+        "==================================================================",
+      );
 
-      print("==================== GET PRIVACY POLICY ERROR ====================");
+      print(
+        "==================== GET PRIVACY POLICY ERROR ====================",
+      );
       print("Error: $e");
-      print("==================================================================");
+      print(
+        "==================================================================",
+      );
 
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const PrivacyPolicy(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const PrivacyPolicy()));
       }
     }
   }
 
   String _getCouponsUrl(Map<String, dynamic> query) {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyCoupons.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyCoupons.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     final q = query.entries.map((e) => "${e.key}=${e.value}").join('&');
     return '$base/$endpoint?$q';
   }
@@ -465,9 +580,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
       if (mounted) {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => PharmacyCouponsScreen(
-              initialCoupons: couponsData,
-            ),
+            builder: (_) => PharmacyCouponsScreen(initialCoupons: couponsData),
           ),
         );
       }
@@ -492,8 +605,13 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
 
   String _getDeliveryBoysUrl() {
     final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/') ? rawBase.substring(0, rawBase.length - 1) : rawBase;
-    final endpoint = ApiEndPoints.pharmacyDeliveryBoys.trim().replaceFirst(RegExp(r'^/'), '');
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyDeliveryBoys.trim().replaceFirst(
+      RegExp(r'^/'),
+      '',
+    );
     return '$base/$endpoint';
   }
 
@@ -543,19 +661,25 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
         );
       }
     } catch (e) {
-      debugPrint("==================== GET DELIVERY BOYS ERROR ====================");
+      debugPrint(
+        "==================== GET DELIVERY BOYS ERROR ====================",
+      );
       debugPrint("Error: $e");
-      debugPrint("=================================================================");
+      debugPrint(
+        "=================================================================",
+      );
 
-      print("==================== GET DELIVERY BOYS ERROR ====================");
+      print(
+        "==================== GET DELIVERY BOYS ERROR ====================",
+      );
       print("Error: $e");
-      print("=================================================================");
+      print(
+        "=================================================================",
+      );
 
       if (mounted) {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const DeliveryBoysScreen(),
-          ),
+          MaterialPageRoute<void>(builder: (_) => const DeliveryBoysScreen()),
         );
       }
     }
@@ -570,39 +694,53 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
       barrierColor: const Color(0xFF1A1A1A).withValues(alpha: 0.28),
       transitionDuration: const Duration(milliseconds: 150),
       pageBuilder: (dialogContext, _, _) {
-        return Padding(
-          padding: EdgeInsets.only(top: top, right: 12),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Material(
-              color: Colors.white,
-              elevation: 6,
-              shadowColor: const Color(0xFF1A1A1A).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
-              child: InkWell(
-                onTap: () => Navigator.of(dialogContext).pop(),
+        final textDirection = LocalizationService().getTextDirection();
+        final isRtl = textDirection == TextDirection.rtl;
+        return Directionality(
+          textDirection: textDirection,
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: top,
+              right: isRtl ? 0 : 12,
+              left: isRtl ? 12 : 0,
+            ),
+            child: Align(
+              alignment: AlignmentDirectional.topEnd,
+              child: Material(
+                color: Colors.white,
+                elevation: 6,
+                shadowColor: const Color(0xFF1A1A1A).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 6, 10),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const _DeleteLidIcon(),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Delete Account',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF1C1D1B),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(dialogContext).pop();
+                    _showDeleteAccountConfirmation();
+                  },
+                  borderRadius: BorderRadius.circular(14),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 6, 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const _DeleteLidIcon(),
+                        const SizedBox(width: 8),
+                        Text(
+                          _t('Delete Account'),
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF1C1D1B),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: Color(0xFFC8C8C8),
-                        size: 20,
-                      ),
-                    ],
+                        Icon(
+                          isRtl
+                              ? Icons.chevron_left_rounded
+                              : Icons.chevron_right_rounded,
+                          color: const Color(0xFFC8C8C8),
+                          size: 20,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -613,261 +751,516 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     );
   }
 
+  Future<void> _showDeleteAccountConfirmation() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color(0x80000000),
+      builder: (context) => const _DeleteAccountConfirmDialog(),
+    );
+
+    if (confirmed == true) {
+      await _deleteAccount();
+    }
+  }
+
+  Future<void> _deleteAccount() async {
+    try {
+      showLoadingDialog(context);
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      final cleanEndpoint = ApiEndPoints.deleteAccount.replaceFirst(
+        RegExp(r'^/'),
+        '',
+      );
+      final fullUrl = cleanEndpoint.startsWith('vendorapp/')
+          ? "$base/$cleanEndpoint"
+          : "$base/vendorapp/$cleanEndpoint";
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      debugPrint(
+        "==================== GET DELETE ACCOUNT ====================",
+      );
+      debugPrint("API Call: GET $fullUrl");
+      debugPrint("Header: $headers");
+
+      print("==================== GET DELETE ACCOUNT ====================");
+      print("API Call: GET $fullUrl");
+      print("Header: $headers");
+
+      final response = await DioClient().get(ApiEndPoints.deleteAccount);
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("===========================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("===========================================================");
+
+      if (mounted) {
+        Get.back();
+      }
+
+      if (response.data != null &&
+          (response.data['status'] == 'true' ||
+              response.data['status'] == true ||
+              response.data['status'] == 1 ||
+              response.data['status'] == '1')) {
+        final rawMsg = response.data['message'];
+        String toastMessage = 'Account deleted successfully';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          toastMessage = rawMsg;
+        } else if (rawMsg is Map) {
+          final list = rawMsg['message_en'] ?? rawMsg['message'];
+          if (list is List && list.isNotEmpty) {
+            toastMessage = list.first.toString();
+          } else if (list is String && list.isNotEmpty) {
+            toastMessage = list;
+          }
+        }
+        if (mounted) {
+          showToast(context, toastMessage);
+        }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        await savename("@isFirstLaunch", "true");
+        await savename('loginStatus', 'false');
+        await savename('token', '');
+        Get.offAll(() => const LoginScreen());
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        String errorMsg = 'Failed to delete account';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          errorMsg = rawMsg;
+        }
+        if (mounted) {
+          showToast(context, errorMsg);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.back();
+      }
+      debugPrint(
+        "==================== GET DELETE ACCOUNT ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "==================================================================",
+      );
+      print(
+        "==================== GET DELETE ACCOUNT ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "==================================================================",
+      );
+      if (mounted) {
+        showToast(context, e.toString().replaceFirst('Exception: ', '').trim());
+      }
+    }
+  }
+
   Future<void> _logout() async {
-    await savename('loginStatus', 'false');
-    await savename('token', '');
-    Get.offAll(() => const LoginScreen());
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color(0x80000000),
+      builder: (context) => const _LogoutConfirmDialog(),
+    );
+
+    if (confirmed == true) {
+      await _performLogout();
+    }
+  }
+
+  Future<void> _performLogout() async {
+    try {
+      showLoadingDialog(context);
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      final cleanEndpoint = ApiEndPoints.logout.replaceFirst(RegExp(r'^/'), '');
+      final fullUrl = cleanEndpoint.startsWith('vendorapp/')
+          ? "$base/$cleanEndpoint"
+          : "$base/vendorapp/$cleanEndpoint";
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      debugPrint("==================== POST LOGOUT ====================");
+      debugPrint("API Call: POST $fullUrl");
+      debugPrint("Header: $headers");
+
+      print("==================== POST LOGOUT ====================");
+      print("API Call: POST $fullUrl");
+      print("Header: $headers");
+
+      final response = await DioClient().post(ApiEndPoints.logout);
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("=====================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("=====================================================");
+
+      if (mounted) {
+        Get.back();
+      }
+
+      if (response.data != null &&
+          (response.data['status'] == 'true' ||
+              response.data['status'] == true ||
+              response.data['status'] == 1 ||
+              response.data['status'] == '1')) {
+        final rawMsg = response.data['message'];
+        String toastMessage = 'You are logged out successfully.';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          toastMessage = rawMsg;
+        } else if (rawMsg is Map) {
+          final list = rawMsg['message_en'] ?? rawMsg['message'];
+          if (list is List && list.isNotEmpty) {
+            toastMessage = list.first.toString();
+          } else if (list is String && list.isNotEmpty) {
+            toastMessage = list;
+          }
+        }
+        if (mounted) {
+          showToast(context, toastMessage);
+        }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        await savename("@isFirstLaunch", "true");
+        await savename('loginStatus', 'false');
+        await savename('token', '');
+        Get.offAll(() => const LoginScreen());
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        String errorMsg = 'Logout failed.';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          errorMsg = rawMsg;
+        }
+        if (mounted) {
+          showToast(context, errorMsg);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.back();
+      }
+      debugPrint("==================== POST LOGOUT ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("===========================================================");
+      print("==================== POST LOGOUT ERROR ====================");
+      print("Error: $e");
+      print("===========================================================");
+      if (mounted) {
+        showToast(context, e.toString().replaceFirst('Exception: ', '').trim());
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final activeCode = LocalizationService.currentLanguageCode;
+    _language = activeCode == 'fr' ? 1 : (activeCode == 'ar' ? 2 : 0);
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFF1E4),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Directionality(
+        textDirection: LocalizationService().getTextDirection(),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.white,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFF1E4),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(32),
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  top: MediaQuery.paddingOf(context).top + 8,
+                  bottom: 28,
+                ),
+                child: _AccountHeader(onBack: widget.onBack, onMenu: _openMenu),
               ),
-              padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 8, bottom: 28),
-              child: _AccountHeader(onBack: widget.onBack, onMenu: _openMenu),
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                children: [
-                  _ProfileCard(
-                    name: _profileData?.name ??
-                        _rawVendorData?['name']?.toString() ??
-                        _rawVendorData?['pharmacy_name']?.toString() ??
-                        '',
-                    id: _profileData?.id?.toString() ??
-                        _rawVendorData?['id']?.toString() ??
-                        '',
-                    rating: _profileData?.rating ??
-                        _rawVendorData?['rating']?.toString() ??
-                        '',
-                    isOpen: (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
-                            _rawVendorData?['status']?.toString() == '1' ||
-                            _profileData?.isBusy == 2) &&
-                        (_profileData?.isBusy != 1),
-                    imageUrl: _profileData?.image ??
-                        _rawVendorData?['image']?.toString(),
-                    isVerified: true,
-                  ),
-                  const SizedBox(height:10),
-                  Text(
-                    'Language',
-                    style: GoogleFonts.inter(
-                      color: PharmacyAccountScreen.orange,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      height: 1.2,
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                  children: [
+                    _ProfileCard(
+                      name:
+                          _profileData?.name ??
+                          _rawVendorData?['name']?.toString() ??
+                          _rawVendorData?['pharmacy_name']?.toString() ??
+                          '',
+                      id:
+                          _profileData?.id?.toString() ??
+                          _rawVendorData?['id']?.toString() ??
+                          '',
+                      rating:
+                          _profileData?.rating ??
+                          _rawVendorData?['rating']?.toString() ??
+                          '',
+                      isOpen:
+                          (_profileData?.status?.toUpperCase() == 'ACTIVE' ||
+                              _rawVendorData?['status']?.toString() == '1' ||
+                              _profileData?.isBusy == 2) &&
+                          (_profileData?.isBusy != 1),
+                      imageUrl:
+                          _profileData?.image ??
+                          _rawVendorData?['image']?.toString(),
+                      isVerified: true,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  _LanguageBar(
-                    selected: _language,
-                    onSelect: (index) => setState(() => _language = index),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    'Business',
-                    style: GoogleFonts.inter(
-                      color: PharmacyAccountScreen.orange,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      height: 1.2,
+                    const SizedBox(height: 10),
+                    Text(
+                      _t('Language'),
+                      style: GoogleFonts.inter(
+                        color: PharmacyAccountScreen.orange,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        height: 1.2,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  _MenuCard(
-                    divided: true,
-                    children: [
-                      _MenuTile(
-                        icon: Icons.notifications_none_rounded,
-                        label: 'Notification',
-                        trailing: Switch(
-                          value: _notifications,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          onChanged: (value) {
-                            HapticFeedback.selectionClick();
-                            setState(() => _notifications = value);
-                          },
-                          thumbColor: const WidgetStatePropertyAll(Colors.white),
-                          trackColor: WidgetStateProperty.resolveWith((states) {
-                            if (states.contains(WidgetState.selected)) {
-                              return PharmacyAccountScreen.orange;
-                            }
-                            return const Color(0xFFE5E7EB);
-                          }),
-                          trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-                        ),
+                    const SizedBox(height: 10),
+                    _LanguageBar(
+                      selected: _language,
+                      onSelect: _onLanguageSelected,
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      _t('Business'),
+                      style: GoogleFonts.inter(
+                        color: PharmacyAccountScreen.orange,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        height: 1.2,
                       ),
-                      _MenuTile(
-                        icon: Icons.domain_outlined,
-                        label: 'Pharmacy Profile',
-                        onTap: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyProfileScreen(),
+                    ),
+                    const SizedBox(height: 10),
+                    _MenuCard(
+                      divided: true,
+                      children: [
+                        _MenuTile(
+                          icon: Icons.notifications_none_rounded,
+                          label: _t('Notification'),
+                          trailing: Switch(
+                            value: _notifications,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            onChanged: (value) {
+                              HapticFeedback.selectionClick();
+                              setState(() => _notifications = value);
+                            },
+                            thumbColor: const WidgetStatePropertyAll(
+                              Colors.white,
                             ),
-                          );
-                          if (mounted) {
-                            _fetchPharmacyProfile();
-                          }
-                        },
-                      ),
-                      _MenuTile(
-                        icon: Icons.access_time_rounded,
-                        label: 'Working hours',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyWorkingHoursScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _MenuTile(
-                        image: 'lib/pharmacy/Assets/images/business_settings.png',
-                        imageSize: 19,
-                        label: 'Business settings',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyBusinessSettingsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _MenuTile(
-                        image: 'lib/pharmacy/Assets/images/leave_management.png',
-                        imageSize: 19,
-                        label: 'Leave Management',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyLeaveManagementScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _MenuTile(
-                        image: 'lib/pharmacy/Assets/images/currency.png',
-                        imageSize: 20,
-                        label: 'Earnings',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyEarningsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _MenuTile(
-                        image: 'lib/pharmacy/Assets/images/received_payouts.png',
-                        imageSize: 22,
-                        label: 'Received Payouts',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const PharmacyReceivedPayoutsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _MenuTile(
-                        icon: Icons.sell_outlined,
-                        label: 'Coupons',
-                        onTap: _onCouponsTap,
-                      ),
-                      _MenuTile(
-                        icon: Icons.delivery_dining_outlined,
-                        label: 'Delivery Boys',
-                        onTap: _onDeliveryBoysTap,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  const _SectionLabel('Support & Legal'),
-                  const SizedBox(height: 10),
-                  _MenuCard(
-                    divided: true,
-                    children: [
-                      _MenuTile(
-                        icon: Icons.headset_mic_outlined,
-                        label: 'Help & Support',
-                        onTap: _onHelpAndSupportTap,
-                      ),
-                      _MenuTile(
-                        icon: Icons.description_outlined,
-                        label: 'Terms & Conditions',
-                        onTap: _onTermsAndConditionsTap,
-                      ),
-                      _MenuTile(
-                        image: 'lib/pharmacy/Assets/images/privacy_policy.png',
-                        imageSize: 20,
-                        label: 'Privacy Policy',
-                        onTap: _onPrivacyPolicyTap,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  InkWell(
-                    onTap: _logout,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.logout_rounded, color: PharmacyAccountScreen.orange, size: 20),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Logout',
-                            style: GoogleFonts.inter(
-                              color: PharmacyAccountScreen.orange,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                            trackColor: WidgetStateProperty.resolveWith((
+                              states,
+                            ) {
+                              if (states.contains(WidgetState.selected)) {
+                                return PharmacyAccountScreen.orange;
+                              }
+                              return const Color(0xFFE5E7EB);
+                            }),
+                            trackOutlineColor: const WidgetStatePropertyAll(
+                              Colors.transparent,
                             ),
                           ),
-                        ],
+                        ),
+                        _MenuTile(
+                          icon: Icons.domain_outlined,
+                          label: _t('Pharmacy Profile'),
+                          onTap: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const PharmacyProfileScreen(),
+                              ),
+                            );
+                            if (mounted) {
+                              _fetchPharmacyProfile();
+                            }
+                          },
+                        ),
+                        _MenuTile(
+                          icon: Icons.access_time_rounded,
+                          label: _t('Working hours'),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const PharmacyWorkingHoursScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuTile(
+                          image:
+                              'lib/pharmacy/Assets/images/business_settings.png',
+                          imageSize: 19,
+                          label: _t('Business settings'),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const PharmacyBusinessSettingsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuTile(
+                          image:
+                              'lib/pharmacy/Assets/images/leave_management.png',
+                          imageSize: 19,
+                          label: _t('Leave Management'),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const PharmacyLeaveManagementScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuTile(
+                          image: 'lib/pharmacy/Assets/images/currency.png',
+                          imageSize: 20,
+                          label: _t('Earnings'),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const PharmacyEarningsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuTile(
+                          image:
+                              'lib/pharmacy/Assets/images/received_payouts.png',
+                          imageSize: 22,
+                          label: _t('Received Payouts'),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const PharmacyReceivedPayoutsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuTile(
+                          icon: Icons.sell_outlined,
+                          label: _t('Coupons'),
+                          onTap: _onCouponsTap,
+                        ),
+                        _MenuTile(
+                          icon: Icons.delivery_dining_outlined,
+                          label: _t('Delivery Boys'),
+                          onTap: _onDeliveryBoysTap,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    _SectionLabel(_t('Support & Legal')),
+                    const SizedBox(height: 10),
+                    _MenuCard(
+                      divided: true,
+                      children: [
+                        _MenuTile(
+                          icon: Icons.headset_mic_outlined,
+                          label: _t('Help & Support'),
+                          onTap: _onHelpAndSupportTap,
+                        ),
+                        _MenuTile(
+                          icon: Icons.description_outlined,
+                          label: _t('Terms & Conditions'),
+                          onTap: _onTermsAndConditionsTap,
+                        ),
+                        _MenuTile(
+                          image:
+                              'lib/pharmacy/Assets/images/privacy_policy.png',
+                          imageSize: 20,
+                          label: _t('Privacy Policy'),
+                          onTap: _onPrivacyPolicyTap,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    InkWell(
+                      onTap: _logout,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.logout_rounded,
+                              color: PharmacyAccountScreen.orange,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _t('Logout'),
+                              style: GoogleFonts.inter(
+                                color: PharmacyAccountScreen.orange,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'V2.8.1',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF858585),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
+                    const SizedBox(height: 6),
+                    Text(
+                      'V2.8.1',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF858585),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Check for update',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF5C5C5C),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      decoration: TextDecoration.underline,
-                      decorationColor: const Color(0xFF5C5C5C),
+                    const SizedBox(height: 6),
+                    Text(
+                      _t('Check for update'),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF5C5C5C),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                        decorationColor: const Color(0xFF5C5C5C),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -890,7 +1283,7 @@ class _AccountHeader extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Account',
+              _t('Account'),
               style: GoogleFonts.inter(
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
@@ -899,7 +1292,7 @@ class _AccountHeader extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -911,8 +1304,10 @@ class _AccountHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color(0xFFFFE0D0)),
                   ),
-                  child: const Icon(
-                    Icons.chevron_left_rounded,
+                  child: Icon(
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_right_rounded
+                        : Icons.chevron_left_rounded,
                     color: PharmacyAccountScreen.orange,
                     size: 26,
                   ),
@@ -920,14 +1315,18 @@ class _AccountHeader extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: InkWell(
                 onTap: onMenu,
                 borderRadius: BorderRadius.circular(12),
                 child: const SizedBox(
                   width: 32,
                   height: 32,
-                  child: Icon(Icons.more_vert, color: Color(0xFF1A1A1A), size: 22),
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Color(0xFF1A1A1A),
+                    size: 22,
+                  ),
                 ),
               ),
             ),
@@ -977,7 +1376,11 @@ class _ProfileCard extends StatelessWidget {
             children: [
               const Spacer(),
               if (rating.isNotEmpty) ...[
-                const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
+                const Icon(
+                  Icons.star_rounded,
+                  color: Color(0xFFF59E0B),
+                  size: 16,
+                ),
                 const SizedBox(width: 2),
                 Text(
                   rating,
@@ -992,7 +1395,9 @@ class _ProfileCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isOpen ? const Color(0xFFF0FDF4) : const Color(0xFFFEF2F2),
+                  color: isOpen
+                      ? const Color(0xFFF0FDF4)
+                      : const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -1002,15 +1407,19 @@ class _ProfileCard extends StatelessWidget {
                       width: 9,
                       height: 9,
                       decoration: BoxDecoration(
-                        color: isOpen ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFFEF4444),
+                        color: isOpen
+                            ? const Color.fromARGB(255, 23, 155, 71)
+                            : const Color(0xFFEF4444),
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      isOpen ? 'Open' : 'Closed',
+                      isOpen ? _t('Open') : _t('Closed'),
                       style: GoogleFonts.inter(
-                        color: isOpen ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFFDC2626),
+                        color: isOpen
+                            ? const Color.fromARGB(255, 23, 155, 71)
+                            : const Color(0xFFDC2626),
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
@@ -1036,22 +1445,30 @@ class _ProfileCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: isVerified ? const Color(0xFFDCFCE7) : const Color(0xFFF3F4F6),
+              color: isVerified
+                  ? const Color(0xFFDCFCE7)
+                  : const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  isVerified ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-                  color: isVerified ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFF9CA3AF),
+                  isVerified
+                      ? Icons.check_circle_rounded
+                      : Icons.info_outline_rounded,
+                  color: isVerified
+                      ? const Color.fromARGB(255, 23, 155, 71)
+                      : const Color(0xFF9CA3AF),
                   size: 14,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  isVerified ? 'Verified' : 'Unverified',
+                  isVerified ? _t('Verified') : _t('Unverified'),
                   style: GoogleFonts.inter(
-                    color: isVerified ? const Color.fromARGB(255, 23, 155, 71) : const Color(0xFF9CA3AF),
+                    color: isVerified
+                        ? const Color.fromARGB(255, 23, 155, 71)
+                        : const Color(0xFF9CA3AF),
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -1085,8 +1502,8 @@ class _LogoBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final String? fullUrl = imageUrl != null && imageUrl!.trim().isNotEmpty
         ? (imageUrl!.startsWith('http')
-            ? imageUrl
-            : '${ApiConfigs.IMAGE_URL}$imageUrl')
+              ? imageUrl
+              : '${ApiConfigs.IMAGE_URL}$imageUrl')
         : null;
 
     if (fullUrl != null) {
@@ -1125,12 +1542,12 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-        style: GoogleFonts.inter(
-          color: const Color(0xFF8B919E),
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          height: 1.2,
-        ),
+      style: GoogleFonts.inter(
+        color: const Color(0xFF8B919E),
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+        height: 1.2,
+      ),
     );
   }
 }
@@ -1145,66 +1562,73 @@ class _LanguageBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFDFD7),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final segment = constraints.maxWidth / _labels.length;
-          return SizedBox(
-            height: 40,
-            child: Stack(
-              children: [
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 280),
-                  curve: Curves.easeOutCubic,
-                  left: selected * segment,
-                  top: 0,
-                  bottom: 0,
-                  width: segment,
-                  child: const DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: PharmacyAccountScreen.orange,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFDFD7),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final segment = constraints.maxWidth / _labels.length;
+            return SizedBox(
+              height: 40,
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 280),
+                    curve: Curves.easeOutCubic,
+                    left: selected * segment,
+                    top: 0,
+                    bottom: 0,
+                    width: segment,
+                    child: const DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: PharmacyAccountScreen.orange,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
                     ),
                   ),
-                ),
-                Row(
-                  children: List.generate(_labels.length, (index) {
-                    final isSelected = selected == index;
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (index == selected) return;
-                          HapticFeedback.selectionClick();
-                          onSelect(index);
-                        },
-                        behavior: HitTestBehavior.opaque,
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
-                            style: GoogleFonts.inter(
-                              color: isSelected ? Colors.white : const Color(0xFF3F3F4D),
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                              fontSize: 14,
-                              height: 1.1,
+                  Row(
+                    children: List.generate(_labels.length, (index) {
+                      final isSelected = selected == index;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (index == selected) return;
+                            HapticFeedback.selectionClick();
+                            onSelect(index);
+                          },
+                          behavior: HitTestBehavior.opaque,
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeOutCubic,
+                              style: GoogleFonts.inter(
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color(0xFF3F3F4D),
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w600,
+                                fontSize: 14,
+                                height: 1.1,
+                              ),
+                              child: Text(_labels[index]),
                             ),
-                            child: Text(_labels[index]),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-          );
-        },
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -1222,11 +1646,9 @@ class _MenuCard extends StatelessWidget {
     for (var i = 0; i < children.length; i++) {
       rows.add(children[i]);
       if (divided && i != children.length - 1) {
-        rows.add(const Divider(
-          height: 1,
-          thickness:.2,
-          color: Color(0xFFF1F1F1),
-        ));
+        rows.add(
+          const Divider(height: 1, thickness: .2, color: Color(0xFFF1F1F1)),
+        );
       }
     }
     return Container(
@@ -1306,7 +1728,13 @@ class _MenuTile extends StatelessWidget {
           ),
           trailing ??
               (showChevron
-                  ? const Icon(Icons.chevron_right_rounded, color: Color(0xFFC8C8C8), size: 22)
+                  ? Icon(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.chevron_left_rounded
+                          : Icons.chevron_right_rounded,
+                      color: const Color(0xFFC8C8C8),
+                      size: 22,
+                    )
                   : const SizedBox(width: 22)),
         ],
       ),
@@ -1323,7 +1751,8 @@ class _DeleteLidIcon extends StatefulWidget {
   State<_DeleteLidIcon> createState() => _DeleteLidIconState();
 }
 
-class _DeleteLidIconState extends State<_DeleteLidIcon> with SingleTickerProviderStateMixin {
+class _DeleteLidIconState extends State<_DeleteLidIcon>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -1392,7 +1821,10 @@ class _DeleteLidPainter extends CustomPainter {
     final slotTop = body.top + body.height * 0.18;
     final slotHeight = body.height * 0.55;
     final slotWidth = size.width * 0.07;
-    for (final left in [body.left + body.width * 0.28, body.left + body.width * 0.58]) {
+    for (final left in [
+      body.left + body.width * 0.28,
+      body.left + body.width * 0.58,
+    ]) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(left, slotTop, slotWidth, slotHeight),
@@ -1413,7 +1845,10 @@ class _DeleteLidPainter extends CustomPainter {
     canvas.translate(hinge.dx, hinge.dy);
     canvas.rotate(-0.9 * lidOpen);
     canvas.translate(-hinge.dx, -hinge.dy);
-    canvas.drawRRect(RRect.fromRectAndRadius(lid, const Radius.circular(1.2)), paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(lid, const Radius.circular(1.2)),
+      paint,
+    );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(
@@ -1432,5 +1867,229 @@ class _DeleteLidPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DeleteLidPainter oldDelegate) {
     return oldDelegate.lidOpen != lidOpen;
+  }
+}
+
+class _DeleteAccountConfirmDialog extends StatelessWidget {
+  const _DeleteAccountConfirmDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: LocalizationService().getTextDirection(),
+      child: Dialog(
+        backgroundColor: Colors.white,
+        elevation: 10,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(false),
+                  borderRadius: BorderRadius.circular(6),
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFFE7E7E7)),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: Color(0xFF7F7F7F),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _t('Are you sure you want to delete your\naccount?'),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF4A4A4A),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFFFF5317),
+                          side: const BorderSide(
+                            color: Color(0xFFFF7F52),
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          _t('No'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF3939),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          _t('Yes'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoutConfirmDialog extends StatelessWidget {
+  const _LogoutConfirmDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: LocalizationService().getTextDirection(),
+      child: Dialog(
+        backgroundColor: Colors.white,
+        elevation: 10,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(false),
+                  borderRadius: BorderRadius.circular(6),
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFFE7E7E7)),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: Color(0xFF7F7F7F),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _t('Are you sure you want to log out?'),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF4A4A4A),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFFFF5317),
+                          side: const BorderSide(
+                            color: Color(0xFFFF7F52),
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          _t('No'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5317),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          _t('Yes'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,6 +6,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_add_coupon_screen.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 
@@ -52,13 +54,22 @@ class _Coupon {
   Map<String, dynamic> toMap() {
     if (rawMap != null) {
       final map = Map<String, dynamic>.from(rawMap!);
-      map['id'] = id ?? map['id'];
+      map['id'] = id ?? map['id'] ?? map['coupon_id'];
+      map['coupon_id'] = id ?? map['coupon_id'] ?? map['id'];
       map['name'] = name;
       map['code'] = code;
+      map['type'] = kind == 'PERCENTAGE' ? '2' : '1';
+      map['discount_value'] = discount
+          .replaceAll('%', '')
+          .replaceAll('MRU', '')
+          .trim();
+      map['count'] = count;
+      map['valid_upto'] = validUntil;
       return map;
     }
     return {
       'id': id,
+      'coupon_id': id,
       'name': name,
       'code': code,
       'type': kind == 'PERCENTAGE' ? '2' : '1',
@@ -118,7 +129,7 @@ class _Coupon {
         statusVal == 'active';
 
     return _Coupon(
-      id: raw['id'],
+      id: raw['id'] ?? raw['coupon_id'] ?? raw['couponId'],
       name: name,
       code: code,
       kind: kind,
@@ -244,6 +255,267 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
         .replaceFirst(RegExp(r'^/'), '');
     final q = query.entries.map((e) => "${e.key}=${e.value}").join('&');
     return '$base/$endpoint?$q';
+  }
+
+  String _getDeleteCouponUrl() {
+    final rawBase = ApiConfigs.BASE_URL.trim();
+    final base = rawBase.endsWith('/')
+        ? rawBase.substring(0, rawBase.length - 1)
+        : rawBase;
+    final endpoint = ApiEndPoints.pharmacyDeleteCoupon
+        .trim()
+        .replaceFirst(RegExp(r'^/'), '');
+    if (endpoint.startsWith('vendorapp/')) {
+      return '$base/$endpoint';
+    }
+    return '$base/vendorapp/$endpoint';
+  }
+
+  Future<void> _updateCouponStatus(_Coupon coupon) async {
+    final blocking = coupon.active;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color(0x80000000),
+      builder: (context) => _CouponConfirmDialog(
+        message: blocking
+            ? 'Are you sure you want to block this\nCoupon?'
+            : 'Are you sure you want to unblock this\nCoupon?',
+        yesColor: const Color(0xFFFF5317),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    HapticFeedback.lightImpact();
+
+    final couponId = coupon.id ??
+        coupon.rawMap?['id'] ??
+        coupon.rawMap?['coupon_id'] ??
+        coupon.rawMap?['couponId'];
+
+    if (couponId == null) {
+      showToast(context, 'Coupon ID not found');
+      return;
+    }
+
+    showLoadingDialog(context);
+
+    final newStatus = blocking ? 2 : 1;
+    final Map<String, dynamic> query = {
+      "coupon_id": couponId.toString(),
+      "status": newStatus.toString(),
+    };
+
+    final url = _getUpdateCouponStatusUrl(query);
+    debugPrint(
+      "==================== GET UPDATE COUPON STATUS ====================",
+    );
+    debugPrint("API Call: GET $url");
+    debugPrint("Query: $query");
+
+    print(
+      "==================== GET UPDATE COUPON STATUS ====================",
+    );
+    print("API Call: GET $url");
+    print("Query: $query");
+
+    try {
+      final token = await getSavedObject("token");
+      if (token != null && token.toString().isNotEmpty) {
+        DioClient().updateToken(token.toString());
+      }
+
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyUpdateCouponStatus,
+        query: query,
+      );
+
+      debugPrint(
+        "Response Status Code: ${response.statusCode}",
+      );
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "==================================================================",
+      );
+
+      print(
+        "Response Status Code: ${response.statusCode}",
+      );
+      print("Response Body: ${response.data}");
+      print(
+        "==================================================================",
+      );
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      final resData = response.data;
+      final bool isSuccess =
+          resData is Map &&
+          (resData['status'] == true ||
+              resData['status'].toString() == 'true');
+
+      if (isSuccess) {
+        if (mounted) {
+          final message =
+              resData['message']?.toString() ??
+              (blocking
+                  ? 'Coupon blocked successfully.'
+                  : 'Coupon unblocked successfully.');
+          try {
+            showToast(context, message);
+          } catch (_) {}
+          setState(() => coupon.active = !blocking);
+          _fetchCoupons();
+        }
+      } else {
+        if (mounted) {
+          final message = resData is Map
+              ? resData['message']?.toString() ??
+                    'Failed to update coupon status'
+              : 'Failed to update coupon status';
+          try {
+            showToast(context, message);
+          } catch (_) {}
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        try {
+          Navigator.of(context, rootNavigator: true).pop();
+        } catch (_) {}
+      }
+
+      debugPrint(
+        "==================== GET UPDATE COUPON STATUS ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      debugPrint(
+        "=======================================================================",
+      );
+
+      print(
+        "==================== GET UPDATE COUPON STATUS ERROR ====================",
+      );
+      print("Error: $e");
+      print(
+        "=======================================================================",
+      );
+
+      if (mounted) {
+        final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
+        try {
+          showToast(context, errorMsg);
+        } catch (_) {}
+      }
+    }
+  }
+
+  Future<void> _deleteCoupon(_Coupon coupon) async {
+    final couponId = coupon.id ??
+        coupon.rawMap?['id'] ??
+        coupon.rawMap?['coupon_id'] ??
+        coupon.rawMap?['couponId'];
+
+    if (couponId == null) {
+      showToast(context, 'Coupon ID not found');
+      return;
+    }
+
+    showLoadingDialog(context);
+
+    try {
+      final token = await getSavedObject("token");
+      if (token != null && token.toString().isNotEmpty) {
+        DioClient().updateToken(token.toString());
+      }
+
+      final bodyMap = <String, dynamic>{
+        "coupon_id": couponId.toString(),
+        "id": couponId.toString(),
+      };
+      final queryMap = <String, dynamic>{
+        "coupon_id": couponId.toString(),
+      };
+
+      final url = _getDeleteCouponUrl();
+      debugPrint("==================== POST DELETE COUPON ====================");
+      debugPrint("API Call: POST $url");
+      debugPrint("Endpoint: ${ApiEndPoints.pharmacyDeleteCoupon}");
+      debugPrint("FormData fields: coupon_id: $couponId");
+
+      print("==================== POST DELETE COUPON ====================");
+      print("API Call: POST $url");
+      print("Endpoint: ${ApiEndPoints.pharmacyDeleteCoupon}");
+      print("FormData fields: coupon_id: $couponId");
+
+      final response = await DioClient().post(
+        ApiEndPoints.pharmacyDeleteCoupon,
+        body: FormData.fromMap(bodyMap),
+        query: queryMap,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("============================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("============================================================");
+
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      final resData = response.data;
+      final bool isSuccess = resData is Map &&
+          (resData['status'] == true ||
+              resData['status'].toString() == 'true');
+
+      if (isSuccess) {
+        HapticFeedback.lightImpact();
+        if (mounted) {
+          final message = resData['message']?.toString() ??
+              'Coupon deleted successfully';
+          try {
+            showToast(context, message);
+          } catch (_) {}
+          setState(() {
+            _coupons.remove(coupon);
+          });
+          _fetchCoupons();
+        }
+      } else {
+        if (mounted) {
+          final message = resData is Map
+              ? resData['message']?.toString() ?? 'Failed to delete coupon'
+              : 'Failed to delete coupon';
+          try {
+            showToast(context, message);
+          } catch (_) {}
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        try {
+          Navigator.of(context, rootNavigator: true).pop();
+        } catch (_) {}
+      }
+
+      debugPrint("==================== POST DELETE COUPON ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("==================================================================");
+
+      print("==================== POST DELETE COUPON ERROR ====================");
+      print("Error: $e");
+      print("==================================================================");
+
+      if (mounted) {
+        final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
+        try {
+          showToast(context, errorMsg);
+        } catch (_) {}
+      }
+    }
   }
 
   @override
@@ -372,7 +644,7 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                                 const _AddPlusIcon(),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Add Coupon',
+                                  LocalizationService.tr('Add Coupon'),
                                   style: GoogleFonts.inter(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
@@ -405,128 +677,7 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                       for (final coupon in coupons) ...[
                         _CouponCard(
                           coupon: coupon,
-                          onUpdateStatus: () async {
-                            final blocking = coupon.active;
-                            final confirmed = await showDialog<bool>(
-                              context: context,
-                              barrierColor: const Color(0x80000000),
-                              builder: (context) => _CouponConfirmDialog(
-                                message: blocking
-                                    ? 'Are you sure you want to block this\nCoupon?'
-                                    : 'Are you sure you want to unblock this\nCoupon?',
-                                yesColor: const Color(0xFFFF5317),
-                              ),
-                            );
-                            if (confirmed != true || !mounted) return;
-                            HapticFeedback.lightImpact();
-
-                            final couponId = coupon.id;
-                            if (couponId == null) {
-                              setState(() => coupon.active = !coupon.active);
-                              return;
-                            }
-
-                            final newStatus = blocking ? 2 : 1;
-                            final Map<String, dynamic> query = {
-                              "coupon_id": couponId.toString(),
-                              "status": newStatus.toString(),
-                            };
-
-                            final url = _getUpdateCouponStatusUrl(query);
-                            debugPrint(
-                              "==================== GET UPDATE COUPON STATUS ====================",
-                            );
-                            debugPrint("API Call: GET $url");
-                            debugPrint("Query: $query");
-
-                            print(
-                              "==================== GET UPDATE COUPON STATUS ====================",
-                            );
-                            print("API Call: GET $url");
-                            print("Query: $query");
-
-                            try {
-                              final token = await getSavedObject("token");
-                              if (token != null &&
-                                  token.toString().isNotEmpty) {
-                                DioClient().updateToken(token.toString());
-                              }
-
-                              final response = await DioClient().get(
-                                ApiEndPoints.pharmacyUpdateCouponStatus,
-                                query: query,
-                              );
-
-                              debugPrint(
-                                "Response Status Code: ${response.statusCode}",
-                              );
-                              debugPrint("Response Body: ${response.data}");
-                              debugPrint(
-                                "==================================================================",
-                              );
-
-                              print(
-                                "Response Status Code: ${response.statusCode}",
-                              );
-                              print("Response Body: ${response.data}");
-                              print(
-                                "==================================================================",
-                              );
-
-                              final resData = response.data;
-                              final bool isSuccess =
-                                  resData is Map &&
-                                  (resData['status'] == true ||
-                                      resData['status'].toString() == 'true');
-
-                              if (isSuccess) {
-                                if (mounted) {
-                                  final message =
-                                      resData['message']?.toString() ??
-                                      (blocking
-                                          ? 'Coupon blocked successfully.'
-                                          : 'Coupon unblocked successfully.');
-                                  try {
-                                    showToast(context, message);
-                                  } catch (_) {}
-                                  setState(() => coupon.active = !blocking);
-                                  _fetchCoupons();
-                                }
-                              } else {
-                                if (mounted) {
-                                  final message = resData is Map
-                                      ? resData['message']?.toString() ??
-                                            'Failed to update coupon status'
-                                      : 'Failed to update coupon status';
-                                  try {
-                                    showToast(context, message);
-                                  } catch (_) {}
-                                }
-                              }
-                            } catch (e) {
-                              debugPrint(
-                                "==================== GET UPDATE COUPON STATUS ERROR ====================",
-                              );
-                              debugPrint("Error: $e");
-                              debugPrint(
-                                "=======================================================================",
-                              );
-
-                              print(
-                                "==================== GET UPDATE COUPON STATUS ERROR ====================",
-                              );
-                              print("Error: $e");
-                              print(
-                                "=======================================================================",
-                              );
-
-                              if (mounted) {
-                                try {
-                                  showToast(context, e.toString());
-                                } catch (_) {}
-                              }
-                            }
-                          },
+                          onUpdateStatus: () => _updateCouponStatus(coupon),
                           onEdit: () async {
                             final draft = await Navigator.of(context)
                                 .push<PharmacyCouponDraft>(
@@ -559,10 +710,7 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                             }
                             _fetchCoupons();
                           },
-                          onDelete: () {
-                            HapticFeedback.lightImpact();
-                            setState(() => _coupons.remove(coupon));
-                          },
+                          onDelete: () => _deleteCoupon(coupon),
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -597,7 +745,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Coupons',
+              LocalizationService.tr('Coupons'),
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -969,7 +1117,7 @@ class _CouponConfirmDialog extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              message,
+              LocalizationService.tr(message),
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 color: const Color(0xFF4A4A4A),
@@ -998,7 +1146,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'No',
+                        LocalizationService.tr('No'),
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -1021,7 +1169,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Yes',
+                        LocalizationService.tr('Yes'),
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,

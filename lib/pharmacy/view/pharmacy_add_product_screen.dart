@@ -1,12 +1,24 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyAddProductScreen extends StatefulWidget {
-  const PharmacyAddProductScreen({super.key});
+  const PharmacyAddProductScreen({
+    super.key,
+    this.isEdit = false,
+    this.initialData,
+  });
+
+  final bool isEdit;
+  final Map<String, dynamic>? initialData;
 
   static const Color orange = Color(0xFFFF5722);
   static const Color ink = Color(0xFF111827);
@@ -23,17 +35,147 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
   final _expiry = TextEditingController();
   final _barcode = TextEditingController();
   final _description = TextEditingController();
-  final _selling = TextEditingController(text: '0.00');
-  final _offer = TextEditingController(text: '0.00');
-  final _stock = TextEditingController(text: '300');
-  final _lowStock = TextEditingController(text: '10');
+  final _selling = TextEditingController();
+  final _offer = TextEditingController();
+  final _stock = TextEditingController();
+  final _lowStock = TextEditingController();
 
   String? _category;
-  String _form = 'Tablet';
+  String? _form;
   String? _dosage;
-  String _unit = 'Strip';
+  String? _unit;
   bool _prescription = false;
+  final List<String> _existingImages = [];
   final List<XFile> _selectedImages = [];
+
+  int? _itemId;
+  int? _categoryId;
+  int? _formId;
+  int? _unitId;
+  String? _initialCategory;
+  String? _initialForm;
+  String? _initialUnit;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.initialData != null) {
+      final d = widget.initialData!;
+      _itemId = int.tryParse(
+        d['id']?.toString() ?? d['item_id']?.toString() ?? '',
+      );
+
+      dynamic rawCat = d['category_id'];
+      if (rawCat == null || rawCat.toString().isEmpty) {
+        final menuCat = d['menu_category_id'];
+        if (menuCat is List && menuCat.isNotEmpty) {
+          rawCat = menuCat.first;
+        } else if (menuCat != null && menuCat is! List) {
+          rawCat = menuCat;
+        }
+      }
+      _categoryId = int.tryParse(rawCat?.toString() ?? '');
+
+      _formId = int.tryParse(d['form_id']?.toString() ?? '');
+      _unitId = int.tryParse(d['unit_id']?.toString() ?? '');
+
+      _name.text =
+          d['name']?.toString() ??
+          d['menu_name_en']?.toString() ??
+          d['menu_name']?.toString() ??
+          '';
+      _expiry.text = d['expiry_date']?.toString() ?? '';
+
+      final rawBarcode =
+          d['barcode']?.toString() ?? d['serial_number']?.toString() ?? '';
+      _barcode.text =
+          (rawBarcode == 'null' || rawBarcode == '-' || rawBarcode == '—')
+              ? ''
+              : rawBarcode;
+
+      _description.text =
+          d['description']?.toString() ??
+          d['description_en']?.toString() ??
+          d['form_details']?.toString() ??
+          '';
+
+      _selling.text =
+          d['price']?.toString() ??
+          d['mrp']?.toString() ??
+          d['selling_price']?.toString() ??
+          '';
+      _offer.text =
+          d['discount_price']?.toString() ??
+          d['offer_price']?.toString() ??
+          d['price']?.toString() ??
+          '';
+      _stock.text = d['stock']?.toString() ?? '';
+      _lowStock.text = d['low_stock_alert']?.toString() ?? '';
+
+      _category =
+          d['category_name']?.toString() ??
+          d['menu_category_name']?.toString() ??
+          _resolveCategoryNameFromId(_categoryId);
+      _initialCategory = _category;
+
+      _form =
+          d['form_name']?.toString() ??
+          d['form']?.toString() ??
+          _resolveFormNameFromId(_formId) ??
+          d['attribute_value']?.toString();
+      _initialForm = _form;
+
+      final rawDosage = d['dosage']?.toString();
+      _dosage =
+          (rawDosage != null && rawDosage.isNotEmpty && rawDosage != 'null')
+              ? (rawDosage.toLowerCase().endsWith('mg')
+                    ? rawDosage
+                    : '${rawDosage}mg')
+              : null;
+
+      _unit =
+          d['unit_name']?.toString() ??
+          d['stock_unit']?.toString() ??
+          _resolveUnitNameFromId(_unitId) ??
+          d['attribute_value']?.toString();
+      _initialUnit = _unit;
+
+      _prescription =
+          d['prescription_required'] == 1 ||
+          d['prescription_required'] == '1' ||
+          d['prescription_required'] == true;
+
+      void appendImg(dynamic img) {
+        if (img == null) return;
+        final p = (img is Map ? img['image']?.toString() : img.toString())?.trim();
+        if (p != null && p.isNotEmpty && p != 'null' && !_existingImages.contains(p)) {
+          _existingImages.add(p);
+        }
+      }
+
+      if (d['menu_image'] != null) {
+        appendImg(d['menu_image']);
+      }
+      if (d['images'] is List) {
+        for (final img in (d['images'] as List)) {
+          appendImg(img);
+        }
+      }
+      if (d['image_items'] is List) {
+        for (final img in (d['image_items'] as List)) {
+          appendImg(img);
+        }
+      }
+    } else {
+      _selling.clear();
+      _offer.clear();
+      _stock.clear();
+      _lowStock.clear();
+      _form = null;
+      _unit = null;
+    }
+  }
 
   @override
   void dispose() {
@@ -185,17 +327,485 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
       _expiry.clear();
       _barcode.clear();
       _description.clear();
-      _selling.text = '0.00';
-      _offer.text = '0.00';
-      _stock.text = '300';
-      _lowStock.text = '10';
+      _selling.clear();
+      _offer.clear();
+      _stock.clear();
+      _lowStock.clear();
       _category = null;
-      _form = 'Tablet';
+      _form = null;
       _dosage = null;
-      _unit = 'Strip';
+      _unit = null;
       _prescription = false;
+      _existingImages.clear();
       _selectedImages.clear();
     });
+  }
+
+  String? _resolveFormNameFromId(dynamic formId) {
+    switch (formId?.toString()) {
+      case '1':
+        return 'Capsule';
+      case '2':
+        return 'Tablet';
+      case '3':
+        return 'Syrup';
+      case '4':
+        return 'Device';
+      default:
+        return null;
+    }
+  }
+
+  String? _resolveCategoryNameFromId(dynamic categoryId) {
+    switch (categoryId?.toString()) {
+      case '1':
+        return 'Vitamins';
+      case '2':
+        return 'Medical Devices';
+      case '3':
+        return 'Analgesics & Antipyretics';
+      default:
+        return null;
+    }
+  }
+
+  String? _resolveUnitNameFromId(dynamic unitId) {
+    switch (unitId?.toString()) {
+      case '1':
+        return 'Strip';
+      case '2':
+        return 'Box';
+      case '3':
+        return 'Bottle';
+      case '4':
+        return 'Piece';
+      default:
+        return null;
+    }
+  }
+
+  int? _resolveCategoryId(String? categoryName) {
+    if (_categoryId != null &&
+        _initialCategory != null &&
+        categoryName?.toLowerCase() == _initialCategory?.toLowerCase()) {
+      return _categoryId;
+    }
+    switch (categoryName?.toLowerCase()) {
+      case 'analgesics & antipyretics':
+      case 'antipyretics':
+        return 3;
+      case 'medical devices':
+        return 2;
+      case 'vitamins':
+        return 1;
+      default:
+        if (_categoryId != null) return _categoryId;
+        dynamic cat = widget.initialData?['category_id'];
+        if (cat == null) {
+          final menuCat = widget.initialData?['menu_category_id'];
+          if (menuCat is List && menuCat.isNotEmpty) {
+            cat = menuCat.first;
+          } else if (menuCat != null && menuCat is! List) {
+            cat = menuCat;
+          }
+        }
+        return int.tryParse(cat?.toString() ?? '');
+    }
+  }
+
+  int? _resolveFormId(String? formName) {
+    if (_formId != null &&
+        _initialForm != null &&
+        formName?.toLowerCase() == _initialForm?.toLowerCase()) {
+      return _formId;
+    }
+    switch (formName?.toLowerCase()) {
+      case 'capsule':
+        return 1;
+      case 'tablet':
+        return 2;
+      case 'syrup':
+        return 3;
+      case 'device':
+        return 4;
+      default:
+        return _formId ??
+            int.tryParse(widget.initialData?['form_id']?.toString() ?? '');
+    }
+  }
+
+  int? _resolveUnitId(String? unitName) {
+    if (_unitId != null &&
+        _initialUnit != null &&
+        unitName?.toLowerCase() == _initialUnit?.toLowerCase()) {
+      return _unitId;
+    }
+    switch (unitName?.toLowerCase()) {
+      case 'strip':
+        return 1;
+      case 'box':
+        return 2;
+      case 'bottle':
+        return 3;
+      case 'piece':
+        return 4;
+      default:
+        return _unitId ??
+            int.tryParse(widget.initialData?['unit_id']?.toString() ?? '');
+    }
+  }
+
+  String _formatExpiryForApi(String input) {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty) return '';
+    if (trimmed.contains('-')) return trimmed;
+    if (trimmed.contains('/')) {
+      final parts = trimmed.split('/');
+      if (parts.length == 3) {
+        if (parts[2].length == 4) {
+          final mm = parts[0].padLeft(2, '0');
+          final dd = parts[1].padLeft(2, '0');
+          final yyyy = parts[2];
+          return '$yyyy-$mm-$dd';
+        } else if (parts[0].length == 4) {
+          final yyyy = parts[0];
+          final mm = parts[1].padLeft(2, '0');
+          final dd = parts[2].padLeft(2, '0');
+          return '$yyyy-$mm-$dd';
+        }
+      }
+    }
+    return trimmed;
+  }
+
+  DioMediaType _getImageContentType(String path) {
+    final ext = path.contains('.') ? path.split('.').last.toLowerCase() : '';
+    if (ext == 'png') return DioMediaType('image', 'png');
+    if (ext == 'webp') return DioMediaType('image', 'webp');
+    if (ext == 'gif') return DioMediaType('image', 'gif');
+    if (ext == 'svg') return DioMediaType('image', 'svg+xml');
+    return DioMediaType('image', 'jpeg');
+  }
+
+  String _sanitizeFilename(String path) {
+    String name = path.split(RegExp(r'[/\\]')).last;
+    final ext = name.contains('.') ? name.split('.').last.toLowerCase() : '';
+    if (!['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].contains(ext)) {
+      name = '$name.jpg';
+    }
+    return name;
+  }
+
+  Future<void> _updateProduct() async {
+    if (_isSubmitting) return;
+
+    final itemId =
+        _itemId?.toString() ??
+        widget.initialData?['id']?.toString() ??
+        widget.initialData?['item_id']?.toString();
+    if (itemId == null || itemId.isEmpty) {
+      Fluttertoast.showToast(msg: 'Item ID is missing');
+      return;
+    }
+
+    dynamic categoryId =
+        _resolveCategoryId(_category) ??
+        _categoryId ??
+        widget.initialData?['category_id'];
+    if (categoryId == null) {
+      final menuCat = widget.initialData?['menu_category_id'];
+      if (menuCat is List && menuCat.isNotEmpty) {
+        categoryId = menuCat.first;
+      } else if (menuCat != null && menuCat is! List) {
+        categoryId = menuCat;
+      }
+    }
+    categoryId ??= 3;
+
+    dynamic formId = _resolveFormId(_form);
+    formId ??= _formId ?? widget.initialData?['form_id'] ?? 2;
+
+    dynamic unitId = _resolveUnitId(_unit);
+    unitId ??= _unitId ?? widget.initialData?['unit_id'] ?? 1;
+
+    final rawDosage =
+        _dosage ?? widget.initialData?['dosage']?.toString() ?? '';
+    final dosageDigits = rawDosage.replaceAll(RegExp(r'[^0-9]'), '');
+    final dosage = dosageDigits.isNotEmpty
+        ? dosageDigits
+        : (rawDosage.isNotEmpty ? rawDosage : '500');
+
+    final expiry = _formatExpiryForApi(_expiry.text.trim());
+
+    final prescriptionRequired = _prescription
+        ? 1
+        : ((widget.initialData?['prescription_required'] == 1 ||
+                  widget.initialData?['prescription_required'] == '1')
+              ? 1
+              : 0);
+
+    final lowStock = _lowStock.text.trim().isNotEmpty
+        ? _lowStock.text.trim()
+        : (widget.initialData?['low_stock_alert']?.toString() ?? '10');
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final Map<String, dynamic> formMap = {
+        'category_id': categoryId.toString(),
+        'name': _name.text.trim(),
+        'dosage': dosage,
+        'unit_id': unitId.toString(),
+        'form_id': formId.toString(),
+        'barcode': _barcode.text.trim(),
+        'expiry_date': expiry,
+        'description': _description.text.trim(),
+        'prescription_required': prescriptionRequired.toString(),
+        'price': _selling.text.trim(),
+        'offer_price': _offer.text.trim(),
+        'stock': _stock.text.trim(),
+        'low_stock_alert': lowStock.toString(),
+        'item_id': itemId.toString(),
+      };
+
+      if (_selectedImages.isNotEmpty) {
+        final firstImg = _selectedImages.first;
+        final baseName = _sanitizeFilename(firstImg.path);
+        formMap['image'] = await MultipartFile.fromFile(
+          firstImg.path,
+          filename: baseName,
+          contentType: _getImageContentType(baseName),
+        );
+      }
+
+      final formData = FormData.fromMap(formMap);
+
+      for (int i = 1; i < _selectedImages.length; i++) {
+        final img = _selectedImages[i];
+        final baseName = _sanitizeFilename(img.path);
+        formData.files.add(
+          MapEntry(
+            'images[]',
+            await MultipartFile.fromFile(
+              img.path,
+              filename: baseName,
+              contentType: _getImageContentType(baseName),
+            ),
+          ),
+        );
+      }
+
+      debugPrint(
+        "==================== POST UPDATE PHARMACY MENU ITEM ====================",
+      );
+      debugPrint("Endpoint: ${ApiEndPoints.updatePharmacyMenuItem}");
+      debugPrint("Form fields: $formMap");
+      debugPrint("New images count: ${_selectedImages.length}");
+      print(
+        "==================== POST UPDATE PHARMACY MENU ITEM ====================",
+      );
+      print("Endpoint: ${ApiEndPoints.updatePharmacyMenuItem}");
+      print("Form fields: $formMap");
+
+      final response = await DioClient().post(
+        ApiEndPoints.updatePharmacyMenuItem,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "========================================================================",
+      );
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "========================================================================",
+      );
+
+      if (response.statusCode == 200 &&
+          response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status'].toString() == 'true')) {
+        final rawMsg = response.data['message'];
+        final msg = rawMsg is String && rawMsg.isNotEmpty
+            ? rawMsg
+            : 'Pharmacy menu item updated';
+        Fluttertoast.showToast(msg: msg);
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        Fluttertoast.showToast(
+          msg: rawMsg is String && rawMsg.isNotEmpty
+              ? rawMsg
+              : 'Failed to update item',
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating pharmacy menu item: $e");
+      final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
+      Fluttertoast.showToast(
+        msg: errorMsg.isNotEmpty ? errorMsg : 'Failed to update item',
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  Future<void> _addProduct() async {
+    if (_isSubmitting) return;
+
+    final name = _name.text.trim();
+    if (name.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please enter product name');
+      return;
+    }
+
+    if (_selectedImages.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please select product image');
+      return;
+    }
+
+    final categoryId = _resolveCategoryId(_category) ?? 3;
+    final formId = _resolveFormId(_form) ?? 2;
+    final unitId = _resolveUnitId(_unit) ?? 1;
+
+    final rawDosage = _dosage ?? '';
+    final dosageDigits = rawDosage.replaceAll(RegExp(r'[^0-9]'), '');
+    final dosage = dosageDigits.isNotEmpty
+        ? dosageDigits
+        : (rawDosage.isNotEmpty ? rawDosage : '500');
+
+    final expiry = _formatExpiryForApi(_expiry.text.trim());
+    final prescriptionRequired = _prescription ? '1' : '0';
+    final price = _selling.text.trim().isNotEmpty ? _selling.text.trim() : '0';
+    final offerPrice = _offer.text.trim().isNotEmpty
+        ? _offer.text.trim()
+        : price;
+    final stock = _stock.text.trim().isNotEmpty ? _stock.text.trim() : '0';
+    final lowStock = _lowStock.text.trim().isNotEmpty
+        ? _lowStock.text.trim()
+        : '10';
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final Map<String, dynamic> formMap = {
+        'category_id': categoryId.toString(),
+        'name': name,
+        'dosage': dosage,
+        'unit_id': unitId.toString(),
+        'form_id': formId.toString(),
+        'barcode': _barcode.text.trim(),
+        'expiry_date': expiry,
+        'description': _description.text.trim(),
+        'prescription_required': prescriptionRequired,
+        'price': price,
+        'offer_price': offerPrice,
+        'stock': stock,
+        'low_stock_alert': lowStock,
+      };
+
+      if (_selectedImages.isNotEmpty) {
+        final firstImg = _selectedImages.first;
+        final baseName = _sanitizeFilename(firstImg.path);
+        formMap['image'] = await MultipartFile.fromFile(
+          firstImg.path,
+          filename: baseName,
+          contentType: _getImageContentType(baseName),
+        );
+      }
+
+      final formData = FormData.fromMap(formMap);
+
+      for (int i = 1; i < _selectedImages.length; i++) {
+        final img = _selectedImages[i];
+        final baseName = _sanitizeFilename(img.path);
+        formData.files.add(
+          MapEntry(
+            'images[]',
+            await MultipartFile.fromFile(
+              img.path,
+              filename: baseName,
+              contentType: _getImageContentType(baseName),
+            ),
+          ),
+        );
+      }
+
+      debugPrint(
+        "==================== POST ADD PHARMACY MENU ITEM ====================",
+      );
+      debugPrint("Endpoint: ${ApiEndPoints.addPharmacyMenuItem}");
+      debugPrint("Form fields: $formMap");
+      debugPrint("New images count: ${_selectedImages.length}");
+      print(
+        "==================== POST ADD PHARMACY MENU ITEM ====================",
+      );
+      print("Endpoint: ${ApiEndPoints.addPharmacyMenuItem}");
+      print("Form fields: $formMap");
+
+      final response = await DioClient().post(
+        ApiEndPoints.addPharmacyMenuItem,
+        body: formData,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint(
+        "========================================================================",
+      );
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print(
+        "========================================================================",
+      );
+
+      if (response.statusCode == 200 &&
+          response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status'].toString() == 'true')) {
+        final rawMsg = response.data['message'];
+        final msg = rawMsg is String && rawMsg.isNotEmpty
+            ? rawMsg
+            : 'Pharmacy menu item added';
+        Fluttertoast.showToast(msg: msg);
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        Fluttertoast.showToast(
+          msg: rawMsg is String && rawMsg.isNotEmpty
+              ? rawMsg
+              : 'Failed to add item',
+        );
+      }
+    } catch (e) {
+      debugPrint("Error adding pharmacy menu item: $e");
+      final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
+      Fluttertoast.showToast(
+        msg: errorMsg.isNotEmpty ? errorMsg : 'Failed to add item',
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
   }
 
   @override
@@ -218,7 +828,10 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
           child: Column(
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-              _Header(onBack: () => Navigator.of(context).maybePop()),
+              _Header(
+                title: widget.isEdit ? 'Edit Product' : 'Add Product',
+                onBack: () => Navigator.of(context).maybePop(),
+              ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -230,9 +843,10 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           'Product Image',
                           color: Color(0xFF4B5563),
                         ),
-                        if (_selectedImages.isNotEmpty)
+                        if ((_existingImages.length + _selectedImages.length) >
+                            0)
                           Text(
-                            '${_selectedImages.length} image${_selectedImages.length > 1 ? "s" : ""} selected',
+                            '${_existingImages.length + _selectedImages.length} image${(_existingImages.length + _selectedImages.length) > 1 ? "s" : ""} selected',
                             style: GoogleFonts.inter(
                               color: PharmacyAddProductScreen.orange,
                               fontWeight: FontWeight.w600,
@@ -242,13 +856,17 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    if (_selectedImages.isEmpty)
+                    if (_existingImages.isEmpty && _selectedImages.isEmpty)
                       _UploadBox(onTap: _pickImages)
                     else
                       _ImagesPreviewList(
+                        existingImages: _existingImages,
                         images: _selectedImages,
                         onAddMore: _pickImages,
-                        onRemove: (idx) {
+                        onRemoveExisting: (idx) {
+                          setState(() => _existingImages.removeAt(idx));
+                        },
+                        onRemoveSelected: (idx) {
                           setState(() => _selectedImages.removeAt(idx));
                         },
                       ),
@@ -265,7 +883,15 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                   label: 'Category',
                                   child: _SelectCategoryField(
                                     value: _category,
-                                    items: const [
+                                    items: [
+                                      if (_category != null &&
+                                          _category!.isNotEmpty &&
+                                          !const [
+                                            'Analgesics & Antipyretics',
+                                            'Medical Devices',
+                                            'Vitamins',
+                                          ].contains(_category))
+                                        _category!,
                                       'Analgesics & Antipyretics',
                                       'Medical Devices',
                                       'Vitamins',
@@ -281,7 +907,16 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                   label: 'Form',
                                   child: _SelectCategoryField(
                                     value: _form,
-                                    items: const [
+                                    items: [
+                                      if (_form != null &&
+                                          _form!.isNotEmpty &&
+                                          !const [
+                                            'Tablet',
+                                            'Capsule',
+                                            'Syrup',
+                                            'Device',
+                                          ].contains(_form))
+                                        _form!,
                                       'Tablet',
                                       'Capsule',
                                       'Syrup',
@@ -298,7 +933,9 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           ),
                           const SizedBox(height: 12),
                           _Labeled(
-                            label: 'Product Name (English)',
+                            label: widget.isEdit
+                                ? 'Medicine Name'
+                                : 'Product Name (English)',
                             child: _InputField(
                               controller: _name,
                               hint: 'e.g. Paracetamol 500mg',
@@ -312,7 +949,19 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                   label: 'Dosage',
                                   child: _SelectCategoryField(
                                     value: _dosage,
-                                    items: const ['250mg', '500mg', '1000mg'],
+                                    items: [
+                                      if (_dosage != null &&
+                                          _dosage!.isNotEmpty &&
+                                          !const [
+                                            '250mg',
+                                            '500mg',
+                                            '1000mg',
+                                          ].contains(_dosage))
+                                        _dosage!,
+                                      '250mg',
+                                      '500mg',
+                                      '1000mg',
+                                    ],
                                     onChanged: (value) =>
                                         setState(() => _dosage = value),
                                   ),
@@ -324,7 +973,16 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                   label: 'Unit',
                                   child: _SelectCategoryField(
                                     value: _unit,
-                                    items: const [
+                                    items: [
+                                      if (_unit != null &&
+                                          _unit!.isNotEmpty &&
+                                          !const [
+                                            'Strip',
+                                            'Box',
+                                            'Bottle',
+                                            'Piece',
+                                          ].contains(_unit))
+                                        _unit!,
                                       'Strip',
                                       'Box',
                                       'Bottle',
@@ -359,12 +1017,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    _PrescriptionCard(
-                      value: _prescription,
-                      onChanged: (value) =>
-                          setState(() => _prescription = value),
-                    ),
+                    if (!widget.isEdit) ...[
+                      const SizedBox(height: 12),
+                      _PrescriptionCard(
+                        value: _prescription,
+                        onChanged: (value) =>
+                            setState(() => _prescription = value),
+                      ),
+                    ],
                     const SizedBox(height: 14),
                     _DescriptionCard(controller: _description),
                     const SizedBox(height: 14),
@@ -375,14 +1035,16 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                         children: [
                           Expanded(
                             child: _Labeled(
-                              label: 'Selling Price',
+                              label: widget.isEdit ? 'Price' : 'Selling Price',
                               child: _PriceField(controller: _selling),
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: _Labeled(
-                              label: 'Offer Price',
+                              label: widget.isEdit
+                                  ? 'Discount Price'
+                                  : 'Offer Price',
                               child: _PriceField(controller: _offer),
                             ),
                           ),
@@ -395,10 +1057,8 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                       background: const Color(0xFFFFF8F6),
                       titleColor: const Color(0xFF3F4753),
                       title: 'INVENTORY CONTROL',
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _Labeled(
+                      child: widget.isEdit
+                          ? _Labeled(
                               label: 'Available Stock',
                               child: _InputField(
                                 controller: _stock,
@@ -406,25 +1066,47 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                 suffixColor: const Color(0xFF1F2937),
                                 keyboard: TextInputType.number,
                               ),
+                            )
+                          : Row(
+                              children: [
+                                Expanded(
+                                  child: _Labeled(
+                                    label: 'Available Stock',
+                                    child: _InputField(
+                                      controller: _stock,
+                                      suffix: _unit,
+                                      suffixColor: const Color(0xFF1F2937),
+                                      keyboard: TextInputType.number,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: _Labeled(
+                                    label: 'Low Stock Alert',
+                                    child: _InputField(
+                                      controller: _lowStock,
+                                      keyboard: TextInputType.number,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _Labeled(
-                              label: 'Low Stock Alert',
-                              child: _InputField(
-                                controller: _lowStock,
-                                keyboard: TextInputType.number,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
               ),
-              _BottomActions(onReset: _reset),
+              _BottomActions(
+                isEdit: widget.isEdit,
+                onReset: _reset,
+                onSave: () {
+                  if (widget.isEdit) {
+                    _updateProduct();
+                  } else {
+                    _addProduct();
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -434,9 +1116,15 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
 }
 
 class _BottomActions extends StatelessWidget {
-  const _BottomActions({required this.onReset});
+  const _BottomActions({
+    required this.onReset,
+    this.onSave,
+    this.isEdit = false,
+  });
 
   final VoidCallback onReset;
+  final VoidCallback? onSave;
+  final bool isEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -460,7 +1148,9 @@ class _BottomActions extends StatelessWidget {
             child: SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: onReset,
+                onPressed: isEdit
+                    ? () => Navigator.of(context).maybePop()
+                    : onReset,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF1F5F9),
                   foregroundColor: const Color(0xFF334155),
@@ -471,7 +1161,7 @@ class _BottomActions extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Reset',
+                  isEdit ? 'Cancel' : 'Reset',
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -485,7 +1175,7 @@ class _BottomActions extends StatelessWidget {
             child: SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: onSave ?? () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF5317),
                   foregroundColor: Colors.white,
@@ -496,7 +1186,7 @@ class _BottomActions extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Save Product',
+                  isEdit ? 'Update' : 'Save Product',
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -512,9 +1202,10 @@ class _BottomActions extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
+  const _Header({required this.onBack, this.title = 'Add Product'});
 
   final VoidCallback onBack;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -526,7 +1217,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Add Product',
+              title,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -612,25 +1303,30 @@ class _UploadBox extends StatelessWidget {
 
 class _ImagesPreviewList extends StatelessWidget {
   const _ImagesPreviewList({
+    this.existingImages = const [],
     required this.images,
     required this.onAddMore,
-    required this.onRemove,
+    required this.onRemoveSelected,
+    required this.onRemoveExisting,
   });
 
+  final List<String> existingImages;
   final List<XFile> images;
   final VoidCallback onAddMore;
-  final ValueChanged<int> onRemove;
+  final ValueChanged<int> onRemoveSelected;
+  final ValueChanged<int> onRemoveExisting;
 
   @override
   Widget build(BuildContext context) {
+    final totalCount = existingImages.length + images.length;
     return SizedBox(
       height: 110,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: images.length + 1,
+        itemCount: totalCount + 1,
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          if (index == images.length) {
+          if (index == totalCount) {
             return Material(
               color: Colors.transparent,
               child: InkWell(
@@ -678,7 +1374,50 @@ class _ImagesPreviewList extends StatelessWidget {
             );
           }
 
-          final img = images[index];
+          final isExisting = index < existingImages.length;
+          final Widget imageWidget;
+          if (isExisting) {
+            final netPath = existingImages[index];
+            if (netPath.startsWith('lib/') || netPath.startsWith('assets/')) {
+              imageWidget = Image.asset(
+                netPath,
+                width: 95,
+                height: 110,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(
+                    Icons.medication_rounded,
+                    color: PharmacyAddProductScreen.orange,
+                    size: 28,
+                  ),
+                ),
+              );
+            } else {
+              imageWidget = Image.network(
+                _resolveImageUrl(netPath),
+                width: 95,
+                height: 110,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(
+                    Icons.medication_rounded,
+                    color: PharmacyAddProductScreen.orange,
+                    size: 28,
+                  ),
+                ),
+              );
+            }
+          } else {
+            final fileIndex = index - existingImages.length;
+            final img = images[fileIndex];
+            imageWidget = Image.file(
+              File(img.path),
+              width: 95,
+              height: 110,
+              fit: BoxFit.cover,
+            );
+          }
+
           return Stack(
             children: [
               Container(
@@ -690,19 +1429,20 @@ class _ImagesPreviewList extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.file(
-                    File(img.path),
-                    width: 95,
-                    height: 110,
-                    fit: BoxFit.cover,
-                  ),
+                  child: imageWidget,
                 ),
               ),
               Positioned(
                 top: 4,
                 right: 4,
                 child: GestureDetector(
-                  onTap: () => onRemove(index),
+                  onTap: () {
+                    if (isExisting) {
+                      onRemoveExisting(index);
+                    } else {
+                      onRemoveSelected(index - existingImages.length);
+                    }
+                  },
                   behavior: HitTestBehavior.opaque,
                   child: Container(
                     padding: const EdgeInsets.all(4),
@@ -724,6 +1464,35 @@ class _ImagesPreviewList extends StatelessWidget {
       ),
     );
   }
+}
+
+String _resolveImageUrl(String path) {
+  final str = path.trim();
+  if (str.startsWith('http://') || str.startsWith('https://')) {
+    return str;
+  }
+  if (str.startsWith('//')) {
+    return 'https:$str';
+  }
+  final base = ApiConfigs.IMAGE_URL.trim();
+  final uri = Uri.tryParse(base);
+  final origin = (uri != null && uri.hasScheme)
+      ? '${uri.scheme}://${uri.host}'
+      : 'https://dev.saimpexenterprise.com';
+  if (str.startsWith('/storage/')) {
+    return '$origin$str';
+  }
+  if (str.startsWith('storage/')) {
+    return '$origin/$str';
+  }
+  if (str.startsWith('/')) {
+    final cleanBase = base.endsWith('/')
+        ? base.substring(0, base.length - 1)
+        : base;
+    return '$cleanBase$str';
+  }
+  final cleanBase = base.endsWith('/') ? base : '$base/';
+  return '$cleanBase$str';
 }
 
 class _UploadIcon extends StatelessWidget {
