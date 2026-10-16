@@ -1701,70 +1701,81 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ClipOval(
-          child: Image.asset(
-            AppAssets.homeTopIcon,
-            width: 42,
-            height: 42,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(
-              width: 42,
-              height: 42,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryOrange,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.local_pharmacy_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        const Expanded(
-          child: Text(
-            'Welcome to Saimpex Vendor!',
-            style: TextStyle(
-              color: AppColors.textDark,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const PharmacyNotificationsScreen(),
-              ),
-            );
-          },
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+    return GetBuilder<PharmacyHomeController>(
+      builder: (controller) {
+        final shopName = controller.shopName;
+        final welcomeText = shopName.isNotEmpty
+            ? '${S.of(context).welcomeTo} $shopName'
+            : S.of(context).welcomeToSaimpexVendor;
+
+        return Row(
+          children: [
+            ClipOval(
+              child: Image.asset(
+                AppAssets.homeTopIcon,
+                width: 42,
+                height: 42,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => Container(
+                  width: 42,
+                  height: 42,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryOrange,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.local_pharmacy_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
-              ],
+              ),
             ),
-            child: const Icon(
-              Icons.notifications_none_rounded,
-              color: AppColors.paymentDivider,
-              size: 22,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                welcomeText,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.textDark,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const PharmacyNotificationsScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: AppColors.paymentDivider,
+                  size: 22,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

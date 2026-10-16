@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../generated/l10n.dart';
+import '../../utils/localization_service.dart';
 
 import '../../controller/settings_controller.dart';
 import '../../view/shimmer_loading/shimmer_text_content.dart';
@@ -13,11 +14,8 @@ class TermsandConditions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = FlutterLocalization.instance;
     return Directionality(
-      textDirection: localization.currentLocale!.languageCode == "ar"
-          ? TextDirection.rtl
-          : TextDirection.ltr,
+      textDirection: LocalizationService().getTextDirection(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -49,19 +47,25 @@ class TermsandConditions extends StatelessWidget {
         body: GetBuilder<SettingsController>(
           init: SettingsController(),
           didChangeDependencies: (state) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (state.controller!.htmlData.isEmpty) {
-                state.controller!.getTerms();
-              }
-            });
+            final controller = state.controller;
+            if (controller != null && controller.termsConditionsHtml.isEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                controller.getTerms();
+              });
+            }
           },
           builder: (controller) {
+            final content = controller.termsConditionsHtml.isNotEmpty
+                ? controller.termsConditionsHtml
+                : controller.htmlData;
+            final isContentEmpty = content.trim().isEmpty;
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              child: controller.isLoading
+              child: (controller.isTermsLoading || controller.isLoading) &&
+                      isContentEmpty
                   ? const ShimmerTextContent()
                   : Html(
-                      data: controller.htmlData,
+                      data: content,
                       style: {
                         "body": Style(
                           margin: Margins.zero,

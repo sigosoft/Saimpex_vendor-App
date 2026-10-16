@@ -46,17 +46,25 @@ class AboutUs extends StatelessWidget {
         body: GetBuilder<SettingsController>(
           init: SettingsController(),
           didChangeDependencies: (state) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              state.controller!.getAboutUs();
-            });
+            final controller = state.controller;
+            if (controller != null && controller.aboutUsHtml.isEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                controller.getAboutUs();
+              });
+            }
           },
           builder: (controller) {
+            final content = controller.aboutUsHtml.isNotEmpty
+                ? controller.aboutUsHtml
+                : controller.htmlData;
+            final isContentEmpty = content.trim().isEmpty;
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              child: controller.isLoading
+              child: (controller.isAboutLoading || controller.isLoading) &&
+                      isContentEmpty
                   ? const ShimmerTextContent()
                   : Html(
-                      data: controller.htmlData,
+                      data: content,
                       style: {
                         "body": Style(
                           margin: Margins.zero,

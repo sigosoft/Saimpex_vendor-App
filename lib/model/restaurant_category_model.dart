@@ -13,11 +13,31 @@ class RestaurantAllCategoriesModel {
     status = json?['status']?.toString();
     message = json?['message']?.toString();
 
-    if (json?['data'] != null) {
+    final rawData = json?['data'];
+    List<dynamic>? list;
+    if (rawData is List) {
+      list = rawData;
+    } else if (rawData is Map) {
+      for (final key in ['data', 'categories', 'menu_categories']) {
+        if (rawData[key] is List) {
+          list = rawData[key];
+          break;
+        } else if (rawData[key] is Map && rawData[key]['data'] is List) {
+          list = rawData[key]['data'];
+          break;
+        }
+      }
+    }
+
+    if (list != null) {
       data = <RestaurantCategoryData>[];
-      json?['data']?.forEach((v) {
-        data?.add(RestaurantCategoryData.fromJson(v));
-      });
+      for (final v in list) {
+        if (v is Map) {
+          data?.add(
+            RestaurantCategoryData.fromJson(Map<String, dynamic>.from(v)),
+          );
+        }
+      }
     } else {
       data = [];
     }
@@ -54,13 +74,29 @@ class RestaurantCategoryData {
     this.image,
   });
 
+  String get displayName {
+    if (nameEn != null && nameEn!.trim().isNotEmpty) return nameEn!.trim();
+    if (nameFr != null && nameFr!.trim().isNotEmpty) return nameFr!.trim();
+    if (nameAr != null && nameAr!.trim().isNotEmpty) return nameAr!.trim();
+    return '';
+  }
+
   RestaurantCategoryData.fromJson(Map<String, dynamic>? json) {
-    final rawId = json?['id'];
+    final rawId =
+        json?['id'] ?? json?['category_id'] ?? json?['menu_category_id'];
     id = rawId is int ? rawId : int.tryParse(rawId?.toString() ?? "0");
-    nameEn = json?['name_en']?.toString() ?? "";
-    nameAr = json?['name_ar']?.toString() ?? "";
-    nameFr = json?['name_fr']?.toString() ?? "";
-    image = json?['image']?.toString() ?? "";
+    final name = (json?['name_en'] ??
+            json?['name'] ??
+            json?['category_name'] ??
+            json?['title'] ??
+            '')
+        .toString();
+    nameEn = name;
+    nameAr = (json?['name_ar'] ?? json?['name'] ?? name).toString();
+    nameFr = (json?['name_fr'] ?? json?['name'] ?? name).toString();
+    image = json?['image']?.toString() ??
+        json?['category_image']?.toString() ??
+        "";
   }
 
   Map<String, dynamic> toJson() {

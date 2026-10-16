@@ -228,44 +228,50 @@ class AddMenuMultiSelectField extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: InkWell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            isDense: true,
-            contentPadding: const EdgeInsets.fromLTRB(16, 13, 8, 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              isDense: true,
+              contentPadding: const EdgeInsets.fromLTRB(16, 13, 8, 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFFF5216), width: 1),
+              ),
+              suffixIcon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Color(0xFF94A3B8),
+                size: 20,
+              ),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFFF5216), width: 1),
-            ),
-            suffixIcon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: Color(0xFF94A3B8),
-              size: 20,
-            ),
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              textToShow ?? (hint ?? ''),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
-                fontSize: 13,
-                fontWeight: textToShow == null ? FontWeight.w400 : FontWeight.w500,
-                color:
-                    textToShow == null ? const Color(0xFF94A3B8) : const Color(0xFF1F1F1F),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                textToShow ?? (hint ?? ''),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.rubik(
+                  fontSize: 13,
+                  fontWeight:
+                      textToShow == null ? FontWeight.w400 : FontWeight.w500,
+                  color: textToShow == null
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF1F1F1F),
+                ),
               ),
             ),
           ),

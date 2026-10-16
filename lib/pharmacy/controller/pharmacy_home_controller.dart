@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_pending_orders_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
@@ -28,6 +29,82 @@ class PharmacyHomeController extends GetxController {
   Map<String, dynamic>? rawPharmacy;
   Map<String, dynamic>? rawKpis;
   Map<String, dynamic>? rawAtAGlance;
+
+  String? cachedShopName;
+
+  Future<void> loadCachedShopName() async {
+    final name = (await getSavedObject("name"))?.toString().trim() ??
+        (await getSavedObject("storeName"))?.toString().trim() ??
+        (await getSavedObject("vendorName"))?.toString().trim() ??
+        (await getSavedObject("pharmacyName"))?.toString().trim();
+    if (name != null && name.isNotEmpty && name != 'null') {
+      cachedShopName = name;
+      update();
+    }
+  }
+
+  void setShopName(String? name) {
+    if (name != null && name.trim().isNotEmpty && name.trim() != 'null') {
+      cachedShopName = name.trim();
+      savename("name", cachedShopName!);
+      update();
+    }
+  }
+
+  String get shopName {
+    // 1. Check rawVendor
+    final rawName = rawVendor?['name']?.toString().trim() ??
+        rawVendor?['pharmacy_name']?.toString().trim() ??
+        rawVendor?['shop_name']?.toString().trim() ??
+        rawVendor?['store_name']?.toString().trim();
+    if (rawName != null && rawName.isNotEmpty && rawName != 'null') {
+      return rawName;
+    }
+
+    // 2. Check vendor in homeData with locale matching
+    final vendor = homeData?.data?.vendor;
+    if (vendor != null) {
+      final lang = LocalizationService.currentLanguageCode;
+      if (lang == 'fr' && vendor.nameFr != null && vendor.nameFr!.trim().isNotEmpty) {
+        return vendor.nameFr!.trim();
+      } else if (lang == 'ar' && vendor.nameAr != null && vendor.nameAr!.trim().isNotEmpty) {
+        return vendor.nameAr!.trim();
+      } else if (vendor.nameEn != null && vendor.nameEn!.trim().isNotEmpty) {
+        return vendor.nameEn!.trim();
+      }
+      final fallback = vendor.nameEn ?? vendor.nameFr ?? vendor.nameAr;
+      if (fallback != null && fallback.trim().isNotEmpty && fallback != 'null') {
+        return fallback.trim();
+      }
+    }
+
+    // 3. Check rawPharmacy
+    final pharmacyName = rawPharmacy?['name']?.toString().trim() ??
+        rawPharmacy?['pharmacy_name']?.toString().trim() ??
+        rawPharmacy?['shop_name']?.toString().trim();
+    if (pharmacyName != null && pharmacyName.isNotEmpty && pharmacyName != 'null') {
+      return pharmacyName;
+    }
+
+    // 4. Check rawScreen welcome map
+    final welcome = rawScreen?['welcome'];
+    if (welcome is Map) {
+      final welcomeName = welcome['name']?.toString().trim() ??
+          welcome['shop_name']?.toString().trim() ??
+          welcome['pharmacy_name']?.toString().trim() ??
+          welcome['store_name']?.toString().trim();
+      if (welcomeName != null && welcomeName.isNotEmpty && welcomeName != 'null') {
+        return welcomeName;
+      }
+    }
+
+    // 5. Check cached name from local storage
+    if (cachedShopName != null && cachedShopName!.isNotEmpty && cachedShopName != 'null') {
+      return cachedShopName!;
+    }
+
+    return '';
+  }
 
   bool isLoadingPrescriptions = false;
   List<PrescriptionItem> prescriptionsList = [];
@@ -113,6 +190,7 @@ class PharmacyHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loadCachedShopName();
     fetchPharmacyPrescriptions();
     fetchPharmacyPrescriptions(status: 'under_review');
     fetchPharmacyPrescriptions(status: 'reviewed');
@@ -589,6 +667,11 @@ class PharmacyHomeController extends GetxController {
           }
         }
         ordersList = homeData?.data?.orders?.data ?? [];
+        final resolvedName = shopName;
+        if (resolvedName.isNotEmpty) {
+          cachedShopName = resolvedName;
+          savename("name", resolvedName);
+        }
       } else {
         homeData = null;
         ordersList = [];

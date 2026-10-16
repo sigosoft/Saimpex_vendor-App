@@ -991,44 +991,61 @@ class ProfileController extends GetxController {
     update();
     try {
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
-      final endpoint = vendorType == "1"
-          ? ApiEndPoints.getRestaurantCategories
-          : ApiEndPoints.getGroceryCategories;
-      debugPrint(
-        "[ProfileController] getAllCategories:request vendorType=$vendorType endpoint=$endpoint hasToken=${(token?.toString().isNotEmpty ?? false)}",
-      );
+      final rawVendorType = (await getSavedObject("vendorType"))?.toString();
+      final currentVendorType =
+          (rawVendorType != null && rawVendorType.isNotEmpty)
+              ? rawVendorType
+              : vendorType;
+      final isGrocery = currentVendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(endpoint);
-      final rawData = response.data is Map<String, dynamic>
-          ? response.data['data']
-          : null;
-      final rawDataCount = rawData is List ? rawData.length : -1;
-      debugPrint(
-        "[ProfileController] getAllCategories:response status=${response.data is Map<String, dynamic> ? response.data['status'] : null} message=${response.data is Map<String, dynamic> ? response.data['message'] : null} rawDataCount=$rawDataCount",
-      );
-      if (vendorType == "1") {
-        final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
-          response.data,
-        );
-        if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
-          restaurantCategories = restaurantCategoriesModel.data ?? [];
-          debugPrint(
-            "[ProfileController] getAllCategories:restaurant parseSuccess=true",
+
+      if (!isGrocery) {
+        try {
+          final response = await DioClient().get(
+            ApiEndPoints.menuCategories,
+            query: {'limit': 100},
           );
-        } else {
-          debugPrint(
-            "[ProfileController] getAllCategories:restaurant parseSuccess=false modelStatus=${restaurantCategoriesModel.status}",
-          );
+          if (response.data is Map<String, dynamic>) {
+            final model = RestaurantAllCategoriesModel.fromJson(response.data);
+            if (model.data != null && model.data!.isNotEmpty) {
+              restaurantCategories = model.data!;
+              debugPrint(
+                "[ProfileController] menuCategories success count=${restaurantCategories.length}",
+              );
+            }
+          }
+        } catch (e) {
+          debugPrint("[ProfileController] menuCategories error: $e");
         }
-        debugPrint(
-          "[ProfileController] getAllCategories:restaurant mappedCount=${restaurantCategories.length}",
-        );
+
+        if (restaurantCategories.isEmpty) {
+          try {
+            final response = await DioClient().get(
+              ApiEndPoints.getRestaurantCategories,
+              query: {'limit': 100},
+            );
+            if (response.data is Map<String, dynamic>) {
+              final model = RestaurantAllCategoriesModel.fromJson(response.data);
+              if (model.data != null && model.data!.isNotEmpty) {
+                restaurantCategories = model.data!;
+                debugPrint(
+                  "[ProfileController] getRestaurantCategories success count=${restaurantCategories.length}",
+                );
+              }
+            }
+          } catch (e) {
+            debugPrint("[ProfileController] getRestaurantCategories error: $e");
+          }
+        }
       } else {
+        final response = await DioClient().get(
+          ApiEndPoints.getGroceryCategories,
+          query: {'limit': 100},
+        );
         final groceryCategoriesModel = GroceryAllCategoriesModel.fromJson(
           response.data,
         );
@@ -1044,17 +1061,7 @@ class ProfileController extends GetxController {
                 }),
               )
               .toList();
-          debugPrint(
-            "[ProfileController] getAllCategories:grocery parseSuccess=true sourceCount=${groceryCategoriesModel.data?.length ?? 0}",
-          );
-        } else {
-          debugPrint(
-            "[ProfileController] getAllCategories:grocery parseSuccess=false modelStatus=${groceryCategoriesModel.status}",
-          );
         }
-        debugPrint(
-          "[ProfileController] getAllCategories:grocery mappedCount=${restaurantCategories.length}",
-        );
       }
     } catch (error) {
       debugPrint("[ProfileController] getAllCategories:error $error");

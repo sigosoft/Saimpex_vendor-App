@@ -73,6 +73,14 @@ class MenuController extends GetxController {
   void onInit() {
     super.onInit();
     debugPrint("MenuController initialized");
+    // Pre-seed categories from ProfileController if available
+    if (Get.isRegistered<ProfileController>()) {
+      final profileCtrl = Get.find<ProfileController>();
+      if (profileCtrl.restaurantCategories.isNotEmpty &&
+          restaurantCategories.isEmpty) {
+        restaurantCategories = List.from(profileCtrl.restaurantCategories);
+      }
+    }
     getAllCategories();
     getAllTags();
     getAllAttributes();
@@ -83,7 +91,7 @@ class MenuController extends GetxController {
     final set = selectedCategoryIds.toSet();
     return restaurantCategories
         .where((c) => c.id != null && set.contains(c.id.toString()))
-        .map((c) => c.nameEn ?? '')
+        .map((c) => c.displayName)
         .where((s) => s.trim().isNotEmpty)
         .toList();
   }
@@ -105,7 +113,7 @@ class MenuController extends GetxController {
   }
 
   List<String> get categoryDisplayNames => restaurantCategories
-      .map((c) => c.nameEn ?? '')
+      .map((c) => c.displayName)
       .where((s) => s.isNotEmpty)
       .toList();
 
@@ -115,8 +123,9 @@ class MenuController extends GetxController {
       final match = restaurantCategories
           .where((c) => c.id.toString() == selectedEditCategoryId)
           .toList();
-      if (match.isNotEmpty && match.first.nameEn != null) {
-        return match.first.nameEn!;
+      if (match.isNotEmpty) {
+        final dName = match.first.displayName;
+        if (dName.isNotEmpty) return dName;
       }
     }
     final names = categoryDisplayNames;
@@ -132,7 +141,7 @@ class MenuController extends GetxController {
     final set = selectedEditCategoryIds.toSet();
     return restaurantCategories
         .where((c) => c.id != null && set.contains(c.id.toString()))
-        .map((c) => c.nameEn ?? '')
+        .map((c) => c.displayName)
         .where((s) => s.trim().isNotEmpty)
         .toList();
   }
@@ -183,7 +192,7 @@ class MenuController extends GetxController {
     final set = selectedTagIds.toSet();
     return restaurantTags
         .where((t) => t.id != null && set.contains(t.id.toString()))
-        .map((t) => t.nameEn ?? '')
+        .map((t) => t.displayName)
         .where((s) => s.trim().isNotEmpty)
         .toList();
   }
@@ -205,7 +214,7 @@ class MenuController extends GetxController {
   }
 
   List<String> get tagDisplayNames => restaurantTags
-      .map((t) => t.nameEn ?? '')
+      .map((t) => t.displayName)
       .where((s) => s.isNotEmpty)
       .toList();
 
@@ -576,13 +585,18 @@ class MenuController extends GetxController {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
+      final rawVendorType = (await getSavedObject("vendorType"))?.toString();
+      final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
+          ? rawVendorType
+          : (Get.isRegistered<ProfileController>()
+              ? Get.find<ProfileController>().vendorType
+              : "1");
+      final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      await getSavedObject("vendorType");
       final attributeId =
           (selectedAttributeId != null &&
               selectedAttributeId!.trim().isNotEmpty)
@@ -595,7 +609,7 @@ class MenuController extends GetxController {
         "quantity_allowed": quantityAllowedCtrl.text,
         "serial_number": serialNumberCtrl.text,
       };
-      if (vendorType == "1") {
+      if (!isGrocery) {
         formDataMap["attributes[0][price]"] = _cleanPrice(priceCtrl.text);
         formDataMap["attributes[0][discount_price]"] = _cleanPrice(
           discountPriceCtrl.text,
@@ -647,7 +661,7 @@ class MenuController extends GetxController {
         );
       }
       final response = await DioClient().post(
-        vendorType == "1"
+        !isGrocery
             ? ApiEndPoints.addRestaurantMenu
             : ApiEndPoints.addGroceryMenu,
         body: formData,
@@ -788,57 +802,125 @@ class MenuController extends GetxController {
     }
   }
 
+  List<dynamic> _extractList(dynamic raw) {
+    if (raw is List) return raw;
+    if (raw is! Map) return const [];
+    final map = Map<String, dynamic>.from(raw);
+    final data = map['data'];
+    if (data is List) return data;
+    if (data is Map) {
+      for (final key in [
+        'data',
+        'categories',
+        'menu_categories',
+        'tags',
+        'menu_tags'
+      ]) {
+        final nested = data[key];
+        if (nested is List) return nested;
+        if (nested is Map && nested['data'] is List) {
+          return nested['data'] as List;
+        }
+      }
+    }
+    for (final key in [
+      'categories',
+      'menu_categories',
+      'tags',
+      'menu_tags',
+      'data'
+    ]) {
+      final val = map[key];
+      if (val is List) return val;
+    }
+    return const [];
+  }
+
   Future<void> getAllCategories({int? categoryId}) async {
     debugPrint(
       "[MenuController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategoryIds=${selectedCategoryIds.length} selectedEditCategoryId=$selectedEditCategoryId",
     );
-    // Clear stale category state before loading for current vendor type.
-    restaurantCategories = [];
-    selectedCategoryIds.clear();
-    selectedEditCategoryId = null;
-    selectedEditCategoryName = '';
+    if (restaurantCategories.isEmpty &&
+        Get.isRegistered<ProfileController>()) {
+      final profileCtrl = Get.find<ProfileController>();
+      if (profileCtrl.restaurantCategories.isNotEmpty) {
+        restaurantCategories = List.from(profileCtrl.restaurantCategories);
+      }
+    }
     isRestaurantCategoriesLoading = true;
     update();
     try {
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
-      final endpoint = vendorType == "1"
-          ? ApiEndPoints.getRestaurantCategories
-          : ApiEndPoints.getGroceryCategories;
-      debugPrint(
-        "[MenuController] getAllCategories:request vendorType=$vendorType endpoint=$endpoint hasToken=${(token?.toString().isNotEmpty ?? false)}",
-      );
+      final rawVendorType = (await getSavedObject("vendorType"))?.toString();
+      final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
+          ? rawVendorType
+          : (Get.isRegistered<ProfileController>()
+              ? Get.find<ProfileController>().vendorType
+              : "1");
+      final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(endpoint);
-      final rawData = response.data is Map<String, dynamic>
-          ? response.data['data']
-          : null;
-      final rawDataCount = rawData is List ? rawData.length : -1;
-      debugPrint(
-        "[MenuController] getAllCategories:response status=${response.data is Map<String, dynamic> ? response.data['status'] : null} message=${response.data is Map<String, dynamic> ? response.data['message'] : null} rawDataCount=$rawDataCount",
-      );
-      if (vendorType == "1") {
-        final restaurantCategoriesModel = RestaurantAllCategoriesModel.fromJson(
-          response.data,
-        );
-        if (restaurantCategoriesModel.status?.toLowerCase() == 'true') {
-          restaurantCategories = restaurantCategoriesModel.data ?? [];
-          debugPrint(
-            "[MenuController] getAllCategories:restaurant parseSuccess=true",
+
+      if (!isGrocery) {
+        // 1. Try menuCategories first (primary vendor endpoint)
+        try {
+          final response = await DioClient().get(
+            ApiEndPoints.menuCategories,
+            query: {'limit': 100},
           );
-        } else {
-          debugPrint(
-            "[MenuController] getAllCategories:restaurant parseSuccess=false modelStatus=${restaurantCategoriesModel.status}",
-          );
+          final list = _extractList(response.data);
+          final items = list
+              .whereType<Map>()
+              .map((e) => RestaurantCategoryData.fromJson(
+                    Map<String, dynamic>.from(e),
+                  ))
+              .where((c) =>
+                  (c.id != null && c.id != 0) || c.displayName.isNotEmpty)
+              .toList();
+          if (items.isNotEmpty) {
+            restaurantCategories = items;
+            debugPrint(
+              "[MenuController] menuCategories success count=${restaurantCategories.length}",
+            );
+          }
+        } catch (e) {
+          debugPrint("[MenuController] menuCategories error: $e");
         }
-        debugPrint(
-          "[MenuController] getAllCategories:restaurant mappedCount=${restaurantCategories.length}",
-        );
+
+        // 2. Try getRestaurantCategories if still empty
+        if (restaurantCategories.isEmpty) {
+          try {
+            final response = await DioClient().get(
+              ApiEndPoints.getRestaurantCategories,
+              query: {'limit': 100},
+            );
+            final list = _extractList(response.data);
+            final items = list
+                .whereType<Map>()
+                .map((e) => RestaurantCategoryData.fromJson(
+                      Map<String, dynamic>.from(e),
+                    ))
+                .where((c) =>
+                    (c.id != null && c.id != 0) || c.displayName.isNotEmpty)
+                .toList();
+            if (items.isNotEmpty) {
+              restaurantCategories = items;
+              debugPrint(
+                "[MenuController] getRestaurantCategories success count=${restaurantCategories.length}",
+              );
+            }
+          } catch (e) {
+            debugPrint("[MenuController] getRestaurantCategories error: $e");
+          }
+        }
       } else {
+        final response = await DioClient().get(
+          ApiEndPoints.getGroceryCategories,
+          query: {'limit': 100},
+        );
         final groceryCategoriesModel = GroceryAllCategoriesModel.fromJson(
           response.data,
         );
@@ -854,21 +936,18 @@ class MenuController extends GetxController {
                 }),
               )
               .toList();
-          debugPrint(
-            "[MenuController] getAllCategories:grocery parseSuccess=true sourceCount=${groceryCategoriesModel.data?.length ?? 0}",
-          );
-        } else {
-          debugPrint(
-            "[MenuController] getAllCategories:grocery parseSuccess=false modelStatus=${groceryCategoriesModel.status}",
-          );
         }
-        debugPrint(
-          "[MenuController] getAllCategories:grocery mappedCount=${restaurantCategories.length}",
-        );
       }
     } catch (error) {
       debugPrint("[MenuController] getAllCategories:error $error");
     } finally {
+      if (restaurantCategories.isEmpty &&
+          Get.isRegistered<ProfileController>()) {
+        final profileCtrl = Get.find<ProfileController>();
+        if (profileCtrl.restaurantCategories.isNotEmpty) {
+          restaurantCategories = List.from(profileCtrl.restaurantCategories);
+        }
+      }
       isRestaurantCategoriesLoading = false;
       debugPrint(
         "[MenuController] getAllCategories:done finalCount=${restaurantCategories.length} loading=$isRestaurantCategoriesLoading",
@@ -883,27 +962,73 @@ class MenuController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
+      final rawVendorType = (await getSavedObject("vendorType"))?.toString();
+      final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
+          ? rawVendorType
+          : (Get.isRegistered<ProfileController>()
+              ? Get.find<ProfileController>().vendorType
+              : "1");
+      final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.getRestaurantTags
-            : ApiEndPoints.getGroceryTags,
-      );
-      final raw = response.data;
-      final map = raw is Map<String, dynamic>
-          ? raw
-          : Map<String, dynamic>.from(raw as Map);
-      if (vendorType == "1") {
-        final tagsModel = TagsModel.fromJson(map);
-        if (tagsModel.status == 'true') {
-          restaurantTags = tagsModel.data ?? [];
+
+      if (!isGrocery) {
+        // 1. Try menuTags first (primary vendor endpoint)
+        try {
+          final response = await DioClient().get(
+            ApiEndPoints.menuTags,
+            query: {'limit': 100},
+          );
+          final list = _extractList(response.data);
+          final items = list
+              .whereType<Map>()
+              .map((e) => TagData.fromJson(Map<String, dynamic>.from(e)))
+              .where((t) =>
+                  (t.id != null && t.id != 0) || t.displayName.isNotEmpty)
+              .toList();
+          if (items.isNotEmpty) {
+            restaurantTags = items;
+            debugPrint(
+              "[MenuController] menuTags success count=${restaurantTags.length}",
+            );
+          }
+        } catch (e) {
+          debugPrint("[MenuController] menuTags error: $e");
+        }
+
+        // 2. Try getRestaurantTags if still empty
+        if (restaurantTags.isEmpty) {
+          try {
+            final response = await DioClient().get(
+              ApiEndPoints.getRestaurantTags,
+              query: {'limit': 100},
+            );
+            final list = _extractList(response.data);
+            final items = list
+                .whereType<Map>()
+                .map((e) => TagData.fromJson(Map<String, dynamic>.from(e)))
+                .where((t) =>
+                    (t.id != null && t.id != 0) || t.displayName.isNotEmpty)
+                .toList();
+            if (items.isNotEmpty) {
+              restaurantTags = items;
+              debugPrint(
+                "[MenuController] getRestaurantTags success count=${restaurantTags.length}",
+              );
+            }
+          } catch (e) {
+            debugPrint("[MenuController] getRestaurantTags error: $e");
+          }
         }
       } else {
+        final response = await DioClient().get(ApiEndPoints.getGroceryTags);
+        final raw = response.data;
+        final map = raw is Map<String, dynamic>
+            ? raw
+            : Map<String, dynamic>.from(raw as Map);
         final groceryTagsModel = GroceryTagsModel.fromJson(map);
         if (groceryTagsModel.status == true) {
           restaurantTags = (groceryTagsModel.data ?? [])
@@ -932,14 +1057,20 @@ class MenuController extends GetxController {
       update();
 
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
+      final rawVendorType = (await getSavedObject("vendorType"))?.toString();
+      final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
+          ? rawVendorType
+          : (Get.isRegistered<ProfileController>()
+              ? Get.find<ProfileController>().vendorType
+              : "1");
+      final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
       } else {
         DioClient().updateToken("");
       }
       final response = await DioClient().get(
-        vendorType == "1"
+        !isGrocery
             ? ApiEndPoints.getRestaurantAttributes
             : ApiEndPoints.getGroceryAttributes,
       );

@@ -10,13 +10,29 @@ class TagsModel {
   });
 
   factory TagsModel.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
+    List<dynamic>? list;
+    if (rawData is List) {
+      list = rawData;
+    } else if (rawData is Map) {
+      for (final key in ['data', 'tags', 'menu_tags']) {
+        if (rawData[key] is List) {
+          list = rawData[key];
+          break;
+        } else if (rawData[key] is Map && rawData[key]['data'] is List) {
+          list = rawData[key]['data'];
+          break;
+        }
+      }
+    }
     return TagsModel(
       status: json['status']?.toString(),
-      data: (json['data'] as List?)
-              ?.map((e) => TagData.fromJson(e))
+      data: list
+              ?.whereType<Map>()
+              .map((e) => TagData.fromJson(Map<String, dynamic>.from(e)))
               .toList() ??
           [],
-      message: json['message'] ?? '',
+      message: json['message']?.toString() ?? '',
     );
   }
 
@@ -42,12 +58,28 @@ class TagData {
     this.nameFr,
   });
 
+  String get displayName {
+    if (nameEn != null && nameEn!.trim().isNotEmpty) return nameEn!.trim();
+    if (nameFr != null && nameFr!.trim().isNotEmpty) return nameFr!.trim();
+    if (nameAr != null && nameAr!.trim().isNotEmpty) return nameAr!.trim();
+    return '';
+  }
+
   factory TagData.fromJson(Map<String, dynamic> json) {
+    final rawId = json['id'] ?? json['tag_id'] ?? json['menu_tag_id'];
+    final id =
+        rawId is int ? rawId : int.tryParse(rawId?.toString() ?? '0') ?? 0;
+    final name = (json['name_en'] ??
+            json['name'] ??
+            json['tag_name'] ??
+            json['title'] ??
+            '')
+        .toString();
     return TagData(
-      id: json['id'] ?? 0,
-      nameEn: json['name_en'] ?? '',
-      nameAr: json['name_ar'] ?? '',
-      nameFr: json['name_fr'] ?? '',
+      id: id,
+      nameEn: name,
+      nameAr: (json['name_ar'] ?? json['name'] ?? name).toString(),
+      nameFr: (json['name_fr'] ?? json['name'] ?? name).toString(),
     );
   }
 

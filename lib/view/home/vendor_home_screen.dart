@@ -41,7 +41,8 @@ class VendorHomeScreen extends StatefulWidget {
   State<VendorHomeScreen> createState() => _VendorHomeScreenState();
 }
 
-class _VendorHomeScreenState extends State<VendorHomeScreen> with WidgetsBindingObserver {
+class _VendorHomeScreenState extends State<VendorHomeScreen>
+    with WidgetsBindingObserver {
   final VendorHomeController vendorHomeController =
       const VendorHomeController();
   final HomeController homeController = Get.find<HomeController>();
@@ -428,53 +429,6 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> with WidgetsBinding
                             width: size.width,
                             height: layout.dashboardButtonHeight,
                           ),
-                          const SizedBox(height: 10),
-                          VendorOrdersHeader(
-                            horizontalPadding: layout.horizontalPadding,
-                            onViewAllPressed: () {
-                              Get.to(() => const OrdersViewAll());
-                            },
-                          ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: layout.horizontalPadding,
-                            ),
-                            child: CustomSearchBox(
-                              hintText: S.of(context).searchByIdName,
-                              controller: controller.searchController,
-                              onChanged: (value) async {
-                                await controller.fetchHome(
-                                  context,
-                                  orderStatus: _statusValue(selectedTab),
-                                  keyword: value.trim(),
-                                  limit: _defaultLimit,
-                                );
-                                _refreshSelectedTabCount();
-                              },
-                              boxColor: Colors.white,
-                              showSearchIcon: true,
-                              width: layout.searchBoxWidth,
-                              height: 44,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          VendorStatusTabs(
-                            height: layout.tabsHeight,
-                            leftPadding: layout.horizontalPadding,
-                            tabWidth: layout.tabWidth,
-                            tabs: controller.isAutoAcceptOrders
-                                ? tabs.where((t) => t != "Pending").toList()
-                                : tabs,
-                            tabCounts: _tabCounts,
-                            selectedTab: selectedTab,
-                            onTabChanged: (tab) {
-                              setState(() {
-                                selectedTab = tab;
-                              });
-                              _fetchOrders();
-                            },
-                          ),
                           const SizedBox(height: 16),
                           Padding(
                             padding: EdgeInsets.symmetric(
@@ -559,6 +513,53 @@ class _VendorHomeScreenState extends State<VendorHomeScreen> with WidgetsBinding
                                 ],
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 10),
+                          VendorOrdersHeader(
+                            horizontalPadding: layout.horizontalPadding,
+                            onViewAllPressed: () {
+                              Get.to(() => const OrdersViewAll());
+                            },
+                          ),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: layout.horizontalPadding,
+                            ),
+                            child: CustomSearchBox(
+                              hintText: S.of(context).searchByIdName,
+                              controller: controller.searchController,
+                              onChanged: (value) async {
+                                await controller.fetchHome(
+                                  context,
+                                  orderStatus: _statusValue(selectedTab),
+                                  keyword: value.trim(),
+                                  limit: _defaultLimit,
+                                );
+                                _refreshSelectedTabCount();
+                              },
+                              boxColor: Colors.white,
+                              showSearchIcon: true,
+                              width: layout.searchBoxWidth,
+                              height: 44,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          VendorStatusTabs(
+                            height: layout.tabsHeight,
+                            leftPadding: layout.horizontalPadding,
+                            tabWidth: layout.tabWidth,
+                            tabs: controller.isAutoAcceptOrders
+                                ? tabs.where((t) => t != "Pending").toList()
+                                : tabs,
+                            tabCounts: _tabCounts,
+                            selectedTab: selectedTab,
+                            onTabChanged: (tab) {
+                              setState(() {
+                                selectedTab = tab;
+                              });
+                              _fetchOrders();
+                            },
                           ),
                           const SizedBox(height: 16),
                           controller.isFirstLoadRunning

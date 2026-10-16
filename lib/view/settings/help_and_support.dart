@@ -47,85 +47,93 @@ class HelpAndSupport extends StatelessWidget {
           child: GetBuilder<SettingsController>(
             init: SettingsController(),
             didChangeDependencies: (state) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (state.controller!.contactEmail.isEmpty &&
-                    state.controller!.contactMobile.isEmpty) {
-                  state.controller!.getHelpAndSupport();
-                }
-              });
+              final controller = state.controller;
+              if (controller != null &&
+                  controller.contactEmail.isEmpty &&
+                  controller.contactMobile.isEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  controller.getHelpAndSupport();
+                });
+              }
             },
-            builder: (controller) => controller.isLoading
-                ? const SingleChildScrollView(child: ShimmerTextContent())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        S.of(context).callUs,
-                        style: GoogleFonts.rubik(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF64748B),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () async {
-                          if (controller.contactMobile.isNotEmpty) {
-                            await launchUrl(
-                              Uri.parse(
-                                "tel:${controller.contactMobile.replaceAll(' ', '')}",
-                              ),
-                            );
-                          }
-                        },
-                        child: Text(
-                          controller.contactMobile.isNotEmpty
-                              ? controller.contactMobile
-                              : "N/A",
+            builder: (controller) {
+              final hasData =
+                  controller.contactEmail.isNotEmpty ||
+                  controller.contactMobile.isNotEmpty;
+              return (controller.isHelpLoading || controller.isLoading) &&
+                      !hasData
+                  ? const SingleChildScrollView(child: ShimmerTextContent())
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          S.of(context).callUs,
                           style: GoogleFonts.rubik(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF333E63),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF64748B),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 25),
-                      Text(
-                        S.of(context).emailUs,
-                        style: GoogleFonts.rubik(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF64748B),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () async {
-                          if (controller.contactEmail.isNotEmpty) {
-                            await launchUrl(
-                              Uri.parse("mailto:${controller.contactEmail}"),
-                            );
-                          }
-                        },
-                        child: Text(
-                          controller.contactEmail.isNotEmpty
-                              ? controller.contactEmail
-                              : "N/A",
-                          style: GoogleFonts.rubik(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF333E63),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () async {
+                            if (controller.contactMobile.isNotEmpty) {
+                              await launchUrl(
+                                Uri.parse(
+                                  "tel:${controller.contactMobile.replaceAll(' ', '')}",
+                                ),
+                              );
+                            }
+                          },
+                          child: Text(
+                            controller.contactMobile.isNotEmpty
+                                ? controller.contactMobile
+                                : "N/A",
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF333E63),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 25),
-                      Divider(
-                        color: Colors.grey.withOpacity(0.1),
-                        height: 1,
-                        thickness: 1,
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 25),
+                        Text(
+                          S.of(context).emailUs,
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () async {
+                            if (controller.contactEmail.isNotEmpty) {
+                              await launchUrl(
+                                Uri.parse("mailto:${controller.contactEmail}"),
+                              );
+                            }
+                          },
+                          child: Text(
+                            controller.contactEmail.isNotEmpty
+                                ? controller.contactEmail
+                                : "N/A",
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF333E63),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Divider(
+                          color: Colors.grey.withOpacity(0.1),
+                          height: 1,
+                          thickness: 1,
+                        ),
+                      ],
+                    );
+            },
           ),
         ),
       ),

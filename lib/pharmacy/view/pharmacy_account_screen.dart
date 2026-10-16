@@ -58,6 +58,10 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     super.initState();
     _initSelectedLanguage();
     _fetchPharmacyProfile();
+    final settingsController = Get.isRegistered<SettingsController>()
+        ? Get.find<SettingsController>()
+        : Get.put(SettingsController());
+    settingsController.preloadSettings();
   }
 
   void _initSelectedLanguage() {
@@ -102,6 +106,9 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     }
     if (Get.isRegistered<PharmacyHomeController>()) {
       Get.find<PharmacyHomeController>().update();
+    }
+    if (Get.isRegistered<SettingsController>()) {
+      Get.find<SettingsController>().onLanguageChanged();
     }
   }
 
@@ -219,6 +226,12 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
             _isLoading = false;
           });
         }
+        final pName = fetchedData?.name ??
+            rawData?['name']?.toString() ??
+            rawData?['pharmacy_name']?.toString();
+        if (pName != null && pName.isNotEmpty && Get.isRegistered<PharmacyHomeController>()) {
+          Get.find<PharmacyHomeController>().setShopName(pName);
+        }
       } else {
         if (mounted) {
           setState(() {
@@ -251,268 +264,22 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     }
   }
 
-  String _getTermsAndConditionsUrl() {
-    final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/')
-        ? rawBase.substring(0, rawBase.length - 1)
-        : rawBase;
-    final endpoint = ApiEndPoints.pharmacyTermsandConditions
-        .trim()
-        .replaceFirst(RegExp(r'^/'), '');
-    return '$base/$endpoint';
-  }
-
-  Future<void> _onTermsAndConditionsTap() async {
-    final url = _getTermsAndConditionsUrl();
-
-    debugPrint(
-      "==================== GET TERMS AND CONDITIONS ====================",
+  void _onTermsAndConditionsTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const TermsandConditions()),
     );
-    debugPrint("API Call: GET $url");
-    debugPrint("Request Body: null (GET request)");
-
-    print("==================== GET TERMS AND CONDITIONS ====================");
-    print("API Call: GET $url");
-    print("Request Body: null (GET request)");
-
-    try {
-      final response = await DioClient().get(
-        ApiEndPoints.pharmacyTermsandConditions,
-      );
-
-      debugPrint("Response Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.data}");
-      debugPrint(
-        "==================================================================",
-      );
-
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Body: ${response.data}");
-      print(
-        "==================================================================",
-      );
-
-      if (response.data is Map && response.data['status'] == true) {
-        final terms = response.data['data']?['terms'];
-        if (terms != null) {
-          final settingsController = Get.isRegistered<SettingsController>()
-              ? Get.find<SettingsController>()
-              : Get.put(SettingsController());
-          final localization = FlutterLocalization.instance;
-          final languageCode = localization.currentLocale?.languageCode;
-
-          if (languageCode == 'fr' && terms['content_fr'] != null) {
-            settingsController.htmlData = terms['content_fr'].toString();
-          } else if (languageCode == 'ar' && terms['content_ar'] != null) {
-            settingsController.htmlData = terms['content_ar'].toString();
-          } else {
-            settingsController.htmlData =
-                (terms['content_en'] ?? "No content available").toString();
-          }
-          settingsController.isLoading = false;
-          settingsController.update();
-        }
-      }
-
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const TermsandConditions()),
-        );
-      }
-    } catch (e) {
-      debugPrint(
-        "==================== GET TERMS AND CONDITIONS ERROR ====================",
-      );
-      debugPrint("Error: $e");
-      debugPrint(
-        "========================================================================",
-      );
-
-      print(
-        "==================== GET TERMS AND CONDITIONS ERROR ====================",
-      );
-      print("Error: $e");
-      print(
-        "========================================================================",
-      );
-
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => const TermsandConditions()),
-        );
-      }
-    }
   }
 
-  String _getHelpSupportUrl() {
-    final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/')
-        ? rawBase.substring(0, rawBase.length - 1)
-        : rawBase;
-    final endpoint = ApiEndPoints.pharmacyHelpSupport.trim().replaceFirst(
-      RegExp(r'^/'),
-      '',
+  void _onHelpAndSupportTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const HelpAndSupport()),
     );
-    return '$base/$endpoint';
   }
 
-  Future<void> _onHelpAndSupportTap() async {
-    final url = _getHelpSupportUrl();
-
-    debugPrint("==================== GET HELP & SUPPORT ====================");
-    debugPrint("API Call: GET $url");
-    debugPrint("Request Body: null (GET request)");
-
-    print("==================== GET HELP & SUPPORT ====================");
-    print("API Call: GET $url");
-    print("Request Body: null (GET request)");
-
-    try {
-      final response = await DioClient().get(ApiEndPoints.pharmacyHelpSupport);
-
-      debugPrint("Response Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.data}");
-      debugPrint(
-        "============================================================",
-      );
-
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Body: ${response.data}");
-      print("============================================================");
-
-      if (response.data is Map && response.data['status'] == true) {
-        final contact = response.data['data']?['contact'];
-        if (contact != null) {
-          final settingsController = Get.isRegistered<SettingsController>()
-              ? Get.find<SettingsController>()
-              : Get.put(SettingsController());
-          settingsController.contactEmail = (contact['email'] ?? "").toString();
-          final countryCode = (contact['country_code'] ?? "").toString().trim();
-          final mobile = (contact['mobile'] ?? "").toString().trim();
-          settingsController.contactMobile = "$countryCode $mobile".trim();
-          settingsController.isLoading = false;
-          settingsController.update();
-        }
-      }
-
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const HelpAndSupport()));
-      }
-    } catch (e) {
-      debugPrint(
-        "==================== GET HELP & SUPPORT ERROR ====================",
-      );
-      debugPrint("Error: $e");
-      debugPrint(
-        "==================================================================",
-      );
-
-      print(
-        "==================== GET HELP & SUPPORT ERROR ====================",
-      );
-      print("Error: $e");
-      print(
-        "==================================================================",
-      );
-
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const HelpAndSupport()));
-      }
-    }
-  }
-
-  String _getPrivacyPolicyUrl() {
-    final rawBase = ApiConfigs.BASE_URL.trim();
-    final base = rawBase.endsWith('/')
-        ? rawBase.substring(0, rawBase.length - 1)
-        : rawBase;
-    final endpoint = ApiEndPoints.pharmacyPrivacyPolicy.trim().replaceFirst(
-      RegExp(r'^/'),
-      '',
+  void _onPrivacyPolicyTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const PrivacyPolicy()),
     );
-    return '$base/$endpoint';
-  }
-
-  Future<void> _onPrivacyPolicyTap() async {
-    final url = _getPrivacyPolicyUrl();
-
-    debugPrint("==================== GET PRIVACY POLICY ====================");
-    debugPrint("API Call: GET $url");
-    debugPrint("Request Body: null (GET request)");
-
-    print("==================== GET PRIVACY POLICY ====================");
-    print("API Call: GET $url");
-    print("Request Body: null (GET request)");
-
-    try {
-      final response = await DioClient().get(
-        ApiEndPoints.pharmacyPrivacyPolicy,
-      );
-
-      debugPrint("Response Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.data}");
-      debugPrint(
-        "============================================================",
-      );
-
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Body: ${response.data}");
-      print("============================================================");
-
-      if (response.data is Map && response.data['status'] == true) {
-        final privacy = response.data['data']?['privacy_policy'];
-        if (privacy != null) {
-          final settingsController = Get.isRegistered<SettingsController>()
-              ? Get.find<SettingsController>()
-              : Get.put(SettingsController());
-          final localization = FlutterLocalization.instance;
-          final languageCode = localization.currentLocale?.languageCode;
-
-          if (languageCode == 'fr' && privacy['content_fr'] != null) {
-            settingsController.htmlData = privacy['content_fr'].toString();
-          } else if (languageCode == 'ar' && privacy['content_ar'] != null) {
-            settingsController.htmlData = privacy['content_ar'].toString();
-          } else {
-            settingsController.htmlData =
-                (privacy['content_en'] ?? "No content available").toString();
-          }
-          settingsController.isLoading = false;
-          settingsController.update();
-        }
-      }
-
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const PrivacyPolicy()));
-      }
-    } catch (e) {
-      debugPrint(
-        "==================== GET PRIVACY POLICY ERROR ====================",
-      );
-      debugPrint("Error: $e");
-      debugPrint(
-        "==================================================================",
-      );
-
-      print(
-        "==================== GET PRIVACY POLICY ERROR ====================",
-      );
-      print("Error: $e");
-      print(
-        "==================================================================",
-      );
-
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const PrivacyPolicy()));
-      }
-    }
   }
 
   String _getCouponsUrl(Map<String, dynamic> query) {
@@ -1216,12 +983,12 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.logout_rounded,
-                              color: PharmacyAccountScreen.orange,
-                              size: 20,
+                            Image.asset(
+                              "lib/assets/images/Logout.png",
+                              height: 22,
+                              width: 22,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 8),
                             Text(
                               _t('Logout'),
                               style: GoogleFonts.inter(
