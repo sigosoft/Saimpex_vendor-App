@@ -1721,15 +1721,18 @@ class VendorRichCard extends StatelessWidget {
     debugPrint(
       "availabilityStatus: $availabilityStatus (id: $id, itemId: $itemId)",
     );
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-      ),
-      child: Stack(
+    return GestureDetector(
+      onTap: onViewDetails,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1F5F9)),
+        ),
+        child: Stack(
         clipBehavior: Clip.none,
         children: [
           Column(
@@ -2210,13 +2213,15 @@ class VendorRichCard extends StatelessWidget {
                           final actionColor = isCurrentlyAvailable
                               ? const Color(0xFFEF4444)
                               : const Color(0xFF16A34A);
-                          const Color noActionColor = Color(0xFFDC2626);
+                          const Color noActionColor = Color(0xFFFF5216);
                           return Dialog(
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
                             insetPadding: const EdgeInsets.symmetric(
                               horizontal: 24,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             child: Stack(
                               clipBehavior: Clip.none,
@@ -2224,7 +2229,7 @@ class VendorRichCard extends StatelessWidget {
                                 Container(
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                   padding: const EdgeInsets.fromLTRB(
                                     20,
@@ -2262,14 +2267,14 @@ class VendorRichCard extends StatelessWidget {
                                                   dialogContext,
                                                 ).pop(),
                                                 style: OutlinedButton.styleFrom(
-                                                  side: BorderSide(
+                                                  side: const BorderSide(
                                                     color: noActionColor,
                                                     width: 1,
                                                   ),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          12,
+                                                          10,
                                                         ),
                                                   ),
                                                 ),
@@ -2322,15 +2327,202 @@ class VendorRichCard extends StatelessWidget {
                                                       ? 2 // Mark Out Of Stock
                                                       : 1; // Mark Available
 
-                                                  await itemController
+                                                  final isSuccess = await itemController
                                                       .updateItemStatus(
                                                         idInt,
                                                         statusToSend,
+                                                        showSuccessToast: false,
                                                       );
 
-                                                  // Refresh the items listing.
-                                                  await profileController
-                                                      .fetchGroceryMenuItems();
+                                                  if (isSuccess) {
+                                                    profileController
+                                                        .updateRestaurantItemAvailability(
+                                                          idInt,
+                                                          statusToSend,
+                                                        );
+                                                    // Refresh items listing
+                                                    await profileController
+                                                        .fetchGroceryMenuItems();
+
+                                                    if (context.mounted) {
+                                                      final vendorType =
+                                                          (await getSavedObject(
+                                                            "vendorType",
+                                                          ))?.toString() ??
+                                                          "1";
+                                                      final isRestaurant =
+                                                          vendorType == "1";
+                                                      final successMessage =
+                                                          statusToSend == 2
+                                                          ? (isRestaurant
+                                                                ? "Restaurant menu item marked as out of stock successfully"
+                                                                : "Grocery menu item marked as out of stock successfully")
+                                                          : (isRestaurant
+                                                                ? "Restaurant menu item marked as available successfully"
+                                                                : "Grocery menu item marked as available successfully");
+
+                                                      showDialog<void>(
+                                                        context: context,
+                                                        builder: (
+                                                          successDialogContext,
+                                                        ) {
+                                                          return Dialog(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            surfaceTintColor:
+                                                                Colors.white,
+                                                            insetPadding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      24,
+                                                                ),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        16,
+                                                                      ),
+                                                                ),
+                                                            child: Stack(
+                                                              clipBehavior:
+                                                                  Clip.none,
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets.fromLTRB(
+                                                                        20,
+                                                                        24,
+                                                                        20,
+                                                                        20,
+                                                                      ),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            12,
+                                                                      ),
+                                                                      Image.asset(
+                                                                        'lib/assets/images/Success vendor.png',
+                                                                        width:
+                                                                            55,
+                                                                        height:
+                                                                            55,
+                                                                        fit: BoxFit
+                                                                            .contain,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            16,
+                                                                      ),
+                                                                      Text(
+                                                                        successMessage,
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style: GoogleFonts.rubik(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          color: const Color(
+                                                                            0xFF1F2937,
+                                                                          ),
+                                                                          height:
+                                                                              1.35,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            20,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            double.infinity,
+                                                                        height:
+                                                                            42,
+                                                                        child: ElevatedButton(
+                                                                          onPressed: () =>
+                                                                              Navigator.of(
+                                                                                successDialogContext,
+                                                                              ).pop(),
+                                                                          style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: const Color(
+                                                                              0xFFFF5216,
+                                                                            ),
+                                                                            elevation:
+                                                                                0,
+                                                                            shape: RoundedRectangleBorder(
+                                                                              borderRadius:
+                                                                                  BorderRadius.circular(
+                                                                                    10,
+                                                                                  ),
+                                                                            ),
+                                                                          ),
+                                                                          child: Text(
+                                                                            'Ok',
+                                                                            style: GoogleFonts.rubik(
+                                                                              fontSize:
+                                                                                  14,
+                                                                              fontWeight:
+                                                                                  FontWeight.w700,
+                                                                              color:
+                                                                                  Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Positioned(
+                                                                  top: 10,
+                                                                  right: 10,
+                                                                  child:
+                                                                      GestureDetector(
+                                                                        onTap: () =>
+                                                                            Navigator.of(
+                                                                              successDialogContext,
+                                                                            ).pop(),
+                                                                        child: Container(
+                                                                          width:
+                                                                              28,
+                                                                          height:
+                                                                              28,
+                                                                          decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                            border: Border.all(
+                                                                              color: const Color(
+                                                                                0xFFD1D5DB,
+                                                                              ),
+                                                                              width:
+                                                                                  1,
+                                                                            ),
+                                                                          ),
+                                                                          child: const Icon(
+                                                                            Icons.close,
+                                                                            size:
+                                                                                18,
+                                                                            color: Color(
+                                                                              0xFF6B7280,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    }
+                                                  }
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: actionColor,
@@ -2338,7 +2530,7 @@ class VendorRichCard extends StatelessWidget {
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          12,
+                                                          10,
                                                         ),
                                                   ),
                                                 ),
@@ -2361,28 +2553,24 @@ class VendorRichCard extends StatelessWidget {
                                 Positioned(
                                   top: 10,
                                   right: 10,
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(999),
-                                      onTap: () =>
-                                          Navigator.of(dialogContext).pop(),
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color(0xFFE5E7EB),
-                                            width: 1,
-                                          ),
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        Navigator.of(dialogContext).pop(),
+                                    child: Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: const Color(0xFFD1D5DB),
+                                          width: 1,
                                         ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          size: 18,
-                                          color: Color(0xFF111827),
-                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: Color(0xFF6B7280),
                                       ),
                                     ),
                                   ),
@@ -2394,88 +2582,63 @@ class VendorRichCard extends StatelessWidget {
                       );
                     }
 
-                    return Column(
+                    return Row(
                       children: [
-                        SizedBox(
-                          width: double.infinity,
-                          height: 42,
-                          child: OutlinedButton(
-                            onPressed: onViewDetails,
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFFFF5216)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 42,
+                            child: ElevatedButton(
+                              onPressed: showConfirmDialog,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    (availabilityStatus ?? 2) == 1
+                                    ? const Color(0xFFEF4444)
+                                    : const Color(0xFF16A34A),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              S.of(context).viewDetails,
-                              style: GoogleFonts.rubik(
-                                color: const Color(0xFFFF5216),
-                                fontWeight: FontWeight.bold,
+                              child: Text(
+                                (availabilityStatus ?? 2) == 1
+                                    ? 'Mark Out Of Stock'
+                                    : 'Mark Available',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.rubik(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 42,
-                                child: ElevatedButton(
-                                  onPressed: showConfirmDialog,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        (availabilityStatus ?? 2) == 1
-                                        ? const Color(0xFFEF4444)
-                                        : const Color(0xFF16A34A),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    (availabilityStatus ?? 2) == 1
-                                        ? 'Mark Out Of Stock'
-                                        : 'Mark Available',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 42,
+                            child: ElevatedButton(
+                              onPressed: showUpdateStockDialog,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5216),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                'Update Stock',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.rubik(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: SizedBox(
-                                height: 42,
-                                child: ElevatedButton(
-                                  onPressed: showUpdateStockDialog,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF5216),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Update Stock',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     );
@@ -2536,7 +2699,8 @@ class VendorRichCard extends StatelessWidget {
               ],
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -579,26 +579,29 @@ class _SettingsState extends State<Settings> {
     VoidCallback onTap, {
     IconData? leadingIcon,
   }) {
-    return ListTile(
-      leading: leadingIcon != null
-          ? Icon(leadingIcon, color: Colors.grey, size: 24)
-          : ImageIcon(image, color: Colors.grey[900], size: 24),
-      title: Text(
-        title,
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF333E63),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: leadingIcon != null
+            ? Icon(leadingIcon, color: Colors.grey, size: 24)
+            : ImageIcon(image, color: Colors.grey[900], size: 24),
+        title: Text(
+          title,
+          style: GoogleFonts.rubik(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF333E63),
+          ),
         ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey,
+        ),
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        visualDensity: VisualDensity.compact,
       ),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-      visualDensity: VisualDensity.compact,
     );
   }
 

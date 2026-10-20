@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../configs/ApiConfigs.dart';
 
 class RestaurantMenuItemsModel {
   bool? status;
@@ -11,7 +12,9 @@ class RestaurantMenuItemsModel {
     if (json == null) return RestaurantMenuItemsModel();
 
     return RestaurantMenuItemsModel(
-      status: json['status'] == 'true' || json['status'] == true,
+      status: json['status'] == 'true' ||
+          json['status'] == true ||
+          json['status']?.toString().toLowerCase() == 'true',
       data: json['data'] != null
           ? RestaurantMenuItemsData.fromJson(
               json['data'] as Map<String, dynamic>?,
@@ -39,6 +42,26 @@ class RestaurantMenuItemsData {
 
   factory RestaurantMenuItemsData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return RestaurantMenuItemsData();
+
+    if (json['items'] is List) {
+      final list = (json['items'] as List)
+          .map(
+            (e) => RestaurantMenuItemData.fromJson(e as Map<String, dynamic>?),
+          )
+          .toList();
+      final pagination = json['pagination'] is Map
+          ? json['pagination'] as Map<String, dynamic>
+          : null;
+      return RestaurantMenuItemsData(
+        restaurantMenuItems: RestaurantMenuItemsPagination(
+          currentPage: pagination?['current_page'] as int? ?? 1,
+          lastPage: pagination?['last_page'] as int? ?? 1,
+          perPage: pagination?['per_page'] as int? ?? 10,
+          total: pagination?['total'] as int? ?? list.length,
+          data: list,
+        ),
+      );
+    }
 
     return RestaurantMenuItemsData(
       restaurantMenuItems: json['restaurant_menu_items'] != null
@@ -162,22 +185,52 @@ class RestaurantMenuItemData {
   factory RestaurantMenuItemData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return RestaurantMenuItemData();
 
+    String? catNameEn;
+    String? catNameAr;
+    String? catNameFr;
+    int? catId;
+
+    if (json['categories'] is List && (json['categories'] as List).isNotEmpty) {
+      final firstCat = (json['categories'] as List).first;
+      if (firstCat is Map) {
+        catId = int.tryParse(firstCat['id']?.toString() ?? '');
+        catNameEn = firstCat['name_en']?.toString();
+        catNameAr = firstCat['name_ar']?.toString();
+        catNameFr = firstCat['name_fr']?.toString();
+      }
+    }
+
+    String rawImg = (json['image_url'] ?? json['image'])?.toString() ?? '';
+    if (rawImg.contains('localhost/storage/')) {
+      rawImg = rawImg
+          .replaceFirst('http://localhost/storage/', ApiConfigs.IMAGE_URL)
+          .replaceFirst('https://localhost/storage/', ApiConfigs.IMAGE_URL);
+    }
+
     return RestaurantMenuItemData(
-      id: json['id'] as int? ?? 0,
+      id: json['id'] as int? ?? int.tryParse(json['id']?.toString() ?? '') ?? 0,
       nameEn: json['name_en']?.toString() ?? '',
       nameAr: json['name_ar']?.toString() ?? '',
       nameFr: json['name_fr']?.toString() ?? '',
       descriptionEn: json['description_en']?.toString() ?? '',
       descriptionAr: json['description_ar']?.toString() ?? '',
       descriptionFr: json['description_fr']?.toString() ?? '',
-      image: json['image']?.toString() ?? '',
+      image: rawImg,
       price: json['price']?.toString() ?? '0',
-      discountPrice: json['discount_price']?.toString() ?? '0',
-      restaurantMenuItemId: json['restaurant_menu_item_id'] as int? ?? 0,
-      categoryId: _parseCategoryIdToInt(json['category_id']),
-      categoryNameEn: json['category_name_en']?.toString() ?? '',
-      categoryNameAr: json['category_name_ar']?.toString() ?? '',
-      categoryNameFr: json['category_name_fr']?.toString() ?? '',
+      discountPrice: json['discount_price']?.toString() ??
+          json['price']?.toString() ??
+          '0',
+      restaurantMenuItemId:
+          (json['restaurant_menu_item_id'] ?? json['id']) as int? ??
+              int.tryParse(
+                (json['restaurant_menu_item_id'] ?? json['id'])?.toString() ??
+                    '',
+              ) ??
+              0,
+      categoryId: catId ?? _parseCategoryIdToInt(json['category_id']),
+      categoryNameEn: catNameEn ?? json['category_name_en']?.toString() ?? '',
+      categoryNameAr: catNameAr ?? json['category_name_ar']?.toString() ?? '',
+      categoryNameFr: catNameFr ?? json['category_name_fr']?.toString() ?? '',
       availableStatus: json['available_status'] is int
           ? json['available_status'] as int
           : int.tryParse(json['available_status']?.toString() ?? '0'),

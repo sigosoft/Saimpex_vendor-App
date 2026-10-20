@@ -1,3 +1,5 @@
+import '../configs/ApiConfigs.dart';
+
 class RestaurantItemsDetailsModel {
   final bool? status;
   final MenuItemData? data;
@@ -6,12 +8,26 @@ class RestaurantItemsDetailsModel {
   RestaurantItemsDetailsModel({this.status, this.data, this.message});
 
   factory RestaurantItemsDetailsModel.fromJson(Map<String, dynamic>? json) {
+    dynamic dataPayload = json?['data'];
+    if (dataPayload is List && dataPayload.isNotEmpty && dataPayload.first is Map) {
+      dataPayload = dataPayload.first;
+    }
+    if (dataPayload == null &&
+        (json?['item'] != null ||
+            json?['catalog_item'] != null ||
+            json?['catalog_item_detail'] != null)) {
+      dataPayload = json;
+    }
+    final dataMap = dataPayload is Map<String, dynamic>
+        ? dataPayload
+        : (dataPayload is Map ? Map<String, dynamic>.from(dataPayload) : null);
+
     return RestaurantItemsDetailsModel(
       status:
           json?['status'] == true ||
           json?['status']?.toString().toLowerCase() == "true" ||
           json?['status']?.toString() == "1",
-      data: json?['data'] != null ? MenuItemData.fromJson(json?['data']) : null,
+      data: dataMap != null ? MenuItemData.fromJson(dataMap) : null,
       // Backend sometimes returns `message` as a localized map.
       // Ensure we never crash on a non-String message payload.
       message: json?['message']?.toString(),
@@ -37,12 +53,29 @@ class MenuItemData {
   MenuItemData({this.menuItemDetails, this.menuItemTags});
 
   factory MenuItemData.fromJson(Map<String, dynamic>? json) {
+    final rawDetails = json?['menu_item_details'] ??
+        json?['item'] ??
+        json?['item_details'] ??
+        json?['catalog_item'] ??
+        json?['catalog_item_detail'] ??
+        json?['restaurant_catalog_item_detail'] ??
+        json?['restaurant_menu_item'] ??
+        json?['restaurant_item'] ??
+        (json?['name_en'] != null || json?['price'] != null || json?['id'] != null ? json : null);
+
     return MenuItemData(
-      menuItemDetails: json?['menu_item_details'] != null
-          ? MenuItemDetails.fromJson(json?['menu_item_details'])
+      menuItemDetails: rawDetails != null
+          ? MenuItemDetails.fromJson(
+              rawDetails is Map<String, dynamic>
+                  ? rawDetails
+                  : Map<String, dynamic>.from(rawDetails as Map),
+            )
           : null,
       menuItemTags:
-          ((json?['menu_item_tags'] ?? json?['grocery_item_tags']) as List?)
+          ((json?['menu_item_tags'] ??
+                      json?['grocery_item_tags'] ??
+                      json?['tags'])
+                  as List?)
               ?.map((e) => MenuItemTag.fromJson(e))
               .toList() ??
           [],
@@ -114,7 +147,9 @@ class MenuItemDetails {
       preparationTime: _toNullableString(
         json?['preparation_time'] ?? json?['prep_time'],
       ),
-      serialNumber: _toNullableString(json?['serial_number']),
+      serialNumber: _toNullableString(
+        json?['serial_number'] ?? json?['serial_no'],
+      ),
       restaurantAttributeId: _toNullableInt(
         json?['restaurant_attribute_id'] ??
             json?['grocery_attribute_id'] ??
@@ -144,14 +179,23 @@ class MenuItemDetails {
       // Restaurant endpoint returns `restaurant_menu`, grocery endpoint returns `grocery_menu`.
       // We map both into the same `restaurantMenu` field so the UI can render details.
       restaurantMenu: (() {
-        final dynamic menuJson =
-            json?['restaurant_menu'] ?? json?['grocery_menu'];
-        if (menuJson == null) return null;
-        if (menuJson is Map<String, dynamic>) {
-          return RestaurantMenu.fromJson(menuJson);
+        final dynamic menuJson = json?['restaurant_menu'] ??
+            json?['grocery_menu'] ??
+            json?['menu'] ??
+            json?['catalog_item'] ??
+            json?['item'];
+        if (menuJson != null) {
+          if (menuJson is Map<String, dynamic>) {
+            return RestaurantMenu.fromJson(menuJson);
+          }
+          if (menuJson is Map) {
+            return RestaurantMenu.fromJson(Map<String, dynamic>.from(menuJson));
+          }
         }
-        if (menuJson is Map) {
-          return RestaurantMenu.fromJson(Map<String, dynamic>.from(menuJson));
+        if (json?['name_en'] != null ||
+            json?['image_url'] != null ||
+            json?['categories'] != null) {
+          return RestaurantMenu.fromJson(json);
         }
         return null;
       })(),
@@ -266,6 +310,22 @@ class RestaurantMenu {
         .map((e) => Category.fromJson(e as Map<String, dynamic>))
         .toList();
 
+    String? catNameEn;
+    String? catNameAr;
+    String? catNameFr;
+    if (categoriesJson.isNotEmpty && categoriesJson.first is Map) {
+      catNameEn = categoriesJson.first['name_en']?.toString();
+      catNameAr = categoriesJson.first['name_ar']?.toString();
+      catNameFr = categoriesJson.first['name_fr']?.toString();
+    }
+
+    String? rawImg = _toNullableString(json?['image'] ?? json?['image_url']);
+    if (rawImg != null && rawImg.contains('localhost/storage/')) {
+      rawImg = rawImg
+          .replaceFirst('http://localhost/storage/', ApiConfigs.IMAGE_URL)
+          .replaceFirst('https://localhost/storage/', ApiConfigs.IMAGE_URL);
+    }
+
     return RestaurantMenu(
       id: _toNullableInt(json?['id']),
       nameEn: _toNullableString(json?['name_en']),
@@ -275,15 +335,15 @@ class RestaurantMenu {
       descriptionAr: _toNullableString(json?['description_ar']),
       descriptionFr: _toNullableString(json?['description_fr']),
       categoryNameEn: _toNullableString(
-        json?['category_name_en'] ?? categoryNameEnFallback,
+        json?['category_name_en'] ?? catNameEn ?? categoryNameEnFallback,
       ),
       categoryNameAr: _toNullableString(
-        json?['category_name_ar'] ?? categoryNameArFallback,
+        json?['category_name_ar'] ?? catNameAr ?? categoryNameArFallback,
       ),
       categoryNameFr: _toNullableString(
-        json?['category_name_fr'] ?? categoryNameFrFallback,
+        json?['category_name_fr'] ?? catNameFr ?? categoryNameFrFallback,
       ),
-      image: _toNullableString(json?['image']),
+      image: rawImg,
       isVeg: _toNullableInt(json?['is_veg']),
       quantityAllowed: _toNullableInt(json?['quantity_allowed']),
       categories: categoriesList,

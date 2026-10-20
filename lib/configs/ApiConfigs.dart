@@ -95,6 +95,14 @@ class ApiEndPoints {
   static String uploadMenuItems = "importRestaurantMenuItems";
   static String restaurantMenuItemStockLogs = "restaurantMenuItemStockLogs";
   static String updateRestaurantMenuItemStock = "updateRestaurantItemStock";
+  static String restaurantCatalogItems = "restaurantCatalogItems";
+  static String restaurantCatalogItemDetail =
+      "vendor/restaurantCatalogItemDetail";
+  static String restaurantCatalogItemDetailAlt = "restaurantCatalogItemDetail";
+  static String updateRestaurantCatalogItemStatus =
+      "updateRestaurantCatalogItemStatus";
+  static String updateRestaurantCatalogItemStatusAlt =
+      "vendor/updateRestaurantCatalogItemStatus";
 
   static String earningsSummary = "earnings/summary";
   static String earningsOrders = "earnings/orders";

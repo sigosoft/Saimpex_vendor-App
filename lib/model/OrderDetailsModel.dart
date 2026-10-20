@@ -3,6 +3,7 @@
 //     final orderDetailsModel = orderDetailsModelFromJson(jsonString);
 
 import 'dart:convert';
+import '../configs/ApiConfigs.dart';
 
 OrderDetailsModel orderDetailsModelFromJson(String str) =>
     OrderDetailsModel.fromJson(json.decode(str));
@@ -49,6 +50,7 @@ class Data {
   final String? longitude;
   final DateTime? createdAt;
   final dynamic customerNote;
+  final dynamic customerNoteAudio;
   final String? userName;
   final dynamic userEmail;
   final dynamic userAddress;
@@ -86,6 +88,7 @@ class Data {
     this.longitude,
     this.createdAt,
     this.customerNote,
+    this.customerNoteAudio,
     this.userName,
     this.userEmail,
     this.userAddress,
@@ -133,6 +136,11 @@ class Data {
         ? null
         : DateTime.parse(json["created_at"]),
     customerNote: json["customer_note"],
+    customerNoteAudio: json["customer_note_audio"] ??
+        json["voice_note"] ??
+        json["audio_note"] ??
+        json["customer_note_voice"] ??
+        json["voice_note_url"],
     userName: json["user_name"],
     userEmail: json["user_email"],
     userAddress: json["user_address"],
@@ -182,6 +190,7 @@ class Data {
     "longitude": longitude,
     "created_at": createdAt?.toIso8601String(),
     "customer_note": customerNote,
+    "customer_note_audio": customerNoteAudio,
     "user_name": userName,
     "user_email": userEmail,
     "user_address": userAddress,
@@ -203,6 +212,64 @@ class Data {
         ? []
         : List<dynamic>.from(statusLogs!.map((x) => x.toJson())),
   };
+
+  static bool _isAudioString(String s) {
+    final lower = s.toLowerCase();
+    return lower.endsWith('.m4a') ||
+        lower.endsWith('.mp3') ||
+        lower.endsWith('.wav') ||
+        lower.endsWith('.aac') ||
+        lower.endsWith('.ogg') ||
+        lower.endsWith('.opus') ||
+        lower.endsWith('.amr') ||
+        lower.contains('/voices/') ||
+        lower.contains('/voice_notes/') ||
+        lower.contains('/audio/');
+  }
+
+  static String? _resolveAudioUrl(String? raw) {
+    if (raw == null) return null;
+    var str = raw.trim();
+    if (str.isEmpty || str == 'null') return null;
+    str = str.replaceAll(r'\', '/');
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      return str;
+    }
+    final base = ApiConfigs.IMAGE_URL.trim();
+    if (str.startsWith('/')) {
+      return '$base${str.substring(1)}';
+    }
+    return '$base$str';
+  }
+
+  String? get customerAudioNoteUrl {
+    final rawAudio = customerNoteAudio?.toString().trim();
+    if (rawAudio != null &&
+        rawAudio.isNotEmpty &&
+        rawAudio != 'null') {
+      return _resolveAudioUrl(rawAudio);
+    }
+    final rawNote = customerNote?.toString().trim();
+    if (rawNote != null &&
+        rawNote.isNotEmpty &&
+        rawNote != 'null' &&
+        _isAudioString(rawNote)) {
+      return _resolveAudioUrl(rawNote);
+    }
+    return null;
+  }
+
+  String? get customerTextNote {
+    final rawNote = customerNote?.toString().trim();
+    if (rawNote == null || rawNote.isEmpty || rawNote == 'null') {
+      return null;
+    }
+    if (_isAudioString(rawNote)) {
+      return null;
+    }
+    return rawNote;
+  }
+
 }
 
 class OrderDurations {

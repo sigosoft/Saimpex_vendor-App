@@ -623,6 +623,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 20),
                     _buildSearchRow(showFilter: false),
                     const SizedBox(height: 16),
+                    _buildItemsActionRow(),
+                    const SizedBox(height: 16),
                     _buildItemsList(),
                     const SizedBox(height: 20),
                   ] else if (selectedMenu == "Menu Bulk Import") ...[
@@ -878,7 +880,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             name,
             menu.id?.toString() ?? "",
             category,
-            id: menu.id.toString(),
+            id: menu.id?.toString() ?? "",
             imageUrl: menu.image,
           );
         }).toList(),
@@ -899,7 +901,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             name,
             menu.id?.toString() ?? "",
             category,
-            id: menu.id.toString(),
+            id: menu.id?.toString() ?? "",
             imageUrl: menu.image,
             categories: profileController.restaurantCategoriesForDropdown,
           );
@@ -966,7 +968,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               menuController.downloadItemTemplate(context);
             },
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFFFF5216), width: 1),
+              backgroundColor: const Color(0xFFFFF4EE),
+              side: const BorderSide(color: Color(0xFFFF9E7D), width: 1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -982,7 +985,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.rubik(
                     fontSize: 12,
-                    color: const Color(0xFFFF5216),
+                    color: const Color(0xFF1E293B),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1008,16 +1011,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               menuController.uploadItemTemplate(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF3B82F6),
-              side: const BorderSide(color: Color(0xFF3B82F6), width: 1),
+              backgroundColor: const Color(0xFFEFF2FF),
+              foregroundColor: const Color(0xFF1E293B),
+              elevation: 0,
+              side: const BorderSide(color: Color(0xFFA7B4FF), width: 1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.symmetric(vertical: 10),
             ),
             child: Container(
-              margin: EdgeInsets.only(left: 3, right: 3),
+              margin: const EdgeInsets.only(left: 3, right: 3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -1028,7 +1032,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.rubik(
                       fontSize: 12,
-                      color: const Color(0xFF3B82F6),
+                      color: const Color(0xFF1E293B),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1038,7 +1042,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     width: 12,
                     height: 12,
                     fit: BoxFit.contain,
-                    color: const Color(0xFF3B82F6),
+                    color: const Color(0xFF6F7FDD),
                     colorBlendMode: BlendMode.srcIn,
                   ),
                 ],
@@ -1067,6 +1071,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ),
             ),
             style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
               side: const BorderSide(color: Color(0xFFFF5216), width: 1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -1331,19 +1336,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     String category, {
     String? imageUrl,
     String? id,
-    String price = "50.00 MRU",
-    String? discountPrice = "100.00 MRU",
+    String price = "",
+    String? discountPrice,
     List<RestaurantCategory>? categories,
   }) {
     return _richCard(
-      id: id ?? "33",
+      id: id ?? "",
       restaurantMenuItemId: restaurantMenuItemId,
       name: name,
       category: category,
       price: price,
       originalPrice: discountPrice,
       imageUrl: imageUrl,
-      itemId: id ?? "33",
+      itemId: id ?? "",
       isMenu: true,
       categories: categories,
     );
@@ -1586,7 +1591,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     String restaurantMenuItemId,
     String? imageUrl,
     String itemId, {
-    String category = "Category",
+    String category = "",
     List<RestaurantCategory>? categories,
     String? originalPrice,
     int? availabilityStatus,

@@ -22,6 +22,7 @@ import '../../utils/Widgets/custom_app_bar.dart';
 import '../../utils/order_fulfillment.dart';
 import '../../utils/utils.dart';
 import '../../utils/widgets/no_data_widget.dart';
+import 'widgets/customer_voice_note_widget.dart';
 import 'widgets/order_fulfillment_badge.dart';
 import 'widgets/vendor_reject_order_sheet.dart';
 
@@ -615,78 +616,88 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 },
                               ),
 
-                              controller.orderData!.customerNote.toString() ==
-                                          "null" ||
-                                      controller.orderData!.customerNote
-                                              .toString() ==
-                                          ""
-                                  ? Container()
-                                  : const SizedBox(height: 30),
-                              controller.orderData!.customerNote.toString() ==
-                                          "null" ||
-                                      controller.orderData!.customerNote
-                                              .toString() ==
-                                          ""
-                                  ? Container()
-                                  : Text(
-                                      S.of(context).customerNotes,
-                                      style: GoogleFonts.rubik(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF9CA3AF),
-                                      ),
-                                    ),
-                              controller.orderData!.customerNote.toString() ==
-                                          "null" ||
-                                      controller.orderData!.customerNote
-                                              .toString() ==
-                                          ""
-                                  ? Container()
-                                  : const SizedBox(height: 12),
-                              controller.orderData!.customerNote.toString() ==
-                                          "null" ||
-                                      controller.orderData!.customerNote
-                                              .toString() ==
-                                          ""
-                                  ? Container()
-                                  : Container(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                          0.95,
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFFFFBEB),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: const Color(0xFFFEF3C7),
-                                          width: 1,
+                              Builder(
+                                builder: (context) {
+                                  final audioUrl = controller
+                                      .orderData
+                                      ?.customerAudioNoteUrl;
+                                  final textNote =
+                                      controller.orderData?.customerTextNote;
+                                  final bool hasAudio =
+                                      audioUrl != null && audioUrl.isNotEmpty;
+                                  final bool hasText =
+                                      textNote != null && textNote.isNotEmpty;
+
+                                  if (!hasAudio && !hasText) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 30),
+                                      Text(
+                                        S.of(context).customerNotes,
+                                        style: GoogleFonts.rubik(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF9CA3AF),
                                         ),
                                       ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            "lib/assets/images/Customer note.png",
-                                            height: 20,
-                                            width: 20,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              controller.orderData!.customerNote
-                                                  .toString(),
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.normal,
-                                                color: Color(0xFF92400E),
-                                                height: 1.5,
-                                              ),
+                                      const SizedBox(height: 12),
+                                      if (hasAudio)
+                                        CustomerVoiceNoteWidget(
+                                          audioUrl: audioUrl!,
+                                        ),
+                                      if (hasAudio && hasText)
+                                        const SizedBox(height: 12),
+                                      if (hasText)
+                                        Container(
+                                          width:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
+                                              0.95,
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFFFBEB),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            border: Border.all(
+                                              color: const Color(0xFFFEF3C7),
+                                              width: 1,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                "lib/assets/images/Customer note.png",
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  textNote!,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontStyle: FontStyle.normal,
+                                                    color: Color(0xFF92400E),
+                                                    height: 1.5,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                },
+                              ),
                               const SizedBox(height: 32),
                               if (widget.orderType
                                           ?.trim()

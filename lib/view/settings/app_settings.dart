@@ -88,19 +88,22 @@ class AppSettings extends StatelessWidget {
     Color? titleColor,
     VoidCallback? onTap,
   }) {
-    return ListTile(
-      title: Text(
-        title,
-        style: GoogleFonts.rubik(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: titleColor ?? const Color(0xFF475569),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        title: Text(
+          title,
+          style: GoogleFonts.rubik(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: titleColor ?? const Color(0xFF475569),
+          ),
         ),
+        trailing: trailing,
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
       ),
-      trailing: trailing,
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-      visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
     );
   }
 

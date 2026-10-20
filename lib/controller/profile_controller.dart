@@ -395,7 +395,7 @@ class ProfileController extends GetxController {
   Future<void> fetchGroceryMenuItems({
     int limit = 10,
     int page = 1,
-    int status = 1,
+    int? status,
     int? categoryId,
     String keyword = '',
   }) async {
@@ -425,25 +425,37 @@ class ProfileController extends GetxController {
         }
       }
 
+      final Map<String, dynamic> queryParams = vendorType == "1"
+          ? {
+              "page": page,
+              "per_page": limit,
+              if (status != null) "available_status": status,
+              if (matchedCategoryId != null) "category_id": matchedCategoryId,
+              if (apiKeyword.isNotEmpty) "keyword": apiKeyword,
+            }
+          : {
+              "limit": limit,
+              "page": page,
+              if (matchedCategoryId != null) "category_id": matchedCategoryId,
+              if (apiKeyword.isNotEmpty) "keyword": apiKeyword,
+            };
+
       final response = await DioClient().get(
         vendorType == "1"
-            ? ApiEndPoints.restaurantMenuItems
+            ? ApiEndPoints.restaurantCatalogItems
             : ApiEndPoints.groceryMenuItems,
-        query: {
-          "limit": limit,
-          "page": page,
-          if (matchedCategoryId != null) "category_id": matchedCategoryId,
-          if (apiKeyword.isNotEmpty) "keyword": apiKeyword,
-        },
+        query: queryParams,
       );
 
       if (vendorType == "1") {
         final model = RestaurantMenuItemsModel.fromJson(response.data);
         if (model.status == true) {
           restaurantMenuItems = model.data?.restaurantMenuItems?.data ?? [];
-          debugPrint(
-            "availabilityStatus: ${restaurantMenuItems.first.availableStatus.toString()}",
-          );
+          if (restaurantMenuItems.isNotEmpty) {
+            debugPrint(
+              "availabilityStatus: ${restaurantMenuItems.first.availableStatus.toString()}",
+            );
+          }
         }
       } else {
         final model = GroceryMenuItemsModel.fromJson(response.data);
@@ -481,6 +493,25 @@ class ProfileController extends GetxController {
       debugPrint("fetchGroceryMenuItems Error: $error");
     } finally {
       isGroceryMenuItemsLoading = false;
+      update();
+    }
+  }
+
+  void updateRestaurantItemAvailability(int itemId, int newStatus) {
+    bool changed = false;
+    for (var item in restaurantMenuItems) {
+      if (item.id == itemId || item.restaurantMenuItemId == itemId) {
+        item.availableStatus = newStatus;
+        changed = true;
+      }
+    }
+    for (var item in groceryMenuItems) {
+      if (item.id == itemId || item.menuItemId == itemId) {
+        item.availableStatus = newStatus;
+        changed = true;
+      }
+    }
+    if (changed) {
       update();
     }
   }

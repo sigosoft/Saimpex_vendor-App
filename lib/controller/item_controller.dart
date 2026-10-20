@@ -105,7 +105,9 @@ class ItemController extends GetxController {
             ? baseName
             : '${baseName.split('.').first}.jpg';
 
-        debugPrint("[ItemController] Enhancing image immediately after crop...");
+        debugPrint(
+          "[ItemController] Enhancing image immediately after crop...",
+        );
         final enhancedBytes = await DioClient().enhanceImageBytes(
           path,
           jpgFilename,
@@ -117,12 +119,16 @@ class ItemController extends GetxController {
           );
           await tempFile.writeAsBytes(enhancedBytes);
           pickedImageFile = XFile(tempFile.path);
-          debugPrint("[ItemController] Image enhanced and saved to: ${tempFile.path}");
+          debugPrint(
+            "[ItemController] Image enhanced and saved to: ${tempFile.path}",
+          );
         } else {
           pickedImageFile = XFile(cropped.path);
         }
       } catch (e) {
-        debugPrint("[ItemController] Immediate image enhancement failed: $e. Fallback to cropped path.");
+        debugPrint(
+          "[ItemController] Immediate image enhancement failed: $e. Fallback to cropped path.",
+        );
         pickedImageFile = XFile(cropped.path);
       } finally {
         if (context.mounted) {
@@ -902,7 +908,11 @@ class ItemController extends GetxController {
     }
   }
 
-  Future<void> updateItemStatus(int itemId, int status) async {
+  Future<bool> updateItemStatus(
+    int itemId,
+    int status, {
+    bool showSuccessToast = false,
+  }) async {
     try {
       var token = await getSavedObject("token");
       var vendorType = await getSavedObject("vendorType");
@@ -911,48 +921,109 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.updateItemStatus
-            : ApiEndPoints.updateGroceryItemStatus,
-        query: {"menu_item_id": itemId, "available_status": status},
-      );
-      debugPrint("updateItemStatus response: $response");
-      final successModel = SuccessModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final isRestaurant = vendorType == "1";
+      final endpoint = isRestaurant
+          ? ApiEndPoints.updateRestaurantCatalogItemStatus
+          : ApiEndPoints.updateGroceryItemStatus;
+      final queryParams = isRestaurant
+          ? {"item_id": itemId, "available_status": status}
+          : {"menu_item_id": itemId, "available_status": status};
 
-      String? firstNonEmptyString(List<String>? values) {
-        if (values == null) return null;
-        final nonEmpty = values
-            .map((e) => e.toString().trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
-        return nonEmpty.isNotEmpty ? nonEmpty.first : null;
+      dynamic response;
+      try {
+        response = await DioClient().get(endpoint, query: queryParams);
+      } on dio.DioException catch (dioErr) {
+        if (isRestaurant && dioErr.response?.statusCode == 404) {
+          debugPrint(
+            'updateRestaurantCatalogItemStatus 404, retrying with ${ApiEndPoints.updateRestaurantCatalogItemStatusAlt}',
+          );
+          try {
+            response = await DioClient().get(
+              ApiEndPoints.updateRestaurantCatalogItemStatusAlt,
+              query: queryParams,
+            );
+          } on dio.DioException catch (altErr) {
+            if (altErr.response?.statusCode == 404) {
+              debugPrint(
+                'updateRestaurantCatalogItemStatus alt 404, trying legacy updateItemStatus',
+              );
+              response = await DioClient().get(
+                ApiEndPoints.updateItemStatus,
+                query: {"menu_item_id": itemId, "available_status": status},
+              );
+            } else {
+              rethrow;
+            }
+          }
+        } else if (dioErr.response?.statusCode == 405) {
+          response = await DioClient().post(endpoint, body: queryParams);
+        } else {
+          rethrow;
+        }
+      }
+      debugPrint("updateItemStatus response: $response");
+
+      final raw = response?.data;
+      final rawMap = raw is Map<String, dynamic>
+          ? raw
+          : (raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{});
+
+      final isSuccess =
+          rawMap['status'] == true ||
+          rawMap['status']?.toString().toLowerCase() == 'true' ||
+          rawMap['status']?.toString() == '1';
+
+      String? toastFromMessage;
+      final msgVal = rawMap['message'];
+      if (msgVal is String && msgVal.trim().isNotEmpty) {
+        toastFromMessage = msgVal.trim();
+      } else if (msgVal is Map) {
+        try {
+          final successModel = SuccessModel.fromJson(rawMap);
+          String? firstNonEmptyString(List<String>? values) {
+            if (values == null) return null;
+            final nonEmpty = values
+                .map((e) => e.toString().trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+            return nonEmpty.isNotEmpty ? nonEmpty.first : null;
+          }
+
+          toastFromMessage =
+              firstNonEmptyString(successModel.message?.messageEn) ??
+              firstNonEmptyString(successModel.message?.messageFr) ??
+              firstNonEmptyString(successModel.message?.messageAr);
+        } catch (_) {}
       }
 
-      final toastFromMessage =
-          firstNonEmptyString(successModel.message?.messageEn) ??
-          firstNonEmptyString(successModel.message?.messageFr) ??
-          firstNonEmptyString(successModel.message?.messageAr) ??
-          '';
-
-      final resolvedToastMessage = toastFromMessage.isNotEmpty
+      final resolvedToastMessage =
+          toastFromMessage != null && toastFromMessage.isNotEmpty
           ? toastFromMessage
-          : (successModel.status == 'true'
+          : (isSuccess
                 ? 'Item status updated successfully'
                 : 'Failed to update item status');
 
       debugPrint('updateItemStatus toast: $resolvedToastMessage');
 
-      final ctx = Get.overlayContext ?? Get.context;
-      if (ctx != null) {
-        try {
-          showToast(ctx, resolvedToastMessage);
-        } catch (e) {
-          debugPrint(
-            'showToast failed (overlay missing). Falling back. err=$e',
-          );
+      if (!isSuccess || showSuccessToast) {
+        final ctx = Get.overlayContext ?? Get.context;
+        if (ctx != null) {
+          try {
+            showToast(ctx, resolvedToastMessage);
+          } catch (e) {
+            debugPrint(
+              'showToast failed (overlay missing). Falling back. err=$e',
+            );
+            Fluttertoast.showToast(
+              msg: resolvedToastMessage,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 14.0,
+            );
+          }
+        } else {
           Fluttertoast.showToast(
             msg: resolvedToastMessage,
             toastLength: Toast.LENGTH_SHORT,
@@ -962,18 +1033,11 @@ class ItemController extends GetxController {
             fontSize: 14.0,
           );
         }
-      } else {
-        Fluttertoast.showToast(
-          msg: resolvedToastMessage,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 14.0,
-        );
       }
+      return isSuccess;
     } catch (error) {
       debugPrint("updateItemStatus Error: $error");
+      return false;
     } finally {
       update();
     }

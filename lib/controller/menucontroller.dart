@@ -589,8 +589,8 @@ class MenuController extends GetxController {
       final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
           ? rawVendorType
           : (Get.isRegistered<ProfileController>()
-              ? Get.find<ProfileController>().vendorType
-              : "1");
+                ? Get.find<ProfileController>().vendorType
+                : "1");
       final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
@@ -769,7 +769,9 @@ class MenuController extends GetxController {
               ? baseName
               : '${baseName.split('.').first}.jpg';
 
-          debugPrint("[MenuController] Enhancing main menu image immediately after crop...");
+          debugPrint(
+            "[MenuController] Enhancing main menu image immediately after crop...",
+          );
           final enhancedBytes = await DioClient().enhanceImageBytes(
             mainImagePath,
             jpgFilename,
@@ -788,7 +790,9 @@ class MenuController extends GetxController {
             uploadedImages.add(XFile(cropped.path));
           }
         } catch (e) {
-          debugPrint("[MenuController] Immediate image enhancement failed: $e. Fallback to cropped path.");
+          debugPrint(
+            "[MenuController] Immediate image enhancement failed: $e. Fallback to cropped path.",
+          );
           uploadedImages.add(XFile(cropped.path));
         } finally {
           if (context.mounted) {
@@ -814,7 +818,7 @@ class MenuController extends GetxController {
         'categories',
         'menu_categories',
         'tags',
-        'menu_tags'
+        'menu_tags',
       ]) {
         final nested = data[key];
         if (nested is List) return nested;
@@ -828,7 +832,7 @@ class MenuController extends GetxController {
       'menu_categories',
       'tags',
       'menu_tags',
-      'data'
+      'data',
     ]) {
       final val = map[key];
       if (val is List) return val;
@@ -840,8 +844,7 @@ class MenuController extends GetxController {
     debugPrint(
       "[MenuController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategoryIds=${selectedCategoryIds.length} selectedEditCategoryId=$selectedEditCategoryId",
     );
-    if (restaurantCategories.isEmpty &&
-        Get.isRegistered<ProfileController>()) {
+    if (restaurantCategories.isEmpty && Get.isRegistered<ProfileController>()) {
       final profileCtrl = Get.find<ProfileController>();
       if (profileCtrl.restaurantCategories.isNotEmpty) {
         restaurantCategories = List.from(profileCtrl.restaurantCategories);
@@ -855,8 +858,8 @@ class MenuController extends GetxController {
       final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
           ? rawVendorType
           : (Get.isRegistered<ProfileController>()
-              ? Get.find<ProfileController>().vendorType
-              : "1");
+                ? Get.find<ProfileController>().vendorType
+                : "1");
       final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
@@ -874,11 +877,14 @@ class MenuController extends GetxController {
           final list = _extractList(response.data);
           final items = list
               .whereType<Map>()
-              .map((e) => RestaurantCategoryData.fromJson(
-                    Map<String, dynamic>.from(e),
-                  ))
-              .where((c) =>
-                  (c.id != null && c.id != 0) || c.displayName.isNotEmpty)
+              .map(
+                (e) => RestaurantCategoryData.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
+              .where(
+                (c) => (c.id != null && c.id != 0) || c.displayName.isNotEmpty,
+              )
               .toList();
           if (items.isNotEmpty) {
             restaurantCategories = items;
@@ -900,11 +906,15 @@ class MenuController extends GetxController {
             final list = _extractList(response.data);
             final items = list
                 .whereType<Map>()
-                .map((e) => RestaurantCategoryData.fromJson(
-                      Map<String, dynamic>.from(e),
-                    ))
-                .where((c) =>
-                    (c.id != null && c.id != 0) || c.displayName.isNotEmpty)
+                .map(
+                  (e) => RestaurantCategoryData.fromJson(
+                    Map<String, dynamic>.from(e),
+                  ),
+                )
+                .where(
+                  (c) =>
+                      (c.id != null && c.id != 0) || c.displayName.isNotEmpty,
+                )
                 .toList();
             if (items.isNotEmpty) {
               restaurantCategories = items;
@@ -966,8 +976,8 @@ class MenuController extends GetxController {
       final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
           ? rawVendorType
           : (Get.isRegistered<ProfileController>()
-              ? Get.find<ProfileController>().vendorType
-              : "1");
+                ? Get.find<ProfileController>().vendorType
+                : "1");
       final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);
@@ -986,8 +996,9 @@ class MenuController extends GetxController {
           final items = list
               .whereType<Map>()
               .map((e) => TagData.fromJson(Map<String, dynamic>.from(e)))
-              .where((t) =>
-                  (t.id != null && t.id != 0) || t.displayName.isNotEmpty)
+              .where(
+                (t) => (t.id != null && t.id != 0) || t.displayName.isNotEmpty,
+              )
               .toList();
           if (items.isNotEmpty) {
             restaurantTags = items;
@@ -1010,8 +1021,10 @@ class MenuController extends GetxController {
             final items = list
                 .whereType<Map>()
                 .map((e) => TagData.fromJson(Map<String, dynamic>.from(e)))
-                .where((t) =>
-                    (t.id != null && t.id != 0) || t.displayName.isNotEmpty)
+                .where(
+                  (t) =>
+                      (t.id != null && t.id != 0) || t.displayName.isNotEmpty,
+                )
                 .toList();
             if (items.isNotEmpty) {
               restaurantTags = items;
@@ -1061,8 +1074,8 @@ class MenuController extends GetxController {
       final vendorType = (rawVendorType != null && rawVendorType.isNotEmpty)
           ? rawVendorType
           : (Get.isRegistered<ProfileController>()
-              ? Get.find<ProfileController>().vendorType
-              : "1");
+                ? Get.find<ProfileController>().vendorType
+                : "1");
       final isGrocery = vendorType == "2";
       if (token != null) {
         DioClient().updateToken(token);

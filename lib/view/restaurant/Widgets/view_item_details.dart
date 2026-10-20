@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,7 @@ import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_stock_history_screen.dart';
+import 'package:saimpex_vendor/view/restaurant/edit_items_screen.dart';
 import 'package:get/get.dart';
 
 import '../../../generated/l10n.dart';
@@ -54,7 +56,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       if (itemIdInt == null && menuItemIdInt == null) {
         throw Exception("Invalid item/menu item ids");
       }
-      final selectedItemId = vendorType == "1" ? itemIdInt : menuItemIdInt;
+      final selectedItemId = vendorType == "1"
+          ? (itemIdInt ?? menuItemIdInt)
+          : (menuItemIdInt ?? itemIdInt);
       if (selectedItemId == null) {
         throw Exception(
           vendorType == "1"
@@ -64,12 +68,41 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       }
       final query = {"item_id": selectedItemId.toString()};
       final endpoint = vendorType == "1"
-          ? ApiEndPoints.getRestaurantMenuItemDetails
+          ? ApiEndPoints.restaurantCatalogItemDetail
           : ApiEndPoints.getGroceryMenuItemDetails;
       debugPrint(
         '[ViewItemDetails] _fetch vendorType=$vendorType endpoint=$endpoint itemId=${widget.itemId} menuItemId=${widget.menuItemId} query=$query',
       );
-      final response = await DioClient().get(endpoint, query: query);
+      dynamic response;
+      try {
+        response = await DioClient().get(endpoint, query: query);
+      } on DioException catch (dioErr) {
+        if (vendorType == "1" && dioErr.response?.statusCode == 404) {
+          debugPrint(
+            '[ViewItemDetails] 404 on $endpoint, trying fallback ${ApiEndPoints.restaurantCatalogItemDetailAlt}',
+          );
+          try {
+            response = await DioClient().get(
+              ApiEndPoints.restaurantCatalogItemDetailAlt,
+              query: query,
+            );
+          } on DioException catch (altErr) {
+            if (altErr.response?.statusCode == 404) {
+              debugPrint(
+                '[ViewItemDetails] 404 on alt, trying getRestaurantMenuItemDetails',
+              );
+              response = await DioClient().get(
+                ApiEndPoints.getRestaurantMenuItemDetails,
+                query: query,
+              );
+            } else {
+              rethrow;
+            }
+          }
+        } else {
+          rethrow;
+        }
+      }
       debugPrint(
         '[ViewItemDetails] response.data runtimeType=${response.data.runtimeType}',
       );
@@ -107,8 +140,8 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           leading: GestureDetector(
             onTap: () => Navigator.pop(context),
             child: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
+              Icons.arrow_back_ios_new,
+              color: Color(0xFF1F2937),
               size: 20,
             ),
           ),
@@ -185,124 +218,345 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       return const SizedBox.shrink();
     }
 
-    final screenHeight = MediaQuery.of(context).size.height;
     final imageUrl = menu.image != null && menu.image!.isNotEmpty
-        ? (ApiConfigs.IMAGE_URL + menu.image!)
+        ? (menu.image!.startsWith('http://') || menu.image!.startsWith('https://')
+            ? menu.image!
+            : (ApiConfigs.IMAGE_URL + menu.image!))
         : "";
 
     final menuName = _pickMenuName(menu, lang);
     final categoryName = _pickCategoryName(menu, lang);
     final description = _pickDescription(menu, lang);
 
-    final createdText = _formatDateTime(details.createdAt);
-    final updatedText = _formatDateTime(details.updatedAt);
+    final isAvailable = (details.availableStatus ?? 1) == 1;
+    final tags = _detailsModel?.data?.menuItemTags ?? [];
 
-    final priceText = _formatMoney(details.price);
-    final discountText =
+    String cleanMoney(String val) {
+      if (val.endsWith('.00')) {
+        return val.substring(0, val.length - 3);
+      }
+      return val;
+    }
+
+    final rawPrice = details.price != null && details.price!.isNotEmpty
+        ? details.price!.replaceAll('MRU', '').trim()
+        : "-";
+    final priceStr = cleanMoney(rawPrice);
+
+    final rawDiscount =
         details.discountPrice != null &&
             details.discountPrice!.isNotEmpty &&
             details.discountPrice != details.price
-        ? _formatMoney(details.discountPrice)
+        ? details.discountPrice!.replaceAll('MRU', '').trim()
         : "";
+    final discountStr = cleanMoney(rawDiscount);
+
+    final hasDiscount =
+        discountStr.isNotEmpty && (double.tryParse(discountStr) ?? 0) > 0;
+
+    final String boldPrice;
+    final String? strikePrice;
+    if (hasDiscount) {
+      boldPrice = discountStr;
+      strikePrice = priceStr;
+    } else {
+      boldPrice = priceStr;
+      strikePrice = null;
+    }
+
+    final serialStr =
+        details.serialNumber != null && details.serialNumber!.isNotEmpty
+        ? details.serialNumber!
+        : "-";
+    final prepTimeRaw =
+        details.preparationTime != null && details.preparationTime!.isNotEmpty
+        ? details.preparationTime!
+        : "-";
+    final prepTimeStr = _formatPrepTime(prepTimeRaw);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 1. Food Image
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: imageUrl.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: imageUrl,
                     width: double.infinity,
-                    height: screenHeight * 0.22,
+                    height: 190,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        _placeholderBurger(screenHeight: screenHeight),
+                    errorWidget: (_, __, ___) => Image.asset(
+                      'lib/assets/images/Burger.jpg',
+                      width: double.infinity,
+                      height: 190,
+                      fit: BoxFit.cover,
+                    ),
                   )
-                : _placeholderBurger(screenHeight: screenHeight),
+                : Image.asset(
+                    'lib/assets/images/Burger.jpg',
+                    width: double.infinity,
+                    height: 190,
+                    fit: BoxFit.cover,
+                  ),
           ),
-          SizedBox(height: screenHeight * 0.02),
+          const SizedBox(height: 14),
 
-          Text(
-            S.of(context).menuInformation,
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF4B5563),
+          // 2. Main Details Card
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
             ),
-          ),
-          const SizedBox(height: 12),
-
-          _InfoCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _kv(
-                  label: "MENU NAME",
-                  value: menuName.isNotEmpty
-                      ? menuName
-                      : "#${details.id ?? widget.itemId}",
-                ),
-                const SizedBox(height: 10),
-                _kv(
-                  label: S.of(context).price,
-                  value: priceText,
-                  valueColor: const Color(0xFF1F2937),
-                ),
-                if (discountText.isNotEmpty) ...[
-                  const SizedBox(height: 6),
-                  _kv(
-                    label: S.of(context).discountPrice,
-                    value: discountText,
-                    valueColor: const Color(0xFFFF5216),
-                  ),
-                ],
-                const SizedBox(height: 10),
-                if (Get.find<ProfileController>().vendorType != '2') ...[
-                  _kv(
-                    label: S.of(context).preparationTime,
-                    value: details.preparationTime?.toString() ?? "-",
-                  ),
-                  const SizedBox(height: 10),
-                ],
-                _kv(
-                  label: S.of(context).category,
-                  value: categoryName.isNotEmpty ? categoryName : "-",
-                ),
-                const SizedBox(height: 10),
-                if (Get.find<ProfileController>().vendorType != '2') ...[
-                  _isVegBadge(
-                    isVeg: details.restaurantMenu?.isVeg == 1,
-                    value: (details.restaurantMenu?.isVeg == 1) ? "Yes" : "No",
-                  ),
-                  const SizedBox(height: 14),
-                ],
+                // Row 1: Name and Available status badge
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _kvSimple(
-                        label: S.of(context).createdDate,
-                        value: createdText,
+                      child: Text(
+                        menuName.isNotEmpty
+                            ? menuName
+                            : "#${details.id ?? widget.itemId}",
+                        style: GoogleFonts.rubik(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1F2937),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _kvSimple(
-                        label: S.of(context).updatedDate,
-                        value: updatedText,
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isAvailable
+                            ? const Color(0xFFDCFCE7)
+                            : const Color(0xFFFEE2E2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: isAvailable
+                                  ? const Color(0xFF16A34A)
+                                  : const Color(0xFFDC2626),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isAvailable ? "Available" : "Out of Stock",
+                            style: GoogleFonts.rubik(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isAvailable
+                                  ? const Color(0xFF16A34A)
+                                  : const Color(0xFFDC2626),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+
+                // Row 2: Category and Serial No
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: RichText(
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Category: ",
+                              style: GoogleFonts.rubik(
+                                fontSize: 12,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text: categoryName.isNotEmpty
+                                  ? categoryName
+                                  : "-",
+                              style: GoogleFonts.rubik(
+                                fontSize: 12,
+                                color: const Color(0xFF1F2937),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Serial No: ",
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              color: const Color(0xFF64748B),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          TextSpan(
+                            text: serialStr,
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              color: const Color(0xFF1F2937),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Row 3: Price (with strikethrough if available) & Preparation Time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              boldPrice,
+                              style: GoogleFonts.rubik(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFFFF5216),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "MRU",
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFFF5216),
+                            ),
+                          ),
+                          if (strikePrice != null &&
+                              strikePrice.isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                "$strikePrice MRU",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 12,
+                                  color: const Color(0xFF94A3B8),
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Preparation Time: ",
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              color: const Color(0xFF64748B),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          TextSpan(
+                            text: prepTimeStr,
+                            style: GoogleFonts.rubik(
+                              fontSize: 12,
+                              color: const Color(0xFF1F2937),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          if (prepTimeStr != "-")
+                            TextSpan(
+                              text: " min",
+                              style: GoogleFonts.rubik(
+                                fontSize: 12,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (tags.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: tags
+                        .map(
+                          (t) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF6FF),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              t.nameEn ?? '',
+                              style: GoogleFonts.rubik(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF2563EB),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
                 const SizedBox(height: 14),
+
+                // Description
                 Text(
-                  S.of(context).description,
+                  "DESCRIPTION",
                   style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF64748B),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF94A3B8),
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -311,42 +565,61 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       ? description
                       : S.of(context).noDescriptionAvailable,
                   style: GoogleFonts.rubik(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xFF94A3B8),
-                    height: 1.35,
+                    color: const Color(0xFF475569),
+                    height: 1.4,
                   ),
                 ),
               ],
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.02),
+          // Edit Item Button
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EditItemsScreen(itemId: widget.itemId),
+                  ),
+                ).then((_) => _fetch());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF5216),
+                elevation: 2,
+                shadowColor: const Color(0xFFFF5216).withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                "Edit Item",
+                style: GoogleFonts.rubik(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
 
+          // SALES & PERFORMANCE Section (Dynamic Data from Response)
+          const SizedBox(height: 22),
           Text(
-            S.of(context).availableThe,
+            "SALES & PERFORMANCE",
             style: GoogleFonts.rubik(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF4B5563),
+              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 10),
-
-          _availabilityList(details.workingHours ?? []),
-
-          SizedBox(height: screenHeight * 0.02),
-
-          Text(
-            S.of(context).salesPerformance,
-            style: GoogleFonts.rubik(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF4B5563),
-            ),
-          ),
-          const SizedBox(height: 10),
-
           _statsGrid(
             totalOrders: _toInt(details.totalOrders?.toString()),
             totalRevenue: details.totalPriceAfterCommission ?? 0,
@@ -355,43 +628,132 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             lastPurchaseAgo: _timeAgo(details.lastOrderDate),
           ),
 
-          SizedBox(height: screenHeight * 0.02),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
 
+  Widget _sectionHeaderWithBadge({
+    required String title,
+    required String badgeText,
+    required Color badgeBg,
+    required Color badgeTextColor,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: GoogleFonts.rubik(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1F2937),
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: badgeBg,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            badgeText,
+            style: GoogleFonts.rubik(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: badgeTextColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _optionCard({
+    required String title,
+    required String price,
+    required bool isAvailable,
+    String? assetImage,
+    String? networkImage,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: networkImage != null && networkImage.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: networkImage,
+                      fit: BoxFit.cover,
+                      errorWidget: (_, __, ___) => Image.asset(
+                        assetImage ?? 'lib/assets/images/Burger.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
+                      assetImage ?? 'lib/assets/images/Burger.jpg',
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: GoogleFonts.rubik(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1F2937),
+              ),
+            ),
+          ),
+          Text(
+            price,
+            style: GoogleFonts.rubik(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFFFF5216),
+            ),
+          ),
+          const SizedBox(width: 10),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Text(
-                  S.of(context).itemOrders,
-                  style: GoogleFonts.rubik(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF4B5563),
-                  ),
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: isAvailable
+                      ? const Color(0xFF16A34A)
+                      : const Color(0xFFDC2626),
+                  shape: BoxShape.circle,
                 ),
               ),
+              const SizedBox(width: 4),
               Text(
-                S.of(context).viewAll,
+                isAvailable ? "Available" : "Out of Stock",
                 style: GoogleFonts.rubik(
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFFF5216),
+                  color: isAvailable
+                      ? const Color(0xFF16A34A)
+                      : const Color(0xFFDC2626),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-
-          _itemOrdersCard(
-            orderId: widget.itemId,
-            merchantName: menuName,
-            isDelivered:
-                (details.availableStatus == 1) || (details.approvalStatus == 1),
-            itemsCount: _toInt(details.quantityAllowed?.toString()),
-            itemsPriceText: _formatMoneyTo2(details.price),
-            dateTimeText: _formatOrderDateTime(details.lastOrderDate),
-          ),
-
-          const SizedBox(height: 12),
         ],
       ),
     );
@@ -511,6 +873,21 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     return menu.descriptionEn ?? '';
   }
 
+  String _formatPrepTime(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return "7";
+    final trimmed = raw.trim();
+    if (trimmed.contains(':')) {
+      final parts = trimmed.split(':');
+      final h = int.tryParse(parts[0]) ?? 0;
+      final m = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+      final total = h * 60 + m;
+      if (total > 0) return total.toString();
+      final s = parts.length > 2 ? (int.tryParse(parts[2]) ?? 0) : 0;
+      return s > 0 ? s.toString() : "0";
+    }
+    return trimmed;
+  }
+
   String _formatDateTime(String? date) {
     if (date == null || date.isEmpty) return '-';
     try {
@@ -599,7 +976,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           Text(
             value,
             style: GoogleFonts.rubik(
-              fontSize: 14,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
               color: valueColor ?? const Color(0xFF1F2937),
             ),
@@ -738,10 +1115,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     required String dateTimeText,
   }) {
     final badgeBg = isDelivered
-        ? const Color(0xFF16A34A)
+        ? const Color(0xFF15803D)
         : const Color(0xFFFF5216);
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -762,16 +1139,16 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       style: GoogleFonts.rubik(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF94A3B8),
+                        color: const Color(0xFFFF5216),
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       merchantName.isNotEmpty ? merchantName : "—",
                       style: GoogleFonts.rubik(
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFFFF5216),
+                        color: const Color(0xFF1F2937),
                       ),
                     ),
                   ],
@@ -779,19 +1156,20 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
+                  horizontal: 12,
+                  vertical: 5,
                 ),
                 decoration: BoxDecoration(
                   color: badgeBg,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  isDelivered ? S.of(context).delivered : S.of(context).pending,
+                  isDelivered ? "DELIVERED" : "PENDING",
                   style: GoogleFonts.rubik(
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
@@ -802,39 +1180,40 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: Text(
-                  S.of(context).itemsTotal,
+                  "ITEMS TOTAL",
                   style: GoogleFonts.rubik(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: const Color(0xFF94A3B8),
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
               Text(
-                S.of(context).dateTime,
+                "DATE & TIME",
                 style: GoogleFonts.rubik(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: const Color(0xFF94A3B8),
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: Row(
                   children: [
                     Text(
-                      "${itemsCount}" + " " + S.of(context).itemsTotal,
+                      "${itemsCount} Items - ",
                       style: GoogleFonts.rubik(
                         fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF94A3B8),
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF64748B),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       itemsPriceText,
                       style: GoogleFonts.rubik(
@@ -849,9 +1228,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               Text(
                 dateTimeText,
                 style: GoogleFonts.rubik(
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF94A3B8),
+                  color: const Color(0xFF64748B),
                 ),
               ),
             ],
