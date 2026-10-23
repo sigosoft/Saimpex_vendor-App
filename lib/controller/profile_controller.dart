@@ -1244,14 +1244,13 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> importRestaurantMenuItems(BuildContext context) async {
-    debugPrint("importRestaurantMenuItems:start");
+  Future<void> downloadRestaurantCatalogTemplate(BuildContext context) async {
+    debugPrint("downloadRestaurantCatalogTemplate:start");
     try {
       isRestaurantBulkTemplateDownloading = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
 
       final token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -1259,9 +1258,7 @@ class ProfileController extends GetxController {
       }
 
       final response = await DioClient().dio.get<List<int>>(
-        vendorType == "1"
-            ? ApiEndPoints.importRestaurantMenuItems
-            : ApiEndPoints.importGroceryMenuItems,
+        ApiEndPoints.downloadRestaurantCatalogTemplate,
         options: dio.Options(
           responseType: dio.ResponseType.bytes,
           headers: {
@@ -1321,7 +1318,7 @@ class ProfileController extends GetxController {
         return;
       }
       final fileName =
-          'restaurant_bulk_template_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+          'restaurant_catalog_template_${DateTime.now().millisecondsSinceEpoch}.xlsx';
 
       Directory? targetDir;
       if (Platform.isAndroid) {
@@ -1349,7 +1346,7 @@ class ProfileController extends GetxController {
         await OpenFilex.open(file.path);
       }
     } catch (error) {
-      debugPrint('importRestaurantMenuItems Error: $error');
+      debugPrint('downloadRestaurantCatalogTemplate Error: $error');
       if (context.mounted) {
         showToast(context, error.toString());
       }
@@ -1359,7 +1356,11 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<bool> uploadmenuBulkImport(
+  Future<void> importRestaurantMenuItems(BuildContext context) async {
+    return downloadRestaurantCatalogTemplate(context);
+  }
+
+  Future<bool> importRestaurantCatalogItems(
     BuildContext context,
     String filePath,
     int categoryId,
@@ -1370,7 +1371,6 @@ class ProfileController extends GetxController {
       isRestaurantMenuDetailsLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
       var token = await getSavedObject("token");
-      var vendorType = await getSavedObject("vendorType");
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -1378,10 +1378,10 @@ class ProfileController extends GetxController {
       }
       final multipartFile = await dio.MultipartFile.fromFile(filePath);
       final formData = dio.FormData.fromMap({
-        "file": multipartFile,
         "category_id": categoryId,
+        "file": multipartFile,
       });
-      debugPrint("FormData (uploadmenuBulkImport):");
+      debugPrint("FormData (importRestaurantCatalogItems):");
       for (final e in formData.fields) {
         debugPrint("  field ${e.key}: ${e.value}");
       }
@@ -1389,9 +1389,7 @@ class ProfileController extends GetxController {
         debugPrint("  file ${e.key}: ${e.value.filename}");
       }
       final response = await DioClient().post(
-        vendorType == "1"
-            ? ApiEndPoints.uploadRestaurantMenuBulkImport
-            : ApiEndPoints.uploadGroceryMenuBulkImport,
+        ApiEndPoints.importRestaurantCatalogItems,
         body: formData,
       );
       final raw = response.data;
@@ -1403,6 +1401,18 @@ class ProfileController extends GetxController {
         final map = Map<String, dynamic>.from(raw);
         final ok = map['status']?.toString() == 'true' || map['status'] == true;
         if (ok) {
+          if (map['data'] is List) {
+            try {
+              final list = (map['data'] as List)
+                  .map((e) => RestaurantMenuItemData.fromJson(
+                      e as Map<String, dynamic>?))
+                  .whereType<RestaurantMenuItemData>()
+                  .toList();
+              if (list.isNotEmpty) {
+                restaurantMenuItems = list;
+              }
+            } catch (_) {}
+          }
           try {
             final restaurantMenuDetailsModel =
                 RestaurantMenuDetailsModel.fromJson(map);
@@ -1411,7 +1421,7 @@ class ProfileController extends GetxController {
             }
           } catch (_) {}
           await fetchRestaurantMenus(keyword: '');
-          await fetchGroceryMenuItems();
+          await fetchGroceryMenuItems(categoryId: categoryId);
           if (context.mounted) {
             final msg = _bulkImportSuccessMessage(map);
             showToast(context, msg);
@@ -1420,12 +1430,12 @@ class ProfileController extends GetxController {
         } else if (context.mounted) {
           showToast(
             context,
-            map['message']?.toString() ?? 'Bulk upload failed',
+            _extractErrorMessage(map['message']),
           );
         }
       }
     } catch (error) {
-      debugPrint('uploadmenuBulkImport Error: $error');
+      debugPrint('importRestaurantCatalogItems Error: $error');
       if (context.mounted) {
         showToast(context, error.toString());
       }
@@ -1438,6 +1448,30 @@ class ProfileController extends GetxController {
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
     }
     return success;
+  }
+
+  Future<bool> uploadmenuBulkImport(
+    BuildContext context,
+    String filePath,
+    int categoryId,
+  ) =>
+      importRestaurantCatalogItems(context, filePath, categoryId);
+
+  String _extractErrorMessage(dynamic message) {
+    if (message is Map) {
+      final errors = <String>[];
+      for (final entry in message.entries) {
+        final val = entry.value;
+        if (val is List && val.isNotEmpty) {
+          errors.add(val.first.toString());
+        } else if (val != null) {
+          errors.add(val.toString());
+        }
+      }
+      if (errors.isNotEmpty) return errors.join("\n");
+    }
+    if (message is String && message.isNotEmpty) return message;
+    return 'Bulk upload failed';
   }
 
   String _bulkImportSuccessMessage(Map<String, dynamic> map) {

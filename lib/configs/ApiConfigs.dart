@@ -88,14 +88,17 @@ class ApiEndPoints {
   static String receivedPayouts = "receivedPayouts";
   static String resturantReport = "resturantReport";
   static String restaurantReportDownload = "restaurantReportDownload";
-  static String importRestaurantMenuItems = "downloadRestaurantBulkTemplate";
-  static String uploadRestaurantMenuBulkImport = "uploadRestaurantBulkMenu";
+  static String downloadRestaurantCatalogTemplate =
+      "downloadRestaurantCatalogTemplate";
+  static String importRestaurantMenuItems = "downloadRestaurantCatalogTemplate";
+  static String importRestaurantCatalogItems = "importRestaurantCatalogItems";
   static String updateRestaurantMenuItem = "updateRestaurantMenuItem";
   static String exportMenuItems = "exportMenuItems";
   static String uploadMenuItems = "importRestaurantMenuItems";
   static String restaurantMenuItemStockLogs = "restaurantMenuItemStockLogs";
   static String updateRestaurantMenuItemStock = "updateRestaurantItemStock";
   static String restaurantCatalogItems = "restaurantCatalogItems";
+  static String addRestaurantCatalogItem = "addRestaurantCatalogItem";
   static String restaurantCatalogItemDetail =
       "vendor/restaurantCatalogItemDetail";
   static String restaurantCatalogItemDetailAlt = "restaurantCatalogItemDetail";

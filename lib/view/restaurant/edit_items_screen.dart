@@ -84,6 +84,34 @@ class _OptionGroupModel {
   }
 }
 
+class _ExtraItemModel {
+  XFile? imageFile;
+  String? assetPath;
+  String? imageUrl;
+  final TextEditingController nameCtrl;
+  final TextEditingController priceCtrl;
+
+  _ExtraItemModel({
+    this.imageFile,
+    this.assetPath,
+    this.imageUrl,
+    String name = '',
+    String price = '',
+    VoidCallback? onChanged,
+  })  : nameCtrl = TextEditingController(text: name),
+        priceCtrl = TextEditingController(text: price) {
+    if (onChanged != null) {
+      nameCtrl.addListener(onChanged);
+      priceCtrl.addListener(onChanged);
+    }
+  }
+
+  void dispose() {
+    nameCtrl.dispose();
+    priceCtrl.dispose();
+  }
+}
+
 class _EditItemsScreenState extends State<EditItemsScreen> {
   bool _didLoadDetails = false;
 
@@ -97,6 +125,10 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
 
   final List<_OptionGroupModel> optionGroups = [];
 
+  final TextEditingController extraMaxSelectionsCtrl = TextEditingController();
+  String extraSelectionRequirement = 'Optional';
+  final List<_ExtraItemModel> extraItems = [];
+
   @override
   void dispose() {
     itemNameCtrl.dispose();
@@ -107,6 +139,10 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
     }
     for (final g in optionGroups) {
       g.dispose();
+    }
+    extraMaxSelectionsCtrl.dispose();
+    for (final extra in extraItems) {
+      extra.dispose();
     }
     super.dispose();
   }
@@ -599,7 +635,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                 GestureDetector(
                   onTap: () => controller.pickAndCropImage(context),
                   child: CustomPaint(
-                    painter: DashedBorderPainter(
+                    foregroundPainter: DashedBorderPainter(
                       color: const Color(0xFFBFDBFE),
                       radius: 16,
                       dash: 6,
@@ -1470,8 +1506,9 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           });
                         },
                         child: CustomPaint(
-                          painter: DashedBorderPainter(
-                            color: const Color(0xFFFF8A65),
+                          foregroundPainter: DashedBorderPainter(
+                            color: const Color(0xFFFF5216),
+                            strokeWidth: 1.2,
                             radius: 12,
                             dash: 5,
                             gap: 4,
@@ -1508,6 +1545,356 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 16),
+
+                // ── Section 4: Add Extras ────────────────────────────────────
+                EditItemsCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.add,
+                            color: Color(0xFFFF5216),
+                            size: 22,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Add Extras',
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF1F2937),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const EditItemsFieldLabel('Maximum selections'),
+                                const SizedBox(height: 6),
+                                EditItemsTextField(
+                                  controller: extraMaxSelectionsCtrl,
+                                  hint: '',
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const EditItemsFieldLabel(
+                                  'Selection requirement',
+                                ),
+                                const SizedBox(height: 6),
+                                EditItemsDropdownField(
+                                  value: extraSelectionRequirement,
+                                  items: const ['Optional', 'Required'],
+                                  onChanged: (v) {
+                                    if (v != null) {
+                                      setState(
+                                        () => extraSelectionRequirement = v,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (extraItems.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ...extraItems.asMap().entries.map((entry) {
+                          final extraIndex = entry.key;
+                          final extra = entry.value;
+                          final hasImg = extra.imageFile != null ||
+                              (extra.assetPath != null &&
+                                  extra.assetPath!.isNotEmpty) ||
+                              (extra.imageUrl != null &&
+                                  extra.imageUrl!.isNotEmpty);
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              EditItemsFieldLabel(
+                                'Item image',
+                                color: hasImg
+                                    ? const Color(0xFFA855F7)
+                                    : const Color(0xFFA855F7),
+                              ),
+                              const SizedBox(height: 8),
+                              if (!hasImg)
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFAF5FF),
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: const Color(0xFFD8B4FE),
+                                        ),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.photo_outlined,
+                                          color: Color(0xFFA855F7),
+                                          size: 22,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () async {
+                                        final picked =
+                                            await ImagePicker().pickImage(
+                                          source: ImageSource.gallery,
+                                          imageQuality: 85,
+                                        );
+                                        if (picked != null) {
+                                          setState(
+                                            () => extra.imageFile = picked,
+                                          );
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFAF5FF),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: const Color(0xFFD8B4FE),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Upload image',
+                                          style: GoogleFonts.rubik(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFFA855F7),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 2),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        child: extra.imageFile != null
+                                            ? Image.file(
+                                                File(extra.imageFile!.path),
+                                                width: 44,
+                                                height: 44,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : (extra.assetPath != null &&
+                                                    extra.assetPath!.isNotEmpty)
+                                                ? Image.asset(
+                                                    extra.assetPath!,
+                                                    width: 44,
+                                                    height: 44,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : (extra.imageUrl != null &&
+                                                        extra.imageUrl!
+                                                            .isNotEmpty)
+                                                    ? CachedNetworkImage(
+                                                        imageUrl:
+                                                            extra.imageUrl!,
+                                                        width: 44,
+                                                        height: 44,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Container(
+                                                        width: 44,
+                                                        height: 44,
+                                                        color: const Color(
+                                                          0xFFF1F5F9,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.fastfood,
+                                                          size: 22,
+                                                          color: Color(
+                                                            0xFF94A3B8,
+                                                          ),
+                                                        ),
+                                                      ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              extra.nameCtrl.text.isNotEmpty
+                                                  ? extra.nameCtrl.text
+                                                  : '',
+                                              style: GoogleFonts.rubik(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    const Color(0xFF1F2937),
+                                              ),
+                                            ),
+                                            if (extra.priceCtrl.text
+                                                .isNotEmpty) ...[
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                '+${extra.priceCtrl.text} MRU',
+                                                style: GoogleFonts.rubik(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                  color:
+                                                      const Color(0xFF64748B),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final picked =
+                                                  await ImagePicker().pickImage(
+                                                source: ImageSource.gallery,
+                                                imageQuality: 85,
+                                              );
+                                              if (picked != null) {
+                                                setState(() {
+                                                  extra.imageFile = picked;
+                                                  extra.assetPath = null;
+                                                  extra.imageUrl = null;
+                                                });
+                                              }
+                                            },
+                                            child: const Icon(
+                                              Icons.edit_outlined,
+                                              size: 16,
+                                              color: Color(0xFFFF5216),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                final removed =
+                                                    extraItems.removeAt(
+                                                  extraIndex,
+                                                );
+                                                removed.dispose();
+                                              });
+                                            },
+                                            child: const Icon(
+                                              Icons.delete_outline,
+                                              size: 16,
+                                              color: Color(0xFFEF4444),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              const SizedBox(height: 12),
+                              const EditItemsFieldLabel('Item Name'),
+                              const SizedBox(height: 6),
+                              EditItemsTextField(
+                                controller: extra.nameCtrl,
+                                hint: 'e.g. Burger',
+                              ),
+                              const SizedBox(height: 12),
+                              const EditItemsFieldLabel('Price'),
+                              const SizedBox(height: 6),
+                              EditItemsTextField(
+                                controller: extra.priceCtrl,
+                                hint: '',
+                                keyboardType: TextInputType.number,
+                                suffixText: 'MRU',
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        }),
+                      ],
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            extraItems.add(
+                              _ExtraItemModel(
+                                onChanged: () => setState(() {}),
+                              ),
+                            );
+                          });
+                        },
+                        child: CustomPaint(
+                          foregroundPainter: DashedBorderPainter(
+                            color: const Color(0xFFFF5216),
+                            strokeWidth: 1.2,
+                            radius: 12,
+                            dash: 5,
+                            gap: 4,
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: Color(0xFFFF5216),
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  extraItems.isEmpty
+                                      ? 'Add Item'
+                                      : 'Add Another Item',
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFFF5216),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 24),
               ],
             ),
@@ -1521,11 +1908,17 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
           itemNameCtrl.clear();
           descriptionCtrl.clear();
           variantGroupNameCtrl.clear();
+          extraMaxSelectionsCtrl.clear();
           setState(() {
             isVeg = 'No';
             isVariantsEnabled = false;
             variants.clear();
             optionGroups.clear();
+            for (final extra in extraItems) {
+              extra.dispose();
+            }
+            extraItems.clear();
+            extraSelectionRequirement = 'Optional';
           });
         },
         onSubmit: () {

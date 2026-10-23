@@ -25,11 +25,7 @@ class _VariantItemModel {
 }
 
 class _OptionItemModel {
-  _OptionItemModel({
-    required this.name,
-    required this.price,
-    this.imageFile,
-  });
+  _OptionItemModel({required this.name, required this.price, this.imageFile});
 
   String name;
   String price;
@@ -44,6 +40,26 @@ class _OptionGroupModel {
   final List<_OptionItemModel> options = [];
 }
 
+class _ExtraItemModel {
+  XFile? imageFile;
+  final TextEditingController nameCtrl;
+  final TextEditingController priceCtrl;
+
+  _ExtraItemModel({VoidCallback? onChanged})
+    : nameCtrl = TextEditingController(),
+      priceCtrl = TextEditingController() {
+    if (onChanged != null) {
+      nameCtrl.addListener(onChanged);
+      priceCtrl.addListener(onChanged);
+    }
+  }
+
+  void dispose() {
+    nameCtrl.dispose();
+    priceCtrl.dispose();
+  }
+}
+
 class _AddItemsScreenState extends State<AddItemsScreen> {
   final TextEditingController itemNameCtrl = TextEditingController();
   final TextEditingController descriptionCtrl = TextEditingController();
@@ -54,6 +70,10 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   final List<_VariantItemModel> variants = [];
 
   final List<_OptionGroupModel> optionGroups = [];
+
+  final TextEditingController extraMaxSelectionsCtrl = TextEditingController();
+  String extraSelectionRequirement = 'Optional';
+  final List<_ExtraItemModel> extraItems = [];
 
   void _openTagsMultiSelect(BuildContext context, ItemController controller) {
     if (controller.restaurantTags.isEmpty) return;
@@ -185,9 +205,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
     final isEditing = editingOptionIndex != null;
     final existingOption = isEditing ? group.options[editingOptionIndex] : null;
 
-    final optNameCtrl = TextEditingController(
-      text: existingOption?.name ?? '',
-    );
+    final optNameCtrl = TextEditingController(text: existingOption?.name ?? '');
     final optPriceCtrl = TextEditingController(
       text: existingOption?.price ?? '0',
     );
@@ -358,10 +376,10 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                   if (isEditing) {
                                     group.options[editingOptionIndex] =
                                         _OptionItemModel(
-                                      name: name,
-                                      price: price,
-                                      imageFile: optImage,
-                                    );
+                                          name: name,
+                                          price: price,
+                                          imageFile: optImage,
+                                        );
                                   } else {
                                     group.options.add(
                                       _OptionItemModel(
@@ -436,6 +454,10 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
       g.minSelectionsCtrl.dispose();
       g.maxSelectionsCtrl.dispose();
     }
+    extraMaxSelectionsCtrl.dispose();
+    for (final extra in extraItems) {
+      extra.dispose();
+    }
     super.dispose();
   }
 
@@ -476,7 +498,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
               GestureDetector(
                 onTap: () => controller.pickAndCropImage(context),
                 child: CustomPaint(
-                  painter: DashedBorderPainter(
+                  foregroundPainter: DashedBorderPainter(
                     color: const Color(0xFFBFDBFE),
                     radius: 16,
                     dash: 6,
@@ -617,7 +639,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               const AddItemsFieldLabel('Category'),
                               const SizedBox(height: 6),
                               AddItemsDropdownField(
-                                value: controller.selectedType != null &&
+                                value:
+                                    controller.selectedType != null &&
                                         controller.typeDisplayNames.contains(
                                           controller.selectedType,
                                         )
@@ -751,8 +774,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         Switch(
                           value: isVariantsEnabled,
                           activeColor: const Color(0xFF10B981),
-                          activeTrackColor:
-                              const Color(0xFF10B981).withOpacity(0.4),
+                          activeTrackColor: const Color(
+                            0xFF10B981,
+                          ).withOpacity(0.4),
                           inactiveThumbColor: const Color(0xFF94A3B8),
                           inactiveTrackColor: const Color(0xFFE2E8F0),
                           onChanged: (val) {
@@ -807,15 +831,13 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                   const SizedBox(width: 10),
                                   InkWell(
                                     onTap: () async {
-                                      final picked =
-                                          await ImagePicker().pickImage(
-                                        source: ImageSource.gallery,
-                                        imageQuality: 85,
-                                      );
+                                      final picked = await ImagePicker()
+                                          .pickImage(
+                                            source: ImageSource.gallery,
+                                            imageQuality: 85,
+                                          );
                                       if (picked != null) {
-                                        setState(
-                                          () => item.imageFile = picked,
-                                        );
+                                        setState(() => item.imageFile = picked);
                                       }
                                     },
                                     borderRadius: BorderRadius.circular(8),
@@ -826,8 +848,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                       ),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFFAF5FF),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                                           color: const Color(0xFFD8B4FE),
                                         ),
@@ -861,11 +882,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          final picked =
-                                              await ImagePicker().pickImage(
-                                            source: ImageSource.gallery,
-                                            imageQuality: 85,
-                                          );
+                                          final picked = await ImagePicker()
+                                              .pickImage(
+                                                source: ImageSource.gallery,
+                                                imageQuality: 85,
+                                              );
                                           if (picked != null) {
                                             setState(
                                               () => item.imageFile = picked,
@@ -881,9 +902,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                       const SizedBox(height: 6),
                                       GestureDetector(
                                         onTap: () {
-                                          setState(
-                                            () => item.imageFile = null,
-                                          );
+                                          setState(() => item.imageFile = null);
                                         },
                                         child: const Icon(
                                           Icons.delete_outline,
@@ -939,9 +958,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               items: const ['Optional', 'Required'],
                               onChanged: (v) {
                                 if (v != null) {
-                                  setState(
-                                    () => item.selectionRequirement = v,
-                                  );
+                                  setState(() => item.selectionRequirement = v);
                                 }
                               },
                             ),
@@ -964,9 +981,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           decoration: BoxDecoration(
                             color: const Color(0xFFFAF5FF),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFFE9D5FF),
-                            ),
+                            border: Border.all(color: const Color(0xFFE9D5FF)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1098,8 +1113,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                   child: Row(
                                     children: [
                                       ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: opt.imageFile != null
                                             ? Image.file(
                                                 File(opt.imageFile!.path),
@@ -1110,9 +1124,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                             : Container(
                                                 width: 44,
                                                 height: 44,
-                                                color: const Color(
-                                                  0xFFF1F5F9,
-                                                ),
+                                                color: const Color(0xFFF1F5F9),
                                                 child: const Icon(
                                                   Icons.fastfood,
                                                   size: 22,
@@ -1131,9 +1143,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                               style: GoogleFonts.rubik(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
-                                                color: const Color(
-                                                  0xFF1F2937,
-                                                ),
+                                                color: const Color(0xFF1F2937),
                                               ),
                                             ),
                                             const SizedBox(height: 2),
@@ -1142,9 +1152,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                               style: GoogleFonts.rubik(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w500,
-                                                color: const Color(
-                                                  0xFF64748B,
-                                                ),
+                                                color: const Color(0xFF64748B),
                                               ),
                                             ),
                                           ],
@@ -1200,8 +1208,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFFAF5FF),
-                                      borderRadius:
-                                          BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: const Color(0xFFE9D5FF),
                                       ),
@@ -1242,8 +1249,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFFEF2F2),
-                                      borderRadius:
-                                          BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: const Color(0xFFFCA5A5),
                                       ),
@@ -1284,8 +1290,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         });
                       },
                       child: CustomPaint(
-                        painter: DashedBorderPainter(
-                          color: const Color(0xFFFF8A65),
+                        foregroundPainter: DashedBorderPainter(
+                          color: const Color(0xFFFF5216),
+                          strokeWidth: 1.2,
                           radius: 12,
                           dash: 5,
                           gap: 4,
@@ -1322,6 +1329,302 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                   ],
                 ),
               ),
+              // ── Section 4: Add Extras ──────────────────────────────────────
+              AddItemsCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.add,
+                          color: Color(0xFFFF5216),
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Add Extras',
+                          style: GoogleFonts.rubik(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF1F2937),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const AddItemsFieldLabel('Maximum selections'),
+                              const SizedBox(height: 6),
+                              AddItemsTextField(
+                                controller: extraMaxSelectionsCtrl,
+                                hint: '',
+                                keyboardType: TextInputType.number,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const AddItemsFieldLabel('Selection requirement'),
+                              const SizedBox(height: 6),
+                              AddItemsDropdownField(
+                                value: extraSelectionRequirement,
+                                items: const ['Optional', 'Required'],
+                                onChanged: (v) {
+                                  if (v != null) {
+                                    setState(
+                                      () => extraSelectionRequirement = v,
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (extraItems.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      ...extraItems.asMap().entries.map((entry) {
+                        final extraIndex = entry.key;
+                        final extra = entry.value;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const AddItemsFieldLabel(
+                              'Item image',
+                              color: Color(0xFFA855F7),
+                            ),
+                            const SizedBox(height: 8),
+                            if (extra.imageFile == null)
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFAF5FF),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: const Color(0xFFD8B4FE),
+                                      ),
+                                    ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.photo_outlined,
+                                        color: Color(0xFFA855F7),
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  InkWell(
+                                    onTap: () async {
+                                      final picked = await ImagePicker()
+                                          .pickImage(
+                                            source: ImageSource.gallery,
+                                            imageQuality: 85,
+                                          );
+                                      if (picked != null) {
+                                        setState(
+                                          () => extra.imageFile = picked,
+                                        );
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFAF5FF),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: const Color(0xFFD8B4FE),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Upload image',
+                                        style: GoogleFonts.rubik(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: const Color(0xFFA855F7),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 2),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        File(extra.imageFile!.path),
+                                        width: 44,
+                                        height: 44,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            extra.nameCtrl.text.isNotEmpty
+                                                ? extra.nameCtrl.text
+                                                : '',
+                                            style: GoogleFonts.rubik(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF1F2937),
+                                            ),
+                                          ),
+                                          if (extra
+                                              .priceCtrl
+                                              .text
+                                              .isNotEmpty) ...[
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              '+${extra.priceCtrl.text} MRU',
+                                              style: GoogleFonts.rubik(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w500,
+                                                color: const Color(0xFF64748B),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                    Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final picked = await ImagePicker()
+                                                .pickImage(
+                                                  source: ImageSource.gallery,
+                                                  imageQuality: 85,
+                                                );
+                                            if (picked != null) {
+                                              setState(
+                                                () => extra.imageFile = picked,
+                                              );
+                                            }
+                                          },
+                                          child: const Icon(
+                                            Icons.edit_outlined,
+                                            size: 16,
+                                            color: Color(0xFFFF5216),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              final removed = extraItems
+                                                  .removeAt(extraIndex);
+                                              removed.dispose();
+                                            });
+                                          },
+                                          child: const Icon(
+                                            Icons.delete_outline,
+                                            size: 16,
+                                            color: Color(0xFFEF4444),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            const SizedBox(height: 12),
+                            const AddItemsFieldLabel('Item Name'),
+                            const SizedBox(height: 6),
+                            AddItemsTextField(
+                              controller: extra.nameCtrl,
+                              hint: 'e.g. Burger',
+                            ),
+                            const SizedBox(height: 12),
+                            const AddItemsFieldLabel('Price'),
+                            const SizedBox(height: 6),
+                            AddItemsTextField(
+                              controller: extra.priceCtrl,
+                              hint: '',
+                              keyboardType: TextInputType.number,
+                              suffixText: 'MRU',
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        );
+                      }),
+                    ],
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          extraItems.add(
+                            _ExtraItemModel(onChanged: () => setState(() {})),
+                          );
+                        });
+                      },
+                      child: CustomPaint(
+                        foregroundPainter: DashedBorderPainter(
+                          color: const Color(0xFFFF5216),
+                          strokeWidth: 1.2,
+                          radius: 12,
+                          dash: 5,
+                          gap: 4,
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.add,
+                                color: Color(0xFFFF5216),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                extraItems.isEmpty
+                                    ? 'Add Item'
+                                    : 'Add Another Item',
+                                style: GoogleFonts.rubik(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFFF5216),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),
@@ -1334,11 +1637,17 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
           itemNameCtrl.clear();
           descriptionCtrl.clear();
           variantGroupNameCtrl.clear();
+          extraMaxSelectionsCtrl.clear();
           setState(() {
             isVeg = 'No';
             isVariantsEnabled = false;
             variants.clear();
             optionGroups.clear();
+            for (final extra in extraItems) {
+              extra.dispose();
+            }
+            extraItems.clear();
+            extraSelectionRequirement = 'Optional';
           });
         },
         onSubmit: () {
@@ -1351,16 +1660,33 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
               c.restaurantAttributes.isNotEmpty) {
             c.selectedRestaurantAttributeId = c.restaurantAttributes.first.id;
           }
+
+          final validExtras = extraItems
+              .where((e) => e.nameCtrl.text.trim().isNotEmpty)
+              .map((e) => CatalogExtraItem(
+                    name: e.nameCtrl.text.trim(),
+                    additionalPrice:
+                        num.tryParse(e.priceCtrl.text.trim()) ?? 0,
+                    availableStatus: 1,
+                    imagePath: e.imageFile?.path,
+                  ))
+              .toList();
+
           c.addItem(
             context,
             menuId: c.selectedMenuId?.toString() ?? '',
             menuItemId: c.serialNumberCtrl.text.trim(),
             restaurantAttributeId:
                 c.selectedRestaurantAttributeId?.toString() ?? '1',
+            itemName: itemNameCtrl.text.trim(),
+            description: descriptionCtrl.text.trim(),
+            isVeg: isVeg,
+            extraSelectionRequirement: extraSelectionRequirement,
+            extraMaxSelections: extraMaxSelectionsCtrl.text.trim(),
+            catalogExtras: validExtras,
           );
         },
       ),
     );
   }
 }
-

@@ -65,8 +65,9 @@ class DashedBorderPainter extends CustomPainter {
 /// Form field label used on Add Items screen.
 class AddItemsFieldLabel extends StatelessWidget {
   final String label;
+  final Color? color;
 
-  const AddItemsFieldLabel(this.label, {super.key});
+  const AddItemsFieldLabel(this.label, {super.key, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class AddItemsFieldLabel extends StatelessWidget {
       style: GoogleFonts.rubik(
         fontSize: 13,
         fontWeight: FontWeight.w500,
-        color: const Color(0xFF475569),
+        color: color ?? const Color(0xFF475569),
       ),
     );
   }

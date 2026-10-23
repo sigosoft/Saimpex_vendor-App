@@ -182,16 +182,71 @@ class VendorWorkingHoursList extends StatelessWidget {
               onDeleteSlot!(nonNullHour, slot);
               return;
             }
-            _resetDayTo24Hours(
+            _deleteSlot(
+              context: context,
               profileController: profileController,
               dayIndex: dayIndex,
               currentHour: nonNullHour,
+              slotToDelete: slot,
+              slotIndex: index,
             );
-            profileController.uploadWorkingHours(context);
           },
         ),
       );
     });
+  }
+
+  void _deleteSlot({
+    required BuildContext context,
+    required ProfileController profileController,
+    required int dayIndex,
+    required WorkingHour? currentHour,
+    required WorkingTimeSlot slotToDelete,
+    required int slotIndex,
+  }) {
+    if (currentHour == null) return;
+    final apiDay = dayIndex + 1;
+    final targetIndex = profileController.workingHours.indexWhere((h) {
+      if (currentHour.id != null && h.id == currentHour.id) return true;
+      return (h.dayOfWeek ?? 0) == apiDay;
+    });
+    if (targetIndex < 0) return;
+    final original = profileController.workingHours[targetIndex];
+
+    final currentSlots = List<WorkingTimeSlot>.from(original.timeSlots ?? []);
+    if (currentSlots.isNotEmpty) {
+      if (slotIndex >= 0 && slotIndex < currentSlots.length) {
+        currentSlots.removeAt(slotIndex);
+      } else {
+        currentSlots.remove(slotToDelete);
+      }
+    }
+
+    if (currentSlots.isEmpty) {
+      _resetDayTo24Hours(
+        profileController: profileController,
+        dayIndex: dayIndex,
+        currentHour: original,
+      );
+    } else {
+      final updated = WorkingHour(
+        id: original.id,
+        day: original.day,
+        dayOfWeek: original.dayOfWeek ?? apiDay,
+        isOpen24h: 2,
+        status: (original.status != null && original.status == 0)
+            ? 1
+            : original.status,
+        openingTime: currentSlots.first.openTime ?? original.openingTime,
+        closingTime: currentSlots.first.closeTime ?? original.closingTime,
+        isClosed: false,
+        timeSlots: currentSlots,
+      );
+      profileController.workingHours[targetIndex] = updated;
+      profileController.update();
+    }
+
+    profileController.uploadWorkingHours(context);
   }
 
   void _resetDayTo24Hours({
@@ -360,258 +415,196 @@ class VendorWorkingHoursList extends StatelessWidget {
             }
 
             return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
               child: Container(
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 width: MediaQuery.of(context).size.width * 0.85,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 16,
+                  vertical: 20,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Edit Working Hour",
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        dayLabel,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Edit Working Hour",
                         style: GoogleFonts.rubik(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF111827),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: isOpen24,
-                          activeColor: const Color(0xFFFF5216),
-                          onChanged: (v) {
-                            if (v == null) return;
-                            setState(() {
-                              isOpen24 = v;
-                              if (!isOpen24) {
-                                if (slotDrafts.isEmpty) {
-                                  final slotStart = _maybeFormatSlot(
-                                    initialStartTime,
-                                  );
-                                  final slotEnd = _maybeFormatSlot(
-                                    initialEndTime,
-                                  );
-                                  slotDrafts =
-                                      [
-                                            {
-                                              'start': slotStart,
-                                              'end': slotEnd,
-                                            },
-                                          ]
-                                          .where(
-                                            (m) =>
-                                                (m['start'] ?? '').isNotEmpty ||
-                                                (m['end'] ?? '').isNotEmpty,
-                                          )
-                                          .toList();
-                                }
-                              }
-                            });
-                          },
-                        ),
-                        Text(
-                          "Open 24 Hr",
+                      const SizedBox(height: 14),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          dayLabel,
                           style: GoogleFonts.rubik(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF111827),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    if (isOpen24)
+                      ),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Start Time",
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 12,
-                                    color: const Color(0xFF6B7280),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                timeBox(
-                                  value: startTime,
-                                  enabled: !isOpen24,
-                                  onTap: () {
-                                    pickTime(isStart: true);
-                                  },
-                                ),
-                              ],
-                            ),
+                          Checkbox(
+                            value: isOpen24,
+                            activeColor: const Color(0xFFFF5216),
+                            onChanged: (v) {
+                              if (v == null) return;
+                              setState(() {
+                                isOpen24 = v;
+                                if (!isOpen24) {
+                                  if (slotDrafts.isEmpty) {
+                                    final slotStart = _maybeFormatSlot(
+                                      initialStartTime,
+                                    );
+                                    final slotEnd = _maybeFormatSlot(
+                                      initialEndTime,
+                                    );
+                                    slotDrafts =
+                                        [
+                                              {
+                                                'start': slotStart,
+                                                'end': slotEnd,
+                                              },
+                                            ]
+                                            .where(
+                                              (m) =>
+                                                  (m['start'] ?? '')
+                                                      .isNotEmpty ||
+                                                  (m['end'] ?? '').isNotEmpty,
+                                            )
+                                            .toList();
+                                  }
+                                }
+                              });
+                            },
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "End Time",
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 12,
-                                    color: const Color(0xFF6B7280),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                timeBox(
-                                  value: endTime,
-                                  enabled: !isOpen24,
-                                  onTap: () {
-                                    pickTime(isStart: false);
-                                  },
-                                ),
-                              ],
+                          Text(
+                            "Open 24 Hr",
+                            style: GoogleFonts.rubik(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF111827),
                             ),
                           ),
                         ],
-                      )
-                    else
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (slotDrafts.isEmpty)
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  if (slotDrafts.length >= 3) return;
-                                  slotDrafts.add({'start': '', 'end': ''});
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                  color: Color(0xFFFF5216),
-                                  width: 1,
-                                ),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                minimumSize: Size(
-                                  MediaQuery.of(context).size.width,
-                                  44,
-                                ),
-                              ),
-                              icon: const Icon(
-                                Icons.add,
-                                size: 18,
-                                color: Color(0xFFFF5216),
-                              ),
-                              label: Text(
-                                "+ Add Time Slot",
-                                style: GoogleFonts.rubik(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFFF5216),
-                                ),
-                              ),
-                            )
-                          else
-                            ...List.generate(slotDrafts.length, (slotIndex) {
-                              final slotStart =
-                                  slotDrafts[slotIndex]['start'] ?? '';
-                              final slotEnd =
-                                  slotDrafts[slotIndex]['end'] ?? '';
-                              return Column(
+                      ),
+                      const SizedBox(height: 14),
+                      if (isOpen24) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Start Time",
-                                              style: GoogleFonts.rubik(
-                                                fontSize: 12,
-                                                color: const Color(0xFF6B7280),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            timeBox(
-                                              value: slotStart,
-                                              enabled: true,
-                                              onTap: () {
-                                                pickSlotTime(
-                                                  slotIndex: slotIndex,
-                                                  isStart: true,
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "End Time",
-                                              style: GoogleFonts.rubik(
-                                                fontSize: 12,
-                                                color: const Color(0xFF6B7280),
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            timeBox(
-                                              value: slotEnd,
-                                              enabled: true,
-                                              onTap: () {
-                                                pickSlotTime(
-                                                  slotIndex: slotIndex,
-                                                  isStart: false,
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                  Text(
+                                    "Start Time",
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 12,
+                                      color: const Color(0xFF6B7280),
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                  if (slotIndex < slotDrafts.length - 1)
-                                    const SizedBox(height: 12),
+                                  const SizedBox(height: 6),
+                                  timeBox(
+                                    value: startTime,
+                                    enabled: false,
+                                    onTap: null,
+                                  ),
                                 ],
-                              );
-                            }),
-                          if (slotDrafts.isNotEmpty && slotDrafts.length < 3)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 14),
-                              child: OutlinedButton.icon(
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "End Time",
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 12,
+                                      color: const Color(0xFF6B7280),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  timeBox(
+                                    value: endTime,
+                                    enabled: false,
+                                    onTap: null,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14),
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                isOpen24 = false;
+                                if (slotDrafts.isEmpty) {
+                                  slotDrafts.add({
+                                    'start': startTime.isNotEmpty
+                                        ? startTime
+                                        : '00:00',
+                                    'end': endTime.isNotEmpty
+                                        ? endTime
+                                        : '23:59',
+                                  });
+                                }
+                              });
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: Color(0xFFFF5216),
+                                width: 1,
+                              ),
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              minimumSize: Size(
+                                MediaQuery.of(context).size.width,
+                                44,
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.add,
+                              size: 18,
+                              color: Color(0xFFFF5216),
+                            ),
+                            label: Text(
+                              "Add Time Slot",
+                              style: GoogleFonts.rubik(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFFF5216),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ] else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (slotDrafts.isEmpty)
+                              OutlinedButton.icon(
                                 onPressed: () {
                                   setState(() {
                                     if (slotDrafts.length >= 3) return;
@@ -649,141 +642,282 @@ class VendorWorkingHoursList extends StatelessWidget {
                                     color: const Color(0xFFFF5216),
                                   ),
                                 ),
+                              )
+                            else
+                              ...List.generate(slotDrafts.length, (slotIndex) {
+                                final slotStart =
+                                    slotDrafts[slotIndex]['start'] ?? '';
+                                final slotEnd =
+                                    slotDrafts[slotIndex]['end'] ?? '';
+                                return Column(
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Start Time",
+                                                style: GoogleFonts.rubik(
+                                                  fontSize: 12,
+                                                  color: const Color(
+                                                    0xFF6B7280,
+                                                  ),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              timeBox(
+                                                value: slotStart,
+                                                enabled: true,
+                                                onTap: () {
+                                                  pickSlotTime(
+                                                    slotIndex: slotIndex,
+                                                    isStart: true,
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "End Time",
+                                                style: GoogleFonts.rubik(
+                                                  fontSize: 12,
+                                                  color: const Color(
+                                                    0xFF6B7280,
+                                                  ),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              timeBox(
+                                                value: slotEnd,
+                                                enabled: true,
+                                                onTap: () {
+                                                  pickSlotTime(
+                                                    slotIndex: slotIndex,
+                                                    isStart: false,
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        SizedBox(
+                                          height: 44,
+                                          width: 32,
+                                          child: IconButton(
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                            onPressed: () {
+                                              setState(() {
+                                                slotDrafts.removeAt(slotIndex);
+                                              });
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              color: Color(0xFFEF4444),
+                                              size: 22,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (slotIndex < slotDrafts.length - 1)
+                                      const SizedBox(height: 12),
+                                  ],
+                                );
+                              }),
+                            if (slotDrafts.isNotEmpty && slotDrafts.length < 3)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 14),
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (slotDrafts.length >= 3) return;
+                                      slotDrafts.add({'start': '', 'end': ''});
+                                    });
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                      color: Color(0xFFFF5216),
+                                      width: 1,
+                                    ),
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    minimumSize: Size(
+                                      MediaQuery.of(context).size.width,
+                                      44,
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.add,
+                                    size: 18,
+                                    color: Color(0xFFFF5216),
+                                  ),
+                                  label: Text(
+                                    "+ Add Time Slot",
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFFFF5216),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE5E7EB),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Cancel",
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF4B5563),
+                                  ),
+                                ),
                               ),
                             ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final existingIndex = profileController
+                                      .workingHours
+                                      .indexWhere((h) {
+                                        if (currentHour?.id != null &&
+                                            h.id == currentHour!.id) {
+                                          return true;
+                                        }
+                                        return (h.dayOfWeek ?? 0) == dayId;
+                                      });
+                                  final existingHour = existingIndex >= 0
+                                      ? profileController
+                                            .workingHours[existingIndex]
+                                      : currentHour;
+                                  List<WorkingTimeSlot> validSlots = [];
+                                  String fallbackOpen = startTime;
+                                  String fallbackClose = endTime;
+                                  if (!isOpen24) {
+                                    final filtered = slotDrafts
+                                        .take(3)
+                                        .where(
+                                          (m) =>
+                                              (m['start'] ?? '').isNotEmpty &&
+                                              (m['end'] ?? '').isNotEmpty,
+                                        )
+                                        .toList();
+                                    validSlots = filtered
+                                        .map(
+                                          (m) => WorkingTimeSlot(
+                                            id: null,
+                                            vendorWorkingHourId:
+                                                existingHour?.id,
+                                            openTime: m['start'],
+                                            closeTime: m['end'],
+                                          ),
+                                        )
+                                        .toList();
+                                    if (validSlots.isEmpty) {
+                                      showToast(
+                                        context,
+                                        "Please add at least one valid time slot.",
+                                      );
+                                      return;
+                                    }
+                                    fallbackOpen =
+                                        validSlots.first.openTime ?? startTime;
+                                    fallbackClose =
+                                        validSlots.first.closeTime ?? endTime;
+                                  }
+                                  final updatedHour = WorkingHour(
+                                    id: existingHour?.id,
+                                    day: existingHour?.day,
+                                    dayOfWeek: dayId,
+                                    isOpen24h: isOpen24 ? 1 : 2,
+                                    status: existingHour?.status,
+                                    openingTime: fallbackOpen,
+                                    closingTime: fallbackClose,
+                                    isClosed: false,
+                                    timeSlots: isOpen24
+                                        ? <WorkingTimeSlot>[]
+                                        : validSlots,
+                                  );
+                                  if (existingIndex >= 0) {
+                                    profileController
+                                            .workingHours[existingIndex] =
+                                        updatedHour;
+                                  } else {
+                                    profileController.workingHours.add(
+                                      updatedHour,
+                                    );
+                                  }
+                                  profileController.update();
+                                  await profileController.uploadWorkingHours(
+                                    dialogContext,
+                                  );
+                                  if (dialogContext.mounted) {
+                                    Navigator.of(dialogContext).pop();
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFF5216),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Save",
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: () =>
-                                  Navigator.of(dialogContext).pop(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFE5E7EB),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: Text(
-                                "Cancel",
-                                style: GoogleFonts.rubik(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF4B5563),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                final existingIndex = profileController
-                                    .workingHours
-                                    .indexWhere((h) {
-                                      if (currentHour?.id != null &&
-                                          h.id == currentHour!.id) {
-                                        return true;
-                                      }
-                                      return (h.dayOfWeek ?? 0) == dayId;
-                                    });
-                                final existingHour = existingIndex >= 0
-                                    ? profileController
-                                          .workingHours[existingIndex]
-                                    : currentHour;
-                                List<WorkingTimeSlot> validSlots = [];
-                                String fallbackOpen = startTime;
-                                String fallbackClose = endTime;
-                                if (!isOpen24) {
-                                  final filtered = slotDrafts
-                                      .take(3)
-                                      .where(
-                                        (m) =>
-                                            (m['start'] ?? '').isNotEmpty &&
-                                            (m['end'] ?? '').isNotEmpty,
-                                      )
-                                      .toList();
-                                  validSlots = filtered
-                                      .map(
-                                        (m) => WorkingTimeSlot(
-                                          id: null,
-                                          vendorWorkingHourId: existingHour?.id,
-                                          openTime: m['start'],
-                                          closeTime: m['end'],
-                                        ),
-                                      )
-                                      .toList();
-                                  if (validSlots.isEmpty) {
-                                    showToast(
-                                      context,
-                                      "Please add at least one valid time slot.",
-                                    );
-                                    return;
-                                  }
-                                  fallbackOpen =
-                                      validSlots.first.openTime ?? startTime;
-                                  fallbackClose =
-                                      validSlots.first.closeTime ?? endTime;
-                                }
-                                final updatedHour = WorkingHour(
-                                  id: existingHour?.id,
-                                  day: existingHour?.day,
-                                  dayOfWeek: dayId,
-                                  isOpen24h: isOpen24 ? 1 : 2,
-                                  status: existingHour?.status,
-                                  openingTime: fallbackOpen,
-                                  closingTime: fallbackClose,
-                                  isClosed: false,
-                                  timeSlots: isOpen24
-                                      ? <WorkingTimeSlot>[]
-                                      : validSlots,
-                                );
-                                if (existingIndex >= 0) {
-                                  profileController
-                                          .workingHours[existingIndex] =
-                                      updatedHour;
-                                } else {
-                                  profileController.workingHours.add(
-                                    updatedHour,
-                                  );
-                                }
-                                profileController.update();
-                                await profileController.uploadWorkingHours(
-                                  dialogContext,
-                                );
-                                if (dialogContext.mounted) {
-                                  Navigator.of(dialogContext).pop();
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF5216),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: Text(
-                                "Save",
-                                style: GoogleFonts.rubik(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1733,972 +1867,962 @@ class VendorRichCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFF1F5F9)),
         ),
         child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: imageUrl != null && imageUrl!.isNotEmpty
-                            ? Image.network(
-                                imageUrl!.startsWith('http')
-                                    ? imageUrl!
-                                    : "${ApiConfigs.IMAGE_URL}$imageUrl",
-                                width: MediaQuery.of(context).size.width * 0.22,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.22,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    const _VendorDefaultImage(),
-                              )
-                            : const _VendorDefaultImage(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "ID: # $id",
-                          style: GoogleFonts.rubik(
-                            fontSize: 10,
-                            color: const Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.rubik(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1F1F1F),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFF1EE),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            _displayCategoryLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.rubik(
-                              fontSize: 10,
-                              color: const Color(0xFFFF5216),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        if (!isMenu)
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  price,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF1F1F1F),
-                                  ),
-                                ),
-                              ),
-                              if (originalPrice != null) ...[
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    originalPrice!,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 11,
-                                      color: const Color(0xFF94A3B8),
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              if (availabilityStatus != null) ...[
-                                const SizedBox(width: 12),
-                                _AvailabilityChip(status: availabilityStatus!),
-                              ],
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              if (isMenu)
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 42,
-                        child: OutlinedButton(
-                          onPressed: onViewDetails,
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFFF5216)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            S.of(context).viewDetails,
-                            style: GoogleFonts.rubik(
-                              color: const Color(0xFFFF5216),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          ),
+                    Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: imageUrl != null && imageUrl!.isNotEmpty
+                              ? Image.network(
+                                  imageUrl!.startsWith('http')
+                                      ? imageUrl!
+                                      : "${ApiConfigs.IMAGE_URL}$imageUrl",
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.22,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.22,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) =>
+                                      const _VendorDefaultImage(),
+                                )
+                              : const _VendorDefaultImage(),
                         ),
-                      ),
+                      ],
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: SizedBox(
-                        height: 42,
-                        child: ElevatedButton(
-                          onPressed: onAddItem,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5216),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "ID: # $id",
+                            style: GoogleFonts.rubik(
+                              fontSize: 10,
+                              color: const Color(0xFF94A3B8),
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          child: Text(
-                            'Add Item',
+                          const SizedBox(height: 4),
+                          Text(
+                            name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.rubik(
-                              color: Colors.white,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                              color: const Color(0xFF1F1F1F),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFF1EE),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              _displayCategoryLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.rubik(
+                                fontSize: 10,
+                                color: const Color(0xFFFF5216),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          if (!isMenu)
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    price,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.rubik(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF1F1F1F),
+                                    ),
+                                  ),
+                                ),
+                                if (originalPrice != null) ...[
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      originalPrice!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.rubik(
+                                        fontSize: 11,
+                                        color: const Color(0xFF94A3B8),
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                if (availabilityStatus != null) ...[
+                                  const SizedBox(width: 12),
+                                  _AvailabilityChip(
+                                    status: availabilityStatus!,
+                                  ),
+                                ],
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (isMenu)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 42,
+                          child: OutlinedButton(
+                            onPressed: onViewDetails,
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFFFF5216)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              S.of(context).viewDetails,
+                              style: GoogleFonts.rubik(
+                                color: const Color(0xFFFF5216),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              else
-                Builder(
-                  builder: (context) {
-                    // If null, default to out-of-stock (2).
-                    final isCurrentlyAvailable = (availabilityStatus ?? 2) == 1;
-                    Future<void> showUpdateStockDialog() async {
-                      final qtyController = TextEditingController();
-                      String stockAction = 'Add';
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SizedBox(
+                          height: 42,
+                          child: ElevatedButton(
+                            onPressed: onAddItem,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF5216),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              'Add Item',
+                              style: GoogleFonts.rubik(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Builder(
+                    builder: (context) {
+                      // If null, default to out-of-stock (2).
+                      final isCurrentlyAvailable =
+                          (availabilityStatus ?? 2) == 1;
+                      Future<void> showUpdateStockDialog() async {
+                        final qtyController = TextEditingController();
+                        String stockAction = 'Add';
 
-                      return showDialog<void>(
-                        context: context,
-                        builder: (dialogContext) {
-                          return StatefulBuilder(
-                            builder: (context, setDialogState) {
-                              return Dialog(
-                                backgroundColor: Colors.white,
-                                surfaceTintColor: Colors.white,
-                                insetPadding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  constraints: const BoxConstraints(
-                                    minHeight: 280,
+                        return showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return StatefulBuilder(
+                              builder: (context, setDialogState) {
+                                return Dialog(
+                                  backgroundColor: Colors.white,
+                                  surfaceTintColor: Colors.white,
+                                  insetPadding: const EdgeInsets.symmetric(
+                                    horizontal: 28,
                                   ),
-                                  padding: const EdgeInsets.fromLTRB(
-                                    14,
-                                    14,
-                                    14,
-                                    14,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              'Update Stock',
-                                              style: GoogleFonts.rubik(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFF111827),
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () => Navigator.of(
-                                              dialogContext,
-                                            ).pop(),
-                                            child: Container(
-                                              width: 28,
-                                              height: 28,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
+                                  child: Container(
+                                    width: double.infinity,
+                                    constraints: const BoxConstraints(
+                                      minHeight: 280,
+                                    ),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      14,
+                                      14,
+                                      14,
+                                      14,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Update Stock',
+                                                style: GoogleFonts.rubik(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
                                                   color: const Color(
-                                                    0xFFD1D5DB,
+                                                    0xFF111827,
                                                   ),
                                                 ),
                                               ),
-                                              child: const Icon(
-                                                Icons.close,
-                                                size: 18,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () => Navigator.of(
+                                                dialogContext,
+                                              ).pop(),
+                                              child: Container(
+                                                width: 28,
+                                                height: 28,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: const Color(
+                                                      0xFFD1D5DB,
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 18,
+                                                  color: Color(0xFF6B7280),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'Type',
+                                          style: GoogleFonts.rubik(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          height: 42,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: const Color(0xFFE5E7EB),
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value: stockAction,
+                                              isExpanded: true,
+                                              icon: const Icon(
+                                                Icons.keyboard_arrow_down,
                                                 color: Color(0xFF6B7280),
                                               ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'Type',
-                                        style: GoogleFonts.rubik(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF6B7280),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        height: 42,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: const Color(0xFFE5E7EB),
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value: stockAction,
-                                            isExpanded: true,
-                                            icon: const Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: Color(0xFF6B7280),
-                                            ),
-                                            items: const [
-                                              DropdownMenuItem(
-                                                value: 'Add',
-                                                child: Text('Add'),
-                                              ),
-                                              DropdownMenuItem(
-                                                value: 'Remove',
-                                                child: Text('Remove'),
-                                              ),
-                                            ],
-                                            onChanged: (value) {
-                                              if (value == null) return;
-                                              setDialogState(() {
-                                                stockAction = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 14),
-                                      Text(
-                                        'Item Quantity',
-                                        style: GoogleFonts.rubik(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF6B7280),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      TextFormField(
-                                        controller: qtyController,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          hintText: '',
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 12,
-                                              ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Color(0xFFE5E7EB),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Color(0xFFE5E7EB),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: Color(0xFFFF5216),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 42,
-                                              child: OutlinedButton(
-                                                onPressed: () => Navigator.of(
-                                                  dialogContext,
-                                                ).pop(),
-                                                style: OutlinedButton.styleFrom(
-                                                  side: const BorderSide(
-                                                    color: Color(0xFFFF5216),
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                  ),
+                                              items: const [
+                                                DropdownMenuItem(
+                                                  value: 'Add',
+                                                  child: Text('Add'),
                                                 ),
-                                                child: Text(
-                                                  'Cancel',
-                                                  style: GoogleFonts.rubik(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: const Color(
-                                                      0xFFFF5216,
+                                                DropdownMenuItem(
+                                                  value: 'Remove',
+                                                  child: Text('Remove'),
+                                                ),
+                                              ],
+                                              onChanged: (value) {
+                                                if (value == null) return;
+                                                setDialogState(() {
+                                                  stockAction = value;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 14),
+                                        Text(
+                                          'Item Quantity',
+                                          style: GoogleFonts.rubik(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        TextFormField(
+                                          controller: qtyController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText: '',
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 12,
+                                                ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Color(0xFFE5E7EB),
+                                              ),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Color(0xFFE5E7EB),
+                                              ),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: Color(0xFFFF5216),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 42,
+                                                child: OutlinedButton(
+                                                  onPressed: () => Navigator.of(
+                                                    dialogContext,
+                                                  ).pop(),
+                                                  style: OutlinedButton.styleFrom(
+                                                    side: const BorderSide(
+                                                      color: Color(0xFFFF5216),
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: const Color(
+                                                        0xFFFF5216,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 42,
-                                              child: ElevatedButton(
-                                                onPressed: () async {
-                                                  final qty = int.tryParse(
-                                                    qtyController.text.trim(),
-                                                  );
-                                                  if (qty == null || qty <= 0) {
-                                                    showToast(
-                                                      context,
-                                                      'Please enter valid quantity',
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 42,
+                                                child: ElevatedButton(
+                                                  onPressed: () async {
+                                                    final qty = int.tryParse(
+                                                      qtyController.text.trim(),
                                                     );
-                                                    return;
-                                                  }
-                                                  final itemController =
-                                                      Get.isRegistered<
-                                                        ItemController
-                                                      >()
-                                                      ? Get.find<
-                                                          ItemController
-                                                        >()
-                                                      : Get.put(
-                                                          ItemController(),
-                                                          permanent: false,
-                                                        );
-                                                  final movementType =
-                                                      stockAction == 'Add'
-                                                      ? '1'
-                                                      : '2';
-                                                  await itemController
-                                                      .updateMenuItemStock(
+                                                    if (qty == null ||
+                                                        qty <= 0) {
+                                                      showToast(
                                                         context,
-                                                        itemId,
-                                                        qty,
-                                                        movementType,
+                                                        'Please enter valid quantity',
                                                       );
-                                                  await itemController
-                                                      .getMenuItemStockLogs(
-                                                        itemId,
-                                                        1,
-                                                        10,
-                                                      );
-                                                  final profileController =
-                                                      Get.find<
-                                                        ProfileController
-                                                      >();
-                                                  await profileController
-                                                      .fetchGroceryMenuItems();
-
-                                                  if (dialogContext.mounted) {
-                                                    Navigator.of(
-                                                      dialogContext,
-                                                    ).pop();
-                                                  }
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: const Color(
-                                                    0xFFFF5216,
-                                                  ),
-                                                  elevation: 0,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  'Update',
-                                                  style: GoogleFonts.rubik(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      );
-                    }
-
-                    Future<void> showConfirmDialog() async {
-                      return showDialog<void>(
-                        context: context,
-                        builder: (dialogContext) {
-                          final message = isCurrentlyAvailable
-                              ? 'Are you sure you want to mark this item as out of stock?'
-                              : 'Are you sure you want to mark this item as available?';
-                          final actionColor = isCurrentlyAvailable
-                              ? const Color(0xFFEF4444)
-                              : const Color(0xFF16A34A);
-                          const Color noActionColor = Color(0xFFFF5216);
-                          return Dialog(
-                            backgroundColor: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            insetPadding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: const EdgeInsets.fromLTRB(
-                                    20,
-                                    22,
-                                    20,
-                                    18,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const SizedBox(height: 28),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                        ),
-                                        child: Text(
-                                          message,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.rubik(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                            color: const Color(0xFF111827),
-                                            height: 1.35,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 18),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 42,
-                                              child: OutlinedButton(
-                                                onPressed: () => Navigator.of(
-                                                  dialogContext,
-                                                ).pop(),
-                                                style: OutlinedButton.styleFrom(
-                                                  side: const BorderSide(
-                                                    color: noActionColor,
-                                                    width: 1,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  'No',
-                                                  style: GoogleFonts.rubik(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: noActionColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 14),
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 42,
-                                              child: ElevatedButton(
-                                                onPressed: () async {
-                                                  Navigator.of(
-                                                    dialogContext,
-                                                  ).pop();
-                                                  final idInt = int.tryParse(
-                                                    itemId,
-                                                  );
-                                                  if (idInt == null) {
-                                                    return;
-                                                  }
-
-                                                  final itemController =
-                                                      Get.isRegistered<
-                                                        ItemController
-                                                      >()
-                                                      ? Get.find<
+                                                      return;
+                                                    }
+                                                    final itemController =
+                                                        Get.isRegistered<
                                                           ItemController
                                                         >()
-                                                      : Get.put(
-                                                          ItemController(),
-                                                          permanent: false,
+                                                        ? Get.find<
+                                                            ItemController
+                                                          >()
+                                                        : Get.put(
+                                                            ItemController(),
+                                                            permanent: false,
+                                                          );
+                                                    final movementType =
+                                                        stockAction == 'Add'
+                                                        ? '1'
+                                                        : '2';
+                                                    await itemController
+                                                        .updateMenuItemStock(
+                                                          context,
+                                                          itemId,
+                                                          qty,
+                                                          movementType,
                                                         );
-
-                                                  final profileController =
-                                                      Get.find<
-                                                        ProfileController
-                                                      >();
-
-                                                  final statusToSend =
-                                                      isCurrentlyAvailable
-                                                      ? 2 // Mark Out Of Stock
-                                                      : 1; // Mark Available
-
-                                                  final isSuccess = await itemController
-                                                      .updateItemStatus(
-                                                        idInt,
-                                                        statusToSend,
-                                                        showSuccessToast: false,
-                                                      );
-
-                                                  if (isSuccess) {
-                                                    profileController
-                                                        .updateRestaurantItemAvailability(
-                                                          idInt,
-                                                          statusToSend,
+                                                    await itemController
+                                                        .getMenuItemStockLogs(
+                                                          itemId,
+                                                          1,
+                                                          10,
                                                         );
-                                                    // Refresh items listing
+                                                    final profileController =
+                                                        Get.find<
+                                                          ProfileController
+                                                        >();
                                                     await profileController
                                                         .fetchGroceryMenuItems();
 
-                                                    if (context.mounted) {
-                                                      final vendorType =
-                                                          (await getSavedObject(
-                                                            "vendorType",
-                                                          ))?.toString() ??
-                                                          "1";
-                                                      final isRestaurant =
-                                                          vendorType == "1";
-                                                      final successMessage =
-                                                          statusToSend == 2
-                                                          ? (isRestaurant
-                                                                ? "Restaurant menu item marked as out of stock successfully"
-                                                                : "Grocery menu item marked as out of stock successfully")
-                                                          : (isRestaurant
-                                                                ? "Restaurant menu item marked as available successfully"
-                                                                : "Grocery menu item marked as available successfully");
+                                                    if (dialogContext.mounted) {
+                                                      Navigator.of(
+                                                        dialogContext,
+                                                      ).pop();
+                                                    }
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color(0xFFFF5216),
+                                                    elevation: 0,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    'Update',
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
 
-                                                      showDialog<void>(
-                                                        context: context,
-                                                        builder: (
-                                                          successDialogContext,
-                                                        ) {
-                                                          return Dialog(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            surfaceTintColor:
-                                                                Colors.white,
-                                                            insetPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                  horizontal:
-                                                                      24,
-                                                                ),
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        16,
+                      Future<void> showConfirmDialog() async {
+                        return showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) {
+                            final message = isCurrentlyAvailable
+                                ? 'Are you sure you want to mark this item as out of stock?'
+                                : 'Are you sure you want to mark this item as available?';
+                            final actionColor = isCurrentlyAvailable
+                                ? const Color(0xFFEF4444)
+                                : const Color(0xFF16A34A);
+                            const Color noActionColor = Color(0xFFFF5216);
+                            return Dialog(
+                              backgroundColor: Colors.white,
+                              surfaceTintColor: Colors.white,
+                              insetPadding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      20,
+                                      22,
+                                      20,
+                                      18,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 28),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                          ),
+                                          child: Text(
+                                            message,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.rubik(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: const Color(0xFF111827),
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 18),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 42,
+                                                child: OutlinedButton(
+                                                  onPressed: () => Navigator.of(
+                                                    dialogContext,
+                                                  ).pop(),
+                                                  style: OutlinedButton.styleFrom(
+                                                    side: const BorderSide(
+                                                      color: noActionColor,
+                                                      width: 1,
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    'No',
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: noActionColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 14),
+                                            Expanded(
+                                              child: SizedBox(
+                                                height: 42,
+                                                child: ElevatedButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(
+                                                      dialogContext,
+                                                    ).pop();
+                                                    final idInt = int.tryParse(
+                                                      itemId,
+                                                    );
+                                                    if (idInt == null) {
+                                                      return;
+                                                    }
+
+                                                    final itemController =
+                                                        Get.isRegistered<
+                                                          ItemController
+                                                        >()
+                                                        ? Get.find<
+                                                            ItemController
+                                                          >()
+                                                        : Get.put(
+                                                            ItemController(),
+                                                            permanent: false,
+                                                          );
+
+                                                    final profileController =
+                                                        Get.find<
+                                                          ProfileController
+                                                        >();
+
+                                                    final statusToSend =
+                                                        isCurrentlyAvailable
+                                                        ? 2 // Mark Out Of Stock
+                                                        : 1; // Mark Available
+
+                                                    final isSuccess =
+                                                        await itemController
+                                                            .updateItemStatus(
+                                                              idInt,
+                                                              statusToSend,
+                                                              showSuccessToast:
+                                                                  false,
+                                                            );
+
+                                                    if (isSuccess) {
+                                                      profileController
+                                                          .updateRestaurantItemAvailability(
+                                                            idInt,
+                                                            statusToSend,
+                                                          );
+                                                      // Refresh items listing
+                                                      await profileController
+                                                          .fetchGroceryMenuItems();
+
+                                                      if (context.mounted) {
+                                                        final vendorType =
+                                                            (await getSavedObject(
+                                                              "vendorType",
+                                                            ))?.toString() ??
+                                                            "1";
+                                                        final isRestaurant =
+                                                            vendorType == "1";
+                                                        final successMessage =
+                                                            statusToSend == 2
+                                                            ? (isRestaurant
+                                                                  ? "Restaurant menu item marked as out of stock successfully"
+                                                                  : "Grocery menu item marked as out of stock successfully")
+                                                            : (isRestaurant
+                                                                  ? "Restaurant menu item marked as available successfully"
+                                                                  : "Grocery menu item marked as available successfully");
+
+                                                        showDialog<void>(
+                                                          context: context,
+                                                          builder:
+                                                              (
+                                                                successDialogContext,
+                                                              ) {
+                                                                return Dialog(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  surfaceTintColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  insetPadding:
+                                                                      const EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            24,
                                                                       ),
-                                                                ),
-                                                            child: Stack(
-                                                              clipBehavior:
-                                                                  Clip.none,
-                                                              children: [
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets.fromLTRB(
-                                                                        20,
-                                                                        24,
-                                                                        20,
-                                                                        20,
-                                                                      ),
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          16,
+                                                                        ),
+                                                                  ),
+                                                                  child: Stack(
+                                                                    clipBehavior:
+                                                                        Clip.none,
                                                                     children: [
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            12,
-                                                                      ),
-                                                                      Image.asset(
-                                                                        'lib/assets/images/Success vendor.png',
-                                                                        width:
-                                                                            55,
-                                                                        height:
-                                                                            55,
-                                                                        fit: BoxFit
-                                                                            .contain,
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            16,
-                                                                      ),
-                                                                      Text(
-                                                                        successMessage,
-                                                                        textAlign:
-                                                                            TextAlign
-                                                                                .center,
-                                                                        style: GoogleFonts.rubik(
-                                                                          fontSize:
-                                                                              13,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                          color: const Color(
-                                                                            0xFF1F2937,
-                                                                          ),
-                                                                          height:
-                                                                              1.35,
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.fromLTRB(
+                                                                              20,
+                                                                              24,
+                                                                              20,
+                                                                              20,
+                                                                            ),
+                                                                        child: Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            const SizedBox(
+                                                                              height: 12,
+                                                                            ),
+                                                                            Image.asset(
+                                                                              'lib/assets/images/Success vendor.png',
+                                                                              width: 55,
+                                                                              height: 55,
+                                                                              fit: BoxFit.contain,
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 16,
+                                                                            ),
+                                                                            Text(
+                                                                              successMessage,
+                                                                              textAlign: TextAlign.center,
+                                                                              style: GoogleFonts.rubik(
+                                                                                fontSize: 13,
+                                                                                fontWeight: FontWeight.w500,
+                                                                                color: const Color(
+                                                                                  0xFF1F2937,
+                                                                                ),
+                                                                                height: 1.35,
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 20,
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: double.infinity,
+                                                                              height: 42,
+                                                                              child: ElevatedButton(
+                                                                                onPressed: () => Navigator.of(
+                                                                                  successDialogContext,
+                                                                                ).pop(),
+                                                                                style: ElevatedButton.styleFrom(
+                                                                                  backgroundColor: const Color(
+                                                                                    0xFFFF5216,
+                                                                                  ),
+                                                                                  elevation: 0,
+                                                                                  shape: RoundedRectangleBorder(
+                                                                                    borderRadius: BorderRadius.circular(
+                                                                                      10,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                child: Text(
+                                                                                  'Ok',
+                                                                                  style: GoogleFonts.rubik(
+                                                                                    fontSize: 14,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
                                                                         ),
                                                                       ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            20,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            double.infinity,
-                                                                        height:
-                                                                            42,
-                                                                        child: ElevatedButton(
-                                                                          onPressed: () =>
-                                                                              Navigator.of(
-                                                                                successDialogContext,
-                                                                              ).pop(),
-                                                                          style: ElevatedButton.styleFrom(
-                                                                            backgroundColor: const Color(
-                                                                              0xFFFF5216,
+                                                                      Positioned(
+                                                                        top: 10,
+                                                                        right:
+                                                                            10,
+                                                                        child: GestureDetector(
+                                                                          onTap: () => Navigator.of(
+                                                                            successDialogContext,
+                                                                          ).pop(),
+                                                                          child: Container(
+                                                                            width:
+                                                                                28,
+                                                                            height:
+                                                                                28,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.white,
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                8,
+                                                                              ),
+                                                                              border: Border.all(
+                                                                                color: const Color(
+                                                                                  0xFFD1D5DB,
+                                                                                ),
+                                                                                width: 1,
+                                                                              ),
                                                                             ),
-                                                                            elevation:
-                                                                                0,
-                                                                            shape: RoundedRectangleBorder(
-                                                                              borderRadius:
-                                                                                  BorderRadius.circular(
-                                                                                    10,
-                                                                                  ),
-                                                                            ),
-                                                                          ),
-                                                                          child: Text(
-                                                                            'Ok',
-                                                                            style: GoogleFonts.rubik(
-                                                                              fontSize:
-                                                                                  14,
-                                                                              fontWeight:
-                                                                                  FontWeight.w700,
-                                                                              color:
-                                                                                  Colors.white,
+                                                                            child: const Icon(
+                                                                              Icons.close,
+                                                                              size: 18,
+                                                                              color: Color(
+                                                                                0xFF6B7280,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                ),
-                                                                Positioned(
-                                                                  top: 10,
-                                                                  right: 10,
-                                                                  child:
-                                                                      GestureDetector(
-                                                                        onTap: () =>
-                                                                            Navigator.of(
-                                                                              successDialogContext,
-                                                                            ).pop(),
-                                                                        child: Container(
-                                                                          width:
-                                                                              28,
-                                                                          height:
-                                                                              28,
-                                                                          decoration: BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8),
-                                                                            border: Border.all(
-                                                                              color: const Color(
-                                                                                0xFFD1D5DB,
-                                                                              ),
-                                                                              width:
-                                                                                  1,
-                                                                            ),
-                                                                          ),
-                                                                          child: const Icon(
-                                                                            Icons.close,
-                                                                            size:
-                                                                                18,
-                                                                            color: Color(
-                                                                              0xFF6B7280,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
+                                                                );
+                                                              },
+                                                        );
+                                                      }
                                                     }
-                                                  }
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: actionColor,
-                                                  elevation: 0,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        actionColor,
+                                                    elevation: 0,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
                                                   ),
-                                                ),
-                                                child: Text(
-                                                  'Yes',
-                                                  style: GoogleFonts.rubik(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
+                                                  child: Text(
+                                                    'Yes',
+                                                    style: GoogleFonts.rubik(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 10,
-                                  right: 10,
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        Navigator.of(dialogContext).pop(),
-                                    child: Container(
-                                      width: 28,
-                                      height: 28,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: const Color(0xFFD1D5DB),
-                                          width: 1,
+                                          ],
                                         ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        size: 18,
-                                        color: Color(0xFF6B7280),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          Navigator.of(dialogContext).pop(),
+                                      child: Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(0xFFD1D5DB),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 18,
+                                          color: Color(0xFF6B7280),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
 
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 42,
-                            child: ElevatedButton(
-                              onPressed: showConfirmDialog,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    (availabilityStatus ?? 2) == 1
-                                    ? const Color(0xFFEF4444)
-                                    : const Color(0xFF16A34A),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 42,
+                              child: ElevatedButton(
+                                onPressed: showConfirmDialog,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      (availabilityStatus ?? 2) == 1
+                                      ? const Color(0xFFEF4444)
+                                      : const Color(0xFF16A34A),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                (availabilityStatus ?? 2) == 1
-                                    ? 'Mark Out Of Stock'
-                                    : 'Mark Available',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.rubik(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
-                            height: 42,
-                            child: ElevatedButton(
-                              onPressed: showUpdateStockDialog,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF5216),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                'Update Stock',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.rubik(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                child: Text(
+                                  (availabilityStatus ?? 2) == 1
+                                      ? 'Mark Out Of Stock'
+                                      : 'Mark Available',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-            ],
-          ),
-          Positioned(
-            top: -8,
-            right: -8,
-            child: PopupMenuButton(
-              icon: const Icon(Icons.more_vert, color: Color(0xFF94A3B8)),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onSelected: (value) {
-                if (value == 'edit') {
-                  onEdit();
-                } else if (value == 'delete' && onDelete != null) {
-                  onDelete!();
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: ListTile(
-                    leading: const Icon(Icons.edit_outlined, size: 20),
-                    title: Text(
-                      S.of(context).edit,
-                      style: GoogleFonts.rubik(fontSize: 14),
-                    ),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    contentPadding: EdgeInsets.zero,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: SizedBox(
+                              height: 42,
+                              child: ElevatedButton(
+                                onPressed: showUpdateStockDialog,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFF5216),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Update Stock',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.delete_outline,
-                      size: 20,
-                      color: Color(0xFFEF4444),
-                    ),
-                    title: Text(
-                      S.of(context).delete,
-                      style: GoogleFonts.rubik(
-                        fontSize: 14,
-                        color: const Color(0xFFEF4444),
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.chevron_right,
-                      size: 20,
-                      color: Color(0xFFEF4444),
-                    ),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
               ],
             ),
-          ),
+            Positioned(
+              top: -8,
+              right: -8,
+              child: PopupMenuButton(
+                icon: const Icon(Icons.more_vert, color: Color(0xFF94A3B8)),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onEdit();
+                  } else if (value == 'delete' && onDelete != null) {
+                    onDelete!();
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: const Icon(Icons.edit_outlined, size: 20),
+                      title: Text(
+                        S.of(context).edit,
+                        style: GoogleFonts.rubik(fontSize: 14),
+                      ),
+                      trailing: const Icon(Icons.chevron_right, size: 20),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.delete_outline,
+                        size: 20,
+                        color: Color(0xFFEF4444),
+                      ),
+                      title: Text(
+                        S.of(context).delete,
+                        style: GoogleFonts.rubik(
+                          fontSize: 14,
+                          color: const Color(0xFFEF4444),
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: Color(0xFFEF4444),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

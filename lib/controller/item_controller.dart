@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,20 @@ import 'package:saimpex_vendor/model/tag_model.dart';
 import 'package:saimpex_vendor/model/success_model.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/restaurant_menu_item_stock_logs_model.dart';
+
+class CatalogExtraItem {
+  final String name;
+  final num additionalPrice;
+  final int availableStatus;
+  final String? imagePath;
+
+  CatalogExtraItem({
+    required this.name,
+    required this.additionalPrice,
+    this.availableStatus = 1,
+    this.imagePath,
+  });
+}
 
 class ItemController extends GetxController {
   final String? editRestaurantMenuItemId;
@@ -365,7 +380,33 @@ class ItemController extends GetxController {
     required String? menuId,
     required String? menuItemId,
     required String? restaurantAttributeId,
+    String? itemName,
+    bool isRestaurantCatalog = false,
   }) {
+    if (isRestaurantCatalog) {
+      final name = (itemName != null && itemName.trim().isNotEmpty)
+          ? itemName.trim()
+          : (menuItemId != null && menuItemId.trim().isNotEmpty
+              ? menuItemId.trim()
+              : serialNumberCtrl.text.trim());
+      if (name.isEmpty) {
+        showToast(context, "Please enter item name");
+        return false;
+      }
+      final catId = (menuId != null && menuId.trim().isNotEmpty)
+          ? menuId.trim()
+          : (selectedMenuId != null ? selectedMenuId.toString() : '');
+      if (catId.isEmpty) {
+        showToast(context, "Please select category");
+        return false;
+      }
+      if (priceCtrl.text.trim().isEmpty) {
+        showToast(context, "Please enter price");
+        return false;
+      }
+      return true;
+    }
+
     if (menuId == null || menuId.trim().isEmpty) {
       showToast(context, "Menu id is required");
       return false;
@@ -401,14 +442,26 @@ class ItemController extends GetxController {
     required String menuId,
     required String menuItemId,
     required String restaurantAttributeId,
+    String? itemName,
+    String? description,
+    String? isVeg,
+    String? extraSelectionRequirement,
+    String? extraMaxSelections,
+    List<CatalogExtraItem>? catalogExtras,
   }) async {
+    final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
+    final isRestaurant = vendorType == "1";
+
     final isValid = addItemValidation(
       context,
       menuId: menuId,
       menuItemId: menuItemId,
       restaurantAttributeId: restaurantAttributeId,
+      itemName: itemName,
+      isRestaurantCatalog: isRestaurant,
     );
     if (!isValid) return;
+
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
@@ -417,65 +470,189 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
-      final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
-      String finalAttrId = restaurantAttributeId;
-      if (finalAttrId.isEmpty &&
-          selectedAttribute != null &&
-          restaurantAttributes.isNotEmpty) {
-        final match = restaurantAttributes.where(
-          (a) => a.nameEn == selectedAttribute,
-        );
-        if (match.isNotEmpty) {
-          finalAttrId = match.first.id?.toString() ?? '';
+
+      dio.FormData formData;
+
+      if (isRestaurant) {
+        // Restaurant catalog item flow: POST addRestaurantCatalogItem
+        final catId = int.tryParse(menuId.trim()) ?? selectedMenuId;
+        final categoryIdsStr = catId != null
+            ? jsonEncode([catId])
+            : (menuId.trim().isNotEmpty ? "[$menuId]" : "[]");
+
+        final finalName = (itemName != null && itemName.trim().isNotEmpty)
+            ? itemName.trim()
+            : (menuItemId.trim().isNotEmpty
+                ? menuItemId.trim()
+                : serialNumberCtrl.text.trim());
+
+        final formDataMap = <String, dynamic>{
+          "name_en": finalName,
+          "category_ids": categoryIdsStr,
+          "price": priceCtrl.text.trim(),
+          if (discountPriceCtrl.text.trim().isNotEmpty)
+            "discount_price": discountPriceCtrl.text.trim(),
+          if (description != null && description.trim().isNotEmpty)
+            "description_en": description.trim(),
+          if (isVeg != null)
+            "is_veg": isVeg == 'Yes' ? '1' : '0',
+          if (prepTimeCtrl.text.trim().isNotEmpty)
+            "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
+          if (serialNumberCtrl.text.trim().isNotEmpty)
+            "serial_number": serialNumberCtrl.text.trim(),
+        };
+
+        formData = dio.FormData.fromMap(formDataMap);
+
+        // Tags
+        final tagIds = selectedRestaurantTagIds.isNotEmpty
+            ? selectedRestaurantTagIds
+            : (selectedRestaurantTagId != null
+                ? [selectedRestaurantTagId!]
+                : const <int>[]);
+        for (int i = 0; i < tagIds.length; i++) {
+          formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+        }
+
+        // Extras (handling both "optional" and "required" conditions)
+        final validExtras = (catalogExtras ?? [])
+            .where((e) => e.name.trim().isNotEmpty)
+            .toList();
+
+        if (validExtras.isNotEmpty) {
+          final reqLower =
+              (extraSelectionRequirement?.trim().toLowerCase() == 'required')
+                  ? 'required'
+                  : 'optional';
+          final parsedMax = int.tryParse(extraMaxSelections?.trim() ?? '');
+          final maxSel = parsedMax ??
+              (reqLower == 'required' ? 1 : validExtras.length);
+
+          final extrasMap = <String, dynamic>{
+            "selection_requirement": reqLower,
+            "max_selections": maxSel,
+            "items": validExtras
+                .map((e) => {
+                      "name": e.name.trim(),
+                      "additional_price": e.additionalPrice,
+                      "available_status": e.availableStatus,
+                    })
+                .toList(),
+          };
+
+          formData.fields.add(MapEntry("extras", jsonEncode(extrasMap)));
+
+          for (int i = 0; i < validExtras.length; i++) {
+            final extraItem = validExtras[i];
+            if (extraItem.imagePath != null &&
+                extraItem.imagePath!.trim().isNotEmpty) {
+              final path = extraItem.imagePath!.trim();
+              final baseName = path.split(RegExp(r'[/\\]')).last;
+              formData.files.add(
+                MapEntry(
+                  "extra_images.$i",
+                  await dio.MultipartFile.fromFile(path, filename: baseName),
+                ),
+              );
+            }
+          }
+        }
+
+        // Main item image
+        if (pickedImageFile != null) {
+          final path = pickedImageFile!.path;
+          final baseName = path.split(RegExp(r'[/\\]')).last;
+          formData.files.add(
+            MapEntry(
+              'image',
+              await dio.MultipartFile.fromFile(path, filename: baseName),
+            ),
+          );
+        }
+      } else {
+        // Grocery menu item flow (existing unchanged behavior)
+        String finalAttrId = restaurantAttributeId;
+        if (finalAttrId.isEmpty &&
+            selectedAttribute != null &&
+            restaurantAttributes.isNotEmpty) {
+          final match = restaurantAttributes.where(
+            (a) => a.nameEn == selectedAttribute,
+          );
+          if (match.isNotEmpty) {
+            finalAttrId = match.first.id?.toString() ?? '';
+          }
+        }
+
+        final formDataMap = <String, dynamic>{
+          "menu_id": menuId,
+          "menu_item_id": menuItemId,
+          "grocery_attribute_id": finalAttrId,
+          "attribute_value": selectedAttribute ?? "",
+          "price": priceCtrl.text.trim(),
+          "discount_price": discountPriceCtrl.text.trim(),
+          "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
+          "serial_number": serialNumberCtrl.text.trim(),
+          "quantity_allowed": maxQuantityCtrl.text.trim(),
+        };
+
+        formData = dio.FormData.fromMap(formDataMap);
+
+        final tagIds = selectedRestaurantTagIds.isNotEmpty
+            ? selectedRestaurantTagIds
+            : (selectedRestaurantTagId != null
+                ? [selectedRestaurantTagId!]
+                : const <int>[]);
+        for (int i = 0; i < tagIds.length; i++) {
+          formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+        }
+        if (pickedImageFile != null) {
+          final path = pickedImageFile!.path;
+          final baseName = path.split(RegExp(r'[/\\]')).last;
+          formData.files.add(
+            MapEntry(
+              'image',
+              await dio.MultipartFile.fromFile(path, filename: baseName),
+            ),
+          );
         }
       }
 
-      final formDataMap = <String, dynamic>{
-        "menu_id": menuId,
-        "menu_item_id": menuItemId,
-        vendorType == "1" ? "restaurant_attribute_id" : "grocery_attribute_id":
-            finalAttrId,
-        "attribute_value": selectedAttribute ?? "",
-        "price": priceCtrl.text.trim(),
-        "discount_price": discountPriceCtrl.text.trim(),
-        "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
-        "serial_number": serialNumberCtrl.text.trim(),
-        "quantity_allowed": maxQuantityCtrl.text.trim(),
-      };
+      printFormData(formData);
 
-      final formData = dio.FormData.fromMap(formDataMap);
-      final tagIds = selectedRestaurantTagIds.isNotEmpty
-          ? selectedRestaurantTagIds
-          : (selectedRestaurantTagId != null
-                ? [selectedRestaurantTagId!]
-                : const <int>[]);
-      for (int i = 0; i < tagIds.length; i++) {
-        formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
-      }
-      if (pickedImageFile != null) {
-        final path = pickedImageFile!.path;
-        final baseName = path.split(RegExp(r'[/\\]')).last;
-        formData.files.add(
-          MapEntry(
-            'image',
-            await dio.MultipartFile.fromFile(path, filename: baseName),
-          ),
+      dynamic response;
+      if (isRestaurant) {
+        try {
+          response = await DioClient().post(
+            ApiEndPoints.addRestaurantCatalogItem,
+            body: formData,
+          );
+        } on dio.DioException catch (dioErr) {
+          if (dioErr.response?.statusCode == 404) {
+            debugPrint(
+              "404 on ${ApiEndPoints.addRestaurantCatalogItem}, trying vendor/${ApiEndPoints.addRestaurantCatalogItem}",
+            );
+            response = await DioClient().post(
+              "vendor/${ApiEndPoints.addRestaurantCatalogItem}",
+              body: formData,
+            );
+          } else {
+            rethrow;
+          }
+        }
+      } else {
+        response = await DioClient().post(
+          ApiEndPoints.addGroceryMenuItem,
+          body: formData,
         );
       }
-      printFormData(formData);
-      final response = await DioClient().post(
-        vendorType == "1"
-            ? ApiEndPoints.addRestaurantMenuItem
-            : ApiEndPoints.addGroceryMenuItem,
-        body: formData,
-      );
+
       if (context.mounted) {
         Get.back();
       }
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Leave marked successfully";
+          String successMessage = "Item added successfully";
           if (response.data['message'] != null) {
             var msgMap = response.data['message'];
             if (msgMap is Map &&
@@ -483,11 +660,15 @@ class ItemController extends GetxController {
                 msgMap['message_en'] is List &&
                 msgMap['message_en'].isNotEmpty) {
               successMessage = msgMap['message_en'][0];
+            } else if (response.data['message'] is String) {
+              successMessage = response.data['message'];
             }
           }
           showToast(context, successMessage);
-          final profileController = Get.find<ProfileController>();
-          await profileController.fetchGroceryMenuItems();
+          if (Get.isRegistered<ProfileController>()) {
+            final profileController = Get.find<ProfileController>();
+            await profileController.fetchGroceryMenuItems();
+          }
           if (context.mounted) {
             Get.back();
           }
@@ -496,7 +677,7 @@ class ItemController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            response.data['message']?.toString() ?? "Failed to add item",
           );
         }
       }

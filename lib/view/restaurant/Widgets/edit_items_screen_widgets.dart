@@ -65,8 +65,9 @@ class DashedBorderPainter extends CustomPainter {
 /// Form field label used on Edit Items screen.
 class EditItemsFieldLabel extends StatelessWidget {
   final String label;
+  final Color? color;
 
-  const EditItemsFieldLabel(this.label, {super.key});
+  const EditItemsFieldLabel(this.label, {super.key, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class EditItemsFieldLabel extends StatelessWidget {
       style: GoogleFonts.rubik(
         fontSize: 13,
         fontWeight: FontWeight.w500,
-        color: const Color(0xFF475569),
+        color: color ?? const Color(0xFF475569),
       ),
     );
   }

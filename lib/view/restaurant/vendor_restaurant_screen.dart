@@ -22,6 +22,8 @@ import 'Widgets/vendor_restaurant_reusable_widgets.dart';
 import '../../controller/profile_controller.dart';
 import '../../controller/menucontroller.dart' as menu_ctrl;
 import '../../controller/item_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../configs/ApiConfigs.dart';
 import '../../Utils/Utils.dart';
 import '../../utils/widgets/app_loader.dart';
 import '../../utils/widgets/no_data_widget.dart';
@@ -148,15 +150,16 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         showToast(context, S.of(context).couldNotAccessTheSelectedFile);
         return;
       }
-      final uploaded = await profileController.uploadmenuBulkImport(
+      final uploaded = await profileController.importRestaurantCatalogItems(
         context,
         path,
         categoryId,
       );
 
       if (mounted && uploaded) {
-        // File selection UI is handled by the server upload flow,
-        // so we don't keep the selected path in state.
+        setState(() {
+          selectedMenu = "Items";
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -169,8 +172,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     final profileController = Get.find<ProfileController>();
     if (selectedMenu == 'Account') {
       await profileController.getProfile(context);
-    } else if (selectedMenu == 'Menu') {
-      await profileController.fetchRestaurantMenus(keyword: _searchKeyword);
     } else if (selectedMenu == 'Items') {
       await profileController.fetchGroceryMenuItems(
         categoryId: profileController.selectedRestaurantCategoryId,
@@ -229,8 +230,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         ),
                         const SizedBox(width: 10),
                         _buildMenuButton(S.of(context).leaves, "Leaves"),
-                        const SizedBox(width: 10),
-                        _buildMenuButton(S.of(context).menu, "Menu"),
                         const SizedBox(width: 10),
                         _buildMenuButton(S.of(context).items, "Items"),
                         const SizedBox(width: 10),
@@ -609,16 +608,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 12),
                     _buildWorkingHoursList(),
                     const SizedBox(height: 20),
-                  ] else if (selectedMenu == "Menu") ...[
-                    const SizedBox(height: 20),
-                    _buildSearchRow(showFilter: true),
-                    const SizedBox(height: 16),
-                    _buildMenuActionRow(),
-                    const SizedBox(height: 16),
-                    _buildCategoryDropdownOnly(),
-                    const SizedBox(height: 20),
-                    _buildMenuList(),
-                    const SizedBox(height: 20),
                   ] else if (selectedMenu == "Items") ...[
                     const SizedBox(height: 20),
                     _buildSearchRow(showFilter: false),
@@ -689,12 +678,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         setState(() {
           selectedMenu = internalKey;
         });
-        if (internalKey == "Menu") {
-          final profileController = Get.find<ProfileController>();
-          profileController.getAllCategories();
-          profileController.clearGroceryMenusForRestaurantFlow();
-          profileController.fetchRestaurantMenus(keyword: _searchKeyword);
-        } else if (internalKey == "Items") {
+        if (internalKey == "Items") {
           final profileController = Get.find<ProfileController>();
           profileController.getAllCategories();
           profileController.fetchGroceryMenuItems(
@@ -925,15 +909,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         setState(() {
           _searchKeyword = value;
         });
-        if (selectedMenu == "Menu") {
-          _searchDebounce?.cancel();
-          _searchDebounce = Timer(const Duration(milliseconds: 400), () {
-            if (!mounted) return;
-            Get.find<ProfileController>().fetchRestaurantMenus(
-              keyword: _searchKeyword.trim(),
-            );
-          });
-        } else if (selectedMenu == "Items") {
+        if (selectedMenu == "Items") {
           _searchDebounce?.cancel();
           _searchDebounce = Timer(const Duration(milliseconds: 400), () {
             if (!mounted) return;
@@ -949,138 +925,42 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   }
 
   Widget _buildItemsActionRow() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              final now = DateTime.now();
-              final last = _lastDownloadTemplateAt;
-              if (last != null &&
-                  now.difference(last) < const Duration(seconds: 20)) {
-                return;
-              }
-              _lastDownloadTemplateAt = now;
-              final menuController =
-                  Get.isRegistered<menu_ctrl.MenuController>()
-                  ? Get.find<menu_ctrl.MenuController>()
-                  : Get.put(menu_ctrl.MenuController(), permanent: false);
-              menuController.downloadItemTemplate(context);
-            },
-            style: OutlinedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFF4EE),
-              side: const BorderSide(color: Color(0xFFFF9E7D), width: 1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Download',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
-                    fontSize: 12,
-                    color: const Color(0xFF1E293B),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Image.asset(
-                  'lib/assets/images/download_image.png',
-                  width: 12,
-                  height: 12,
-                  fit: BoxFit.contain,
-                ),
-              ],
-            ),
+    return SizedBox(
+      width: double.infinity,
+      height: 42,
+      child: OutlinedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddItemsScreen()),
+          );
+        },
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: const BorderSide(color: Color(0xFFFF5216), width: 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
+          elevation: 0,
+          padding: EdgeInsets.zero,
         ),
-        const SizedBox(width: 5),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              final menuController =
-                  Get.isRegistered<menu_ctrl.MenuController>()
-                  ? Get.find<menu_ctrl.MenuController>()
-                  : Get.put(menu_ctrl.MenuController(), permanent: false);
-              menuController.uploadItemTemplate(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEFF2FF),
-              foregroundColor: const Color(0xFF1E293B),
-              elevation: 0,
-              side: const BorderSide(color: Color(0xFFA7B4FF), width: 1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-            child: Container(
-              margin: const EdgeInsets.only(left: 3, right: 3),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Upload Menu',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
-                      fontSize: 12,
-                      color: const Color(0xFF1E293B),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Image.asset(
-                    'lib/assets/images/upload_button.png',
-                    width: 12,
-                    height: 12,
-                    fit: BoxFit.contain,
-                    color: const Color(0xFF6F7FDD),
-                    colorBlendMode: BlendMode.srcIn,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 5),
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddItemsScreen()),
-              );
-            },
-            icon: const Icon(Icons.add, color: Color(0xFFFF5216), size: 18),
-            label: Text(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.add, color: Color(0xFFFF5216), size: 18),
+            const SizedBox(width: 6),
+            Text(
               S.of(context).addItem,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.rubik(
-                fontSize: 12,
+                fontSize: 13,
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w600,
               ),
             ),
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white,
-              side: const BorderSide(color: Color(0xFFFF5216), width: 1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -1625,65 +1505,81 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   Widget _buildBulkImportActionsRow({
     required ProfileController profileController,
   }) {
-    const downloadColor = Color(0xFFE78A63);
-    const downloadBg = Color(0xFFFFF4EE);
-    const uploadColor = Color(0xFF6F7FDD);
-    const uploadBorder = Color(0xFFA7B4FF);
-    const uploadBg = Color(0xFFEFF2FF);
-
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () =>
-                profileController.importRestaurantMenuItems(context),
-            icon: const Icon(
-              Icons.download_outlined,
-              size: 18,
-              color: downloadColor,
-            ),
-            label: Text(
-              "Download Template",
-              style: GoogleFonts.rubik(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: downloadColor,
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: downloadColor, width: 1),
-              backgroundColor: downloadBg,
-              shape: RoundedRectangleBorder(
+          child: InkWell(
+            onTap: () =>
+                profileController.downloadRestaurantCatalogTemplate(context),
+            borderRadius: BorderRadius.circular(24),
+            child: Container(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF2EB),
                 borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFFFCCBA), width: 1),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Download Template",
+                      style: GoogleFonts.rubik(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1F2937),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.file_download_outlined,
+                      size: 16,
+                      color: Color(0xFF374151),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () => profileController.uploadImages(context),
-            icon: const Icon(
-              Icons.file_upload_outlined,
-              size: 18,
-              color: uploadColor,
-            ),
-            label: Text(
-              "Upload Images",
-              style: GoogleFonts.rubik(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: uploadColor,
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: uploadBorder, width: 1),
-              backgroundColor: uploadBg,
-              shape: RoundedRectangleBorder(
+          child: InkWell(
+            onTap: () => profileController.uploadImages(context),
+            borderRadius: BorderRadius.circular(24),
+            child: Container(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF3FE),
                 borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFBFD2F8), width: 1),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Upload Images",
+                      style: GoogleFonts.rubik(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1F2937),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.file_upload_outlined,
+                      size: 16,
+                      color: Color(0xFF374151),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -1691,67 +1587,72 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     );
   }
 
-  String? _bulkImportCategoryImageAsset(String? categoryName) {
-    final name = (categoryName ?? "").toLowerCase();
-    if (name.contains("soup")) return "lib/assets/images/Soups.png";
-    if (name.contains("juice")) return "lib/assets/images/Juice.png";
-    if (name.contains("chinese")) return "lib/assets/images/Chinese.png";
-    if (name.contains("sandwich")) return "lib/assets/images/Sandwich.png";
-    return null;
-  }
-
   Widget _buildBulkImportCategoryCardsGrid({
     required ProfileController profileController,
   }) {
-    final categories = profileController.restaurantCategoriesForDropdown;
-    final selectedCards = categories
-        .where((c) => c.id != null)
-        .map(
-          (c) => ({
-            "category": c,
-            "assetPath": _bulkImportCategoryImageAsset(c.name),
-          }),
-        )
-        .toList();
-
-    if (selectedCards.isEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "No categories available for bulk import.",
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF6B7280),
-            ),
+    if (profileController.isRestaurantCategoriesLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 32),
+          child: CircularProgressIndicator(
+            color: Color(0xFFFF5216),
           ),
-          const SizedBox(height: 8),
-          _buildBulkImportCategoryRow(),
-        ],
+        ),
+      );
+    }
+
+    final categories = profileController.restaurantCategories;
+
+    if (categories.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: NoDataWidget(
+          context,
+          S.of(context).noCategoriesFound,
+          "",
+          "lib/assets/images/nodata.png",
+        ),
       );
     }
 
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: selectedCards.length,
+      itemCount: categories.length,
       padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.8,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.78,
       ),
       itemBuilder: (context, index) {
-        final card = selectedCards[index];
-        final category = card["category"] as RestaurantCategory;
-        final assetPath = card["assetPath"] as String?;
+        final category = categories[index];
+        final categoryId = category.id;
+        final categoryName = category.displayName.isNotEmpty
+            ? category.displayName
+            : (category.nameEn ?? "Category");
+
+        final rawImage = category.image?.trim();
+        String? finalImageUrl;
+        if (rawImage != null && rawImage.isNotEmpty) {
+          if (rawImage.contains('localhost/storage/')) {
+            finalImageUrl = rawImage
+                .replaceFirst('http://localhost/storage/', ApiConfigs.IMAGE_URL)
+                .replaceFirst('https://localhost/storage/', ApiConfigs.IMAGE_URL);
+          } else if (rawImage.startsWith('http://') ||
+              rawImage.startsWith('https://')) {
+            finalImageUrl = rawImage;
+          } else {
+            finalImageUrl = '${ApiConfigs.IMAGE_URL}$rawImage';
+          }
+        }
+
         return _bulkImportCategoryCard(
-          categoryName: category.name ?? "Category",
-          assetPath: assetPath,
+          categoryName: categoryName,
+          imageUrl: finalImageUrl,
           onImport: () async {
-            profileController.setSelectedRestaurantCategoryId(category.id);
+            profileController.setSelectedRestaurantCategoryId(categoryId);
             await _pickBulkImportXlsxFile();
           },
         );
@@ -1761,44 +1662,56 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
 
   Widget _bulkImportCategoryCard({
     required String categoryName,
-    required String? assetPath,
+    required String? imageUrl,
     required Future<void> Function() onImport,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
       ),
       padding: const EdgeInsets.all(10),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: assetPath != null && assetPath.isNotEmpty
-                ? Image.asset(
-                    assetPath,
+            child: (imageUrl != null && imageUrl.isNotEmpty)
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl,
                     width: double.infinity,
-                    height: 80,
+                    height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) {
-                      return Container(
-                        width: double.infinity,
-                        height: 92,
-                        color: const Color(0xFFF1F5F9),
-                        alignment: Alignment.center,
-                        child: const Icon(
-                          Icons.fastfood,
+                    placeholder: (_, __) => Container(
+                      width: double.infinity,
+                      height: 100,
+                      color: const Color(0xFFF1F5F9),
+                      alignment: Alignment.center,
+                      child: const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
                           color: Color(0xFFFF5216),
-                          size: 30,
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => Container(
+                      width: double.infinity,
+                      height: 100,
+                      color: const Color(0xFFF1F5F9),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.fastfood,
+                        color: Color(0xFFFF5216),
+                        size: 30,
+                      ),
+                    ),
                   )
                 : Container(
                     width: double.infinity,
-                    height: 92,
+                    height: 100,
                     color: const Color(0xFFF1F5F9),
                     alignment: Alignment.center,
                     child: const Icon(
@@ -1813,6 +1726,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             categoryName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: GoogleFonts.rubik(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -1822,13 +1736,13 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           const Spacer(),
           SizedBox(
             width: double.infinity,
-            height: 40,
+            height: 38,
             child: ElevatedButton(
               onPressed: onImport,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF5216),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 elevation: 0,
               ),
@@ -1836,8 +1750,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 "Import",
                 style: GoogleFonts.rubik(
                   color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
