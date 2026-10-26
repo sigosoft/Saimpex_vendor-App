@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/view/account/add_coupon_view.dart';
 
 class CouponsView extends StatefulWidget {
@@ -23,6 +26,7 @@ class CouponsView extends StatefulWidget {
 
 class _Coupon {
   _Coupon({
+    this.id,
     required this.name,
     required this.code,
     required this.kind,
@@ -31,8 +35,10 @@ class _Coupon {
     required this.validUntil,
     required this.createdOn,
     required this.updatedOn,
+    this.active = true,
   });
 
+  final dynamic id;
   final String name;
   final String code;
   final String kind;
@@ -41,23 +47,143 @@ class _Coupon {
   final String validUntil;
   final String createdOn;
   final String updatedOn;
-  bool active = true;
+  bool active;
 }
 
 class _CouponsViewState extends State<CouponsView> {
   final _search = TextEditingController();
-  final _coupons = [
-    _Coupon(
-      name: 'WELCOME COUPON',
-      code: 'WELCOME50',
-      kind: 'PERCENTAGE',
-      discount: '12.00%',
-      count: '2',
-      validUntil: 'Feb 10,2026',
-      createdOn: 'Feb 07, 2026 10:45 AM, Today',
-      updatedOn: 'Feb 07, 2026 10:45 AM, Today',
-    ),
-  ];
+  bool _isLoading = true;
+  List<_Coupon> _coupons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCoupons();
+  }
+
+  Future<void> _fetchCoupons() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint("==================== GET COUPONS ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.coupons}");
+
+      final response = await DioClient().get(
+        ApiEndPoints.coupons,
+        query: {"limit": "50"},
+      );
+
+      debugPrint("==================== GET COUPONS RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      List<dynamic> rawList = [];
+      if (response.data is Map) {
+        final data = response.data['data'];
+        if (data is Map) {
+          if (data['coupons'] is Map && data['coupons']['data'] is List) {
+            rawList = data['coupons']['data'] as List;
+          } else if (data['coupons'] is List) {
+            rawList = data['coupons'] as List;
+          } else if (data['data'] is List) {
+            rawList = data['data'] as List;
+          }
+        } else if (data is List) {
+          rawList = data;
+        } else if (response.data['coupons'] is List) {
+          rawList = response.data['coupons'] as List;
+        }
+      }
+
+      final List<_Coupon> loaded = [];
+      for (final item in rawList) {
+        if (item is Map) {
+          final map = Map<String, dynamic>.from(item);
+          final id = map['id'];
+          final String name = map['name_en']?.toString() ??
+              map['name_ar']?.toString() ??
+              map['name_fr']?.toString() ??
+              map['name']?.toString() ??
+              map['title']?.toString() ??
+              'N/A';
+          final int statusInt = int.tryParse(map['status']?.toString() ?? '0') ?? 0;
+          final bool active = statusInt == 1 ||
+              map['status'] == true ||
+              map['status']?.toString() == '1';
+          final String code = map['code']?.toString() ?? 'N/A';
+
+          final int typeInt = int.tryParse(map['type']?.toString() ?? '1') ?? 1;
+          String kind = typeInt == 2 ? 'PERCENTAGE' : 'AMOUNT';
+          if (map['kind'] != null && map['kind'].toString().isNotEmpty) {
+            kind = map['kind'].toString().toUpperCase();
+          } else if (map['discount_type'] != null && map['discount_type'].toString().isNotEmpty) {
+            kind = map['discount_type'].toString().toUpperCase();
+          }
+
+          final String discountValue = map['discount_value']?.toString() ??
+              map['discount']?.toString() ??
+              '0.00';
+          final String discount = (typeInt == 2 || kind.contains('PERCENT'))
+              ? (discountValue.endsWith('%') ? discountValue : '$discountValue%')
+              : discountValue;
+          final String count = map['count']?.toString() ??
+              map['usage_count']?.toString() ??
+              map['limit']?.toString() ??
+              '0';
+          final String validUntil = map['valid_upto']?.toString() ??
+              map['valid_until']?.toString() ??
+              map['expiry_date']?.toString() ??
+              map['end_date']?.toString() ??
+              'N/A';
+          final String createdOn = map['formatted_created_on']?.toString() ??
+              map['created_at']?.toString() ??
+              'N/A';
+          final String updatedOn = map['formatted_updated_on']?.toString() ??
+              map['updated_at']?.toString() ??
+              'N/A';
+
+          loaded.add(
+            _Coupon(
+              id: id,
+              name: name,
+              code: code,
+              kind: kind,
+              discount: discount,
+              count: count,
+              validUntil: validUntil,
+              createdOn: createdOn,
+              updatedOn: updatedOn,
+              active: active,
+            ),
+          );
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _coupons = loaded;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching coupons: $e");
+      if (mounted) {
+        setState(() {
+          _coupons = [];
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -97,112 +223,164 @@ class _CouponsViewState extends State<CouponsView> {
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).maybePop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _search,
-                            onChanged: (_) => setState(() {}),
-                            style: GoogleFonts.inter(
-                              color: CouponsView.ink,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Search Coupon',
-                              hintStyle: GoogleFonts.inter(
-                                color: const Color(0xFFA9AEB6),
+                child: RefreshIndicator(
+                  color: CouponsView.orange,
+                  onRefresh: _fetchCoupons,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _search,
+                              onChanged: (_) => setState(() {}),
+                              style: GoogleFonts.inter(
+                                color: CouponsView.ink,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
-                              prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFFA9AEB6)),
-                              filled: true,
-                              fillColor: Colors.white,
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                              border: _fieldBorder,
-                              enabledBorder: _fieldBorder,
-                              focusedBorder: _fieldBorder,
+                              decoration: InputDecoration(
+                                hintText: 'Search Coupon',
+                                hintStyle: GoogleFonts.inter(
+                                  color: const Color(0xFFA9AEB6),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                                prefixIcon: const Icon(Icons.search, size: 18, color: Color(0xFFA9AEB6)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                border: _fieldBorder,
+                                enabledBorder: _fieldBorder,
+                                focusedBorder: _fieldBorder,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        SizedBox(
-                          height: 44,
-                          child: FilledButton(
-                            onPressed: () async {
-                              final draft = await Navigator.of(context).push<WaterCouponDraft>(
-                                MaterialPageRoute(builder: (_) => const AddCouponView()),
-                              );
-                              if (draft == null || !mounted) return;
-                              setState(() {
-                                _coupons.insert(
-                                  0,
-                                  _Coupon(
-                                    name: draft.name,
-                                    code: draft.code,
-                                    kind: draft.kind,
-                                    discount: draft.discount,
-                                    count: draft.count,
-                                    validUntil: draft.validUntil,
-                                    createdOn: draft.createdOn,
-                                    updatedOn: draft.createdOn,
-                                  ),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                            height: 44,
+                            child: FilledButton(
+                              onPressed: () async {
+                                final draft = await Navigator.of(context).push<WaterCouponDraft>(
+                                  MaterialPageRoute(builder: (_) => const AddCouponView()),
                                 );
-                              });
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: CouponsView.orange,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                if (draft == null || !mounted) return;
+                                setState(() {
+                                  _coupons.insert(
+                                    0,
+                                    _Coupon(
+                                      name: draft.name,
+                                      code: draft.code,
+                                      kind: draft.kind,
+                                      discount: draft.discount,
+                                      count: draft.count,
+                                      validUntil: draft.validUntil,
+                                      createdOn: draft.createdOn,
+                                      updatedOn: draft.createdOn,
+                                    ),
+                                  );
+                                });
+                              },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: CouponsView.orange,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const _AddPlusIcon(),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Add Coupon',
+                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Row(
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: CouponsView.orange,
+                            ),
+                          ),
+                        )
+                      else if (coupons.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const _AddPlusIcon(),
-                                const SizedBox(width: 6),
+                                Image.asset(
+                                  'lib/assets/images/nodata.png',
+                                  height: 120,
+                                  width: 140,
+                                  fit: BoxFit.contain,
+                                ),
+                                const SizedBox(height: 16),
                                 Text(
-                                  'Add Coupon',
-                                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
+                                  'No Coupons Found',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: CouponsView.ink,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Created coupons will appear here',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                    color: CouponsView.muted,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    for (final coupon in coupons) ...[
-                      _CouponCard(
-                        coupon: coupon,
-                        onUpdateStatus: () async {
-                          final blocking = coupon.active;
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            barrierColor: const Color(0x80000000),
-                            builder: (context) => _CouponConfirmDialog(
-                              message: blocking
-                                  ? 'Are you sure you want to block this\nCoupon?'
-                                  : 'Are you sure you want to unblock this\nCoupon?',
-                              yesColor: const Color(0xFFFF5317),
-                            ),
-                          );
-                          if (confirmed != true || !mounted) return;
-                          HapticFeedback.lightImpact();
-                          setState(() => coupon.active = !coupon.active);
-                        },
-                        onDelete: () {
-                          HapticFeedback.lightImpact();
-                          setState(() => _coupons.remove(coupon));
-                        },
-                      ),
-                      const SizedBox(height: 12),
+                        )
+                      else
+                        for (final coupon in coupons) ...[
+                          _CouponCard(
+                            coupon: coupon,
+                            onUpdateStatus: () async {
+                              final blocking = coupon.active;
+                              final confirmed = await showDialog<bool>(
+                                context: context,
+                                barrierColor: const Color(0x80000000),
+                                builder: (context) => _CouponConfirmDialog(
+                                  message: blocking
+                                      ? 'Are you sure you want to block this\nCoupon?'
+                                      : 'Are you sure you want to unblock this\nCoupon?',
+                                  yesColor: const Color(0xFFFF5317),
+                                ),
+                              );
+                              if (confirmed != true || !mounted) return;
+                              HapticFeedback.lightImpact();
+                              setState(() => coupon.active = !coupon.active);
+                            },
+                            onDelete: () {
+                              HapticFeedback.lightImpact();
+                              setState(() => _coupons.remove(coupon));
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                        ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],

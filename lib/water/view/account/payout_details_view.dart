@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
-class PayoutDetailsView extends StatelessWidget {
+class PayoutDetailsView extends StatefulWidget {
   const PayoutDetailsView({
     super.key,
+    this.payoutId,
     required this.transactionId,
     required this.timestamp,
     required this.amount,
+    this.status = 'CREDITED',
+    this.initialPayoutData,
   });
 
+  final String? payoutId;
   final String transactionId;
   final String timestamp;
   final String amount;
+  final String status;
+  final Map<String, dynamic>? initialPayoutData;
 
   static const orange = Color(0xFFFF5216);
   static const ink = Color(0xFF1C1D1B);
@@ -21,16 +30,259 @@ class PayoutDetailsView extends StatelessWidget {
 
   static void open(
     BuildContext context, {
+    String? payoutId,
     required String transactionId,
     required String timestamp,
     required String amount,
+    String status = 'CREDITED',
+    Map<String, dynamic>? initialPayoutData,
   }) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PayoutDetailsView(
+          payoutId: payoutId,
           transactionId: transactionId,
           timestamp: timestamp,
           amount: amount,
+          status: status,
+          initialPayoutData: initialPayoutData,
+        ),
+      ),
+    );
+  }
+
+  @override
+  State<PayoutDetailsView> createState() => _PayoutDetailsViewState();
+}
+
+class _PayoutOrder {
+  const _PayoutOrder({
+    required this.id,
+    required this.when,
+    this.reason,
+    this.payout,
+    this.orderAmount,
+    this.amount,
+  });
+
+  final String id;
+  final String when;
+  final String? reason;
+  final String? payout;
+  final String? orderAmount;
+  final String? amount;
+}
+
+class _PayoutDetailsViewState extends State<PayoutDetailsView> {
+  bool _isLoading = true;
+  Map<String, dynamic>? _payoutDetails;
+  List<_PayoutOrder> _relatedOrders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPayoutDetail();
+  }
+
+  Future<void> _fetchPayoutDetail() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = await getSavedObject("token");
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      final payoutId = widget.payoutId?.toString().trim().replaceAll(RegExp(r'[^0-9]'), '') ??
+          widget.initialPayoutData?['id']?.toString() ??
+          widget.transactionId.replaceAll(RegExp(r'[^0-9]'), '');
+
+      debugPrint("==================== GET EARNINGS PAYOUT DETAIL ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.earningsPayoutDetail}");
+      debugPrint("Query ID: $payoutId");
+
+      final response = await DioClient().get(
+        ApiEndPoints.earningsPayoutDetail,
+        query: {"id": payoutId},
+      );
+
+      debugPrint("==================== GET EARNINGS PAYOUT DETAIL RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      if (response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status'].toString() == 'true')) {
+        final dataField = response.data['data'];
+        Map<String, dynamic>? payoutData;
+        if (dataField is Map) {
+          if (dataField['payout'] is Map) {
+            payoutData = Map<String, dynamic>.from(dataField['payout'] as Map);
+          } else {
+            payoutData = Map<String, dynamic>.from(dataField);
+          }
+        }
+
+        List rawOrdersList = [];
+        if (payoutData != null) {
+          if (payoutData['payout_orders'] is List) {
+            rawOrdersList = payoutData['payout_orders'] as List;
+          } else if (payoutData['orders'] is List) {
+            rawOrdersList = payoutData['orders'] as List;
+          }
+        }
+        if (rawOrdersList.isEmpty && dataField is Map) {
+          if (dataField['payout_orders'] is List) {
+            rawOrdersList = dataField['payout_orders'] as List;
+          } else if (dataField['orders'] is List) {
+            rawOrdersList = dataField['orders'] as List;
+          }
+        }
+
+        final List<_PayoutOrder> parsedOrders = [];
+        for (final o in rawOrdersList) {
+          if (o is! Map) continue;
+          final item = Map<String, dynamic>.from(o);
+
+          String orderId = item['order_code']?.toString().trim() ?? '';
+          if (orderId.isEmpty) {
+            final rawOrderId = item['order_id'] ?? item['id'];
+            orderId = rawOrderId != null ? '#ORD-$rawOrderId' : '#ORD-000000';
+          } else if (!orderId.startsWith('#')) {
+            orderId = '#$orderId';
+          }
+
+          String whenStr = '';
+          final rawDate = item['order_placed_at']?.toString() ??
+              item['created_at']?.toString() ??
+              payoutData?['payment_date']?.toString() ??
+              payoutData?['paid_at']?.toString() ??
+              item['date']?.toString() ??
+              '';
+          if (rawDate.isNotEmpty) {
+            final dt = DateTime.tryParse(rawDate);
+            if (dt != null) {
+              whenStr = formatOrderPlacedAt(dt);
+            } else {
+              whenStr = rawDate;
+            }
+          }
+
+          final reason = item['reason']?.toString() ?? item['note']?.toString();
+          final rawPayout = item['payout_amount'] ?? item['amount'];
+          final rawOrderAmount = item['order_amount'] ?? item['total_amount'] ?? item['total'];
+
+          String? payoutStr;
+          String? orderAmountStr;
+          String? amountStr;
+
+          if (rawPayout != null && rawOrderAmount != null) {
+            payoutStr = '${_formatVal(rawPayout)} MRU';
+            orderAmountStr = '${_formatVal(rawOrderAmount)} MRU';
+          } else if (rawPayout != null) {
+            amountStr = '${_formatVal(rawPayout)} MRU';
+          } else if (rawOrderAmount != null) {
+            amountStr = '${_formatVal(rawOrderAmount)} MRU';
+          } else {
+            amountStr = '0.00 MRU';
+          }
+
+          parsedOrders.add(
+            _PayoutOrder(
+              id: orderId,
+              when: whenStr.isNotEmpty ? whenStr : widget.timestamp,
+              reason: (reason != null && reason.isNotEmpty && reason != 'null') ? reason : null,
+              payout: payoutStr,
+              orderAmount: orderAmountStr,
+              amount: amountStr,
+            ),
+          );
+        }
+
+        if (mounted) {
+          setState(() {
+            _payoutDetails = payoutData;
+            _relatedOrders = parsedOrders;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching payout detail: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _formatVal(dynamic val) {
+    if (val == null) return '0.00';
+    final str = val.toString().trim();
+    if (str.isEmpty || str == 'null') return '0.00';
+    final d = double.tryParse(str.replaceAll(RegExp(r'[^0-9.]'), ''));
+    if (d != null) {
+      return d.toStringAsFixed(2);
+    }
+    return str;
+  }
+
+  void _showProofDialog(BuildContext context, String url) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Payment Proof',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: PayoutDetailsView.ink,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                InteractiveViewer(
+                  child: Image.network(
+                    url,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const Padding(
+                      padding: EdgeInsets.all(32),
+                      child: Text('Failed to load image'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -38,6 +290,44 @@ class PayoutDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final transactionId = _payoutDetails?['transaction_id']?.toString() ??
+        _payoutDetails?['transaction_ref']?.toString() ??
+        widget.transactionId;
+
+    String timestamp = widget.timestamp;
+    final rawDate = _payoutDetails?['paid_at']?.toString() ??
+        _payoutDetails?['payment_date']?.toString() ??
+        _payoutDetails?['created_at']?.toString();
+    if (rawDate != null && rawDate.isNotEmpty) {
+      final dt = DateTime.tryParse(rawDate);
+      if (dt != null) {
+        timestamp = formatOrderPlacedAt(dt);
+      }
+    }
+
+    final statusStr = _payoutDetails?['status']?.toString().toUpperCase() ?? widget.status.toUpperCase();
+    final statusColor = statusStr == 'CANCELLED'
+        ? const Color(0xFFEF4444)
+        : PayoutDetailsView.green;
+
+    final amountStr = _payoutDetails?['amount'] != null
+        ? '${_formatVal(_payoutDetails!['amount'])} MRU'
+        : widget.amount;
+
+    final paymentId = _payoutDetails?['transaction_ref']?.toString() ??
+        _payoutDetails?['payment_id']?.toString() ??
+        _payoutDetails?['reference_number']?.toString() ??
+        'N/A';
+
+    final notes = _payoutDetails?['payment_note']?.toString() ??
+        _payoutDetails?['note']?.toString() ??
+        _payoutDetails?['notes']?.toString() ??
+        'N/A';
+
+    final proofUrl = _payoutDetails?['payment_proof']?.toString() ??
+        _payoutDetails?['proof']?.toString() ??
+        _payoutDetails?['proof_image']?.toString();
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
@@ -69,150 +359,207 @@ class PayoutDetailsView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: const Color(0xFFFFE0D0)),
                       ),
-                      child: const Icon(Icons.chevron_left_rounded, color: orange, size: 26),
+                      child: const Icon(Icons.chevron_left_rounded, color: PayoutDetailsView.orange, size: 26),
                     ),
                   ),
                 ),
               ),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33FFAE91),
-                            blurRadius: 12,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                child: RefreshIndicator(
+                  color: PayoutDetailsView.orange,
+                  onRefresh: _fetchPayoutDetail,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                    children: [
+                      Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFE0D7),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFFFAE91)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        transactionId,
-                                        style: GoogleFonts.inter(
-                                          color: orange,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.access_time_outlined, size: 13, color: muted),
-                                          const SizedBox(width: 4),
-                                          Flexible(
-                                            child: Text(
-                                              timestamp,
-                                              style: GoogleFonts.inter(
-                                                color: muted,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'CREDITED',
-                                      style: GoogleFonts.inter(
-                                        color: green,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 11,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      amount,
-                                      style: GoogleFonts.inter(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Payment ID: ABCD123456',
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF6B7280),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'View Payment Proof',
-                                  style: GoogleFonts.inter(
-                                    color: orange,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: orange,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            _ExpandableLine(
-                              title: 'Notes',
-                              text: 'Notes: Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFF9AA3B2),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                              ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x33FFAE91),
+                              blurRadius: 12,
+                              offset: Offset(0, 4),
                             ),
                           ],
                         ),
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFE0D7),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFFFAE91)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          transactionId,
+                                          style: GoogleFonts.inter(
+                                            color: PayoutDetailsView.orange,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.access_time_outlined, size: 13, color: PayoutDetailsView.muted),
+                                            const SizedBox(width: 4),
+                                            Flexible(
+                                              child: Text(
+                                                timestamp,
+                                                style: GoogleFonts.inter(
+                                                  color: PayoutDetailsView.muted,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        statusStr,
+                                        style: GoogleFonts.inter(
+                                          color: statusColor,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 11,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        amountStr,
+                                        style: GoogleFonts.inter(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Payment ID: $paymentId',
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFF6B7280),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (proofUrl != null && proofUrl.isNotEmpty && proofUrl != 'null') {
+                                        _showProofDialog(context, proofUrl);
+                                      }
+                                    },
+                                    child: Text(
+                                      'View Payment Proof',
+                                      style: GoogleFonts.inter(
+                                        color: PayoutDetailsView.orange,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: PayoutDetailsView.orange,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              _ExpandableLine(
+                                title: 'Notes',
+                                text: 'Notes: $notes',
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF9AA3B2),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const _DetailOrderCard(
-                      id: '#ORD-000246',
-                      when: 'Feb 07, 2026 11:45 AM, Today',
-                      reason: 'Lorem ipsum dolor sit amet',
-                      payout: '450.00 MRU',
-                      orderAmount: '500.00 MRU',
-                    ),
-                    const SizedBox(height: 12),
-                    const _DetailOrderCard(
-                      id: '#ORD-000241',
-                      when: 'Feb 07, 2026 10:45 AM, Today',
-                      amount: '550.00 MRU',
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: PayoutDetailsView.orange,
+                            ),
+                          ),
+                        )
+                      else if (_relatedOrders.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'lib/assets/images/nodata.png',
+                                  height: 120,
+                                  width: 140,
+                                  fit: BoxFit.contain,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No Orders Found',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: PayoutDetailsView.ink,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Orders related to this payout will appear here',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                    color: PayoutDetailsView.muted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        for (final order in _relatedOrders) ...[
+                          _DetailOrderCard(
+                            id: order.id,
+                            when: order.when,
+                            reason: order.reason,
+                            payout: order.payout,
+                            orderAmount: order.orderAmount,
+                            amount: order.amount,
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                    ],
+                  ),
                 ),
               ),
             ],

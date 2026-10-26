@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/controller/chat_controller.dart';
+import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 
@@ -12,6 +17,8 @@ class ChatThread {
     this.isOnline = false,
     this.showReadReceipt = false,
     this.previewIsUnread = false,
+    this.conversationId,
+    this.avatarUrl,
   });
 
   final String name;
@@ -21,30 +28,15 @@ class ChatThread {
   final bool isOnline;
   final bool showReadReceipt;
   final bool previewIsUnread;
+  final int? conversationId;
+  final String? avatarUrl;
 }
 
-class MessagesListView extends StatelessWidget {
+class MessagesListView extends StatefulWidget {
   const MessagesListView({super.key, this.embedded = false});
 
   /// When true, used as a bottom-nav tab (no own bottom nav / back button).
   final bool embedded;
-
-  static const threads = [
-    ChatThread(
-      name: 'Ahmed',
-      preview: 'Order #22789007 is ready for pickup?',
-      time: '12:45 PM',
-      unreadCount: 1,
-      previewIsUnread: true,
-    ),
-    ChatThread(
-      name: 'Ali Ahmed',
-      preview: 'Etiam cursus velit non eros eleifenddic',
-      time: 'Just now',
-      isOnline: true,
-      showReadReceipt: true,
-    ),
-  ];
 
   static void open(BuildContext context) {
     Navigator.of(context).push(
@@ -55,63 +47,290 @@ class MessagesListView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final body = Column(
-      children: [
-        SizedBox(height: embedded ? MediaQuery.paddingOf(context).top + 8 : 8),
-        _Header(
-          showBack: !embedded,
-          onBack: () => Navigator.of(context).maybePop(),
-        ),
-        const SizedBox(height: 14),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: _SearchField(),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            itemCount: threads.length,
-            separatorBuilder: (_, _) => const Divider(
-              height: 1,
-              color: AppColors.divider,
-            ),
-            itemBuilder: (context, index) {
-              final thread = threads[index];
-              return _ChatListTile(
-                thread: thread,
-                onTap: () => ChatView.open(
-                  context,
-                  customerName: thread.name,
-                  isOnline: thread.isOnline,
-                ),
-              );
-            },
-          ),
-        ),
-        if (!embedded)
-          _MessagesBottomNav(
-            onSelect: (index) {
-              if (index == 2) return;
-              Navigator.of(context).maybePop();
-            },
-          ),
-      ],
-    );
+  State<MessagesListView> createState() => _MessagesListViewState();
+}
 
-    if (embedded) {
-      return ColoredBox(color: Colors.white, child: body);
+class _MessagesListViewState extends State<MessagesListView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  bool _isFirstLoad = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    _isFirstLoad = controller.conversations.isEmpty;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.getAllConversations(context).then((_) {
+        if (mounted) {
+          setState(() {
+            _isFirstLoad = false;
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  ChatThread _threadFromConversation(Conversation conv) {
+    final customerName = conv.customer?.name?.trim();
+    final name = (customerName != null && customerName.isNotEmpty)
+        ? customerName
+        : 'Customer';
+
+    String preview = '';
+    if (conv.lastMessage != null) {
+      if (conv.lastMessage?.messageType == 'image') {
+        preview = '📷 Image';
+      } else if (conv.lastMessage?.messageType == 'voice') {
+        preview = '🎤 Voice message';
+      } else {
+        preview = conv.lastMessage?.message ?? '';
+      }
     }
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(child: body),
-      ),
+    final timeStr = conv.lastMessageAt ?? conv.lastMessage?.createdAt;
+    final time = _formatChatTime(timeStr);
+    final unreadCount = conv.unreadCount ?? 0;
+    final isRead =
+        conv.lastMessage?.isRead == 1 || conv.lastMessage?.isRead == true;
+
+    String? avatar;
+    if (conv.image != null && conv.image!.isNotEmpty) {
+      avatar = conv.image!.startsWith('http')
+          ? conv.image
+          : '${ApiConfigs.IMAGE_URL}${conv.image}';
+    } else if (conv.customer?.image != null &&
+        conv.customer!.image!.isNotEmpty) {
+      avatar = conv.customer!.image!.startsWith('http')
+          ? conv.customer!.image
+          : '${ApiConfigs.IMAGE_URL}${conv.customer!.image}';
+    }
+
+    return ChatThread(
+      name: name,
+      preview: preview,
+      time: time,
+      unreadCount: unreadCount,
+      isOnline: false,
+      showReadReceipt: unreadCount == 0 && isRead,
+      previewIsUnread: unreadCount > 0,
+      conversationId: conv.id,
+      avatarUrl: avatar,
+    );
+  }
+
+  String _formatChatTime(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return '';
+    try {
+      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
+      if (timeStr.contains('-') && !timeStr.contains('T')) {
+        try {
+          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
+        } catch (_) {}
+      }
+      dt = dt.toLocal();
+      final now = DateTime.now();
+      if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+        return DateFormat('hh:mm a').format(dt);
+      }
+      final yesterday = now.subtract(const Duration(days: 1));
+      if (dt.year == yesterday.year &&
+          dt.month == yesterday.month &&
+          dt.day == yesterday.day) {
+        return 'Yesterday';
+      }
+      return DateFormat('dd/MM/yyyy').format(dt);
+    } catch (_) {
+      return '';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<ChatController>(
+      init: Get.isRegistered<ChatController>()
+          ? Get.find<ChatController>()
+          : Get.put(ChatController()),
+      builder: (controller) {
+        final isLoading = controller.isLoading ||
+            (_isFirstLoad && controller.conversations.isEmpty);
+
+        final List<ChatThread> threads = controller.conversations
+            .map(_threadFromConversation)
+            .where((t) {
+              if (_searchQuery.isEmpty) return true;
+              final q = _searchQuery.toLowerCase();
+              return t.name.toLowerCase().contains(q) ||
+                  t.preview.toLowerCase().contains(q);
+            })
+            .toList();
+
+        final body = Column(
+          children: [
+            SizedBox(
+              height: widget.embedded
+                  ? MediaQuery.paddingOf(context).top + 8
+                  : 8,
+            ),
+            _Header(
+              showBack: !widget.embedded,
+              onBack: () => Navigator.of(context).maybePop(),
+            ),
+            const SizedBox(height: 14),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _SearchField(
+                controller: _searchController,
+                onChanged: (val) {
+                  setState(() {
+                    _searchQuery = val.trim();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryOrange,
+                      ),
+                    )
+                  : threads.isEmpty
+                      ? RefreshIndicator(
+                          color: AppColors.primaryOrange,
+                          onRefresh: () =>
+                              controller.getAllConversations(context),
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.45,
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          'lib/assets/images/nodata.png',
+                                          height: 120,
+                                          width: 140,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          'No messages yet',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.textDark,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        const Text(
+                                          'Customer messages will appear here',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          color: AppColors.primaryOrange,
+                          onRefresh: () =>
+                              controller.getAllConversations(context),
+                          child: ListView.separated(
+                            controller:
+                                controller.conversationsScrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            itemCount: threads.length +
+                                (controller.isLoadMoreConversations ? 1 : 0),
+                            separatorBuilder: (_, _) => const Divider(
+                              height: 1,
+                              color: AppColors.divider,
+                            ),
+                            itemBuilder: (context, index) {
+                              if (index == threads.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColors.primaryOrange,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              final thread = threads[index];
+                              return _ChatListTile(
+                                thread: thread,
+                                onTap: () {
+                                  if (thread.unreadCount > 0 &&
+                                      thread.conversationId != null) {
+                                    controller
+                                        .markAsRead(thread.conversationId!);
+                                  }
+                                  ChatView.open(
+                                    context,
+                                    customerName: thread.name,
+                                    isOnline: thread.isOnline,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+            ),
+            if (!widget.embedded)
+              _MessagesBottomNav(
+                onSelect: (index) {
+                  if (index == 2) return;
+                  Navigator.of(context).maybePop();
+                },
+              ),
+          ],
+        );
+
+        if (widget.embedded) {
+          return ColoredBox(color: Colors.white, child: body);
+        }
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: SafeArea(child: body),
+          ),
+        );
+      },
     );
   }
 }
@@ -176,7 +395,10 @@ class _Header extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField();
+  const _SearchField({this.controller, this.onChanged});
+
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -188,26 +410,49 @@ class _SearchField extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: AppColors.fieldBorder),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.search_rounded,
             color: AppColors.textMeta,
             size: 22,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              'Search customer name or order ID...',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: AppColors.textMuted,
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              style: const TextStyle(
+                color: AppColors.textDark,
                 fontWeight: FontWeight.w400,
                 fontSize: 13.5,
               ),
+              cursorColor: AppColors.primaryOrange,
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                hintText: 'Search customer name or order ID...',
+                hintStyle: TextStyle(
+                  color: AppColors.textMuted,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13.5,
+                ),
+              ),
             ),
           ),
+          if (controller != null && controller!.text.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                controller!.clear();
+                onChanged?.call('');
+              },
+              child: const Icon(
+                Icons.close_rounded,
+                color: AppColors.textMeta,
+                size: 18,
+              ),
+            ),
         ],
       ),
     );
@@ -238,14 +483,22 @@ class _ChatListTile extends StatelessWidget {
                 CircleAvatar(
                   radius: 26,
                   backgroundColor: AppColors.avatarPink,
-                  child: Text(
-                    thread.name[0].toUpperCase(),
-                    style: const TextStyle(
-                      color: AppColors.avatarText,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                    ),
-                  ),
+                  backgroundImage: thread.avatarUrl != null &&
+                          thread.avatarUrl!.isNotEmpty
+                      ? NetworkImage(thread.avatarUrl!)
+                      : null,
+                  child: thread.avatarUrl != null && thread.avatarUrl!.isNotEmpty
+                      ? null
+                      : Text(
+                          thread.name.isNotEmpty
+                              ? thread.name[0].toUpperCase()
+                              : 'U',
+                          style: const TextStyle(
+                            color: AppColors.avatarText,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18,
+                          ),
+                        ),
                 ),
                 if (thread.isOnline)
                   Positioned(

@@ -31,6 +31,8 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     if (!Get.isRegistered<WaterHomeController>()) {
       Get.put(WaterHomeController());
+    } else {
+      Get.find<WaterHomeController>().fetchHome();
     }
   }
 
@@ -104,33 +106,47 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildHomeTab(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        Container(
-          color: AppColors.languageChip,
-          padding: EdgeInsets.only(
-            top: MediaQuery.paddingOf(context).top + 8,
-            left: 16,
-            right: 16,
-            bottom: 12,
+    return RefreshIndicator(
+      color: AppColors.primaryOrange,
+      onRefresh: () => controller.fetchHome(),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        children: [
+          Container(
+            color: AppColors.languageChip,
+            padding: EdgeInsets.only(
+              top: MediaQuery.paddingOf(context).top + 8,
+              left: 16,
+              right: 16,
+              bottom: 12,
+            ),
+            child: _Header(welcomeText: controller.welcomeText),
           ),
-          child: const _Header(),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _StoreStatusCard(
-                isOpen: controller.isStoreOpen,
-                onToggle: controller.toggleStore,
-              ),
-              const SizedBox(height: 12),
-              const _MetricsGrid(),
-              const SizedBox(height: 16),
-              const _TotalsRow(),
-              const SizedBox(height: 18),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _StoreStatusCard(
+                  isOpen: controller.isStoreOpen,
+                  timings: controller.storeTimings,
+                  onToggle: controller.toggleStore,
+                ),
+                const SizedBox(height: 12),
+                _MetricsGrid(
+                  newOrders: controller.newOrdersCount,
+                  subscriptionOrders: controller.subscriptionOrdersCount,
+                  preparing: controller.preparingOrdersCount,
+                  ready: controller.readyOrdersCount,
+                ),
+                const SizedBox(height: 16),
+                _TotalsRow(
+                  orders: controller.totalOrdersValue,
+                  completed: controller.completedOrdersValue,
+                  revenue: controller.revenueValue,
+                ),
+                const SizedBox(height: 18),
               _OrdersHeader(
                 onSeeAll: () => controller.onBottomNavSelect(1),
               ),
@@ -138,6 +154,12 @@ class _HomeViewState extends State<HomeView> {
               _OrderTypeTabs(
                 selectedIndex: controller.selectedTabIndex,
                 onSelect: controller.selectOrderType,
+                oneTimeBadge: controller.newOrdersCount != '0'
+                    ? controller.newOrdersCount
+                    : null,
+                subscriptionBadge: controller.subscriptionOrdersCount != '0'
+                    ? controller.subscriptionOrdersCount
+                    : null,
               ),
               const SizedBox(height: 14),
               _SearchBlock(controller: controller.searchController),
@@ -179,6 +201,7 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       ],
+    ),
     );
   }
 
@@ -273,6 +296,12 @@ class _HomeViewState extends State<HomeView> {
                 _OrderTypeTabs(
                   selectedIndex: controller.selectedTabIndex,
                   onSelect: controller.selectOrderType,
+                  oneTimeBadge: controller.newOrdersCount != '0'
+                      ? controller.newOrdersCount
+                      : null,
+                  subscriptionBadge: controller.subscriptionOrdersCount != '0'
+                      ? controller.subscriptionOrdersCount
+                      : null,
                 ),
                 const SizedBox(height: 14),
                 _SearchBlock(controller: controller.searchController),
@@ -334,28 +363,37 @@ class _HomeViewState extends State<HomeView> {
 }
 
 class _EmptyOrders extends StatelessWidget {
-  const _EmptyOrders({required this.message});
+  const _EmptyOrders({required this.message, this.subMessage});
 
   final String message;
+  final String? subMessage;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF0F0F0)),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 36,
-            color: AppColors.textHint,
+          Image.asset(
+            'lib/assets/images/nodata.png',
+            height: 120,
+            width: 140,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) => const Icon(
+              Icons.receipt_long_outlined,
+              size: 40,
+              color: AppColors.textHint,
+            ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
             message,
             textAlign: TextAlign.center,
@@ -366,10 +404,10 @@ class _EmptyOrders extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Try another status filter above',
+          Text(
+            subMessage ?? 'Try another status filter above',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textHint,
               fontWeight: FontWeight.w400,
               fontSize: 12.5,
@@ -382,7 +420,9 @@ class _EmptyOrders extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header();
+  const _Header({this.welcomeText});
+
+  final String? welcomeText;
 
   @override
   Widget build(BuildContext context) {
@@ -408,10 +448,12 @@ class _Header extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        const Expanded(
+        Expanded(
           child: Text(
-            'Welcome to Saimpex Vendor!',
-            style: TextStyle(
+            welcomeText?.isNotEmpty == true
+                ? welcomeText!
+                : 'Welcome to Saimpex Vendor!',
+            style: const TextStyle(
               color: AppColors.textDark,
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -447,10 +489,15 @@ class _Header extends StatelessWidget {
 }
 
 class _StoreStatusCard extends StatelessWidget {
-  const _StoreStatusCard({required this.isOpen, required this.onToggle});
+  const _StoreStatusCard({
+    required this.isOpen,
+    required this.onToggle,
+    this.timings = 'Today: 08:00 - 22:00',
+  });
 
   final bool isOpen;
   final ValueChanged<bool> onToggle;
+  final String timings;
 
   static const Color _iconGreen = AppColors.iconGreen;
   static const Color _iconBg = AppColors.iconGreenBg;
@@ -549,9 +596,9 @@ class _StoreStatusCard extends StatelessWidget {
                         ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'Today: 08:00 - 22:00',
-                  style: TextStyle(
+                Text(
+                  timings,
+                  style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -594,20 +641,30 @@ class _StoreStatusCard extends StatelessWidget {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  const _MetricsGrid();
+  const _MetricsGrid({
+    this.newOrders = '0',
+    this.subscriptionOrders = '0',
+    this.preparing = '0',
+    this.ready = '0',
+  });
+
+  final String newOrders;
+  final String subscriptionOrders;
+  final String preparing;
+  final String ready;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: newOrders,
                 label: 'New Orders',
-                badgeGradient: LinearGradient(
+                badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
@@ -618,35 +675,35 @@ class _MetricsGrid extends StatelessWidget {
                 countColor: Colors.white,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: subscriptionOrders,
                 label: 'Subscription Orders',
-                badgeColor: Color(0xFFB2DFDB),
-                countColor: Color(0xFF00695C),
+                badgeColor: const Color(0xFFB2DFDB),
+                countColor: const Color(0xFF00695C),
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: preparing,
                 label: 'Preparing',
-                badgeColor: Color(0xFFFFB300),
+                badgeColor: const Color(0xFFFFB300),
                 countColor: Colors.white,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: '2',
+                count: ready,
                 label: 'Ready',
-                badgeColor: Color(0xFF43A047),
+                badgeColor: const Color(0xFF43A047),
                 countColor: Colors.white,
               ),
             ),
@@ -728,7 +785,15 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _TotalsRow extends StatelessWidget {
-  const _TotalsRow();
+  const _TotalsRow({
+    this.orders = '0',
+    this.completed = '0',
+    this.revenue = '0',
+  });
+
+  final String orders;
+  final String completed;
+  final String revenue;
 
   static const Color _labelColor = AppColors.homeLabel;
   static const Color _valueColor = AppColors.homeValue;
@@ -736,28 +801,28 @@ class _TotalsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Expanded(
             child: _TotalItem(
               title: 'ORDERS',
-              value: '15',
+              value: orders,
             ),
           ),
-          _Line(),
+          const _Line(),
           Expanded(
             child: _TotalItem(
               title: 'COMPLETED',
-              value: '2',
+              value: completed,
             ),
           ),
-          _Line(),
+          const _Line(),
           Expanded(
             child: _TotalItem(
               title: 'REVENUE',
-              value: '830',
+              value: revenue,
               suffix: 'MRU',
               showTrend: true,
             ),
@@ -902,10 +967,14 @@ class _OrderTypeTabs extends StatelessWidget {
   const _OrderTypeTabs({
     required this.selectedIndex,
     required this.onSelect,
+    this.oneTimeBadge,
+    this.subscriptionBadge,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+  final String? oneTimeBadge;
+  final String? subscriptionBadge;
 
   static const _labels = ['One-Time Orders', 'Subscription Orders'];
 
@@ -952,11 +1021,12 @@ class _OrderTypeTabs extends StatelessWidget {
                 Row(
                   children: List.generate(_labels.length, (index) {
                     final selected = selectedIndex == index;
+                    final badge = index == 0 ? oneTimeBadge : subscriptionBadge;
                     return Expanded(
                       child: _Seg(
                         label: _labels[index],
                         selected: selected,
-                        badge: selected ? '1' : null,
+                        badge: badge,
                         onTap: () {
                           if (index == selectedIndex) return;
                           HapticFeedback.selectionClick();

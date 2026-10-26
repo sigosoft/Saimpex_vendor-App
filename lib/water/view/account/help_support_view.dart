@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HelpSupportView extends StatelessWidget {
+class HelpSupportView extends StatefulWidget {
   const HelpSupportView({super.key});
 
   static const orange = Color(0xFFFF5216);
@@ -13,6 +16,80 @@ class HelpSupportView extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => const HelpSupportView()),
     );
+  }
+
+  @override
+  State<HelpSupportView> createState() => _HelpSupportViewState();
+}
+
+class _HelpSupportViewState extends State<HelpSupportView> {
+  bool _isLoading = true;
+  String _phone = '';
+  String _email = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchContact();
+  }
+
+  Future<void> _fetchContact() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint("==================== GET CONTACT ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.getContact}");
+
+      final response = await DioClient().get(ApiEndPoints.getContact);
+
+      debugPrint("==================== GET CONTACT RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      if (response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status']?.toString() == 'true')) {
+        final data = response.data['data'];
+        dynamic contact = data is Map ? (data['contact'] ?? data) : data;
+
+        if (contact is Map) {
+          final emailStr = contact['email']?.toString().trim() ?? '';
+          final mobileStr = contact['mobile']?.toString().trim() ??
+              contact['phone']?.toString().trim() ??
+              '';
+          final codeStr = contact['country_code']?.toString().trim() ?? '';
+
+          String formattedPhone = mobileStr;
+          if (codeStr.isNotEmpty && !mobileStr.startsWith(codeStr)) {
+            formattedPhone = '$codeStr $mobileStr'.trim();
+          }
+
+          if (mounted) {
+            setState(() {
+              _phone = formattedPhone;
+              _email = emailStr;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching contact: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _open(Uri uri) async {
@@ -40,31 +117,80 @@ class HelpSupportView extends StatelessWidget {
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).maybePop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                  children: [
-                    _SupportCard(
-                      icon: Icons.phone,
-                      label: 'Call Us',
-                      value: '+222 45 12 34 56',
-                      action: 'Call Now',
-                      onTap: () => _open(Uri.parse('tel:+22245123456')),
-                    ),
-                    const SizedBox(height: 14),
-                    _SupportCard(
-                      icon: Icons.mail,
-                      label: 'Email Us',
-                      value: 'saimpex@gmail.com',
-                      action: 'Send Mail',
-                      onTap: () => _open(Uri.parse('mailto:saimpex@gmail.com')),
-                    ),
-                  ],
+                child: RefreshIndicator(
+                  color: HelpSupportView.orange,
+                  onRefresh: _fetchContact,
+                  child: _buildBody(),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: HelpSupportView.orange,
+        ),
+      );
+    }
+
+    final hasPhone = _phone.isNotEmpty;
+    final hasEmail = _email.isNotEmpty;
+
+    if (!hasPhone && !hasEmail) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Center(
+              child: Text(
+                'No contact details available',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF626466),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+      children: [
+        if (hasPhone) ...[
+          _SupportCard(
+            icon: Icons.phone,
+            label: 'Call Us',
+            value: _phone,
+            action: 'Call Now',
+            onTap: () {
+              final raw = _phone.replaceAll(' ', '');
+              _open(Uri.parse('tel:$raw'));
+            },
+          ),
+        ],
+        if (hasPhone && hasEmail) const SizedBox(height: 14),
+        if (hasEmail) ...[
+          _SupportCard(
+            icon: Icons.mail,
+            label: 'Email Us',
+            value: _email,
+            action: 'Send Mail',
+            onTap: () => _open(Uri.parse('mailto:$_email')),
+          ),
+        ],
+      ],
     );
   }
 }

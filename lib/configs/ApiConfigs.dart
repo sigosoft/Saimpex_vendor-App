@@ -146,6 +146,13 @@ class ApiEndPoints {
   static String updateCoupon = "updateCoupon";
   static String deleteCoupon = "deleteCoupon";
   static String imageEnhance = "openai-image-enhance";
+  static String getDeliveryBoys = "deliveryBoys";
+  static String AddDeliveryBoy = "addDeliveryBoy";
+  static String UpdateDeliveryBoy = "updateDeliveryBoy";
+  static String MarkLeave = "markLeave";
+  static String UnmarkLeave = "unmarkLeave";
+  static String BusinessSettings = "businessSettings";
+  static String getRatingReview = "ratingsReviews";
 
   // Pharmacy api endpoints
 
@@ -199,5 +206,4 @@ class ApiEndPoints {
   static String deletePharmacyMenuItem = "deletePharmacyMenuItem";
   static String deliveryBoyDetail = "deliveryBoyDetail";
   static String deleteDeliveryBoy = "deleteDeliveryBoy";
-  // static String pharmacyEarningsSummary = "";
 }

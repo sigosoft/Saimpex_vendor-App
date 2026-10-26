@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/view/account/payout_details_view.dart';
 
 class EarningsView extends StatefulWidget {
@@ -41,42 +44,345 @@ class _Order {
   final _OrderStatus status;
 }
 
+class _Payout {
+  const _Payout({
+    required this.id,
+    required this.rawId,
+    required this.when,
+    required this.amount,
+    required this.status,
+    this.raw,
+  });
+
+  final String id;
+  final String rawId;
+  final String when;
+  final String amount;
+  final String status;
+  final Map<String, dynamic>? raw;
+}
+
 class _EarningsViewState extends State<EarningsView> {
   _EarnTab _tab = _EarnTab.orders;
   _OrderFilter _filter = _OrderFilter.all;
 
-  static const _orders = [
-    _Order(
-      id: '#ORD-000246',
-      when: 'Feb 07, 2026 11:45 AM, Today',
-      amount: '450.00 MRU',
-      status: _OrderStatus.available,
-    ),
-    _Order(
-      id: '#ORD-000241',
-      when: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '550.00 MRU',
-      status: _OrderStatus.available,
-    ),
-    _Order(
-      id: '#ORD-000230',
-      when: 'Feb 07, 2026 09:45 AM, Today',
-      amount: '300.00 MRU',
-      status: _OrderStatus.available,
-    ),
-    _Order(
-      id: '#ORD-000225',
-      when: 'Feb 07, 2026 09:15 AM, Today',
-      amount: '400.00 MRU',
-      status: _OrderStatus.pending,
-    ),
-    _Order(
-      id: '#ORD-000202',
-      when: 'Feb 07, 2026 08:30 AM, Today',
-      amount: '0.00 MRU',
-      status: _OrderStatus.cancelled,
-    ),
-  ];
+  bool _isLoadingSummary = true;
+  bool _isLoadingOrders = true;
+  bool _isLoadingPayouts = true;
+  Map<String, dynamic>? _earningsSummary;
+  List<_Order> _orders = [];
+  List<_Payout> _payouts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEarningsSummary();
+    _fetchOrders();
+    _fetchPayouts();
+  }
+
+  Future<void> _fetchEarningsSummary() async {
+    try {
+      final token = await getSavedObject("token");
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint("==================== GET EARNINGS SUMMARY ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.earningsSummary}");
+
+      final response = await DioClient().get(ApiEndPoints.earningsSummary);
+
+      debugPrint("==================== GET EARNINGS SUMMARY RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      if (response.data is Map &&
+          (response.data['status'] == true ||
+              response.data['status'].toString() == 'true')) {
+        if (mounted) {
+          setState(() {
+            _earningsSummary = response.data['data'] is Map
+                ? Map<String, dynamic>.from(response.data['data'])
+                : null;
+            _isLoadingSummary = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoadingSummary = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching earnings summary: $e");
+      if (mounted) {
+        setState(() {
+          _isLoadingSummary = false;
+        });
+      }
+    }
+  }
+
+  String get _filterQuery {
+    switch (_filter) {
+      case _OrderFilter.all:
+        return 'all';
+      case _OrderFilter.available:
+        return 'available';
+      case _OrderFilter.pending:
+        return 'pending';
+      case _OrderFilter.cancelled:
+        return 'cancelled';
+    }
+  }
+
+  Future<void> _fetchOrders() async {
+    setState(() {
+      _isLoadingOrders = true;
+    });
+
+    try {
+      final token = await getSavedObject("token");
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint("==================== GET EARNINGS ORDERS ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.earningsOrders}");
+      debugPrint("Filter: $_filterQuery");
+
+      final response = await DioClient().get(
+        ApiEndPoints.earningsOrders,
+        query: {"limit": 50, "filter": _filterQuery},
+      );
+
+      debugPrint("==================== GET EARNINGS ORDERS RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      List<dynamic> ordersRaw = [];
+      if (response.data is Map) {
+        final dataField = response.data['data'];
+        if (dataField is Map) {
+          final ordersField = dataField['orders'];
+          if (ordersField is Map && ordersField['data'] is List) {
+            ordersRaw = ordersField['data'] as List;
+          } else if (ordersField is List) {
+            ordersRaw = ordersField;
+          } else if (dataField['data'] is List) {
+            ordersRaw = dataField['data'] as List;
+          }
+        } else if (dataField is List) {
+          ordersRaw = dataField;
+        } else if (response.data['orders'] is List) {
+          ordersRaw = response.data['orders'] as List;
+        }
+      }
+
+      final List<_Order> parsedOrders = [];
+      for (final item in ordersRaw) {
+        if (item is! Map) continue;
+        final order = Map<String, dynamic>.from(item);
+
+        String id = order['order_code']?.toString().trim() ?? '';
+        if (id.isEmpty) {
+          final rawId = order['id'] ?? order['order_id'] ?? order['order_number'];
+          if (rawId != null) {
+            id = '#ORD-$rawId';
+          } else {
+            id = '#ORD-000000';
+          }
+        } else if (!id.startsWith('#')) {
+          id = '#$id';
+        }
+
+        String whenStr = '';
+        final rawDate = order['order_placed_at']?.toString() ??
+            order['created_at']?.toString() ??
+            order['when']?.toString() ??
+            order['date']?.toString() ??
+            '';
+        if (rawDate.isNotEmpty) {
+          final dt = DateTime.tryParse(rawDate);
+          if (dt != null) {
+            whenStr = formatOrderPlacedAt(dt);
+          } else {
+            whenStr = rawDate;
+          }
+        }
+
+        final rawAmount = order['earnings_amount'] ??
+            order['amount'] ??
+            order['total'] ??
+            order['total_amount'];
+        final amountStr = '${_formatVal(rawAmount)} MRU';
+
+        final rawStatus = order['earnings_status']?.toString() ??
+            order['status']?.toString();
+        final statusEnum = _parseOrderStatus(rawStatus);
+
+        parsedOrders.add(
+          _Order(
+            id: id,
+            when: whenStr,
+            amount: amountStr,
+            status: statusEnum,
+          ),
+        );
+      }
+
+      if (mounted) {
+        setState(() {
+          _orders = parsedOrders;
+          _isLoadingOrders = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching earnings orders: $e");
+      if (mounted) {
+        setState(() {
+          _orders = [];
+          _isLoadingOrders = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchPayouts() async {
+    setState(() {
+      _isLoadingPayouts = true;
+    });
+
+    try {
+      final token = await getSavedObject("token");
+      if (token != null &&
+          token.toString() != 'null' &&
+          token.toString().isNotEmpty) {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint("==================== GET EARNINGS PAYOUT HISTORY ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.earningsPayoutHistory}");
+
+      final response = await DioClient().get(
+        ApiEndPoints.earningsPayoutHistory,
+        query: {"limit": 50},
+      );
+
+      debugPrint("==================== GET EARNINGS PAYOUT HISTORY RESPONSE ====================");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      List<dynamic> payoutsRaw = [];
+      if (response.data is Map) {
+        final dataField = response.data['data'];
+        if (dataField is Map) {
+          final payoutsField = dataField['payouts'];
+          if (payoutsField is Map && payoutsField['data'] is List) {
+            payoutsRaw = payoutsField['data'] as List;
+          } else if (payoutsField is List) {
+            payoutsRaw = payoutsField;
+          } else if (dataField['data'] is List) {
+            payoutsRaw = dataField['data'] as List;
+          }
+        } else if (dataField is List) {
+          payoutsRaw = dataField;
+        } else if (response.data['payouts'] is List) {
+          payoutsRaw = response.data['payouts'] as List;
+        }
+      }
+
+      final List<_Payout> parsedPayouts = [];
+      for (final item in payoutsRaw) {
+        if (item is! Map) continue;
+        final payout = Map<String, dynamic>.from(item);
+
+        final rawId = payout['id']?.toString() ?? '';
+        String id = payout['transaction_id']?.toString().trim() ??
+            payout['transaction_ref']?.toString().trim() ??
+            payout['payout_code']?.toString().trim() ??
+            '';
+        if (id.isEmpty) {
+          id = rawId.isNotEmpty ? '#TRX$rawId' : '#TRX000';
+        } else if (!id.startsWith('#')) {
+          id = '#$id';
+        }
+
+        String whenStr = '';
+        final rawDate = payout['paid_at']?.toString() ??
+            payout['payment_date']?.toString() ??
+            payout['created_at']?.toString() ??
+            payout['date']?.toString() ??
+            '';
+        if (rawDate.isNotEmpty) {
+          final dt = DateTime.tryParse(rawDate);
+          if (dt != null) {
+            whenStr = formatOrderPlacedAt(dt);
+          } else {
+            whenStr = rawDate;
+          }
+        }
+
+        final rawAmount = payout['amount'] ?? payout['payout_amount'];
+        final amountStr = '${_formatVal(rawAmount)} MRU';
+        final statusStr = payout['status']?.toString() ?? 'CREDITED';
+
+        parsedPayouts.add(
+          _Payout(
+            id: id,
+            rawId: rawId,
+            when: whenStr,
+            amount: amountStr,
+            status: statusStr,
+            raw: payout,
+          ),
+        );
+      }
+
+      if (mounted) {
+        setState(() {
+          _payouts = parsedPayouts;
+          _isLoadingPayouts = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching earnings payouts: $e");
+      if (mounted) {
+        setState(() {
+          _payouts = [];
+          _isLoadingPayouts = false;
+        });
+      }
+    }
+  }
+
+  _OrderStatus _parseOrderStatus(String? status) {
+    final s = status?.toString().trim().toLowerCase() ?? '';
+    if (s.contains('avail') || s.contains('credit') || s.contains('complete') || s.contains('deliver')) {
+      return _OrderStatus.available;
+    } else if (s.contains('cancel') || s.contains('reject')) {
+      return _OrderStatus.cancelled;
+    } else {
+      return _OrderStatus.pending;
+    }
+  }
+
+  String _formatVal(dynamic val) {
+    if (val == null) return '0.00';
+    final str = val.toString().trim();
+    if (str.isEmpty || str == 'null') return '0.00';
+    final d = double.tryParse(str.replaceAll(RegExp(r'[^0-9.]'), ''));
+    if (d != null) {
+      return d.toStringAsFixed(2);
+    }
+    return str;
+  }
 
   List<_Order> get _visible {
     if (_filter == _OrderFilter.all) return _orders;
@@ -92,6 +398,13 @@ class _EarningsViewState extends State<EarningsView> {
   @override
   Widget build(BuildContext context) {
     final ordersTab = _tab == _EarnTab.orders;
+    final orderTab = _earningsSummary?['order_amount_tab'] is Map
+        ? _earningsSummary!['order_amount_tab'] as Map
+        : null;
+    final payoutsTab = _earningsSummary?['payouts_tab'] is Map
+        ? _earningsSummary!['payouts_tab'] as Map
+        : null;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
@@ -110,52 +423,168 @@ class _EarningsViewState extends State<EarningsView> {
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).maybePop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-                  children: [
-                    _TabSwitch(
-                      orders: ordersTab,
-                      onChanged: (orders) {
-                        setState(() => _tab = orders ? _EarnTab.orders : _EarnTab.payouts);
-                      },
-                    ),
-                    const SizedBox(height: 14),
-                    _SummaryCard(
-                      rows: ordersTab
-                          ? const [
-                              ('Pending Order Balance', '400.00 MRU'),
-                              ('Available Order Balance', '1300.00 MRU'),
-                              ('Total Payout Received', '00.00 MRU'),
-                            ]
-                          : const [
-                              ('Total Sale Amount', '1300.00 MRU'),
-                              ('Available Payout Balance', '300.00 MRU'),
-                              ('Total Payout Received', '00.00 MRU'),
-                            ],
-                    ),
-                    const SizedBox(height: 14),
-                    if (ordersTab) ...[
-                      _Filters(
-                        selected: _filter,
-                        onSelected: (filter) => setState(() => _filter = filter),
-                      ),
-                      const SizedBox(height: 14),
-                      for (final order in _visible) ...[
-                        _OrderCard(order: order),
-                        const SizedBox(height: 12),
-                      ],
-                    ] else
-                      _PayoutCard(
-                        onDetails: () {
-                          PayoutDetailsView.open(
-                            context,
-                            transactionId: '#TRX002',
-                            timestamp: 'Feb 07, 2026 10:45 AM, Today',
-                            amount: '1000.00 MRU',
-                          );
+                child: RefreshIndicator(
+                  color: EarningsView.orange,
+                  onRefresh: () async {
+                    await Future.wait([
+                      _fetchEarningsSummary(),
+                      _fetchOrders(),
+                      _fetchPayouts(),
+                    ]);
+                  },
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                    children: [
+                      _TabSwitch(
+                        orders: ordersTab,
+                        onChanged: (orders) {
+                          setState(() => _tab = orders ? _EarnTab.orders : _EarnTab.payouts);
                         },
                       ),
-                  ],
+                      const SizedBox(height: 14),
+                      _SummaryCard(
+                        rows: ordersTab
+                            ? [
+                                ('Pending Order Balance', '${_formatVal(orderTab?['pending_order_balance'])} MRU'),
+                                ('Available Order Balance', '${_formatVal(orderTab?['available_order_balance'])} MRU'),
+                                ('Total Payout Received', '${_formatVal(orderTab?['total_payout_received'])} MRU'),
+                              ]
+                            : [
+                                ('Total Sale Amount', '${_formatVal(payoutsTab?['total_sale_amount'] ?? '1300.00')} MRU'),
+                                ('Available Payout Balance', '${_formatVal(payoutsTab?['available_payout_balance'] ?? '300.00')} MRU'),
+                                ('Total Payout Received', '${_formatVal(payoutsTab?['total_payout_received'] ?? '00.00')} MRU'),
+                              ],
+                      ),
+                      const SizedBox(height: 14),
+                      if (ordersTab) ...[
+                        _Filters(
+                          selected: _filter,
+                          onSelected: (filter) {
+                            setState(() => _filter = filter);
+                            _fetchOrders();
+                          },
+                        ),
+                        const SizedBox(height: 14),
+                        if (_isLoadingOrders)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: EarningsView.orange,
+                              ),
+                            ),
+                          )
+                        else if (_visible.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'lib/assets/images/nodata.png',
+                                    height: 120,
+                                    width: 140,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No Orders Found',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: EarningsView.ink,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Orders will appear here',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                      color: EarningsView.muted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          for (final order in _visible) ...[
+                            _OrderCard(order: order),
+                            const SizedBox(height: 12),
+                          ],
+                      ] else ...[
+                        if (_isLoadingPayouts)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: EarningsView.orange,
+                              ),
+                            ),
+                          )
+                        else if (_payouts.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'lib/assets/images/nodata.png',
+                                    height: 120,
+                                    width: 140,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No Payouts Found',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: EarningsView.ink,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Payout history will appear here',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                      color: EarningsView.muted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          for (final payout in _payouts) ...[
+                            _PayoutCard(
+                              payout: payout,
+                              onDetails: () {
+                                PayoutDetailsView.open(
+                                  context,
+                                  payoutId: payout.rawId,
+                                  transactionId: payout.id,
+                                  timestamp: payout.when,
+                                  amount: payout.amount,
+                                  status: payout.status,
+                                  initialPayoutData: payout.raw,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                      ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -511,12 +940,20 @@ class _OrderCard extends StatelessWidget {
 }
 
 class _PayoutCard extends StatelessWidget {
-  const _PayoutCard({required this.onDetails});
+  const _PayoutCard({
+    required this.payout,
+    required this.onDetails,
+  });
 
+  final _Payout payout;
   final VoidCallback onDetails;
 
   @override
   Widget build(BuildContext context) {
+    final statusColor = payout.status.toUpperCase() == 'CANCELLED'
+        ? const Color(0xFFEF4444)
+        : const Color(0xFF16A34A);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
@@ -534,7 +971,7 @@ class _PayoutCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '#TRX002',
+                      payout.id,
                       style: GoogleFonts.inter(
                         color: EarningsView.orange,
                         fontWeight: FontWeight.w700,
@@ -546,12 +983,14 @@ class _PayoutCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.access_time_outlined, size: 13, color: EarningsView.muted),
                         const SizedBox(width: 4),
-                        Text(
-                          'Feb 07, 2026 10:45 AM, Today',
-                          style: GoogleFonts.inter(
-                            color: EarningsView.muted,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
+                        Flexible(
+                          child: Text(
+                            payout.when,
+                            style: GoogleFonts.inter(
+                              color: EarningsView.muted,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ],
@@ -559,13 +998,14 @@ class _PayoutCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'CREDITED',
+                    payout.status.toUpperCase(),
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF16A34A),
+                      color: statusColor,
                       fontWeight: FontWeight.w700,
                       fontSize: 11,
                       letterSpacing: 0.3,
@@ -573,9 +1013,9 @@ class _PayoutCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '1000.00 MRU',
+                    payout.amount,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF16A34A),
+                      color: statusColor,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),

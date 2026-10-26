@@ -86,6 +86,12 @@ class RetryInterceptor extends Interceptor {
         final loginModel = LoginModel.fromJson(response.data);
         if (loginModel.status == true) {
           final token = loginModel.data?.details?.token ?? "";
+          final vendorType = loginModel.data?.details?.vendorType;
+          debugPrint("==================================================");
+          debugPrint("[REAUTH LOGIN SUCCESS] API Vendor Type: $vendorType");
+          debugPrint("[REAUTH LOGIN SUCCESS] Auth Token: $token");
+          debugPrint("[REAUTH LOGIN SUCCESS] FCM Token: $fcmToken");
+          debugPrint("==================================================");
           await savename("token", token);
           await savename("loginStatus", loginModel.status?.toString() ?? "false");
           await savename("name", loginModel.data?.details?.name ?? "");

@@ -67,10 +67,13 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
-    // Water and Home Cleaning are UI-design only for now: skip API validation.
-    // Grocery, Restaurant, and Pharmacy use the authenticated login flow.
-    if (selectedAppType == VendorAppType.water ||
-        selectedAppType == VendorAppType.homeCleaning) {
+    // Home Cleaning is UI-design only for now: skip API validation.
+    // Grocery, Restaurant, Pharmacy, and Water use the authenticated login flow.
+    if (selectedAppType == VendorAppType.homeCleaning) {
+      debugPrint("==================================================");
+      debugPrint("[LOGIN] Selected Vendor Type: ${selectedAppType.label} (${selectedAppType.name})");
+      debugPrint("[LOGIN] Home Cleaning skips API validation (UI-only)");
+      debugPrint("==================================================");
       await savename(VendorAppRouter.storageKey, selectedAppType.storageValue);
       await savename("loginStatus", "true");
       await VendorAppRouter.goToSelectedApp(type: selectedAppType);
@@ -86,6 +89,11 @@ class LoginController extends GetxController {
         // Retry after few seconds
         await Future.delayed(Duration(seconds: 2));
       }
+      debugPrint("==================================================");
+      debugPrint("[LOGIN REQUEST] Selected Vendor Type: ${selectedAppType.label}");
+      debugPrint("[LOGIN REQUEST] Username: $userName");
+      debugPrint("[LOGIN REQUEST] FCM Token: $fcm_token");
+      debugPrint("==================================================");
       final response = await DioClient().post(
         ApiEndPoints.login,
         body: {"username": userName, "password": password,  "fcm": fcm_token,},
@@ -95,6 +103,15 @@ class LoginController extends GetxController {
       update();
       if (loginModel.status == true) {
         final authToken = loginModel.data?.details?.token ?? "";
+        final apiVendorType = loginModel.data?.details?.vendorType;
+        debugPrint("==================================================");
+        debugPrint("[LOGIN SUCCESS] Selected Vendor Type: ${selectedAppType.label}");
+        debugPrint("[LOGIN SUCCESS] API Vendor Type: $apiVendorType");
+        debugPrint("[LOGIN SUCCESS] Auth Token: $authToken");
+        debugPrint("[LOGIN SUCCESS] FCM Token: $fcm_token");
+        debugPrint("[LOGIN SUCCESS] User ID: ${loginModel.data?.details?.id}");
+        debugPrint("[LOGIN SUCCESS] Vendor ID: ${loginModel.data?.details?.vendorId}");
+        debugPrint("==================================================");
         await savename("username", userName);
         await savename("password", password);
         await savename("token", authToken);

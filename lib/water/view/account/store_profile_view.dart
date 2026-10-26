@@ -1,8 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/controller/profile_controller.dart';
+import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/model/rating_review_model.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/vendor_app_router.dart';
+import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
 
-class StoreProfileView extends StatelessWidget {
+class StoreProfileView extends StatefulWidget {
   const StoreProfileView({super.key});
 
   static const _label = Color(0xFF8A97A8);
@@ -17,7 +28,278 @@ class StoreProfileView extends StatelessWidget {
   }
 
   @override
+  State<StoreProfileView> createState() => _StoreProfileViewState();
+}
+
+class _StoreProfileViewState extends State<StoreProfileView> {
+  ProfileData? _profileData;
+  Map<String, dynamic>? _rawVendorData;
+  List<ReviewItem> _reviews = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _isLoading = true);
+    await Future.wait([
+      _fetchProfile(),
+      _fetchRatingsReviews(),
+    ]);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _fetchProfile() async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      } else {
+        return;
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "1");
+
+      final now = DateTime.now();
+      final fromDate =
+          "${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+      final queryParams = <String, dynamic>{
+        "vendor_type": vendorType,
+        "from_date": fromDate,
+        "to_date": fromDate,
+        "limit": 10,
+        "page": 1,
+      };
+
+      debugPrint("==================== GET STORE PROFILE ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.profile}");
+      debugPrint("Query: $queryParams");
+
+      print("==================== GET STORE PROFILE ====================");
+      print("Endpoint: ${ApiEndPoints.profile}");
+      print("Query: $queryParams");
+
+      final response = await DioClient().get(
+        ApiEndPoints.profile,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      print("Response Status Code: ${response.statusCode}");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        try {
+          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+        } catch (_) {}
+      }
+
+      if (dataMap != null && mounted) {
+        final profileModel = ProfileModel.fromJson(dataMap);
+        final fetchedData = profileModel.data;
+        final rawData = (dataMap['data'] is Map<String, dynamic>)
+            ? ((dataMap['data']['vendor'] as Map<String, dynamic>?) ??
+                dataMap['data'] as Map<String, dynamic>?)
+            : null;
+
+        setState(() {
+          _profileData = fetchedData;
+          _rawVendorData = rawData;
+        });
+      }
+    } catch (e) {
+      debugPrint("==================== GET STORE PROFILE ERROR ====================");
+      debugPrint("Error: $e");
+      print("==================== GET STORE PROFILE ERROR ====================");
+      print("Error: $e");
+    }
+  }
+
+  Future<void> _fetchRatingsReviews() async {
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      }
+
+      final savedVendorType = await getSavedObject("vendorType");
+      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
+      final vendorType = (savedVendorType != null &&
+              savedVendorType.toString().isNotEmpty &&
+              savedVendorType.toString() != "0")
+          ? savedVendorType.toString()
+          : (savedAppType?.toString().isNotEmpty == true
+              ? savedAppType.toString()
+              : "1");
+
+      final queryParams = <String, dynamic>{
+        "limit": 10,
+        "vendor_type": vendorType,
+        "page": 1,
+      };
+
+      debugPrint("==================== GET RATING & REVIEWS ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.getRatingReview}");
+      debugPrint("Query: $queryParams");
+
+      print("==================== GET RATING & REVIEWS ====================");
+      print("Endpoint: ${ApiEndPoints.getRatingReview}");
+      print("Query: $queryParams");
+
+      final response = await DioClient().get(
+        ApiEndPoints.getRatingReview,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      print("Response Status Code: ${response.statusCode}");
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        try {
+          dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+        } catch (_) {}
+      }
+
+      if (dataMap != null && mounted) {
+        List<ReviewItem> items = [];
+        if (dataMap['data'] is Map<String, dynamic>) {
+          final model = RatingReviewModel.fromJson(dataMap);
+          items = model.data?.reviews ?? [];
+        } else if (dataMap['data'] is List) {
+          items = (dataMap['data'] as List)
+              .map((i) => ReviewItem.fromJson(i as Map<String, dynamic>?))
+              .toList();
+        }
+
+        setState(() {
+          _reviews = items;
+        });
+      }
+    } catch (e) {
+      debugPrint("==================== GET RATING & REVIEWS ERROR ====================");
+      debugPrint("Error: $e");
+      print("==================== GET RATING & REVIEWS ERROR ====================");
+      print("Error: $e");
+    }
+  }
+
+  String _formatContact(String? code, String? mobile) {
+    final c = (code ?? '').trim();
+    final m = (mobile ?? '').trim();
+    if (c.isEmpty && m.isEmpty) return '';
+    if (c.isEmpty) return m;
+    if (m.isEmpty) return c;
+    return '$c$m';
+  }
+
+  String _formatCommission(String? value) {
+    if (value == null || value.trim().isEmpty || value == 'null') return '';
+    final trimmed = value.trim();
+    return trimmed.endsWith('%') ? trimmed : '$trimmed%';
+  }
+
+  String _formatProfit(String? value) {
+    if (value == null || value.trim().isEmpty || value == 'null') return '';
+    final trimmed = value.trim();
+    return trimmed.contains('MRU') ? trimmed : '$trimmed MRU';
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final storeName = _profileData?.name ??
+        _rawVendorData?['name']?.toString() ??
+        _rawVendorData?['store_name']?.toString() ??
+        _rawVendorData?['vendor_name']?.toString() ??
+        '';
+    final ownerName = _profileData?.owner ??
+        _rawVendorData?['owner']?.toString() ??
+        _rawVendorData?['owner_name']?.toString() ??
+        '';
+    final storeId = _profileData?.id?.toString() ??
+        _rawVendorData?['id']?.toString() ??
+        '';
+    final contact = _formatContact(
+      _profileData?.countryCode ?? _rawVendorData?['country_code']?.toString(),
+      _profileData?.mobile ?? _rawVendorData?['mobile']?.toString(),
+    );
+    final email = _profileData?.email ??
+        _rawVendorData?['email']?.toString() ??
+        '';
+    final rawStatus = _profileData?.status ?? _rawVendorData?['status']?.toString();
+    final status = (rawStatus == '1' || rawStatus?.toLowerCase() == 'active' || rawStatus?.toLowerCase() == 'true')
+        ? 'ACTIVE'
+        : (rawStatus == '0' || rawStatus?.toLowerCase() == 'inactive' || rawStatus?.toLowerCase() == 'false'
+            ? 'INACTIVE'
+            : (rawStatus != null && rawStatus != 'null' ? rawStatus.toUpperCase() : ''));
+    final address = _profileData?.address ??
+        _rawVendorData?['address']?.toString() ??
+        '';
+
+    final holderName = _profileData?.accountHolderName ??
+        _rawVendorData?['account_holder_name']?.toString() ??
+        _rawVendorData?['holder_name']?.toString() ??
+        _rawVendorData?['bank_holder_name']?.toString() ??
+        '';
+    final ibanNumber = _profileData?.accountNumber ??
+        _rawVendorData?['account_number']?.toString() ??
+        _rawVendorData?['iban']?.toString() ??
+        _rawVendorData?['iban_number']?.toString() ??
+        '';
+    final swiftCode = _profileData?.ifscCode ??
+        _rawVendorData?['ifsc_code']?.toString() ??
+        _rawVendorData?['swift']?.toString() ??
+        _rawVendorData?['swift_code']?.toString() ??
+        '';
+
+    final regNumber = _profileData?.registrationNumber ??
+        _rawVendorData?['registration_number']?.toString() ??
+        _rawVendorData?['reg_number']?.toString() ??
+        '';
+    final regDate = _profileData?.registrationDate ??
+        _rawVendorData?['registration_date']?.toString() ??
+        _rawVendorData?['reg_date']?.toString() ??
+        '';
+    final tinNumber = _profileData?.gstNo ??
+        _rawVendorData?['gst_no']?.toString() ??
+        _rawVendorData?['tin_number']?.toString() ??
+        _rawVendorData?['nif_number']?.toString() ??
+        '';
+
+    final commission = _formatCommission(
+      _profileData?.commissionPercentage ??
+          _rawVendorData?['commission_percentage']?.toString() ??
+          _rawVendorData?['commission']?.toString(),
+    );
+    final totalProfit = _formatProfit(
+      _profileData?.totalProfit ??
+          _rawVendorData?['total_profit']?.toString() ??
+          _rawVendorData?['profit']?.toString(),
+    );
+
+    final ownerIdProof = _profileData?.ownerIdProof ??
+        _rawVendorData?['owner_id_proof']?.toString();
+    final certificate = _profileData?.certificate ??
+        _rawVendorData?['certificate']?.toString();
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
@@ -36,67 +318,118 @@ class StoreProfileView extends StatelessWidget {
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).maybePop()),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                  children: const [
-                    _SectionTitle('Store Details'),
-                    SizedBox(height: 8),
-                    _InfoCard(
-                      rows: [
-                        _InfoRow('Name', 'PureLife Water Co.'),
-                        _InfoRow('Owner', 'Salman'),
-                        _InfoRow('ID', '1'),
-                        _InfoRow('Contact', '+22241518211'),
-                        _InfoRow('Email', 'Purelife@.com'),
-                        _InfoRow('Status', 'ACTIVE', badge: true),
-                        _InfoRow('Address', 'Store Block 5, Mauritania'),
-                      ],
-                    ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Bank Details'),
-                    SizedBox(height: 8),
-                    _InfoCard(
-                      rows: [
-                        _InfoRow('Holder Name', 'Salman H'),
-                        _InfoRow('IBAN Number', '12123562189536189111'),
-                        _InfoRow('SWIFT Code', 'TESTMRMR001'),
-                      ],
-                    ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Registration Details'),
-                    SizedBox(height: 8),
-                    _InfoCard(
-                      rows: [
-                        _InfoRow('Reg. Number', 'REST11MAUR13'),
-                        _InfoRow('Reg. Date', 'Dec 7, 2025'),
-                        _InfoRow('TIN/NIF Number', 'MR-TIN-127444'),
-                      ],
-                    ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Payment Details'),
-                    SizedBox(height: 8),
-                    _InfoCard(
-                      rows: [
-                        _InfoRow('Commission %', '5.00%'),
-                        _InfoRow('Total Profit', '0 MRU', emphasize: true),
-                      ],
-                    ),
-                    SizedBox(height: 18),
-                    _SectionTitle('Owner Identity Proof'),
-                    SizedBox(height: 8),
-                    _EmptyCard(),
-                    SizedBox(height: 18),
-                    _SectionTitle('Certificate'),
-                    SizedBox(height: 8),
-                    _EmptyCard(),
-                    SizedBox(height: 20),
-                    _ReviewsHeader(),
-                    SizedBox(height: 10),
-                    _ReviewCard(),
-                    SizedBox(height: 10),
-                    _ReviewCard(),
-                  ],
-                ),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: StoreProfileView._orange,
+                        ),
+                      )
+                    : RefreshIndicator(
+                        color: StoreProfileView._orange,
+                        onRefresh: _fetchData,
+                        child: ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
+                          children: [
+                            const _SectionTitle('Store Details'),
+                            const SizedBox(height: 8),
+                            _InfoCard(
+                              rows: [
+                                _InfoRow('Name', storeName),
+                                _InfoRow('Owner', ownerName),
+                                _InfoRow('ID', storeId),
+                                _InfoRow('Contact', contact),
+                                _InfoRow('Email', email),
+                                _InfoRow('Status', status, badge: true),
+                                _InfoRow('Address', address),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+                            const _SectionTitle('Bank Details'),
+                            const SizedBox(height: 8),
+                            _InfoCard(
+                              rows: [
+                                _InfoRow('Holder Name', holderName),
+                                _InfoRow('IBAN Number', ibanNumber),
+                                _InfoRow('SWIFT Code', swiftCode),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+                            const _SectionTitle('Registration Details'),
+                            const SizedBox(height: 8),
+                            _InfoCard(
+                              rows: [
+                                _InfoRow('Reg. Number', regNumber),
+                                _InfoRow('Reg. Date', regDate),
+                                _InfoRow('TIN/NIF Number', tinNumber),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+                            const _SectionTitle('Payment Details'),
+                            const SizedBox(height: 8),
+                            _InfoCard(
+                              rows: [
+                                _InfoRow('Commission %', commission),
+                                _InfoRow('Total Profit', totalProfit, emphasize: true),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+                            const _SectionTitle('Owner Identity Proof'),
+                            const SizedBox(height: 8),
+                            _EmptyCard(imageUrl: ownerIdProof),
+                            const SizedBox(height: 18),
+                            const _SectionTitle('Certificate'),
+                            const SizedBox(height: 8),
+                            _EmptyCard(imageUrl: certificate),
+                            const SizedBox(height: 20),
+                            _ReviewsHeader(
+                              onSeeAll: () {
+                                if (!Get.isRegistered<ProfileController>()) {
+                                  Get.put(ProfileController());
+                                }
+                                Get.find<ProfileController>().getRatingsReviews(context);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const RatingReviewsScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            if (_reviews.isNotEmpty)
+                              for (var i = 0; i < _reviews.length; i++) ...[
+                                _ReviewCard(review: _reviews[i]),
+                                if (i < _reviews.length - 1) const SizedBox(height: 10),
+                              ]
+                            else
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 24),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'lib/assets/images/nodata.png',
+                                        height: 100,
+                                        width: 120,
+                                        fit: BoxFit.contain,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'No Rating & Reviews Found',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: StoreProfileView._ink,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
               ),
             ],
           ),
@@ -223,21 +556,23 @@ class _InfoCard extends StatelessWidget {
                     ),
                   ),
                   if (rows[i].badge)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0FDF4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        rows[i].value,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF16A34A),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )
+                    rows[i].value.isNotEmpty
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF0FDF4),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              rows[i].value,
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF16A34A),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()
                   else
                     Expanded(
                       flex: 6,
@@ -257,7 +592,7 @@ class _InfoCard extends StatelessWidget {
               ),
             ),
             if (i < rows.length - 1)
-              const Divider(height: 1, thickness:.2, color: Color(0xFFF1F1F1)),
+              const Divider(height: 1, thickness: .2, color: Color(0xFFF1F1F1)),
           ],
         ],
       ),
@@ -266,10 +601,18 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _EmptyCard extends StatelessWidget {
-  const _EmptyCard();
+  const _EmptyCard({this.imageUrl});
+
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final String? fullUrl = imageUrl != null && imageUrl!.trim().isNotEmpty && imageUrl != 'null'
+        ? (imageUrl!.startsWith('http://') || imageUrl!.startsWith('https://')
+            ? imageUrl
+            : '${ApiConfigs.IMAGE_URL}$imageUrl')
+        : null;
+
     return Container(
       width: double.infinity,
       height: 100,
@@ -284,12 +627,24 @@ class _EmptyCard extends StatelessWidget {
           ),
         ],
       ),
+      child: fullUrl != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                fullUrl,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(),
+              ),
+            )
+          : null,
     );
   }
 }
 
 class _ReviewsHeader extends StatelessWidget {
-  const _ReviewsHeader();
+  const _ReviewsHeader({this.onSeeAll});
+
+  final VoidCallback? onSeeAll;
 
   @override
   Widget build(BuildContext context) {
@@ -305,12 +660,16 @@ class _ReviewsHeader extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Text(
-          'See All',
-          style: GoogleFonts.inter(
-            color: StoreProfileView._orange,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+        GestureDetector(
+          onTap: onSeeAll,
+          behavior: HitTestBehavior.opaque,
+          child: Text(
+            'See All',
+            style: GoogleFonts.inter(
+              color: StoreProfileView._orange,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
         ),
       ],
@@ -319,10 +678,57 @@ class _ReviewsHeader extends StatelessWidget {
 }
 
 class _ReviewCard extends StatelessWidget {
-  const _ReviewCard();
+  const _ReviewCard({this.review});
+
+  final ReviewItem? review;
+
+  String _formatDate(String? raw) {
+    if (raw == null || raw.trim().isEmpty || raw == 'null') return '';
+    final dt = DateTime.tryParse(raw.trim());
+    if (dt != null) {
+      try {
+        return DateFormat('MMM dd yyyy, hh:mm a')
+            .format(dt)
+            .replaceAll('AM', 'am')
+            .replaceAll('PM', 'pm');
+      } catch (_) {
+        return formatOrderPlacedAt(dt);
+      }
+    }
+    return raw.trim();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final username = review?.username?.trim().isNotEmpty == true
+        ? review!.username!.trim()
+        : '';
+    final initial = username.isNotEmpty ? username[0].toUpperCase() : 'S';
+    final dateStr = _formatDate(review?.createdAt);
+
+    final ratingVal = double.tryParse(review?.rating?.toString() ?? '0') ?? 0.0;
+    final ratingDisplay = review?.rating?.toString().trim().isNotEmpty == true
+        ? review!.rating!.toString().trim()
+        : (ratingVal > 0 ? ratingVal.toStringAsFixed(1) : '0.0');
+
+    final comment = review?.comment?.trim() ?? '';
+    final rawOrder = review?.orderCode?.trim() ??
+        (review?.orderId != null ? review!.orderId.toString() : '');
+    final orderDisplay = rawOrder.isNotEmpty
+        ? (rawOrder.toLowerCase().startsWith('order:')
+            ? rawOrder
+            : 'Order: $rawOrder')
+        : '';
+
+    final hasUserImage = review?.userImage != null &&
+        review!.userImage!.trim().isNotEmpty &&
+        review!.userImage != 'null';
+    final String? userImageUrl = hasUserImage
+        ? (review!.userImage!.startsWith('http')
+            ? review!.userImage
+            : '${ApiConfigs.IMAGE_URL}${review!.userImage}')
+        : null;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -351,14 +757,31 @@ class _ReviewCard extends StatelessWidget {
                   color: Color(0xFFD1FAE5),
                   shape: BoxShape.circle,
                 ),
-                child: Text(
-                  'S',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF059669),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                ),
+                child: userImageUrl != null
+                    ? ClipOval(
+                        child: Image.network(
+                          userImageUrl,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Text(
+                            initial,
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF059669),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Text(
+                        initial,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF059669),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -369,7 +792,7 @@ class _ReviewCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            'Aicha Mint Ahmed',
+                            username,
                             style: GoogleFonts.inter(
                               color: const Color(0xFF3F4555),
                               fontWeight: FontWeight.w700,
@@ -377,14 +800,15 @@ class _ReviewCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text(
-                          'Jan 12 2026, 07:13 am',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF9AA8B8),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11,
+                        if (dateStr.isNotEmpty)
+                          Text(
+                            dateStr,
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF9AA8B8),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -392,13 +816,17 @@ class _ReviewCard extends StatelessWidget {
                       children: [
                         for (var i = 0; i < 5; i++)
                           Icon(
-                            i < 3 ? Icons.star_rounded : Icons.star_border_rounded,
-                            color: i < 3 ? const Color(0xFFFBBF24) : const Color(0xFFD1D5DB),
+                            i < ratingVal.round()
+                                ? Icons.star_rounded
+                                : Icons.star_border_rounded,
+                            color: i < ratingVal.round()
+                                ? const Color(0xFFFBBF24)
+                                : const Color(0xFFD1D5DB),
                             size: 16,
                           ),
                         const SizedBox(width: 4),
                         Text(
-                          '3.0',
+                          ratingDisplay,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
@@ -412,34 +840,38 @@ class _ReviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            "Lorem Ipsum has been the industry's standard dummy",
-            style: GoogleFonts.inter(
-              color: const Color(0xFF3F4555),
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            height: 34,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              'Order: ORD-000091',
+          if (comment.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              comment,
               style: GoogleFonts.inter(
-                color: const Color(0xFF94A3B8),
+                color: const Color(0xFF3F4555),
                 fontWeight: FontWeight.w500,
-                fontSize: 12,
+                fontSize: 13,
               ),
             ),
-          ),
+          ],
+          if (orderDisplay.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              height: 34,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                orderDisplay,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF94A3B8),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

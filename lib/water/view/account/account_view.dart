@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/water/controller/account_controller.dart';
@@ -25,9 +29,9 @@ class AccountView extends StatefulWidget {
   final bool embedded;
 
   static void open(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const AccountView()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const AccountView()));
   }
 
   @override
@@ -40,7 +44,201 @@ class _AccountViewState extends State<AccountView> {
   @override
   void initState() {
     super.initState();
-    controller = WaterAccountController();
+    controller = Get.isRegistered<WaterAccountController>()
+        ? Get.find<WaterAccountController>()
+        : Get.put(WaterAccountController());
+    controller.fetchProfile();
+  }
+
+  Future<bool?> _showDeleteAccountConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 6,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFECE5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.primaryOrange,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Delete Account',
+                  style: GoogleFonts.inter(
+                    color: AppColors.textDark,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Are you sure you want to delete your account?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF454E5D),
+                            side: const BorderSide(color: Color(0xFFE5E7EB)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'No',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: FilledButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF3B30),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Yes',
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _handleDeleteAccount() async {
+    final confirmed = await _showDeleteAccountConfirmationDialog(context);
+    if (confirmed != true) return;
+
+    try {
+      showLoadingDialog(context);
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      }
+
+      debugPrint(
+        "==================== GET DELETE ACCOUNT ====================",
+      );
+      debugPrint("Endpoint: ${ApiEndPoints.deleteAccount}");
+      print("==================== GET DELETE ACCOUNT ====================");
+      print("Endpoint: ${ApiEndPoints.deleteAccount}");
+
+      final response = await DioClient().get(ApiEndPoints.deleteAccount);
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+
+      if (mounted) {
+        Get.back();
+      }
+
+      if (response.data != null &&
+          (response.data['status'] == 'true' ||
+              response.data['status'] == true ||
+              response.data['status'] == 1 ||
+              response.data['status'] == '1')) {
+        final rawMsg = response.data['message'];
+        String toastMessage = 'Account deleted successfully';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          toastMessage = rawMsg;
+        } else if (rawMsg is Map) {
+          final list = rawMsg['message_en'] ?? rawMsg['message'];
+          if (list is List && list.isNotEmpty) {
+            toastMessage = list.first.toString();
+          } else if (list is String && list.isNotEmpty) {
+            toastMessage = list;
+          }
+        }
+        if (mounted) {
+          showToast(context, toastMessage);
+        }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        await savename("@isFirstLaunch", "true");
+        await savename('loginStatus', 'false');
+        await savename('token', '');
+        Get.offAll(() => const LoginScreen());
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        String errorMsg = 'Failed to delete account';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          errorMsg = rawMsg;
+        }
+        if (mounted) {
+          showToast(context, errorMsg);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.back();
+      }
+      debugPrint(
+        "==================== GET DELETE ACCOUNT ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      print(
+        "==================== GET DELETE ACCOUNT ERROR ====================",
+      );
+      print("Error: $e");
+      if (mounted) {
+        showToast(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -56,163 +254,169 @@ class _AccountViewState extends State<AccountView> {
     final body = Column(
       children: [
         SizedBox(
-          height: widget.embedded
-              ? MediaQuery.paddingOf(context).top + 8
-              : 8,
+          height: widget.embedded ? MediaQuery.paddingOf(context).top + 8 : 8,
         ),
         _Header(
           showBack: !widget.embedded,
           onBack: () => Navigator.of(context).maybePop(),
+          onDeleteAccount: _handleDeleteAccount,
         ),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-            children: [
-              const _ProfileCard(),
-              const SizedBox(height: 18),
-              const _SectionLabel('Language'),
-              const SizedBox(height: 10),
-              _LanguageSelector(
-                selectedIndex: controller.languageIndex,
-                languages: WaterAccountController.languages,
-                onSelect: controller.selectLanguage,
-              ),
-              const SizedBox(height: 18),
-              const _SectionLabel('Business'),
-              const SizedBox(height: 10),
-              _SettingsCard(
-                children: [
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.notifications_none_rounded,
-                    iconSize: 26,
-                    title: 'Notification',
-                    trailing: Switch(
-                      value: controller.notificationsEnabled,
-                      thumbColor: const WidgetStatePropertyAll(Colors.white),
-                      trackColor: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return AppColors.primaryOrange;
-                        }
-                        return const Color(0xFFE2E5E9);
-                      }),
-                      trackOutlineColor: WidgetStateProperty.resolveWith(
-                        (states) {
+          child: RefreshIndicator(
+            color: AppColors.primaryOrange,
+            onRefresh: () => controller.fetchProfile(),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+              children: [
+                _ProfileCard(controller: controller),
+                const SizedBox(height: 18),
+                const _SectionLabel('Language'),
+                const SizedBox(height: 10),
+                _LanguageSelector(
+                  selectedIndex: controller.languageIndex,
+                  languages: WaterAccountController.languages,
+                  onSelect: controller.selectLanguage,
+                ),
+                const SizedBox(height: 18),
+                const _SectionLabel('Business'),
+                const SizedBox(height: 10),
+                _SettingsCard(
+                  children: [
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.notifications_none_rounded,
+                      iconSize: 26,
+                      title: 'Notification',
+                      trailing: Switch(
+                        value: controller.notificationsEnabled,
+                        thumbColor: const WidgetStatePropertyAll(Colors.white),
+                        trackColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AppColors.primaryOrange;
+                          }
+                          return const Color(0xFFE2E5E9);
+                        }),
+                        trackOutlineColor: WidgetStateProperty.resolveWith((
+                          states,
+                        ) {
                           if (states.contains(WidgetState.selected)) {
                             return Colors.transparent;
                           }
                           return const Color(0xFFC5CAD1);
+                        }),
+                        onChanged: (value) {
+                          HapticFeedback.lightImpact();
+                          controller.setNotifications(value);
                         },
                       ),
-                      onChanged: (value) {
-                        HapticFeedback.lightImpact();
-                        controller.setNotifications(value);
-                      },
                     ),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.apartment_rounded,
-                    title: 'Store Profile',
-                    onTap: () => StoreProfileView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.access_time_rounded,
-                    title: 'Working hours',
-                    onTap: () => WorkingHoursView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    imageAsset: 'lib/water/Assets/Images/business_settings.png',
-                    imageSize: 20,
-                    title: 'Business settings',
-                    onTap: () => BusinessSettingsView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.event_busy_outlined,
-                    title: 'Leave Management',
-                    onTap: () => LeaveManagementView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    imageAsset: 'lib/water/Assets/Images/currency.png',
-                    imageSize: 20,
-                    title: 'Earnings',
-                    onTap: () => EarningsView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    imageAsset: 'lib/water/Assets/Images/received_payouts.png',
-                    imageSize: 22,
-                    title: 'Received Payouts',
-                    onTap: () => ReceivedPayoutsView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.local_offer_outlined,
-                    title: 'Coupons',
-                    onTap: () => CouponsView.open(context),
-                  ),
-                  _SettingsTile(
-                    icon: Icons.delivery_dining_outlined,
-                    title: 'Delivery Boys',
-                    onTap: () => DeliveryBoysView.open(context),
-                    showDivider: false,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              const _SectionLabel('Support & Legal'),
-              const SizedBox(height: 10),
-              _SettingsCard(
-                children: [
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.help_outline_rounded,
-                    title: 'Help & Support',
-                    onTap: () => HelpSupportView.open(context),
-                  ),
-                  _SettingsTile(
-                    edgeDivider: true,
-                    icon: Icons.description_outlined,
-                    title: 'Terms & Conditions',
-                    onTap: () => TermsConditionsView.open(context),
-                  ),
-                  _SettingsTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: 'Privacy Policy',
-                    onTap: () => PrivacySecurityView.open(context),
-                    showDivider: false,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 28),
-              const _LogoutButton(),
-              const SizedBox(height: 14),
-              const Text(
-                'V2.8.1',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.apartment_rounded,
+                      title: 'Store Profile',
+                      onTap: () => StoreProfileView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.access_time_rounded,
+                      title: 'Working hours',
+                      onTap: () => WorkingHoursView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      imageAsset:
+                          'lib/water/Assets/Images/business_settings.png',
+                      imageSize: 20,
+                      title: 'Business settings',
+                      onTap: () => BusinessSettingsView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.event_busy_outlined,
+                      title: 'Leave Management',
+                      onTap: () => LeaveManagementView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      imageAsset: 'lib/water/Assets/Images/currency.png',
+                      imageSize: 20,
+                      title: 'Earnings',
+                      onTap: () => EarningsView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      imageAsset:
+                          'lib/water/Assets/Images/received_payouts.png',
+                      imageSize: 22,
+                      title: 'Received Payouts',
+                      onTap: () => ReceivedPayoutsView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.local_offer_outlined,
+                      title: 'Coupons',
+                      onTap: () => CouponsView.open(context),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.delivery_dining_outlined,
+                      title: 'Delivery Boys',
+                      onTap: () => DeliveryBoysView.open(context),
+                      showDivider: false,
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Check for update',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.textMuted,
+                const SizedBox(height: 18),
+                const _SectionLabel('Support & Legal'),
+                const SizedBox(height: 10),
+                _SettingsCard(
+                  children: [
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.help_outline_rounded,
+                      title: 'Help & Support',
+                      onTap: () => HelpSupportView.open(context),
+                    ),
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.description_outlined,
+                      title: 'Terms & Conditions',
+                      onTap: () => TermsConditionsView.open(context),
+                    ),
+                    _SettingsTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'Privacy Policy',
+                      onTap: () => PrivacySecurityView.open(context),
+                      showDivider: false,
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 28),
+                const _LogoutButton(),
+                const SizedBox(height: 14),
+                const Text(
+                  'V2.8.1',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.textMuted,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Check for update',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.textMuted,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -249,10 +453,15 @@ class _AccountViewState extends State<AccountView> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack, this.showBack = true});
+  const _Header({
+    required this.onBack,
+    this.showBack = true,
+    this.onDeleteAccount,
+  });
 
   final VoidCallback onBack;
   final bool showBack;
+  final VoidCallback? onDeleteAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +529,7 @@ class _Header extends StatelessWidget {
                 ),
                 onSelected: (value) {
                   if (value == 'delete') {
-                    // Placeholder for delete-account flow.
+                    onDeleteAccount?.call();
                   }
                 },
                 itemBuilder: (context) => [
@@ -364,10 +573,18 @@ class _Header extends StatelessWidget {
 }
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard();
+  const _ProfileCard({required this.controller});
+
+  final WaterAccountController controller;
 
   @override
   Widget build(BuildContext context) {
+    final image = controller.profileImage;
+    final name = controller.storeName;
+    final rating = controller.rating;
+    final status = controller.storeStatusText;
+    final isOpen = controller.isStoreOpen;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
@@ -387,70 +604,92 @@ class _ProfileCard extends StatelessWidget {
           SizedBox(
             width: 118,
             height: 118,
-            child: Image.asset(
-              AppAssets.profileImage,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, _, _) => Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.fieldBorder),
-                ),
-                child: const Icon(
-                  Icons.local_pharmacy_outlined,
-                  color: AppColors.primaryOrange,
-                  size: 40,
-                ),
+            child: image.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (_, _, _) => _errorPlaceholder(),
+                    ),
+                  )
+                : _errorPlaceholder(),
+          ),
+          if (name.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textDark,
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
               ),
             ),
-          ),
-          const SizedBox(height: 14),
-          const Text(
-            'PureLife Water Co.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.textDark,
-              fontWeight: FontWeight.w800,
-              fontSize: 18,
+          ],
+          if (rating.isNotEmpty || status.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (rating.isNotEmpty) ...[
+                  const Icon(
+                    Icons.star_rounded,
+                    color: AppColors.primaryOrange,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    rating,
+                    style: const TextStyle(
+                      color: AppColors.primaryOrange,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ],
+                if (rating.isNotEmpty && status.isNotEmpty)
+                  const SizedBox(width: 10),
+                if (status.isNotEmpty) ...[
+                  Icon(
+                    Icons.circle,
+                    size: 6,
+                    color: isOpen
+                        ? AppColors.inventoryAvailable
+                        : AppColors.primaryOrange,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    status,
+                    style: TextStyle(
+                      color: isOpen
+                          ? AppColors.inventoryAvailable
+                          : AppColors.primaryOrange,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ],
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.star_rounded,
-                color: AppColors.primaryOrange,
-                size: 16,
-              ),
-              SizedBox(width: 4),
-              Text(
-                '4.8',
-                style: TextStyle(
-                  color: AppColors.primaryOrange,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.5,
-                ),
-              ),
-              SizedBox(width: 10),
-              Icon(
-                Icons.circle,
-                size: 6,
-                color: AppColors.inventoryAvailable,
-              ),
-              SizedBox(width: 5),
-              Text(
-                'Open',
-                style: TextStyle(
-                  color: AppColors.inventoryAvailable,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.5,
-                ),
-              ),
-            ],
-          ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _errorPlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.fieldBorder),
+      ),
+      child: const Icon(
+        Icons.local_pharmacy_outlined,
+        color: AppColors.primaryOrange,
+        size: 40,
       ),
     );
   }
@@ -659,7 +898,11 @@ class _SettingsTile extends StatelessWidget {
         ),
         if (showDivider)
           edgeDivider
-              ? const Divider(height: 1, thickness: .2, color: AppColors.divider)
+              ? const Divider(
+                  height: 1,
+                  thickness: .2,
+                  color: AppColors.divider,
+                )
               : const Padding(
                   padding: EdgeInsets.only(left: 64),
                   child: Divider(height: 1, color: AppColors.divider),
