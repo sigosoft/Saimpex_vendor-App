@@ -228,7 +228,10 @@ class OrderData {
       placedAt: json['placed_at']?.toString(),
       id: (json['id'] is int)
           ? json['id']
-          : int.tryParse(json['id']?.toString() ?? ''),
+          : (int.tryParse(json['id']?.toString() ?? '') ??
+              ((json['order_id'] is int)
+                  ? json['order_id']
+                  : int.tryParse(json['order_id']?.toString() ?? ''))),
       prescriptionId: (json['prescription_id'] is int)
           ? json['prescription_id']
           : (int.tryParse(json['prescription_id']?.toString() ?? '') ??

@@ -278,6 +278,21 @@ class WaterHomeController extends GetxController {
           }
         }
         orders = loadedOrders;
+        if (selectedTabIndex == 0) {
+          if (selectedFilterIndex == 0) {
+            await fetchWaterOrders(limit: 10, status: 1);
+          } else if (selectedFilterIndex == 1) {
+            await fetchWaterOrders(limit: 10, status: 2);
+          } else if (selectedFilterIndex == 2) {
+            await fetchWaterOrders(limit: 10, status: 3);
+          } else if (selectedFilterIndex == 3) {
+            await fetchWaterOrders(limit: 10, status: 4);
+          } else if (selectedFilterIndex == 4) {
+            await fetchWaterOrders(limit: 10, status: 9);
+          } else if (selectedFilterIndex == 5) {
+            await fetchWaterOrders(limit: 10, status: 10);
+          }
+        }
       } else {
         homeData = null;
         rawSummary = null;
@@ -302,6 +317,455 @@ class WaterHomeController extends GetxController {
       subscriptionOrders = [];
     } finally {
       isLoading = false;
+      update();
+    }
+  }
+
+  Future<void> fetchWaterOrders({int limit = 10, int status = 1}) async {
+    try {
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      final queryParams = <String, dynamic>{'limit': limit, 'status': status};
+
+      debugPrint('==================== GET WATER ORDERS ====================');
+      debugPrint('Endpoint: ${ApiEndPoints.getWaterOrders}');
+      debugPrint('Query: $queryParams');
+
+      final response = await DioClient().get(
+        ApiEndPoints.getWaterOrders,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint('========================================================');
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')) {
+        List rawList = [];
+        final d = dataMap['data'];
+        if (d is Map) {
+          final ord = d['orders'];
+          if (ord is Map && ord['data'] is List) {
+            rawList = ord['data'] as List;
+          } else if (ord is List) {
+            rawList = ord;
+          }
+        } else if (d is List) {
+          rawList = d;
+        }
+
+        final List<HomeOrder> loadedOrders = [];
+        for (final item in rawList) {
+          if (item is Map) {
+            final map = Map<String, dynamic>.from(item);
+            final orderData = OrderData.fromJson(map);
+            loadedOrders.add(HomeOrder.fromOrderData(orderData));
+          }
+        }
+
+        final targetStatus = switch (status) {
+          1 => HomeOrderStatus.newOrder,
+          2 => HomeOrderStatus.accepted,
+          3 => HomeOrderStatus.preparing,
+          4 => HomeOrderStatus.ready,
+          9 => HomeOrderStatus.delivered,
+          10 => HomeOrderStatus.cancelled,
+          _ => HomeOrderStatus.newOrder,
+        };
+
+        orders.removeWhere((o) => o.status == targetStatus);
+        orders.insertAll(0, loadedOrders);
+      }
+    } catch (e) {
+      debugPrint(
+        '==================== GET WATER ORDERS ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '================================================================',
+      );
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> acceptWaterOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = orderId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final queryParams = <String, dynamic>{'order_id': id};
+
+      debugPrint(
+        '==================== ACCEPT WATER ORDER ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.AcceptWaterOrder}');
+      debugPrint('Query: $queryParams');
+
+      final response = await DioClient().get(
+        ApiEndPoints.AcceptWaterOrder,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint('===========================================================');
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Order accepted successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        orders.removeWhere(
+          (o) =>
+              (o.rawId != null && o.rawId.toString() == id.toString()) ||
+              o.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh orders and home data
+        await fetchWaterOrders(limit: 10, status: 1);
+        await fetchWaterOrders(limit: 10, status: 2);
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to accept order';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== ACCEPT WATER ORDER ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error accepting order: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> prepareWaterOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = orderId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final queryParams = <String, dynamic>{'order_id': id};
+
+      debugPrint(
+        '==================== PREPARE WATER ORDER ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.PrepareWaterOrder}');
+      debugPrint('Query: $queryParams');
+
+      final response = await DioClient().get(
+        ApiEndPoints.PrepareWaterOrder,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '============================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ??
+            'Order moved to preparing successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        orders.removeWhere(
+          (o) =>
+              (o.rawId != null && o.rawId.toString() == id.toString()) ||
+              o.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh orders and home data
+        await fetchWaterOrders(limit: 10, status: 2);
+        await fetchWaterOrders(limit: 10, status: 3);
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to prepare order';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== PREPARE WATER ORDER ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '==================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error preparing order: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> markAsReadyWaterOrder(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = orderId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final queryParams = <String, dynamic>{'order_id': id};
+
+      debugPrint(
+        '==================== MARK AS READY WATER ORDER ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.MarkAsReadyWaterOrder}');
+      debugPrint('Query: $queryParams');
+
+      final response = await DioClient().get(
+        ApiEndPoints.MarkAsReadyWaterOrder,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '============================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ??
+            'Order marked as ready successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        orders.removeWhere(
+          (o) =>
+              (o.rawId != null && o.rawId.toString() == id.toString()) ||
+              o.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh orders and home data
+        await fetchWaterOrders(limit: 10, status: 3);
+        await fetchWaterOrders(limit: 10, status: 4);
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to mark order as ready';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== MARK AS READY WATER ORDER ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '========================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error marking order as ready: $e');
+      }
+    } finally {
       update();
     }
   }
@@ -364,6 +828,9 @@ class WaterHomeController extends GetxController {
   void selectOrderType(int index) {
     selectedTabIndex = index;
     selectedFilterIndex = 0;
+    if (index == 0) {
+      fetchWaterOrders(limit: 10, status: 1);
+    }
     update();
   }
 
@@ -397,12 +864,41 @@ class WaterHomeController extends GetxController {
       if (Get.isRegistered<WaterAccountController>()) {
         Get.find<WaterAccountController>().fetchProfile();
       }
+    } else if ((index == 0 || index == 1) && selectedTabIndex == 0) {
+      if (selectedFilterIndex == 0) {
+        fetchWaterOrders(limit: 10, status: 1);
+      } else if (selectedFilterIndex == 1) {
+        fetchWaterOrders(limit: 10, status: 2);
+      } else if (selectedFilterIndex == 2) {
+        fetchWaterOrders(limit: 10, status: 3);
+      } else if (selectedFilterIndex == 3) {
+        fetchWaterOrders(limit: 10, status: 4);
+      } else if (selectedFilterIndex == 4) {
+        fetchWaterOrders(limit: 10, status: 9);
+      } else if (selectedFilterIndex == 5) {
+        fetchWaterOrders(limit: 10, status: 10);
+      }
     }
     update();
   }
 
   void selectFilter(int index) {
     selectedFilterIndex = index;
+    if (selectedTabIndex == 0) {
+      if (index == 0) {
+        fetchWaterOrders(limit: 10, status: 1);
+      } else if (index == 1) {
+        fetchWaterOrders(limit: 10, status: 2);
+      } else if (index == 2) {
+        fetchWaterOrders(limit: 10, status: 3);
+      } else if (index == 3) {
+        fetchWaterOrders(limit: 10, status: 4);
+      } else if (index == 4) {
+        fetchWaterOrders(limit: 10, status: 9);
+      } else if (index == 5) {
+        fetchWaterOrders(limit: 10, status: 10);
+      }
+    }
     update();
   }
 

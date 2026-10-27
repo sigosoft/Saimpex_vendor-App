@@ -21,6 +21,7 @@ import 'package:saimpex_vendor/water/view/account/delivery_boys_view.dart';
 import 'package:saimpex_vendor/water/view/account/help_support_view.dart';
 import 'package:saimpex_vendor/water/view/account/terms_conditions_view.dart';
 import 'package:saimpex_vendor/water/view/account/privacy_security_view.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({super.key, this.embedded = false});
@@ -241,6 +242,108 @@ class _AccountViewState extends State<AccountView> {
     }
   }
 
+  Future<void> _handleLogout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color(0x80000000),
+      builder: (context) => const _LogoutConfirmDialog(),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      showLoadingDialog(context);
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      }
+
+      String base = ApiConfigs.BASE_URL.trim();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      final cleanEndpoint = ApiEndPoints.logout.replaceFirst(RegExp(r'^/'), '');
+      final fullUrl = cleanEndpoint.startsWith('vendorapp/')
+          ? "$base/$cleanEndpoint"
+          : "$base/vendorapp/$cleanEndpoint";
+
+      final headers = <String, dynamic>{
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      debugPrint("==================== POST LOGOUT ====================");
+      debugPrint("API Call: POST $fullUrl");
+      debugPrint("Header: $headers");
+
+      print("==================== POST LOGOUT ====================");
+      print("API Call: POST $fullUrl");
+      print("Header: $headers");
+
+      final response = await DioClient().post(ApiEndPoints.logout);
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      debugPrint("=====================================================");
+
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+      print("=====================================================");
+
+      if (mounted) {
+        Get.back();
+      }
+
+      if (response.data != null &&
+          (response.data['status'] == 'true' ||
+              response.data['status'] == true ||
+              response.data['status'] == 1 ||
+              response.data['status'] == '1')) {
+        final rawMsg = response.data['message'];
+        String toastMessage = 'You are logged out successfully.';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          toastMessage = rawMsg;
+        } else if (rawMsg is Map) {
+          final list = rawMsg['message_en'] ?? rawMsg['message'];
+          if (list is List && list.isNotEmpty) {
+            toastMessage = list.first.toString();
+          } else if (list is String && list.isNotEmpty) {
+            toastMessage = list;
+          }
+        }
+        if (mounted) {
+          showToast(context, toastMessage);
+        }
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        await savename("@isFirstLaunch", "true");
+        await savename('loginStatus', 'false');
+        await savename('token', '');
+        Get.offAll(() => const LoginScreen());
+      } else {
+        final rawMsg = response.data is Map ? response.data['message'] : null;
+        String errorMsg = 'Logout failed.';
+        if (rawMsg is String && rawMsg.isNotEmpty) {
+          errorMsg = rawMsg;
+        }
+        if (mounted) {
+          showToast(context, errorMsg);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.back();
+      }
+      debugPrint("==================== POST LOGOUT ERROR ====================");
+      debugPrint("Error: $e");
+      debugPrint("===========================================================");
+      print("==================== POST LOGOUT ERROR ====================");
+      print("Error: $e");
+      print("===========================================================");
+      if (mounted) {
+        showToast(context, e.toString().replaceFirst('Exception: ', '').trim());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<WaterAccountController>(
@@ -392,7 +495,7 @@ class _AccountViewState extends State<AccountView> {
                   ],
                 ),
                 const SizedBox(height: 28),
-                const _LogoutButton(),
+                _LogoutButton(onTap: _handleLogout),
                 const SizedBox(height: 14),
                 const Text(
                   'V2.8.1',
@@ -913,29 +1016,27 @@ class _SettingsTile extends StatelessWidget {
 }
 
 class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
+  const _LogoutButton({this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async {
-        await savename('loginStatus', 'false');
-        await savename('token', '');
-        Get.offAll(() => const LoginScreen());
-      },
+      onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.logout_rounded,
-              color: AppColors.primaryOrange,
-              size: 20,
+            Image.asset(
+              "lib/assets/images/Logout.png",
+              height: 22,
+              width: 22,
             ),
-            SizedBox(width: 8),
-            Text(
+            const SizedBox(width: 8),
+            const Text(
               'Logout',
               style: TextStyle(
                 color: AppColors.primaryOrange,
@@ -944,6 +1045,118 @@ class _LogoutButton extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoutConfirmDialog extends StatelessWidget {
+  const _LogoutConfirmDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: LocalizationService().getTextDirection(),
+      child: Dialog(
+        backgroundColor: Colors.white,
+        elevation: 10,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(false),
+                  borderRadius: BorderRadius.circular(6),
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFFE7E7E7)),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 16,
+                      color: Color(0xFF7F7F7F),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                LocalizationService.tr('Are you sure you want to log out?'),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF4A4A4A),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.primaryOrange,
+                          side: const BorderSide(
+                            color: Color(0xFFFF7F52),
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          LocalizationService.tr('No'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primaryOrange,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          LocalizationService.tr('Yes'),
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

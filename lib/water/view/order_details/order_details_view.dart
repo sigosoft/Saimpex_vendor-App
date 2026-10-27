@@ -1,18 +1,311 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
+import 'package:get/get.dart';
+import 'package:saimpex_vendor/controller/chat_controller.dart';
+import 'package:saimpex_vendor/view/chat/ChatDetails.dart';
+import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/reject_order_sheet.dart';
 
-class OrderDetailsView extends StatelessWidget {
-  const OrderDetailsView({super.key, required this.order});
+class OrderDetailsView extends StatefulWidget {
+  const OrderDetailsView({super.key, required this.order, this.orderId});
 
   final HomeOrder order;
+  final dynamic orderId;
 
   static const Color _orange = Color(0xFFFF5E21);
   static const Color _title = Color(0xFF1E212C);
   static const Color _muted = Color(0xFF8E8E8E);
   static const Color _cardShadow = Color(0x0F000000);
+
+  @override
+  State<OrderDetailsView> createState() => _OrderDetailsViewState();
+}
+
+class _OrderDetailsViewState extends State<OrderDetailsView> {
+  bool _isLoading = true;
+  String? _errorMessage;
+  Map<String, dynamic>? _orderDetail;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrderDetail();
+  }
+
+  Future<void> _fetchOrderDetail() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      }
+
+      dynamic id = widget.orderId ??
+          widget.order.rawId ??
+          widget.order.orderData?.id ??
+          widget.order.orderData?.rawJson?['id'];
+
+      if (id == null) {
+        final match = RegExp(r'\d+').firstMatch(widget.order.orderId);
+        if (match != null) {
+          id = int.tryParse(match.group(0)!);
+        }
+      }
+
+      if (id != null) {
+        id = int.tryParse(id.toString()) ?? id;
+      }
+
+      final queryParams = <String, dynamic>{'order_id': id};
+
+      debugPrint("==================== GET WATER ORDER DETAIL ====================");
+      debugPrint("Endpoint: ${ApiEndPoints.getWaterOrderDetail}");
+      debugPrint("Query: $queryParams");
+      print("==================== GET WATER ORDER DETAIL ====================");
+      print("Endpoint: ${ApiEndPoints.getWaterOrderDetail}");
+      print("Query: $queryParams");
+
+      final response = await DioClient().get(
+        ApiEndPoints.getWaterOrderDetail,
+        query: queryParams,
+      );
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.data}");
+      print("Response Status Code: ${response.statusCode}");
+      print("Response Body: ${response.data}");
+
+      Map<String, dynamic>? raw;
+      if (response.data is Map<String, dynamic>) {
+        raw = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        raw = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) raw = Map<String, dynamic>.from(decoded);
+        } catch (_) {}
+      }
+
+      if (raw != null &&
+          (raw['status'] == true ||
+              raw['status'].toString() == 'true' ||
+              raw['status'] == 1 ||
+              raw['status'] == '1')) {
+        final data = raw['data'];
+        if (data is Map<String, dynamic>) {
+          _orderDetail = data;
+        } else if (data is Map) {
+          _orderDetail = Map<String, dynamic>.from(data);
+        } else if (data is List && data.isNotEmpty && data.first is Map) {
+          _orderDetail = Map<String, dynamic>.from(data.first as Map);
+        } else {
+          _orderDetail = raw;
+        }
+      } else {
+        _errorMessage = raw?['message']?.toString() ?? 'Order details not found';
+      }
+    } catch (e) {
+      debugPrint("==================== GET WATER ORDER DETAIL ERROR ====================");
+      debugPrint("Error: $e");
+      print("==================== GET WATER ORDER DETAIL ERROR ====================");
+      print("Error: $e");
+      _errorMessage = e.toString();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _openUserChat({
+    required BuildContext context,
+    required String name,
+    int? userId,
+    String? avatarUrl,
+  }) async {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+
+    int convId = 0;
+    int? finalCustomerId = userId;
+
+    if (chatCtrl.conversations.isEmpty) {
+      try {
+        await chatCtrl.getAllConversations(context, quiet: true);
+      } catch (_) {}
+    }
+
+    if (finalCustomerId != null && finalCustomerId > 0) {
+      for (final c in chatCtrl.conversations) {
+        if (c.customerId == finalCustomerId || c.customer?.id == finalCustomerId) {
+          if (c.id != null && c.id! > 0) {
+            convId = c.id!;
+            break;
+          }
+        }
+      }
+    }
+
+    if (convId == 0 && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer') {
+      for (final c in chatCtrl.conversations) {
+        final cName = c.customer?.name?.trim();
+        if (cName != null && cName.toLowerCase() == name.trim().toLowerCase()) {
+          if (c.id != null && c.id! > 0) {
+            convId = c.id!;
+            finalCustomerId ??= c.customerId ?? c.customer?.id;
+            break;
+          }
+        }
+      }
+    }
+
+    if (convId == 0 && finalCustomerId == null && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer') {
+      try {
+        await chatCtrl.searchCustomers(name.trim());
+        if (chatCtrl.customerResults.isNotEmpty) {
+          final match = chatCtrl.customerResults.firstWhere(
+            (c) => c.name?.trim().toLowerCase() == name.trim().toLowerCase(),
+            orElse: () => chatCtrl.customerResults.first,
+          );
+          finalCustomerId = match.id;
+          for (final c in chatCtrl.conversations) {
+            if (c.customerId == finalCustomerId || c.customer?.id == finalCustomerId) {
+              if (c.id != null && c.id! > 0) {
+                convId = c.id!;
+                break;
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (!mounted || !context.mounted) return;
+
+    ChatView.open(
+      context,
+      customerName: name.isNotEmpty ? name : 'Customer',
+      conversationId: convId > 0 ? convId : null,
+      customerId: finalCustomerId,
+      avatarUrl: avatarUrl,
+    );
+  }
+
+  static Map<String, dynamic>? _safeMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) return Map<String, dynamic>.from(value);
+    return null;
+  }
+
+  Map<String, dynamic> get _orderMap {
+    if (_orderDetail == null) return {};
+    if (_orderDetail!['order'] is Map) {
+      return Map<String, dynamic>.from(_orderDetail!['order'] as Map);
+    }
+    return _orderDetail!;
+  }
+
+  List<Map<String, dynamic>> get _itemsList {
+    if (_orderDetail == null) return [];
+    final candidates = [
+      _orderDetail!['items'],
+      _orderDetail!['orderItems'],
+      _orderDetail!['order_items'],
+      _orderMap['items'],
+      _orderMap['orderItems'],
+      _orderMap['order_items'],
+    ];
+    for (final c in candidates) {
+      if (c is List && c.isNotEmpty) {
+        return c
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      }
+    }
+    return [];
+  }
+
+  List<Map<String, dynamic>> get _statusLogsList {
+    if (_orderDetail == null) return [];
+    final candidates = [
+      _orderDetail!['status_logs'],
+      _orderDetail!['statusLogs'],
+      _orderMap['status_logs'],
+      _orderMap['statusLogs'],
+    ];
+    for (final c in candidates) {
+      if (c is List && c.isNotEmpty) {
+        return c
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      }
+    }
+    return [];
+  }
+
+  static String _formatDateString(dynamic rawDate) {
+    if (rawDate == null) return '';
+    final str = rawDate.toString().trim();
+    if (str.isEmpty || str == 'null') return '';
+    try {
+      final dt = DateTime.parse(str);
+      return DateFormat('MMM dd, yyyy hh:mm a').format(dt);
+    } catch (_) {
+      return str;
+    }
+  }
+
+  static HomeOrderStatus _parseStatus(dynamic rawStatus, HomeOrderStatus fallback) {
+    if (rawStatus == null) return fallback;
+    final s = int.tryParse(rawStatus.toString());
+    if (s != null) {
+      switch (s) {
+        case 1:
+          return HomeOrderStatus.newOrder;
+        case 2:
+          return HomeOrderStatus.accepted;
+        case 3:
+          return HomeOrderStatus.preparing;
+        case 4:
+          return HomeOrderStatus.ready;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+          return HomeOrderStatus.delivered;
+        case 10:
+          return HomeOrderStatus.cancelled;
+      }
+    }
+    final str = rawStatus.toString().toLowerCase();
+    if (str.contains('new') || str.contains('pending')) return HomeOrderStatus.newOrder;
+    if (str.contains('accept')) return HomeOrderStatus.accepted;
+    if (str.contains('prepar')) return HomeOrderStatus.preparing;
+    if (str.contains('ready')) return HomeOrderStatus.ready;
+    if (str.contains('deliver') || str.contains('complete') || str.contains('ongoing')) {
+      return HomeOrderStatus.delivered;
+    }
+    if (str.contains('cancel') || str.contains('reject')) return HomeOrderStatus.cancelled;
+    return fallback;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,82 +335,324 @@ class OrderDetailsView extends StatelessWidget {
                 _Header(onBack: () => Navigator.of(context).maybePop()),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    children: [
-                      _CustomerCard(order: order),
-                      if (order.deliveryPartnerName != null) ...[
-                        const SizedBox(height: 16),
-                        const Text(
-                          'DELIVERY PARTNER',
-                          style: TextStyle(
-                            color: _muted,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _DeliveryPartnerCard(
-                          name: order.deliveryPartnerName!,
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      const Text(
-                        'ORDER ITEMS (1)',
-                        style: TextStyle(
-                          color: _muted,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const _OrderItemCard(),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'PAYMENT SUMMARY',
-                        style: TextStyle(
-                          color: _muted,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _PaymentSummary(
-                        isOnline: order.isOnlinePayment,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Order Timeline',
-                        style: TextStyle(
-                          color: _title,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _OrderTimeline(
-                        isDelivery: order.isDelivery,
-                        status: order.status,
-                        hasDeliveryPartner: order.deliveryPartnerName != null,
-                      ),
-                    ],
-                  ),
-                ),
-                _BottomActions(
-                  status: order.status,
-                  isDelivery: order.isDelivery,
-                  onReject: () => showRejectOrderSheet(context),
-                  onAccept: () {},
-                  onPrepare: () {},
+                  child: _buildBody(context),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: OrderDetailsView._orange),
+      );
+    }
+
+    if (_errorMessage != null && _orderDetail == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFF6B7280),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 14),
+              OutlinedButton(
+                onPressed: _fetchOrderDetail,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: OrderDetailsView._orange,
+                  side: const BorderSide(color: OrderDetailsView._orange),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final orderMap = _orderMap;
+    final items = _itemsList;
+    final statusLogs = _statusLogsList;
+
+    final userMap = _safeMap(orderMap['user']) ?? _safeMap(_orderDetail?['user']);
+    final customerMap = _safeMap(orderMap['customer']) ?? _safeMap(_orderDetail?['customer']);
+    final partnerMap = _safeMap(orderMap['delivery_boy']) ??
+        _safeMap(orderMap['driver']) ??
+        _safeMap(_orderDetail?['delivery_boy']) ??
+        _safeMap(_orderDetail?['driver']);
+
+    // Customer
+    final customerName = orderMap['user_name']?.toString().trim().isNotEmpty == true
+        ? orderMap['user_name'].toString().trim()
+        : (userMap?['name']?.toString().trim().isNotEmpty == true
+            ? userMap!['name'].toString().trim()
+            : (customerMap?['name']?.toString().trim().isNotEmpty == true
+                ? customerMap!['name'].toString().trim()
+                : widget.order.customerName));
+
+    final customerPhone = orderMap['user_mobile']?.toString().trim() ??
+        orderMap['mobile']?.toString().trim() ??
+        orderMap['user_phone']?.toString().trim() ??
+        orderMap['phone']?.toString().trim() ??
+        userMap?['mobile']?.toString().trim() ??
+        userMap?['phone']?.toString().trim() ??
+        customerMap?['mobile']?.toString().trim() ??
+        customerMap?['phone']?.toString().trim() ??
+        '';
+
+    // Order code & time
+    final orderCode = orderMap['order_code']?.toString().trim().isNotEmpty == true
+        ? orderMap['order_code'].toString().trim()
+        : (orderMap['order_id']?.toString().trim().isNotEmpty == true
+            ? orderMap['order_id'].toString().trim()
+            : widget.order.orderId);
+
+    final rawPlaced = orderMap['placed_at_formatted'] ??
+        orderMap['placed_at'] ??
+        orderMap['created_at'];
+    final placedTime = _formatDateString(rawPlaced);
+
+    // Delivery type
+    final isPickup = orderMap['is_self_pickup'] == 1 ||
+        orderMap['is_self_pickup'] == true ||
+        orderMap['is_self_pickup'] == '1' ||
+        orderMap['delivery_type'] == 2 ||
+        orderMap['delivery_type'] == '2' ||
+        orderMap['delivery_type']?.toString().toLowerCase().contains('pickup') == true ||
+        (!widget.order.isDelivery && orderMap['delivery_type'] == null);
+    final isDelivery = !isPickup;
+
+    // Status
+    final currentStatus = _parseStatus(orderMap['status'], widget.order.status);
+
+    // Delivery partner
+    final partnerName = orderMap['delivery_boy_name']?.toString().trim().isNotEmpty == true
+        ? orderMap['delivery_boy_name'].toString().trim()
+        : (orderMap['delivery_partner_name']?.toString().trim().isNotEmpty == true
+            ? orderMap['delivery_partner_name'].toString().trim()
+            : (partnerMap?['name']?.toString().trim().isNotEmpty == true
+                ? partnerMap!['name'].toString().trim()
+                : widget.order.deliveryPartnerName));
+
+    final partnerRating = orderMap['delivery_boy_rating']?.toString() ??
+        partnerMap?['rating']?.toString();
+    final partnerReviews = orderMap['delivery_boy_reviews']?.toString() ??
+        partnerMap?['reviews_count']?.toString() ??
+        partnerMap?['reviews']?.toString();
+
+    // Address
+    final fullAddress = orderMap['user_address']?.toString().trim() ??
+        orderMap['address']?.toString().trim() ??
+        orderMap['location']?.toString().trim() ??
+        orderMap['delivery_address']?.toString().trim() ??
+        userMap?['address']?.toString().trim() ??
+        customerMap?['address']?.toString().trim();
+
+    final addressTitle = orderMap['address_title']?.toString().trim() ??
+        orderMap['building_name']?.toString().trim() ??
+        orderMap['address_name']?.toString().trim() ??
+        ((fullAddress != null && fullAddress.isNotEmpty) ? 'Delivery Address' : null);
+
+    // Payment
+    final paymentType = orderMap['payment_type']?.toString().trim() ??
+        orderMap['payment_method']?.toString().trim();
+    final isCod = paymentType?.toLowerCase().contains('cash') == true ||
+        paymentType?.toLowerCase().contains('cod') == true;
+    final isOnlinePayment = paymentType != null && paymentType.isNotEmpty
+        ? !isCod
+        : widget.order.isOnlinePayment;
+
+    final rawPayedOn = orderMap['payed_on'] ??
+        orderMap['paid_at'] ??
+        orderMap['payment_date'];
+    final payedOn = _formatDateString(rawPayedOn);
+
+    final subtotal = orderMap['subtotal']?.toString() ??
+        orderMap['item_total']?.toString();
+    final deliveryFee = orderMap['delivery_fee']?.toString();
+    final tax = orderMap['tax']?.toString();
+    final discount = orderMap['discount']?.toString();
+    final total = orderMap['total']?.toString();
+
+    final dynamic rawCustomerId = orderMap['user_id'] ??
+        orderMap['customer_id'] ??
+        userMap?['id'] ??
+        customerMap?['id'] ??
+        _orderDetail?['user_id'] ??
+        _orderDetail?['customer_id'] ??
+        widget.order.orderData?.rawJson?['user_id'] ??
+        widget.order.orderData?.rawJson?['customer_id'] ??
+        _safeMap(widget.order.orderData?.rawJson?['user'])?['id'] ??
+        _safeMap(widget.order.orderData?.rawJson?['customer'])?['id'];
+    final int? customerId = int.tryParse(rawCustomerId?.toString() ?? '');
+
+    final dynamic rawPartnerId = orderMap['delivery_boy_id'] ??
+        partnerMap?['id'] ??
+        orderMap['driver_id'] ??
+        orderMap['delivery_partner_id'] ??
+        _orderDetail?['delivery_boy_id'] ??
+        _orderDetail?['driver_id'] ??
+        widget.order.orderData?.rawJson?['delivery_boy_id'] ??
+        _safeMap(widget.order.orderData?.rawJson?['delivery_boy'])?['id'];
+    final int? partnerId = int.tryParse(rawPartnerId?.toString() ?? '');
+
+    final dynamic rawCustomerImage = orderMap['user_image'] ??
+        orderMap['customer_image'] ??
+        orderMap['user_avatar'] ??
+        orderMap['avatar'] ??
+        orderMap['image'] ??
+        userMap?['image'] ??
+        userMap?['avatar'] ??
+        customerMap?['image'] ??
+        customerMap?['avatar'] ??
+        _orderDetail?['user_image'] ??
+        _orderDetail?['customer_image'] ??
+        _safeMap(widget.order.orderData?.rawJson?['user'])?['image'] ??
+        _safeMap(widget.order.orderData?.rawJson?['customer'])?['image'];
+    final String? customerAvatar = rawCustomerImage?.toString();
+
+    final dynamic rawPartnerImage = orderMap['delivery_boy_image'] ??
+        partnerMap?['image'] ??
+        orderMap['driver_image'] ??
+        _orderDetail?['delivery_boy_image'] ??
+        _orderDetail?['driver_image'];
+    final String? partnerAvatar = rawPartnerImage?.toString();
+
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            color: OrderDetailsView._orange,
+            onRefresh: _fetchOrderDetail,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                _CustomerCard(
+                  customerName: customerName,
+                  customerPhone: customerPhone,
+                  orderId: orderCode,
+                  placedTime: placedTime.isNotEmpty ? placedTime : widget.order.timeAgo,
+                  orderType: isDelivery ? 'Delivery' : 'Self Pickup',
+                  isDelivery: isDelivery,
+                  status: currentStatus,
+                  addressTitle: addressTitle,
+                  fullAddress: fullAddress,
+                  onChat: () => _openUserChat(
+                    context: context,
+                    name: customerName,
+                    userId: customerId,
+                    avatarUrl: customerAvatar,
+                  ),
+                ),
+                if (partnerName != null && partnerName.isNotEmpty && partnerName != 'null') ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'DELIVERY PARTNER',
+                    style: TextStyle(
+                      color: OrderDetailsView._muted,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _DeliveryPartnerCard(
+                    name: partnerName,
+                    rating: partnerRating,
+                    reviews: partnerReviews,
+                    onChat: () => _openUserChat(
+                      context: context,
+                      name: partnerName,
+                      userId: partnerId,
+                      avatarUrl: partnerAvatar,
+                    ),
+                  ),
+                ],
+                if (items.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'ORDER ITEMS (${items.length})',
+                    style: const TextStyle(
+                      color: OrderDetailsView._muted,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  for (final item in items) ...[
+                    _OrderItemCard(item: item),
+                    const SizedBox(height: 8),
+                  ],
+                ],
+                const SizedBox(height: 16),
+                const Text(
+                  'PAYMENT SUMMARY',
+                  style: TextStyle(
+                    color: OrderDetailsView._muted,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _PaymentSummary(
+                  isOnline: isOnlinePayment,
+                  subtotal: subtotal,
+                  deliveryFee: deliveryFee,
+                  tax: tax,
+                  discount: discount,
+                  total: total,
+                  paymentType: paymentType,
+                  payedOn: payedOn,
+                  isDelivery: isDelivery,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Order Timeline',
+                  style: TextStyle(
+                    color: OrderDetailsView._title,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _OrderTimeline(
+                  isDelivery: isDelivery,
+                  status: currentStatus,
+                  hasDeliveryPartner:
+                      partnerName != null && partnerName.isNotEmpty && partnerName != 'null',
+                  statusLogs: statusLogs,
+                  placedAt: placedTime.isNotEmpty ? placedTime : widget.order.timeAgo,
+                ),
+              ],
+            ),
+          ),
+        ),
+        _BottomActions(
+          status: currentStatus,
+          isDelivery: isDelivery,
+          onReject: () => showRejectOrderSheet(context),
+          onAccept: () {},
+          onPrepare: () {},
+        ),
+      ],
     );
   }
 }
@@ -179,9 +714,29 @@ class _Header extends StatelessWidget {
 }
 
 class _CustomerCard extends StatelessWidget {
-  const _CustomerCard({required this.order});
+  const _CustomerCard({
+    required this.customerName,
+    required this.customerPhone,
+    required this.orderId,
+    required this.placedTime,
+    required this.orderType,
+    required this.isDelivery,
+    required this.status,
+    this.addressTitle,
+    this.fullAddress,
+    this.onChat,
+  });
 
-  final HomeOrder order;
+  final String customerName;
+  final String customerPhone;
+  final String orderId;
+  final String placedTime;
+  final String orderType;
+  final bool isDelivery;
+  final HomeOrderStatus status;
+  final String? addressTitle;
+  final String? fullAddress;
+  final VoidCallback? onChat;
 
   static const Color _labelOrange = Color(0xFFE67E4D);
   static const Color _newBadge = Color(0xFFF39C12);
@@ -189,7 +744,7 @@ class _CustomerCard extends StatelessWidget {
   static const Color _pillShadow = Color(0x14000000);
 
   (String, Color) get _statusBadge {
-    return switch (order.status) {
+    return switch (status) {
       HomeOrderStatus.newOrder => ('NEW', _newBadge),
       HomeOrderStatus.accepted => ('ACCEPTED', _acceptedBadge),
       HomeOrderStatus.preparing => ('PREPARING', const Color(0xFFFF8A00)),
@@ -202,8 +757,11 @@ class _CustomerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final typeColor =
-        order.isDelivery ? OrderDetailsView._orange : const Color(0xFF2F80ED);
+        isDelivery ? OrderDetailsView._orange : const Color(0xFF2F80ED);
     final (badgeLabel, badgeColor) = _statusBadge;
+    final initial = customerName.trim().isNotEmpty
+        ? customerName.trim()[0].toUpperCase()
+        : 'C';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
@@ -266,7 +824,7 @@ class _CustomerCard extends StatelessWidget {
                   radius: 22,
                   backgroundColor: const Color(0xFFFFE4E8),
                   child: Text(
-                    order.customerName[0].toUpperCase(),
+                    initial,
                     style: const TextStyle(
                       color: Color(0xFFC62828),
                       fontWeight: FontWeight.w700,
@@ -280,40 +838,51 @@ class _CustomerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.customerName,
+                        customerName,
                         style: const TextStyle(
                           color: OrderDetailsView._title,
                           fontWeight: FontWeight.w700,
                           fontSize: 15.5,
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      const Text(
-                        '+222 45 12 34 56',
-                        style: TextStyle(
-                          color: Color(0xFF9E9E9E),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 13,
+                      if (customerPhone.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          customerPhone,
+                          style: const TextStyle(
+                            color: Color(0xFF9E9E9E),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: OrderDetailsView._orange,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: OrderDetailsView._orange.withValues(alpha: 0.35),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                InkWell(
+                  onTap: onChat ?? () => ChatView.open(context, customerName: customerName),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: OrderDetailsView._orange,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              OrderDetailsView._orange.withValues(alpha: 0.35),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
-                  child: const Icon(Icons.phone, color: Colors.white, size: 20),
                 ),
               ],
             ),
@@ -343,21 +912,22 @@ class _CustomerCard extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: order.orderId,
+                              text: orderId,
                               style: const TextStyle(
                                 color: OrderDetailsView._orange,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
                               ),
                             ),
-                            const TextSpan(
-                              text: ' - Today - 10:45 AM',
-                              style: TextStyle(
-                                color: Color(0xFF5A5A5A),
-                                fontWeight: FontWeight.w400,
-                                fontSize: 11.5,
+                            if (placedTime.isNotEmpty)
+                              TextSpan(
+                                text: ' - $placedTime',
+                                style: const TextStyle(
+                                  color: Color(0xFF5A5A5A),
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 11.5,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         softWrap: false,
@@ -390,7 +960,7 @@ class _CustomerCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (!order.isDelivery)
+                          if (!isDelivery)
                             Text(
                               '(',
                               style: TextStyle(
@@ -399,7 +969,7 @@ class _CustomerCard extends StatelessWidget {
                                 fontSize: 12.5,
                               ),
                             ),
-                          if (!order.isDelivery) const SizedBox(width: 2),
+                          if (!isDelivery) const SizedBox(width: 2),
                           ColorFiltered(
                             colorFilter: const ColorFilter.matrix(<double>[
                               1, 0, 0, 0, 0,
@@ -408,13 +978,13 @@ class _CustomerCard extends StatelessWidget {
                               1, 1, 1, 0, 0,
                             ]),
                             child: Image.asset(
-                              order.isDelivery
+                              isDelivery
                                   ? AppAssets.deliveryIcon
                                   : AppAssets.selfPickupIcon,
                               width: 14,
                               height: 14,
                               errorBuilder: (_, _, _) => Icon(
-                                order.isDelivery
+                                isDelivery
                                     ? Icons.delivery_dining
                                     : Icons.shopping_bag_outlined,
                                 size: 14,
@@ -424,7 +994,7 @@ class _CustomerCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            order.orderType,
+                            orderType,
                             softWrap: false,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -433,8 +1003,8 @@ class _CustomerCard extends StatelessWidget {
                               fontSize: 12.5,
                             ),
                           ),
-                          if (!order.isDelivery) const SizedBox(width: 2),
-                          if (!order.isDelivery)
+                          if (!isDelivery) const SizedBox(width: 2),
+                          if (!isDelivery)
                             Text(
                               ')',
                               style: TextStyle(
@@ -451,7 +1021,7 @@ class _CustomerCard extends StatelessWidget {
               ),
             ],
           ),
-          if (order.isDelivery) ...[
+          if (isDelivery && (fullAddress != null && fullAddress!.trim().isNotEmpty)) ...[
             const SizedBox(height: 14),
             const Row(
               children: [
@@ -473,10 +1043,10 @@ class _CustomerCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            const _SoftPill(
+            _SoftPill(
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 20,
                     backgroundColor: Color(0xFFFFF0E6),
                     child: Icon(
@@ -485,23 +1055,25 @@ class _CustomerCard extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Sahara View Home',
-                          style: TextStyle(
-                            color: OrderDetailsView._title,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
+                        if (addressTitle != null && addressTitle!.trim().isNotEmpty) ...[
+                          Text(
+                            addressTitle!.trim(),
+                            style: const TextStyle(
+                              color: OrderDetailsView._title,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 3),
+                          const SizedBox(height: 3),
+                        ],
                         Text(
-                          'Near Marhaba Supermarket, Nouakchott',
-                          style: TextStyle(
+                          fullAddress!.trim(),
+                          style: const TextStyle(
                             color: Color(0xFF9E9E9E),
                             fontWeight: FontWeight.w400,
                             fontSize: 12.5,
@@ -537,11 +1109,11 @@ class _SoftPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: _CustomerCard._pillShadow,
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -551,20 +1123,56 @@ class _SoftPill extends StatelessWidget {
 }
 
 class _OrderItemCard extends StatelessWidget {
-  const _OrderItemCard();
+  const _OrderItemCard({required this.item});
+
+  final Map<String, dynamic> item;
 
   @override
   Widget build(BuildContext context) {
+    final dynamic rawOrderItem = item['order_item'];
+    final orderItemMap = rawOrderItem is Map ? rawOrderItem : null;
+    final name = orderItemMap?['name_en']?.toString() ??
+        orderItemMap?['name']?.toString() ??
+        item['name']?.toString() ??
+        item['product_name']?.toString() ??
+        item['item_name']?.toString() ??
+        item['title']?.toString() ??
+        '';
+
+    final unitPrice = item['unit_price']?.toString() ??
+        item['price']?.toString() ??
+        item['rate']?.toString() ??
+        '';
+
+    final qty = item['quantity']?.toString() ??
+        item['qty']?.toString() ??
+        '1';
+
+    final rawImage = item['image']?.toString() ??
+        item['product_image']?.toString() ??
+        item['image_url']?.toString() ??
+        '';
+
+    String imageUrl = '';
+    if (rawImage.isNotEmpty && rawImage != 'null') {
+      if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+        imageUrl = rawImage;
+      } else {
+        final base = ApiConfigs.IMAGE_URL.trim();
+        imageUrl = base.endsWith('/') ? '$base$rawImage' : '$base/$rawImage';
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: OrderDetailsView._cardShadow,
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -576,38 +1184,53 @@ class _OrderItemCard extends StatelessWidget {
               width: 64,
               height: 64,
               color: const Color(0xFFE8E8E8),
-              child: Image.asset(
-                AppAssets.waterCan19L,
-                fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const Icon(
-                  Icons.water_drop,
-                  color: Color(0xFF9E9E9E),
-                ),
-              ),
+              child: imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => Image.asset(
+                        AppAssets.waterCan19L,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.water_drop,
+                          color: Color(0xFF9E9E9E),
+                        ),
+                      ),
+                    )
+                  : Image.asset(
+                      AppAssets.waterCan19L,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.water_drop,
+                        color: Color(0xFF9E9E9E),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Drinking Water 19L',
-                  style: TextStyle(
+                  name.isNotEmpty ? name : 'Water Item',
+                  style: const TextStyle(
                     color: OrderDetailsView._title,
                     fontWeight: FontWeight.w600,
                     fontSize: 14.5,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  '50 MRU',
-                  style: TextStyle(
-                    color: OrderDetailsView._orange,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                if (unitPrice.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '$unitPrice MRU',
+                    style: const TextStyle(
+                      color: OrderDetailsView._orange,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -617,9 +1240,9 @@ class _OrderItemCard extends StatelessWidget {
               color: const Color(0xFFF2F2F2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text(
-              'Qty: 1',
-              style: TextStyle(
+            child: Text(
+              'Qty: $qty',
+              style: const TextStyle(
                 color: Color(0xFF555555),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -633,12 +1256,34 @@ class _OrderItemCard extends StatelessWidget {
 }
 
 class _PaymentSummary extends StatelessWidget {
-  const _PaymentSummary({required this.isOnline});
+  const _PaymentSummary({
+    required this.isOnline,
+    this.subtotal,
+    this.deliveryFee,
+    this.tax,
+    this.discount,
+    this.total,
+    this.paymentType,
+    this.payedOn,
+    this.isDelivery = true,
+  });
 
   final bool isOnline;
+  final String? subtotal;
+  final String? deliveryFee;
+  final String? tax;
+  final String? discount;
+  final String? total;
+  final String? paymentType;
+  final String? payedOn;
+  final bool isDelivery;
 
   @override
   Widget build(BuildContext context) {
+    final payTypeLabel = (paymentType != null && paymentType!.trim().isNotEmpty)
+        ? paymentType!.trim()
+        : (isOnline ? 'Online Payment' : 'Cash on Delivery');
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
@@ -648,30 +1293,46 @@ class _PaymentSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const _PayRow(label: 'Item total', value: '50 MRU'),
-          const SizedBox(height: 10),
-          const _PayRow(label: 'Delivery fee', value: '20 MRU'),
-          const SizedBox(height: 10),
-          const _PayRow(label: 'Tax', value: '10 MRU'),
-          const SizedBox(height: 10),
+          if (subtotal != null && subtotal!.isNotEmpty) ...[
+            _PayRow(label: 'Item total', value: '$subtotal MRU'),
+            const SizedBox(height: 10),
+          ],
+          if (isDelivery && deliveryFee != null && deliveryFee!.isNotEmpty) ...[
+            _PayRow(label: 'Delivery fee', value: '$deliveryFee MRU'),
+            const SizedBox(height: 10),
+          ],
+          if (tax != null && tax!.isNotEmpty && tax != '0' && tax != '0.00') ...[
+            _PayRow(label: 'Tax', value: '$tax MRU'),
+            const SizedBox(height: 10),
+          ],
+          if (discount != null && discount!.isNotEmpty && discount != '0' && discount != '0.00') ...[
+            _PayRow(
+              label: 'Discount',
+              value: '-$discount MRU',
+              valueColor: const Color(0xFF2EAD5B),
+            ),
+            const SizedBox(height: 10),
+          ],
           _PayRow(
             label: 'Payment type',
-            value: isOnline ? 'Online Payment' : 'Cash on Delivery',
+            value: payTypeLabel,
             valueColor: OrderDetailsView._orange,
           ),
-          const SizedBox(height: 10),
-          const _PayRow(
-            label: 'Payment on',
-            value: 'Feb 07, 2026 10:45 AM, Today',
-            valueColor: Color(0xFFB0B0B0),
-            valueSize: 12,
-          ),
+          if (payedOn != null && payedOn!.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _PayRow(
+              label: 'Payment on',
+              value: payedOn!.trim(),
+              valueColor: const Color(0xFFB0B0B0),
+              valueSize: 12,
+            ),
+          ],
           const SizedBox(height: 12),
           const Divider(color: Color(0xFF444444), height: 1),
           const SizedBox(height: 12),
-          const Row(
+          Row(
             children: [
-              Text(
+              const Text(
                 'Total payed',
                 style: TextStyle(
                   color: Colors.white,
@@ -679,10 +1340,10 @@ class _PaymentSummary extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
-                '80 MRU',
-                style: TextStyle(
+                '${total ?? subtotal ?? "0"} MRU',
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -739,9 +1400,17 @@ class _PayRow extends StatelessWidget {
 }
 
 class _DeliveryPartnerCard extends StatelessWidget {
-  const _DeliveryPartnerCard({required this.name});
+  const _DeliveryPartnerCard({
+    required this.name,
+    this.rating,
+    this.reviews,
+    this.onChat,
+  });
 
   final String name;
+  final String? rating;
+  final String? reviews;
+  final VoidCallback? onChat;
 
   @override
   Widget build(BuildContext context) {
@@ -811,52 +1480,64 @@ class _DeliveryPartnerCard extends StatelessWidget {
                     fontSize: 15,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.star_rounded,
-                      size: 16,
-                      color: Color(0xFFFFC107),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '4.8',
-                      style: TextStyle(
-                        color: OrderDetailsView._title,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                if (rating != null && rating!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star_rounded,
+                        size: 16,
+                        color: Color(0xFFFFC107),
                       ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '(124 reviews)',
-                      style: TextStyle(
-                        color: Color(0xFF9E9E9E),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12.5,
+                      const SizedBox(width: 4),
+                      Text(
+                        rating!.trim(),
+                        style: const TextStyle(
+                          color: OrderDetailsView._title,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      if (reviews != null && reviews!.trim().isNotEmpty) ...[
+                        const SizedBox(width: 4),
+                        Text(
+                          '(${reviews!.trim()} reviews)',
+                          style: const TextStyle(
+                            color: Color(0xFF9E9E9E),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12.5,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: OrderDetailsView._orange,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: OrderDetailsView._orange.withValues(alpha: 0.35),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+          InkWell(
+            onTap: onChat ?? () => ChatView.open(context, customerName: name),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: OrderDetailsView._orange,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: OrderDetailsView._orange.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.chat_bubble_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
-            child: const Icon(Icons.phone, color: Colors.white, size: 20),
           ),
         ],
       ),
@@ -869,31 +1550,34 @@ class _OrderTimeline extends StatelessWidget {
     required this.isDelivery,
     required this.status,
     this.hasDeliveryPartner = false,
+    this.statusLogs = const [],
+    this.placedAt,
   });
 
   final bool isDelivery;
   final HomeOrderStatus status;
   final bool hasDeliveryPartner;
+  final List<Map<String, dynamic>> statusLogs;
+  final String? placedAt;
 
   static const Color _containerBg = Color(0xFFF8F7F4);
-  static const String _stamp = 'Feb 07, 2026 10:45 AM';
 
   static const deliveryBase = [
-    (Icons.check_rounded, 'Order Received'),
-    (Icons.check_rounded, 'Order Accepted'),
-    (Icons.local_drink_outlined, 'Preparing'),
-    (Icons.check_rounded, 'Ready for Dispatch'),
-    (Icons.delivery_dining_outlined, 'Delivery Partner Assigned'),
-    (Icons.check_rounded, 'Picked Up by Rider'),
-    (Icons.home_outlined, 'Order Delivered'),
+    (Icons.check_rounded, 'Order Received', [1]),
+    (Icons.check_rounded, 'Order Accepted', [2]),
+    (Icons.local_drink_outlined, 'Preparing', [3]),
+    (Icons.check_rounded, 'Ready for Dispatch', [4]),
+    (Icons.delivery_dining_outlined, 'Delivery Partner Assigned', [5]),
+    (Icons.check_rounded, 'Picked Up by Rider', [6, 7]),
+    (Icons.home_outlined, 'Order Delivered', [8, 9]),
   ];
 
   static const selfPickupBase = [
-    (Icons.check_rounded, 'Order Received'),
-    (Icons.check_rounded, 'Order Accepted'),
-    (Icons.local_drink_outlined, 'Preparing'),
-    (Icons.check_rounded, 'Ready for Pickup'),
-    (Icons.check_rounded, 'Picked Up by Customer'),
+    (Icons.check_rounded, 'Order Received', [1]),
+    (Icons.check_rounded, 'Order Accepted', [2]),
+    (Icons.local_drink_outlined, 'Preparing', [3]),
+    (Icons.check_rounded, 'Ready for Pickup', [4]),
+    (Icons.check_rounded, 'Picked Up by Customer', [5, 6, 7, 8, 9]),
   ];
 
   int get _completedCount {
@@ -907,6 +1591,25 @@ class _OrderTimeline extends StatelessWidget {
       HomeOrderStatus.delivered => isDelivery ? 7 : 5,
       HomeOrderStatus.cancelled => 1,
     };
+  }
+
+  String _getTimestampForStep(int stepIndex, List<int> statusIds) {
+    for (final log in statusLogs) {
+      final logStatus = int.tryParse(log['status']?.toString() ?? '');
+      if (logStatus != null && statusIds.contains(logStatus)) {
+        final timeStr = log['created_at_formatted'] ??
+            log['created_at'] ??
+            log['time'] ??
+            log['date'];
+        if (timeStr != null && timeStr.toString().isNotEmpty) {
+          return _OrderDetailsViewState._formatDateString(timeStr);
+        }
+      }
+    }
+    if (stepIndex == 0 && placedAt != null && placedAt!.isNotEmpty) {
+      return _OrderDetailsViewState._formatDateString(placedAt);
+    }
+    return '';
   }
 
   @override
@@ -927,7 +1630,7 @@ class _OrderTimeline extends StatelessWidget {
             _TimelineStep(
               icon: base[i].$1,
               title: base[i].$2,
-              subtitle: i < completed ? _stamp : '',
+              subtitle: i < completed ? _getTimestampForStep(i, base[i].$3) : '',
               active: i < completed,
               showLine: i < base.length - 1,
               lineActive: i < completed - 1,

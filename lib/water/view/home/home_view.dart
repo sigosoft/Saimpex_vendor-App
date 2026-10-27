@@ -36,71 +36,67 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<WaterHomeController>(
       builder: (_) {
-      return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.transparent,
-        ),
-        child: Scaffold(
-          backgroundColor: AppColors.backgroundBottom,
-          body: Column(
-            children: [
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 360),
-                  reverseDuration: const Duration(milliseconds: 280),
-                  switchInCurve: Curves.easeInOutCubic,
-                  switchOutCurve: Curves.easeInOutCubic,
-                  transitionBuilder: (child, animation) {
-                    final curved = CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeInOutCubic,
-                    );
-                    final slide = Tween<Offset>(
-                      begin: const Offset(0.04, 0),
-                      end: Offset.zero,
-                    ).animate(curved);
-                    return FadeTransition(
-                      opacity: curved,
-                      child: SlideTransition(
-                        position: slide,
-                        child: child,
-                      ),
-                    );
-                  },
-                  layoutBuilder: (currentChild, previousChildren) {
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        ...previousChildren,
-                        if (currentChild != null) currentChild,
-                      ],
-                    );
-                  },
-                  child: KeyedSubtree(
-                    key: ValueKey<int>(controller.bottomNavIndex),
-                    child: switch (controller.bottomNavIndex) {
-                      0 => _buildHomeTab(context),
-                      1 => _buildOrdersTab(context),
-                      2 => const MessagesListView(embedded: true),
-                      3 => const InventoryView(embedded: true),
-                      _ => const AccountView(embedded: true),
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: AppColors.backgroundBottom,
+            body: Column(
+              children: [
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 360),
+                    reverseDuration: const Duration(milliseconds: 280),
+                    switchInCurve: Curves.easeInOutCubic,
+                    switchOutCurve: Curves.easeInOutCubic,
+                    transitionBuilder: (child, animation) {
+                      final curved = CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOutCubic,
+                      );
+                      final slide = Tween<Offset>(
+                        begin: const Offset(0.04, 0),
+                        end: Offset.zero,
+                      ).animate(curved);
+                      return FadeTransition(
+                        opacity: curved,
+                        child: SlideTransition(position: slide, child: child),
+                      );
                     },
+                    layoutBuilder: (currentChild, previousChildren) {
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ...previousChildren,
+                          if (currentChild != null) currentChild,
+                        ],
+                      );
+                    },
+                    child: KeyedSubtree(
+                      key: ValueKey<int>(controller.bottomNavIndex),
+                      child: switch (controller.bottomNavIndex) {
+                        0 => _buildHomeTab(context),
+                        1 => _buildOrdersTab(context),
+                        2 => const MessagesListView(embedded: true),
+                        3 => const InventoryView(embedded: true),
+                        _ => const AccountView(embedded: true),
+                      },
+                    ),
                   ),
                 ),
-              ),
-              _BottomNav(
-                selectedIndex: controller.bottomNavIndex,
-                onSelect: controller.onBottomNavSelect,
-              ),
-            ],
+                _BottomNav(
+                  selectedIndex: controller.bottomNavIndex,
+                  onSelect: controller.onBottomNavSelect,
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
       },
     );
   }
@@ -147,61 +143,61 @@ class _HomeViewState extends State<HomeView> {
                   revenue: controller.revenueValue,
                 ),
                 const SizedBox(height: 18),
-              _OrdersHeader(
-                onSeeAll: () => controller.onBottomNavSelect(1),
-              ),
-              const SizedBox(height: 12),
-              _OrderTypeTabs(
-                selectedIndex: controller.selectedTabIndex,
-                onSelect: controller.selectOrderType,
-                oneTimeBadge: controller.newOrdersCount != '0'
-                    ? controller.newOrdersCount
-                    : null,
-                subscriptionBadge: controller.subscriptionOrdersCount != '0'
-                    ? controller.subscriptionOrdersCount
-                    : null,
-              ),
-              const SizedBox(height: 14),
-              _SearchBlock(controller: controller.searchController),
-              const SizedBox(height: 12),
-              _StatusFilters(
-                filters: controller.activeFilters,
-                selectedIndex:
-                    controller.selectedFilterIndex.clamp(0, controller.activeFilters.length - 1),
-                onSelect: controller.selectFilter,
-                badgeLabel: _filterBadgeLabel,
-              ),
-              if (controller.isSubscriptionTab) ...[
-                const SizedBox(height: 10),
-                const Align(
-                  alignment: Alignment.centerRight,
-                  child: _SubscriptionCalendarLink(),
+                _OrdersHeader(onSeeAll: () => controller.onBottomNavSelect(1)),
+                const SizedBox(height: 12),
+                _OrderTypeTabs(
+                  selectedIndex: controller.selectedTabIndex,
+                  onSelect: controller.selectOrderType,
+                  oneTimeBadge: controller.newOrdersCount != '0'
+                      ? controller.newOrdersCount
+                      : null,
+                  subscriptionBadge: controller.subscriptionOrdersCount != '0'
+                      ? controller.subscriptionOrdersCount
+                      : null,
                 ),
-              ],
-              const SizedBox(height: 12),
-              if (controller.isSubscriptionTab)
-                if (controller.filteredSubscriptionOrders.isEmpty)
-                  const _EmptyOrders(message: 'No subscription orders here')
+                const SizedBox(height: 14),
+                _SearchBlock(controller: controller.searchController),
+                const SizedBox(height: 12),
+                _StatusFilters(
+                  filters: controller.activeFilters,
+                  selectedIndex: controller.selectedFilterIndex.clamp(
+                    0,
+                    controller.activeFilters.length - 1,
+                  ),
+                  onSelect: controller.selectFilter,
+                  badgeLabel: _filterBadgeLabel,
+                ),
+                if (controller.isSubscriptionTab) ...[
+                  const SizedBox(height: 10),
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: _SubscriptionCalendarLink(),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                if (controller.isSubscriptionTab)
+                  if (controller.filteredSubscriptionOrders.isEmpty)
+                    const _EmptyOrders(message: 'No subscription orders here')
+                  else
+                    for (final order
+                        in controller.filteredSubscriptionOrders.take(3))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _SubscriptionOrderCard(order: order),
+                      )
+                else if (controller.filteredOrders.isEmpty)
+                  const _EmptyOrders(message: 'No orders here')
                 else
-                  for (final order
-                      in controller.filteredSubscriptionOrders.take(3))
+                  for (final order in controller.filteredOrders.take(3))
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _SubscriptionOrderCard(order: order),
-                    )
-              else if (controller.filteredOrders.isEmpty)
-                const _EmptyOrders(message: 'No orders here')
-              else
-                for (final order in controller.filteredOrders.take(3))
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _OrderCard(order: order),
-                  ),
-            ],
+                      child: _OrderCard(order: order),
+                    ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 
@@ -215,8 +211,10 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildOrdersTab(BuildContext context) {
     final subscription = controller.isSubscriptionTab;
     final filters = controller.activeFilters;
-    final filterIndex =
-        controller.selectedFilterIndex.clamp(0, filters.length - 1);
+    final filterIndex = controller.selectedFilterIndex.clamp(
+      0,
+      filters.length - 1,
+    );
     final oneTime = controller.filteredOrders;
     final subscriptions = controller.filteredSubscriptionOrders;
     final count = subscription ? subscriptions.length : oneTime.length;
@@ -265,9 +263,7 @@ class _HomeViewState extends State<HomeView> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.orangeChipBorder,
-                          ),
+                          border: Border.all(color: AppColors.orangeChipBorder),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.05),
@@ -330,31 +326,37 @@ class _HomeViewState extends State<HomeView> {
           Expanded(
             child: subscription
                 ? (subscriptions.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-                        child: _EmptyOrders(message: 'No subscription orders here'),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                        itemCount: subscriptions.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          return _SubscriptionOrderCard(order: subscriptions[index]);
-                        },
-                      ))
+                      ? const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          child: _EmptyOrders(
+                            message: 'No subscription orders here',
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          itemCount: subscriptions.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            return _SubscriptionOrderCard(
+                              order: subscriptions[index],
+                            );
+                          },
+                        ))
                 : (oneTime.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-                        child: _EmptyOrders(message: 'No orders here'),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                        itemCount: oneTime.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          return _OrderCard(order: oneTime[index]);
-                        },
-                      )),
+                      ? const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          child: _EmptyOrders(message: 'No orders here'),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          itemCount: oneTime.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            return _OrderCard(order: oneTime[index]);
+                          },
+                        )),
           ),
         ],
       ),
@@ -667,10 +669,7 @@ class _MetricsGrid extends StatelessWidget {
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFFF8A3D),
-                    Color(0xFFFF5722),
-                  ],
+                  colors: [Color(0xFFFF8A3D), Color(0xFFFF5722)],
                 ),
                 countColor: Colors.white,
               ),
@@ -806,17 +805,11 @@ class _TotalsRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _TotalItem(
-              title: 'ORDERS',
-              value: orders,
-            ),
+            child: _TotalItem(title: 'ORDERS', value: orders),
           ),
           const _Line(),
           Expanded(
-            child: _TotalItem(
-              title: 'COMPLETED',
-              value: completed,
-            ),
+            child: _TotalItem(title: 'COMPLETED', value: completed),
           ),
           const _Line(),
           Expanded(
@@ -838,11 +831,7 @@ class _Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 42,
-      color: _TotalsRow._dividerColor,
-    );
+    return Container(width: 1, height: 42, color: _TotalsRow._dividerColor);
   }
 }
 
@@ -869,11 +858,7 @@ class _TotalItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (showTrend) ...[
-              const Icon(
-                Icons.trending_up,
-                size: 14,
-                color: Color(0xFF43A047),
-              ),
+              const Icon(Icons.trending_up, size: 14, color: Color(0xFF43A047)),
               const SizedBox(width: 3),
             ],
             Text(
@@ -988,11 +973,7 @@ class _OrderTypeTabs extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [
-            Color(0xFFFF5722),
-            Color(0xFFFF8F3D),
-            Color(0xFFFFC04D),
-          ],
+          colors: [Color(0xFFFF5722), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
         ),
         borderRadius: BorderRadius.circular(28),
       ),
@@ -1135,8 +1116,11 @@ class _SubscriptionCalendarLink extends StatelessWidget {
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.calendar_month_outlined,
-                size: 14, color: AppColors.calendarPurple),
+            Icon(
+              Icons.calendar_month_outlined,
+              size: 14,
+              color: AppColors.calendarPurple,
+            ),
             SizedBox(width: 4),
             Text(
               'Subscription Calendar',
@@ -1161,52 +1145,52 @@ class _SearchBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(
+          color: Color(0xFF333333),
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+        decoration: InputDecoration(
+          hintText: 'Search by ID, name',
+          hintStyle: const TextStyle(
+            color: Color(0xFF9CA3AF),
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Color(0xFF8E9AAF),
+            size: 22,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            borderSide: const BorderSide(color: Color(0xFFE6E8F0)),
           ),
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(
-              color: Color(0xFF333333),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-            decoration: InputDecoration(
-              hintText: 'Search by ID, name',
-              hintStyle: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-              prefixIcon: const Icon(
-                Icons.search,
-                color: Color(0xFF8E9AAF),
-                size: 22,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-                borderSide: const BorderSide(color: Color(0xFFE6E8F0)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-                borderSide: const BorderSide(color: Color(0xFFD0D5E0)),
-              ),
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28),
+            borderSide: const BorderSide(color: Color(0xFFD0D5E0)),
           ),
+        ),
+      ),
     );
   }
 }
@@ -1268,8 +1252,9 @@ class _StatusFilters extends StatelessWidget {
                     boxShadow: selected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFFFF5722)
-                                  .withValues(alpha: 0.22),
+                              color: const Color(
+                                0xFFFF5722,
+                              ).withValues(alpha: 0.22),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -1386,351 +1371,354 @@ class _OrderCard extends StatelessWidget {
         );
       },
       child: Container(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: _avatarBg,
-                child: Text(
-                  order.customerName[0].toUpperCase(),
-                  style: const TextStyle(
-                    color: _avatarLetter,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      order.customerName,
-                      style: const TextStyle(
-                        color: _nameColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _OrderTypeBadge(isDelivery: order.isDelivery),
-                          Text(
-                            ' • ',
-                            style: TextStyle(
-                              color: _metaGray.withValues(alpha: 0.8),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12.5,
-                              height: 1.2,
-                            ),
-                          ),
-                          Text(
-                            order.orderId,
-                            style: const TextStyle(
-                              color: _metaGray,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
-                              height: 1.2,
-                            ),
-                          ),
-                          Text(
-                            ' • ',
-                            style: TextStyle(
-                              color: _metaGray.withValues(alpha: 0.8),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12.5,
-                              height: 1.2,
-                            ),
-                          ),
-                          Text(
-                            order.timeAgo,
-                            style: const TextStyle(
-                              color: _metaGray,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Builder(
-                builder: (_) {
-                  final (label, color) = _statusBadge;
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Text(
-                      label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.4,
-                        height: 1.1,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (order.deliveryPartnerName != null) ...[
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                color: _partnerBg,
-                borderRadius: BorderRadius.circular(22),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.delivery_dining_outlined,
-                    size: 16,
-                    color: _partnerPurple,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          const TextSpan(
-                            text: 'Assigned Delivery Partner ',
-                            style: TextStyle(
-                              color: _partnerPurple,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                            ),
-                          ),
-                          TextSpan(
-                            text: '[${order.deliveryPartnerName}]',
-                            style: const TextStyle(
-                              color: _partnerPurple,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            const SizedBox(height: 10),
           ],
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!_isReady) ...[
-                  _OrderChip(
-                    icon: Icons.inventory_2_outlined,
-                    label: order.itemLabel,
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: _avatarBg,
+                  child: Text(
+                    order.customerName[0].toUpperCase(),
+                    style: const TextStyle(
+                      color: _avatarLetter,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                ],
-                _OrderChip(
-                  icon: order.isOnlinePayment
-                      ? Icons.payments_outlined
-                      : Icons.handshake_outlined,
-                  label: order.paymentLabel,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        order.customerName,
+                        style: const TextStyle(
+                          color: _nameColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _OrderTypeBadge(isDelivery: order.isDelivery),
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                color: _metaGray.withValues(alpha: 0.8),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12.5,
+                                height: 1.2,
+                              ),
+                            ),
+                            Text(
+                              order.orderId,
+                              style: const TextStyle(
+                                color: _metaGray,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 11,
+                                height: 1.2,
+                              ),
+                            ),
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                color: _metaGray.withValues(alpha: 0.8),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12.5,
+                                height: 1.2,
+                              ),
+                            ),
+                            Text(
+                              order.timeAgo,
+                              style: const TextStyle(
+                                color: _metaGray,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 11,
+                                height: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Builder(
+                  builder: (_) {
+                    final (label, color) = _statusBadge;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.4,
+                          height: 1.1,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
-          ),
-          if (order.isScheduled) ...[
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                color: _scheduledBg,
-                borderRadius: BorderRadius.circular(16),
+            const SizedBox(height: 12),
+            if (order.deliveryPartnerName != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: _partnerBg,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.delivery_dining_outlined,
+                      size: 16,
+                      color: _partnerPurple,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Assigned Delivery Partner ',
+                              style: TextStyle(
+                                color: _partnerPurple,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '[${order.deliveryPartnerName}]',
+                              style: const TextStyle(
+                                color: _partnerPurple,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(height: 10),
+            ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: _scheduledBlue,
-                      shape: BoxShape.circle,
+                  if (!_isReady) ...[
+                    _OrderChip(
+                      icon: Icons.inventory_2_outlined,
+                      label: order.itemLabel,
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Text(
-                    'SCHEDULED',
-                    style: TextStyle(
-                      color: _scheduledBlue,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  const Spacer(),
-                  const Icon(
-                    Icons.calendar_today_outlined,
-                    size: 13,
-                    color: _scheduledBlue,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    order.scheduleDate ?? '',
-                    style: const TextStyle(
-                      color: _scheduledBlue,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Icon(
-                    Icons.access_time_rounded,
-                    size: 14,
-                    color: _scheduledBlue,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    order.scheduleTime ?? '',
-                    style: const TextStyle(
-                      color: _scheduledBlue,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
-                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  _OrderChip(
+                    icon: order.isOnlinePayment
+                        ? Icons.payments_outlined
+                        : Icons.handshake_outlined,
+                    label: order.paymentLabel,
                   ),
                 ],
               ),
             ),
-          ],
-          if (_primaryActionLabel != null) ...[
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: DecoratedBox(
+            if (order.isScheduled) ...[
+              const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _orange.withValues(alpha: 0.35),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                  color: _scheduledBg,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: _scheduledBlue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'SCHEDULED',
+                      style: TextStyle(
+                        color: _scheduledBlue,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.calendar_today_outlined,
+                      size: 13,
+                      color: _scheduledBlue,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      order.scheduleDate ?? '',
+                      style: const TextStyle(
+                        color: _scheduledBlue,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Icon(
+                      Icons.access_time_rounded,
+                      size: 14,
+                      color: _scheduledBlue,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      order.scheduleTime ?? '',
+                      style: const TextStyle(
+                        color: _scheduledBlue,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _orange,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+              ),
+            ],
+            if (_primaryActionLabel != null) ...[
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _orange.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    _primaryActionLabel!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (order.status == HomeOrderStatus.accepted ||
+                          _primaryActionLabel == 'Prepare Order') {
+                        final dynamic id =
+                            order.rawId ??
+                            order.orderData?.id ??
+                            order.orderData?.rawJson?['order_id'] ??
+                            order.orderData?.rawJson?['id'] ??
+                            order.orderId.replaceAll('#', '').trim();
+                        if (Get.isRegistered<WaterHomeController>()) {
+                          Get.find<WaterHomeController>().prepareWaterOrder(
+                            id,
+                            context: context,
+                          );
+                        }
+                      } else if (order.status == HomeOrderStatus.preparing ||
+                          _primaryActionLabel == 'Mark as Ready') {
+                        final dynamic id =
+                            order.rawId ??
+                            order.orderData?.id ??
+                            order.orderData?.rawJson?['order_id'] ??
+                            order.orderData?.rawJson?['id'] ??
+                            order.orderId.replaceAll('#', '').trim();
+                        if (Get.isRegistered<WaterHomeController>()) {
+                          Get.find<WaterHomeController>().markAsReadyWaterOrder(
+                            id,
+                            context: context,
+                          );
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _orange,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      _primaryActionLabel!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ] else if (_isNewOrder) ...[
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: () => showRejectOrderSheet(context),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: _nameColor,
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: _rejectBorder, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Reject',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _orange.withValues(alpha: 0.35),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+            ] else if (_isNewOrder) ...[
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: OutlinedButton(
+                        onPressed: () => showRejectOrderSheet(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _nameColor,
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(
+                            color: _rejectBorder,
+                            width: 1,
                           ),
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _orange,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
-                          'Accept Order',
+                          'Reject',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
@@ -1739,13 +1727,62 @@ class _OrderCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _orange.withValues(alpha: 0.35),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final dynamic id =
+                                order.rawId ??
+                                order.orderData?.id ??
+                                order.orderData?.rawJson?['order_id'] ??
+                                order.orderData?.rawJson?['id'] ??
+                                order.orderId.replaceAll('#', '').trim();
+                            if (Get.isRegistered<WaterHomeController>()) {
+                              Get.find<WaterHomeController>().acceptWaterOrder(
+                                id,
+                                context: context,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _orange,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Accept Order',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-    ),
     );
   }
 }
@@ -1763,9 +1800,7 @@ class _OrderTypeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isDelivery
-        ? _OrderCard._orange
-        : _OrderCard._selfPickupBlue;
+    final color = isDelivery ? _OrderCard._orange : _OrderCard._selfPickupBlue;
     final label = isDelivery ? 'Delivery' : 'Self Pickup';
 
     return Row(
@@ -1785,11 +1820,7 @@ class _OrderTypeBadge extends StatelessWidget {
           fallbackColor: color,
         ),
         const SizedBox(width: 4),
-        Text(
-          label,
-          softWrap: false,
-          style: _metaStyle.copyWith(color: color),
-        ),
+        Text(label, softWrap: false, style: _metaStyle.copyWith(color: color)),
         if (!isDelivery) ...[
           const SizedBox(width: 2),
           Text(')', style: _metaStyle.copyWith(color: color)),
@@ -1818,10 +1849,26 @@ class _NeonAssetIcon extends StatelessWidget {
     // Equal RGB weights so orange delivery and blue self-pickup both show.
     return ColorFiltered(
       colorFilter: const ColorFilter.matrix(<double>[
-        1, 0, 0, 0, 0,
-        0, 1, 0, 0, 0,
-        0, 0, 1, 0, 0,
-        1, 1, 1, 0, 0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
       ]),
       child: Image.asset(
         asset,
@@ -1830,11 +1877,8 @@ class _NeonAssetIcon extends StatelessWidget {
         fit: BoxFit.contain,
         filterQuality: FilterQuality.high,
         gaplessPlayback: true,
-        errorBuilder: (_, _, _) => Icon(
-          fallback,
-          size: size,
-          color: fallbackColor,
-        ),
+        errorBuilder: (_, _, _) =>
+            Icon(fallback, size: size, color: fallbackColor),
       ),
     );
   }
@@ -1904,7 +1948,10 @@ class _SubscriptionOrderCard extends StatelessWidget {
       SubscriptionOrderStatus.newOrder => ('NEW', _newBadge),
       SubscriptionOrderStatus.active => ('ACTIVE', _activeBadge),
       SubscriptionOrderStatus.paused => ('PAUSED', _orange),
-      SubscriptionOrderStatus.cancelled => ('CANCELLED', AppColors.cancelledGray),
+      SubscriptionOrderStatus.cancelled => (
+        'CANCELLED',
+        AppColors.cancelledGray,
+      ),
     };
   }
 
@@ -1922,318 +1969,214 @@ class _SubscriptionOrderCard extends StatelessWidget {
         );
       },
       child: Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 14, 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: _avatarBg,
-                child: Text(
-                  order.customerName[0].toUpperCase(),
-                  style: const TextStyle(
-                    color: _avatarLetter,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      order.customerName,
-                      style: const TextStyle(
-                        color: _nameColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15.5,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      order.productLabel,
-                      style: const TextStyle(
-                        color: _metaGray,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.5,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        if (!order.isDelivery) ...[
-                          Text(
-                            '(',
-                            style: TextStyle(
-                              color: typeColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11.5,
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                        ],
-                        ColorFiltered(
-                          colorFilter: const ColorFilter.matrix(<double>[
-                            1, 0, 0, 0, 0,
-                            0, 1, 0, 0, 0,
-                            0, 0, 1, 0, 0,
-                            1, 1, 1, 0, 0,
-                          ]),
-                          child: Image.asset(
-                            order.isDelivery
-                                ? AppAssets.deliveryIcon
-                                : AppAssets.selfPickupIcon,
-                            width: 13,
-                            height: 13,
-                            errorBuilder: (_, _, _) => Icon(
-                              order.isDelivery
-                                  ? Icons.delivery_dining
-                                  : Icons.shopping_bag_outlined,
-                              size: 13,
-                              color: typeColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          order.isDelivery ? 'Delivery' : 'Self Pickup',
-                          style: TextStyle(
-                            color: typeColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11.5,
-                          ),
-                        ),
-                        if (!order.isDelivery) ...[
-                          const SizedBox(width: 2),
-                          Text(
-                            ')',
-                            style: TextStyle(
-                              color: typeColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11.5,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${order.orderId} • ${order.timeAgo}',
-                      style: const TextStyle(
-                        color: _metaGray,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Text(
-                  badgeLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.4,
-                    height: 1.1,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (_isActive) ...[
-            Row(
-              children: [
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: 'Next Delivery : ',
-                          style: TextStyle(
-                            color: _metaGray,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                          ),
-                        ),
-                        TextSpan(
-                          text: order.nextDelivery ?? '',
-                          style: const TextStyle(
-                            color: _nameColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const Icon(
-                  Icons.calendar_month_outlined,
-                  size: 14,
-                  color: _planPurple,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${order.planName} • ${order.timeSlot}',
-                  style: const TextStyle(
-                    color: _planPurple,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12.5,
-                  ),
-                ),
-              ],
+        padding: const EdgeInsets.fromLTRB(16, 16, 14, 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF0F0F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
-            const SizedBox(height: 14),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: () =>
-                          ChatView.open(context, customerName: order.customerName),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: _orange,
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: _orange, width: 1.2),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Chat With Customer',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: _avatarBg,
+                  child: Text(
+                    order.customerName[0].toUpperCase(),
+                    style: const TextStyle(
+                      color: _avatarLetter,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _orange.withValues(alpha: 0.35),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () => showPauseSubscriptionSheet(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _orange,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        order.customerName,
+                        style: const TextStyle(
+                          color: _nameColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15.5,
+                          height: 1.2,
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.pause, size: 18),
-                            SizedBox(width: 6),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        order.productLabel,
+                        style: const TextStyle(
+                          color: _metaGray,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.5,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          if (!order.isDelivery) ...[
                             Text(
-                              'Pause',
+                              '(',
                               style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
+                                color: typeColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 11.5,
+                              ),
+                            ),
+                            const SizedBox(width: 2),
+                          ],
+                          ColorFiltered(
+                            colorFilter: const ColorFilter.matrix(<double>[
+                              1,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                              1,
+                              1,
+                              1,
+                              0,
+                              0,
+                            ]),
+                            child: Image.asset(
+                              order.isDelivery
+                                  ? AppAssets.deliveryIcon
+                                  : AppAssets.selfPickupIcon,
+                              width: 13,
+                              height: 13,
+                              errorBuilder: (_, _, _) => Icon(
+                                order.isDelivery
+                                    ? Icons.delivery_dining
+                                    : Icons.shopping_bag_outlined,
+                                size: 13,
+                                color: typeColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            order.isDelivery ? 'Delivery' : 'Self Pickup',
+                            style: TextStyle(
+                              color: typeColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11.5,
+                            ),
+                          ),
+                          if (!order.isDelivery) ...[
+                            const SizedBox(width: 2),
+                            Text(
+                              ')',
+                              style: TextStyle(
+                                color: typeColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 11.5,
                               ),
                             ),
                           ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${order.orderId} • ${order.timeAgo}',
+                        style: const TextStyle(
+                          color: _metaGray,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.5,
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: badgeColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Text(
+                    badgeLabel,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      height: 1.1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (_isActive) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Next Delivery : ',
+                            style: TextStyle(
+                              color: _metaGray,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                            ),
+                          ),
+                          TextSpan(
+                            text: order.nextDelivery ?? '',
+                            style: const TextStyle(
+                              color: _nameColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ] else if (_isPaused) ...[
-            Row(
-              children: [
-                const Icon(
-                  Icons.calendar_today_outlined,
-                  size: 14,
-                  color: _metaGray,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Paused on: ${order.pausedOn ?? ''}',
+                  const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 14,
+                    color: _planPurple,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${order.planName} • ${order.timeSlot}',
                     style: const TextStyle(
-                      color: _metaGray,
-                      fontWeight: FontWeight.w500,
+                      color: _planPurple,
+                      fontWeight: FontWeight.w600,
                       fontSize: 12.5,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const _OutlinedPauseIcon(
-                  color: _pausedAmber,
-                  size: 14,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    order.pauseReason ?? '',
-                    style: const TextStyle(
-                      color: _pausedAmber,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            if (order.pausedByVendor)
+                ],
+              ),
+              const SizedBox(height: 14),
               Row(
                 children: [
                   Expanded(
@@ -2285,7 +2228,7 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () => showPauseSubscriptionSheet(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _orange,
                             foregroundColor: Colors.white,
@@ -2298,10 +2241,10 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.play_arrow_rounded, size: 20),
-                              SizedBox(width: 4),
+                              Icon(Icons.pause, size: 18),
+                              SizedBox(width: 6),
                               Text(
-                                'Resume',
+                                'Pause',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -2314,196 +2257,290 @@ class _SubscriptionOrderCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              )
-            else
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: OutlinedButton(
-                  onPressed: () =>
-                      ChatView.open(context, customerName: order.customerName),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: _orange,
-                    backgroundColor: Colors.white,
-                    side: const BorderSide(color: _orange, width: 1.2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              ),
+            ] else if (_isPaused) ...[
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: _metaGray,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Paused on: ${order.pausedOn ?? ''}',
+                      style: const TextStyle(
+                        color: _metaGray,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.5,
+                      ),
                     ),
                   ),
-                  child: const FittedBox(
-                    fit: BoxFit.scaleDown,
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const _OutlinedPauseIcon(color: _pausedAmber, size: 14),
+                  const SizedBox(width: 6),
+                  Expanded(
                     child: Text(
-                      'Chat With Customer',
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
+                      order.pauseReason ?? '',
+                      style: const TextStyle(
+                        color: _pausedAmber,
+                        fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-          ] else ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Plan :',
-                  style: TextStyle(
-                    color: _metaGray,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                    decoration: BoxDecoration(
-                      color: _planBg,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.calendar_month_outlined,
-                          size: 14,
-                          color: _planPurple,
+              const SizedBox(height: 14),
+              if (order.pausedByVendor)
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 46,
+                        child: OutlinedButton(
+                          onPressed: () => ChatView.open(
+                            context,
+                            customerName: order.customerName,
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: _orange,
+                            backgroundColor: Colors.white,
+                            side: const BorderSide(color: _orange, width: 1.2),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Chat With Customer',
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
                         ),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text.rich(
-                            TextSpan(
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 46,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: _orange.withValues(alpha: 0.35),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _orange,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TextSpan(
-                                  text: order.planName,
-                                  style: const TextStyle(
-                                    color: _planPurple,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' - ${order.planRange}',
+                                Icon(Icons.play_arrow_rounded, size: 20),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Resume',
                                   style: TextStyle(
-                                    color: _planPurple.withValues(alpha: 0.75),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ],
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const Text(
-                  'Time Slot :',
-                  style: TextStyle(
-                    color: _metaGray,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  order.timeSlot,
-                  style: const TextStyle(
-                    color: _nameColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                const Text(
-                  'Est. value :',
-                  style: TextStyle(
-                    color: _metaGray,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  order.estimatedValue,
-                  style: const TextStyle(
-                    color: _nameColor,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13.5,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: OutlinedButton(
-                      onPressed: () => showRejectOrderSheet(context),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: _nameColor,
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: _rejectBorder, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                       ),
-                      child: const Text(
-                        'Reject',
+                    ),
+                  ],
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: OutlinedButton(
+                    onPressed: () => ChatView.open(
+                      context,
+                      customerName: order.customerName,
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _orange,
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: _orange, width: 1.2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'Chat With Customer',
+                        maxLines: 1,
+                        softWrap: false,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 13,
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 46,
-                    child: DecoratedBox(
+            ] else ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Plan :',
+                    style: TextStyle(
+                      color: _metaGray,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 7,
+                      ),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _orange.withValues(alpha: 0.35),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                        color: _planBg,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.calendar_month_outlined,
+                            size: 14,
+                            color: _planPurple,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: order.planName,
+                                    style: const TextStyle(
+                                      color: _planPurple,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' - ${order.planRange}',
+                                    style: TextStyle(
+                                      color: _planPurple.withValues(
+                                        alpha: 0.75,
+                                      ),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _orange,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Text(
+                    'Time Slot :',
+                    style: TextStyle(
+                      color: _metaGray,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    order.timeSlot,
+                    style: const TextStyle(
+                      color: _nameColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  const Text(
+                    'Est. value :',
+                    style: TextStyle(
+                      color: _metaGray,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    order.estimatedValue,
+                    style: const TextStyle(
+                      color: _nameColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: OutlinedButton(
+                        onPressed: () => showRejectOrderSheet(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _nameColor,
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(
+                            color: _rejectBorder,
+                            width: 1,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
-                          'Accept Order',
+                          'Reject',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
@@ -2512,22 +2549,55 @@ class _SubscriptionOrderCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 46,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _orange.withValues(alpha: 0.35),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _orange,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Accept Order',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-    ),
     );
   }
 }
 
 class _OutlinedPauseIcon extends StatelessWidget {
-  const _OutlinedPauseIcon({
-    required this.color,
-    this.size = 14,
-  });
+  const _OutlinedPauseIcon({required this.color, this.size = 14});
 
   final Color color;
   final double size;
@@ -2565,10 +2635,7 @@ class _OutlinedPauseIcon extends StatelessWidget {
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({
-    required this.selectedIndex,
-    required this.onSelect,
-  });
+  const _BottomNav({required this.selectedIndex, required this.onSelect});
 
   final int selectedIndex;
   final ValueChanged<int> onSelect;
@@ -2587,9 +2654,7 @@ class _BottomNav extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -2643,14 +2708,22 @@ class _BottomNav extends StatelessWidget {
                                   child: Center(
                                     child: TweenAnimationBuilder<double>(
                                       tween: Tween(end: selected ? 1 : 0),
-                                      duration: const Duration(milliseconds: 280),
+                                      duration: const Duration(
+                                        milliseconds: 280,
+                                      ),
                                       curve: Curves.easeOutCubic,
                                       builder: (context, t, _) {
                                         return _NavIcon(
                                           asset: asset,
                                           fallback: Icons.home_rounded,
-                                          color: Color.lerp(AppColors.navInactive, Colors.white, t)!,
-                                          size: asset == null && !selected ? 28 : 24,
+                                          color: Color.lerp(
+                                            AppColors.navInactive,
+                                            Colors.white,
+                                            t,
+                                          )!,
+                                          size: asset == null && !selected
+                                              ? 28
+                                              : 24,
                                         );
                                       },
                                     ),
@@ -2662,8 +2735,12 @@ class _BottomNav extends StatelessWidget {
                                   curve: Curves.easeOutCubic,
                                   style: TextStyle(
                                     fontSize: 11,
-                                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                                    color: selected ? AppColors.primaryOrange : AppColors.navInactive,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    color: selected
+                                        ? AppColors.primaryOrange
+                                        : AppColors.navInactive,
                                   ),
                                   child: Text(
                                     labels[index],

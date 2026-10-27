@@ -25,6 +25,8 @@ class HomeOrder {
   final String? scheduleTime;
   final String? deliveryPartnerName;
   final HomeOrderStatus status;
+  final dynamic rawId;
+  final OrderData? orderData;
 
   const HomeOrder({
     required this.customerName,
@@ -40,6 +42,8 @@ class HomeOrder {
     this.scheduleTime,
     this.deliveryPartnerName,
     this.status = HomeOrderStatus.newOrder,
+    this.rawId,
+    this.orderData,
   });
 
   factory HomeOrder.fromOrderData(OrderData order) {
@@ -59,15 +63,27 @@ class HomeOrder {
         ? order.userName!.trim()
         : (raw['user']?['name']?.toString().trim().isNotEmpty == true
             ? raw['user']['name'].toString().trim()
-            : 'Customer');
+            : (raw['customer_name']?.toString().trim().isNotEmpty == true
+                ? raw['customer_name'].toString().trim()
+                : (raw['user_name']?.toString().trim().isNotEmpty == true
+                    ? raw['user_name'].toString().trim()
+                    : 'Customer')));
 
     final orderId = (order.orderCode?.trim().isNotEmpty == true)
         ? order.orderCode!.trim()
-        : (order.id != null ? '#${order.id}' : '');
+        : (order.id != null
+            ? '#${order.id}'
+            : (raw['order_code']?.toString().trim().isNotEmpty == true
+                ? raw['order_code'].toString().trim()
+                : (raw['order_id'] != null ? '#${raw['order_id']}' : '')));
 
     final timeAgo = (order.placedAtFormatted?.trim().isNotEmpty == true)
         ? order.placedAtFormatted!.trim()
-        : (order.placedAt?.trim() ?? '');
+        : (order.placedAt?.trim().isNotEmpty == true
+            ? order.placedAt!.trim()
+            : (raw['placed_at']?.toString().trim().isNotEmpty == true
+                ? raw['placed_at'].toString().trim()
+                : (raw['created_at']?.toString().trim() ?? '')));
 
     final paymentMethod = (raw['payment_type'] ?? raw['payment_method'])
             ?.toString()
@@ -147,6 +163,8 @@ class HomeOrder {
       scheduleTime: scheduleTime,
       deliveryPartnerName: deliveryPartner,
       status: status,
+      rawId: order.id ?? order.rawJson?['order_id'] ?? order.rawJson?['id'],
+      orderData: order,
     );
   }
 }

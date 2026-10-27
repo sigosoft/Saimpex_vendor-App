@@ -206,4 +206,18 @@ class ApiEndPoints {
   static String deletePharmacyMenuItem = "deletePharmacyMenuItem";
   static String deliveryBoyDetail = "deliveryBoyDetail";
   static String deleteDeliveryBoy = "deleteDeliveryBoy";
+
+  /////Water Api Endpoints
+
+  static String getWaterOrderDetail = "waterOrderDetail";
+  static String getWaterOrders = "waterOrders";
+  static String AcceptWaterOrder = "acceptWaterOrder";
+  static String PrepareWaterOrder = "prepareWaterOrder";
+  static String MarkAsReadyWaterOrder = "markAsReadyWaterOrder";
+  //static String MarkAsDeliveredWaterOrder = "markAsDeliveredWaterOrder";
+  //static String getWaterOrderDetail = "waterOrderDetail";
+  //static String getWaterOrderDetail = "waterOrderDetail";
+  //static String getWaterOrderDetail = "waterOrderDetail";
+  //static String getWaterOrderDetail = "waterOrderDetail";
+  //static String getWaterOrderDetail = "waterOrderDetail";
 }

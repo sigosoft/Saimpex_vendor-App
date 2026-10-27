@@ -300,6 +300,8 @@ class _MessagesListViewState extends State<MessagesListView> {
                                     context,
                                     customerName: thread.name,
                                     isOnline: thread.isOnline,
+                                    conversationId: thread.conversationId,
+                                    avatarUrl: thread.avatarUrl,
                                   );
                                 },
                               );

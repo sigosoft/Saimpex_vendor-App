@@ -1,8 +1,17 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/controller/chat_controller.dart';
+import 'package:saimpex_vendor/model/conversations_model.dart';
+import 'package:saimpex_vendor/model/get_conversation_model.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
-enum ChatMessageType { text, audio }
+enum ChatMessageType { text, audio, image }
 
 class ChatMessage {
   const ChatMessage({
@@ -11,6 +20,8 @@ class ChatMessage {
     required this.time,
     this.text,
     this.duration,
+    this.attachmentUrl,
+    this.createdAt,
     this.isRead = false,
   });
 
@@ -19,49 +30,424 @@ class ChatMessage {
   final String time;
   final String? text;
   final String? duration;
+  final String? attachmentUrl;
+  final String? createdAt;
   final bool isRead;
 }
 
-class ChatView extends StatelessWidget {
+class ChatView extends StatefulWidget {
   const ChatView({
     super.key,
-    this.customerName = 'Ahmed',
+    this.customerName = '',
     this.isOnline = true,
+    this.conversationId,
+    this.customerId,
+    this.orderId,
+    this.avatarUrl,
   });
 
   final String customerName;
   final bool isOnline;
-
-  static const messages = [
-    ChatMessage(
-      type: ChatMessageType.text,
-      isOutgoing: false,
-      time: '12:42 PM',
-      text:
-          'Hello Ahmed! Your order #22789000 is being ready. Would you like to add anything else?',
-    ),
-    ChatMessage(
-      type: ChatMessageType.audio,
-      isOutgoing: true,
-      time: '12:44 PM',
-      duration: '0:12',
-      isRead: true,
-    ),
-  ];
+  final int? conversationId;
+  final int? customerId;
+  final dynamic orderId;
+  final String? avatarUrl;
 
   static void open(
     BuildContext context, {
-    String customerName = 'Ahmed',
+    String customerName = '',
     bool isOnline = true,
+    int? conversationId,
+    int? customerId,
+    dynamic orderId,
+    String? avatarUrl,
   }) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ChatView(
           customerName: customerName,
           isOnline: isOnline,
+          conversationId: conversationId,
+          customerId: customerId,
+          orderId: orderId,
+          avatarUrl: avatarUrl,
         ),
       ),
     );
+  }
+
+  @override
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoading = true;
+  bool _isSending = false;
+  String? _errorMessage;
+  int? _activeConversationId;
+  String _displayName = '';
+  String? _avatarUrl;
+  List<ChatMessage> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _activeConversationId = widget.conversationId;
+    _displayName = widget.customerName.trim().isNotEmpty
+        ? widget.customerName.trim()
+        : '';
+    if (widget.avatarUrl != null && widget.avatarUrl!.trim().isNotEmpty) {
+      _avatarUrl = _formatImageUrl(widget.avatarUrl!);
+    }
+    _fetchConversation();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchConversation({bool quiet = false}) async {
+    if (!quiet) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
+    try {
+      final token = (await getSavedObject("token"))?.toString() ?? "";
+      if (token.isNotEmpty && token != "null") {
+        DioClient().updateToken(token);
+      }
+
+      final chatCtrl = Get.isRegistered<ChatController>()
+          ? Get.find<ChatController>()
+          : Get.put(ChatController());
+
+      // If active conversation ID is not known, lookup by customerId or customerName
+      if (_activeConversationId == null || _activeConversationId! <= 0) {
+        if (chatCtrl.conversations.isEmpty) {
+          try {
+            await chatCtrl.getAllConversations(context, quiet: true);
+          } catch (_) {}
+        }
+
+        if (widget.customerId != null && widget.customerId! > 0) {
+          for (final c in chatCtrl.conversations) {
+            if (c.customerId == widget.customerId ||
+                c.customer?.id == widget.customerId) {
+              if (c.id != null && c.id! > 0) {
+                _activeConversationId = c.id;
+              }
+              final cImg = c.customer?.image?.trim() ?? c.image?.trim();
+              if (cImg != null && cImg.isNotEmpty && cImg != 'null') {
+                _avatarUrl ??= _formatImageUrl(cImg);
+              }
+              break;
+            }
+          }
+        }
+
+        if ((_activeConversationId == null || _activeConversationId! <= 0) &&
+            _displayName.isNotEmpty &&
+            _displayName.toLowerCase() != 'customer') {
+          for (final c in chatCtrl.conversations) {
+            final cName = c.customer?.name?.trim();
+            if (cName != null &&
+                cName.toLowerCase() == _displayName.toLowerCase()) {
+              if (c.id != null && c.id! > 0) {
+                _activeConversationId = c.id;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // If we have an active conversation ID, call getConversation API
+      if (_activeConversationId != null && _activeConversationId! > 0) {
+        final queryParams = <String, dynamic>{
+          'conversation_id': _activeConversationId,
+          'page': 1,
+        };
+
+        debugPrint(
+          "==================== GET VENDOR CHAT GET CONVERSATION ====================",
+        );
+        debugPrint("Endpoint: ${ApiEndPoints.getConversation}");
+        debugPrint("Query: $queryParams");
+        print(
+          "==================== GET VENDOR CHAT GET CONVERSATION ====================",
+        );
+        print("Endpoint: ${ApiEndPoints.getConversation}");
+        print("Query: $queryParams");
+
+        final response = await DioClient().get(
+          ApiEndPoints.getConversation,
+          query: queryParams,
+        );
+
+        debugPrint("Response Status Code: ${response.statusCode}");
+        debugPrint("Response Body: ${response.data}");
+        print("Response Status Code: ${response.statusCode}");
+        print("Response Body: ${response.data}");
+
+        Map<String, dynamic>? rawData;
+        if (response.data is Map<String, dynamic>) {
+          rawData = response.data as Map<String, dynamic>;
+        } else if (response.data is Map) {
+          rawData = Map<String, dynamic>.from(response.data as Map);
+        } else if (response.data is String) {
+          try {
+            final decoded = jsonDecode(response.data as String);
+            if (decoded is Map) rawData = Map<String, dynamic>.from(decoded);
+          } catch (_) {}
+        }
+
+        if (rawData != null) {
+          final model = GetConversationModel.fromJson(rawData);
+          if (model.status == true && model.data?.conversation != null) {
+            final convo = model.data!.conversation!;
+            chatCtrl.currentConversation = convo;
+
+            final customerName = convo.customer?.name?.trim();
+            if (customerName != null && customerName.isNotEmpty) {
+              _displayName = customerName;
+            }
+
+            final rawConvoMap =
+                (rawData['data'] is Map &&
+                    rawData['data']['conversation'] is Map)
+                ? rawData['data']['conversation'] as Map
+                : null;
+            final rawCustomerMap =
+                (rawConvoMap != null && rawConvoMap['customer'] is Map)
+                ? rawConvoMap['customer'] as Map
+                : null;
+            final rawUserMap =
+                (rawConvoMap != null && rawConvoMap['user'] is Map)
+                ? rawConvoMap['user'] as Map
+                : null;
+
+            final imgCandidate =
+                convo.customer?.image?.trim() ??
+                convo.image?.trim() ??
+                rawCustomerMap?['image']?.toString().trim() ??
+                rawCustomerMap?['avatar']?.toString().trim() ??
+                rawCustomerMap?['profile_image']?.toString().trim() ??
+                rawCustomerMap?['profile_pic']?.toString().trim() ??
+                rawUserMap?['image']?.toString().trim() ??
+                rawUserMap?['avatar']?.toString().trim() ??
+                rawConvoMap?['image']?.toString().trim() ??
+                rawConvoMap?['customer_image']?.toString().trim() ??
+                rawConvoMap?['avatar']?.toString().trim();
+
+            if (imgCandidate != null &&
+                imgCandidate.isNotEmpty &&
+                imgCandidate != 'null') {
+              _avatarUrl = _formatImageUrl(imgCandidate);
+            }
+
+            final rawList = convo.messages ?? [];
+            final converted = rawList.map(_convertLastMessage).toList();
+            // Sort chronologically (oldest first so newest is at the bottom)
+            converted.sort((a, b) {
+              final dA = a.createdAt != null
+                  ? DateTime.tryParse(a.createdAt!) ?? DateTime(0)
+                  : DateTime(0);
+              final dB = b.createdAt != null
+                  ? DateTime.tryParse(b.createdAt!) ?? DateTime(0)
+                  : DateTime(0);
+              return dA.compareTo(dB);
+            });
+            _messages = converted;
+          }
+        }
+
+        try {
+          chatCtrl.markAsRead(_activeConversationId!);
+        } catch (_) {}
+      } else {
+        _messages = [];
+      }
+    } catch (e) {
+      debugPrint(
+        "==================== GET CONVERSATION ERROR ====================",
+      );
+      debugPrint("Error: $e");
+      print("==================== GET CONVERSATION ERROR ====================");
+      print("Error: $e");
+      _errorMessage = e.toString();
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _scrollToBottom();
+      }
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _textController.text.trim();
+    if (text.isEmpty || _isSending) return;
+
+    setState(() => _isSending = true);
+    try {
+      final chatCtrl = Get.isRegistered<ChatController>()
+          ? Get.find<ChatController>()
+          : Get.put(ChatController());
+
+      chatCtrl.messageController.text = text;
+      await chatCtrl.sendMessage(
+        context,
+        conversationId:
+            (_activeConversationId != null && _activeConversationId! > 0)
+            ? _activeConversationId
+            : null,
+        customerId: widget.customerId,
+      );
+
+      _textController.clear();
+
+      if (chatCtrl.currentConversation?.id != null &&
+          chatCtrl.currentConversation!.id! > 0) {
+        _activeConversationId = chatCtrl.currentConversation!.id;
+      }
+      await _fetchConversation(quiet: true);
+    } catch (e) {
+      debugPrint("Error sending message: $e");
+    } finally {
+      if (mounted) {
+        setState(() => _isSending = false);
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+
+    await chatCtrl.pickAndSendImage(
+      context,
+      conversationId:
+          (_activeConversationId != null && _activeConversationId! > 0)
+          ? _activeConversationId
+          : null,
+      customerId: widget.customerId,
+    );
+
+    if (chatCtrl.currentConversation?.id != null &&
+        chatCtrl.currentConversation!.id! > 0) {
+      _activeConversationId = chatCtrl.currentConversation!.id;
+    }
+    await _fetchConversation(quiet: true);
+  }
+
+  static String _formatImageUrl(String raw) {
+    final str = raw.trim();
+    if (str.isEmpty || str == 'null') return '';
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      return str;
+    }
+    final base = ApiConfigs.IMAGE_URL.trim();
+    if (base.endsWith('/')) {
+      return str.startsWith('/') ? '$base${str.substring(1)}' : '$base$str';
+    } else {
+      return str.startsWith('/') ? '$base$str' : '$base/$str';
+    }
+  }
+
+  static ChatMessage _convertLastMessage(LastMessage m) {
+    final isOutgoing = m.senderType?.toLowerCase() == 'vendor';
+
+    ChatMessageType type = ChatMessageType.text;
+    final mType = m.messageType?.toLowerCase();
+    if (mType == 'voice' || mType == 'audio') {
+      type = ChatMessageType.audio;
+    } else if (mType == 'image') {
+      type = ChatMessageType.image;
+    }
+
+    String time = '';
+    if (m.createdAt != null && m.createdAt!.isNotEmpty) {
+      try {
+        final dt = DateTime.parse(m.createdAt!).toLocal();
+        time = DateFormat('hh:mm a').format(dt);
+      } catch (_) {
+        time = m.createdAt!;
+      }
+    }
+
+    String? duration;
+    if (type == ChatMessageType.audio) {
+      duration = '0:12';
+    }
+
+    return ChatMessage(
+      type: type,
+      isOutgoing: isOutgoing,
+      time: time,
+      text: m.message,
+      duration: duration,
+      attachmentUrl: m.attachmentUrl,
+      createdAt: m.createdAt,
+      isRead: m.isRead == true,
+    );
+  }
+
+  String _getDateLabel(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'Today';
+    try {
+      final dt = DateTime.parse(dateStr).toLocal();
+      final now = DateTime.now();
+      if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+        return 'Today';
+      }
+      final yesterday = now.subtract(const Duration(days: 1));
+      if (dt.year == yesterday.year &&
+          dt.month == yesterday.month &&
+          dt.day == yesterday.day) {
+        return 'Yesterday';
+      }
+      return DateFormat('MMM dd, yyyy').format(dt);
+    } catch (_) {
+      return 'Today';
+    }
+  }
+
+  List<Widget> _buildMessagesWithDatePills() {
+    final List<Widget> widgets = [];
+    String? lastDate;
+
+    for (final message in _messages) {
+      final dateLabel = _getDateLabel(message.createdAt);
+      if (dateLabel != lastDate) {
+        lastDate = dateLabel;
+        widgets.add(Center(child: _DatePill(label: dateLabel)));
+        widgets.add(const SizedBox(height: 18));
+      }
+      widgets.add(_MessageItem(message: message));
+      widgets.add(const SizedBox(height: 14));
+    }
+
+    return widgets;
   }
 
   @override
@@ -77,29 +463,83 @@ class ChatView extends StatelessWidget {
             children: [
               const SizedBox(height: 6),
               _ChatHeader(
-                name: customerName,
-                isOnline: isOnline,
+                name: _displayName,
+                isOnline: widget.isOnline,
+                avatarUrl: _avatarUrl,
                 onBack: () => Navigator.of(context).maybePop(),
               ),
               const SizedBox(height: 8),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  children: [
-                    const Center(child: _DatePill(label: 'Today')),
-                    const SizedBox(height: 18),
-                    for (final message in messages) ...[
-                      _MessageItem(message: message),
-                      const SizedBox(height: 14),
-                    ],
-                  ],
-                ),
+              Expanded(child: _buildBody()),
+              _ChatInputBar(
+                controller: _textController,
+                onSend: _sendMessage,
+                onPickImage: _pickImage,
+                isSending: _isSending,
               ),
-              const _ChatInputBar(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryOrange),
+      );
+    }
+
+    if (_errorMessage != null && _messages.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () => _fetchConversation(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primaryOrange,
+                  side: const BorderSide(color: AppColors.primaryOrange),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_messages.isEmpty) {
+      return const Center(
+        child: Text(
+          'No messages yet',
+          style: TextStyle(
+            color: AppColors.textMuted,
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
+        ),
+      );
+    }
+
+    return ListView(
+      controller: _scrollController,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      children: _buildMessagesWithDatePills(),
     );
   }
 }
@@ -109,14 +549,19 @@ class _ChatHeader extends StatelessWidget {
     required this.name,
     required this.isOnline,
     required this.onBack,
+    this.avatarUrl,
   });
 
   final String name;
   final bool isOnline;
   final VoidCallback onBack;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
+    final displayName = name.trim().isNotEmpty ? name.trim() : 'Customer';
+    final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'C';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -152,13 +597,34 @@ class _ChatHeader extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: AppColors.avatarPink,
-            child: Text(
-              name.isNotEmpty ? name[0].toUpperCase() : 'A',
-              style: const TextStyle(
-                color: AppColors.avatarText,
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
+            child: ClipOval(
+              child: (avatarUrl != null && avatarUrl!.trim().isNotEmpty)
+                  ? Image.network(
+                      avatarUrl!.trim(),
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => Center(
+                        child: Text(
+                          initial,
+                          style: const TextStyle(
+                            color: AppColors.avatarText,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        initial,
+                        style: const TextStyle(
+                          color: AppColors.avatarText,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 10),
@@ -167,7 +633,7 @@ class _ChatHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  displayName,
                   style: const TextStyle(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
@@ -226,19 +692,23 @@ class _MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final align =
-        message.isOutgoing ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final align = message.isOutgoing
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start;
 
     return Column(
       crossAxisAlignment: align,
       children: [
         if (message.type == ChatMessageType.text)
-          _TextBubble(
-            text: message.text ?? '',
+          _TextBubble(text: message.text ?? '', isOutgoing: message.isOutgoing)
+        else if (message.type == ChatMessageType.audio)
+          _AudioBubble(duration: message.duration ?? '0:00')
+        else if (message.attachmentUrl != null &&
+            message.attachmentUrl!.isNotEmpty)
+          _ImageBubble(
+            imageUrl: message.attachmentUrl!,
             isOutgoing: message.isOutgoing,
-          )
-        else
-          _AudioBubble(duration: message.duration ?? '0:00'),
+          ),
         const SizedBox(height: 6),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -321,9 +791,36 @@ class _AudioBubble extends StatelessWidget {
   final String duration;
 
   static const _heights = [
-    8.0, 14.0, 10.0, 18.0, 12.0, 20.0, 9.0, 16.0, 11.0, 19.0,
-    13.0, 8.0, 17.0, 12.0, 21.0, 10.0, 15.0, 9.0, 18.0, 11.0,
-    16.0, 8.0, 14.0, 12.0, 19.0, 10.0, 15.0, 9.0, 17.0, 11.0,
+    8.0,
+    14.0,
+    10.0,
+    18.0,
+    12.0,
+    20.0,
+    9.0,
+    16.0,
+    11.0,
+    19.0,
+    13.0,
+    8.0,
+    17.0,
+    12.0,
+    21.0,
+    10.0,
+    15.0,
+    9.0,
+    18.0,
+    11.0,
+    16.0,
+    8.0,
+    14.0,
+    12.0,
+    19.0,
+    10.0,
+    15.0,
+    9.0,
+    17.0,
+    11.0,
   ];
 
   @override
@@ -395,8 +892,65 @@ class _AudioBubble extends StatelessWidget {
   }
 }
 
+class _ImageBubble extends StatelessWidget {
+  const _ImageBubble({required this.imageUrl, required this.isOutgoing});
+
+  final String imageUrl;
+  final bool isOutgoing;
+
+  @override
+  Widget build(BuildContext context) {
+    String fullUrl = imageUrl;
+    if (!fullUrl.startsWith('http')) {
+      final base = ApiConfigs.IMAGE_URL.trim();
+      fullUrl = base.endsWith('/') ? '$base$fullUrl' : '$base/$fullUrl';
+    }
+
+    return Align(
+      alignment: isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(18),
+          topRight: const Radius.circular(18),
+          bottomLeft: Radius.circular(isOutgoing ? 18 : 6),
+          bottomRight: Radius.circular(isOutgoing ? 6 : 18),
+        ),
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.sizeOf(context).width * 0.70,
+            maxHeight: 220,
+          ),
+          decoration: BoxDecoration(
+            color: isOutgoing
+                ? AppColors.chatBubbleOutgoing
+                : AppColors.chatBubbleIncoming,
+          ),
+          child: Image.network(
+            fullUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => const Padding(
+              padding: EdgeInsets.all(16),
+              child: Icon(Icons.broken_image, color: Colors.grey),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ChatInputBar extends StatelessWidget {
-  const _ChatInputBar();
+  const _ChatInputBar({
+    required this.controller,
+    required this.onSend,
+    this.onPickImage,
+    this.isSending = false,
+  });
+
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  final VoidCallback? onPickImage;
+  final bool isSending;
 
   @override
   Widget build(BuildContext context) {
@@ -416,22 +970,45 @@ class _ChatInputBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(
-                      Icons.add_rounded,
-                      color: AppColors.textMeta,
-                      size: 24,
+                    InkWell(
+                      onTap: onPickImage,
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Icon(
+                        Icons.add_rounded,
+                        color: AppColors.textMeta,
+                        size: 24,
+                      ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
-                        'Type a message...',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
+                      child: TextField(
+                        controller: controller,
+                        cursorColor: AppColors.primaryOrange,
+                        style: const TextStyle(
+                          color: AppColors.textDark,
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                         ),
+                        decoration: const InputDecoration(
+                          hintText: 'Type a message...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textMuted,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        onSubmitted: (_) => onSend(),
                       ),
                     ),
                   ],
@@ -453,24 +1030,39 @@ class _ChatInputBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.primaryOrange,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryOrange.withValues(alpha: 0.35),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.send_rounded,
-                color: Colors.white,
-                size: 20,
+            InkWell(
+              onTap: isSending ? null : onSend,
+              borderRadius: BorderRadius.circular(24),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryOrange,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryOrange.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: isSending
+                    ? const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : const Icon(
+                        Icons.send_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
               ),
             ),
           ],
