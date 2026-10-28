@@ -48,12 +48,14 @@ class HomeOrder {
 
   factory HomeOrder.fromOrderData(OrderData order) {
     final raw = order.rawJson ?? {};
-    final isPickup = order.isSelfPickup == 1 ||
+    final isPickup =
+        order.isSelfPickup == 1 ||
         order.isSelfPickup == true ||
         order.isSelfPickup == '1' ||
         order.deliveryType == 2 ||
         order.deliveryType == '2' ||
-        order.deliveryType?.toString().toLowerCase().contains('pickup') == true ||
+        order.deliveryType?.toString().toLowerCase().contains('pickup') ==
+            true ||
         raw['is_self_pickup'] == 1 ||
         raw['is_self_pickup'] == true ||
         raw['is_self_pickup'] == '1';
@@ -62,38 +64,42 @@ class HomeOrder {
     final customerName = (order.userName?.trim().isNotEmpty == true)
         ? order.userName!.trim()
         : (raw['user']?['name']?.toString().trim().isNotEmpty == true
-            ? raw['user']['name'].toString().trim()
-            : (raw['customer_name']?.toString().trim().isNotEmpty == true
-                ? raw['customer_name'].toString().trim()
-                : (raw['user_name']?.toString().trim().isNotEmpty == true
-                    ? raw['user_name'].toString().trim()
-                    : 'Customer')));
+              ? raw['user']['name'].toString().trim()
+              : (raw['customer_name']?.toString().trim().isNotEmpty == true
+                    ? raw['customer_name'].toString().trim()
+                    : (raw['user_name']?.toString().trim().isNotEmpty == true
+                          ? raw['user_name'].toString().trim()
+                          : 'Customer')));
 
     final orderId = (order.orderCode?.trim().isNotEmpty == true)
         ? order.orderCode!.trim()
         : (order.id != null
-            ? '#${order.id}'
-            : (raw['order_code']?.toString().trim().isNotEmpty == true
-                ? raw['order_code'].toString().trim()
-                : (raw['order_id'] != null ? '#${raw['order_id']}' : '')));
+              ? '#${order.id}'
+              : (raw['order_code']?.toString().trim().isNotEmpty == true
+                    ? raw['order_code'].toString().trim()
+                    : (raw['order_id'] != null ? '#${raw['order_id']}' : '')));
 
     final timeAgo = (order.placedAtFormatted?.trim().isNotEmpty == true)
         ? order.placedAtFormatted!.trim()
         : (order.placedAt?.trim().isNotEmpty == true
-            ? order.placedAt!.trim()
-            : (raw['placed_at']?.toString().trim().isNotEmpty == true
-                ? raw['placed_at'].toString().trim()
-                : (raw['created_at']?.toString().trim() ?? '')));
+              ? order.placedAt!.trim()
+              : (raw['placed_at']?.toString().trim().isNotEmpty == true
+                    ? raw['placed_at'].toString().trim()
+                    : (raw['created_at']?.toString().trim() ?? '')));
 
-    final paymentMethod = (raw['payment_type'] ?? raw['payment_method'])
+    final paymentMethod =
+        (raw['payment_type'] ?? raw['payment_method'])
             ?.toString()
             .toLowerCase() ??
         '';
-    final isCod = paymentMethod.contains('cash') ||
+    final isCod =
+        paymentMethod.contains('cash') ||
         paymentMethod.contains('cod') ||
         paymentMethod == '1';
     final isOnlinePayment = !isCod;
-    final paymentLabel = isOnlinePayment ? 'Online Payment' : 'Cash on Delivery';
+    final paymentLabel = isOnlinePayment
+        ? 'Online Payment'
+        : 'Cash on Delivery';
 
     final total = order.total?.toString() ?? raw['total']?.toString() ?? '0';
     String itemLabel = '';
@@ -101,7 +107,8 @@ class HomeOrder {
     if (orderItems is List && orderItems.isNotEmpty) {
       final first = orderItems.first;
       if (first is Map) {
-        final itemName = first['name'] ??
+        final itemName =
+            first['name'] ??
             first['product_name'] ??
             first['item_name'] ??
             'Bottle';
@@ -114,7 +121,8 @@ class HomeOrder {
       itemLabel = '$count ${count == 1 ? "Item" : "Items"} • $total MRU';
     }
 
-    final isScheduled = raw['is_scheduled'] == 1 ||
+    final isScheduled =
+        raw['is_scheduled'] == 1 ||
         raw['is_scheduled'] == true ||
         raw['is_scheduled'] == '1';
     final scheduleDate = raw['schedule_date']?.toString();
@@ -184,6 +192,10 @@ class SubscriptionOrder {
   final String? pauseReason;
   final bool pausedByVendor;
   final SubscriptionOrderStatus status;
+  final dynamic rawId;
+  final int? customerId;
+  final String? customerAvatar;
+  final Map<String, dynamic>? rawJson;
 
   const SubscriptionOrder({
     required this.customerName,
@@ -200,46 +212,98 @@ class SubscriptionOrder {
     this.pauseReason,
     this.pausedByVendor = false,
     this.status = SubscriptionOrderStatus.newOrder,
+    this.rawId,
+    this.customerId,
+    this.customerAvatar,
+    this.rawJson,
   });
 
+  dynamic get subscriptionId {
+    if (rawId != null) return rawId;
+    final clean = orderId.replaceAll('#', '').trim();
+    return int.tryParse(clean) ?? clean;
+  }
+
+  int? get resolvedCustomerId {
+    if (customerId != null && customerId! > 0) return customerId;
+    final dynamic rawCustId = rawJson?['customer_id'] ??
+        rawJson?['user_id'] ??
+        (rawJson?['customer'] is Map ? rawJson!['customer']['id'] : null) ??
+        (rawJson?['user'] is Map ? rawJson!['user']['id'] : null) ??
+        (rawJson?['client'] is Map ? rawJson!['client']['id'] : null) ??
+        rawJson?['client_id'];
+    return int.tryParse(rawCustId?.toString() ?? '');
+  }
+
   factory SubscriptionOrder.fromJson(Map<String, dynamic> json) {
-    final customerName = json['customer_name']?.toString() ??
+    final rawId = json['id'] ?? json['subscription_id'] ?? json['order_id'];
+
+    final customerName =
+        json['customer_name']?.toString() ??
         json['user_name']?.toString() ??
         json['user']?['name']?.toString() ??
+        json['customer']?['name']?.toString() ??
         'Customer';
 
-    final productLabel = json['product_label']?.toString() ??
+    final productLabel =
+        json['product_label']?.toString() ??
         json['product_name']?.toString() ??
+        json['water_menu_item']?['name']?.toString() ??
+        json['item']?['name']?.toString() ??
         json['item_name']?.toString() ??
+        (json['plan'] is Map ? json['plan']['name']?.toString() : null) ??
         'Drinking Water 19L';
 
-    final orderId = json['order_code']?.toString() ??
+    final rawOrderId =
+        json['order_code']?.toString() ??
+        json['subscription_code']?.toString() ??
+        json['code']?.toString() ??
         (json['id'] != null ? '#${json['id']}' : '');
+    final orderId = (rawOrderId.isNotEmpty && !rawOrderId.startsWith('#'))
+        ? '#$rawOrderId'
+        : rawOrderId;
 
-    final timeAgo = json['time_ago']?.toString() ??
+    final timeAgo =
+        json['time_ago']?.toString() ??
         json['placed_at_formatted']?.toString() ??
         json['placed_at']?.toString() ??
+        json['created_at']?.toString() ??
         '';
 
-    final isDelivery = json['is_delivery'] == true ||
+    final isDelivery =
+        json['is_delivery'] == true ||
         json['is_delivery'] == 1 ||
+        json['is_delivery'] == '1' ||
         json['delivery_type'] == 1 ||
+        json['delivery_type'] == '1' ||
         json['is_self_pickup'] != 1;
 
-    final planName = json['plan_name']?.toString() ??
-        json['plan']?.toString() ??
+    final planName =
+        json['plan_name']?.toString() ??
+        (json['plan'] is Map
+            ? json['plan']['name']?.toString()
+            : json['plan']?.toString()) ??
         'Daily';
 
-    final planRange = json['plan_range']?.toString() ??
+    final planRange =
+        json['plan_range']?.toString() ??
         (json['start_date'] != null && json['end_date'] != null
             ? 'Start ${json['start_date']} - End ${json['end_date']}'
-            : '');
+            : (json['start_date'] != null
+                  ? 'Start ${json['start_date']}'
+                  : ''));
 
-    final timeSlot = json['time_slot']?.toString() ??
+    final timeSlot =
+        json['time_slot']?.toString() ??
         json['delivery_slot']?.toString() ??
+        json['slot']?.toString() ??
         '';
 
-    final total = json['total']?.toString() ??
+    final total =
+        json['total']?.toString() ??
+        json['total_amount']?.toString() ??
+        json['amount']?.toString() ??
+        json['price']?.toString() ??
         json['estimated_value']?.toString() ??
         '';
     final estimatedValue = total.isNotEmpty
@@ -249,20 +313,39 @@ class SubscriptionOrder {
     final nextDelivery = json['next_delivery']?.toString();
     final pausedOn = json['paused_on']?.toString();
     final pauseReason = json['pause_reason']?.toString();
-    final pausedByVendor = json['paused_by_vendor'] == true ||
-        json['paused_by_vendor'] == 1;
+    final pausedByVendor =
+        json['paused_by_vendor'] == true ||
+        json['paused_by_vendor'] == 1 ||
+        json['paused_by_vendor'] == '1';
 
     SubscriptionOrderStatus status = SubscriptionOrderStatus.newOrder;
-    final s = json['status'];
-    if (s == 1 || s == '1' || s == 'new' || s == 'newOrder') {
+    final s = json['status']?.toString().toLowerCase();
+    if (s == '1' || s == 'new' || s == 'neworder' || s == 'pending') {
       status = SubscriptionOrderStatus.newOrder;
-    } else if (s == 2 || s == '2' || s == 'active') {
+    } else if (s == '2' ||
+        s == 'active' ||
+        s == 'approved' ||
+        s == 'accepted') {
       status = SubscriptionOrderStatus.active;
-    } else if (s == 3 || s == '3' || s == 'paused') {
+    } else if (s == '3' || s == 'paused') {
       status = SubscriptionOrderStatus.paused;
-    } else if (s == 4 || s == '4' || s == 10 || s == 'cancelled') {
+    } else if (s == '4' || s == '10' || s == 'cancelled' || s == 'rejected') {
       status = SubscriptionOrderStatus.cancelled;
     }
+
+    final dynamic rawCustId = json['customer_id'] ??
+        json['user_id'] ??
+        (json['customer'] is Map ? json['customer']['id'] : null) ??
+        (json['user'] is Map ? json['user']['id'] : null) ??
+        (json['client'] is Map ? json['client']['id'] : null) ??
+        json['client_id'];
+    final int? customerId = int.tryParse(rawCustId?.toString() ?? '');
+
+    final dynamic rawCustomerImage = json['customer_image'] ??
+        json['user_image'] ??
+        (json['customer'] is Map ? json['customer']['image'] : null) ??
+        (json['user'] is Map ? json['user']['image'] : null);
+    final String? customerAvatar = rawCustomerImage?.toString();
 
     return SubscriptionOrder(
       customerName: customerName,
@@ -279,6 +362,10 @@ class SubscriptionOrder {
       pauseReason: pauseReason,
       pausedByVendor: pausedByVendor,
       status: status,
+      rawId: rawId,
+      customerId: customerId,
+      customerAvatar: customerAvatar,
+      rawJson: json,
     );
   }
 }

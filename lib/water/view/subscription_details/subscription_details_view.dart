@@ -13,6 +13,7 @@ class SubscriptionDetailsView extends StatelessWidget {
   bool get _isPaused => order.status == SubscriptionOrderStatus.paused;
   bool get _isActive => order.status == SubscriptionOrderStatus.active;
   bool get _isNew => order.status == SubscriptionOrderStatus.newOrder;
+
   /// New + Active share the full schedule layout from the design.
   bool get _showDeliverySchedule => _isActive || _isNew;
 
@@ -111,6 +112,9 @@ class SubscriptionDetailsView extends StatelessWidget {
                   status: order.status,
                   pausedByVendor: order.pausedByVendor,
                   customerName: order.customerName,
+                  customerId: order.resolvedCustomerId,
+                  orderId: order.subscriptionId,
+                  avatarUrl: order.customerAvatar,
                   onPause: () => showPauseSubscriptionSheet(context),
                 ),
               ],
@@ -156,9 +160,7 @@ class _Header extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.primaryOrange.withValues(
-                        alpha: 0.35,
-                      ),
+                      color: AppColors.primaryOrange.withValues(alpha: 0.35),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -189,12 +191,12 @@ class _CustomerCard extends StatelessWidget {
   final SubscriptionOrder order;
 
   static List<BoxShadow> get _softShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.06),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -204,12 +206,9 @@ class _CustomerCard extends StatelessWidget {
 
     final (badgeLabel, badgeColor) = switch (order.status) {
       SubscriptionOrderStatus.newOrder ||
-      SubscriptionOrderStatus.active =>
-        ('ACTIVE', AppColors.activeGreen),
-      SubscriptionOrderStatus.paused =>
-        ('PAUSED', AppColors.primaryOrange),
-      SubscriptionOrderStatus.cancelled =>
-        ('CANCELLED', AppColors.textMuted),
+      SubscriptionOrderStatus.active => ('ACTIVE', AppColors.activeGreen),
+      SubscriptionOrderStatus.paused => ('PAUSED', AppColors.primaryOrange),
+      SubscriptionOrderStatus.cancelled => ('CANCELLED', AppColors.textMuted),
     };
 
     return Container(
@@ -247,8 +246,10 @@ class _CustomerCard extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: badgeColor,
                   borderRadius: BorderRadius.circular(20),
@@ -320,8 +321,7 @@ class _CustomerCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primaryOrange
-                            .withValues(alpha: 0.35),
+                        color: AppColors.primaryOrange.withValues(alpha: 0.35),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -414,10 +414,26 @@ class _CustomerCard extends StatelessWidget {
                         children: [
                           ColorFiltered(
                             colorFilter: const ColorFilter.matrix(<double>[
-                              1, 0, 0, 0, 0,
-                              0, 1, 0, 0, 0,
-                              0, 0, 1, 0, 0,
-                              1, 1, 1, 0, 0,
+                              1,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                              0,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                              1,
+                              1,
+                              1,
+                              0,
+                              0,
                             ]),
                             child: Image.asset(
                               order.isDelivery
@@ -560,10 +576,8 @@ class _ProductCard extends StatelessWidget {
               child: Image.asset(
                 AppAssets.waterCan19L,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const Icon(
-                  Icons.water_drop,
-                  color: AppColors.textMuted,
-                ),
+                errorBuilder: (_, _, _) =>
+                    const Icon(Icons.water_drop, color: AppColors.textMuted),
               ),
             ),
           ),
@@ -582,8 +596,10 @@ class _ProductCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.softGray,
                     borderRadius: BorderRadius.circular(8),
@@ -1042,9 +1058,7 @@ class _DeliveryHistoryRow extends StatelessWidget {
     final accent = delivered
         ? AppColors.deliveredGreen
         : AppColors.progressBlue;
-    final bg = delivered
-        ? AppColors.deliveredBg
-        : AppColors.progressBg;
+    final bg = delivered ? AppColors.deliveredBg : AppColors.progressBg;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -1052,15 +1066,10 @@ class _DeliveryHistoryRow extends StatelessWidget {
         Container(
           width: 38,
           height: 38,
-          decoration: BoxDecoration(
-            color: bg,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
           alignment: Alignment.center,
           child: Icon(
-            delivered
-                ? Icons.check_circle_outline_rounded
-                : Icons.sync_rounded,
+            delivered ? Icons.check_circle_outline_rounded : Icons.sync_rounded,
             size: 20,
             color: accent,
           ),
@@ -1207,26 +1216,35 @@ class _BottomActions extends StatelessWidget {
     required this.pausedByVendor,
     required this.customerName,
     required this.onPause,
+    this.customerId,
+    this.orderId,
+    this.avatarUrl,
   });
 
   final SubscriptionOrderStatus status;
   final bool pausedByVendor;
   final String customerName;
   final VoidCallback onPause;
+  final int? customerId;
+  final dynamic orderId;
+  final String? avatarUrl;
 
   Widget _chatButton({required BuildContext context, bool fullWidth = false}) {
     return SizedBox(
       height: 50,
       width: fullWidth ? double.infinity : null,
       child: OutlinedButton(
-        onPressed: () => ChatView.open(context, customerName: customerName),
+        onPressed: () => ChatView.open(
+          context,
+          customerName: customerName,
+          customerId: customerId,
+          orderId: orderId,
+          avatarUrl: avatarUrl,
+        ),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primaryOrange,
           backgroundColor: Colors.white,
-          side: const BorderSide(
-            color: AppColors.primaryOrange,
-            width: 1.2,
-          ),
+          side: const BorderSide(color: AppColors.primaryOrange, width: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -1243,10 +1261,7 @@ class _BottomActions extends StatelessWidget {
                 'Chat With Customer',
                 maxLines: 1,
                 softWrap: false,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
               ),
             ],
           ),

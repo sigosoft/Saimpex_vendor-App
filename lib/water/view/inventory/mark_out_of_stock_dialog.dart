@@ -17,6 +17,20 @@ Future<bool> showMarkAvailableDialog(BuildContext context) {
   );
 }
 
+Future<bool> showDeleteProductDialog(
+  BuildContext context, {
+  String? productName,
+}) {
+  final nameText = productName != null && productName.trim().isNotEmpty
+      ? ' "${productName.trim()}"'
+      : ' this item';
+  return showInventoryStatusDialog(
+    context,
+    message: 'Are you sure you want to delete$nameText?',
+    confirmColor: AppColors.inventoryOutOfStock,
+  );
+}
+
 Future<bool> showInventoryStatusDialog(
   BuildContext context, {
   required String message,

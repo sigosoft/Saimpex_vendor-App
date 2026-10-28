@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/water/controller/inventory_details_controller.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/inventory_product.dart';
+import 'package:saimpex_vendor/water/view/inventory/add_product_view.dart';
+import 'package:saimpex_vendor/water/view/inventory/edit_price_dialog.dart';
+import 'package:saimpex_vendor/water/view/inventory/update_stock_dialog.dart';
 
 class InventoryDetailsView extends StatefulWidget {
   const InventoryDetailsView({super.key, required this.product});
 
   final InventoryProduct product;
 
-  static void open(BuildContext context, InventoryProduct product) {
-    Navigator.of(context).push(
+  static Future<void> open(BuildContext context, InventoryProduct product) {
+    return Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => InventoryDetailsView(product: product),
       ),
@@ -26,14 +30,58 @@ class InventoryDetailsView extends StatefulWidget {
 class _InventoryDetailsViewState extends State<InventoryDetailsView> {
   late final WaterInventoryDetailsController controller;
 
-  InventoryProduct get product => widget.product;
+  InventoryProduct get product => controller.product;
 
   bool get isInStock => product.status != InventoryStockStatus.outOfStock;
 
   @override
   void initState() {
     super.initState();
-    controller = WaterInventoryDetailsController();
+    controller =
+        WaterInventoryDetailsController(initialProduct: widget.product);
+    final dynamic itemId = widget.product.rawId ??
+        widget.product.menuId ??
+        widget.product.rawJson?['id'] ??
+        widget.product.id.replaceAll('#', '').trim();
+    controller.fetchWaterMenuItemDetail(itemId);
+  }
+
+  Future<void> _onEditPrice() async {
+    final cleanPrice = product.price
+        .replaceAll('MRU', '')
+        .replaceAll(',', '')
+        .trim();
+    final newPrice = await showEditPriceDialog(
+      context,
+      initialPrice: cleanPrice,
+    );
+    if (newPrice == null || newPrice.isEmpty || !mounted) return;
+    final dynamic itemId = product.rawId ??
+        product.menuId ??
+        product.rawJson?['id'] ??
+        product.id.replaceAll('#', '').trim();
+    await controller.updateWaterMenuItemPrice(
+      itemId,
+      newPrice,
+      context: context,
+    );
+  }
+
+  Future<void> _onUpdateStock() async {
+    final quantity = await showUpdateStockDialog(
+      context,
+      initialQuantity: product.bottles,
+    );
+    if (quantity == null || !mounted) return;
+    final dynamic itemId = product.rawId ??
+        product.menuId ??
+        product.rawJson?['id'] ??
+        product.id.replaceAll('#', '').trim();
+    await controller.updateWaterItemStock(
+      itemId,
+      quantity,
+      context: context,
+    );
   }
 
   @override
@@ -74,7 +122,11 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                     children: [
-                      _HeroImage(),
+                      _HeroImage(
+                        key: ValueKey(product.images.join(',')),
+                        imagePath: product.image,
+                        images: product.images,
+                      ),
                       const SizedBox(height: 14),
                       Text(
                         product.name,
@@ -86,8 +138,8 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                       ),
                       const SizedBox(height: 14),
                       _InfoGrid(
-                        availableStock: isInStock ? '248' : '0',
-                        todayOrders: '10',
+                        availableStock: isInStock ? '${product.bottles}' : '0',
+                        todayOrders: controller.todayOrders,
                         sellingPrice: product.price.contains('MRU')
                             ? product.price
                                 .replaceAll('.00', '')
@@ -96,20 +148,44 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                         inStock: isInStock,
                       ),
                       const SizedBox(height: 10),
-                      const _BarcodeCard(value: '8901234567890'),
+                      _BarcodeCard(
+                        value: (product.barcode != null &&
+                                product.barcode!.trim().isNotEmpty &&
+                                product.barcode != 'null')
+                            ? product.barcode!.trim()
+                            : (product.rawId != null
+                                ? product.rawId.toString()
+                                : (product.id.isNotEmpty
+                                    ? product.id.replaceAll('#', '').trim()
+                                    : '—')),
+                      ),
                       const SizedBox(height: 14),
-                      const _ActionButtons(),
+                      _ActionButtons(
+                        onEdit: _onEditPrice,
+                        onUpdateStock: _onUpdateStock,
+                      ),
                       const SizedBox(height: 14),
                       _BottleReturnCard(
                         enabled: controller.returnableBottle,
                         onChanged: controller.setReturnableBottle,
                       ),
                       const SizedBox(height: 14),
-                      const _ProductDetailsCard(),
-                      const SizedBox(height: 14),
-                      const _SalesPerformanceCard(),
+                      _ProductDetailsCard(
+                        category: product.categoryName,
+                        unitType: product.rawJson?['unit_name']?.toString() ??
+                            product.rawJson?['unit']?.toString() ??
+                            product.rawJson?['unit_type']?.toString(),
+                        size: product.size,
+                        storage: product.rawJson?['storage']?.toString(),
+                        description: product.description,
+                      ),
+                      if (controller.salesData != null &&
+                          controller.salesData!.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        _SalesPerformanceCard(salesData: controller.salesData!),
+                      ],
                       const SizedBox(height: 18),
-                      const _StockHistorySection(),
+                      _StockHistorySection(stockLogs: controller.stockLogs),
                     ],
                   ),
                 ),
@@ -181,26 +257,279 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _HeroImage extends StatelessWidget {
+class _HeroImage extends StatefulWidget {
+  const _HeroImage({
+    super.key,
+    this.imagePath,
+    this.images = const [],
+  });
+
+  final String? imagePath;
+  final List<String> images;
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 210,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.inventoryHeroBg,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Image.asset(
+  State<_HeroImage> createState() => _HeroImageState();
+}
+
+class _HeroImageState extends State<_HeroImage> {
+  late final PageController _pageController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  List<String> get _resolvedImages {
+    final list = <String>[];
+    for (final img in widget.images) {
+      final t = img.trim();
+      if (t.isNotEmpty && !list.contains(t)) {
+        list.add(t);
+      }
+    }
+    if (list.isEmpty &&
+        widget.imagePath != null &&
+        widget.imagePath!.trim().isNotEmpty) {
+      list.add(widget.imagePath!.trim());
+    }
+    return list;
+  }
+
+  @override
+  void didUpdateWidget(covariant _HeroImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final count = _resolvedImages.length;
+    if (count > 0 && _currentIndex >= count) {
+      _currentIndex = 0;
+    }
+  }
+
+String _resolveWaterImageUrl(String path) {
+  final str = path.trim();
+  if (str.isEmpty) return '';
+  if (str.startsWith('http://') || str.startsWith('https://')) {
+    return str;
+  }
+  if (str.startsWith('//')) {
+    return 'https:$str';
+  }
+  final base = ApiConfigs.IMAGE_URL.trim();
+  final uri = Uri.tryParse(base);
+  final origin = (uri != null && uri.hasScheme)
+      ? '${uri.scheme}://${uri.host}'
+      : 'https://dev.saimpexenterprise.com';
+  if (str.startsWith('/storage/')) {
+    return '$origin$str';
+  }
+  if (str.startsWith('storage/')) {
+    return '$origin/$str';
+  }
+  if (str.startsWith('/')) {
+    final cleanBase =
+        base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    return '$cleanBase$str';
+  }
+  final cleanBase = base.endsWith('/') ? base : '$base/';
+  return '$cleanBase$str';
+}
+
+  Widget _buildSingleImage(String path) {
+    if (path.isEmpty) {
+      return Image.asset(
         AppAssets.waterCan19L,
         fit: BoxFit.contain,
-        errorBuilder: (_, _, _) => const Icon(
+        errorBuilder: (_, __, ___) => const Icon(
           Icons.water_drop,
           size: 72,
           color: AppColors.planPurple,
         ),
+      );
+    }
+    final resolved = _resolveWaterImageUrl(path);
+    if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
+      return Image.network(
+        resolved,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Image.asset(
+          AppAssets.waterCan19L,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+    return Image.asset(
+      resolved,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => const Icon(
+        Icons.water_drop,
+        size: 72,
+        color: AppColors.planPurple,
       ),
+    );
+  }
+
+  Widget _buildThumbnailImage(String path) {
+    if (path.isEmpty) {
+      return Container(
+        color: AppColors.inventoryHeroBg,
+        child: const Icon(
+          Icons.water_drop,
+          size: 20,
+          color: AppColors.planPurple,
+        ),
+      );
+    }
+    final resolved = _resolveWaterImageUrl(path);
+    if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
+      return Image.network(
+        resolved,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Image.asset(
+          AppAssets.waterCan19L,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return Image.asset(
+      resolved,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => const Icon(
+        Icons.water_drop,
+        size: 20,
+        color: AppColors.planPurple,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final images = _resolvedImages;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          height: 210,
+          decoration: BoxDecoration(
+            color: AppColors.inventoryHeroBg,
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (images.length <= 1)
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: _buildSingleImage(images.isNotEmpty ? images.first : ''),
+                  )
+                else ...[
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: images.length,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() => _currentIndex = index);
+                    },
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: _buildSingleImage(images[index]),
+                      );
+                    },
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(images.length, (index) {
+                        final isSelected = index == _currentIndex;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          width: isSelected ? 18 : 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primaryOrange
+                                : AppColors.primaryOrange.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        if (images.length > 1) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 56,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: images.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final isSelected = index == _currentIndex;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() => _currentIndex = index);
+                    if (_pageController.hasClients) {
+                      _pageController.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 56,
+                    height: 56,
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primaryOrange
+                            : AppColors.cardBorder,
+                        width: isSelected ? 2 : 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(9),
+                      child: _buildThumbnailImage(images[index]),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -403,7 +732,10 @@ class _BarcodeCard extends StatelessWidget {
 }
 
 class _ActionButtons extends StatelessWidget {
-  const _ActionButtons();
+  const _ActionButtons({this.onEdit, this.onUpdateStock});
+
+  final VoidCallback? onEdit;
+  final VoidCallback? onUpdateStock;
 
   @override
   Widget build(BuildContext context) {
@@ -413,7 +745,7 @@ class _ActionButtons extends StatelessWidget {
           child: SizedBox(
             height: 48,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: onEdit ?? () {},
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primaryOrange,
                 side: const BorderSide(
@@ -436,7 +768,7 @@ class _ActionButtons extends StatelessWidget {
           child: SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onUpdateStock ?? () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryOrange,
                 foregroundColor: Colors.white,
@@ -543,10 +875,47 @@ class _BottleReturnCard extends StatelessWidget {
 }
 
 class _ProductDetailsCard extends StatelessWidget {
-  const _ProductDetailsCard();
+  const _ProductDetailsCard({
+    this.category,
+    this.unitType,
+    this.size,
+    this.storage,
+    this.description,
+  });
+
+  final String? category;
+  final String? unitType;
+  final String? size;
+  final String? storage;
+  final String? description;
 
   @override
   Widget build(BuildContext context) {
+    final catVal = (category != null &&
+            category!.trim().isNotEmpty &&
+            category != 'null')
+        ? category!.trim()
+        : '—';
+    final unitVal = (unitType != null &&
+            unitType!.trim().isNotEmpty &&
+            unitType != 'null')
+        ? unitType!.trim()
+        : '—';
+    final sizeVal =
+        (size != null && size!.trim().isNotEmpty && size != 'null')
+            ? size!.trim()
+            : '—';
+    final storageVal = (storage != null &&
+            storage!.trim().isNotEmpty &&
+            storage != 'null')
+        ? storage!.trim()
+        : '—';
+    final descVal = (description != null &&
+            description!.trim().isNotEmpty &&
+            description != 'null')
+        ? description!.trim()
+        : 'No description available';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -561,10 +930,10 @@ class _ProductDetailsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.info_outline_rounded,
@@ -582,7 +951,7 @@ class _ProductDetailsCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 14),
+          const SizedBox(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -590,9 +959,15 @@ class _ProductDetailsCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _DetailPair(label: 'Category', value: 'Water Bottle'),
-                    SizedBox(height: 12),
-                    _DetailPair(label: 'Unit Type', value: 'Bottle'),
+                    _DetailPair(
+                      label: 'Category',
+                      value: catVal,
+                    ),
+                    const SizedBox(height: 12),
+                    _DetailPair(
+                      label: 'Unit Type',
+                      value: unitVal,
+                    ),
                   ],
                 ),
               ),
@@ -600,16 +975,22 @@ class _ProductDetailsCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _DetailPair(label: 'Size', value: '10 Litres'),
-                    SizedBox(height: 12),
-                    _DetailPair(label: 'Storage', value: 'Warehouse A'),
+                    _DetailPair(
+                      label: 'Size',
+                      value: sizeVal,
+                    ),
+                    const SizedBox(height: 12),
+                    _DetailPair(
+                      label: 'Storage',
+                      value: storageVal,
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 14),
-          Text(
+          const SizedBox(height: 14),
+          const Text(
             'Description',
             style: TextStyle(
               color: AppColors.textMuted,
@@ -617,11 +998,13 @@ class _ProductDetailsCard extends StatelessWidget {
               fontSize: 12.5,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
-            'Premium purified water, mineral-balanced for optimal hydration. Sourced from high quality aquifers and treated with state of the art reverse osmosis.',
+            descVal,
             style: TextStyle(
-              color: AppColors.textDark,
+              color: descVal == 'No description available'
+                  ? AppColors.textSecondary
+                  : AppColors.textDark,
               fontWeight: FontWeight.w400,
               fontSize: 13.5,
               height: 1.4,
@@ -667,10 +1050,37 @@ class _DetailPair extends StatelessWidget {
 }
 
 class _SalesPerformanceCard extends StatelessWidget {
-  const _SalesPerformanceCard();
+  const _SalesPerformanceCard({required this.salesData});
+
+  final Map<String, dynamic> salesData;
 
   @override
   Widget build(BuildContext context) {
+    final todaySold = salesData['today_sold']?.toString() ??
+        salesData['today']?.toString() ??
+        '0';
+    final weekSold = salesData['week_sold']?.toString() ??
+        salesData['week']?.toString() ??
+        '0';
+    final monthSold = salesData['month_sold']?.toString() ??
+        salesData['month']?.toString() ??
+        '0';
+    final totalSold = salesData['total_sold']?.toString() ??
+        salesData['total']?.toString() ??
+        '0';
+    final todayRev = salesData['today_revenue']?.toString() ??
+        salesData['revenue_today']?.toString() ??
+        '0 MRU';
+    final weekRev = salesData['week_revenue']?.toString() ??
+        salesData['revenue_week']?.toString() ??
+        '0 MRU';
+    final monthRev = salesData['month_revenue']?.toString() ??
+        salesData['revenue_month']?.toString() ??
+        '0 MRU';
+    final lastSold = salesData['last_sold']?.toString() ??
+        salesData['last_order_at']?.toString() ??
+        '—';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -681,15 +1091,15 @@ class _SalesPerformanceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.trending_up_rounded,
                 color: AppColors.primaryOrange,
                 size: 20,
               ),
-              SizedBox(width: 8),
-              Expanded(
+              const SizedBox(width: 8),
+              const Expanded(
                 child: Text(
                   'Sales Performance',
                   style: TextStyle(
@@ -700,8 +1110,8 @@ class _SalesPerformanceCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'Last Sold: Today - 2:15 PM',
-                style: TextStyle(
+                'Last Sold: $lastSold',
+                style: const TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w400,
                   fontSize: 11,
@@ -710,11 +1120,11 @@ class _SalesPerformanceCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          const Row(
+          Row(
             children: [
-              Expanded(child: _SalesStat(label: 'Today', value: '12')),
-              Expanded(child: _SalesStat(label: 'Week', value: '68')),
-              Expanded(child: _SalesStat(label: 'Month', value: '245')),
+              Expanded(child: _SalesStat(label: 'Today', value: todaySold)),
+              Expanded(child: _SalesStat(label: 'Week', value: weekSold)),
+              Expanded(child: _SalesStat(label: 'Month', value: monthSold)),
             ],
           ),
           const SizedBox(height: 12),
@@ -725,9 +1135,9 @@ class _SalesPerformanceCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Text(
                     'Total Sold (All Time)',
                     style: TextStyle(
@@ -738,8 +1148,8 @@ class _SalesPerformanceCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '3,482',
-                  style: TextStyle(
+                  totalSold,
+                  style: const TextStyle(
                     color: AppColors.primaryOrange,
                     fontWeight: FontWeight.w800,
                     fontSize: 18,
@@ -758,16 +1168,16 @@ class _SalesPerformanceCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Row(
+          Row(
             children: [
               Expanded(
-                child: _RevenueStat(label: 'Today', value: '120 MRU'),
+                child: _RevenueStat(label: 'Today', value: todayRev),
               ),
               Expanded(
-                child: _RevenueStat(label: 'Week', value: '680 MRU'),
+                child: _RevenueStat(label: 'Week', value: weekRev),
               ),
               Expanded(
-                child: _RevenueStat(label: 'Month', value: '2,450 MRU'),
+                child: _RevenueStat(label: 'Month', value: monthRev),
               ),
             ],
           ),
@@ -842,15 +1252,18 @@ class _RevenueStat extends StatelessWidget {
 }
 
 class _StockHistorySection extends StatelessWidget {
-  const _StockHistorySection();
+  const _StockHistorySection({this.stockLogs = const []});
+
+  final List<dynamic> stockLogs;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Expanded(
+            const Expanded(
               child: Text(
                 'Stock History',
                 style: TextStyle(
@@ -860,35 +1273,125 @@ class _StockHistorySection extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              'See All',
-              style: TextStyle(
-                color: AppColors.primaryOrange,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
+            if (stockLogs.isNotEmpty)
+              const Text(
+                'See All',
+                style: TextStyle(
+                  color: AppColors.primaryOrange,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
               ),
-            ),
           ],
         ),
-        SizedBox(height: 12),
-        _HistoryCard(
-          stockId: '#927',
-          date: '26 Mar, 2026, 03:59 AM',
-          title: 'Stock Removed',
-          quantity: '-50',
-          remaining: '400',
-          isRemoval: true,
-        ),
-        SizedBox(height: 10),
-        _HistoryCard(
-          stockId: '#926',
-          date: '26 Mar, 2026, 03:59 AM',
-          title: 'Stock Added',
-          quantity: '+450',
-          remaining: '450',
-          isRemoval: false,
-        ),
+        const SizedBox(height: 12),
+        if (stockLogs.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.cardBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'lib/assets/images/nodata.png',
+                  height: 90,
+                  width: 110,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => const Icon(
+                    Icons.history_rounded,
+                    size: 40,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'No Stock History Found',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'No stock records recorded for this item yet',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          for (var i = 0; i < stockLogs.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _buildHistoryItem(stockLogs[i]),
+          ],
       ],
+    );
+  }
+
+  Widget _buildHistoryItem(dynamic log) {
+    if (log is! Map) {
+      return const SizedBox.shrink();
+    }
+    final map = log;
+    final stockId = map['id']?.toString() ??
+        map['stock_id']?.toString() ??
+        map['transaction_id']?.toString() ??
+        '';
+    final date = map['created_at']?.toString() ??
+        map['date']?.toString() ??
+        map['updated_at']?.toString() ??
+        '';
+    final type = (map['type']?.toString() ??
+            map['status']?.toString() ??
+            map['action']?.toString() ??
+            '')
+        .toLowerCase();
+    final isRemoval = type.contains('remove') ||
+        type.contains('decrease') ||
+        type.contains('deduct') ||
+        map['is_removal'] == true ||
+        (map['quantity'] != null &&
+            map['quantity'].toString().startsWith('-'));
+    final title = map['title']?.toString() ??
+        (isRemoval ? 'Stock Removed' : 'Stock Added');
+    final quantityRaw = map['quantity']?.toString() ??
+        map['stock']?.toString() ??
+        '0';
+    final quantity = quantityRaw.startsWith('+') || quantityRaw.startsWith('-')
+        ? quantityRaw
+        : (isRemoval ? '-$quantityRaw' : '+$quantityRaw');
+    final remaining = map['remaining']?.toString() ??
+        map['remaining_stock']?.toString() ??
+        map['current_stock']?.toString() ??
+        map['stock']?.toString() ??
+        '0';
+
+    return _HistoryCard(
+      stockId: stockId.isNotEmpty ? '#$stockId' : '—',
+      date: date.isNotEmpty ? date : '—',
+      title: title,
+      quantity: quantity,
+      remaining: remaining,
+      isRemoval: isRemoval,
     );
   }
 }

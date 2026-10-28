@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/model/get_conversation_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
 enum ChatMessageType { text, audio, image }
@@ -53,7 +55,7 @@ class ChatView extends StatefulWidget {
   final dynamic orderId;
   final String? avatarUrl;
 
-  static void open(
+  static Future<void> open(
     BuildContext context, {
     String customerName = '',
     bool isOnline = true,
@@ -62,7 +64,7 @@ class ChatView extends StatefulWidget {
     dynamic orderId,
     String? avatarUrl,
   }) {
-    Navigator.of(context).push(
+    return Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ChatView(
           customerName: customerName,
@@ -106,6 +108,12 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   void dispose() {
+    if (Get.isRegistered<ChatController>()) {
+      final chatCtrl = Get.find<ChatController>();
+      if (chatCtrl.isRecording) {
+        chatCtrl.cancelRecording();
+      }
+    }
     _textController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -339,25 +347,100 @@ class _ChatViewState extends State<ChatView> {
     }
   }
 
+  Future<void> _startRecording() async {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    await chatCtrl.startRecording();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _stopAndSendRecording() async {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    final duration = chatCtrl.recordingDuration;
+    final path = await chatCtrl.stopRecording();
+    if (path == null || path.isEmpty) return;
+
+    setState(() => _isSending = true);
+    try {
+      await chatCtrl.sendVoiceMessage(
+        context,
+        path,
+        conversationId:
+            (_activeConversationId != null && _activeConversationId! > 0)
+                ? _activeConversationId
+                : null,
+        customerId: widget.customerId,
+        duration: duration,
+      );
+
+      if (chatCtrl.currentConversation?.id != null &&
+          chatCtrl.currentConversation!.id! > 0) {
+        _activeConversationId = chatCtrl.currentConversation!.id;
+      }
+      await _fetchConversation(quiet: true);
+    } catch (e) {
+      debugPrint("Error sending voice message: $e");
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
+  void _cancelRecording() {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    chatCtrl.cancelRecording();
+    if (mounted) setState(() {});
+  }
+
+  void _togglePauseRecording() {
+    final chatCtrl = Get.isRegistered<ChatController>()
+        ? Get.find<ChatController>()
+        : Get.put(ChatController());
+    if (chatCtrl.isPaused) {
+      chatCtrl.resumeRecording();
+    } else {
+      chatCtrl.pauseRecording();
+    }
+    if (mounted) setState(() {});
+  }
+
   Future<void> _pickImage() async {
     final chatCtrl = Get.isRegistered<ChatController>()
         ? Get.find<ChatController>()
         : Get.put(ChatController());
 
-    await chatCtrl.pickAndSendImage(
-      context,
-      conversationId:
-          (_activeConversationId != null && _activeConversationId! > 0)
-          ? _activeConversationId
-          : null,
-      customerId: widget.customerId,
-    );
+    setState(() {
+      _isSending = true;
+    });
 
-    if (chatCtrl.currentConversation?.id != null &&
-        chatCtrl.currentConversation!.id! > 0) {
-      _activeConversationId = chatCtrl.currentConversation!.id;
+    try {
+      await chatCtrl.pickAndSendImage(
+        context,
+        conversationId:
+            (_activeConversationId != null && _activeConversationId! > 0)
+            ? _activeConversationId
+            : null,
+        customerId: widget.customerId,
+      );
+
+      if (chatCtrl.currentConversation?.id != null &&
+          chatCtrl.currentConversation!.id! > 0) {
+        _activeConversationId = chatCtrl.currentConversation!.id;
+      }
+      await _fetchConversation(quiet: true);
+    } catch (e) {
+      debugPrint("Error picking/sending image: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSending = false;
+        });
+      }
     }
-    await _fetchConversation(quiet: true);
   }
 
   static String _formatImageUrl(String raw) {
@@ -400,13 +483,19 @@ class _ChatViewState extends State<ChatView> {
       duration = '0:12';
     }
 
+    String? attachment = m.attachmentUrl;
+    if ((attachment == null || attachment.isEmpty) &&
+        (type == ChatMessageType.image || type == ChatMessageType.audio)) {
+      attachment = m.message;
+    }
+
     return ChatMessage(
       type: type,
       isOutgoing: isOutgoing,
       time: time,
       text: m.message,
       duration: duration,
-      attachmentUrl: m.attachmentUrl,
+      attachmentUrl: attachment,
       createdAt: m.createdAt,
       isRead: m.isRead == true,
     );
@@ -470,11 +559,22 @@ class _ChatViewState extends State<ChatView> {
               ),
               const SizedBox(height: 8),
               Expanded(child: _buildBody()),
-              _ChatInputBar(
-                controller: _textController,
-                onSend: _sendMessage,
-                onPickImage: _pickImage,
-                isSending: _isSending,
+              GetBuilder<ChatController>(
+                builder: (chatCtrl) {
+                  return _ChatInputBar(
+                    controller: _textController,
+                    onSend: _sendMessage,
+                    onPickImage: _pickImage,
+                    onStartRecording: _startRecording,
+                    onStopAndSendRecording: _stopAndSendRecording,
+                    onCancelRecording: _cancelRecording,
+                    onTogglePauseRecording: _togglePauseRecording,
+                    isRecording: chatCtrl.isRecording,
+                    isPaused: chatCtrl.isPaused,
+                    recordingDuration: chatCtrl.recordingDuration,
+                    isSending: _isSending || chatCtrl.isSendingMessage,
+                  );
+                },
               ),
             ],
           ),
@@ -702,11 +802,19 @@ class _MessageItem extends StatelessWidget {
         if (message.type == ChatMessageType.text)
           _TextBubble(text: message.text ?? '', isOutgoing: message.isOutgoing)
         else if (message.type == ChatMessageType.audio)
-          _AudioBubble(duration: message.duration ?? '0:00')
-        else if (message.attachmentUrl != null &&
-            message.attachmentUrl!.isNotEmpty)
+          _AudioBubble(
+            duration: message.duration ?? '0:00',
+            audioUrl: message.attachmentUrl,
+            isOutgoing: message.isOutgoing,
+          )
+        else if (message.type == ChatMessageType.image ||
+            (message.attachmentUrl != null &&
+                message.attachmentUrl!.isNotEmpty))
           _ImageBubble(
-            imageUrl: message.attachmentUrl!,
+            imageUrl: (message.attachmentUrl != null &&
+                    message.attachmentUrl!.isNotEmpty)
+                ? message.attachmentUrl!
+                : (message.text ?? ''),
             isOutgoing: message.isOutgoing,
           ),
         const SizedBox(height: 6),
@@ -785,68 +893,131 @@ class _TextBubble extends StatelessWidget {
   }
 }
 
-class _AudioBubble extends StatelessWidget {
-  const _AudioBubble({required this.duration});
+class _AudioBubble extends StatefulWidget {
+  const _AudioBubble({
+    required this.duration,
+    this.audioUrl,
+    this.isOutgoing = true,
+  });
 
   final String duration;
+  final String? audioUrl;
+  final bool isOutgoing;
+
+  @override
+  State<_AudioBubble> createState() => _AudioBubbleState();
+}
+
+class _AudioBubbleState extends State<_AudioBubble> {
+  late AudioPlayer _audioPlayer;
+  bool _isPlaying = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
 
   static const _heights = [
-    8.0,
-    14.0,
-    10.0,
-    18.0,
-    12.0,
-    20.0,
-    9.0,
-    16.0,
-    11.0,
-    19.0,
-    13.0,
-    8.0,
-    17.0,
-    12.0,
-    21.0,
-    10.0,
-    15.0,
-    9.0,
-    18.0,
-    11.0,
-    16.0,
-    8.0,
-    14.0,
-    12.0,
-    19.0,
-    10.0,
-    15.0,
-    9.0,
-    17.0,
-    11.0,
+    8.0, 14.0, 10.0, 18.0, 12.0, 20.0, 9.0, 16.0, 11.0, 19.0,
+    13.0, 8.0, 17.0, 12.0, 21.0, 10.0, 15.0, 9.0, 18.0, 11.0,
+    16.0, 8.0, 14.0, 12.0, 19.0, 10.0, 15.0, 9.0, 17.0, 11.0,
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _audioPlayer.onDurationChanged.listen((d) {
+      if (mounted) setState(() => _duration = d);
+    });
+    _audioPlayer.onPositionChanged.listen((p) {
+      if (mounted) setState(() => _position = p);
+    });
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+    _audioPlayer.onPlayerComplete.listen((_) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _position = Duration.zero;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void _togglePlayback() async {
+    final rawUrl = widget.audioUrl?.trim();
+    if (rawUrl == null || rawUrl.isEmpty) return;
+
+    String fullUrl = rawUrl;
+    if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+      final base = ApiConfigs.IMAGE_URL.trim();
+      fullUrl = base.endsWith('/')
+          ? (fullUrl.startsWith('/') ? '$base${fullUrl.substring(1)}' : '$base$fullUrl')
+          : (fullUrl.startsWith('/') ? '$base$fullUrl' : '$base/$fullUrl');
+    }
+
+    try {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play(UrlSource(fullUrl));
+      }
+    } catch (e) {
+      debugPrint("Audio playback error: $e");
+    }
+  }
+
+  String get _displayDuration {
+    if (_isPlaying || _position > Duration.zero) {
+      final m = _position.inMinutes;
+      final s = _position.inSeconds % 60;
+      return '$m:${s.toString().padLeft(2, '0')}';
+    }
+    if (_duration > Duration.zero) {
+      final m = _duration.inMinutes;
+      final s = _duration.inSeconds % 60;
+      return '$m:${s.toString().padLeft(2, '0')}';
+    }
+    return widget.duration;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: widget.isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         width: MediaQuery.sizeOf(context).width * 0.72,
         padding: const EdgeInsets.fromLTRB(8, 8, 14, 8),
         decoration: BoxDecoration(
-          color: AppColors.chatBubbleOutgoing,
+          color: widget.isOutgoing ? AppColors.chatBubbleOutgoing : AppColors.softGrayAlt,
           borderRadius: BorderRadius.circular(28),
         ),
         child: Row(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                color: AppColors.chatPlayCircle,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.play_arrow_rounded,
-                color: AppColors.primaryOrange,
-                size: 22,
+            InkWell(
+              onTap: _togglePlayback,
+              borderRadius: BorderRadius.circular(18),
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: widget.isOutgoing ? AppColors.chatPlayCircle : Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                  color: AppColors.primaryOrange,
+                  size: 22,
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -856,16 +1027,18 @@ class _AudioBubble extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    for (final h in _heights)
+                    for (int i = 0; i < _heights.length; i++)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 0.8),
                           child: Align(
                             alignment: Alignment.center,
                             child: Container(
-                              height: h,
+                              height: _heights[i],
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: widget.isOutgoing
+                                    ? Colors.white.withValues(alpha: 0.9)
+                                    : AppColors.textDark.withValues(alpha: 0.6),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -878,9 +1051,9 @@ class _AudioBubble extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-              duration,
-              style: const TextStyle(
-                color: Colors.white,
+              _displayDuration,
+              style: TextStyle(
+                color: widget.isOutgoing ? Colors.white : AppColors.textDark,
                 fontWeight: FontWeight.w500,
                 fontSize: 12.5,
               ),
@@ -900,11 +1073,8 @@ class _ImageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String fullUrl = imageUrl;
-    if (!fullUrl.startsWith('http')) {
-      final base = ApiConfigs.IMAGE_URL.trim();
-      fullUrl = base.endsWith('/') ? '$base$fullUrl' : '$base/$fullUrl';
-    }
+    final fullUrl = _ChatViewState._formatImageUrl(imageUrl);
+    final isLocal = !imageUrl.startsWith('http') && File(imageUrl).existsSync();
 
     return Align(
       alignment: isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
@@ -925,14 +1095,23 @@ class _ImageBubble extends StatelessWidget {
                 ? AppColors.chatBubbleOutgoing
                 : AppColors.chatBubbleIncoming,
           ),
-          child: Image.network(
-            fullUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => const Padding(
-              padding: EdgeInsets.all(16),
-              child: Icon(Icons.broken_image, color: Colors.grey),
-            ),
-          ),
+          child: isLocal
+              ? Image.file(
+                  File(imageUrl),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                )
+              : Image.network(
+                  fullUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                ),
         ),
       ),
     );
@@ -944,16 +1123,33 @@ class _ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     this.onPickImage,
+    this.onStartRecording,
+    this.onStopAndSendRecording,
+    this.onCancelRecording,
+    this.onTogglePauseRecording,
+    this.isRecording = false,
+    this.isPaused = false,
+    this.recordingDuration = 0,
     this.isSending = false,
   });
 
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback? onPickImage;
+  final VoidCallback? onStartRecording;
+  final VoidCallback? onStopAndSendRecording;
+  final VoidCallback? onCancelRecording;
+  final VoidCallback? onTogglePauseRecording;
+  final bool isRecording;
+  final bool isPaused;
+  final int recordingDuration;
   final bool isSending;
 
   @override
   Widget build(BuildContext context) {
+    final timerText =
+        "${(recordingDuration ~/ 60).toString().padLeft(1, '0')}:${(recordingDuration % 60).toString().padLeft(2, '0')}";
+
     return Container(
       color: AppColors.chatBg,
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
@@ -970,68 +1166,128 @@ class _ChatInputBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: onPickImage,
-                      borderRadius: BorderRadius.circular(20),
-                      child: const Icon(
-                        Icons.add_rounded,
-                        color: AppColors.textMeta,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        cursorColor: AppColors.primaryOrange,
-                        style: const TextStyle(
-                          color: AppColors.textDark,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message...',
-                          hintStyle: TextStyle(
-                            color: AppColors.textMuted,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                child: isRecording
+                    ? Row(
+                        children: [
+                          InkWell(
+                            onTap: onCancelRecording,
+                            borderRadius: BorderRadius.circular(16),
+                            child: const Padding(
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.redAccent,
+                                size: 22,
+                              ),
+                            ),
                           ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        onSubmitted: (_) => onSend(),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Colors.redAccent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            timerText,
+                            style: const TextStyle(
+                              color: AppColors.textDark,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const Spacer(),
+                          InkWell(
+                            onTap: onTogglePauseRecording,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                isPaused
+                                    ? Icons.play_arrow_rounded
+                                    : Icons.pause_rounded,
+                                color: AppColors.textMeta,
+                                size: 22,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          InkWell(
+                            onTap: onPickImage,
+                            borderRadius: BorderRadius.circular(20),
+                            child: const Icon(
+                              Icons.add_rounded,
+                              color: AppColors.textMeta,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: controller,
+                              cursorColor: AppColors.primaryOrange,
+                              style: const TextStyle(
+                                color: AppColors.textDark,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: 'Type a message...',
+                                hintStyle: TextStyle(
+                                  color: AppColors.textMuted,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                filled: false,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              onSubmitted: (_) => onSend(),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
             const SizedBox(width: 10),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: const BoxDecoration(
-                color: AppColors.chatBubbleOutgoing,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.mic_none_rounded,
-                color: Colors.white,
-                size: 22,
+            InkWell(
+              onTap: isRecording
+                  ? onStopAndSendRecording
+                  : onStartRecording,
+              borderRadius: BorderRadius.circular(24),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: isRecording
+                      ? Colors.redAccent
+                      : AppColors.chatBubbleOutgoing,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isRecording ? Icons.mic : Icons.mic_none_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
             ),
             const SizedBox(width: 8),
             InkWell(
-              onTap: isSending ? null : onSend,
+              onTap: isSending
+                  ? null
+                  : (isRecording ? onStopAndSendRecording : onSend),
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 width: 48,

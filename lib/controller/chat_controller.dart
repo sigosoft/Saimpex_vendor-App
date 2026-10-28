@@ -11,6 +11,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/PusherConfig.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
+import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/model/get_conversation_model.dart';
@@ -323,6 +324,11 @@ class ChatController extends GetxController {
           final homeController = Get.find<HomeController>();
           homeController.fetchUnreadChatCount();
         } catch (_) {}
+        try {
+          if (Get.isRegistered<WaterHomeController>()) {
+            Get.find<WaterHomeController>().fetchUnreadChatCount();
+          }
+        } catch (_) {}
       } else {
         debugPrint("Event ignored: receiver mismatch or missing data");
       }
@@ -385,6 +391,13 @@ class ChatController extends GetxController {
         homeController.fetchUnreadChatCount();
       } catch (_) {
         // HomeController may not be registered yet — safe to ignore
+      }
+      try {
+        if (Get.isRegistered<WaterHomeController>()) {
+          Get.find<WaterHomeController>().fetchUnreadChatCount();
+        }
+      } catch (_) {
+        // WaterHomeController may not be registered yet — safe to ignore
       }
     } catch (e) {
       debugPrint("markAsRead Error: $e");
@@ -497,13 +510,14 @@ class ChatController extends GetxController {
 
   Future<void> pickAndSendImage(
     BuildContext context, {
+    ImageSource source = ImageSource.gallery,
     int? conversationId,
     int? customerId,
   }) async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         imageQuality: 70,
       );
 
@@ -530,7 +544,7 @@ class ChatController extends GetxController {
       isSendingMessage = true;
       update();
 
-      final filename = imageFile.path.split('/').last;
+      final filename = imageFile.path.split(RegExp(r'[/\\]')).last;
       dio.MultipartFile? uploadFile;
       try {
         debugPrint("[ChatController] Enhancing chat image using imageEnhance endpoint...");
@@ -543,9 +557,13 @@ class ChatController extends GetxController {
           debugPrint("[ChatController] Chat image enhanced successfully!");
         }
       } catch (e) {
-        debugPrint("[ChatController] Chat image enhancement failed: $e.");
-        rethrow;
+        debugPrint("[ChatController] Chat image enhancement failed (proceeding with original): $e");
       }
+
+      uploadFile ??= await dio.MultipartFile.fromFile(
+        imageFile.path,
+        filename: filename,
+      );
 
       Map<String, dynamic> body = {
         "message": uploadFile,
@@ -559,7 +577,9 @@ class ChatController extends GetxController {
       }
 
       var token = await getSavedObject("token");
-      DioClient().updateToken(token);
+      if (token != null && token.toString().isNotEmpty && token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
       final response = await DioClient().post(
         ApiEndPoints.sendMessage,
         body: dio.FormData.fromMap(body),

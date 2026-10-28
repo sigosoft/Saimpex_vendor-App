@@ -74,7 +74,7 @@ class NeedAnUpdate extends StatelessWidget {
                             "https://play.google.com/store/apps/details?id=${ApiConfigs.androidPackageName}",
                           )
                         : Uri.parse(
-                            "https://apps.apple.com/app/id${ApiConfigs.iosAppStoreId}",
+                            "https://apps.apple.com/app/id${ApiConfigs.androidPackageName}",
                           );
                     if (await canLaunchUrl(url)) {
                       await launchUrl(

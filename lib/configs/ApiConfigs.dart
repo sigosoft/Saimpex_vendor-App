@@ -214,10 +214,17 @@ class ApiEndPoints {
   static String AcceptWaterOrder = "acceptWaterOrder";
   static String PrepareWaterOrder = "prepareWaterOrder";
   static String MarkAsReadyWaterOrder = "markAsReadyWaterOrder";
-  //static String MarkAsDeliveredWaterOrder = "markAsDeliveredWaterOrder";
-  //static String getWaterOrderDetail = "waterOrderDetail";
-  //static String getWaterOrderDetail = "waterOrderDetail";
-  //static String getWaterOrderDetail = "waterOrderDetail";
-  //static String getWaterOrderDetail = "waterOrderDetail";
-  //static String getWaterOrderDetail = "waterOrderDetail";
+  static String CancelWaterOrder = "cancelWaterOrder";
+  static String getWaterMenuItems = "waterMenuItems";
+  static String UpdateWaterItemStock = "updateWaterItemStock";
+  static String getWaterMenuItemDetail = "waterMenuItemDetail";
+  static String UpdateWaterMenuItem = "updateWaterMenuItem";
+  static String deleteWaterMenuItem = "deleteWaterMenuItem";
+  static String addWaterMenuItem = "addWaterMenuItem";
+  static String getwaterSubscriptions = "waterSubscriptions";
+  static String waterSubscriptions = "waterSubscriptions";
+  static String acceptWaterSubscription = "acceptWaterSubscription";
+  static String rejectWaterSubscription = "rejectWaterSubscription";
+  static String pauseWaterSubscription = "pauseWaterSubscription";
+  static String resumeWaterSubscription = "resumeWaterSubscription";
 }

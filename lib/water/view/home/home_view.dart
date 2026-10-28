@@ -33,6 +33,7 @@ class _HomeViewState extends State<HomeView> {
       Get.put(WaterHomeController());
     } else {
       Get.find<WaterHomeController>().fetchHome();
+      Get.find<WaterHomeController>().fetchUnreadChatCount();
     }
   }
 
@@ -92,6 +93,7 @@ class _HomeViewState extends State<HomeView> {
                 _BottomNav(
                   selectedIndex: controller.bottomNavIndex,
                   onSelect: controller.onBottomNavSelect,
+                  unreadChatCount: controller.unreadChatCount,
                 ),
               ],
             ),
@@ -1705,7 +1707,25 @@ class _OrderCard extends StatelessWidget {
                     child: SizedBox(
                       height: 46,
                       child: OutlinedButton(
-                        onPressed: () => showRejectOrderSheet(context),
+                        onPressed: () async {
+                          final reason = await showRejectOrderSheet(context);
+                          if (reason != null && reason.isNotEmpty) {
+                            final dynamic id =
+                                order.rawId ??
+                                order.orderData?.id ??
+                                order.orderData?.rawJson?['order_id'] ??
+                                order.orderData?.rawJson?['id'] ??
+                                order.orderId.replaceAll('#', '').trim();
+                            if (context.mounted &&
+                                Get.isRegistered<WaterHomeController>()) {
+                              Get.find<WaterHomeController>().cancelWaterOrder(
+                                id,
+                                reason: reason,
+                                context: context,
+                              );
+                            }
+                          }
+                        },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: _nameColor,
                           backgroundColor: Colors.white,
@@ -2186,6 +2206,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                         onPressed: () => ChatView.open(
                           context,
                           customerName: order.customerName,
+                          customerId: order.resolvedCustomerId,
+                          orderId: order.subscriptionId,
+                          avatarUrl: order.customerAvatar,
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: _orange,
@@ -2228,7 +2251,21 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () => showPauseSubscriptionSheet(context),
+                          onPressed: () async {
+                            final reason =
+                                await showPauseSubscriptionSheet(context);
+                            if (reason != null && context.mounted) {
+                              final controller =
+                                  Get.isRegistered<WaterHomeController>()
+                                  ? Get.find<WaterHomeController>()
+                                  : Get.put(WaterHomeController());
+                              controller.pauseWaterSubscription(
+                                order.subscriptionId,
+                                reason: reason,
+                                context: context,
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _orange,
                             foregroundColor: Colors.white,
@@ -2307,6 +2344,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           onPressed: () => ChatView.open(
                             context,
                             customerName: order.customerName,
+                            customerId: order.resolvedCustomerId,
+                            orderId: order.subscriptionId,
+                            avatarUrl: order.customerAvatar,
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: _orange,
@@ -2349,7 +2389,20 @@ class _SubscriptionOrderCard extends StatelessWidget {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final confirmed =
+                                  await _showResumeConfirmationDialog(context);
+                              if (confirmed && context.mounted) {
+                                final controller =
+                                    Get.isRegistered<WaterHomeController>()
+                                    ? Get.find<WaterHomeController>()
+                                    : Get.put(WaterHomeController());
+                                controller.resumeWaterSubscription(
+                                  order.subscriptionId,
+                                  context: context,
+                                );
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: _orange,
                               foregroundColor: Colors.white,
@@ -2387,6 +2440,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                     onPressed: () => ChatView.open(
                       context,
                       customerName: order.customerName,
+                      customerId: order.resolvedCustomerId,
+                      orderId: order.subscriptionId,
+                      avatarUrl: order.customerAvatar,
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: _orange,
@@ -2527,7 +2583,20 @@ class _SubscriptionOrderCard extends StatelessWidget {
                     child: SizedBox(
                       height: 46,
                       child: OutlinedButton(
-                        onPressed: () => showRejectOrderSheet(context),
+                        onPressed: () async {
+                          final reason = await showRejectOrderSheet(context);
+                          if (reason != null && context.mounted) {
+                            final controller =
+                                Get.isRegistered<WaterHomeController>()
+                                ? Get.find<WaterHomeController>()
+                                : Get.put(WaterHomeController());
+                            controller.rejectWaterSubscription(
+                              order.subscriptionId,
+                              reason: reason,
+                              context: context,
+                            );
+                          }
+                        },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: _nameColor,
                           backgroundColor: Colors.white,
@@ -2565,7 +2634,16 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            final controller =
+                                Get.isRegistered<WaterHomeController>()
+                                ? Get.find<WaterHomeController>()
+                                : Get.put(WaterHomeController());
+                            controller.acceptWaterSubscription(
+                              order.subscriptionId,
+                              context: context,
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _orange,
                             foregroundColor: Colors.white,
@@ -2593,6 +2671,127 @@ class _SubscriptionOrderCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> _showResumeConfirmationDialog(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 16, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () => Navigator.of(ctx).pop(false),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.borderMuted),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 18,
+                        color: Color(0xFF7F7F7F),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Resume Subscription',
+                  style: TextStyle(
+                    color: _orange,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Are you sure you want to resume this subscription order?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.textBody,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textBody,
+                            side: const BorderSide(color: AppColors.fieldBorder),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _orange,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    return confirmed ?? false;
   }
 }
 
@@ -2635,10 +2834,15 @@ class _OutlinedPauseIcon extends StatelessWidget {
 }
 
 class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.selectedIndex, required this.onSelect});
+  const _BottomNav({
+    required this.selectedIndex,
+    required this.onSelect,
+    this.unreadChatCount = 0,
+  });
 
   final int selectedIndex;
   final ValueChanged<int> onSelect;
+  final int unreadChatCount;
 
   @override
   Widget build(BuildContext context) {
@@ -2705,28 +2909,67 @@ class _BottomNav extends StatelessWidget {
                               children: [
                                 SizedBox(
                                   height: 40,
-                                  child: Center(
-                                    child: TweenAnimationBuilder<double>(
-                                      tween: Tween(end: selected ? 1 : 0),
-                                      duration: const Duration(
-                                        milliseconds: 280,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Center(
+                                        child: TweenAnimationBuilder<double>(
+                                          tween: Tween(end: selected ? 1 : 0),
+                                          duration: const Duration(
+                                            milliseconds: 280,
+                                          ),
+                                          curve: Curves.easeOutCubic,
+                                          builder: (context, t, _) {
+                                            return _NavIcon(
+                                              asset: asset,
+                                              fallback: Icons.home_rounded,
+                                              color: Color.lerp(
+                                                AppColors.navInactive,
+                                                Colors.white,
+                                                t,
+                                              )!,
+                                              size: asset == null && !selected
+                                                  ? 28
+                                                  : 24,
+                                            );
+                                          },
+                                        ),
                                       ),
-                                      curve: Curves.easeOutCubic,
-                                      builder: (context, t, _) {
-                                        return _NavIcon(
-                                          asset: asset,
-                                          fallback: Icons.home_rounded,
-                                          color: Color.lerp(
-                                            AppColors.navInactive,
-                                            Colors.white,
-                                            t,
-                                          )!,
-                                          size: asset == null && !selected
-                                              ? 28
-                                              : 24,
-                                        );
-                                      },
-                                    ),
+                                      if (index == 2 && unreadChatCount > 0)
+                                        Positioned(
+                                          top: -2,
+                                          right: selected ? 2 : 6,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFEF4444),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            constraints: const BoxConstraints(
+                                              minWidth: 16,
+                                              minHeight: 16,
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              unreadChatCount > 99
+                                                  ? '99+'
+                                                  : unreadChatCount.toString(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                                height: 1,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(height: 2),

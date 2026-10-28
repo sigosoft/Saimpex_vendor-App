@@ -6,6 +6,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 
 class ChatThread {
@@ -63,6 +64,9 @@ class _MessagesListViewState extends State<MessagesListView> {
         : Get.put(ChatController());
     _isFirstLoad = controller.conversations.isEmpty;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<WaterHomeController>()) {
+        Get.find<WaterHomeController>().fetchUnreadChatCount();
+      }
       controller.getAllConversations(context).then((_) {
         if (mounted) {
           setState(() {
@@ -207,8 +211,13 @@ class _MessagesListViewState extends State<MessagesListView> {
                   : threads.isEmpty
                       ? RefreshIndicator(
                           color: AppColors.primaryOrange,
-                          onRefresh: () =>
-                              controller.getAllConversations(context),
+                          onRefresh: () async {
+                            if (Get.isRegistered<WaterHomeController>()) {
+                              Get.find<WaterHomeController>()
+                                  .fetchUnreadChatCount();
+                            }
+                            await controller.getAllConversations(context);
+                          },
                           child: ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             children: [
@@ -258,8 +267,13 @@ class _MessagesListViewState extends State<MessagesListView> {
                         )
                       : RefreshIndicator(
                           color: AppColors.primaryOrange,
-                          onRefresh: () =>
-                              controller.getAllConversations(context),
+                          onRefresh: () async {
+                            if (Get.isRegistered<WaterHomeController>()) {
+                              Get.find<WaterHomeController>()
+                                  .fetchUnreadChatCount();
+                            }
+                            await controller.getAllConversations(context);
+                          },
                           child: ListView.separated(
                             controller:
                                 controller.conversationsScrollController,
@@ -290,19 +304,27 @@ class _MessagesListViewState extends State<MessagesListView> {
                               final thread = threads[index];
                               return _ChatListTile(
                                 thread: thread,
-                                onTap: () {
+                                onTap: () async {
                                   if (thread.unreadCount > 0 &&
                                       thread.conversationId != null) {
                                     controller
                                         .markAsRead(thread.conversationId!);
+                                    if (Get.isRegistered<WaterHomeController>()) {
+                                      Get.find<WaterHomeController>()
+                                          .fetchUnreadChatCount();
+                                    }
                                   }
-                                  ChatView.open(
+                                  await ChatView.open(
                                     context,
                                     customerName: thread.name,
                                     isOnline: thread.isOnline,
                                     conversationId: thread.conversationId,
                                     avatarUrl: thread.avatarUrl,
                                   );
+                                  if (Get.isRegistered<WaterHomeController>()) {
+                                    Get.find<WaterHomeController>()
+                                        .fetchUnreadChatCount();
+                                  }
                                 },
                               );
                             },
@@ -311,6 +333,9 @@ class _MessagesListViewState extends State<MessagesListView> {
             ),
             if (!widget.embedded)
               _MessagesBottomNav(
+                unreadChatCount: Get.isRegistered<WaterHomeController>()
+                    ? Get.find<WaterHomeController>().unreadChatCount
+                    : 0,
                 onSelect: (index) {
                   if (index == 2) return;
                   Navigator.of(context).maybePop();
@@ -613,9 +638,13 @@ class _ChatListTile extends StatelessWidget {
 }
 
 class _MessagesBottomNav extends StatelessWidget {
-  const _MessagesBottomNav({required this.onSelect});
+  const _MessagesBottomNav({
+    required this.onSelect,
+    this.unreadChatCount = 0,
+  });
 
   final ValueChanged<int> onSelect;
+  final int unreadChatCount;
 
   @override
   Widget build(BuildContext context) {
@@ -644,27 +673,64 @@ class _MessagesBottomNav extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (selected)
-                        Container(
-                          width: 44,
-                          height: 44,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryOrange,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primaryOrange
-                                    .withValues(alpha: 0.35),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryOrange,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primaryOrange
+                                        .withValues(alpha: 0.35),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.chat_bubble_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
+                              child: const Icon(
+                                Icons.chat_bubble_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                            if (unreadChatCount > 0)
+                              Positioned(
+                                top: -2,
+                                right: -2,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEF4444),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    unreadChatCount > 99
+                                        ? '99+'
+                                        : unreadChatCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
                         )
                       else
                         Icon(

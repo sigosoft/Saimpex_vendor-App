@@ -38,6 +38,7 @@ class WaterHomeController extends GetxController {
     'Cancelled',
   ];
 
+  int unreadChatCount = 0;
   List<HomeOrder> orders = [];
   List<SubscriptionOrder> subscriptionOrders = [];
 
@@ -46,6 +47,7 @@ class WaterHomeController extends GetxController {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     fetchHome();
+    fetchUnreadChatCount();
   }
 
   void _onSearchChanged() {
@@ -292,6 +294,21 @@ class WaterHomeController extends GetxController {
           } else if (selectedFilterIndex == 5) {
             await fetchWaterOrders(limit: 10, status: 10);
           }
+          await fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+        } else if (selectedTabIndex == 1) {
+          if (selectedFilterIndex == 0) {
+            await fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+          } else if (selectedFilterIndex == 1) {
+            await fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+          } else if (selectedFilterIndex == 2) {
+            await fetchWaterSubscriptions(limit: 10, page: 1, status: 'paused');
+          } else if (selectedFilterIndex == 3) {
+            await fetchWaterSubscriptions(
+              limit: 10,
+              page: 1,
+              status: 'cancelled',
+            );
+          }
         }
       } else {
         homeData = null;
@@ -405,6 +422,596 @@ class WaterHomeController extends GetxController {
       debugPrint(
         '================================================================',
       );
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> fetchWaterSubscriptions({
+    int limit = 10,
+    int page = 1,
+    String status = 'new',
+  }) async {
+    try {
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+        'page': page,
+        'status': status,
+      };
+
+      debugPrint(
+        '==================== GET WATER SUBSCRIPTIONS ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.getwaterSubscriptions}');
+      debugPrint('Query: $queryParams');
+
+      final response = await DioClient().get(
+        ApiEndPoints.getwaterSubscriptions,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '================================================================',
+      );
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true')) {
+        List rawList = [];
+        final d = dataMap['data'];
+        if (d is Map) {
+          final subs = d['subscriptions'];
+          if (subs is Map && subs['data'] is List) {
+            rawList = subs['data'] as List;
+          } else if (subs is List) {
+            rawList = subs;
+          }
+        } else if (d is List) {
+          rawList = d;
+        }
+
+        final List<SubscriptionOrder> loadedSubscriptions = [];
+        for (final item in rawList) {
+          if (item is Map) {
+            final map = Map<String, dynamic>.from(item);
+            loadedSubscriptions.add(SubscriptionOrder.fromJson(map));
+          }
+        }
+
+        final targetStatus = switch (status.toLowerCase()) {
+          'new' => SubscriptionOrderStatus.newOrder,
+          'active' => SubscriptionOrderStatus.active,
+          'paused' => SubscriptionOrderStatus.paused,
+          'cancelled' => SubscriptionOrderStatus.cancelled,
+          _ => SubscriptionOrderStatus.newOrder,
+        };
+
+        subscriptionOrders.removeWhere((s) => s.status == targetStatus);
+        subscriptionOrders.insertAll(0, loadedSubscriptions);
+      }
+    } catch (e) {
+      debugPrint(
+        '==================== GET WATER SUBSCRIPTIONS ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '======================================================================',
+      );
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> acceptWaterSubscription(
+    dynamic subscriptionId, {
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = subscriptionId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final bodyMap = <String, dynamic>{'subscription_id': id};
+
+      debugPrint(
+        '==================== ACCEPT WATER SUBSCRIPTION ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.acceptWaterSubscription}');
+      debugPrint('Body: $bodyMap');
+
+      final response = await DioClient().post(
+        ApiEndPoints.acceptWaterSubscription,
+        body: bodyMap,
+        query: bodyMap,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '==================================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Subscription accepted successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        subscriptionOrders.removeWhere(
+          (s) =>
+              (s.rawId != null && s.rawId.toString() == id.toString()) ||
+              s.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh subscriptions and home data
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to accept subscription';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== ACCEPT WATER SUBSCRIPTION ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '========================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error accepting subscription: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> rejectWaterSubscription(
+    dynamic subscriptionId, {
+    String? reason,
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = subscriptionId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final bodyMap = <String, dynamic>{'subscription_id': id};
+      if (reason != null && reason.toString().trim().isNotEmpty) {
+        bodyMap['reason'] = reason.toString().trim();
+      }
+
+      debugPrint(
+        '==================== REJECT WATER SUBSCRIPTION ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.rejectWaterSubscription}');
+      debugPrint('Body: $bodyMap');
+
+      final response = await DioClient().post(
+        ApiEndPoints.rejectWaterSubscription,
+        body: bodyMap,
+        query: bodyMap,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '==================================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Subscription rejected successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        subscriptionOrders.removeWhere(
+          (s) =>
+              (s.rawId != null && s.rawId.toString() == id.toString()) ||
+              s.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh subscriptions and home data
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'cancelled');
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to reject subscription';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== REJECT WATER SUBSCRIPTION ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '========================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error rejecting subscription: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> pauseWaterSubscription(
+    dynamic subscriptionId, {
+    String? reason,
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = subscriptionId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final bodyMap = <String, dynamic>{'subscription_id': id};
+      if (reason != null && reason.toString().trim().isNotEmpty) {
+        bodyMap['reason'] = reason.toString().trim();
+      }
+
+      debugPrint(
+        '==================== PAUSE WATER SUBSCRIPTION ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.pauseWaterSubscription}');
+      debugPrint('Body: $bodyMap');
+
+      final response = await DioClient().post(
+        ApiEndPoints.pauseWaterSubscription,
+        body: bodyMap,
+        query: bodyMap,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '==================================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Subscription paused successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        subscriptionOrders.removeWhere(
+          (s) =>
+              (s.rawId != null && s.rawId.toString() == id.toString()) ||
+              s.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh subscriptions and home data
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'paused');
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to pause subscription';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== PAUSE WATER SUBSCRIPTION ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '========================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error pausing subscription: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
+  Future<void> resumeWaterSubscription(
+    dynamic subscriptionId, {
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = subscriptionId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final bodyMap = <String, dynamic>{'subscription_id': id};
+
+      debugPrint(
+        '==================== RESUME WATER SUBSCRIPTION ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.resumeWaterSubscription}');
+      debugPrint('Body: $bodyMap');
+
+      final response = await DioClient().post(
+        ApiEndPoints.resumeWaterSubscription,
+        body: bodyMap,
+        query: bodyMap,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint(
+        '==================================================================',
+      );
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Subscription resumed successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        subscriptionOrders.removeWhere(
+          (s) =>
+              (s.rawId != null && s.rawId.toString() == id.toString()) ||
+              s.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh subscriptions and home data
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'paused');
+        await fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to resume subscription';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== RESUME WATER SUBSCRIPTION ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '========================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error resuming subscription: $e');
+      }
     } finally {
       update();
     }
@@ -770,6 +1377,128 @@ class WaterHomeController extends GetxController {
     }
   }
 
+  Future<void> cancelWaterOrder(
+    dynamic orderId, {
+    String? reason,
+    BuildContext? context,
+  }) async {
+    bool dialogShown = false;
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+
+      final token = await getSavedObject('token');
+      if (token != null &&
+          token.toString().isNotEmpty &&
+          token.toString() != 'null') {
+        DioClient().updateToken(token.toString());
+      }
+
+      dynamic id = orderId;
+      if (id is String) {
+        final clean = id.replaceAll('#', '').trim();
+        id = int.tryParse(clean) ?? clean;
+      }
+
+      final queryParams = <String, dynamic>{'order_id': id};
+
+      debugPrint(
+        '==================== CANCEL WATER ORDER ====================',
+      );
+      debugPrint('Endpoint: ${ApiEndPoints.CancelWaterOrder}');
+      debugPrint('Query: $queryParams');
+      if (reason != null && reason.isNotEmpty) {
+        debugPrint('Reason: $reason');
+      }
+
+      final response = await DioClient().get(
+        ApiEndPoints.CancelWaterOrder,
+        query: queryParams,
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint('===========================================================');
+
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+
+      Map<String, dynamic>? dataMap;
+      if (response.data is Map<String, dynamic>) {
+        dataMap = response.data as Map<String, dynamic>;
+      } else if (response.data is Map) {
+        dataMap = Map<String, dynamic>.from(response.data as Map);
+      } else if (response.data is String) {
+        try {
+          final decoded = jsonDecode(response.data as String);
+          if (decoded is Map) {
+            dataMap = Map<String, dynamic>.from(decoded);
+          }
+        } catch (_) {}
+      }
+
+      if (dataMap != null &&
+          (dataMap['status'] == true ||
+              dataMap['status'].toString() == 'true' ||
+              dataMap['status'] == 1 ||
+              dataMap['status'] == '1')) {
+        final message =
+            dataMap['message']?.toString() ?? 'Order cancelled successfully';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+
+        // Optimistically remove from current list
+        orders.removeWhere(
+          (o) =>
+              (o.rawId != null && o.rawId.toString() == id.toString()) ||
+              o.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+
+        // Refresh orders and home data
+        await fetchWaterOrders(limit: 10, status: 1);
+        await fetchWaterOrders(limit: 10, status: 10);
+        await fetchHome();
+      } else {
+        final message =
+            dataMap?['message']?.toString() ?? 'Failed to cancel order';
+        if (context != null && context.mounted) {
+          showToast(context, message);
+        }
+      }
+    } catch (e) {
+      if (dialogShown) {
+        if (context != null && context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        } else {
+          Get.back();
+        }
+        dialogShown = false;
+      }
+      debugPrint(
+        '==================== CANCEL WATER ORDER ERROR ====================',
+      );
+      debugPrint('Error: $e');
+      debugPrint(
+        '================================================================',
+      );
+      if (context != null && context.mounted) {
+        showToast(context, 'Error cancelling order: $e');
+      }
+    } finally {
+      update();
+    }
+  }
+
   bool get isSubscriptionTab => selectedTabIndex == 1;
 
   List<String> get activeFilters =>
@@ -830,11 +1559,14 @@ class WaterHomeController extends GetxController {
     selectedFilterIndex = 0;
     if (index == 0) {
       fetchWaterOrders(limit: 10, status: 1);
+    } else if (index == 1) {
+      fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
     }
     update();
   }
 
   void onBottomNavSelect(int index) {
+    fetchUnreadChatCount();
     if (index == bottomNavIndex) {
       if (index == 2) {
         final chatController = Get.isRegistered<ChatController>()
@@ -864,19 +1596,31 @@ class WaterHomeController extends GetxController {
       if (Get.isRegistered<WaterAccountController>()) {
         Get.find<WaterAccountController>().fetchProfile();
       }
-    } else if ((index == 0 || index == 1) && selectedTabIndex == 0) {
-      if (selectedFilterIndex == 0) {
-        fetchWaterOrders(limit: 10, status: 1);
-      } else if (selectedFilterIndex == 1) {
-        fetchWaterOrders(limit: 10, status: 2);
-      } else if (selectedFilterIndex == 2) {
-        fetchWaterOrders(limit: 10, status: 3);
-      } else if (selectedFilterIndex == 3) {
-        fetchWaterOrders(limit: 10, status: 4);
-      } else if (selectedFilterIndex == 4) {
-        fetchWaterOrders(limit: 10, status: 9);
-      } else if (selectedFilterIndex == 5) {
-        fetchWaterOrders(limit: 10, status: 10);
+    } else if (index == 0 || index == 1) {
+      if (selectedTabIndex == 0) {
+        if (selectedFilterIndex == 0) {
+          fetchWaterOrders(limit: 10, status: 1);
+        } else if (selectedFilterIndex == 1) {
+          fetchWaterOrders(limit: 10, status: 2);
+        } else if (selectedFilterIndex == 2) {
+          fetchWaterOrders(limit: 10, status: 3);
+        } else if (selectedFilterIndex == 3) {
+          fetchWaterOrders(limit: 10, status: 4);
+        } else if (selectedFilterIndex == 4) {
+          fetchWaterOrders(limit: 10, status: 9);
+        } else if (selectedFilterIndex == 5) {
+          fetchWaterOrders(limit: 10, status: 10);
+        }
+      } else if (selectedTabIndex == 1) {
+        if (selectedFilterIndex == 0) {
+          fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+        } else if (selectedFilterIndex == 1) {
+          fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+        } else if (selectedFilterIndex == 2) {
+          fetchWaterSubscriptions(limit: 10, page: 1, status: 'paused');
+        } else if (selectedFilterIndex == 3) {
+          fetchWaterSubscriptions(limit: 10, page: 1, status: 'cancelled');
+        }
       }
     }
     update();
@@ -898,6 +1642,16 @@ class WaterHomeController extends GetxController {
       } else if (index == 5) {
         fetchWaterOrders(limit: 10, status: 10);
       }
+    } else if (selectedTabIndex == 1) {
+      if (index == 0) {
+        fetchWaterSubscriptions(limit: 10, page: 1, status: 'new');
+      } else if (index == 1) {
+        fetchWaterSubscriptions(limit: 10, page: 1, status: 'active');
+      } else if (index == 2) {
+        fetchWaterSubscriptions(limit: 10, page: 1, status: 'paused');
+      } else if (index == 3) {
+        fetchWaterSubscriptions(limit: 10, page: 1, status: 'cancelled');
+      }
     }
     update();
   }
@@ -905,6 +1659,30 @@ class WaterHomeController extends GetxController {
   void toggleStore(bool value) {
     isStoreOpen = value;
     update();
+  }
+
+  Future<void> fetchUnreadChatCount() async {
+    try {
+      final token = await getSavedObject("token");
+      if (token == null ||
+          token.toString().isEmpty ||
+          token.toString() == "null") {
+        return;
+      }
+      DioClient().updateToken(token.toString());
+      final response = await DioClient().get(
+        ApiEndPoints.totalUnreadMessagesCount,
+      );
+      if (response.data != null && response.data['status'] == true) {
+        final count = response.data['data']?['total_unread_messages_count'];
+        unreadChatCount = (count is int)
+            ? count
+            : int.tryParse(count?.toString() ?? '0') ?? 0;
+        update();
+      }
+    } catch (e) {
+      debugPrint("fetchUnreadChatCount error: $e");
+    }
   }
 
   @override

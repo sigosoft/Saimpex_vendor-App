@@ -268,10 +268,12 @@ class _SettingsState extends State<Settings> {
                           children: [
                             _buildMenuItem(
                               context,
-                                S.of(context).restaurantManagement,
+                              S.of(context).restaurantManagement,
                               null,
                               () {
-                                Get.to(() => const RestaurantManagementScreen());
+                                Get.to(
+                                  () => const RestaurantManagementScreen(),
+                                );
                               },
                               leadingIcon: Icons.storefront_outlined,
                             ),
@@ -440,7 +442,7 @@ class _SettingsState extends State<Settings> {
       );
     } else if (Platform.isIOS) {
       url = Uri.parse(
-        "https://apps.apple.com/app/id${ApiConfigs.iosAppStoreId}",
+        "https://apps.apple.com/app/id${ApiConfigs.androidPackageName}",
       );
     } else {
       return;
