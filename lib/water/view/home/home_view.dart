@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
@@ -2874,9 +2875,11 @@ class _BottomNav extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final segment = constraints.maxWidth / labels.length;
-              return SizedBox(
-                width: constraints.maxWidth,
-                child: Stack(
+              return Directionality(
+                textDirection: TextDirection.ltr,
+                child: SizedBox(
+                  width: constraints.maxWidth,
+                  child: Stack(
                   children: [
                     AnimatedPositioned(
                       duration: const Duration(milliseconds: 280),
@@ -2986,7 +2989,7 @@ class _BottomNav extends StatelessWidget {
                                         : AppColors.navInactive,
                                   ),
                                   child: Text(
-                                    labels[index],
+                                    LocalizationService.tr(labels[index]),
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -3000,7 +3003,8 @@ class _BottomNav extends StatelessWidget {
                     ),
                   ],
                 ),
-              );
+              ),
+            );
             },
           ),
         ),

@@ -105,8 +105,18 @@ class LocalizationService {
       'fr': 'Profil de la pharmacie',
       'ar': 'ملف الصيدلية',
     },
+    'Store Profile': {
+      'en': 'Store Profile',
+      'fr': 'Profil du magasin',
+      'ar': 'ملف المتجر',
+    },
     'Working hours': {
       'en': 'Working hours',
+      'fr': 'Heures de travail',
+      'ar': 'ساعات العمل',
+    },
+    'Working Hours': {
+      'en': 'Working Hours',
       'fr': 'Heures de travail',
       'ar': 'ساعات العمل',
     },
@@ -152,6 +162,11 @@ class LocalizationService {
       'fr': 'Politique de confidentialité',
       'ar': 'سياسة الخصوصية',
     },
+    'Privacy & Security': {
+      'en': 'Privacy & Security',
+      'fr': 'Confidentialité et sécurité',
+      'ar': 'الخصوصية والأمان',
+    },
     'Logout': {'en': 'Logout', 'fr': 'Déconnexion', 'ar': 'تسجيل الخروج'},
     'Are you sure you want to log out?': {
       'en': 'Are you sure you want to log out?',
@@ -162,6 +177,11 @@ class LocalizationService {
       'en': 'Are you sure you want to delete your\naccount?',
       'fr': 'Voulez-vous vraiment supprimer\nvotre compte ?',
       'ar': 'هل أنت متأكد أنك تريد حذف\nحسابك؟',
+    },
+    'Are you sure you want to delete your account?': {
+      'en': 'Are you sure you want to delete your account?',
+      'fr': 'Voulez-vous vraiment supprimer votre compte ?',
+      'ar': 'هل أنت متأكد من أنك تريد حذف حسابك؟',
     },
     'Check for update': {
       'en': 'Check for update',

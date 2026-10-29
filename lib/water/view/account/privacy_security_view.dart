@@ -5,6 +5,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class PrivacySecurityView extends StatefulWidget {
@@ -239,7 +240,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Privacy & Security',
+              LocalizationService.tr('Privacy & Security'),
               style: GoogleFonts.inter(
                 color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,

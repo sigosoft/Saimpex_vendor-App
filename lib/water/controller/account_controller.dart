@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/controller/settings_controller.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/water/controller/home_controller.dart';
 
 class WaterAccountController extends GetxController {
   static const languages = ['English', 'French', 'Arabic'];
@@ -19,7 +22,31 @@ class WaterAccountController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initLanguage();
+    LocalizationService.localeNotifier.addListener(_onLocaleChanged);
     fetchProfile();
+  }
+
+  @override
+  void onClose() {
+    LocalizationService.localeNotifier.removeListener(_onLocaleChanged);
+    super.onClose();
+  }
+
+  void _initLanguage() {
+    final lang = LocalizationService.currentLanguageCode;
+    if (lang == 'fr') {
+      languageIndex = 1;
+    } else if (lang == 'ar') {
+      languageIndex = 2;
+    } else {
+      languageIndex = 0;
+    }
+  }
+
+  void _onLocaleChanged() {
+    _initLanguage();
+    update();
   }
 
   Future<void> fetchProfile() async {
@@ -150,8 +177,25 @@ class WaterAccountController extends GetxController {
     return isStoreOpen ? 'Open' : 'Closed';
   }
 
-  void selectLanguage(int index) {
+  Future<void> selectLanguage(int index) async {
     languageIndex = index;
+    update();
+
+    String langCode = 'en';
+    if (index == 1) {
+      langCode = 'fr';
+    } else if (index == 2) {
+      langCode = 'ar';
+    }
+
+    await LocalizationService().updateLocale(langCode);
+
+    if (Get.isRegistered<SettingsController>()) {
+      Get.find<SettingsController>().onLanguageChanged();
+    }
+    if (Get.isRegistered<WaterHomeController>()) {
+      Get.find<WaterHomeController>().update();
+    }
     update();
   }
 

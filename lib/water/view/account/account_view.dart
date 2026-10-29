@@ -83,7 +83,7 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Delete Account',
+                  LocalizationService.tr('Delete Account'),
                   style: GoogleFonts.inter(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
@@ -92,7 +92,7 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Are you sure you want to delete your account?',
+                  LocalizationService.tr('Are you sure you want to delete your account?'),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF6B7280),
@@ -117,7 +117,7 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                           child: Text(
-                            'No',
+                            LocalizationService.tr('No'),
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -140,7 +140,7 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                           child: Text(
-                            'Yes',
+                            LocalizationService.tr('Yes'),
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -507,10 +507,10 @@ class _AccountViewState extends State<AccountView> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Check for update',
+                Text(
+                  LocalizationService.tr('Check for update'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -575,9 +575,9 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Account',
-              style: TextStyle(
+            Text(
+              LocalizationService.tr('Account'),
+              style: const TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
@@ -636,21 +636,21 @@ class _Header extends StatelessWidget {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: 'delete',
                     height: 48,
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.delete_outline_rounded,
                           color: AppColors.primaryOrange,
                           size: 20,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'Delete Account',
-                            style: TextStyle(
+                            LocalizationService.tr('Delete Account'),
+                            style: const TextStyle(
                               color: AppColors.primaryOrange,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -764,7 +764,7 @@ class _ProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 5),
                   Text(
-                    status,
+                    LocalizationService.tr(status),
                     style: TextStyle(
                       color: isOpen
                           ? AppColors.inventoryAvailable
@@ -806,7 +806,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      LocalizationService.tr(text),
       style: const TextStyle(
         color: AppColors.primaryOrange,
         fontWeight: FontWeight.w700,
@@ -829,69 +829,72 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.orangeSoftBg,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final segment = constraints.maxWidth / languages.length;
-          return Stack(
-            children: [
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 280),
-                curve: Curves.easeOutCubic,
-                left: selectedIndex * segment,
-                top: 0,
-                bottom: 0,
-                width: segment,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryOrange,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryOrange.withValues(alpha: 0.28),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: AppColors.orangeSoftBg,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final segment = constraints.maxWidth / languages.length;
+            return Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutCubic,
+                  left: selectedIndex * segment,
+                  top: 0,
+                  bottom: 0,
+                  width: segment,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryOrange,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryOrange.withValues(alpha: 0.28),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: List.generate(languages.length, (index) {
-                  final selected = selectedIndex == index;
-                  return Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        if (index == selectedIndex) return;
-                        HapticFeedback.selectionClick();
-                        onSelect(index);
-                      },
-                      child: Center(
-                        child: AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 220),
-                          curve: Curves.easeOutCubic,
-                          style: TextStyle(
-                            color: selected ? Colors.white : AppColors.textDark,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13.5,
+                Row(
+                  children: List.generate(languages.length, (index) {
+                    final selected = selectedIndex == index;
+                    return Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          if (index == selectedIndex) return;
+                          HapticFeedback.selectionClick();
+                          onSelect(index);
+                        },
+                        child: Center(
+                          child: AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            style: TextStyle(
+                              color: selected ? Colors.white : AppColors.textDark,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                            ),
+                            child: Text(languages[index]),
                           ),
-                          child: Text(languages[index]),
                         ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ],
-          );
-        },
+                    );
+                  }),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -981,7 +984,7 @@ class _SettingsTile extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    title,
+                    LocalizationService.tr(title),
                     style: const TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w600,
@@ -1036,9 +1039,9 @@ class _LogoutButton extends StatelessWidget {
               width: 22,
             ),
             const SizedBox(width: 8),
-            const Text(
-              'Logout',
-              style: TextStyle(
+            Text(
+              LocalizationService.tr('Logout'),
+              style: const TextStyle(
                 color: AppColors.primaryOrange,
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
