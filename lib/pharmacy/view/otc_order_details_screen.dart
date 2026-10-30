@@ -824,12 +824,12 @@ class _OtcCustomerCard extends StatelessWidget {
                       color: _accent,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const SizedBox(
+                    child: Image.asset(
+                      'lib/home_cleaning/Assets/images/chat.png',
                       width: 22,
                       height: 22,
-                      child: CustomPaint(
-                        painter: _ChatDotsIconPainter(color: Colors.white),
-                      ),
+                      color: Colors.white,
+                      colorBlendMode: BlendMode.srcIn,
                     ),
                   ),
                 ),

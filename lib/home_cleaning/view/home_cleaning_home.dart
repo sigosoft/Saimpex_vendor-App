@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
+import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_messages_view.dart';
+import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_account_view.dart';
+import 'package:saimpex_vendor/home_cleaning/view/my_services_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
 
 class HomeCleaningController extends GetxController {
@@ -17,6 +20,11 @@ class HomeCleaningController extends GetxController {
 
   void selectNav(int index) {
     if (index == navIndex) return;
+    navIndex = index;
+    update();
+  }
+
+  void setNavIndex(int index) {
     navIndex = index;
     update();
   }
@@ -61,9 +69,9 @@ class _HomeCleaningHomeState extends State<HomeCleaningHome> {
                   child: switch (controller.navIndex) {
                     0 => _HomeTab(controller: controller),
                     1 => const _PlaceholderTab(title: 'Bookings'),
-                    2 => const _PlaceholderTab(title: 'My Services'),
-                    3 => const _PlaceholderTab(title: 'Chat'),
-                    _ => const _PlaceholderTab(title: 'Account'),
+                    2 => MyServicesView(controller: controller),
+                    3 => HomeCleaningMessagesView(controller: controller),
+                    _ => HomeCleaningAccountView(controller: controller),
                   },
                 ),
                 _BottomNav(
@@ -109,9 +117,60 @@ class _HomeTab extends StatelessWidget {
     ),
   ];
 
+  static const _acceptedBookings = [
+    _Booking(
+      name: 'Ahmed',
+      service: 'Regular Cleaning',
+      orderId: '#22789007',
+      timeAgo: '2 min ago',
+      status: 'ACCEPTED',
+      tasks: [
+        _Task('Bedroom × 4'),
+        _Task('Kitchen × 1'),
+        _Task('Fridge Cleaning × 1'),
+      ],
+    ),
+  ];
+
+  static const _inProgressBookings = [
+    _Booking(
+      name: 'Ahmed',
+      service: 'Regular Cleaning',
+      orderId: '#22789007',
+      timeAgo: '2 min ago',
+      status: 'IN PROGRESS',
+      tasks: [
+        _Task('Bedroom × 4'),
+        _Task('Kitchen × 1'),
+        _Task('Fridge Cleaning × 1'),
+      ],
+    ),
+  ];
+
+  static const _completedBookings = [
+    _Booking(
+      name: 'Ahmed',
+      service: 'Regular Cleaning',
+      orderId: '#22789007',
+      timeAgo: '2 min ago',
+      status: 'COMPLETED',
+      tasks: [
+        _Task('Bedroom × 4'),
+        _Task('Kitchen × 1'),
+        _Task('Fridge Cleaning × 1'),
+      ],
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final bookings = controller.filterIndex == 0 ? _bookings : const <_Booking>[];
+    final bookings = switch (controller.filterIndex) {
+      0 => _bookings,
+      1 => _acceptedBookings,
+      2 => _inProgressBookings,
+      3 => _completedBookings,
+      _ => const <_Booking>[],
+    };
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -180,6 +239,7 @@ class _Booking {
     required this.orderId,
     required this.timeAgo,
     required this.tasks,
+    this.status = 'NEW',
   });
 
   final String name;
@@ -187,6 +247,12 @@ class _Booking {
   final String orderId;
   final String timeAgo;
   final List<_Task> tasks;
+  final String status;
+
+  bool get isAccepted => status == 'ACCEPTED';
+  bool get isInProgress => status == 'IN PROGRESS';
+  bool get isCompleted => status == 'COMPLETED';
+  bool get isDetailedStatus => isAccepted || isInProgress || isCompleted;
 }
 
 class _Task {
@@ -731,7 +797,13 @@ class _Filters extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
-  static const _labels = ['New Bookings', 'Accepted', 'In Progress'];
+  static const _labels = [
+    'New Bookings',
+    'Accepted',
+    'In Progress',
+    'Completed',
+    'Cancelled',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -774,7 +846,7 @@ class _Filters extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (selected && index == 0)
+                if (selected && (index == 0 || index == 1 || index == 2 || index == 3))
                   Positioned(
                     right: -2,
                     top: -8,
@@ -823,6 +895,7 @@ class _BookingCard extends StatelessWidget {
               customerName: booking.name,
               serviceName: booking.service,
               orderId: booking.orderId,
+              status: booking.status,
             ),
           ),
         );
@@ -860,57 +933,126 @@ class _BookingCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      booking.name,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF1A1A1A),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        height: 1.2,
+                child: booking.isDetailedStatus
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  booking.name,
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFF1A1A1A),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: booking.isInProgress
+                                      ? const Color(0xFF1E6BE6)
+                                      : const Color(0xFF009624),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  booking.isInProgress
+                                      ? 'IN PROGRESS'
+                                      : booking.isCompleted
+                                          ? 'COMPLETED'
+                                          : 'ACCEPTED',
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 10,
+                                    letterSpacing: 0.3,
+                                    height: 1.1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: booking.service,
+                                  style: GoogleFonts.inter(
+                                    color: _orange,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' - ${booking.orderId} - ${booking.timeAgo}',
+                                  style: GoogleFonts.inter(
+                                    color: const Color(0xFF757575),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            booking.name,
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF1A1A1A),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            booking.service,
+                            style: GoogleFonts.inter(
+                              color: _orange,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${booking.orderId} • ${booking.timeAgo}',
+                            style: GoogleFonts.inter(
+                              color: const Color.fromARGB(255, 95, 95, 95),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      booking.service,
-                      style: GoogleFonts.inter(
-                        color: _orange,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${booking.orderId} • ${booking.timeAgo}',
-                      style: GoogleFonts.inter(
-                        color: const Color.fromARGB(255, 95, 95, 95),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 243, 170, 0),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'NEW',
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                    letterSpacing: 0.3,
-                    height: 1.1,
+              if (!booking.isDetailedStatus) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 243, 170, 0),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'NEW',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      letterSpacing: 0.3,
+                      height: 1.1,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
           const SizedBox(height: 12),
@@ -945,6 +1087,10 @@ class _BookingCard extends StatelessWidget {
               ],
             ),
           ),
+          if (booking.isDetailedStatus) ...[
+            const SizedBox(height: 12),
+            const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+          ],
           const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -970,14 +1116,14 @@ class _BookingCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.location_on, size: 16, color: _orange),
                   const SizedBox(height: 4),
                   Text(
-                    'Sahara View',
+                    'Sahara View...',
                     softWrap: false,
                     maxLines: 1,
                     style: GoogleFonts.inter(
@@ -990,59 +1136,108 @@ class _BookingCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 44,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      showRejectBookingSheet(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF1A1A1A),
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFFE0E0E0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      'Reject',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF424242),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
+          if (booking.isCompleted)
+            const SizedBox.shrink()
+          else ...[
+            const SizedBox(height: 14),
+            if (booking.isInProgress)
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: ElevatedButton(
+                  onPressed: () => HapticFeedback.lightImpact(),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: _orange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    'Mark as Completed',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: SizedBox(
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: () => HapticFeedback.lightImpact(),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: _orange,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      'Accept Booking',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
+              )
+            else if (booking.isAccepted)
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: ElevatedButton(
+                  onPressed: () => HapticFeedback.lightImpact(),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: _orange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    'Start Cleaning',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ),
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          showRejectBookingSheet(context);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF1A1A1A),
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(color: Color(0xFFE0E0E0)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          'Reject',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF424242),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: () => HapticFeedback.lightImpact(),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: _orange,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          'Accept Booking',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+          ],
         ],
       ),
     ),

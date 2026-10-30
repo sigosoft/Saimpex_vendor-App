@@ -68,11 +68,19 @@ class _CouponsViewState extends State<CouponsView> {
 
     try {
       final token = await getSavedObject('token');
-      if (token != null &&
-          token.toString() != 'null' &&
-          token.toString().isNotEmpty) {
-        DioClient().updateToken(token);
+      if (token == null ||
+          token.toString() == 'null' ||
+          token.toString().isEmpty ||
+          token.toString() == 'home_cleaning_mock_token') {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _coupons = [];
+          });
+        }
+        return;
       }
+      DioClient().updateToken(token.toString());
 
       debugPrint("==================== GET COUPONS ====================");
       debugPrint("Endpoint: ${ApiEndPoints.coupons}");

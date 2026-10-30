@@ -29,7 +29,7 @@ class AppAssets {
 
   /// Bottom navigation icons.
   static const String ordersIcon = 'lib/water/Assets/Images/orders_icon.png';
-  static const String chatIcon = 'lib/water/Assets/Images/chat_icon.png';
+  static const String chatIcon = 'lib/home_cleaning/Assets/images/chat.png';
   static const String inventoryIcon = 'lib/water/Assets/Images/inventory_icon.png';
   static const String accountIcon = 'lib/water/Assets/Images/account_icon.png';
 

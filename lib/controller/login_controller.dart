@@ -67,19 +67,6 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
-    // Home Cleaning is UI-design only for now: skip API validation.
-    // Grocery, Restaurant, Pharmacy, and Water use the authenticated login flow.
-    if (selectedAppType == VendorAppType.homeCleaning) {
-      debugPrint("==================================================");
-      debugPrint("[LOGIN] Selected Vendor Type: ${selectedAppType.label} (${selectedAppType.name})");
-      debugPrint("[LOGIN] Home Cleaning skips API validation (UI-only)");
-      debugPrint("==================================================");
-      await savename(VendorAppRouter.storageKey, selectedAppType.storageValue);
-      await savename("loginStatus", "true");
-      await VendorAppRouter.goToSelectedApp(type: selectedAppType);
-      return;
-    }
-
     try {
       showLoadingDialog(context);
       String? fcm_token;
@@ -102,7 +89,13 @@ class LoginController extends GetxController {
       Get.back();
       update();
       if (loginModel.status == true) {
-        final authToken = loginModel.data?.details?.token ?? "";
+        String authToken = loginModel.data?.details?.token ?? "";
+        if (authToken.isEmpty && response.data is Map) {
+          final d = response.data['data'];
+          if (d is Map) {
+            authToken = d['token']?.toString() ?? d['details']?['token']?.toString() ?? "";
+          }
+        }
         final apiVendorType = loginModel.data?.details?.vendorType;
         debugPrint("==================================================");
         debugPrint("[LOGIN SUCCESS] Selected Vendor Type: ${selectedAppType.label}");
@@ -144,6 +137,22 @@ class LoginController extends GetxController {
 
         showToast(context, toastMessage ?? "Login successful");
         await VendorAppRouter.goToSelectedApp(type: selectedAppType);
+      } else {
+        final languageCode = localization.currentLocale?.languageCode;
+        final message = loginModel.message;
+        final toastMessage = languageCode == "fr"
+            ? (message?.messageFr?.isNotEmpty == true
+                  ? message!.messageFr!.first
+                  : null)
+            : languageCode == "ar"
+            ? (message?.messageAr?.isNotEmpty == true
+                  ? message!.messageAr!.first
+                  : null)
+            : (message?.messageEn?.isNotEmpty == true
+                  ? message!.messageEn!.first
+                  : null);
+
+        showToast(context, toastMessage ?? "Login failed");
       }
     } catch (error) {
       Get.back();

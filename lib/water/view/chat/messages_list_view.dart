@@ -692,10 +692,12 @@ class _MessagesBottomNav extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: const Icon(
-                                Icons.chat_bubble_rounded,
+                              child: Image.asset(
+                                'lib/home_cleaning/Assets/images/chat.png',
+                                width: 22,
+                                height: 22,
                                 color: Colors.white,
-                                size: 22,
+                                colorBlendMode: BlendMode.srcIn,
                               ),
                             ),
                             if (unreadChatCount > 0)

@@ -1163,12 +1163,12 @@ class _CustomerCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const SizedBox(
+                    child: Image.asset(
+                      'lib/home_cleaning/Assets/images/chat.png',
                       width: 22,
                       height: 22,
-                      child: CustomPaint(
-                        painter: _ChatDotsIconPainter(color: Colors.white),
-                      ),
+                      color: Colors.white,
+                      colorBlendMode: BlendMode.srcIn,
                     ),
                   ),
                 ),
@@ -1230,47 +1230,7 @@ class _CustomerCard extends StatelessWidget {
   }
 }
 
-/// Speech bubble with three dots, matching the customer chat button.
-class _ChatDotsIconPainter extends CustomPainter {
-  const _ChatDotsIconPainter({required this.color});
 
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.6
-      ..strokeJoin = StrokeJoin.round
-      ..strokeCap = StrokeCap.round;
-
-    final w = size.width;
-    final h = size.height;
-    final bubble = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w * 0.06, h * 0.08, w * 0.88, h * 0.62),
-      Radius.circular(h * 0.18),
-    );
-    canvas.drawRRect(bubble, paint);
-
-    final tail = Path()
-      ..moveTo(w * 0.22, h * 0.68)
-      ..lineTo(w * 0.18, h * 0.92)
-      ..lineTo(w * 0.42, h * 0.68);
-    canvas.drawPath(tail, paint);
-
-    final dot = Paint()..color = color;
-    final cy = h * 0.39;
-    final r = w * 0.055;
-    canvas.drawCircle(Offset(w * 0.32, cy), r, dot);
-    canvas.drawCircle(Offset(w * 0.50, cy), r, dot);
-    canvas.drawCircle(Offset(w * 0.68, cy), r, dot);
-  }
-
-  @override
-  bool shouldRepaint(covariant _ChatDotsIconPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
 
 class _UploadedPrescriptionCard extends StatelessWidget {
   const _UploadedPrescriptionCard({
@@ -1932,12 +1892,12 @@ class _ToPrepareInfoCard extends StatelessWidget {
                       color: _accent,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const SizedBox(
+                    child: Image.asset(
+                      'lib/home_cleaning/Assets/images/chat.png',
                       width: 22,
                       height: 22,
-                      child: CustomPaint(
-                        painter: _ChatDotsIconPainter(color: Colors.white),
-                      ),
+                      color: Colors.white,
+                      colorBlendMode: BlendMode.srcIn,
                     ),
                   ),
                 ),

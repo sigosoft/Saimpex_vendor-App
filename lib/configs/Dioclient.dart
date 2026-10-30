@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -27,8 +28,38 @@ class DioClient {
         "Content-Type": "application/json",
       };
 
+    dio.interceptors.add(_authInterceptor());
     dio.interceptors.add(RetryInterceptor(dio: dio));
     dio.interceptors.add(_loggingInterceptor());
+  }
+
+  /// Auth Interceptor: guarantees Authorization header is automatically attached to every request
+  InterceptorsWrapper _authInterceptor() {
+    return InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final path = options.path;
+        final isLogin = path.contains(ApiEndPoints.login) || path.contains('/login');
+        if (!isLogin) {
+          final authHeader = options.headers["Authorization"]?.toString();
+          if (authHeader == null ||
+              authHeader.isEmpty ||
+              authHeader == "Bearer " ||
+              authHeader == "Bearer null" ||
+              authHeader == "Bearer false") {
+            final token = (await getSavedObject("token"))?.toString();
+            if (token != null &&
+                token.isNotEmpty &&
+                token != "null" &&
+                token != "false" &&
+                token != "home_cleaning_mock_token") {
+              options.headers["Authorization"] = "Bearer $token";
+              dio.options.headers["Authorization"] = "Bearer $token";
+            }
+          }
+        }
+        return handler.next(options);
+      },
+    );
   }
 
   /// Logger Interceptor

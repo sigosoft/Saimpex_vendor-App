@@ -848,7 +848,7 @@ class _SubscriptionCard extends StatelessWidget {
                 ChatView.open(context, customerName: item.name);
               },
               icon: Image.asset(
-                'lib/water/Assets/Images/chat.png',
+                'lib/home_cleaning/Assets/images/chat.png',
                 width: 18,
                 height: 18,
                 color: Colors.white,

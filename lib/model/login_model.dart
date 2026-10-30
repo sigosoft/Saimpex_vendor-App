@@ -36,10 +36,14 @@ class LoginData {
   LoginData({this.details});
 
   factory LoginData.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return LoginData();
+    if (json.containsKey('details') && json['details'] is Map<String, dynamic>) {
+      return LoginData(
+        details: LoginDetails.fromJson(json['details'] as Map<String, dynamic>),
+      );
+    }
     return LoginData(
-      details: json?['details'] != null
-          ? LoginDetails.fromJson(json?['details'])
-          : null,
+      details: LoginDetails.fromJson(json),
     );
   }
 
@@ -74,16 +78,22 @@ class LoginDetails {
   });
 
   factory LoginDetails.fromJson(Map<String, dynamic>? json) {
+    int parseInt(dynamic val) {
+      if (val is int) return val;
+      if (val is String) return int.tryParse(val) ?? 0;
+      return 0;
+    }
+
     return LoginDetails(
-      id: json?['id'] ?? 0,
-      name: json?['name'] ?? '',
-      email: json?['email'] ?? '',
-      username: json?['username'] ?? '',
-      roleId: json?['role_id'] ?? 0,
-      status: json?['status'] ?? 0,
-      token: json?['token'] ?? '',
-      vendorType: json?['vendor_type'] ?? 0,
-      vendorId: json?['vendor_id'] ?? 0,
+      id: parseInt(json?['id']),
+      name: json?['name']?.toString() ?? '',
+      email: json?['email']?.toString() ?? '',
+      username: json?['username']?.toString() ?? '',
+      roleId: parseInt(json?['role_id']),
+      status: parseInt(json?['status']),
+      token: json?['token']?.toString() ?? '',
+      vendorType: parseInt(json?['vendor_type']),
+      vendorId: parseInt(json?['vendor_id']),
     );
   }
 

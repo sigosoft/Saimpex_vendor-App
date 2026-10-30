@@ -1250,12 +1250,18 @@ class _BottomActions extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const FittedBox(
+        child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.chat_bubble_outline, size: 18),
+              Image.asset(
+                'lib/home_cleaning/Assets/images/chat.png',
+                width: 18,
+                height: 18,
+                color: Colors.white,
+                colorBlendMode: BlendMode.srcIn,
+              ),
               SizedBox(width: 6),
               Text(
                 'Chat With Customer',

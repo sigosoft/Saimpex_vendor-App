@@ -1512,6 +1512,14 @@ class _InventoryBottomNav extends StatelessWidget {
                             size: 22,
                           ),
                         )
+                      else if (index == 2)
+                        Image.asset(
+                          'lib/home_cleaning/Assets/images/chat.png',
+                          width: 24,
+                          height: 24,
+                          color: AppColors.navInactive,
+                          colorBlendMode: BlendMode.srcIn,
+                        )
                       else
                         Icon(
                           icons[index],

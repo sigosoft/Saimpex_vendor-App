@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
                               clipBehavior: Clip.none,
                               children: [
                                 Image.asset(
-                                  "lib/assets/images/Chat vendor.png",
+                                  "lib/home_cleaning/Assets/images/chat.png",
                                   height: 24,
                                   color: const Color(0xFF94A3B8),
                                 ),
@@ -190,7 +190,7 @@ class _HomeState extends State<Home> {
                               clipBehavior: Clip.none,
                               children: [
                                 Image.asset(
-                                  "lib/assets/images/Chat vendor.png",
+                                  "lib/home_cleaning/Assets/images/chat.png",
                                   height: 24,
                                   color: colorPrimary,
                                 ),

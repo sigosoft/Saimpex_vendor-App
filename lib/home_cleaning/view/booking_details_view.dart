@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_conversation_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
 
 class BookingDetailsView extends StatefulWidget {
@@ -10,11 +11,17 @@ class BookingDetailsView extends StatefulWidget {
     required this.customerName,
     required this.serviceName,
     required this.orderId,
+    this.status = 'ACCEPTED',
   });
 
   final String customerName;
   final String serviceName;
   final String orderId;
+  final String status;
+
+  bool get isAccepted => status == 'ACCEPTED';
+  bool get isInProgress => status == 'IN PROGRESS';
+  bool get isCompleted => status == 'COMPLETED';
 
   static const _orange = Color(0xFFFF5722);
   static const _ink = Color(0xFF1A1A1A);
@@ -46,7 +53,9 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -72,181 +81,158 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
               ),
             ),
             Column(
-            children: [
-              SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(
-                  height: 44,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        'Booking Details',
-                        style: GoogleFonts.inter(
-                          color: BookingDetailsView._ink,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
+              children: [
+                SizedBox(height: MediaQuery.paddingOf(context).top + 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SizedBox(
+                    height: 44,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Text(
+                          'Booking Details',
+                          style: GoogleFonts.inter(
+                            color: BookingDetailsView._ink,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () => Navigator.of(context).maybePop(),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFFFE0D0)),
-                            ),
-                            child: const Icon(
-                              Icons.chevron_left_rounded,
-                              color: BookingDetailsView._orange,
-                              size: 26,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).maybePop(),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFFFE0D0),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.chevron_left_rounded,
+                                color: BookingDetailsView._orange,
+                                size: 26,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                  children: [
-                    _CustomerCard(
-                      name: widget.customerName,
-                      orderId: widget.orderId,
-                    ),
-                    const SizedBox(height: 12),
-                    _ServiceCard(
-                      key: _serviceKey,
-                      serviceName: widget.serviceName,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'SPACES',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF9AA3B2),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        letterSpacing: 0.6,
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                    children: [
+                      _CustomerCard(
+                        name: widget.customerName,
+                        orderId: widget.orderId,
+                        status: widget.status,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const _SpacesCard(),
-                    const SizedBox(height: 16),
-                    Text(
-                      'MAKE IT EXTRA CLEAN',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF9AA3B2),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        letterSpacing: 0.6,
+                      const SizedBox(height: 12),
+                      _ServiceCard(
+                        key: _serviceKey,
+                        serviceName: widget.serviceName,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const _WhiteCard(
-                      child: _SpaceTile(
-                        title: 'Fridge Cleaning',
-                        detail: '100 MRU x 1',
-                        total: '100 MRU',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const _ProductsCard(),
-                    const SizedBox(height: 16),
-                    Text(
-                      'SPECIAL NOTES',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF9AA3B2),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(14, 14, 16, 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF8E6),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.sticky_note_2_outlined,
-                            color: Color(0xFFFF5722),
-                            size: 22,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFF7A4E32),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 13.5,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const _LocationCard(),
-                    const SizedBox(height: 16),
-                    Text(
-                      'PAYMENT SUMMARY',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF9AA3B2),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const _PaymentCard(),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 48,
-                            child: OutlinedButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                showRejectBookingSheet(context);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: BookingDetailsView._ink,
-                                backgroundColor: Colors.white,
-                                side: const BorderSide(color: Color(0xFFE0E0E0)),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                'Reject',
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF424242),
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'SPACES',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF9AA3B2),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          letterSpacing: 0.6,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
+                      ),
+                      const SizedBox(height: 8),
+                      const _SpacesCard(),
+                      const SizedBox(height: 16),
+                      Text(
+                        'MAKE IT EXTRA CLEAN',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF9AA3B2),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const _WhiteCard(
+                        child: _SpaceTile(
+                          title: 'Fridge Cleaning',
+                          detail: '100 MRU x 1',
+                          total: '100 MRU',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _ProductsCard(isCompleted: widget.isCompleted),
+                      const SizedBox(height: 16),
+                      Text(
+                        'SPECIAL NOTES',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF9AA3B2),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(14, 14, 16, 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF8E6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.sticky_note_2_outlined,
+                              color: Color(0xFFFF5722),
+                              size: 22,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF7A4E32),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13.5,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const _LocationCard(),
+                      const SizedBox(height: 16),
+                      Text(
+                        'PAYMENT SUMMARY',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF9AA3B2),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const _PaymentCard(),
+                      if (widget.isCompleted)
+                        const SizedBox.shrink()
+                      else ...[
+                        const SizedBox(height: 16),
+                        if (widget.isInProgress)
+                          SizedBox(
+                            width: double.infinity,
                             height: 48,
                             child: ElevatedButton(
                               onPressed: () => HapticFeedback.lightImpact(),
@@ -259,22 +245,105 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                 ),
                               ),
                               child: Text(
-                                'Accept Booking',
+                                'Mark as Completed',
                                 style: GoogleFonts.inter(
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),
                               ),
                             ),
+                          )
+                        else if (widget.isAccepted)
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: () => HapticFeedback.lightImpact(),
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: BookingDetailsView._orange,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                'Start Cleaning',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: 48,
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+                                      showRejectBookingSheet(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: BookingDetailsView._ink,
+                                      backgroundColor: Colors.white,
+                                      side: const BorderSide(
+                                        color: Color(0xFFE0E0E0),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Reject',
+                                      style: GoogleFonts.inter(
+                                        color: const Color(0xFF424242),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: SizedBox(
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        HapticFeedback.lightImpact(),
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor:
+                                          BookingDetailsView._orange,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Accept Booking',
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
                       ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ],
         ),
       ),
@@ -309,10 +378,19 @@ class _WhiteCard extends StatelessWidget {
 }
 
 class _CustomerCard extends StatelessWidget {
-  const _CustomerCard({required this.name, required this.orderId});
+  const _CustomerCard({
+    required this.name,
+    required this.orderId,
+    this.status = 'NEW',
+  });
 
   final String name;
   final String orderId;
+  final String status;
+
+  bool get isAccepted => status == 'ACCEPTED';
+  bool get isInProgress => status == 'IN PROGRESS';
+  bool get isCompleted => status == 'COMPLETED';
 
   @override
   Widget build(BuildContext context) {
@@ -341,13 +419,26 @@ class _CustomerCard extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF9800),
+                  color: isInProgress
+                      ? const Color(0xFF1E6BE6)
+                      : (isAccepted || isCompleted)
+                      ? const Color(0xFF009624)
+                      : const Color(0xFFFF9800),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
-                  'NEW',
+                  isInProgress
+                      ? 'IN PROGRESS'
+                      : isCompleted
+                      ? 'COMPLETED'
+                      : isAccepted
+                      ? 'ACCEPTED'
+                      : 'NEW',
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -404,20 +495,34 @@ class _CustomerCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: BookingDetailsView._orange,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'lib/home_cleaning/Assets/images/chat.png',
-                    width: 20,
-                    height: 20,
-                    color: Colors.white,
-                    colorBlendMode: BlendMode.srcIn,
+                InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => HomeCleaningConversationView(
+                          customerName: name,
+                          orderId: orderId,
+                        ),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: BookingDetailsView._orange,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'lib/home_cleaning/Assets/images/chat.png',
+                      width: 20,
+                      height: 20,
+                      color: Colors.white,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ],
@@ -511,7 +616,11 @@ class _ServiceCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today_outlined, size: 14, color: Color(0xFF42A5F5)),
+                    const Icon(
+                      Icons.calendar_today_outlined,
+                      size: 14,
+                      color: Color(0xFF42A5F5),
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -544,9 +653,17 @@ class _SpacesCard extends StatelessWidget {
     return const _WhiteCard(
       child: Column(
         children: [
-          _SpaceTile(title: 'Bedrooms', detail: '100 MRU x 4', total: '400 MRU'),
+          _SpaceTile(
+            title: 'Bedrooms',
+            detail: '100 MRU x 4',
+            total: '400 MRU',
+          ),
           SizedBox(height: 10),
-          _SpaceTile(title: 'Kitchens', detail: '150 MRU x 1', total: '150 MRU'),
+          _SpaceTile(
+            title: 'Kitchens',
+            detail: '150 MRU x 1',
+            total: '150 MRU',
+          ),
         ],
       ),
     );
@@ -615,7 +732,9 @@ class _SpaceTile extends StatelessWidget {
 }
 
 class _ProductsCard extends StatelessWidget {
-  const _ProductsCard();
+  const _ProductsCard({this.isCompleted = false});
+
+  final bool isCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -625,12 +744,14 @@ class _ProductsCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              'CLEANING PRODUCTS',
+              isCompleted ? 'Cleaning Products' : 'CLEANING PRODUCTS',
               style: GoogleFonts.inter(
-                color: const Color(0xFF9AA3B2),
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-                letterSpacing: 0.6,
+                color: isCompleted
+                    ? const Color(0xFF1A1A1A)
+                    : const Color(0xFF9AA3B2),
+                fontWeight: isCompleted ? FontWeight.w700 : FontWeight.w600,
+                fontSize: isCompleted ? 14 : 12,
+                letterSpacing: isCompleted ? 0.2 : 0.6,
               ),
             ),
             const Spacer(),
@@ -656,7 +777,9 @@ class _ProductsCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Provider will provide products',
+                isCompleted
+                    ? 'Provided by SAIMPEX'
+                    : 'Provider will provide products',
                 style: GoogleFonts.inter(
                   color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.w700,
@@ -701,63 +824,95 @@ class _LocationCard extends StatelessWidget {
             child: SizedBox(
               height: 140,
               width: double.infinity,
-              child: Stack(
-                children: [
-                  const Positioned.fill(child: _BookingMap()),
-                  const Align(
-                    alignment: Alignment(0.12, -0.28),
-                    child: Icon(Icons.location_on, color: Color(0xFFFF5722), size: 50),
-                  ),
-                  Positioned(
-                    left: 12,
-                    bottom: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF4EEF8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.location_on_outlined, color: Color(0xFF7E57C2), size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Sahara View Home',
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFF1D1B20),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+              child: Image.asset(
+                'lib/home_cleaning/Assets/images/sahara_map.png',
+                fit: BoxFit.cover,
+                width: double.infinity,
+                errorBuilder: (context, error, stackTrace) => Stack(
+                  children: [
+                    const Positioned.fill(child: _BookingMap()),
+                    const Align(
+                      alignment: Alignment(0.12, -0.28),
+                      child: Icon(
+                        Icons.location_on,
+                        color: Color(0xFFFF5722),
+                        size: 50,
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      left: 12,
+                      bottom: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4EEF8),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: Color(0xFF7E57C2),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Sahara View Home',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF1D1B20),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Sahara View Home',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF1D1B20),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                Container(
+                  width: 3.5,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: BookingDetailsView._orange,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  '123 Desert Rose Blvd, Suite 4B',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF494551),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sahara View Home',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF1D1B20),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '123 Desert Rose Blvd, Suite 4B',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF494551),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -768,7 +923,6 @@ class _LocationCard extends StatelessWidget {
     );
   }
 }
-
 
 class _BookingMap extends StatelessWidget {
   const _BookingMap();
@@ -822,7 +976,11 @@ class _PaymentCard extends StatelessWidget {
           const SizedBox(height: 16),
           const _PayRow('Total', '730 MRU'),
           const SizedBox(height: 12),
-          const _PayRow('Payment type', 'Online Payment', valueColor: Color(0xFFFF5722)),
+          const _PayRow(
+            'Payment type',
+            'Online Payment',
+            valueColor: Color(0xFFFF5722),
+          ),
           const SizedBox(height: 12),
           const _PayRow('Payment on', 'Aug 25, 2026 10:45 AM, Today'),
           const Padding(
@@ -858,7 +1016,9 @@ class _PayRow extends StatelessWidget {
     );
     final valueStyle = GoogleFonts.inter(
       color: valueColor,
-      fontWeight: emphasize || valueColor != Colors.white ? FontWeight.w700 : FontWeight.w600,
+      fontWeight: emphasize || valueColor != Colors.white
+          ? FontWeight.w700
+          : FontWeight.w600,
       fontSize: emphasize ? 16 : 13.5,
     );
     return Row(

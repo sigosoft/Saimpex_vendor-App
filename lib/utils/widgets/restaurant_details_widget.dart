@@ -177,7 +177,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'lib/assets/images/chat_clicked.png',
+                      'lib/home_cleaning/Assets/images/chat.png',
                       height: 20,
                       width: 20,
                       color: Colors.white,

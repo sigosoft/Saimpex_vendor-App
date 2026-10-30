@@ -877,10 +877,12 @@ class _CustomerCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.chat_bubble_outline_rounded,
+                    child: Image.asset(
+                      'lib/home_cleaning/Assets/images/chat.png',
+                      width: 20,
+                      height: 20,
                       color: Colors.white,
-                      size: 20,
+                      colorBlendMode: BlendMode.srcIn,
                     ),
                   ),
                 ),
@@ -1532,10 +1534,12 @@ class _DeliveryPartnerCard extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.chat_bubble_outline_rounded,
+              child: Image.asset(
+                'lib/home_cleaning/Assets/images/chat.png',
+                width: 20,
+                height: 20,
                 color: Colors.white,
-                size: 20,
+                colorBlendMode: BlendMode.srcIn,
               ),
             ),
           ),
