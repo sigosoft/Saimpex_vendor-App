@@ -34,6 +34,8 @@ class ApiEndPoints {
   static String logout = "logout";
   static String dashboard = "dashboard";
   static String deleteAccount = "deleteAccount";
+  static String profileSendOtp = "profile/sendOtp";
+  static String profileUpdate = "profile/update";
   static String markLeave = "markLeave";
   static String unmarkLeave = "unmarkLeave";
   static String ratingsReviews = "ratingsReviews";
