@@ -33,6 +33,50 @@ class CatalogExtraItem {
   });
 }
 
+/// A size/portion of a restaurant catalog item; each has its own price.
+class CatalogVariant {
+  final String name;
+  final num price;
+  final String selectionRequirement;
+  final String? imagePath;
+
+  CatalogVariant({
+    required this.name,
+    required this.price,
+    this.selectionRequirement = 'optional',
+    this.imagePath,
+  });
+}
+
+class CatalogOption {
+  final String name;
+  final num additionalPrice;
+  final String? imagePath;
+
+  CatalogOption({
+    required this.name,
+    required this.additionalPrice,
+    this.imagePath,
+  });
+}
+
+/// A group of choices on a catalog item (e.g. "Choose your sauce").
+class CatalogOptionGroup {
+  final String name;
+  final String selectionRequirement;
+  final int? minSelections;
+  final int? maxSelections;
+  final List<CatalogOption> options;
+
+  CatalogOptionGroup({
+    required this.name,
+    required this.options,
+    this.selectionRequirement = 'optional',
+    this.minSelections,
+    this.maxSelections,
+  });
+}
+
 class ItemController extends GetxController {
   final String? editRestaurantMenuItemId;
   ItemController({this.editRestaurantMenuItemId});
@@ -382,8 +426,28 @@ class ItemController extends GetxController {
     required String? restaurantAttributeId,
     String? itemName,
     bool isRestaurantCatalog = false,
+    List<CatalogVariant> variants = const [],
+    List<CatalogOptionGroup> optionGroups = const [],
   }) {
     if (isRestaurantCatalog) {
+      for (final group in optionGroups) {
+        final min = group.minSelections;
+        final max = group.maxSelections;
+        if (min != null && max != null && min > max) {
+          showToast(
+            context,
+            "Minimum selections can't be more than maximum in ${group.name}",
+          );
+          return false;
+        }
+        if (max != null && max > group.options.length) {
+          showToast(
+            context,
+            "${group.name} allows $max selections but has ${group.options.length} options",
+          );
+          return false;
+        }
+      }
       final name = (itemName != null && itemName.trim().isNotEmpty)
           ? itemName.trim()
           : (menuItemId != null && menuItemId.trim().isNotEmpty
@@ -400,7 +464,8 @@ class ItemController extends GetxController {
         showToast(context, "Please select category");
         return false;
       }
-      if (priceCtrl.text.trim().isEmpty) {
+      // With variants each variant carries its own price instead.
+      if (variants.isEmpty && priceCtrl.text.trim().isEmpty) {
         showToast(context, "Please enter price");
         return false;
       }
@@ -448,6 +513,9 @@ class ItemController extends GetxController {
     String? extraSelectionRequirement,
     String? extraMaxSelections,
     List<CatalogExtraItem>? catalogExtras,
+    String? variantGroupName,
+    List<CatalogVariant> variants = const [],
+    List<CatalogOptionGroup> optionGroups = const [],
   }) async {
     final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
     final isRestaurant = vendorType == "1";
@@ -459,6 +527,8 @@ class ItemController extends GetxController {
       restaurantAttributeId: restaurantAttributeId,
       itemName: itemName,
       isRestaurantCatalog: isRestaurant,
+      variants: variants,
+      optionGroups: optionGroups,
     );
     if (!isValid) return;
 
@@ -486,11 +556,13 @@ class ItemController extends GetxController {
                 ? menuItemId.trim()
                 : serialNumberCtrl.text.trim());
 
+        final hasVariants = variants.isNotEmpty;
         final formDataMap = <String, dynamic>{
           "name_en": finalName,
           "category_ids": categoryIdsStr,
-          "price": priceCtrl.text.trim(),
-          if (discountPriceCtrl.text.trim().isNotEmpty)
+          "has_variants": hasVariants ? '1' : '0',
+          if (!hasVariants) "price": priceCtrl.text.trim(),
+          if (!hasVariants && discountPriceCtrl.text.trim().isNotEmpty)
             "discount_price": discountPriceCtrl.text.trim(),
           if (description != null && description.trim().isNotEmpty)
             "description_en": description.trim(),
@@ -498,11 +570,64 @@ class ItemController extends GetxController {
             "is_veg": isVeg == 'Yes' ? '1' : '0',
           if (prepTimeCtrl.text.trim().isNotEmpty)
             "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
+          // The catalog API reads serial_no; serial_number was ignored.
           if (serialNumberCtrl.text.trim().isNotEmpty)
-            "serial_number": serialNumberCtrl.text.trim(),
+            "serial_no": serialNumberCtrl.text.trim(),
+          if (hasVariants && (variantGroupName ?? '').trim().isNotEmpty)
+            "variant_group_name": variantGroupName!.trim(),
+          if (hasVariants)
+            "variants": jsonEncode([
+              for (final v in variants)
+                {
+                  "name": v.name,
+                  "price": v.price,
+                  "selection_requirement": v.selectionRequirement,
+                },
+            ]),
+          if (optionGroups.isNotEmpty)
+            "option_groups": jsonEncode([
+              for (final g in optionGroups)
+                {
+                  "name": g.name,
+                  "selection_requirement": g.selectionRequirement,
+                  "min_selections": ?g.minSelections,
+                  "max_selections": ?g.maxSelections,
+                  "options": [
+                    for (final o in g.options)
+                      {
+                        "name": o.name,
+                        "additional_price": o.additionalPrice,
+                        "available_status": 1,
+                      },
+                  ],
+                },
+            ]),
         };
 
         formData = dio.FormData.fromMap(formDataMap);
+
+        Future<dio.MultipartFile> upload(String path) =>
+            dio.MultipartFile.fromFile(
+              path,
+              filename: path.split(RegExp(r'[/\\]')).last,
+            );
+        for (int i = 0; i < variants.length; i++) {
+          final path = variants[i].imagePath?.trim() ?? '';
+          if (hasVariants && path.isNotEmpty) {
+            formData.files.add(MapEntry("variant_images[$i]", await upload(path)));
+          }
+        }
+        for (int g = 0; g < optionGroups.length; g++) {
+          final options = optionGroups[g].options;
+          for (int o = 0; o < options.length; o++) {
+            final path = options[o].imagePath?.trim() ?? '';
+            if (path.isNotEmpty) {
+              formData.files.add(
+                MapEntry("option_images[$g][$o]", await upload(path)),
+              );
+            }
+          }
+        }
 
         // Tags
         final tagIds = selectedRestaurantTagIds.isNotEmpty
@@ -550,7 +675,7 @@ class ItemController extends GetxController {
               final baseName = path.split(RegExp(r'[/\\]')).last;
               formData.files.add(
                 MapEntry(
-                  "extra_images.$i",
+                  "extra_images[$i]",
                   await dio.MultipartFile.fromFile(path, filename: baseName),
                 ),
               );
@@ -558,13 +683,14 @@ class ItemController extends GetxController {
           }
         }
 
-        // Main item image
+        // Main item image. The catalog API reads an `images` list; a single
+        // `image` field was ignored, so items saved without a photo.
         if (pickedImageFile != null) {
           final path = pickedImageFile!.path;
           final baseName = path.split(RegExp(r'[/\\]')).last;
           formData.files.add(
             MapEntry(
-              'image',
+              'images[]',
               await dio.MultipartFile.fromFile(path, filename: baseName),
             ),
           );

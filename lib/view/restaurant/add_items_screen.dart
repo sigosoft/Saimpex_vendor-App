@@ -1672,6 +1672,48 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                   ))
               .toList();
 
+          final validVariants = !isVariantsEnabled
+              ? const <CatalogVariant>[]
+              : variants
+                  .where((v) =>
+                      v.nameCtrl.text.trim().isNotEmpty &&
+                      num.tryParse(v.priceCtrl.text.trim()) != null)
+                  .map((v) => CatalogVariant(
+                        name: v.nameCtrl.text.trim(),
+                        price: num.parse(v.priceCtrl.text.trim()),
+                        selectionRequirement:
+                            v.selectionRequirement.toLowerCase(),
+                        imagePath: v.imageFile?.path,
+                      ))
+                  .toList();
+          if (isVariantsEnabled && validVariants.isEmpty) {
+            Get.snackbar('', 'Add at least one variant with a name and price',
+                titleText: const SizedBox.shrink());
+            return;
+          }
+
+          final validGroups = optionGroups
+              .where((g) => g.groupNameCtrl.text.trim().isNotEmpty)
+              .map((g) => CatalogOptionGroup(
+                    name: g.groupNameCtrl.text.trim(),
+                    selectionRequirement:
+                        g.selectionRequirement.toLowerCase(),
+                    minSelections:
+                        int.tryParse(g.minSelectionsCtrl.text.trim()),
+                    maxSelections:
+                        int.tryParse(g.maxSelectionsCtrl.text.trim()),
+                    options: g.options
+                        .where((o) => o.name.trim().isNotEmpty)
+                        .map((o) => CatalogOption(
+                              name: o.name.trim(),
+                              additionalPrice:
+                                  num.tryParse(o.price.trim()) ?? 0,
+                              imagePath: o.imageFile?.path,
+                            ))
+                        .toList(),
+                  ))
+              .toList();
+
           c.addItem(
             context,
             menuId: c.selectedMenuId?.toString() ?? '',
@@ -1684,6 +1726,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
             extraSelectionRequirement: extraSelectionRequirement,
             extraMaxSelections: extraMaxSelectionsCtrl.text.trim(),
             catalogExtras: validExtras,
+            variantGroupName: variantGroupNameCtrl.text.trim(),
+            variants: validVariants,
+            optionGroups: validGroups,
           );
         },
       ),
