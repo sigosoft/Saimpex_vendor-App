@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -51,7 +52,7 @@ class RetryInterceptor extends Interceptor {
   Future<bool> _performReauth() async {
     try {
       final username = await getSavedObject("username");
-      final password = await getSavedObject("password");
+      final password = await SecureCredentials.readPassword();
       if (username == null || password == null) {
         return false;
       }
@@ -95,8 +96,6 @@ class RetryInterceptor extends Interceptor {
           final vendorType = loginModel.data?.details?.vendorType;
           debugPrint("==================================================");
           debugPrint("[REAUTH LOGIN SUCCESS] API Vendor Type: $vendorType");
-          debugPrint("[REAUTH LOGIN SUCCESS] Auth Token: $token");
-          debugPrint("[REAUTH LOGIN SUCCESS] FCM Token: $fcmToken");
           debugPrint("==================================================");
           await savename("token", token);
           await savename("loginStatus", loginModel.status?.toString() ?? "false");

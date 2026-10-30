@@ -847,22 +847,23 @@ class ProfileController extends GetxController {
     }
   }
 
+  // The vendor API has no OTP endpoints, and updateProfile needs the full
+  // business profile (registration, city, location...), which this screen
+  // doesn't edit. Until the backend supports it, say so instead of showing
+  // a fake success.
+  static const _profileEditUnavailable =
+      "Profile changes aren't available in the app yet. "
+      "Please contact SAIMPEX support to update your details.";
+
   Future<void> sendOtp(
     BuildContext context,
     String countryCode,
     String mobile,
   ) async {
-    try {
-      otpController.clear();
-      await Future.delayed(const Duration(seconds: 1));
-      showToast(context, "OTP sent successfully (Mock)");
-      isOtpSent = true;
-      update();
-    } catch (error) {
-      debugPrint("Otp Mock Error: $error");
-      isOtpSent = false;
-      update();
-    }
+    otpController.clear();
+    showToast(context, _profileEditUnavailable);
+    isOtpSent = false;
+    update();
   }
 
   Future<void> verifyOtp(
@@ -871,30 +872,9 @@ class ProfileController extends GetxController {
     String mobile,
     String otp,
   ) async {
-    try {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (context.mounted) {
-        Get.back();
-        showToast(context, "OTP Verified successfully (Mock)");
-        await postEditProfile(
-          context,
-          nameController.text,
-          countryCode,
-          phoneController.text,
-        );
-        isOtpVerified = true;
-        Navigator.of(context).pop();
-      }
-      update();
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
-      debugPrint("verify otp Mock Error: $error");
-      isOtpVerified = false;
-    }
+    showToast(context, _profileEditUnavailable);
+    isOtpVerified = false;
+    update();
   }
 
   Future<void> postEditProfile(
@@ -904,13 +884,11 @@ class ProfileController extends GetxController {
     String mobile,
   ) async {
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      showToast(context, "Profile updated successfully (Mock)");
-      isOtpSent = true;
-      imageSource = null;
+      showToast(context, _profileEditUnavailable);
+      isOtpSent = false;
       update();
     } catch (error) {
-      debugPrint("postEditProfile Mock Error: $error");
+      debugPrint("postEditProfile error: $error");
       isOtpSent = false;
       update();
     }
