@@ -14,6 +14,7 @@ import 'package:saimpex_vendor/view/chat/ChatDetails.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/reject_order_sheet.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/printing/print_order_ticket.dart';
 
 class OrderDetailsView extends StatefulWidget {
   const OrderDetailsView({super.key, required this.order, this.orderId});
@@ -34,6 +35,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
   bool _isLoading = true;
   String? _errorMessage;
   Map<String, dynamic>? _orderDetail;
+
+  /// Order id used for the API calls, kept for printing.
+  dynamic _apiOrderId;
 
   @override
   void initState() {
@@ -68,6 +72,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       if (id != null) {
         id = int.tryParse(id.toString()) ?? id;
       }
+      _apiOrderId = id;
 
       final queryParams = <String, dynamic>{'order_id': id};
 
@@ -334,7 +339,16 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                _Header(onBack: () => Navigator.of(context).maybePop()),
+                _Header(
+                  onBack: () => Navigator.of(context).maybePop(),
+                  onPrint: _orderDetail == null || _apiOrderId == null
+                      ? null
+                      : () => printOrderTicket(
+                          context,
+                          orderId: _apiOrderId,
+                          orderType: 'water',
+                        ),
+                ),
                 const SizedBox(height: 12),
                 Expanded(
                   child: _buildBody(context),
@@ -659,9 +673,12 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
+  const _Header({required this.onBack, this.onPrint});
 
   final VoidCallback onBack;
+
+  /// Prints the order ticket (V7); hidden until the order has loaded.
+  final VoidCallback? onPrint;
 
   @override
   Widget build(BuildContext context) {
@@ -707,6 +724,37 @@ class _Header extends StatelessWidget {
                 ),
               ),
             ),
+            if (onPrint != null)
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Tooltip(
+                  message: S.of(context).printOrder,
+                  child: InkWell(
+                    onTap: onPrint,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.print_outlined,
+                        color: OrderDetailsView._orange,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

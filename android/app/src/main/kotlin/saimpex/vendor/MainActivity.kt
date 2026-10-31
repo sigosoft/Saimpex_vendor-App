@@ -66,6 +66,18 @@ class MainActivity : FlutterActivity() {
                         }
                     }.start()
                 }
+                // Paired Bluetooth devices for the printer picker (V7).
+                "listPairedPrinters" -> {
+                    if (!hasBluetoothConnectPermission()) {
+                        result.error("NO_BT_PERMISSION", "Bluetooth permission not granted", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        result.success(listPairedDevices())
+                    } catch (e: Exception) {
+                        result.error("LIST_FAILED", e.message ?: "Could not list paired devices", null)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }
@@ -207,6 +219,15 @@ class MainActivity : FlutterActivity() {
         } finally {
             connection.releaseInterface(intf)
             connection.close()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun listPairedDevices(): List<Map<String, String>> {
+        val adapter = BluetoothAdapter.getDefaultAdapter() ?: return emptyList()
+        if (!adapter.isEnabled) throw IOException("Bluetooth is disabled")
+        return adapter.bondedDevices.orEmpty().map {
+            mapOf("name" to (it.name ?: ""), "address" to it.address)
         }
     }
 

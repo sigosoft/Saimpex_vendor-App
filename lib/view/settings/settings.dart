@@ -16,6 +16,7 @@ import 'package:saimpex_vendor/view/settings/app_settings.dart';
 import 'package:saimpex_vendor/view/settings/coupons_screen.dart';
 import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
 import 'package:saimpex_vendor/view/settings/earnings.dart';
+import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../generated/l10n.dart';
@@ -296,6 +297,14 @@ class _SettingsState extends State<Settings> {
                               () {
                                 Get.to(() => const EarningsScreen());
                               },
+                            ),
+                            // Bluetooth printer for order tickets (V7).
+                            _buildMenuItem(
+                              context,
+                              S.of(context).printer,
+                              null,
+                              () => showPrinterPicker(context),
+                              leadingIcon: Icons.print_outlined,
                             ),
                             _buildMenuItem(
                               context,

@@ -49,7 +49,8 @@ class EscPosReceiptBuilder {
       void addBytes(List<int> value) => bytes.addAll(value);
 
       void addText(String text) {
-        addBytes(latin1.encode('$text\n'));
+        // latin1.encode throws on anything above U+00FF (curly quotes, Arabic names).
+        addBytes(latin1.encode(latin1Safe('$text\n')));
         if (!is58mm) previewLines.add(text);
       }
 
@@ -429,4 +430,20 @@ class _ReceiptItem {
     required this.qty,
     required this.total,
   });
+}
+
+/// The printer gets Latin-1 bytes; [latin1.encode] throws on anything else
+/// (curly quotes, Arabic), which would fail the whole ticket. Common
+/// punctuation is mapped, the rest becomes '?'.
+String latin1Safe(String value) {
+  const map = {
+    '\u2018': "'", '\u2019': "'", '\u201C': '"', '\u201D': '"',
+    '\u2013': '-', '\u2014': '-', '\u2026': '...',
+  };
+  final out = StringBuffer();
+  for (final r in value.runes) {
+    final c = String.fromCharCode(r);
+    out.write(r <= 0xFF ? c : (map[c] ?? '?'));
+  }
+  return out.toString();
 }

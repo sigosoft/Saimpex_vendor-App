@@ -277,7 +277,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Ratings and reviews | Done (unverified) | `lib/view/restaurant/rating_reviews_screen.dart` | |
 | Chat (text + voice) | Done | `lib/view/chat/ChatListing.dart`, `lib/view/chat/ChatDetails.dart`, `lib/controller/chat_controller.dart` | Pusher realtime, voice via `record` / `audioplayers`. |
 | Notifications | Done | `lib/view/notifications/notifications.dart`, `lib/controller/notification_controller.dart`, `lib/view/notifications/notification.dart` | |
-| Printing | Done (Android) | `lib/utils/printing/` | No iOS. Printer selection UI: unverified. |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/utils/printing/`, `lib/view/settings/widgets/printer_picker_dialog.dart` | Settings → **Printer**: paired Bluetooth devices + "Automatic" (USB first, then the first paired printer), saved as `printerAddress`, **Print test page**. Ticket text is Latin-1 safe (curly quotes / Arabic no longer fail the print). No Figma screen. No iOS. **Not yet tested on a real printer.** |
 | Pre-orders | Not started | - | Contract pending from backend. |
 | Grocery substitution | Not started | - | Contract pending from backend. |
 | Local store endpoints | Not started | - | Backend `localStore*` routes exist. |
@@ -298,7 +298,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Profile, hours, leave, business settings | Done (unverified) | `lib/pharmacy/view/pharmacy_profile_screen.dart`, `lib/pharmacy/view/pharmacy_working_hours_screen.dart`, `lib/pharmacy/view/pharmacy_leave_management_screen.dart`, `lib/pharmacy/view/pharmacy_business_settings_screen.dart` | Profile edit through OTP endpoints: not wired here. |
 | Chat | Done | `lib/pharmacy/view/pharmacy_chat_screen.dart`, `lib/pharmacy/controller/pharmacy_chat_controller.dart` | |
 | Notifications | Done | `lib/pharmacy/view/pharmacy_notifications_screen.dart` | |
-| Printing | Not started | - | |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/pharmacy/view/otc_order_details_screen.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the OTC order header (hidden until the order loads); `pharmacyOrderDetail` {order, items} is mapped onto the same ticket. Printer picker in Account. Prescription requests (not orders yet) have no ticket. **Not yet tested on a real printer.** |
 | Localisation | Partial | - | Most pharmacy screens are English literals. |
 
 ### 4.4 By feature, Water / Gas section
@@ -315,7 +315,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Profile, hours, leave, business settings | Done (unverified) | `lib/water/view/account/store_profile_view.dart`, `lib/water/view/account/working_hours_view.dart`, `lib/water/view/account/leave_management_view.dart`, `lib/water/view/account/business_settings_view.dart` | |
 | Chat | Done | `lib/water/view/chat/messages_list_view.dart`, `lib/water/view/chat/chat_view.dart` | Reuses `ChatController`. |
 | Notifications | Partial (mock) | `lib/water/view/notifications/notifications_view.dart` | Hard-coded list. |
-| Printing | Not started | - | |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/water/view/order_details/order_details_view.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the order header (hidden until the order loads); `waterOrderDetail` mapped onto the same ticket. Printer picker in Account. Gas not covered. **Not yet tested on a real printer.** |
 | Localisation | Not started | - | English literals only. |
 
 ### 4.5 Home Cleaning
@@ -441,7 +441,7 @@ AC: bookings, booking detail/status changes, services CRUD and hours use the bac
 Today these vendors use the web panel. Only build when Praveen confirms; then use `service*` endpoints and Figma.
 AC: login no longer blocks types 7 and 8; bookings flow works.
 
-**P12. Printing beyond Android restaurant/grocery.**
+**P12. Printing beyond Android restaurant/grocery.** ✅ **Code done (`feature/bluetooth-printing`, V7); needs a real 58 mm and 80 mm printer to verify.**
 AC: print button on pharmacy and water order details; works with a generic 58/80 mm ESC/POS Bluetooth printer; printer choice remembered.
 
 **P13. Release readiness.**

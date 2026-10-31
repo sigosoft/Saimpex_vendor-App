@@ -407,7 +407,10 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-                    const _OtcDetailsHeader(),
+                    _OtcDetailsHeader(
+                      // Print only once the order has loaded (V7).
+                      printOrderId: orderDetailData == null ? null : (orderRawId ?? orderId),
+                    ),
                     const SizedBox(height: 12),
                     Expanded(
                       child: isLoading && orderDetailData == null
@@ -585,7 +588,10 @@ class _OtcOrderDetailsPage extends StatelessWidget {
 }
 
 class _OtcDetailsHeader extends StatelessWidget {
-  const _OtcDetailsHeader();
+  const _OtcDetailsHeader({this.printOrderId});
+
+  /// Order id for the print button; null hides it.
+  final dynamic printOrderId;
 
   @override
   Widget build(BuildContext context) {
@@ -634,6 +640,42 @@ class _OtcDetailsHeader extends StatelessWidget {
                 ),
               ),
             ),
+            if (printOrderId != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Tooltip(
+                  message: S.of(context).printOrder,
+                  child: InkWell(
+                    onTap: () => printOrderTicket(
+                      context,
+                      orderId: printOrderId,
+                      orderType: 'pharmacy',
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFFFE0D0)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.print_outlined,
+                        color: _OtcOrderDetailsPage._orange,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
