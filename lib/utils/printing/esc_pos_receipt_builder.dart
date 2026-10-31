@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -163,7 +164,7 @@ class EscPosReceiptBuilder {
       addText(_dashedLine(lineWidth));
 
       // ── PAYMENT ───────────────────────────────────────────────────────
-      addText('Payment : ${_clean(data.paymentType)}');
+      addText('Payment : ${_receiptPaymentLabel(data.paymentType)}');
 
       // ── DASHED DIVIDER ────────────────────────────────────────────────
       addText(_dashedLine(lineWidth));
@@ -300,6 +301,16 @@ class EscPosReceiptBuilder {
     final ampm = value.hour >= 12 ? 'PM' : 'AM';
     return '$day $month $year  |  $hour:$min $ampm';
   }
+
+  static const Map<int, String> _paymentLabels = {
+    PaymentType.cash: 'Cash on Delivery',
+    PaymentType.online: 'Online Payment',
+    PaymentType.wallet: 'SAIMPEX Wallet',
+    PaymentType.payAfterDelivery: 'Pay After Delivery',
+  };
+
+  String _receiptPaymentLabel(String? value) =>
+      _paymentLabels[paymentTypeCode(value)] ?? _clean(value);
 
   String _clean(String? value) {
     final v = value?.trim() ?? '';

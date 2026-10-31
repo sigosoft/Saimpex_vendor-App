@@ -1204,6 +1204,66 @@ class S {
     );
   }
 
+  /// `SAIMPEX Wallet`
+  String get walletPayment {
+    return Intl.message(
+      'SAIMPEX Wallet',
+      name: 'walletPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pay After Delivery`
+  String get payAfterDelivery {
+    return Intl.message(
+      'Pay After Delivery',
+      name: 'payAfterDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance adjustments`
+  String get balanceAdjustments {
+    return Intl.message(
+      'Balance adjustments',
+      name: 'balanceAdjustments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No balance adjustments yet`
+  String get noBalanceAdjustmentsYet {
+    return Intl.message(
+      'No balance adjustments yet',
+      name: 'noBalanceAdjustmentsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Admin adjustment`
+  String get adminAdjustment {
+    return Intl.message(
+      'Admin adjustment',
+      name: 'adminAdjustment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance after`
+  String get balanceAfter {
+    return Intl.message(
+      'Balance after',
+      name: 'balanceAfter',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Order Details`
   String get orderDetails {
     return Intl.message(
@@ -5209,6 +5269,26 @@ class S {
   /// `Non-Veg`
   String get nonVeg {
     return Intl.message('Non-Veg', name: 'nonVeg', desc: '', args: []);
+  }
+
+  /// `Item updated successfully`
+  String get itemUpdatedSuccessfully {
+    return Intl.message(
+      'Item updated successfully',
+      name: 'itemUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update item`
+  String get failedToUpdateItem {
+    return Intl.message(
+      'Failed to update item',
+      name: 'failedToUpdateItem',
+      desc: '',
+      args: [],
+    );
   }
 }
 

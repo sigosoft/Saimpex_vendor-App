@@ -105,6 +105,7 @@ class ApiEndPoints {
   static String restaurantCatalogItemDetail =
       "vendor/restaurantCatalogItemDetail";
   static String restaurantCatalogItemDetailAlt = "restaurantCatalogItemDetail";
+  static String updateRestaurantCatalogItem = "updateRestaurantCatalogItem";
   static String updateRestaurantCatalogItemStatus =
       "updateRestaurantCatalogItemStatus";
   static String updateRestaurantCatalogItemStatusAlt =
@@ -114,6 +115,7 @@ class ApiEndPoints {
   static String earningsOrders = "earnings/orders";
   static String earningsPayoutHistory = "earnings/payoutHistory";
   static String earningsPayoutDetail = "earnings/payoutDetail";
+  static String earningsBalanceAdjustments = "earnings/balanceAdjustments";
 
   // grocery api endpoints
 

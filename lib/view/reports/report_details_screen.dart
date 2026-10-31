@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -222,7 +223,7 @@ class ReportDetailsScreen extends StatelessWidget {
           _breakdownRow(S.of(context).tax, '${params.tax} ${params.currency}'),
           _breakdownRow(S.of(context).earnings, '${params.earnings} ${params.currency}'),
           _breakdownRow(S.of(context).commission, '${params.commission} ${params.currency}'),
-          _breakdownRow(S.of(context).paymentMethod, params.paymentMethod=="1"?S.of(context).cash:S.of(context).onlinePayment, valueColor: colorPrimary),
+          _breakdownRow(S.of(context).paymentMethod, isCashPayment(params.paymentMethod)?S.of(context).cash:paymentTypeLabel(params.paymentMethod), valueColor: colorPrimary),
         ],
       ),
     );

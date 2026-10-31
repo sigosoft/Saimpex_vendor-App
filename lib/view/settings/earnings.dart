@@ -10,6 +10,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/Utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/Utils/widgets/no_data_widget.dart';
+import 'package:saimpex_vendor/utils/widgets/balance_adjustments_section.dart';
 import 'package:saimpex_vendor/view/settings/earnings_all_orders.dart';
 
 class EarningsScreen extends StatefulWidget {
@@ -44,6 +45,8 @@ class _EarningsScreenState extends State<EarningsScreen> {
   bool _hasNextPagePayouts = true;
   bool _isLoadMoreRunningPayouts = false;
   int _pagePayouts = 1;
+
+  final GlobalKey<BalanceAdjustmentsSectionState> _adjustmentsKey = GlobalKey();
 
   void _loadMoreTabs() {
     if (_selectedTab == 1) {
@@ -343,7 +346,11 @@ class _EarningsScreenState extends State<EarningsScreen> {
             if (_selectedTab == 0) {
               await _fetchOrders();
             } else {
-              await _fetchPayouts();
+              await Future.wait([
+                _fetchPayouts(),
+                if (_adjustmentsKey.currentState != null)
+                  _adjustmentsKey.currentState!.refresh(),
+              ]);
             }
           },
           child: SingleChildScrollView(
@@ -459,6 +466,10 @@ class _EarningsScreenState extends State<EarningsScreen> {
                         child: Center(child: AppLoader()),
                       ),
                   ],
+                  BalanceAdjustmentsSection(
+                    key: _adjustmentsKey,
+                    accent: colorPrimary,
+                  ),
                 ],
               ],
             ),

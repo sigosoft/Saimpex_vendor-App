@@ -278,6 +278,18 @@
   "@off": {},
   "onlinePayment": "الدفع عبر الإنترنت",
   "@onlinePayment": {},
+  "walletPayment": "محفظة SAIMPEX",
+  "@walletPayment": {},
+  "payAfterDelivery": "الدفع بعد التوصيل",
+  "@payAfterDelivery": {},
+  "balanceAdjustments": "تعديلات الرصيد",
+  "@balanceAdjustments": {},
+  "noBalanceAdjustmentsYet": "لا توجد تعديلات على الرصيد بعد",
+  "@noBalanceAdjustmentsYet": {},
+  "adminAdjustment": "تعديل من الإدارة",
+  "@adminAdjustment": {},
+  "balanceAfter": "الرصيد بعد",
+  "@balanceAfter": {},
   "orderDetails": "تفاصيل الطلب",
   "@orderDetails": {},
   "ordered": "تم الطلب",
@@ -1253,5 +1265,7 @@
   "completedLeaves": "الإجازات المكتملة",
   "noCompletedLeavesFound": "لم يتم العثور على إجازات مكتملة",
   "pleaseSelectAnXlsxFileOnly": "يرجى اختيار ملف .xlsx فقط",
-  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار"
+  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار",
+  "itemUpdatedSuccessfully": "تم تحديث المنتج بنجاح",
+  "failedToUpdateItem": "فشل تحديث المنتج"
 }

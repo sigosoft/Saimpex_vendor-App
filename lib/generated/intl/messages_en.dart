@@ -81,6 +81,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Address not available",
     ),
+    "adminAdjustment": MessageLookupByLibrary.simpleMessage("Admin adjustment"),
     "afterAttributesReferenceYouCanEditTheAttributesListBelow":
         MessageLookupByLibrary.simpleMessage(
           "After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.",
@@ -179,6 +180,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "averageRatingLabel": MessageLookupByLibrary.simpleMessage(
       "Average Rating",
     ),
+    "balanceAdjustments": MessageLookupByLibrary.simpleMessage(
+      "Balance adjustments",
+    ),
+    "balanceAfter": MessageLookupByLibrary.simpleMessage("Balance after"),
     "balanceAfterPayout": MessageLookupByLibrary.simpleMessage(
       "BALANCE AFTER PAYOUT",
     ),
@@ -499,6 +504,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("Item Total"),
     "itemType": MessageLookupByLibrary.simpleMessage("Item Type"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("Item Type"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Item updated successfully",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("Items"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("ITEMS COUNT"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),
@@ -563,6 +571,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage("Needs An Update"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
+    "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
+      "No balance adjustments yet",
+    ),
     "noBasketsFound": MessageLookupByLibrary.simpleMessage("No baskets found"),
     "noCategoriesFound": MessageLookupByLibrary.simpleMessage(
       "No Categories Found",
@@ -716,6 +727,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "packagingCost": MessageLookupByLibrary.simpleMessage("Packaging Cost"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
+    "payAfterDelivery": MessageLookupByLibrary.simpleMessage(
+      "Pay After Delivery",
+    ),
     "paymentDetails": MessageLookupByLibrary.simpleMessage("PAYMENT DETAILS"),
     "paymentId": MessageLookupByLibrary.simpleMessage("Payment ID"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
@@ -1083,6 +1097,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "View Payment Proof",
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("View Reports"),
+    "walletPayment": MessageLookupByLibrary.simpleMessage("SAIMPEX Wallet"),
     "wednesday": MessageLookupByLibrary.simpleMessage("Wednesday"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("Welcome to"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

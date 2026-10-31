@@ -18,6 +18,8 @@ class EditItemsScreen extends StatefulWidget {
 }
 
 class _VariantItemModel {
+  /// Server id when the variant already exists (kept so the server updates it in place).
+  int? id;
   XFile? imageFile;
   String? assetPath;
   String? imageUrl;
@@ -26,6 +28,7 @@ class _VariantItemModel {
   String selectionRequirement;
 
   _VariantItemModel({
+    this.id,
     this.imageFile,
     this.assetPath,
     this.imageUrl,
@@ -43,6 +46,7 @@ class _VariantItemModel {
 
 class _OptionItemModel {
   _OptionItemModel({
+    this.id,
     required this.name,
     required this.price,
     this.imageFile,
@@ -51,6 +55,8 @@ class _OptionItemModel {
     this.isAvailable = true,
   });
 
+  /// Server id when the option already exists; keeps carts that picked it valid.
+  int? id;
   String name;
   String price;
   XFile? imageFile;
@@ -60,6 +66,8 @@ class _OptionItemModel {
 }
 
 class _OptionGroupModel {
+  /// Server id when the group already exists.
+  int? id;
   final TextEditingController groupNameCtrl;
   final TextEditingController minSelectionsCtrl;
   final TextEditingController maxSelectionsCtrl;
@@ -67,6 +75,7 @@ class _OptionGroupModel {
   final List<_OptionItemModel> options;
 
   _OptionGroupModel({
+    this.id,
     String groupName = '',
     String minSelections = '',
     String maxSelections = '',
@@ -85,6 +94,8 @@ class _OptionGroupModel {
 }
 
 class _ExtraItemModel {
+  /// Server id when the extra already exists.
+  int? id;
   XFile? imageFile;
   String? assetPath;
   String? imageUrl;
@@ -92,6 +103,7 @@ class _ExtraItemModel {
   final TextEditingController priceCtrl;
 
   _ExtraItemModel({
+    this.id,
     this.imageFile,
     this.assetPath,
     this.imageUrl,
@@ -145,6 +157,159 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
       extra.dispose();
     }
     super.dispose();
+  }
+
+  String _requirementLabel(dynamic value) =>
+      value?.toString().toLowerCase() == 'required' ? 'Required' : 'Optional';
+
+  String _numText(dynamic value) {
+    if (value == null) return '';
+    final n = num.tryParse(value.toString());
+    if (n == null) return value.toString();
+    return n == n.roundToDouble() ? n.toInt().toString() : n.toString();
+  }
+
+  int? _id(dynamic value) => value == null ? null : int.tryParse(value.toString());
+
+  /// Fills the screen from restaurantCatalogItemDetail so the vendor edits what is
+  /// really saved: variants, option groups and extras with their server ids.
+  void _fillFromCatalog(Map<String, dynamic>? data) {
+    if (data == null) return;
+
+    itemNameCtrl.text = data['name_en']?.toString() ?? itemNameCtrl.text;
+    descriptionCtrl.text = data['description_en']?.toString() ?? '';
+
+    for (final v in variants) {
+      v.dispose();
+    }
+    variants.clear();
+    final rawVariants = (data['variants'] as List? ?? const []).whereType<Map>();
+    for (final v in rawVariants) {
+      variants.add(_VariantItemModel(
+        id: _id(v['id']),
+        name: v['name']?.toString() ?? '',
+        price: _numText(v['price']),
+        imageUrl: v['image_url']?.toString(),
+        selectionRequirement: _requirementLabel(v['selection_requirement']),
+      ));
+    }
+    isVariantsEnabled = data['has_variants'] == true ||
+        data['has_variants']?.toString() == '1' ||
+        variants.isNotEmpty;
+    variantGroupNameCtrl.text = data['variant_group_name']?.toString() ?? '';
+
+    for (final g in optionGroups) {
+      g.dispose();
+    }
+    optionGroups.clear();
+    for (final g in (data['option_groups'] as List? ?? const []).whereType<Map>()) {
+      optionGroups.add(_OptionGroupModel(
+        id: _id(g['id']),
+        groupName: g['name']?.toString() ?? '',
+        minSelections: _numText(g['min_selections']),
+        maxSelections: _numText(g['max_selections']),
+        selectionRequirement: _requirementLabel(g['selection_requirement']),
+        options: [
+          for (final o in (g['options'] as List? ?? const []).whereType<Map>())
+            _OptionItemModel(
+              id: _id(o['id']),
+              name: o['name']?.toString() ?? '',
+              price: _numText(o['additional_price']),
+              imageUrl: o['image_url']?.toString(),
+              isAvailable: o['available_status']?.toString() != '2',
+            ),
+        ],
+      ));
+    }
+
+    for (final e in extraItems) {
+      e.dispose();
+    }
+    extraItems.clear();
+    final extras = data['extras'] is Map ? data['extras'] as Map : const {};
+    extraSelectionRequirement = _requirementLabel(extras['selection_requirement']);
+    extraMaxSelectionsCtrl.text = _numText(extras['max_selections']);
+    for (final e in (extras['items'] as List? ?? const []).whereType<Map>()) {
+      // Hidden extras (available_status 2) are kept on the server for old orders;
+      // they are not shown, so saving leaves them hidden.
+      if (e['available_status']?.toString() == '2') continue;
+      extraItems.add(_ExtraItemModel(
+        id: _id(e['id']),
+        name: e['name']?.toString() ?? '',
+        price: _numText(e['additional_price']),
+        imageUrl: e['image_url']?.toString(),
+      ));
+    }
+  }
+
+  /// Restaurant save: same fields as add, plus ids so existing rows update in place.
+  void _submitCatalog(ItemController c) {
+    final validExtras = extraItems
+        .where((e) => e.nameCtrl.text.trim().isNotEmpty)
+        .map((e) => CatalogExtraItem(
+              id: e.id,
+              name: e.nameCtrl.text.trim(),
+              additionalPrice: num.tryParse(e.priceCtrl.text.trim()) ?? 0,
+              availableStatus: 1,
+              imagePath: e.imageFile?.path,
+            ))
+        .toList();
+
+    final validVariants = !isVariantsEnabled
+        ? const <CatalogVariant>[]
+        : variants
+            .where((v) =>
+                v.nameCtrl.text.trim().isNotEmpty &&
+                num.tryParse(v.priceCtrl.text.trim()) != null)
+            .map((v) => CatalogVariant(
+                  id: v.id,
+                  name: v.nameCtrl.text.trim(),
+                  price: num.parse(v.priceCtrl.text.trim()),
+                  selectionRequirement: v.selectionRequirement.toLowerCase(),
+                  imagePath: v.imageFile?.path,
+                ))
+            .toList();
+    if (isVariantsEnabled && validVariants.isEmpty) {
+      Get.snackbar('', 'Add at least one variant with a name and price',
+          titleText: const SizedBox.shrink());
+      return;
+    }
+
+    final validGroups = optionGroups
+        .where((g) => g.groupNameCtrl.text.trim().isNotEmpty)
+        .map((g) => CatalogOptionGroup(
+              id: g.id,
+              name: g.groupNameCtrl.text.trim(),
+              selectionRequirement: g.selectionRequirement.toLowerCase(),
+              minSelections: int.tryParse(g.minSelectionsCtrl.text.trim()),
+              maxSelections: int.tryParse(g.maxSelectionsCtrl.text.trim()),
+              options: g.options
+                  .where((o) => o.name.trim().isNotEmpty)
+                  .map((o) => CatalogOption(
+                        id: o.id,
+                        name: o.name.trim(),
+                        additionalPrice: num.tryParse(o.price.trim()) ?? 0,
+                        availableStatus: o.isAvailable ? 1 : 2,
+                        imagePath: o.imageFile?.path,
+                      ))
+                  .toList(),
+            ))
+        .toList();
+
+    c.updateCatalogItem(
+      context,
+      itemId: widget.itemId,
+      menuId: c.selectedMenuId?.toString() ?? '',
+      itemName: itemNameCtrl.text.trim(),
+      description: descriptionCtrl.text.trim(),
+      isVeg: isVeg,
+      extraSelectionRequirement: extraSelectionRequirement,
+      extraMaxSelections: extraMaxSelectionsCtrl.text.trim(),
+      catalogExtras: validExtras,
+      variantGroupName: variantGroupNameCtrl.text.trim(),
+      variants: validVariants,
+      optionGroups: validGroups,
+    );
   }
 
   void _openTagsMultiSelect(BuildContext context, ItemController controller) {
@@ -510,6 +675,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                   if (isEditing) {
                                     group.options[editingOptionIndex] =
                                         _OptionItemModel(
+                                      id: existingOption?.id,
                                       name: name,
                                       price: price,
                                       imageFile: optImage,
@@ -594,7 +760,10 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
               controller.editRestaurantMenuItemId!.isNotEmpty) {
             _didLoadDetails = true;
             Future.microtask(() async {
-              await controller.getRestaurantMenuItemDetails(widget.itemId);
+              await controller.loadItemForEdit(widget.itemId);
+              if (mounted && controller.isCatalogEdit) {
+                setState(() => _fillFromCatalog(controller.catalogItemDetail));
+              }
               if (mounted) {
                 setState(() {
                   if (itemNameCtrl.text.isEmpty) {
@@ -622,7 +791,9 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
             controller.getAllMenus();
           }
 
-          final existingImageUrl = controller.currentMenuData?.image;
+          final existingImageUrl = controller.isCatalogEdit
+              ? controller.catalogImageUrl
+              : controller.currentMenuData?.image;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1923,6 +2094,10 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
         },
         onSubmit: () {
           final c = Get.find<ItemController>();
+          if (c.isCatalogEdit) {
+            _submitCatalog(c);
+            return;
+          }
           if (c.serialNumberCtrl.text.trim().isEmpty &&
               itemNameCtrl.text.trim().isNotEmpty) {
             c.serialNumberCtrl.text = itemNameCtrl.text.trim();

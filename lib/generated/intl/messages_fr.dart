@@ -91,6 +91,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Adresse non disponible",
     ),
+    "adminAdjustment": MessageLookupByLibrary.simpleMessage(
+      "Ajustement par l\'administrateur",
+    ),
     "afterAttributesReferenceYouCanEditTheAttributesListBelow":
         MessageLookupByLibrary.simpleMessage(
           "Après la référence des attributs, vous pouvez modifier la liste des attributs ci-dessous et utiliser l\'ID d\'attribut dans la colonne attribute_id avec sa valeur correspondante.",
@@ -193,6 +196,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "averageRating": MessageLookupByLibrary.simpleMessage("Note moyenne"),
     "averageRatingLabel": MessageLookupByLibrary.simpleMessage("Note moyenne"),
+    "balanceAdjustments": MessageLookupByLibrary.simpleMessage(
+      "Ajustements du solde",
+    ),
+    "balanceAfter": MessageLookupByLibrary.simpleMessage("Solde après"),
     "balanceAfterPayout": MessageLookupByLibrary.simpleMessage(
       "Solde après paiement",
     ),
@@ -471,6 +478,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Entrez votre numéro WhatsApp",
     ),
     "expiresInDays": m5,
+    "expiresInDays": m3,
+    "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour de l\'article",
+    ),
     "filters": MessageLookupByLibrary.simpleMessage("Filtres"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("Filtres et tri"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -547,6 +558,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("Total de l’article"),
     "itemType": MessageLookupByLibrary.simpleMessage("Type d\'élément"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("Type d\'article"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Article mis à jour avec succès",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("Articles"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage(
       "NOMBRE D\'ARTICLES",
@@ -627,6 +641,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Nécessite une mise à jour",
     ),
     "no": MessageLookupByLibrary.simpleMessage("Non"),
+    "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
+      "Aucun ajustement du solde pour le moment",
+    ),
     "noBasketsFound": MessageLookupByLibrary.simpleMessage(
       "Aucun panier trouvé",
     ),
@@ -810,6 +827,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "packagingCost": MessageLookupByLibrary.simpleMessage("Coût d\'emballage"),
     "password": MessageLookupByLibrary.simpleMessage("Mot de passe"),
     "pay": MessageLookupByLibrary.simpleMessage("Payer"),
+    "payAfterDelivery": MessageLookupByLibrary.simpleMessage(
+      "Payer après la livraison",
+    ),
     "paymentDetails": MessageLookupByLibrary.simpleMessage(
       "DÉTAILS DU PAIEMENT",
     ),
@@ -1229,6 +1249,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Voir la preuve de paiement",
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("Voir les rapports"),
+    "walletPayment": MessageLookupByLibrary.simpleMessage(
+      "Portefeuille SAIMPEX",
+    ),
     "wednesday": MessageLookupByLibrary.simpleMessage("Mercredi"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("Bienvenue chez"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(
