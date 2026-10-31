@@ -1,52 +1,180 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
-
-enum NotificationKind { newOrder, newSubscription, lowStock }
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/water/core/water_state_view.dart';
 
 class AppNotification {
   const AppNotification({
-    required this.kind,
     required this.title,
     required this.body,
     required this.timeAgo,
-    required this.actionLabel,
   });
 
-  final NotificationKind kind;
   final String title;
   final String body;
   final String timeAgo;
-  final String actionLabel;
+
+  /// `GET vendorapp/notifications` row: `title_en|fr|ar`, `content_en|fr|ar`,
+  /// `created_at`. The row carries no order/subscription link, so no action
+  /// button is shown.
+  factory AppNotification.fromJson(Map<String, dynamic> json, String lang) {
+    String pick(String base) {
+      final local = json['${base}_$lang']?.toString().trim() ?? '';
+      if (local.isNotEmpty && local != 'null') return local;
+      final en = json['${base}_en']?.toString().trim() ?? '';
+      return en == 'null' ? '' : en;
+    }
+
+    return AppNotification(
+      title: pick('title'),
+      body: pick('content'),
+      timeAgo: WaterApi.timeAgo(json['created_at']),
+    );
+  }
 }
 
-class NotificationsView extends StatelessWidget {
+class NotificationsView extends StatefulWidget {
   const NotificationsView({super.key});
 
-  static const items = [
-    AppNotification(
-      kind: NotificationKind.newOrder,
-      title: 'New Order',
-      body: 'Ahmed placed an order for Drinking Water 19L',
-      timeAgo: '2m ago',
-      actionLabel: 'View Order',
-    ),
-    AppNotification(
-      kind: NotificationKind.newSubscription,
-      title: 'New Subscription',
-      body: 'Mariem started a Daily subscription',
-      timeAgo: '15m ago',
-      actionLabel: 'Review Subscription',
-    ),
-    AppNotification(
-      kind: NotificationKind.lowStock,
-      title: 'Low Stock',
-      body: 'Drinking Water 19L has only 8 bottles remaining',
-      timeAgo: '1h ago',
-      actionLabel: 'Update Stock',
-    ),
-  ];
+  @override
+  State<NotificationsView> createState() => _NotificationsViewState();
+}
+
+class _NotificationsViewState extends State<NotificationsView> {
+  static const _limit = 20;
+
+  final _scroll = ScrollController();
+  final List<AppNotification> _items = [];
+  bool _loading = true;
+  bool _loadingMore = false;
+  bool _hasMore = false;
+  int _page = 1;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_onScroll);
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_hasMore &&
+        !_loadingMore &&
+        !_loading &&
+        _scroll.position.extentAfter < 300) {
+      _load(more: true);
+    }
+  }
+
+  Future<void> _load({bool more = false}) async {
+    if (more) {
+      setState(() => _loadingMore = true);
+    } else if (_items.isEmpty) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
+    final page = more ? _page + 1 : 1;
+    try {
+      await WaterApi.prepare();
+      final response = await DioClient().get(
+        ApiEndPoints.getNotifications,
+        query: {
+          'vendor_type': await WaterApi.vendorType(),
+          'limit': _limit,
+          'page': page,
+        },
+      );
+      final body = response.data;
+      if (!WaterApi.isOk(body)) {
+        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+      }
+      if (!mounted) return;
+      final lang = Localizations.localeOf(context).languageCode;
+      final data = body['data'];
+      final rows = WaterApi.pageItems(data)
+          .map((e) => AppNotification.fromJson(e, lang))
+          .toList();
+      setState(() {
+        if (!more) _items.clear();
+        _items.addAll(rows);
+        _page = page;
+        _hasMore = WaterApi.hasMore(data);
+        _error = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      if (more || _items.isNotEmpty) {
+        showToast(context, WaterApi.errorText(e));
+      } else {
+        setState(() => _error = WaterApi.errorText(e));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _loadingMore = false;
+        });
+      }
+    }
+  }
+
+  Widget _body() {
+    if (_loading && _items.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: const [WaterStateView.loading()],
+      );
+    }
+    if (_error != null && _items.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [WaterStateView.error(message: _error!, onRetry: _load)],
+      );
+    }
+    if (_items.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          WaterStateView.empty(
+            title: S.of(context).noNotificationsFound,
+            icon: Icons.notifications_none_rounded,
+          ),
+        ],
+      );
+    }
+    return ListView.separated(
+      controller: _scroll,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      itemCount: _items.length + (_loadingMore ? 1 : 0),
+      separatorBuilder: (_, _) => const SizedBox(height: 14),
+      itemBuilder: (context, index) {
+        if (index >= _items.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.primaryOrange),
+            ),
+          );
+        }
+        return _NotificationCard(item: _items[index]);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +204,10 @@ class NotificationsView extends StatelessWidget {
                 _Header(onBack: () => Navigator.of(context).maybePop()),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 14),
-                    itemBuilder: (context, index) {
-                      return _NotificationCard(item: items[index]);
-                    },
+                  child: RefreshIndicator(
+                    color: AppColors.primaryOrange,
+                    onRefresh: _load,
+                    child: _body(),
                   ),
                 ),
               ],
@@ -155,29 +280,11 @@ class _NotificationCard extends StatelessWidget {
 
   final AppNotification item;
 
-  (Color accent, Color iconBg, IconData icon) get _style {
-    return switch (item.kind) {
-      NotificationKind.newOrder => (
-          AppColors.notifOrderAccent,
-          AppColors.notifOrderIconBg,
-          Icons.receipt_long_outlined,
-        ),
-      NotificationKind.newSubscription => (
-          AppColors.notifSubscriptionAccent,
-          AppColors.notifSubscriptionIconBg,
-          Icons.sync_rounded,
-        ),
-      NotificationKind.lowStock => (
-          AppColors.notifStockAccent,
-          AppColors.notifStockIconBg,
-          Icons.warning_amber_rounded,
-        ),
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
-    final (accent, iconBg, icon) = _style;
+    const accent = AppColors.notifOrderAccent;
+    const iconBg = AppColors.notifOrderIconBg;
+    const icon = Icons.notifications_none_rounded;
 
     return Container(
       decoration: BoxDecoration(
@@ -242,6 +349,7 @@ class _NotificationCard extends StatelessWidget {
                               ),
                             ],
                           ),
+                          if (item.body.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Text(
                             item.body,
@@ -252,45 +360,7 @@ class _NotificationCard extends StatelessWidget {
                               height: 1.35,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            height: 36,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.primaryOrange
-                                        .withValues(alpha: 0.28),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryOrange,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: Text(
-                                  item.actionLabel,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          ],
                         ],
                       ),
                     ),

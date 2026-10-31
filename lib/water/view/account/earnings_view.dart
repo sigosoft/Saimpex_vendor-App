@@ -197,7 +197,7 @@ class _EarningsViewState extends State<EarningsView> {
           if (rawId != null) {
             id = '#ORD-$rawId';
           } else {
-            id = '#ORD-000000';
+            id = '';
           }
         } else if (!id.startsWith('#')) {
           id = '#$id';
@@ -310,7 +310,7 @@ class _EarningsViewState extends State<EarningsView> {
             payout['payout_code']?.toString().trim() ??
             '';
         if (id.isEmpty) {
-          id = rawId.isNotEmpty ? '#TRX$rawId' : '#TRX000';
+          id = rawId.isNotEmpty ? '#TRX$rawId' : '';
         } else if (!id.startsWith('#')) {
           id = '#$id';
         }
@@ -452,9 +452,9 @@ class _EarningsViewState extends State<EarningsView> {
                                 (S.of(context).totalPayoutReceived, '${_formatVal(orderTab?['total_payout_received'])} MRU'),
                               ]
                             : [
-                                (S.of(context).totalSaleAmount, '${_formatVal(payoutsTab?['total_sale_amount'] ?? '1300.00')} MRU'),
-                                (S.of(context).availablePayoutBalance, '${_formatVal(payoutsTab?['available_payout_balance'] ?? '300.00')} MRU'),
-                                (S.of(context).totalPayoutReceived, '${_formatVal(payoutsTab?['total_payout_received'] ?? '00.00')} MRU'),
+                                (S.of(context).totalSaleAmount, '${_formatVal(payoutsTab?['total_sale_amount'])} MRU'),
+                                (S.of(context).availablePayoutBalance, '${_formatVal(payoutsTab?['available_payout_balance'])} MRU'),
+                                (S.of(context).totalPayoutReceived, '${_formatVal(payoutsTab?['total_payout_received'])} MRU'),
                               ],
                       ),
                       const SizedBox(height: 14),

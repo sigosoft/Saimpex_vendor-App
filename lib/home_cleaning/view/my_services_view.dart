@@ -2,38 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
 import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
-
-class ServiceItem {
-  const ServiceItem({
-    required this.title,
-    required this.description,
-    required this.image,
-    required this.startingRate,
-    required this.rateUnit,
-    required this.categoryLabel,
-    required this.badges,
-  });
-
-  final String title;
-  final String description;
-  final String image;
-  final String startingRate;
-  final String rateUnit;
-  final String categoryLabel;
-  final List<ServiceBadge> badges;
-}
-
-class ServiceBadge {
-  const ServiceBadge({
-    required this.label,
-    this.price,
-  });
-
-  final String label;
-  final String? price;
-}
+import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class MyServicesView extends StatefulWidget {
   const MyServicesView({super.key, required this.controller});
@@ -44,42 +18,23 @@ class MyServicesView extends StatefulWidget {
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF757575);
 
-  static const defaultServices = [
-    ServiceItem(
-      title: 'Regular Cleaning',
-      description: 'Professional cleaning with flexible space-based pricing',
-      image: 'lib/home_cleaning/Assets/images/regularcleaning.png',
-      startingRate: '100',
-      rateUnit: 'MRU / Room',
-      categoryLabel: 'ADD-ONS:',
-      badges: [
-        ServiceBadge(label: 'Fridge Cleaning', price: '+100 MRU'),
-        ServiceBadge(label: 'Dish Washing', price: '+150 MRU'),
-      ],
-    ),
-    ServiceItem(
-      title: 'Pest Control & Disinfection',
-      description: 'Professional cleaning with flexible space-based pricing',
-      image: 'lib/home_cleaning/Assets/images/pest_control.png',
-      startingRate: '100',
-      rateUnit: 'MRU / Room',
-      categoryLabel: 'ISSUE COVERED:',
-      badges: [
-        ServiceBadge(label: 'Cockroaches'),
-        ServiceBadge(label: 'Bed Bugs'),
-        ServiceBadge(label: 'Termites'),
-        ServiceBadge(label: 'Viral Disinfection'),
-      ],
-    ),
-  ];
-
   @override
   State<MyServicesView> createState() => _MyServicesViewState();
 }
 
 class _MyServicesViewState extends State<MyServicesView> {
   final TextEditingController _searchController = TextEditingController();
-  final List<ServiceItem> _services = List.of(MyServicesView.defaultServices);
+  List<CleaningServiceItem> _services = [];
+  bool _loading = true;
+  String? _error;
+
+  String get _lang => LocalizationService.currentLanguageCode;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
 
   @override
   void dispose() {
@@ -87,18 +42,193 @@ class _MyServicesViewState extends State<MyServicesView> {
     super.dispose();
   }
 
-  List<ServiceItem> get _filteredServices {
-    final query = _searchController.text.trim().toLowerCase();
-    if (query.isEmpty) return _services;
-    return _services
-        .where((s) => s.title.toLowerCase().contains(query))
-        .toList();
+  Future<void> _load({bool quiet = false}) async {
+    if (!quiet) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
+    try {
+      final services = await CleaningServicesApi.fetchServices();
+      if (!mounted) return;
+      setState(() {
+        _services = services;
+        _error = null;
+        _loading = false;
+      });
+    } on CleaningApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message ?? S.of(context).cleaningSvcLoadError;
+        _loading = false;
+      });
+    }
   }
 
-  void _handleDelete(ServiceItem item) {
-    setState(() {
-      _services.remove(item);
-    });
+  List<CleaningServiceItem> get _filteredServices {
+    final query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) return _services;
+    return _services.where((s) {
+      return s.localizedName(_lang).toLowerCase().contains(query) ||
+          (s.nameEn ?? '').toLowerCase().contains(query) ||
+          (s.description ?? '').toLowerCase().contains(query);
+    }).toList();
+  }
+
+  Future<void> _openEditor([CleaningServiceItem? item]) async {
+    HapticFeedback.lightImpact();
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => AddServiceView(initialService: item),
+      ),
+    );
+    if (saved == true && mounted) _load(quiet: true);
+  }
+
+  Future<void> _handleDelete(CleaningServiceItem item) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Text(
+          S.of(context).waterConfirmDeleteNamedItem(item.localizedName(_lang)),
+          style: GoogleFonts.inter(
+            fontSize: 13.5,
+            color: const Color(0xFF424242),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              S.of(context).cancel,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF757575),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MyServicesView._orange,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              S.of(context).delete,
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      final message = await CleaningServicesApi.deleteService(item.id);
+      if (!mounted) return;
+      setState(() => _services.removeWhere((s) => s.id == item.id));
+      if (message != null) showToast(context, message);
+    } on CleaningApiException catch (e) {
+      if (!mounted) return;
+      showToast(context, e.message ?? S.of(context).cleaningSvcGenericError);
+    }
+  }
+
+  Widget _buildBody(List<CleaningServiceItem> services) {
+    if (_loading) {
+      return const Center(
+        child: CircularProgressIndicator(color: MyServicesView._orange),
+      );
+    }
+    if (_error != null && _services.isEmpty) {
+      return RefreshIndicator(
+        color: MyServicesView._orange,
+        onRefresh: () => _load(quiet: true),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+          children: [
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 44,
+              color: Color(0xFFBDBDBD),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF757575),
+                fontWeight: FontWeight.w500,
+                fontSize: 13.5,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Center(
+              child: OutlinedButton(
+                onPressed: _load,
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: MyServicesView._orange),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  S.of(context).tryAgain,
+                  style: GoogleFonts.inter(
+                    color: MyServicesView._orange,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return RefreshIndicator(
+      color: MyServicesView._orange,
+      onRefresh: () => _load(quiet: true),
+      child: services.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(top: 120),
+              children: [
+                Center(
+                  child: Text(
+                    S.of(context).cleaningNoServicesFound,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF9E9E9E),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              itemCount: services.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                final service = services[index];
+                return _ServiceCard(
+                  service: service,
+                  onEdit: () => _openEditor(service),
+                  onDelete: () => _handleDelete(service),
+                );
+              },
+            ),
+    );
   }
 
   @override
@@ -109,11 +239,7 @@ class _MyServicesViewState extends State<MyServicesView> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFFFE8DC),
-            Color(0xFFFFF3EC),
-            Color(0xFFFFFFFF),
-          ],
+          colors: [Color(0xFFFFE8DC), Color(0xFFFFF3EC), Color(0xFFFFFFFF)],
           stops: [0, 0.22, 0.45],
         ),
       ),
@@ -219,31 +345,7 @@ class _MyServicesViewState extends State<MyServicesView> {
             ),
           ),
           const SizedBox(height: 8),
-          Expanded(
-            child: services.isEmpty
-                ? Center(
-                    child: Text(
-                      S.of(context).cleaningNoServicesFound,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF9E9E9E),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
-                    ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                    itemCount: services.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      final service = services[index];
-                      return _ServiceCard(
-                        service: service,
-                        onDelete: () => _handleDelete(service),
-                      );
-                    },
-                  ),
-          ),
+          Expanded(child: _buildBody(services)),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             color: Colors.white,
@@ -251,14 +353,7 @@ class _MyServicesViewState extends State<MyServicesView> {
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const AddServiceView(),
-                    ),
-                  );
-                },
+                onPressed: () => _openEditor(),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: MyServicesView._orange,
@@ -287,14 +382,34 @@ class _MyServicesViewState extends State<MyServicesView> {
 class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.service,
+    required this.onEdit,
     required this.onDelete,
   });
 
-  final ServiceItem service;
+  final CleaningServiceItem service;
+  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
+    final lang = LocalizationService.currentLanguageCode;
+    final firstSpace = service.spaces.isNotEmpty ? service.spaces.first : null;
+    final rate = formatServicePrice(firstSpace?.price ?? service.price);
+    final unit = firstSpace?.unit;
+    final rateUnit = unit == null || unit.isEmpty
+        ? 'MRU'
+        : 'MRU / ${cleaningUnitLabel(context, unit)}';
+    final description = service.description ?? '';
+    final placeholder = Container(
+      height: 155,
+      color: const Color(0xFFF5F5F5),
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.cleaning_services,
+        size: 40,
+        color: MyServicesView._orange,
+      ),
+    );
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -312,22 +427,15 @@ class _ServiceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            service.image,
-            height: 155,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              height: 155,
-              color: const Color(0xFFF5F5F5),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.cleaning_services,
-                size: 40,
-                color: MyServicesView._orange,
-              ),
-            ),
-          ),
+          service.imageUrl == null
+              ? placeholder
+              : Image.network(
+                  service.imageUrl!,
+                  height: 155,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => placeholder,
+                ),
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
             child: Column(
@@ -338,7 +446,7 @@ class _ServiceCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        service.title,
+                        service.localizedName(lang),
                         style: GoogleFonts.inter(
                           color: MyServicesView._ink,
                           fontWeight: FontWeight.w700,
@@ -346,19 +454,40 @@ class _ServiceCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _ServicePopupMenu(service: service, onDelete: onDelete),
+                    if (service.status != 1)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F1F1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          S.of(context).inactiveLabel,
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF757575),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.5,
+                          ),
+                        ),
+                      ),
+                    _ServicePopupMenu(onEdit: onEdit, onDelete: onDelete),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  service.description,
-                  style: GoogleFonts.inter(
-                    color: MyServicesView._muted,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.5,
-                    height: 1.35,
+                if (description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: GoogleFonts.inter(
+                      color: MyServicesView._muted,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.5,
+                      height: 1.35,
+                    ),
                   ),
-                ),
+                ],
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
@@ -387,7 +516,7 @@ class _ServiceCard extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: '${service.startingRate} ',
+                              text: '$rate ',
                               style: GoogleFonts.inter(
                                 color: MyServicesView._orange,
                                 fontWeight: FontWeight.w700,
@@ -395,7 +524,7 @@ class _ServiceCard extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: service.rateUnit,
+                              text: rateUnit,
                               style: GoogleFonts.inter(
                                 color: const Color(0xFFFF8A65),
                                 fontWeight: FontWeight.w600,
@@ -408,25 +537,27 @@ class _ServiceCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  service.categoryLabel,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF424242),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10.5,
-                    letterSpacing: 0.4,
+                if (service.addons.isNotEmpty)
+                  _BadgeSection(
+                    label: S.of(context).cleaningAddonServicesHeader,
+                    badges: [
+                      for (final addon in service.addons)
+                        _ServiceBadge(
+                          label: addon.name,
+                          price: '+${formatServicePrice(addon.price)} MRU',
+                        ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final badge in service.badges)
-                      _ServiceBadgeChip(badge: badge),
-                  ],
-                ),
+                if (service.issues.isNotEmpty)
+                  _BadgeSection(
+                    label: S.of(context).cleaningIssuesCoveredHeader,
+                    badges: [
+                      for (final issue in service.issues)
+                        _ServiceBadge(
+                          label: cleaningIssueLabel(context, issue),
+                        ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -436,10 +567,51 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
+class _ServiceBadge {
+  const _ServiceBadge({required this.label, this.price});
+
+  final String label;
+  final String? price;
+}
+
+class _BadgeSection extends StatelessWidget {
+  const _BadgeSection({required this.label, required this.badges});
+
+  final String label;
+  final List<_ServiceBadge> badges;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            color: const Color(0xFF424242),
+            fontWeight: FontWeight.w700,
+            fontSize: 10.5,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final badge in badges) _ServiceBadgeChip(badge: badge),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _ServiceBadgeChip extends StatelessWidget {
   const _ServiceBadgeChip({required this.badge});
 
-  final ServiceBadge badge;
+  final _ServiceBadge badge;
 
   @override
   Widget build(BuildContext context) {
@@ -486,12 +658,9 @@ class _ServiceBadgeChip extends StatelessWidget {
 }
 
 class _ServicePopupMenu extends StatelessWidget {
-  const _ServicePopupMenu({
-    required this.service,
-    required this.onDelete,
-  });
+  const _ServicePopupMenu({required this.onEdit, required this.onDelete});
 
-  final ServiceItem service;
+  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   @override
@@ -515,11 +684,7 @@ class _ServicePopupMenu extends StatelessWidget {
         onSelected: (value) {
           HapticFeedback.lightImpact();
           if (value == 'edit') {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => AddServiceView(initialService: service),
-              ),
-            );
+            onEdit();
           } else if (value == 'delete') {
             onDelete();
           }

@@ -229,4 +229,23 @@ class ApiEndPoints {
   static String rejectWaterSubscription = "rejectWaterSubscription";
   static String pauseWaterSubscription = "pauseWaterSubscription";
   static String resumeWaterSubscription = "resumeWaterSubscription";
+  static String waterSubscriptionDetails = "waterSubscriptionDetails";
+
+  // Service verticals (home cleaning, laundry, car wash, gas): ServiceVerticalController
+  static String serviceDashboard = "serviceDashboard";
+  static String serviceTypes = "serviceTypes";
+  static String requestServiceType = "requestServiceType";
+  static String serviceItems = "serviceItems";
+  static String addServiceItem = "addServiceItem";
+  static String updateServiceItem = "updateServiceItem";
+  static String updateServiceItemStatus = "updateServiceItemStatus";
+  static String deleteServiceItem = "deleteServiceItem";
+  static String serviceBookings = "serviceBookings";
+  static String serviceBookingDetail = "serviceBookingDetail";
+  static String updateServiceBookingStatus = "updateServiceBookingStatus";
+  static String serviceEarnings = "serviceEarnings";
+  static String serviceHours = "serviceHours";
+  static String saveServiceHours = "saveServiceHours";
+  static String serviceAvailability = "serviceAvailability";
+  static String serviceProfile = "serviceProfile";
 }

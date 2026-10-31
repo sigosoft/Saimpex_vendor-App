@@ -8820,6 +8820,246 @@ class S {
   String get waterYou {
     return Intl.message('You', name: 'waterYou', desc: '', args: []);
   }
+
+  /// `Couldn't update availability. Please try again.`
+  String get cleaningBookingAvailabilityFailed {
+    return Intl.message(
+      'Couldn\'t update availability. Please try again.',
+      name: 'cleaningBookingAvailabilityFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CANCELLATION REASON`
+  String get cleaningBookingCancelReasonHeader {
+    return Intl.message(
+      'CANCELLATION REASON',
+      name: 'cleaningBookingCancelReasonHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} d ago`
+  String cleaningBookingDaysAgo(String count) {
+    return Intl.message(
+      '$count d ago',
+      name: 'cleaningBookingDaysAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} h ago`
+  String cleaningBookingHoursAgo(String count) {
+    return Intl.message(
+      '$count h ago',
+      name: 'cleaningBookingHoursAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Couldn't load the data. Please try again.`
+  String get cleaningBookingLoadFailed {
+    return Intl.message(
+      'Couldn\'t load the data. Please try again.',
+      name: 'cleaningBookingLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} min ago`
+  String cleaningBookingMinutesAgo(String count) {
+    return Intl.message(
+      '$count min ago',
+      name: 'cleaningBookingMinutesAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `CANCELLED`
+  String get cleaningBookingStatusCancelled {
+    return Intl.message(
+      'CANCELLED',
+      name: 'cleaningBookingStatusCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ON THE WAY`
+  String get cleaningBookingStatusOnTheWay {
+    return Intl.message(
+      'ON THE WAY',
+      name: 'cleaningBookingStatusOnTheWay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't update the booking. Please try again.`
+  String get cleaningBookingUpdateFailed {
+    return Intl.message(
+      'Couldn\'t update the booking. Please try again.',
+      name: 'cleaningBookingUpdateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add at least one space with its price.`
+  String get cleaningSvcAddOneSpace {
+    return Intl.message(
+      'Add at least one space with its price.',
+      name: 'cleaningSvcAddOneSpace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't load messages.`
+  String get cleaningSvcChatLoadError {
+    return Intl.message(
+      'Couldn\'t load messages.',
+      name: 'cleaningSvcChatLoadError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat with this customer isn't available yet.`
+  String get cleaningSvcChatUnavailable {
+    return Intl.message(
+      'Chat with this customer isn\'t available yet.',
+      name: 'cleaningSvcChatUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something went wrong. Please try again.`
+  String get cleaningSvcGenericError {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'cleaningSvcGenericError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't load your services.`
+  String get cleaningSvcLoadError {
+    return Intl.message(
+      'Couldn\'t load your services.',
+      name: 'cleaningSvcLoadError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a service type.`
+  String get cleaningSvcSelectServiceType {
+    return Intl.message(
+      'Please select a service type.',
+      name: 'cleaningSvcSelectServiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't load service types.`
+  String get cleaningSvcTypesLoadError {
+    return Intl.message(
+      'Couldn\'t load service types.',
+      name: 'cleaningSvcTypesLoadError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount due`
+  String get waterAmountDue {
+    return Intl.message(
+      'Amount due',
+      name: 'waterAmountDue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every 2 weeks`
+  String get waterBiWeekly {
+    return Intl.message(
+      'Every 2 weeks',
+      name: 'waterBiWeekly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery calendar not available yet`
+  String get waterCalendarNotAvailable {
+    return Intl.message(
+      'Delivery calendar not available yet',
+      name: 'waterCalendarNotAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scheduled subscription deliveries will appear here once this feature is ready. You can see each subscription's next delivery in its details.`
+  String get waterCalendarNotAvailableHint {
+    return Intl.message(
+      'Scheduled subscription deliveries will appear here once this feature is ready. You can see each subscription\'s next delivery in its details.',
+      name: 'waterCalendarNotAvailableHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every {days} days`
+  String waterEveryNDays(String days) {
+    return Intl.message(
+      'Every $days days',
+      name: 'waterEveryNDays',
+      desc: '',
+      args: [days],
+    );
+  }
+
+  /// `Monthly`
+  String get waterMonthly {
+    return Intl.message('Monthly', name: 'waterMonthly', desc: '', args: []);
+  }
+
+  /// `Something went wrong. Please try again.`
+  String get waterSomethingWentWrong {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'waterSomethingWentWrong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tomorrow`
+  String get waterTomorrow {
+    return Intl.message('Tomorrow', name: 'waterTomorrow', desc: '', args: []);
+  }
+
+  /// `Wallet`
+  String get waterWallet {
+    return Intl.message('Wallet', name: 'waterWallet', desc: '', args: []);
+  }
+
+  /// `Weekly`
+  String get waterWeekly {
+    return Intl.message('Weekly', name: 'waterWeekly', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

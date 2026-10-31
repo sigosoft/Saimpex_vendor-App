@@ -246,7 +246,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. No substitution. |
 | Local store (11) | **Partial / likely broken** | Opens grocery screens and calls grocery endpoints. Backend `groceryOrders` filters `order_type = 2`, so local store orders probably do not show. Backend `localStore*` endpoints are not used. Needs testing with a real local store account. |
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
-| Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, add coupon, subscription details/calendar are static mock UI. EN/FR/AR since V5. |
+| Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
 | Laundry (7) | **Not started** in app | Blocked at login; use web panel. |
 | Car wash (8) | **Not started** in app | Blocked at login; use web panel. |
@@ -322,10 +322,10 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 
 | Feature | Status | Files |
 |---|---|---|
-| Home / bookings | Partial (mock) | `lib/home_cleaning/view/home_cleaning_home.dart`, `lib/home_cleaning/view/booking_details_view.dart`, `lib/home_cleaning/view/reject_booking_sheet.dart` |
-| Services | Partial (mock) | `lib/home_cleaning/view/my_services_view.dart`, `lib/home_cleaning/view/add_service_view.dart` |
-| Chat | Partial (mock) | `lib/home_cleaning/view/chat/home_cleaning_messages_view.dart`, `lib/home_cleaning/view/chat/home_cleaning_conversation_view.dart` |
-| Account | Partial | `lib/home_cleaning/view/home_cleaning_account_view.dart` (profile, logout, delete on API) |
+| Home / bookings | Done (V6, not run against a real account) — `serviceDashboard`, `serviceBookings`, `serviceBookingDetail`, `updateServiceBookingStatus`, `serviceAvailability`; flow 1→2→8→3→9, 10 cancelled | `lib/home_cleaning/view/home_cleaning_home.dart`, `lib/home_cleaning/view/booking_details_view.dart`, `lib/home_cleaning/view/reject_booking_sheet.dart` |
+| Services | Done (V6, not run against a real account) — `serviceItems`, `serviceTypes`, `addServiceItem`/`updateServiceItem` (multipart, lists as JSON strings), `deleteServiceItem` | `lib/home_cleaning/view/my_services_view.dart`, `lib/home_cleaning/view/add_service_view.dart` |
+| Chat | Done (V6, not run against a real account) — shared `ChatController` (`chat/allConversations`, `getConversation`, `sendMessage`) | `lib/home_cleaning/view/chat/home_cleaning_messages_view.dart`, `lib/home_cleaning/view/chat/home_cleaning_conversation_view.dart` |
+| Account | Partial | `lib/home_cleaning/view/home_cleaning_account_view.dart` (profile now sends `vendor_type`; store open from `serviceHours`). Working hours, earnings and business settings rows still open the Water screens (`profile`/`updateWorkingHours`, `earnings/summary`) instead of `serviceHours`/`saveServiceHours`/`serviceEarnings`: follow-up. |
 
 ---
 
@@ -430,11 +430,11 @@ AC: a quick-edit path (name, price, availability, photo) in one screen; advanced
 Move literals to the ARB files.
 AC: switching to French or Arabic translates every visible string in these sections; Arabic layout is right-to-left with no clipped or mirrored-wrong icons.
 
-**P9. Replace mock screens in Water.**
+**P9. Replace mock screens in Water.** ✅ V6 (`feature/water-cleaning-api`), except the delivery calendar and history (no endpoint; hidden).
 Notifications, received payouts, add/edit coupon, subscription details and calendar must use the API.
 AC: no hard-coded sample data remains in `lib/water/view/`.
 
-**P10. Home Cleaning on `service*` endpoints.**
+**P10. Home Cleaning on `service*` endpoints.** ✅ V6 for bookings, services and chat; account hours/earnings still on the Water screens (follow-up). 18 backend gaps in `docs/V6_BACKEND_ISSUES.md`.
 AC: bookings, booking detail/status changes, services CRUD and hours use the backend; no hard-coded bookings.
 
 **P11. Laundry and car wash sections (if confirmed for the app).**
@@ -469,7 +469,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 2. **Gas routed to Water section**, but backend `HomeController` treats type 10 as a service vertical. Needs a backend decision.
 3. **Edit item loses variants/options** (UI shows them, save does not send them).
 4. **Endpoints with no backend route**: `exportMenuItems`, `importRestaurantMenuItems`, `vendor/...` fallbacks (see 5.2). These buttons fail.
-5. **Mock data** in Water notifications, received payouts, add coupon, subscription details/calendar, and all of Home Cleaning bookings/services/chat.
+5. **Mock data**: removed in V6. Where the backend has no data (Water delivery calendar/history, some Home Cleaning fields) the block is hidden; gaps in `docs/V6_BACKEND_ISSUES.md`.
 6. **Dead OTP login path** saves a fake `mock_token` (`lib/controller/otp_controller.dart`). Not reachable now; remove.
 7. **Release signed with the debug key**; iOS not configured (template bundle id, no Firebase plist).
 8. **Localisation gaps**: Pharmacy mostly English; FR/AR missing a few older keys; Water/Home Cleaning mock data still English (V6). Reject/pause reasons are sent to the API in English while shown translated.
