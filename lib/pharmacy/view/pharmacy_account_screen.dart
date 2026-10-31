@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -922,6 +924,12 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                               ),
                             );
                           },
+                        ),
+                        // Bluetooth printer for order tickets (V7).
+                        _MenuTile(
+                          icon: Icons.print_outlined,
+                          label: S.of(context).printer,
+                          onTap: () => showPrinterPicker(context),
                         ),
                         _MenuTile(
                           image:

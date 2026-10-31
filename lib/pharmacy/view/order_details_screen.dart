@@ -12,6 +12,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/printing/print_order_ticket.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_chat_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_order_details_controller.dart';

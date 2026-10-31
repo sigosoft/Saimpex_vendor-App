@@ -261,6 +261,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
       "Acceptation automatique des commandes",
     ),
+    "automaticPrinter": MessageLookupByLibrary.simpleMessage("Automatique"),
+    "automaticPrinterHint": MessageLookupByLibrary.simpleMessage(
+      "Imprimante USB si elle est branchée, sinon la première imprimante Bluetooth associée",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("Disponible"),
     "availableAt": MessageLookupByLibrary.simpleMessage("Disponible à"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -313,6 +317,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
     "beverages": MessageLookupByLibrary.simpleMessage("Boissons"),
     "blocked": MessageLookupByLibrary.simpleMessage("Bloqué"),
+    "bluetoothUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Le Bluetooth est désactivé ou non autorisé. Activez-le et autorisez les appareils à proximité pour cette application.",
+    ),
     "breakfast": MessageLookupByLibrary.simpleMessage("Petit-déjeuner"),
     "busy": MessageLookupByLibrary.simpleMessage("Occupé"),
     "buyNow": MessageLookupByLibrary.simpleMessage("Acheter maintenant"),
@@ -1129,6 +1136,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noOrdersFound": MessageLookupByLibrary.simpleMessage(
       "Aucune commande trouvée",
     ),
+    "noPairedPrinters": MessageLookupByLibrary.simpleMessage(
+      "Aucun appareil Bluetooth associé. Associez d\'abord l\'imprimante dans les paramètres Bluetooth d\'Android.",
+    ),
     "noPayoutsYet": MessageLookupByLibrary.simpleMessage(
       "Aucun paiement pour le moment",
     ),
@@ -1363,6 +1373,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "price": MessageLookupByLibrary.simpleMessage("Prix"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("PRIX"),
+    "printFailed": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'impression. Vérifiez que l\'imprimante est allumée et associée.",
+    ),
+    "printOrder": MessageLookupByLibrary.simpleMessage("Imprimer la commande"),
+    "printTestPage": MessageLookupByLibrary.simpleMessage(
+      "Imprimer une page de test",
+    ),
+    "printer": MessageLookupByLibrary.simpleMessage("Imprimante"),
+    "printerTest": MessageLookupByLibrary.simpleMessage("Test d\'imprimante"),
+    "printingAndroidOnly": MessageLookupByLibrary.simpleMessage(
+      "L\'impression n\'est disponible que sur les appareils Android.",
+    ),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Politique de confidentialité",
     ),
@@ -1518,6 +1540,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selfPickup": MessageLookupByLibrary.simpleMessage("Retrait sur place"),
     "send": MessageLookupByLibrary.simpleMessage("Envoyer"),
+    "sendingToPrinter": MessageLookupByLibrary.simpleMessage(
+      "Envoi à l\'imprimante…",
+    ),
     "serialNoLabel": MessageLookupByLibrary.simpleMessage("Numéro de série"),
     "serialNumber": MessageLookupByLibrary.simpleMessage("Numéro de série"),
     "serverDown": MessageLookupByLibrary.simpleMessage("Serveur indisponible"),
@@ -1559,10 +1584,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "termsConditions": MessageLookupByLibrary.simpleMessage(
       "Termes et conditions",
     ),
+    "testPageSent": MessageLookupByLibrary.simpleMessage(
+      "Page de test envoyée à l\'imprimante",
+    ),
     "theRestaurantPreparingYourFood": MessageLookupByLibrary.simpleMessage(
       "Le restaurant prépare votre commande",
     ),
     "thursday": MessageLookupByLibrary.simpleMessage("Jeudi"),
+    "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
+      "Ticket envoyé à l\'imprimante",
+    ),
     "toDate": MessageLookupByLibrary.simpleMessage("Date de Fin"),
     "toPay": MessageLookupByLibrary.simpleMessage("À payer"),
     "today": MessageLookupByLibrary.simpleMessage("Aujourd’hui"),

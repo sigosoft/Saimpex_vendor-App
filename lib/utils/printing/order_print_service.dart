@@ -3,6 +3,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/OrderDetailsModel.dart';
 import 'package:saimpex_vendor/utils/printing/bluetooth_escpos_printer.dart';
 import 'package:saimpex_vendor/utils/printing/esc_pos_receipt_builder.dart';
+import 'package:saimpex_vendor/utils/printing/vertical_order_ticket.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class OrderPrintService {
@@ -62,6 +63,23 @@ class OrderPrintService {
     DioClient().updateToken(token);
 
     final vendorType = (await getSavedObject('vendorType'))?.toString() ?? '1';
+
+    // Pharmacy (3) and water (4) details come back as {order, items}.
+    final kind = orderType?.toLowerCase() ?? '';
+    final vertical = kind.contains('pharmacy') || (kind.isEmpty && vendorType == '3')
+        ? ApiEndPoints.pharmacyOrderDetail
+        : kind.contains('water') || (kind.isEmpty && vendorType == '4')
+        ? ApiEndPoints.getWaterOrderDetail
+        : null;
+    if (vertical != null) {
+      final res = await DioClient().get(vertical, query: {'order_id': orderId});
+      final body = res.data;
+      if (body is! Map || body['status']?.toString() != 'true' || body['data'] is! Map) {
+        throw Exception('Unable to load order details for printing');
+      }
+      return ticketDataFromVerticalDetail(Map<String, dynamic>.from(body['data'] as Map));
+    }
+
     final isRestaurant =
         orderType?.toLowerCase().contains('restaurant') == true ||
         (orderType?.toLowerCase().contains('grocery') != true && vendorType == '1');

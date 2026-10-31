@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -447,6 +448,13 @@ class _AccountViewState extends State<AccountView> {
                       imageSize: 20,
                       title: S.of(context).earnings,
                       onTap: () => EarningsView.open(context),
+                    ),
+                    // Bluetooth printer for order tickets (V7).
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.print_outlined,
+                      title: S.of(context).printer,
+                      onTap: () => showPrinterPicker(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,

@@ -9245,6 +9245,126 @@ class S {
   String get waterWeekly {
     return Intl.message('Weekly', name: 'waterWeekly', desc: '', args: []);
   }
+
+  /// `Printer`
+  String get printer {
+    return Intl.message('Printer', name: 'printer', desc: '', args: []);
+  }
+
+  /// `Automatic`
+  String get automaticPrinter {
+    return Intl.message(
+      'Automatic',
+      name: 'automaticPrinter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `USB printer if connected, otherwise the first paired Bluetooth printer`
+  String get automaticPrinterHint {
+    return Intl.message(
+      'USB printer if connected, otherwise the first paired Bluetooth printer',
+      name: 'automaticPrinterHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No paired Bluetooth devices. Pair the printer in the Android Bluetooth settings first.`
+  String get noPairedPrinters {
+    return Intl.message(
+      'No paired Bluetooth devices. Pair the printer in the Android Bluetooth settings first.',
+      name: 'noPairedPrinters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bluetooth is off or not allowed. Turn it on and allow Nearby devices for this app.`
+  String get bluetoothUnavailable {
+    return Intl.message(
+      'Bluetooth is off or not allowed. Turn it on and allow Nearby devices for this app.',
+      name: 'bluetoothUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Print test page`
+  String get printTestPage {
+    return Intl.message(
+      'Print test page',
+      name: 'printTestPage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Printer test`
+  String get printerTest {
+    return Intl.message(
+      'Printer test',
+      name: 'printerTest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test page sent to the printer`
+  String get testPageSent {
+    return Intl.message(
+      'Test page sent to the printer',
+      name: 'testPageSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Printing failed. Check that the printer is on and paired.`
+  String get printFailed {
+    return Intl.message(
+      'Printing failed. Check that the printer is on and paired.',
+      name: 'printFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Printing is available on Android devices only.`
+  String get printingAndroidOnly {
+    return Intl.message(
+      'Printing is available on Android devices only.',
+      name: 'printingAndroidOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Print order`
+  String get printOrder {
+    return Intl.message('Print order', name: 'printOrder', desc: '', args: []);
+  }
+
+  /// `Sending to the printer…`
+  String get sendingToPrinter {
+    return Intl.message(
+      'Sending to the printer…',
+      name: 'sendingToPrinter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket sent to the printer`
+  String get ticketSentToPrinter {
+    return Intl.message(
+      'Ticket sent to the printer',
+      name: 'ticketSentToPrinter',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
