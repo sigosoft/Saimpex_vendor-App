@@ -55,7 +55,7 @@ One app serves all vendor types. After login the app opens a section based on th
 |---|---|---|---|
 | 1 | Food / restaurant | Grocery/Restaurant | `lib/view/`, `lib/controller/` |
 | 2 | Grocery | Grocery/Restaurant | same |
-| 11 | Local store | Grocery/Restaurant (uses grocery endpoints, see Risks) | same |
+| 11 | Local store | Grocery/Restaurant screens on the `localStore*` endpoints (`feature/vendor-routing`) | same |
 | 3 | Pharmacy | Pharmacy | `lib/pharmacy/` |
 | 4 | Water | Water | `lib/water/` |
 | 10 | Gas | Water (see Risks: backend treats gas as a service vertical) | `lib/water/` |
@@ -244,7 +244,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 |---|---|---|
 | Restaurant (1) | **Partial**, most complete | Orders, menu, items, catalogue, stock, coupons, drivers, earnings, reports, chat, printing all on API. Gaps: edit item drops variants/options; no pre-orders; no advanced/easy split. |
 | Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. No substitution. |
-| Local store (11) | **Partial / likely broken** | Opens grocery screens and calls grocery endpoints. Backend `groceryOrders` filters `order_type = 2`, so local store orders probably do not show. Backend `localStore*` endpoints are not used. Needs testing with a real local store account. |
+| Local store (11) | **Done (`feature/vendor-routing`), not yet tested on a device** | Same grocery screens, but every grocery call is switched to its `localStore*` twin (27 endpoints, `lib/configs/store_endpoints.dart`, applied in the `DioClient` interceptor when the saved `vendorType` is 11). Same parameters and response shape, checked against `integration/v2`. |
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
@@ -280,7 +280,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Printing | Done (Android), `feature/bluetooth-printing` | `lib/utils/printing/`, `lib/view/settings/widgets/printer_picker_dialog.dart` | Settings → **Printer**: paired Bluetooth devices + "Automatic" (USB first, then the first paired printer), saved as `printerAddress`, **Print test page**. Ticket text is Latin-1 safe (curly quotes / Arabic no longer fail the print). No Figma screen. No iOS. **Not yet tested on a real printer.** |
 | Pre-orders | Not started | - | Contract pending from backend. |
 | Grocery substitution | Not started | - | Contract pending from backend. |
-| Local store endpoints | Not started | - | Backend `localStore*` routes exist. |
+| Local store endpoints | Done (`feature/vendor-routing`) | `lib/configs/store_endpoints.dart` | Grocery endpoint → `localStore*` twin for vendor type 11. |
 | Kitchen board | Out of scope here | - | Separate app `sigosoft/Saimpex-Kitchen-App`. |
 
 ### 4.3 By feature, Pharmacy section
@@ -513,7 +513,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | Pharmacy quote lines take `availability`, `requested_quantity`, `alternative_for`; the server computes the total (§6.15). Water subscriptions can be `pending_payment` (hide until paid). Gas bookings show `empty_cylinders_to_collect`. | V11 unblocked for the quote part. |
 | 31 Oct 2026 | Hide / unhide a product: `POST vendorapp/products/visibility` {`product_type`, `id` (catalog item id for restaurants), `hidden`}. Response `status` 1 visible / 2 blocked by Admin / 3 hidden. | Add a Hide/Show toggle and a "Hidden" chip on the product list (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules`: minimum order value and default preparation time (set by Admin, read-only). | Show both on the store settings/profile screen (§6.22). |
-| 31 Oct 2026 | **Routing answered (V12, P3/P4):** login returns `app_section` (`restaurant`, `grocery`, `pharmacy`, `water`, `local_store`, `service`). Local store (11) → `localStore*` endpoints (grocery ones filter order_type 2, so its orders never show there). Gas (10) → `service*` endpoints, **not** `water*`; bookings include `empty_cylinders_to_collect`. | Route by `app_section` instead of mapping types in the app (§6.23). |
+| 31 Oct 2026 | **Routing answered (V12, P3/P4):** login returns `app_section` (`restaurant`, `grocery`, `pharmacy`, `water`, `local_store`, `service`). Local store (11) → `localStore*` endpoints (grocery ones filter order_type 2, so its orders never show there). Gas (10) → `service*` endpoints, **not** `water*`; bookings include `empty_cylinders_to_collect`. | Route by `app_section` instead of mapping types in the app (§6.23). ✅ Local store done (`feature/vendor-routing`). **Gas (10): decided (Abhinav, 31 Oct) to use the Water UI** (no gas design; water's bottles + returnable bottle match cylinders + empty-cylinder exchange). It already opens the Water section, but gas bookings are service bookings, so the water endpoints return nothing for gas: **waits for backend praveensigo/saimpex-backend-new#84**. |
 | 31 Oct 2026 | **Change:** hide product is now `POST vendorapp/updateProductVisibility` {`vertical`: food/grocery/local_store/pharmacy/water, `menu_id`, `hide_for`: 1h/4h/today/forever/until/show}. The `products/visibility` endpoint from this morning is removed. | Build V10 against this one (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules` also returns `delivery_fee_type`, `delivery_fee_value`, `delivery_fee_paid_by`, `delivery_model` (Admin-set). If the vendor pays delivery, the fee is deducted from its earnings. | Show them read-only on the store settings screen (§6.22). |
 | 31 Oct 2026 | `GET vendorapp/commissionRules`: the store's commission rules (read-only) and `fallback_percent`. | Optional: show on earnings/settings (§6.24). |
