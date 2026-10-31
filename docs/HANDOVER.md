@@ -485,3 +485,4 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | Date | Change | What the app must do |
 |---|---|---|
 | 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
+| 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. |
