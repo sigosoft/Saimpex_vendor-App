@@ -5105,6 +5105,26 @@ class S {
   String get nonVeg {
     return Intl.message('Non-Veg', name: 'nonVeg', desc: '', args: []);
   }
+
+  /// `Item updated successfully`
+  String get itemUpdatedSuccessfully {
+    return Intl.message(
+      'Item updated successfully',
+      name: 'itemUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update item`
+  String get failedToUpdateItem {
+    return Intl.message(
+      'Failed to update item',
+      name: 'failedToUpdateItem',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

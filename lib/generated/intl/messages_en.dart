@@ -414,6 +414,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your whatsapp number",
     ),
     "expiresInDays": m3,
+    "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
+      "Failed to update item",
+    ),
     "filters": MessageLookupByLibrary.simpleMessage("Filters"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("Filters & Sorting"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -484,6 +487,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("Item Total"),
     "itemType": MessageLookupByLibrary.simpleMessage("Item Type"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("Item Type"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Item updated successfully",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("Items"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("ITEMS COUNT"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),

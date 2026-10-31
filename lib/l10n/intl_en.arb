@@ -1177,5 +1177,7 @@
   "completedLeaves": "Completed Leaves",
   "noCompletedLeavesFound": "No completed leaves found",
   "pleaseSelectAnXlsxFileOnly": "Please select an .xlsx file only",
-  "couldNotAccessTheSelectedFile": "Could not access the selected file"
+  "couldNotAccessTheSelectedFile": "Could not access the selected file",
+  "itemUpdatedSuccessfully": "Item updated successfully",
+  "failedToUpdateItem": "Failed to update item"
 }
