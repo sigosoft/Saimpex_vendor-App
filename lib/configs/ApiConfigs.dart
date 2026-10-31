@@ -113,6 +113,7 @@ class ApiEndPoints {
   static String earningsOrders = "earnings/orders";
   static String earningsPayoutHistory = "earnings/payoutHistory";
   static String earningsPayoutDetail = "earnings/payoutDetail";
+  static String earningsBalanceAdjustments = "earnings/balanceAdjustments";
 
   // grocery api endpoints
 

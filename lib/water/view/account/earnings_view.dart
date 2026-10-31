@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/widgets/balance_adjustments_section.dart';
 import 'package:saimpex_vendor/water/view/account/payout_details_view.dart';
 
 class EarningsView extends StatefulWidget {
@@ -72,6 +73,7 @@ class _EarningsViewState extends State<EarningsView> {
   Map<String, dynamic>? _earningsSummary;
   List<_Order> _orders = [];
   List<_Payout> _payouts = [];
+  final GlobalKey<BalanceAdjustmentsSectionState> _adjustmentsKey = GlobalKey();
 
   @override
   void initState() {
@@ -430,6 +432,8 @@ class _EarningsViewState extends State<EarningsView> {
                       _fetchEarningsSummary(),
                       _fetchOrders(),
                       _fetchPayouts(),
+                      if (_adjustmentsKey.currentState != null)
+                        _adjustmentsKey.currentState!.refresh(),
                     ]);
                   },
                   child: ListView(
@@ -582,6 +586,10 @@ class _EarningsViewState extends State<EarningsView> {
                             ),
                             const SizedBox(height: 12),
                           ],
+                        BalanceAdjustmentsSection(
+                          key: _adjustmentsKey,
+                          accent: EarningsView.orange,
+                        ),
                       ],
                     ],
                   ),

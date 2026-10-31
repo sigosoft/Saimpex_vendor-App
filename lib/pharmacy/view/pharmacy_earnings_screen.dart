@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_payout_details_screen.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
+import 'package:saimpex_vendor/utils/widgets/balance_adjustments_section.dart';
 
 class PharmacyEarningsScreen extends StatefulWidget {
   const PharmacyEarningsScreen({super.key});
@@ -68,6 +69,7 @@ class _PharmacyEarningsScreenState extends State<PharmacyEarningsScreen> {
   bool _isLoadingOrders = false;
   List<_Payout> _payouts = [];
   bool _isLoadingPayouts = false;
+  final GlobalKey<BalanceAdjustmentsSectionState> _adjustmentsKey = GlobalKey();
 
   @override
   void initState() {
@@ -790,6 +792,9 @@ class _PharmacyEarningsScreenState extends State<PharmacyEarningsScreen> {
                       _tab == _EarnTab.payouts
                           ? _fetchPayouts()
                           : _fetchOrders(),
+                      if (_tab == _EarnTab.payouts &&
+                          _adjustmentsKey.currentState != null)
+                        _adjustmentsKey.currentState!.refresh(),
                     ]);
                   },
                   child: ListView(
@@ -892,6 +897,10 @@ class _PharmacyEarningsScreenState extends State<PharmacyEarningsScreen> {
                           ),
                           const SizedBox(height: 12),
                         ],
+                      BalanceAdjustmentsSection(
+                        key: _adjustmentsKey,
+                        accent: PharmacyEarningsScreen.orange,
+                      ),
                     ],
                   ],
                 ),

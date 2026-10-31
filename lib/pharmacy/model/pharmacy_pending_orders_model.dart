@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
@@ -219,10 +220,7 @@ class PharmacyPendingOrderItem {
         deliveryType?.toString().toLowerCase() == 'pickup';
   }
 
-  bool get isCashOnDeliveryBool {
-    final p = paymentType?.toString().toLowerCase() ?? '';
-    return p.contains('cash') || p.contains('cod');
-  }
+  bool get isCashOnDeliveryBool => isCashPayment(paymentType);
 
   int get displayItemsCount {
     if (itemsCount != null && itemsCount! > 0) return itemsCount!;

@@ -77,7 +77,7 @@ From `V2_DECISIONS_AND_PLAN.md` (sections 3, 5, 7, 9, 11):
 | **Vendors manage their own drivers** | Keep Delivery Boys screens (list, add, edit, delete). Note: the FRD says the opposite; the decisions file wins. | Done for grocery/restaurant and pharmacy. Water: list and add screen exist; flows unverified. |
 | **Pre-order reminder 30 min before** scheduled time; driver requested when Ready or 15 min before | Show scheduled orders, show the scheduled time on cards, handle the reminder push. | Not started. Contract pending from backend (phase 2). |
 | **Grocery substitution, auto-accepted after 10 min** | Vendor proposes a replacement item per order line; show pending/accepted/auto-accepted state. | Not started. Contract pending from backend (phase 2). |
-| **Balance adjustments visible in Earnings** | Show admin add/deduct entries with note, amount, balance after, date. | API exists (`GET vendorapp/earnings/balanceAdjustments`). Not used in the app. |
+| **Balance adjustments visible in Earnings** | Show admin add/deduct entries with note, amount, balance after, date. | **Done (V4, branch `feature/earnings-adjustments`, needs device test).** `lib/utils/widgets/balance_adjustments_section.dart` on the Payouts tab of all three earnings screens. Built without a Figma screen. |
 | **EN / FR / AR, Arabic right-to-left** | All strings translated; RTL layout correct. | Grocery/restaurant mostly translated. Water and Home Cleaning are English only. Pharmacy partly. |
 | **Printing: generic** (no specific device) | Receipt printing should work with common ESC/POS printers. | Android Bluetooth ESC/POS works for grocery/restaurant orders. No iOS. Not in pharmacy/water. |
 | **API responses carry `message_en/fr/ar`** | Show the message in the current app language. | Done in login and profile; other screens vary (unverified per screen). |
@@ -270,7 +270,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Baskets (grocery) | Done (unverified) | `lib/view/basket/basketlisting.dart`, `lib/controller/basket_controller.dart`, `lib/controller/redeemed_customers_controller.dart` | |
 | Coupons | Done | `lib/view/settings/coupons_screen.dart`, `lib/view/settings/add_coupon_screen.dart`, `lib/controller/coupon_controller.dart` | |
 | Drivers (delivery boys) | Done | `lib/view/settings/delivery_boys.dart`, `lib/view/settings/add_delivery_boy_screen.dart`, `lib/controller/delivery_boys_controller.dart` | List, add, edit, detail, delete. |
-| Earnings / payouts | Partial | `lib/view/settings/earnings.dart`, `lib/view/settings/earnings_all_orders.dart`, `lib/view/settings/payout_details.dart`, `lib/controller/payout_controller.dart` | Summary, orders, payout history/detail done. **Balance adjustments not shown.** |
+| Earnings / payouts | Partial | `lib/view/settings/earnings.dart`, `lib/view/settings/earnings_all_orders.dart`, `lib/view/settings/payout_details.dart`, `lib/controller/payout_controller.dart` | Summary, orders, payout history/detail done. Balance adjustments listed on the Payouts tab (V4, `lib/utils/widgets/balance_adjustments_section.dart`). |
 | Sales reports | Done (unverified) | `lib/view/reports/sales_reports.dart`, `lib/controller/sales_report_controller.dart` | |
 | Working hours, leave, busy mode | Done (unverified) | `lib/controller/profile_controller.dart`, `lib/view/restaurant/leave_history_screen.dart` | |
 | Profile edit | Done | `lib/view/profile/edit_profile.dart`, `lib/controller/profile_controller.dart` | Name/photo via `profile/update`; phone change needs WhatsApp OTP via `profile/sendOtp` (commit `706c74e`). |
@@ -294,7 +294,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Category request | Not started | - | Backend has `requestPharmacyCategory`. Scope: categories are admin-managed; vendor may request one. |
 | Coupons | Done | `lib/pharmacy/view/pharmacy_coupons_screen.dart`, `lib/pharmacy/view/pharmacy_add_coupon_screen.dart` | |
 | Drivers | Done | `lib/pharmacy/view/pharmacy_delivery_boys_screen.dart` (uses shared add screen) | |
-| Earnings / payouts | Partial | `lib/pharmacy/view/pharmacy_earnings_screen.dart`, `lib/pharmacy/view/pharmacy_payout_details_screen.dart`, `lib/pharmacy/view/pharmacy_received_payouts_screen.dart` | No balance adjustments. |
+| Earnings / payouts | Partial | `lib/pharmacy/view/pharmacy_earnings_screen.dart`, `lib/pharmacy/view/pharmacy_payout_details_screen.dart`, `lib/pharmacy/view/pharmacy_received_payouts_screen.dart` | Balance adjustments listed on the Payouts tab (V4). |
 | Profile, hours, leave, business settings | Done (unverified) | `lib/pharmacy/view/pharmacy_profile_screen.dart`, `lib/pharmacy/view/pharmacy_working_hours_screen.dart`, `lib/pharmacy/view/pharmacy_leave_management_screen.dart`, `lib/pharmacy/view/pharmacy_business_settings_screen.dart` | Profile edit through OTP endpoints: not wired here. |
 | Chat | Done | `lib/pharmacy/view/pharmacy_chat_screen.dart`, `lib/pharmacy/controller/pharmacy_chat_controller.dart` | |
 | Notifications | Done | `lib/pharmacy/view/pharmacy_notifications_screen.dart` | |
@@ -311,7 +311,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Inventory, stock, price | Done | `lib/water/view/inventory/inventory_view.dart`, `lib/water/controller/inventory_controller.dart`, `lib/water/controller/inventory_details_controller.dart`, `lib/water/view/inventory/add_product_view.dart` | |
 | Coupons | Partial | `lib/water/view/account/coupons_view.dart`, `lib/water/view/account/add_coupon_view.dart` | List on API; add/edit screen does not call the API. |
 | Drivers | Partial (unverified) | `lib/water/view/account/delivery_boys_view.dart` | List on API; opens shared add screen. |
-| Earnings | Partial | `lib/water/view/account/earnings_view.dart`, `lib/water/view/account/payout_details_view.dart` | `lib/water/view/account/received_payouts_view.dart` is static. No balance adjustments. |
+| Earnings | Partial | `lib/water/view/account/earnings_view.dart`, `lib/water/view/account/payout_details_view.dart` | `lib/water/view/account/received_payouts_view.dart` is static. Balance adjustments listed on the Payouts tab (V4). |
 | Profile, hours, leave, business settings | Done (unverified) | `lib/water/view/account/store_profile_view.dart`, `lib/water/view/account/working_hours_view.dart`, `lib/water/view/account/leave_management_view.dart`, `lib/water/view/account/business_settings_view.dart` | |
 | Chat | Done | `lib/water/view/chat/messages_list_view.dart`, `lib/water/view/chat/chat_view.dart` | Reuses `ChatController`. |
 | Notifications | Partial (mock) | `lib/water/view/notifications/notifications_view.dart` | Hard-coded list. |
@@ -401,7 +401,7 @@ Do not build against guessed contracts. Ask the backend owner for the request/re
 
 Each item: what to do, then acceptance criteria (AC).
 
-**P1. Show balance adjustments in Earnings (all sections).**
+**P1. Show balance adjustments in Earnings (all sections).** ✅ Done in V4 (`feature/earnings-adjustments`): shared `lib/utils/widgets/balance_adjustments_section.dart`, built without a Figma screen (payout-card style); +/- amount, note (or "Admin adjustment"), balance after, date DD/MM/YYYY; empty state; EN/FR/AR. Pull to refresh reloads it.
 Add `ApiEndPoints.earningsBalanceAdjustments = "earnings/balanceAdjustments"`; show a list in `lib/view/settings/earnings.dart`, `lib/pharmacy/view/pharmacy_earnings_screen.dart`, `lib/water/view/account/earnings_view.dart`. No Figma screen: build in the same card style and note it as "built without a Figma screen".
 AC: an admin adjustment made in the admin panel appears with +/- amount, note, balance after and date; empty state shown when none; labels in EN/FR/AR.
 
@@ -505,7 +505,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 
 | Date | Change | What the app must do |
 |---|---|---|
-| 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
+| 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. ✅ V4: `lib/utils/payment_type.dart` (`paymentTypeLabel`, `isCashPayment`) used in restaurant/grocery order details, sales report details, pharmacy cards + OTC detail, water order list + detail, and the printed receipt (English). Also fixes water detail showing the raw code and pharmacy pending orders treating `1` as online. |
 | 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. |
 | 31 Oct 2026 | Grocery substitution: on a grocery order before Ready, pick a line → choose a substitute from own items (or "unavailable") → `POST vendorapp/orders/{id}/substitutions`; list with `GET` same path. Customer has 10 min, then auto-accept. | Add a "Suggest substitute" action per line and a status chip (pending / accepted / rejected / auto). |
 | 31 Oct 2026 | Substitution rule change: customers pay the extra for pricier substitutes (wallet, then cash/online). An unanswered pricier substitute is removed, not auto-accepted. | Show the result status; no app change needed beyond that. |
