@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -294,8 +295,8 @@ class WaterInventoryDetailsController extends GetxController {
               dataMap['status'] == '1');
 
       String message = isSuccess
-          ? 'Stock updated successfully'
-          : 'Failed to update stock';
+          ? S.current.waterStockUpdatedSuccessfully
+          : S.current.waterFailedToUpdateStock;
 
       if (dataMap != null && dataMap['message'] != null) {
         final msgObj = dataMap['message'];
@@ -356,7 +357,7 @@ class WaterInventoryDetailsController extends GetxController {
         '=======================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error updating stock: $e');
+        showToast(context, S.current.waterErrorUpdatingStock(e.toString()));
       }
       return false;
     }
@@ -448,8 +449,8 @@ class WaterInventoryDetailsController extends GetxController {
               dataMap['status'] == '1');
 
       String message = isSuccess
-          ? 'Price updated successfully'
-          : 'Failed to update price';
+          ? S.current.waterPriceUpdatedSuccessfully
+          : S.current.waterFailedToUpdatePrice;
 
       if (dataMap != null && dataMap['message'] != null) {
         final msgObj = dataMap['message'];
@@ -503,7 +504,7 @@ class WaterInventoryDetailsController extends GetxController {
         '======================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error updating price: $e');
+        showToast(context, S.current.waterErrorUpdatingPrice(e.toString()));
       }
       return false;
     }

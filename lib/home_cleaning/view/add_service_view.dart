@@ -3,7 +3,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:saimpex_vendor/home_cleaning/view/my_services_view.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+
+/// Localised label for a space unit stored as its English value.
+String cleaningUnitLabel(BuildContext context, String unit) {
+  switch (unit) {
+    case 'Room':
+      return S.of(context).cleaningUnitRoom;
+    case 'Unit':
+      return S.of(context).cleaningUnitUnit;
+    case 'Hour':
+      return S.of(context).cleaningUnitHour;
+    case 'Sq. Ft':
+      return S.of(context).cleaningUnitSqFt;
+    case 'Piece':
+      return S.of(context).cleaningUnitPiece;
+    default:
+      return unit;
+  }
+}
+
+/// Localised label for an "issue covered" stored as its English id; values
+/// outside the app's catalogue are shown as stored.
+String cleaningIssueLabel(BuildContext context, String issue) {
+  switch (issue) {
+    case 'Cockroaches':
+      return S.of(context).cleaningPestCockroaches;
+    case 'Ants':
+      return S.of(context).cleaningPestAnts;
+    case 'Bed Bugs':
+      return S.of(context).cleaningPestBedBugs;
+    case 'Mosquitoes':
+      return S.of(context).cleaningPestMosquitoes;
+    case 'Rodents':
+      return S.of(context).cleaningPestRodents;
+    case 'Termites':
+      return S.of(context).cleaningPestTermites;
+    case 'General Sanitization':
+      return S
+          .of(context)
+          .cleaningPestGeneralSanitization
+          .replaceAll('\n', ' ');
+    case 'Flies':
+      return S.of(context).cleaningPestFlies;
+    case 'Other Pests':
+      return S.of(context).cleaningPestOtherPests;
+    default:
+      return issue;
+  }
+}
 
 class SpacePricingItem {
   SpacePricingItem({
@@ -17,22 +69,19 @@ class SpacePricingItem {
   String unit;
 }
 
+/// Add-ons have a name and a price only: the backend stores no unit for them.
 class AddonPricingItem {
-  AddonPricingItem({
-    required this.name,
-    required this.rate,
-    required this.unit,
-  });
+  AddonPricingItem({required this.name, required this.rate});
 
   String name;
   String rate;
-  String unit;
 }
 
 class AddServiceView extends StatefulWidget {
   const AddServiceView({super.key, this.initialService});
 
-  final ServiceItem? initialService;
+  /// The service being edited; null to add a new one. Pops `true` once saved.
+  final CleaningServiceItem? initialService;
 
   static const _orange = Color(0xFFFF5722);
   static const _ink = Color(0xFF1A1A1A);
@@ -43,77 +92,79 @@ class AddServiceView extends StatefulWidget {
 
 class _AddServiceViewState extends State<AddServiceView> {
   File? _pickedImage;
+  String? _existingImageUrl;
   final ImagePicker _picker = ImagePicker();
 
-  bool _isApartmentSelected = true;
-  bool _isVillaSelected = true;
+  bool _isApartmentSelected = false;
+  bool _isVillaSelected = false;
 
-  String _selectedServiceType = 'Select Service';
-  final List<String> _serviceTypes = [
-    'Select Service',
-    'Regular Cleaning',
-    'Pest Control & Disinfection',
-    'Deep Cleaning',
-    'Office Cleaning',
-    'Move-in / Move-out Cleaning',
-  ];
+  List<CleaningServiceType> _serviceTypes = [];
+  int? _selectedTypeId;
+  bool _typesLoading = true;
+  String? _typesError;
+  bool _saving = false;
 
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _supplyFeeController = TextEditingController(text: '120');
+  final TextEditingController _supplyFeeController = TextEditingController();
 
-  bool _customerProvidesProducts = true;
-  bool _iProvideProducts = true;
+  bool _customerProvidesProducts = false;
+  bool _iProvideProducts = false;
 
   late List<SpacePricingItem> _spaces;
   late List<AddonPricingItem> _addons;
   Set<String> _selectedIssues = <String>{};
 
-  bool get _isCleaningService =>
-      _selectedServiceType == 'Regular Cleaning' ||
-      _selectedServiceType == 'Deep Cleaning' ||
-      _selectedServiceType == 'Office Cleaning' ||
-      _selectedServiceType == 'Move-in / Move-out Cleaning';
+  String get _lang => LocalizationService.currentLanguageCode;
 
-  bool get _isPestControl =>
-      _selectedServiceType == 'Pest Control & Disinfection' ||
-      _selectedServiceType == 'Select Service';
+  String _unitLabel(BuildContext context, String unit) =>
+      cleaningUnitLabel(context, unit);
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialService != null) {
-      _selectedServiceType = widget.initialService!.title;
-      _descriptionController.text = widget.initialService!.description;
-      _spaces = [
-        SpacePricingItem(name: 'Bedrooms', rate: widget.initialService!.startingRate, unit: 'Room'),
-        SpacePricingItem(name: 'Kitchens', rate: widget.initialService!.startingRate, unit: 'Room'),
-      ];
-      _addons = widget.initialService!.badges
-          .where((b) => b.price != null)
-          .map((b) => AddonPricingItem(
-                name: b.label,
-                rate: b.price!.replaceAll(RegExp(r'[^0-9]'), ''),
-                unit: 'Unit',
-              ))
+    final item = widget.initialService;
+    if (item != null) {
+      _selectedTypeId = item.serviceTypeId;
+      _existingImageUrl = item.imageUrl;
+      _descriptionController.text = item.description ?? '';
+      _isApartmentSelected = item.propertyTypes.contains(
+        CleaningServiceValues.propertyApartment,
+      );
+      _isVillaSelected = item.propertyTypes.contains(
+        CleaningServiceValues.propertyVilla,
+      );
+      _customerProvidesProducts = item.productSupply.contains(
+        CleaningServiceValues.supplyCustomer,
+      );
+      _iProvideProducts = item.productSupply.contains(
+        CleaningServiceValues.supplyVendor,
+      );
+      if (item.supplyFee != null) {
+        _supplyFeeController.text = formatServicePrice(item.supplyFee);
+      }
+      _spaces = item.spaces
+          .map(
+            (sp) => SpacePricingItem(
+              name: sp.name,
+              rate: formatServicePrice(sp.price),
+              unit: sp.unit ?? 'Room',
+            ),
+          )
           .toList();
-      _selectedIssues = widget.initialService!.badges
-          .where((b) => b.price == null)
-          .map((b) {
-            if (b.label == 'Viral Disinfection') return 'General Sanitization';
-            return b.label;
-          })
-          .toSet();
+      _addons = item.addons
+          .map(
+            (a) => AddonPricingItem(
+              name: a.name,
+              rate: formatServicePrice(a.price),
+            ),
+          )
+          .toList();
+      _selectedIssues = item.issues.toSet();
     } else {
-      _spaces = [
-        SpacePricingItem(name: 'Bedrooms', rate: '100', unit: 'Room'),
-        SpacePricingItem(name: 'Kitchens', rate: '100', unit: 'Room'),
-        SpacePricingItem(name: 'Bathrooms / WC', rate: '100', unit: 'Room'),
-        SpacePricingItem(name: 'Balconies', rate: '100', unit: 'Unit'),
-      ];
-      _addons = [
-        AddonPricingItem(name: 'Fridge Cleaning', rate: '100', unit: 'Unit'),
-      ];
+      _spaces = [];
+      _addons = [];
     }
+    _loadTypes();
   }
 
   @override
@@ -121,6 +172,41 @@ class _AddServiceViewState extends State<AddServiceView> {
     _descriptionController.dispose();
     _supplyFeeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadTypes() async {
+    setState(() {
+      _typesLoading = true;
+      _typesError = null;
+    });
+    try {
+      final types = await CleaningServicesApi.fetchTypes();
+      if (!mounted) return;
+      final item = widget.initialService;
+      // Keep the edited service's type selectable even if it is no longer
+      // in the approved list.
+      if (item?.serviceTypeId != null &&
+          !types.any((t) => t.id == item!.serviceTypeId)) {
+        types.add(
+          CleaningServiceType(
+            id: item!.serviceTypeId!,
+            nameEn: item.nameEn,
+            nameFr: item.nameFr,
+            nameAr: item.nameAr,
+          ),
+        );
+      }
+      setState(() {
+        _serviceTypes = types;
+        _typesLoading = false;
+      });
+    } on CleaningApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _typesLoading = false;
+        _typesError = e.message ?? S.of(context).cleaningSvcTypesLoadError;
+      });
+    }
   }
 
   Future<void> _pickImage() async {
@@ -143,7 +229,7 @@ class _AddServiceViewState extends State<AddServiceView> {
       _pickedImage = null;
       _isApartmentSelected = false;
       _isVillaSelected = false;
-      _selectedServiceType = 'Select Service';
+      _selectedTypeId = null;
       _descriptionController.clear();
       _supplyFeeController.clear();
       _customerProvidesProducts = false;
@@ -154,11 +240,81 @@ class _AddServiceViewState extends State<AddServiceView> {
     });
   }
 
+  Future<void> _save() async {
+    if (_saving) return;
+    HapticFeedback.lightImpact();
+    final type = _serviceTypes
+        .where((t) => t.id == _selectedTypeId)
+        .firstOrNull;
+    if (type == null) {
+      showToast(context, S.of(context).cleaningSvcSelectServiceType);
+      return;
+    }
+    if (_spaces.isEmpty) {
+      showToast(context, S.of(context).cleaningSvcAddOneSpace);
+      return;
+    }
+    double? supplyFee;
+    if (_iProvideProducts && _supplyFeeController.text.trim().isNotEmpty) {
+      supplyFee = double.tryParse(_supplyFeeController.text.trim());
+      if (supplyFee == null || supplyFee < 0) {
+        showToast(context, S.of(context).waterPleaseEnterValidPrice);
+        return;
+      }
+    }
+    setState(() => _saving = true);
+    try {
+      final message = await CleaningServicesApi.saveService(
+        serviceItemId: widget.initialService?.id,
+        type: type,
+        description: _descriptionController.text.trim(),
+        status: widget.initialService?.status ?? 1,
+        propertyTypes: [
+          if (_isApartmentSelected) CleaningServiceValues.propertyApartment,
+          if (_isVillaSelected) CleaningServiceValues.propertyVilla,
+        ],
+        productSupply: [
+          if (_customerProvidesProducts) CleaningServiceValues.supplyCustomer,
+          if (_iProvideProducts) CleaningServiceValues.supplyVendor,
+        ],
+        supplyFee: supplyFee,
+        spaces: _spaces
+            .map(
+              (sp) => CleaningServiceSpace(
+                name: sp.name,
+                unit: sp.unit,
+                price: double.tryParse(sp.rate) ?? 0,
+              ),
+            )
+            .toList(),
+        addons: _addons
+            .map(
+              (a) => CleaningServiceAddon(
+                name: a.name,
+                price: double.tryParse(a.rate) ?? 0,
+              ),
+            )
+            .toList(),
+        issues: _selectedIssues.toList(),
+        image: _pickedImage,
+      );
+      if (!mounted) return;
+      if (message != null) showToast(context, message);
+      Navigator.pop(context, true);
+    } on CleaningApiException catch (e) {
+      if (!mounted) return;
+      showToast(context, e.message ?? S.of(context).cleaningSvcGenericError);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   void _showAddSpaceDialog({SpacePricingItem? editingItem, int? index}) {
     final nameCtrl = TextEditingController(text: editingItem?.name ?? '');
     final priceCtrl = TextEditingController(text: editingItem?.rate ?? '');
     String currentUnit = editingItem?.unit ?? 'Room';
     final units = ['Room', 'Unit', 'Hour', 'Sq. Ft'];
+    if (!units.contains(currentUnit)) units.add(currentUnit);
 
     showModalBottomSheet<void>(
       context: context,
@@ -185,7 +341,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                   Row(
                     children: [
                       Text(
-                        editingItem != null ? 'Edit Space' : 'Add Space',
+                        editingItem != null
+                            ? S.of(context).cleaningEditSpace
+                            : S.of(context).cleaningAddSpace,
                         style: GoogleFonts.inter(
                           color: AddServiceView._ink,
                           fontWeight: FontWeight.w700,
@@ -213,7 +371,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Space Name',
+                    S.of(context).cleaningSpaceName,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
@@ -223,16 +381,22 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
-                    style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AddServiceView._ink,
+                    ),
                     decoration: InputDecoration(
-                      hintText: 'e.g. Master Bedroom, Living Room, Corridor, Balcony',
+                      hintText: S.of(context).cleaningSpaceNameHint,
                       hintStyle: GoogleFonts.inter(
                         color: const Color(0xFFBDBDBD),
                         fontSize: 12.5,
                       ),
                       filled: true,
                       fillColor: const Color(0xFFF7F7F8),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
@@ -245,7 +409,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Unit',
+                    S.of(context).cleaningUnitLabel,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
@@ -265,10 +429,22 @@ class _AddServiceViewState extends State<AddServiceView> {
                       child: DropdownButton<String>(
                         value: currentUnit,
                         isExpanded: true,
-                        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF757575)),
-                        style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink, fontWeight: FontWeight.w600),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Color(0xFF757575),
+                        ),
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: AddServiceView._ink,
+                          fontWeight: FontWeight.w600,
+                        ),
                         items: units
-                            .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                            .map(
+                              (u) => DropdownMenuItem(
+                                value: u,
+                                child: Text(_unitLabel(context, u)),
+                              ),
+                            )
                             .toList(),
                         onChanged: (val) {
                           if (val != null) {
@@ -280,7 +456,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Price',
+                    S.of(context).price,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
@@ -290,7 +466,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   Container(
                     height: 44,
-                    padding: const EdgeInsets.only(left: 14, right: 8),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 14,
+                      end: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF7F7F8),
                       borderRadius: BorderRadius.circular(10),
@@ -302,9 +481,12 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: TextField(
                             controller: priceCtrl,
                             keyboardType: TextInputType.number,
-                            style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: AddServiceView._ink,
+                            ),
                             decoration: InputDecoration(
-                              hintText: 'Enter the Price',
+                              hintText: S.of(context).cleaningEnterThePrice,
                               hintStyle: GoogleFonts.inter(
                                 color: const Color(0xFFBDBDBD),
                                 fontSize: 12.5,
@@ -316,7 +498,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEFF5FE),
                             borderRadius: BorderRadius.circular(6),
@@ -343,10 +528,12 @@ class _AddServiceViewState extends State<AddServiceView> {
                             onPressed: () => Navigator.pop(ctx),
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xFFE0E0E0)),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             child: Text(
-                              'Cancel',
+                              S.of(context).cancel,
                               style: GoogleFonts.inter(
                                 color: const Color(0xFF424242),
                                 fontWeight: FontWeight.w600,
@@ -365,6 +552,14 @@ class _AddServiceViewState extends State<AddServiceView> {
                               final name = nameCtrl.text.trim();
                               final price = priceCtrl.text.trim();
                               if (name.isNotEmpty && price.isNotEmpty) {
+                                final parsed = double.tryParse(price);
+                                if (parsed == null || parsed < 0) {
+                                  showToast(
+                                    context,
+                                    S.of(context).waterPleaseEnterValidPrice,
+                                  );
+                                  return;
+                                }
                                 setState(() {
                                   if (editingItem != null && index != null) {
                                     _spaces[index] = SpacePricingItem(
@@ -373,11 +568,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                                       unit: currentUnit,
                                     );
                                   } else {
-                                    _spaces.add(SpacePricingItem(
-                                      name: name,
-                                      rate: price,
-                                      unit: currentUnit,
-                                    ));
+                                    _spaces.add(
+                                      SpacePricingItem(
+                                        name: name,
+                                        rate: price,
+                                        unit: currentUnit,
+                                      ),
+                                    );
                                   }
                                 });
                                 Navigator.pop(ctx);
@@ -387,10 +584,14 @@ class _AddServiceViewState extends State<AddServiceView> {
                               elevation: 0,
                               backgroundColor: AddServiceView._orange,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             child: Text(
-                              editingItem != null ? 'Save Space' : 'Add Space',
+                              editingItem != null
+                                  ? S.of(context).cleaningSaveSpace
+                                  : S.of(context).cleaningAddSpace,
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
@@ -413,8 +614,6 @@ class _AddServiceViewState extends State<AddServiceView> {
   void _showAddAddonDialog({AddonPricingItem? editingItem, int? index}) {
     final nameCtrl = TextEditingController(text: editingItem?.name ?? '');
     final priceCtrl = TextEditingController(text: editingItem?.rate ?? '');
-    String currentUnit = editingItem?.unit ?? 'Unit';
-    final units = ['Unit', 'Hour', 'Room', 'Piece'];
 
     showModalBottomSheet<void>(
       context: context,
@@ -441,7 +640,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                   Row(
                     children: [
                       Text(
-                        editingItem != null ? 'Edit Add-on' : 'Add Add-on',
+                        editingItem != null
+                            ? S.of(context).cleaningEditAddon
+                            : S.of(context).cleaningAddAddon,
                         style: GoogleFonts.inter(
                           color: AddServiceView._ink,
                           fontWeight: FontWeight.w700,
@@ -469,7 +670,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Add-on Name',
+                    S.of(context).cleaningAddonName,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
@@ -479,16 +680,22 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
-                    style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AddServiceView._ink,
+                    ),
                     decoration: InputDecoration(
-                      hintText: 'e.g. Fridge Cleaning, Oven Cleaning',
+                      hintText: S.of(context).cleaningAddonNameHint,
                       hintStyle: GoogleFonts.inter(
                         color: const Color(0xFFBDBDBD),
                         fontSize: 12.5,
                       ),
                       filled: true,
                       fillColor: const Color(0xFFF7F7F8),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
@@ -501,7 +708,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Unit',
+                    S.of(context).price,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
@@ -511,42 +718,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   Container(
                     height: 44,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF7F7F8),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFE8E8E8)),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 14,
+                      end: 8,
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: currentUnit,
-                        isExpanded: true,
-                        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF757575)),
-                        style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink, fontWeight: FontWeight.w600),
-                        items: units
-                            .map((u) => DropdownMenuItem(value: u, child: Text(u)))
-                            .toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setModalState(() => currentUnit = val);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Price',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF616161),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    height: 44,
-                    padding: const EdgeInsets.only(left: 14, right: 8),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF7F7F8),
                       borderRadius: BorderRadius.circular(10),
@@ -558,9 +733,12 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: TextField(
                             controller: priceCtrl,
                             keyboardType: TextInputType.number,
-                            style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: AddServiceView._ink,
+                            ),
                             decoration: InputDecoration(
-                              hintText: 'Enter the Price',
+                              hintText: S.of(context).cleaningEnterThePrice,
                               hintStyle: GoogleFonts.inter(
                                 color: const Color(0xFFBDBDBD),
                                 fontSize: 12.5,
@@ -572,7 +750,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEFF5FE),
                             borderRadius: BorderRadius.circular(6),
@@ -599,10 +780,12 @@ class _AddServiceViewState extends State<AddServiceView> {
                             onPressed: () => Navigator.pop(ctx),
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xFFE0E0E0)),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             child: Text(
-                              'Cancel',
+                              S.of(context).cancel,
                               style: GoogleFonts.inter(
                                 color: const Color(0xFF424242),
                                 fontWeight: FontWeight.w600,
@@ -621,19 +804,24 @@ class _AddServiceViewState extends State<AddServiceView> {
                               final name = nameCtrl.text.trim();
                               final price = priceCtrl.text.trim();
                               if (name.isNotEmpty && price.isNotEmpty) {
+                                final parsed = double.tryParse(price);
+                                if (parsed == null || parsed < 0) {
+                                  showToast(
+                                    context,
+                                    S.of(context).waterPleaseEnterValidPrice,
+                                  );
+                                  return;
+                                }
                                 setState(() {
                                   if (editingItem != null && index != null) {
                                     _addons[index] = AddonPricingItem(
                                       name: name,
                                       rate: price,
-                                      unit: currentUnit,
                                     );
                                   } else {
-                                    _addons.add(AddonPricingItem(
-                                      name: name,
-                                      rate: price,
-                                      unit: currentUnit,
-                                    ));
+                                    _addons.add(
+                                      AddonPricingItem(name: name, rate: price),
+                                    );
                                   }
                                 });
                                 Navigator.pop(ctx);
@@ -643,10 +831,14 @@ class _AddServiceViewState extends State<AddServiceView> {
                               elevation: 0,
                               backgroundColor: AddServiceView._orange,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             child: Text(
-                              editingItem != null ? 'Save Add-on' : 'Add Add-on',
+                              editingItem != null
+                                  ? S.of(context).cleaningSaveAddon
+                                  : S.of(context).cleaningAddAddon,
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
@@ -699,7 +891,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Request New Service Type',
+                    S.of(context).cleaningRequestNewServiceType,
                     style: GoogleFonts.inter(
                       color: AddServiceView._ink,
                       fontWeight: FontWeight.w700,
@@ -727,7 +919,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(height: 14),
               Text(
-                'Service Type Name',
+                S.of(context).cleaningServiceTypeName,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
@@ -737,16 +929,22 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(height: 6),
               TextField(
                 controller: typeCtrl,
-                style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: AddServiceView._ink,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'Enter service type',
+                  hintText: S.of(context).cleaningEnterServiceType,
                   hintStyle: GoogleFonts.inter(
                     color: const Color(0xFFBDBDBD),
                     fontSize: 12.5,
                   ),
                   filled: true,
                   fillColor: const Color(0xFFF7F7F8),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
@@ -759,7 +957,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Reason / Description',
+                S.of(context).cleaningReasonDescription,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
@@ -771,16 +969,22 @@ class _AddServiceViewState extends State<AddServiceView> {
                 controller: reasonCtrl,
                 minLines: 3,
                 maxLines: 4,
-                style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: AddServiceView._ink,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'Briefly describe why you need this service type',
+                  hintText: S.of(context).cleaningServiceTypeReasonHint,
                   hintStyle: GoogleFonts.inter(
                     color: const Color(0xFFBDBDBD),
                     fontSize: 12.5,
                   ),
                   filled: true,
                   fillColor: const Color(0xFFF7F7F8),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
@@ -801,10 +1005,12 @@ class _AddServiceViewState extends State<AddServiceView> {
                         onPressed: () => Navigator.pop(ctx),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFFE0E0E0)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         child: Text(
-                              'Cancel',
+                          S.of(context).cancel,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w600,
@@ -820,25 +1026,21 @@ class _AddServiceViewState extends State<AddServiceView> {
                       height: 44,
                       child: ElevatedButton(
                         onPressed: () {
-                          final requested = typeCtrl.text.trim();
-                          if (requested.isNotEmpty) {
-                            if (!_serviceTypes.contains(requested)) {
-                              setState(() {
-                                _serviceTypes.add(requested);
-                                _selectedServiceType = requested;
-                              });
-                            }
-                          }
+                          // TODO(V8): send POST requestServiceType
+                          // {name_en, reason}. A requested type stays pending
+                          // until approved, so it is not added to the list.
                           Navigator.pop(ctx);
                         },
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: AddServiceView._orange,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         child: Text(
-                          'Submit Request',
+                          S.of(context).cleaningSubmitRequest,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             fontSize: 13.5,
@@ -859,7 +1061,9 @@ class _AddServiceViewState extends State<AddServiceView> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -888,14 +1092,19 @@ class _AddServiceViewState extends State<AddServiceView> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: SizedBox(
                       height: 44,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
                           Text(
-                            widget.initialService != null ? 'Edit Service' : 'Add Service',
+                            widget.initialService != null
+                                ? S.of(context).cleaningEditService
+                                : S.of(context).cleaningAddService,
                             style: GoogleFonts.inter(
                               color: AddServiceView._ink,
                               fontWeight: FontWeight.w700,
@@ -903,7 +1112,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                           ),
                           Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: AlignmentDirectional.centerStart,
                             child: InkWell(
                               onTap: () {
                                 HapticFeedback.lightImpact();
@@ -916,7 +1125,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFFFFE0D0)),
+                                  border: Border.all(
+                                    color: const Color(0xFFFFE0D0),
+                                  ),
                                 ),
                                 child: const Icon(
                                   Icons.chevron_left_rounded,
@@ -935,7 +1146,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                       padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
                       children: [
                         Text(
-                          'Service Image',
+                          S.of(context).cleaningServiceImage,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w600,
@@ -958,33 +1169,56 @@ class _AddServiceViewState extends State<AddServiceView> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               clipBehavior: Clip.antiAlias,
-                              child: _pickedImage != null
+                              child:
+                                  _pickedImage != null ||
+                                      _existingImageUrl != null
                                   ? Stack(
                                       fit: StackFit.expand,
                                       children: [
-                                        Image.file(
-                                          _pickedImage!,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                          right: 8,
+                                        if (_pickedImage != null)
+                                          Image.file(
+                                            _pickedImage!,
+                                            fit: BoxFit.cover,
+                                          )
+                                        else
+                                          Image.network(
+                                            _existingImageUrl!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, _, _) =>
+                                                const Icon(
+                                                  Icons.broken_image_outlined,
+                                                  color: Color(0xFFBDBDBD),
+                                                ),
+                                          ),
+                                        PositionedDirectional(
+                                          end: 8,
                                           bottom: 8,
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withValues(alpha: 0.6),
-                                              borderRadius: BorderRadius.circular(6),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.6,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
                                             ),
                                             child: Text(
-                                              'Change Image',
-                                              style: GoogleFonts.inter(color: Colors.white, fontSize: 11),
+                                              S.of(context).cleaningChangeImage,
+                                              style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontSize: 11,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ],
                                     )
                                   : Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           width: 44,
@@ -1001,7 +1235,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Tap to upload image',
+                                          S
+                                              .of(context)
+                                              .cleaningTapToUploadImage,
                                           style: GoogleFonts.inter(
                                             color: AddServiceView._ink,
                                             fontWeight: FontWeight.w700,
@@ -1010,7 +1246,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          'PNG, JPG up to 5MB',
+                                          S
+                                              .of(context)
+                                              .cleaningImageFormatsHint,
                                           style: GoogleFonts.inter(
                                             color: const Color(0xFF9E9E9E),
                                             fontWeight: FontWeight.w400,
@@ -1026,20 +1264,16 @@ class _AddServiceViewState extends State<AddServiceView> {
                         _buildPropertyTypesCard(),
                         const SizedBox(height: 14),
                         _buildBasicInfoCard(),
-                        if (_isCleaningService) ...[
-                          const SizedBox(height: 14),
-                          _buildCleaningProductsCard(),
-                        ],
+                        // service_types carry no "kind" flag, so every optional
+                        // section is offered for every type.
+                        const SizedBox(height: 14),
+                        _buildCleaningProductsCard(),
                         const SizedBox(height: 14),
                         _buildSpacePricingCard(),
-                        if (_isCleaningService) ...[
-                          const SizedBox(height: 14),
-                          _buildAddonsCard(),
-                        ],
-                        if (_isPestControl) ...[
-                          const SizedBox(height: 14),
-                          _buildIssuesCoveredCard(),
-                        ],
+                        const SizedBox(height: 14),
+                        _buildAddonsCard(),
+                        const SizedBox(height: 14),
+                        _buildIssuesCoveredCard(),
                       ],
                     ),
                   ),
@@ -1062,7 +1296,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: SizedBox(
                             height: 46,
                             child: ElevatedButton(
-                              onPressed: _resetAll,
+                              onPressed: _saving ? null : _resetAll,
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: const Color(0xFFF1F5F9),
@@ -1072,7 +1306,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                 ),
                               ),
                               child: Text(
-                                'Reset',
+                                S.of(context).reset,
                                 style: GoogleFonts.inter(
                                   color: const Color(0xFF1E6BE6),
                                   fontWeight: FontWeight.w700,
@@ -1088,26 +1322,36 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: SizedBox(
                             height: 46,
                             child: ElevatedButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                Navigator.pop(context);
-                              },
+                              onPressed: _saving ? null : _save,
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 backgroundColor: AddServiceView._orange,
+                                disabledBackgroundColor: AddServiceView._orange
+                                    .withValues(alpha: 0.6),
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: Text(
-                                'Add Service',
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
+                              child: _saving
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      widget.initialService != null
+                                          ? S.of(context).update
+                                          : S.of(context).cleaningAddService,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
@@ -1157,7 +1401,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(width: 6),
               Text(
-                'PROPERTY TYPES',
+                S.of(context).cleaningPropertyTypesHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
@@ -1174,15 +1418,21 @@ class _AddServiceViewState extends State<AddServiceView> {
                 child: GestureDetector(
                   onTap: () {
                     HapticFeedback.selectionClick();
-                    setState(() => _isApartmentSelected = !_isApartmentSelected);
+                    setState(
+                      () => _isApartmentSelected = !_isApartmentSelected,
+                    );
                   },
                   child: Container(
                     height: 42,
                     decoration: BoxDecoration(
-                      color: _isApartmentSelected ? Colors.white : const Color(0xFFF7F7F8),
+                      color: _isApartmentSelected
+                          ? Colors.white
+                          : const Color(0xFFF7F7F8),
                       borderRadius: BorderRadius.circular(22),
                       border: Border.all(
-                        color: _isApartmentSelected ? AddServiceView._orange : const Color(0xFFE8E8E8),
+                        color: _isApartmentSelected
+                            ? AddServiceView._orange
+                            : const Color(0xFFE8E8E8),
                         width: _isApartmentSelected ? 1.2 : 1,
                       ),
                     ),
@@ -1193,14 +1443,20 @@ class _AddServiceViewState extends State<AddServiceView> {
                         Icon(
                           Icons.apartment,
                           size: 18,
-                          color: _isApartmentSelected ? AddServiceView._orange : const Color(0xFF424242),
+                          color: _isApartmentSelected
+                              ? AddServiceView._orange
+                              : const Color(0xFF424242),
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Apartment',
+                          S.of(context).cleaningApartment,
                           style: GoogleFonts.inter(
-                            color: _isApartmentSelected ? AddServiceView._orange : const Color(0xFF424242),
-                            fontWeight: _isApartmentSelected ? FontWeight.w700 : FontWeight.w600,
+                            color: _isApartmentSelected
+                                ? AddServiceView._orange
+                                : const Color(0xFF424242),
+                            fontWeight: _isApartmentSelected
+                                ? FontWeight.w700
+                                : FontWeight.w600,
                             fontSize: 13,
                           ),
                         ),
@@ -1219,10 +1475,14 @@ class _AddServiceViewState extends State<AddServiceView> {
                   child: Container(
                     height: 42,
                     decoration: BoxDecoration(
-                      color: _isVillaSelected ? Colors.white : const Color(0xFFF7F7F8),
+                      color: _isVillaSelected
+                          ? Colors.white
+                          : const Color(0xFFF7F7F8),
                       borderRadius: BorderRadius.circular(22),
                       border: Border.all(
-                        color: _isVillaSelected ? AddServiceView._orange : const Color(0xFFE8E8E8),
+                        color: _isVillaSelected
+                            ? AddServiceView._orange
+                            : const Color(0xFFE8E8E8),
                         width: _isVillaSelected ? 1.2 : 1,
                       ),
                     ),
@@ -1233,14 +1493,20 @@ class _AddServiceViewState extends State<AddServiceView> {
                         Icon(
                           Icons.holiday_village_outlined,
                           size: 18,
-                          color: _isVillaSelected ? AddServiceView._orange : const Color(0xFF424242),
+                          color: _isVillaSelected
+                              ? AddServiceView._orange
+                              : const Color(0xFF424242),
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Villa',
+                          S.of(context).cleaningVilla,
                           style: GoogleFonts.inter(
-                            color: _isVillaSelected ? AddServiceView._orange : const Color(0xFF424242),
-                            fontWeight: _isVillaSelected ? FontWeight.w700 : FontWeight.w600,
+                            color: _isVillaSelected
+                                ? AddServiceView._orange
+                                : const Color(0xFF424242),
+                            fontWeight: _isVillaSelected
+                                ? FontWeight.w700
+                                : FontWeight.w600,
                             fontSize: 13,
                           ),
                         ),
@@ -1270,7 +1536,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(width: 6),
               Text(
-                'BASIC INFORMATION',
+                S.of(context).cleaningBasicInformationHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
@@ -1284,7 +1550,7 @@ class _AddServiceViewState extends State<AddServiceView> {
           Row(
             children: [
               Text(
-                'Service Type',
+                S.of(context).cleaningServiceType,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
@@ -1295,7 +1561,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               GestureDetector(
                 onTap: _showRequestServiceTypeSheet,
                 child: Text(
-                  '+ Request New Service Type',
+                  S.of(context).cleaningRequestNewServiceTypeLink,
                   style: GoogleFonts.inter(
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
@@ -1314,32 +1580,89 @@ class _AddServiceViewState extends State<AddServiceView> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE8E8E8)),
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedServiceType,
-                isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF757575)),
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  color: _selectedServiceType == 'Select Service'
-                      ? const Color(0xFF757575)
-                      : AddServiceView._ink,
-                  fontWeight: FontWeight.w500,
-                ),
-                items: _serviceTypes
-                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) {
-                    setState(() => _selectedServiceType = val);
-                  }
-                },
-              ),
-            ),
+            child: _typesError != null
+                ? InkWell(
+                    onTap: _loadTypes,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _typesError!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              color: const Color(0xFF757575),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          S.of(context).tryAgain,
+                          style: GoogleFonts.inter(
+                            color: AddServiceView._orange,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: _serviceTypes.any((t) => t.id == _selectedTypeId)
+                          ? _selectedTypeId
+                          : null,
+                      isExpanded: true,
+                      hint: Text(
+                        _typesLoading
+                            ? S.of(context).loading
+                            : S.of(context).cleaningSelectService,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: const Color(0xFF757575),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      icon: _typesLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AddServiceView._orange,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: Color(0xFF757575),
+                            ),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: AddServiceView._ink,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      items: _serviceTypes
+                          .map(
+                            (t) => DropdownMenuItem<int>(
+                              value: t.id,
+                              child: Text(t.localizedName(_lang)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: _typesLoading
+                          ? null
+                          : (val) {
+                              if (val != null) {
+                                setState(() => _selectedTypeId = val);
+                              }
+                            },
+                    ),
+                  ),
           ),
           const SizedBox(height: 12),
           Text(
-            'Short Description',
+            S.of(context).cleaningShortDescription,
             style: GoogleFonts.inter(
               color: const Color(0xFF616161),
               fontWeight: FontWeight.w500,
@@ -1353,14 +1676,17 @@ class _AddServiceViewState extends State<AddServiceView> {
             maxLines: 4,
             style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
             decoration: InputDecoration(
-              hintText: 'Enter Description',
+              hintText: S.of(context).cleaningEnterDescription,
               hintStyle: GoogleFonts.inter(
                 color: const Color(0xFFBDBDBD),
                 fontSize: 12.5,
               ),
               filled: true,
               fillColor: const Color(0xFFF7F7F8),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
@@ -1390,7 +1716,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(width: 6),
               Text(
-                'CLEANING PRODUCTS',
+                S.of(context).cleaningCleaningProductsHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
@@ -1402,7 +1728,9 @@ class _AddServiceViewState extends State<AddServiceView> {
           ),
           const SizedBox(height: 12),
           GestureDetector(
-            onTap: () => setState(() => _customerProvidesProducts = !_customerProvidesProducts),
+            onTap: () => setState(
+              () => _customerProvidesProducts = !_customerProvidesProducts,
+            ),
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1413,7 +1741,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
-                    _customerProvidesProducts ? Icons.check : Icons.circle_outlined,
+                    _customerProvidesProducts
+                        ? Icons.check
+                        : Icons.circle_outlined,
                     color: AddServiceView._orange,
                     size: 18,
                   ),
@@ -1423,7 +1753,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Customer provides products',
+                          S.of(context).cleaningCustomerProvidesProducts,
                           style: GoogleFonts.inter(
                             color: AddServiceView._ink,
                             fontWeight: FontWeight.w700,
@@ -1432,7 +1762,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Customer brings their own detergents, mop, and cleaning cloths.',
+                          S.of(context).cleaningCustomerProvidesProductsDesc,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF757575),
                             fontWeight: FontWeight.w400,
@@ -1472,7 +1802,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'I provide the products',
+                              S.of(context).cleaningIProvideProducts,
                               style: GoogleFonts.inter(
                                 color: AddServiceView._ink,
                                 fontWeight: FontWeight.w700,
@@ -1481,7 +1811,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Your team brings professional cleaning detergents, vacuums & cloths.',
+                              S.of(context).cleaningIProvideProductsDesc,
                               style: GoogleFonts.inter(
                                 color: const Color(0xFF757575),
                                 fontWeight: FontWeight.w400,
@@ -1498,7 +1828,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   Row(
                     children: [
                       Text(
-                        'Product Supply Fee',
+                        S.of(context).cleaningProductSupplyFee,
                         style: GoogleFonts.inter(
                           color: const Color(0xFF616161),
                           fontWeight: FontWeight.w500,
@@ -1521,7 +1851,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                               child: TextField(
                                 controller: _supplyFeeController,
                                 keyboardType: TextInputType.number,
-                                textAlign: TextAlign.right,
+                                textAlign: TextAlign.end,
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -1571,7 +1901,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(width: 6),
               Text(
-                'SPACE PRICING',
+                S.of(context).cleaningSpacePricingHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
@@ -1603,7 +1933,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -1621,7 +1954,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                           ),
                           TextSpan(
-                            text: 'MRU/${_spaces[i].unit}',
+                            text: 'MRU/${_unitLabel(context, _spaces[i].unit)}',
                             style: GoogleFonts.inter(
                               color: const Color(0xFF757575),
                               fontWeight: FontWeight.w500,
@@ -1634,7 +1967,8 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(width: 8),
                   InkWell(
-                    onTap: () => _showAddSpaceDialog(editingItem: _spaces[i], index: i),
+                    onTap: () =>
+                        _showAddSpaceDialog(editingItem: _spaces[i], index: i),
                     child: const Icon(
                       Icons.edit_outlined,
                       size: 16,
@@ -1661,7 +1995,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  '+ Add Space',
+                  S.of(context).cleaningAddSpaceButton,
                   style: GoogleFonts.inter(
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
@@ -1690,7 +2024,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               ),
               const SizedBox(width: 6),
               Text(
-                'ADD-ON SERVICES',
+                S.of(context).cleaningAddonServicesHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
@@ -1722,7 +2056,10 @@ class _AddServiceViewState extends State<AddServiceView> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -1740,7 +2077,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                           ),
                           TextSpan(
-                            text: 'MRU/${_addons[i].unit}',
+                            text: 'MRU',
                             style: GoogleFonts.inter(
                               color: const Color(0xFF757575),
                               fontWeight: FontWeight.w500,
@@ -1753,7 +2090,8 @@ class _AddServiceViewState extends State<AddServiceView> {
                   ),
                   const SizedBox(width: 8),
                   InkWell(
-                    onTap: () => _showAddAddonDialog(editingItem: _addons[i], index: i),
+                    onTap: () =>
+                        _showAddAddonDialog(editingItem: _addons[i], index: i),
                     child: const Icon(
                       Icons.edit_outlined,
                       size: 16,
@@ -1780,7 +2118,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  '+ Add Add-on',
+                  S.of(context).cleaningAddAddonButton,
                   style: GoogleFonts.inter(
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
@@ -1801,7 +2139,7 @@ class _AddServiceViewState extends State<AddServiceView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ISSUES COVERED',
+            S.of(context).cleaningIssuesCoveredHeader,
             style: GoogleFonts.inter(
               color: const Color(0xFF424242),
               fontWeight: FontWeight.w700,
@@ -1814,7 +2152,7 @@ class _AddServiceViewState extends State<AddServiceView> {
             children: [
               _buildIssueItem(
                 id: 'Cockroaches',
-                label: 'Cockroaches',
+                label: S.of(context).cleaningPestCockroaches,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _CockroachPainter(),
@@ -1823,7 +2161,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Ants',
-                label: 'Ants',
+                label: S.of(context).cleaningPestAnts,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _AntPainter(),
@@ -1832,7 +2170,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Bed Bugs',
-                label: 'Bed Bugs',
+                label: S.of(context).cleaningPestBedBugs,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _BedBugPainter(),
@@ -1845,7 +2183,7 @@ class _AddServiceViewState extends State<AddServiceView> {
             children: [
               _buildIssueItem(
                 id: 'Mosquitoes',
-                label: 'Mosquitoes',
+                label: S.of(context).cleaningPestMosquitoes,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _MosquitoPainter(),
@@ -1854,7 +2192,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Rodents',
-                label: 'Rodents',
+                label: S.of(context).cleaningPestRodents,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _RodentPainter(),
@@ -1863,7 +2201,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Termites',
-                label: 'Termites',
+                label: S.of(context).cleaningPestTermites,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _TermitePainter(),
@@ -1876,7 +2214,7 @@ class _AddServiceViewState extends State<AddServiceView> {
             children: [
               _buildIssueItem(
                 id: 'General Sanitization',
-                label: 'General\nSanitization',
+                label: S.of(context).cleaningPestGeneralSanitization,
                 circleBg: const Color(0xFFDCE9FF),
                 icon: const CustomPaint(
                   size: Size(22, 22),
@@ -1886,7 +2224,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Flies',
-                label: 'Flies',
+                label: S.of(context).cleaningPestFlies,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _FlyPainter(),
@@ -1895,7 +2233,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 8),
               _buildIssueItem(
                 id: 'Other Pests',
-                label: 'Other Pests',
+                label: S.of(context).cleaningPestOtherPests,
                 icon: const CustomPaint(
                   size: Size(22, 22),
                   painter: _OtherPestsPainter(),
@@ -1934,7 +2272,9 @@ class _AddServiceViewState extends State<AddServiceView> {
             color: isSelected ? const Color(0xFFFFF9F5) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AddServiceView._orange : const Color(0xFFEEEEEE),
+              color: isSelected
+                  ? AddServiceView._orange
+                  : const Color(0xFFEEEEEE),
               width: isSelected ? 1.2 : 0.9,
             ),
             boxShadow: [
@@ -1965,7 +2305,9 @@ class _AddServiceViewState extends State<AddServiceView> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                  color: isSelected ? AddServiceView._orange : const Color(0xFF2D3748),
+                  color: isSelected
+                      ? AddServiceView._orange
+                      : const Color(0xFF2D3748),
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   fontSize: 10.5,
                   height: 1.15,
@@ -2040,7 +2382,11 @@ class _CockroachPainter extends CustomPainter {
       ..color = const Color(0xFF2C140A)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
-    canvas.drawLine(Offset(w * 0.5, h * 0.34), Offset(w * 0.5, h * 0.85), seamPaint);
+    canvas.drawLine(
+      Offset(w * 0.5, h * 0.34),
+      Offset(w * 0.5, h * 0.85),
+      seamPaint,
+    );
 
     final shieldRect = Rect.fromCenter(
       center: Offset(w * 0.5, h * 0.32),
@@ -2107,12 +2453,20 @@ class _AntPainter extends CustomPainter {
     canvas.drawCircle(Offset(w * 0.5, h * 0.24), w * 0.09, paintDark);
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.46), width: w * 0.14, height: h * 0.22),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.46),
+        width: w * 0.14,
+        height: h * 0.22,
+      ),
       paintDark,
     );
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.74), width: w * 0.26, height: h * 0.32),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.74),
+        width: w * 0.26,
+        height: h * 0.32,
+      ),
       paintDark,
     );
   }
@@ -2182,12 +2536,28 @@ class _BedBugPainter extends CustomPainter {
       ..color = const Color(0xFF4E160E)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
-    canvas.drawLine(Offset(w * 0.32, h * 0.50), Offset(w * 0.68, h * 0.50), stripePaint);
-    canvas.drawLine(Offset(w * 0.30, h * 0.60), Offset(w * 0.70, h * 0.60), stripePaint);
-    canvas.drawLine(Offset(w * 0.34, h * 0.70), Offset(w * 0.66, h * 0.70), stripePaint);
+    canvas.drawLine(
+      Offset(w * 0.32, h * 0.50),
+      Offset(w * 0.68, h * 0.50),
+      stripePaint,
+    );
+    canvas.drawLine(
+      Offset(w * 0.30, h * 0.60),
+      Offset(w * 0.70, h * 0.60),
+      stripePaint,
+    );
+    canvas.drawLine(
+      Offset(w * 0.34, h * 0.70),
+      Offset(w * 0.66, h * 0.70),
+      stripePaint,
+    );
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.32), width: w * 0.32, height: h * 0.16),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.32),
+        width: w * 0.32,
+        height: h * 0.16,
+      ),
       paintDark,
     );
 
@@ -2220,23 +2590,47 @@ class _MosquitoPainter extends CustomPainter {
       ..color = const Color(0x6694A3B8)
       ..style = PaintingStyle.fill;
 
-    canvas.drawLine(Offset(w * 0.5, h * 0.20), Offset(w * 0.5, h * 0.08), paintStroke);
-    canvas.drawLine(Offset(w * 0.48, h * 0.20), Offset(w * 0.36, h * 0.12), paintStroke);
-    canvas.drawLine(Offset(w * 0.52, h * 0.20), Offset(w * 0.64, h * 0.12), paintStroke);
+    canvas.drawLine(
+      Offset(w * 0.5, h * 0.20),
+      Offset(w * 0.5, h * 0.08),
+      paintStroke,
+    );
+    canvas.drawLine(
+      Offset(w * 0.48, h * 0.20),
+      Offset(w * 0.36, h * 0.12),
+      paintStroke,
+    );
+    canvas.drawLine(
+      Offset(w * 0.52, h * 0.20),
+      Offset(w * 0.64, h * 0.12),
+      paintStroke,
+    );
 
     final leftWing = Path()
       ..moveTo(w * 0.48, h * 0.36)
       ..quadraticBezierTo(w * 0.14, h * 0.38, w * 0.20, h * 0.56)
       ..quadraticBezierTo(w * 0.36, h * 0.52, w * 0.48, h * 0.42);
     canvas.drawPath(leftWing, paintWing);
-    canvas.drawPath(leftWing, Paint()..color = const Color(0xFF94A3B8)..style = PaintingStyle.stroke..strokeWidth = 0.8);
+    canvas.drawPath(
+      leftWing,
+      Paint()
+        ..color = const Color(0xFF94A3B8)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8,
+    );
 
     final rightWing = Path()
       ..moveTo(w * 0.52, h * 0.36)
       ..quadraticBezierTo(w * 0.86, h * 0.38, w * 0.80, h * 0.56)
       ..quadraticBezierTo(w * 0.64, h * 0.52, w * 0.52, h * 0.42);
     canvas.drawPath(rightWing, paintWing);
-    canvas.drawPath(rightWing, Paint()..color = const Color(0xFF94A3B8)..style = PaintingStyle.stroke..strokeWidth = 0.8);
+    canvas.drawPath(
+      rightWing,
+      Paint()
+        ..color = const Color(0xFF94A3B8)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8,
+    );
 
     final legPath = Path()
       ..moveTo(w * 0.46, h * 0.34)
@@ -2261,11 +2655,19 @@ class _MosquitoPainter extends CustomPainter {
 
     canvas.drawCircle(Offset(w * 0.5, h * 0.22), w * 0.06, paintDark);
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.36), width: w * 0.12, height: h * 0.18),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.36),
+        width: w * 0.12,
+        height: h * 0.18,
+      ),
       paintDark,
     );
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.64), width: w * 0.09, height: h * 0.36),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.64),
+        width: w * 0.09,
+        height: h * 0.36,
+      ),
       paintDark,
     );
   }
@@ -2304,7 +2706,11 @@ class _RodentPainter extends CustomPainter {
     canvas.drawPath(body, paintBody);
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.48, h * 0.30), width: w * 0.08, height: h * 0.12),
+      Rect.fromCenter(
+        center: Offset(w * 0.48, h * 0.30),
+        width: w * 0.08,
+        height: h * 0.12,
+      ),
       paintBody,
     );
 
@@ -2314,7 +2720,11 @@ class _RodentPainter extends CustomPainter {
       ..cubicTo(w * 0.28, h * 0.26, w * 0.24, h * 0.20, w * 0.18, h * 0.22);
     canvas.drawPath(tail, paintStroke);
 
-    canvas.drawCircle(Offset(w * 0.58, h * 0.42), w * 0.025, Paint()..color = Colors.white);
+    canvas.drawCircle(
+      Offset(w * 0.58, h * 0.42),
+      w * 0.025,
+      Paint()..color = Colors.white,
+    );
   }
 
   @override
@@ -2343,8 +2753,16 @@ class _TermitePainter extends CustomPainter {
       ..strokeWidth = 1.1
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawLine(Offset(w * 0.46, h * 0.22), Offset(w * 0.36, h * 0.10), paintStroke);
-    canvas.drawLine(Offset(w * 0.54, h * 0.22), Offset(w * 0.64, h * 0.10), paintStroke);
+    canvas.drawLine(
+      Offset(w * 0.46, h * 0.22),
+      Offset(w * 0.36, h * 0.10),
+      paintStroke,
+    );
+    canvas.drawLine(
+      Offset(w * 0.54, h * 0.22),
+      Offset(w * 0.64, h * 0.10),
+      paintStroke,
+    );
 
     final legPath = Path()
       ..moveTo(w * 0.40, h * 0.36)
@@ -2368,17 +2786,29 @@ class _TermitePainter extends CustomPainter {
     canvas.drawPath(legPath, paintStroke);
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.24), width: w * 0.22, height: h * 0.20),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.24),
+        width: w * 0.22,
+        height: h * 0.20,
+      ),
       paintHead,
     );
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.44), width: w * 0.20, height: h * 0.18),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.44),
+        width: w * 0.20,
+        height: h * 0.18,
+      ),
       paintBody,
     );
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.68), width: w * 0.26, height: h * 0.36),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.68),
+        width: w * 0.26,
+        height: h * 0.36,
+      ),
       paintBody,
     );
   }
@@ -2494,12 +2924,20 @@ class _FlyPainter extends CustomPainter {
     canvas.drawPath(rightWing, paintWingStroke);
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.42), width: w * 0.22, height: h * 0.20),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.42),
+        width: w * 0.22,
+        height: h * 0.20,
+      ),
       paintDark,
     );
 
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(w * 0.5, h * 0.64), width: w * 0.24, height: h * 0.30),
+      Rect.fromCenter(
+        center: Offset(w * 0.5, h * 0.64),
+        width: w * 0.24,
+        height: h * 0.30,
+      ),
       paintDark,
     );
 
@@ -2534,7 +2972,11 @@ class _OtherPestsPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    canvas.drawLine(Offset(w * 0.38, h * 0.62), Offset(w * 0.60, h * 0.40), paintArrow);
+    canvas.drawLine(
+      Offset(w * 0.38, h * 0.62),
+      Offset(w * 0.60, h * 0.40),
+      paintArrow,
+    );
 
     final head = Path()
       ..moveTo(w * 0.46, h * 0.40)
@@ -2548,10 +2990,7 @@ class _OtherPestsPainter extends CustomPainter {
 }
 
 class _DashedBorderPainter extends CustomPainter {
-  const _DashedBorderPainter({
-    required this.color,
-    required this.radius,
-  });
+  const _DashedBorderPainter({required this.color, required this.radius});
 
   final Color color;
   final double radius;

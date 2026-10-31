@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Shows the Reject Order bottom sheet. Returns the selected reason, or null.
 Future<String?> showRejectOrderSheet(BuildContext context) {
@@ -32,6 +33,15 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
     'Temporary Store Closure',
     'Water Supply Issue',
     'Other',
+  ];
+
+  // Localised labels shown for [reasons]; the English value is what is
+  // returned to the caller / sent to the API.
+  List<String> get _reasonLabels => [
+    S.of(context).outOfStock,
+    S.of(context).waterTemporaryStoreClosure,
+    S.of(context).waterWaterSupplyIssue,
+    S.of(context).waterOther,
   ];
 
   int? selectedIndex;
@@ -87,10 +97,10 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                     size: 24,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Reject Order',
-                      style: TextStyle(
+                      S.of(context).waterRejectOrder,
+                      style: const TextStyle(
                         color: _titleRed,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -118,9 +128,9 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Please select a reason. The customer will be notified accordingly',
-                style: TextStyle(
+              Text(
+                S.of(context).waterRejectOrderHint,
+                style: const TextStyle(
                   color: Color.fromARGB(255, 87, 86, 86),
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -128,9 +138,9 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
-                'Reason For Rejecting',
-                style: TextStyle(
+              Text(
+                S.of(context).waterReasonForRejecting,
+                style: const TextStyle(
                   color: AppColors.textBody,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -140,7 +150,7 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
               for (var i = 0; i < reasons.length; i++) ...[
                 if (i > 0) const SizedBox(height: 12),
                 _ReasonTile(
-                  label: reasons[i],
+                  label: _reasonLabels[i],
                   selected: selectedIndex == i,
                   onTap: () => setState(() => selectedIndex = i),
                 ),
@@ -149,10 +159,10 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Other Reason',
-                        style: TextStyle(
+                        S.of(context).waterOtherReason,
+                        style: const TextStyle(
                           color: AppColors.textBody,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -216,10 +226,10 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Cancel',
+                        child: Text(
+                          S.of(context).cancel,
                           softWrap: false,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -256,11 +266,11 @@ class _RejectOrderSheetState extends State<RejectOrderSheet> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Confirm Reject',
+                          child: Text(
+                            S.of(context).waterConfirmReject,
                             softWrap: false,
                             maxLines: 1,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),

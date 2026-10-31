@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -94,8 +95,8 @@ class _AddProductViewState extends State<AddProductView> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Select Image Source',
+              Text(
+                S.of(ctx).waterSelectImageSource,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -117,16 +118,16 @@ class _AddProductViewState extends State<AddProductView> {
                     size: 22,
                   ),
                 ),
-                title: const Text(
-                  'Camera',
+                title: Text(
+                  S.of(ctx).camera,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: AppColors.textDark,
                   ),
                 ),
-                subtitle: const Text(
-                  'Take a photo',
+                subtitle: Text(
+                  S.of(ctx).waterTakeAPhoto,
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
@@ -149,16 +150,16 @@ class _AddProductViewState extends State<AddProductView> {
                     size: 22,
                   ),
                 ),
-                title: const Text(
-                  'Gallery',
+                title: Text(
+                  S.of(ctx).gallery,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: AppColors.textDark,
                   ),
                 ),
-                subtitle: const Text(
-                  'Pick one or more images from gallery',
+                subtitle: Text(
+                  S.of(ctx).waterPickImagesFromGallery,
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
@@ -203,24 +204,24 @@ class _AddProductViewState extends State<AddProductView> {
   Future<void> _saveProduct() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      showToast(context, 'Please enter product name');
+      showToast(context, S.of(context).waterPleaseEnterProductName);
       return;
     }
 
     final price = _sellingPriceController.text.trim();
     if (price.isEmpty || price == '0.00' || price == '0') {
-      showToast(context, 'Please enter selling price');
+      showToast(context, S.of(context).waterPleaseEnterSellingPrice);
       return;
     }
 
     final stock = _stockController.text.trim();
     if (stock.isEmpty) {
-      showToast(context, 'Please enter available stock');
+      showToast(context, S.of(context).waterPleaseEnterAvailableStock);
       return;
     }
 
     if (_selectedImages.isEmpty) {
-      showToast(context, 'Please select at least one product image');
+      showToast(context, S.of(context).waterPleaseSelectProductImage);
       return;
     }
 
@@ -340,8 +341,8 @@ class _AddProductViewState extends State<AddProductView> {
               dataMap['status'] == '1');
 
       String message = isSuccess
-          ? 'Product added successfully'
-          : 'Failed to add product';
+          ? S.current.waterProductAddedSuccessfully
+          : S.current.waterFailedToAddProduct;
 
       if (dataMap != null && dataMap['message'] != null) {
         final msgObj = dataMap['message'];
@@ -377,7 +378,7 @@ class _AddProductViewState extends State<AddProductView> {
       }
       debugPrint('Error adding water menu item: $e');
       if (mounted) {
-        showToast(context, 'Error adding product: $e');
+        showToast(context, S.of(context).waterErrorAddingProduct(e.toString()));
       }
     }
   }
@@ -413,8 +414,8 @@ class _AddProductViewState extends State<AddProductView> {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                     children: [
                       if (_selectedImages.isEmpty) ...[
-                        const Text(
-                          'Product Image',
+                        Text(
+                          S.of(context).waterProductImage,
                           style: TextStyle(
                             color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
@@ -427,8 +428,8 @@ class _AddProductViewState extends State<AddProductView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Product Image',
+                            Text(
+                              S.of(context).waterProductImage,
                               style: TextStyle(
                                 color: AppColors.textDark,
                                 fontWeight: FontWeight.w600,
@@ -436,7 +437,11 @@ class _AddProductViewState extends State<AddProductView> {
                               ),
                             ),
                             Text(
-                              '${_selectedImages.length} image${_selectedImages.length > 1 ? "s" : ""} selected',
+                              _selectedImages.length > 1
+                                  ? S.of(context).waterImagesSelected(
+                                      _selectedImages.length.toString(),
+                                    )
+                                  : S.of(context).waterOneImageSelected,
                               style: const TextStyle(
                                 color: AppColors.primaryOrange,
                                 fontWeight: FontWeight.w600,
@@ -459,17 +464,17 @@ class _AddProductViewState extends State<AddProductView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _SectionTitle(
+                            _SectionTitle(
                               icon: Icons.info_outline_rounded,
-                              title: 'BASIC INFORMATION',
+                              title: S.of(context).waterBasicInformation,
                               color: AppColors.primaryOrange,
                             ),
                             const SizedBox(height: 14),
-                            const _FieldLabel('Product Name (English)'),
+                            _FieldLabel(S.of(context).waterProductNameEnglish),
                             const SizedBox(height: 6),
                             _InputField(
                               controller: _nameController,
-                              hint: 'e.g. Drinking Water',
+                              hint: S.of(context).waterProductNameHint,
                             ),
                             const SizedBox(height: 12),
                             Row(
@@ -479,11 +484,11 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Brand'),
+                                      _FieldLabel(S.of(context).waterBrand),
                                       const SizedBox(height: 6),
                                       _InputField(
                                         controller: _brandController,
-                                        hint: 'Brand Name',
+                                        hint: S.of(context).waterBrandName,
                                       ),
                                     ],
                                   ),
@@ -494,7 +499,7 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Category'),
+                                      _FieldLabel(S.of(context).category),
                                       const SizedBox(height: 6),
                                       _DropdownField(
                                         value: _category,
@@ -508,7 +513,7 @@ class _AddProductViewState extends State<AddProductView> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            const _FieldLabel('Bottle Size'),
+                            _FieldLabel(S.of(context).waterBottleSize),
                             const SizedBox(height: 6),
                             _DropdownField(
                               value: _bottleSize,
@@ -517,11 +522,11 @@ class _AddProductViewState extends State<AddProductView> {
                                   setState(() => _bottleSize = v),
                             ),
                             const SizedBox(height: 12),
-                            const _FieldLabel('Barcode'),
+                            _FieldLabel(S.of(context).waterBarcode),
                             const SizedBox(height: 6),
                             _InputField(
                               controller: _barcodeController,
-                              hint: 'Scan or enter barcode',
+                              hint: S.of(context).waterScanOrEnterBarcode,
                               suffix: const _BarcodeScanIcon(),
                             ),
                           ],
@@ -532,12 +537,11 @@ class _AddProductViewState extends State<AddProductView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _FieldLabel('Product Description'),
+                            _FieldLabel(S.of(context).waterProductDescription),
                             const SizedBox(height: 8),
                             _InputField(
                               controller: _descriptionController,
-                              hint:
-                                  'Describe the source, pH level, or benefits...',
+                              hint: S.of(context).waterProductDescriptionHint,
                               maxLines: 4,
                             ),
                           ],
@@ -548,9 +552,9 @@ class _AddProductViewState extends State<AddProductView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _SectionTitle(
+                            _SectionTitle(
                               icon: Icons.payments_outlined,
-                              title: 'PRICING (MRU)',
+                              title: S.of(context).waterPricingMru,
                               color: AppColors.primaryOrange,
                             ),
                             const SizedBox(height: 14),
@@ -561,7 +565,7 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Selling Price'),
+                                      _FieldLabel(S.of(context).waterSellingPrice),
                                       const SizedBox(height: 6),
                                       _PriceField(
                                         controller: _sellingPriceController,
@@ -575,7 +579,7 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Offer Price'),
+                                      _FieldLabel(S.of(context).waterOfferPrice),
                                       const SizedBox(height: 6),
                                       _PriceField(
                                         controller: _offerPriceController,
@@ -593,9 +597,9 @@ class _AddProductViewState extends State<AddProductView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _SectionTitle(
+                            _SectionTitle(
                               icon: Icons.inventory_2_outlined,
-                              title: 'INVENTORY CONTROL',
+                              title: S.of(context).waterInventoryControl,
                               color: AppColors.primaryOrange,
                             ),
                             const SizedBox(height: 14),
@@ -606,7 +610,7 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Available Stock'),
+                                      _FieldLabel(S.of(context).waterAvailableStock),
                                       const SizedBox(height: 6),
                                       _InputField(
                                         controller: _stockController,
@@ -621,7 +625,7 @@ class _AddProductViewState extends State<AddProductView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const _FieldLabel('Low Stock Alert'),
+                                      _FieldLabel(S.of(context).waterLowStockAlert),
                                       const SizedBox(height: 6),
                                       _InputField(
                                         controller: _lowStockController,
@@ -640,31 +644,31 @@ class _AddProductViewState extends State<AddProductView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const _SectionTitle(
+                            _SectionTitle(
                               icon: Icons.recycling_rounded,
-                              title: 'BOTTLE RETURN SETTINGS',
+                              title: S.of(context).waterBottleReturnSettings,
                               color: AppColors.inventoryBottleGreen,
                             ),
                             const SizedBox(height: 12),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Expanded(
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Returnable Bottle',
+                                        S.of(context).waterReturnableBottle,
                                         style: TextStyle(
                                           color: AppColors.textDark,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 15,
                                         ),
                                       ),
-                                      SizedBox(height: 6),
+                                      const SizedBox(height: 6),
                                       Text(
-                                        'Enable this option if customers must return the empty bottle after delivery or self pickup',
+                                        S.of(context).waterReturnableBottleHint,
                                         style: TextStyle(
                                           color: AppColors.textSecondary,
                                           fontWeight: FontWeight.w400,
@@ -739,8 +743,8 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Add Product',
+            Text(
+              S.of(context).waterAddProduct,
               style: TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -748,7 +752,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -824,8 +828,8 @@ class _ImageUploadCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  'Tap to upload image',
+                Text(
+                  S.of(context).waterTapToUploadImage,
                   style: TextStyle(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
@@ -833,8 +837,8 @@ class _ImageUploadCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'PNG, JPG up to 5MB',
+                Text(
+                  S.of(context).waterImageFormatHint,
                   style: TextStyle(
                     color: AppColors.textMuted,
                     fontWeight: FontWeight.w400,
@@ -949,8 +953,8 @@ class _ImagesPreviewList extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        const Text(
-                          'Add More',
+                        Text(
+                          S.of(context).waterAddMore,
                           style: TextStyle(
                             color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
@@ -1210,7 +1214,7 @@ class _InputField extends StatelessWidget {
             ? null
             : UnconstrainedBox(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsetsDirectional.only(end: 12),
                   child: suffix,
                 ),
               ),
@@ -1335,8 +1339,8 @@ class _FooterBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'Reset',
+                  child: Text(
+                    S.of(context).reset,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -1360,8 +1364,8 @@ class _FooterBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'Save Product',
+                  child: Text(
+                    S.of(context).waterSaveProduct,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,

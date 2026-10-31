@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -502,22 +503,22 @@ class _ChatViewState extends State<ChatView> {
   }
 
   String _getDateLabel(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty) return 'Today';
+    if (dateStr == null || dateStr.isEmpty) return S.of(context).today;
     try {
       final dt = DateTime.parse(dateStr).toLocal();
       final now = DateTime.now();
       if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
-        return 'Today';
+        return S.of(context).today;
       }
       final yesterday = now.subtract(const Duration(days: 1));
       if (dt.year == yesterday.year &&
           dt.month == yesterday.month &&
           dt.day == yesterday.day) {
-        return 'Yesterday';
+        return S.of(context).yesterday;
       }
       return DateFormat('MMM dd, yyyy').format(dt);
     } catch (_) {
-      return 'Today';
+      return S.of(context).today;
     }
   }
 
@@ -615,7 +616,7 @@ class _ChatViewState extends State<ChatView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text('Retry'),
+                child: Text(S.of(context).tryAgain),
               ),
             ],
           ),
@@ -624,10 +625,10 @@ class _ChatViewState extends State<ChatView> {
     }
 
     if (_messages.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'No messages yet',
-          style: TextStyle(
+          S.of(context).noMessagesYet,
+          style: const TextStyle(
             color: AppColors.textMuted,
             fontWeight: FontWeight.w400,
             fontSize: 14,
@@ -659,7 +660,8 @@ class _ChatHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = name.trim().isNotEmpty ? name.trim() : 'Customer';
+    final displayName =
+        name.trim().isNotEmpty ? name.trim() : S.of(context).waterCustomer;
     final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'C';
 
     return Padding(
@@ -742,7 +744,7 @@ class _ChatHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  isOnline ? 'Online' : 'Offline',
+                  isOnline ? S.of(context).waterOnline : S.of(context).waterOffline,
                   style: TextStyle(
                     color: isOnline
                         ? AppColors.textSecondary
@@ -855,7 +857,9 @@ class _TextBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: isOutgoing
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.sizeOf(context).width * 0.78,
@@ -865,11 +869,11 @@ class _TextBubble extends StatelessWidget {
           color: isOutgoing
               ? AppColors.chatBubbleOutgoing
               : AppColors.chatBubbleIncoming,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
-            bottomLeft: Radius.circular(isOutgoing ? 18 : 6),
-            bottomRight: Radius.circular(isOutgoing ? 6 : 18),
+          borderRadius: BorderRadiusDirectional.only(
+            topStart: const Radius.circular(18),
+            topEnd: const Radius.circular(18),
+            bottomStart: Radius.circular(isOutgoing ? 18 : 6),
+            bottomEnd: Radius.circular(isOutgoing ? 6 : 18),
           ),
           boxShadow: [
             BoxShadow(
@@ -993,7 +997,9 @@ class _AudioBubbleState extends State<_AudioBubble> {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: widget.isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: widget.isOutgoing
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
       child: Container(
         width: MediaQuery.sizeOf(context).width * 0.72,
         padding: const EdgeInsets.fromLTRB(8, 8, 14, 8),
@@ -1077,13 +1083,15 @@ class _ImageBubble extends StatelessWidget {
     final isLocal = !imageUrl.startsWith('http') && File(imageUrl).existsSync();
 
     return Align(
-      alignment: isOutgoing ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: isOutgoing
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(18),
-          topRight: const Radius.circular(18),
-          bottomLeft: Radius.circular(isOutgoing ? 18 : 6),
-          bottomRight: Radius.circular(isOutgoing ? 6 : 18),
+        borderRadius: BorderRadiusDirectional.only(
+          topStart: const Radius.circular(18),
+          topEnd: const Radius.circular(18),
+          bottomStart: Radius.circular(isOutgoing ? 18 : 6),
+          bottomEnd: Radius.circular(isOutgoing ? 6 : 18),
         ),
         child: Container(
           constraints: BoxConstraints(
@@ -1237,9 +1245,9 @@ class _ChatInputBar extends StatelessWidget {
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14,
                               ),
-                              decoration: const InputDecoration(
-                                hintText: 'Type a message...',
-                                hintStyle: TextStyle(
+                              decoration: InputDecoration(
+                                hintText: S.of(context).typeAMessage,
+                                hintStyle: const TextStyle(
                                   color: AppColors.textMuted,
                                   fontWeight: FontWeight.w400,
                                   fontSize: 14,

@@ -318,7 +318,7 @@
   "@outOfStock": {},
   "pay": "Pay",
   "@pay": {},
-  "paymentDetails": "Payment Details",
+  "paymentDetails": "PAYMENT DETAILS",
   "@paymentDetails": {},
   "paymentType": "Payment Type",
   "@paymentType": {},
@@ -593,8 +593,6 @@
   "receivedPayouts": "Received Payouts",
   "@receivedPayouts": {},
   "restaurantReports": "Restaurant Reports",
-  "@receivedPayouts": {},
-  "restaurantReports": "Restaurant Reports",
   "@restaurantReports": {},
   "restaurantDetails": "RESTAURANT DETAILS",
   "@restaurantDetails": {},
@@ -610,10 +608,8 @@
   "@ownerIdentityProof": {},
   "certificates": "CERTIFICATES",
   "@certificates": {},
-  "ratingReviews": "RATING & REVIEWS",
+  "ratingReviews": "Rating & Reviews",
   "@ratingReviews": {},
-  "viewAll": "View All",
-  "@viewAll": {},
   "holderName": "Holder Name",
   "@holderName": {},
   "ibanNumber": "IBAN Number",
@@ -672,14 +668,6 @@
   "@unknown": {},
   "membership": "Membership",
   "@membership": {},
-  "expiresInDays": "Expires in {days} days",
-  "@expiresInDays": {
-    "placeholders": {
-      "days": {
-        "type": "String"
-      }
-    }
-  },
   "all": "All",
   "@all": {},
   "monday": "Monday",
@@ -801,17 +789,44 @@
   "preOrders": "Pre-orders",
   "@preOrders": {},
   "upcomingPreordersCount": "Upcoming pre-orders ({count})",
-  "@upcomingPreordersCount": {"placeholders": {"count": {"type": "String"}}},
+  "@upcomingPreordersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "noUpcomingPreorders": "No upcoming pre-orders",
   "@noUpcomingPreorders": {},
   "preorderBadge": "Pre-order",
   "@preorderBadge": {},
   "scheduledForTime": "Scheduled for {time}",
-  "@scheduledForTime": {"placeholders": {"time": {"type": "String"}}},
+  "@scheduledForTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "dueInHoursMinutes": "In {hours} h {minutes} min",
-  "@dueInHoursMinutes": {"placeholders": {"hours": {"type": "String"}, "minutes": {"type": "String"}}},
+  "@dueInHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "dueInMinutes": "In {minutes} min",
-  "@dueInMinutes": {"placeholders": {"minutes": {"type": "String"}}},
+  "@dueInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "preorderDueNow": "Due now",
   "@preorderDueNow": {},
   "driverRequested": "Driver requested",
@@ -821,7 +836,16 @@
   "preorderReminderTitle": "Pre-order due soon",
   "@preorderReminderTitle": {},
   "preorderReminderBody": "Pre-order {code} is due at {time}. Please have it ready.",
-  "@preorderReminderBody": {"placeholders": {"code": {"type": "String"}, "time": {"type": "String"}}},
+  "@preorderReminderBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "assignedStatus": "Assigned",
   "@assignedStatus": {},
   "cancelledOnLabel": "Cancelled On {date}",
@@ -1009,13 +1033,13 @@
   "markSelfPickupCompleted": "Complete Pickup",
   "@markSelfPickupCompleted": {},
   "welcomeTo": "Welcome to",
-  "noReviewsFound": "No reviews found.",
+  "noReviewsFound": "No reviews found",
   "anonymous": "Anonymous",
   "noCommentProvided": "No comment provided.",
   "noComment": "No comment",
   "leave": "Leave",
-  "noUpcomingLeavesFound": "No upcoming leaves found.",
-  "noCompletedLeavesFound": "No completed leaves found.",
+  "noUpcomingLeavesFound": "No upcoming leaves found",
+  "noCompletedLeavesFound": "No completed leaves found",
   "baskets": "BASKETS",
   "checkForUpdate": "Check for update",
   "noPayoutsYet": "No payouts yet",
@@ -1041,7 +1065,7 @@
   "orders": "Orders",
   "guestLogin": "Guest Login",
   "balanceAfterPayout": "BALANCE AFTER PAYOUT",
-  "amount": "AMOUNT",
+  "amount": "Amount",
   "discount": "Discount",
   "earnings": "Earnings",
   "commission": "Commission",
@@ -1145,11 +1169,9 @@
   "couponType": "Coupon Type",
   "select": "Select",
   "percentage": "Percentage",
-  "amount": "Amount",
   "enterDiscount": "Enter discount",
   "enterCount": "Enter count",
   "pleaseSelectCouponType": "Please select coupon type",
-  "earnings": "Earnings",
   "orderAmount": "Order Amount",
   "payouts": "Payouts",
   "credited": "Credited",
@@ -1163,57 +1185,1094 @@
   "notes": "Notes",
   "available": "Available",
   "workHours": "Working Hours",
-  "menuBulkImport": "Menu Bulk Import",
-  "receivedPayouts": "Received Payouts",
-  "storeReports": "Store Reports",
   "restaurantStatus": "Restaurant Status",
   "busy": "Busy",
-  "owner": "Owner",
   "storeId": "Store ID",
-  "name": "Name",
-  "contact": "Contact",
-  "email": "Email",
-  "status": "Status",
-  "address": "Address",
-  "holderName": "Holder Name",
-  "accountNumber": "Account Number",
-  "swiftCode": "SWIFT Code",
-  "regNumber": "Reg. Number",
-  "regDate": "Reg. Date",
-  "gstNumber": "GST Number",
-  "commissionPercentage": "Commission %",
-  "totalProfit": "Total Profit",
-  "restaurantOne": "Restaurant 1",
-  "categoryLabel": "Category",
   "veg": "Veg",
   "nonVeg": "Non-Veg",
-  "all": "All",
-  "pending": "Pending",
-  "cancelled": "Cancelled",
-  "account": "Account",
-  "leaves": "Leaves",
-  "menu": "Menu",
-  "items": "Items",
-  "basket": "Basket",
-  "bankDetails": "BANK DETAILS",
-  "registrationDetails": "REGISTRATION DETAILS",
-  "paymentDetails": "PAYMENT DETAILS",
-  "ownerIdentityProof": "OWNER IDENTITY PROOF",
-  "certificates": "CERTIFICATES",
-  "ratingReviews": "Rating & Reviews",
-  "viewAll": "View All",
-  "anonymous": "Anonymous",
-  "noComment": "No comment",
-  "noReviewsFound": "No reviews found",
-  "markLeave": "MARK LEAVE",
-  "leavesHistory": "LEAVES HISTORY",
-  "upcomingLeaves": "Upcoming Leaves",
-  "leave": "Leave",
-  "noUpcomingLeavesFound": "No upcoming leaves found",
-  "completedLeaves": "Completed Leaves",
-  "noCompletedLeavesFound": "No completed leaves found",
-  "pleaseSelectAnXlsxFileOnly": "Please select an .xlsx file only",
-  "couldNotAccessTheSelectedFile": "Could not access the selected file",
   "itemUpdatedSuccessfully": "Item updated successfully",
-  "failedToUpdateItem": "Failed to update item"
+  "failedToUpdateItem": "Failed to update item",
+  "cleaningAcceptBooking": "Accept Booking",
+  "@cleaningAcceptBooking": {},
+  "cleaningAcceptingBookings": "Accepting bookings",
+  "@cleaningAcceptingBookings": {},
+  "cleaningAddAddon": "Add Add-on",
+  "@cleaningAddAddon": {},
+  "cleaningAddAddonButton": "+ Add Add-on",
+  "@cleaningAddAddonButton": {},
+  "cleaningAddService": "Add Service",
+  "@cleaningAddService": {},
+  "cleaningAddServiceButton": "+ Add Service",
+  "@cleaningAddServiceButton": {},
+  "cleaningAddSpace": "Add Space",
+  "@cleaningAddSpace": {},
+  "cleaningAddSpaceButton": "+ Add Space",
+  "@cleaningAddSpaceButton": {},
+  "cleaningAddonName": "Add-on Name",
+  "@cleaningAddonName": {},
+  "cleaningAddonNameHint": "e.g. Fridge Cleaning, Oven Cleaning",
+  "@cleaningAddonNameHint": {},
+  "cleaningAddonServicesHeader": "ADD-ON SERVICES",
+  "@cleaningAddonServicesHeader": {},
+  "cleaningApartment": "Apartment",
+  "@cleaningApartment": {},
+  "cleaningBasicInformationHeader": "BASIC INFORMATION",
+  "@cleaningBasicInformationHeader": {},
+  "cleaningBookingDetails": "Booking Details",
+  "@cleaningBookingDetails": {},
+  "cleaningBookings": "Bookings",
+  "@cleaningBookings": {},
+  "cleaningBookingsHeader": "BOOKINGS",
+  "@cleaningBookingsHeader": {},
+  "cleaningBusinessSection": "Business",
+  "@cleaningBusinessSection": {},
+  "cleaningBusinessSettings": "Business settings",
+  "@cleaningBusinessSettings": {},
+  "cleaningChangeImage": "Change Image",
+  "@cleaningChangeImage": {},
+  "cleaningCleaningProducts": "Cleaning Products",
+  "@cleaningCleaningProducts": {},
+  "cleaningCleaningProductsHeader": "CLEANING PRODUCTS",
+  "@cleaningCleaningProductsHeader": {},
+  "cleaningClosedStatus": "Closed",
+  "@cleaningClosedStatus": {},
+  "cleaningCompleted": "Completed",
+  "@cleaningCompleted": {},
+  "cleaningConfirmReject": "Confirm Reject",
+  "@cleaningConfirmReject": {},
+  "cleaningCustomerHeader": "CUSTOMER",
+  "@cleaningCustomerHeader": {},
+  "cleaningCustomerProvidesProducts": "Customer provides products",
+  "@cleaningCustomerProvidesProducts": {},
+  "cleaningCustomerProvidesProductsDesc": "Customer brings their own detergents, mop, and cleaning cloths.",
+  "@cleaningCustomerProvidesProductsDesc": {},
+  "cleaningDeleteAccountConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+  "@cleaningDeleteAccountConfirm": {},
+  "cleaningEditAddon": "Edit Add-on",
+  "@cleaningEditAddon": {},
+  "cleaningEditService": "Edit Service",
+  "@cleaningEditService": {},
+  "cleaningEditSpace": "Edit Space",
+  "@cleaningEditSpace": {},
+  "cleaningEnterDescription": "Enter Description",
+  "@cleaningEnterDescription": {},
+  "cleaningEnterServiceType": "Enter service type",
+  "@cleaningEnterServiceType": {},
+  "cleaningEnterThePrice": "Enter the Price",
+  "@cleaningEnterThePrice": {},
+  "cleaningIProvideProducts": "I provide the products",
+  "@cleaningIProvideProducts": {},
+  "cleaningIProvideProductsDesc": "Your team brings professional cleaning detergents, vacuums & cloths.",
+  "@cleaningIProvideProductsDesc": {},
+  "cleaningImageFormatsHint": "PNG, JPG up to 5MB",
+  "@cleaningImageFormatsHint": {},
+  "cleaningInProgress": "In Progress",
+  "@cleaningInProgress": {},
+  "cleaningIssuesCoveredHeader": "ISSUES COVERED",
+  "@cleaningIssuesCoveredHeader": {},
+  "cleaningJustNow": "Just now",
+  "@cleaningJustNow": {},
+  "cleaningLanguageArabic": "Arabic",
+  "@cleaningLanguageArabic": {},
+  "cleaningLanguageEnglish": "English",
+  "@cleaningLanguageEnglish": {},
+  "cleaningLanguageFrench": "French",
+  "@cleaningLanguageFrench": {},
+  "cleaningMakeItExtraCleanHeader": "MAKE IT EXTRA CLEAN",
+  "@cleaningMakeItExtraCleanHeader": {},
+  "cleaningMarkAsCompleted": "Mark as Completed",
+  "@cleaningMarkAsCompleted": {},
+  "cleaningMessages": "Messages",
+  "@cleaningMessages": {},
+  "cleaningMyServices": "My Services",
+  "@cleaningMyServices": {},
+  "cleaningNewBookings": "New Bookings",
+  "@cleaningNewBookings": {},
+  "cleaningNoBookingsHere": "No bookings here",
+  "@cleaningNoBookingsHere": {},
+  "cleaningNoMessagesFound": "No messages found",
+  "@cleaningNoMessagesFound": {},
+  "cleaningNoServicesFound": "No services found",
+  "@cleaningNoServicesFound": {},
+  "cleaningNotAccepting": "Not accepting",
+  "@cleaningNotAccepting": {},
+  "cleaningOffline": "Offline",
+  "@cleaningOffline": {},
+  "cleaningOnline": "Online",
+  "@cleaningOnline": {},
+  "cleaningOpenStatus": "Open",
+  "@cleaningOpenStatus": {},
+  "cleaningOtherReason": "Other Reason",
+  "@cleaningOtherReason": {},
+  "cleaningPestAnts": "Ants",
+  "@cleaningPestAnts": {},
+  "cleaningPestBedBugs": "Bed Bugs",
+  "@cleaningPestBedBugs": {},
+  "cleaningPestCockroaches": "Cockroaches",
+  "@cleaningPestCockroaches": {},
+  "cleaningPestFlies": "Flies",
+  "@cleaningPestFlies": {},
+  "cleaningPestGeneralSanitization": "General\nSanitization",
+  "@cleaningPestGeneralSanitization": {},
+  "cleaningPestMosquitoes": "Mosquitoes",
+  "@cleaningPestMosquitoes": {},
+  "cleaningPestOtherPests": "Other Pests",
+  "@cleaningPestOtherPests": {},
+  "cleaningPestRodents": "Rodents",
+  "@cleaningPestRodents": {},
+  "cleaningPestTermites": "Termites",
+  "@cleaningPestTermites": {},
+  "cleaningProductSupplyFee": "Product Supply Fee",
+  "@cleaningProductSupplyFee": {},
+  "cleaningProductsProvidedByProvider": "Cleaning products will be provided by the service provider",
+  "@cleaningProductsProvidedByProvider": {},
+  "cleaningPropertyTypesHeader": "PROPERTY TYPES",
+  "@cleaningPropertyTypesHeader": {},
+  "cleaningProvidedBySaimpex": "Provided by SAIMPEX",
+  "@cleaningProvidedBySaimpex": {},
+  "cleaningProviderWillProvideProducts": "Provider will provide products",
+  "@cleaningProviderWillProvideProducts": {},
+  "cleaningReasonDescription": "Reason / Description",
+  "@cleaningReasonDescription": {},
+  "cleaningRejectBooking": "Reject Booking",
+  "@cleaningRejectBooking": {},
+  "cleaningRejectReasonNoCleaner": "No cleaner available",
+  "@cleaningRejectReasonNoCleaner": {},
+  "cleaningRejectReasonOther": "Other",
+  "@cleaningRejectReasonOther": {},
+  "cleaningRejectReasonOutsideArea": "Outside our service area",
+  "@cleaningRejectReasonOutsideArea": {},
+  "cleaningRejectReasonServiceUnavailable": "Service temporarily unavailable",
+  "@cleaningRejectReasonServiceUnavailable": {},
+  "cleaningRejectSheetSubtitle": "Please select a reason. The customer will be\nnotified accordingly",
+  "@cleaningRejectSheetSubtitle": {},
+  "cleaningRequestIdHeader": "REQUEST ID",
+  "@cleaningRequestIdHeader": {},
+  "cleaningRequestNewServiceType": "Request New Service Type",
+  "@cleaningRequestNewServiceType": {},
+  "cleaningRequestNewServiceTypeLink": "+ Request New Service Type",
+  "@cleaningRequestNewServiceTypeLink": {},
+  "cleaningRevenueHeader": "REVENUE",
+  "@cleaningRevenueHeader": {},
+  "cleaningSaveAddon": "Save Add-on",
+  "@cleaningSaveAddon": {},
+  "cleaningSaveSpace": "Save Space",
+  "@cleaningSaveSpace": {},
+  "cleaningSearchCustomerOrOrderId": "Search customer name or order ID..",
+  "@cleaningSearchCustomerOrOrderId": {},
+  "cleaningSearchServices": "Search Services",
+  "@cleaningSearchServices": {},
+  "cleaningSelectService": "Select Service",
+  "@cleaningSelectService": {},
+  "cleaningServiceImage": "Service Image",
+  "@cleaningServiceImage": {},
+  "cleaningServiceType": "Service Type",
+  "@cleaningServiceType": {},
+  "cleaningServiceTypeName": "Service Type Name",
+  "@cleaningServiceTypeName": {},
+  "cleaningServiceTypeReasonHint": "Briefly describe why you need this service type",
+  "@cleaningServiceTypeReasonHint": {},
+  "cleaningShortDescription": "Short Description",
+  "@cleaningShortDescription": {},
+  "cleaningSpaceName": "Space Name",
+  "@cleaningSpaceName": {},
+  "cleaningSpaceNameHint": "e.g. Master Bedroom, Living Room, Corridor, Balcony",
+  "@cleaningSpaceNameHint": {},
+  "cleaningSpacePricingHeader": "SPACE PRICING",
+  "@cleaningSpacePricingHeader": {},
+  "cleaningSpacesHeader": "SPACES",
+  "@cleaningSpacesHeader": {},
+  "cleaningSpecialNotesHeader": "SPECIAL NOTES",
+  "@cleaningSpecialNotesHeader": {},
+  "cleaningStartCleaning": "Start Cleaning",
+  "@cleaningStartCleaning": {},
+  "cleaningStartingRateHeader": "STARTING RATE",
+  "@cleaningStartingRateHeader": {},
+  "cleaningStatusAccepted": "ACCEPTED",
+  "@cleaningStatusAccepted": {},
+  "cleaningStatusInProgress": "IN PROGRESS",
+  "@cleaningStatusInProgress": {},
+  "cleaningStatusNew": "NEW",
+  "@cleaningStatusNew": {},
+  "cleaningSubmitRequest": "Submit Request",
+  "@cleaningSubmitRequest": {},
+  "cleaningSupportLegal": "Support & Legal",
+  "@cleaningSupportLegal": {},
+  "cleaningTapToUploadImage": "Tap to upload image",
+  "@cleaningTapToUploadImage": {},
+  "cleaningTodayHours": "Today: {hours}",
+  "@cleaningTodayHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningTodaysBookings": "Today's Bookings",
+  "@cleaningTodaysBookings": {},
+  "cleaningTotal": "Total",
+  "@cleaningTotal": {},
+  "cleaningTotalPaid": "Total paid",
+  "@cleaningTotalPaid": {},
+  "cleaningUnitHour": "Hour",
+  "@cleaningUnitHour": {},
+  "cleaningUnitLabel": "Unit",
+  "@cleaningUnitLabel": {},
+  "cleaningUnitPiece": "Piece",
+  "@cleaningUnitPiece": {},
+  "cleaningUnitRoom": "Room",
+  "@cleaningUnitRoom": {},
+  "cleaningUnitSqFt": "Sq. Ft",
+  "@cleaningUnitSqFt": {},
+  "cleaningUnitUnit": "Unit",
+  "@cleaningUnitUnit": {},
+  "cleaningUpcoming": "Upcoming",
+  "@cleaningUpcoming": {},
+  "cleaningVendorProfile": "Vendor Profile",
+  "@cleaningVendorProfile": {},
+  "cleaningVilla": "Villa",
+  "@cleaningVilla": {},
+  "cleaningWorkingHoursBookingSlots": "Working hours & Booking Slots",
+  "@cleaningWorkingHoursBookingSlots": {},
+  "cleaningYourServicesHeader": "YOUR SERVICES",
+  "@cleaningYourServicesHeader": {},
+  "waterAcceptingOrders": "Accepting orders",
+  "@waterAcceptingOrders": {},
+  "waterAccountDeletedSuccessfully": "Account deleted successfully",
+  "@waterAccountDeletedSuccessfully": {},
+  "waterAddDeliveryBoy": "Add Delivery Boy",
+  "@waterAddDeliveryBoy": {},
+  "waterAddDistanceRange": "Add Distance Range",
+  "@waterAddDistanceRange": {},
+  "waterAddMore": "Add More",
+  "@waterAddMore": {},
+  "waterAddProduct": "Add Product",
+  "@waterAddProduct": {},
+  "waterAddedDeliveryBoysAppearHere": "Added delivery boys will appear here",
+  "@waterAddedDeliveryBoysAppearHere": {},
+  "waterAddedProductsWillAppearHere": "Added products will appear here",
+  "@waterAddedProductsWillAppearHere": {},
+  "waterAfternoon": "Afternoon",
+  "@waterAfternoon": {},
+  "waterAvailableStock": "Available Stock",
+  "@waterAvailableStock": {},
+  "waterBankDetails": "Bank Details",
+  "@waterBankDetails": {},
+  "waterBarcode": "Barcode",
+  "@waterBarcode": {},
+  "waterBasicInformation": "BASIC INFORMATION",
+  "@waterBasicInformation": {},
+  "waterBottleReturnSettings": "BOTTLE RETURN SETTINGS",
+  "@waterBottleReturnSettings": {},
+  "waterBottleSize": "Bottle Size",
+  "@waterBottleSize": {},
+  "waterBottles": "Bottles",
+  "@waterBottles": {},
+  "waterBottlesCount": "{count} Bottles",
+  "@waterBottlesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterBottlesLeft": "{count} Bottles Left",
+  "@waterBottlesLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterBrand": "Brand",
+  "@waterBrand": {},
+  "waterBrandName": "Brand Name",
+  "@waterBrandName": {},
+  "waterBusiness": "Business",
+  "@waterBusiness": {},
+  "waterBusinessSettings": "Business settings",
+  "@waterBusinessSettings": {},
+  "waterBusinessSettingsUpdated": "Business settings updated successfully",
+  "@waterBusinessSettingsUpdated": {},
+  "waterCallNow": "Call Now",
+  "@waterCallNow": {},
+  "waterCancelLeaveConfirm": "Are you sure you want to cancel this leave?",
+  "@waterCancelLeaveConfirm": {},
+  "waterCertificate": "Certificate",
+  "@waterCertificate": {},
+  "waterChatWithCustomer": "Chat With Customer",
+  "@waterChatWithCustomer": {},
+  "waterClosed": "Closed",
+  "@waterClosed": {},
+  "waterConfirmDeleteItem": "Are you sure you want to delete this item?",
+  "@waterConfirmDeleteItem": {},
+  "waterConfirmDeleteNamedItem": "Are you sure you want to delete \"{name}\"?",
+  "@waterConfirmDeleteNamedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waterConfirmMarkAvailable": "Are you sure you want to mark this item as available?",
+  "@waterConfirmMarkAvailable": {},
+  "waterConfirmMarkOutOfStock": "Are you sure you want to mark this item as out of stock?",
+  "@waterConfirmMarkOutOfStock": {},
+  "waterConfirmReject": "Confirm Reject",
+  "@waterConfirmReject": {},
+  "waterCount": "Count",
+  "@waterCount": {},
+  "waterCreatedCouponsAppearHere": "Created coupons will appear here",
+  "@waterCreatedCouponsAppearHere": {},
+  "waterCurrentStatus": "Current Status",
+  "@waterCurrentStatus": {},
+  "waterCurrentlyPaused": "Currently Paused",
+  "@waterCurrentlyPaused": {},
+  "waterCustomer": "Customer",
+  "@waterCustomer": {},
+  "waterCustomerHeader": "CUSTOMER",
+  "@waterCustomerHeader": {},
+  "waterCustomerMessagesWillAppearHere": "Customer messages will appear here",
+  "@waterCustomerMessagesWillAppearHere": {},
+  "waterCustomerRequestedPause": "Customer Requested Pause",
+  "@waterCustomerRequestedPause": {},
+  "waterDaily": "Daily",
+  "@waterDaily": {},
+  "waterDatePlaceholder": "dd-mm-yyyy",
+  "@waterDatePlaceholder": {},
+  "waterDeliveryAddressTitle": "Delivery Address",
+  "@waterDeliveryAddressTitle": {},
+  "waterDeliveryHistory": "DELIVERY HISTORY",
+  "@waterDeliveryHistory": {},
+  "waterDeliveryPartnerAssigned": "Delivery Partner Assigned",
+  "@waterDeliveryPartnerAssigned": {},
+  "waterDeliveryPartnerHeader": "DELIVERY PARTNER",
+  "@waterDeliveryPartnerHeader": {},
+  "waterDeliveryTypeHeader": "DELIVERY TYPE",
+  "@waterDeliveryTypeHeader": {},
+  "waterDescription": "Description",
+  "@waterDescription": {},
+  "waterDistanceRangeKm": "{min} - {max} km",
+  "@waterDistanceRangeKm": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "waterEditDistanceRange": "Edit Distance Range",
+  "@waterEditDistanceRange": {},
+  "waterEditPrice": "Edit Price",
+  "@waterEditPrice": {},
+  "waterEditWorkingHour": "Edit Working Hour",
+  "@waterEditWorkingHour": {},
+  "waterEnd": "End",
+  "@waterEnd": {},
+  "waterEndTime": "End Time",
+  "@waterEndTime": {},
+  "waterEndTimeAfterStartTime": "End time must be after start time",
+  "@waterEndTimeAfterStartTime": {},
+  "waterEnterMinMaxDistance": "Enter minimum and maximum distance",
+  "@waterEnterMinMaxDistance": {},
+  "waterEnterPrice": "Enter a price",
+  "@waterEnterPrice": {},
+  "waterEnterQuantity": "Enter Quantity",
+  "@waterEnterQuantity": {},
+  "waterEnterReason": "Enter a reason",
+  "@waterEnterReason": {},
+  "waterErrorAcceptingOrder": "Error accepting order: {error}",
+  "@waterErrorAcceptingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorAcceptingSubscription": "Error accepting subscription: {error}",
+  "@waterErrorAcceptingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorAddingProduct": "Error adding product: {error}",
+  "@waterErrorAddingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorCancellingOrder": "Error cancelling order: {error}",
+  "@waterErrorCancellingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorDeletingProduct": "Error deleting product: {error}",
+  "@waterErrorDeletingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorMarkingOrderAsReady": "Error marking order as ready: {error}",
+  "@waterErrorMarkingOrderAsReady": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorPausingSubscription": "Error pausing subscription: {error}",
+  "@waterErrorPausingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorPreparingOrder": "Error preparing order: {error}",
+  "@waterErrorPreparingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorRejectingSubscription": "Error rejecting subscription: {error}",
+  "@waterErrorRejectingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorResumingSubscription": "Error resuming subscription: {error}",
+  "@waterErrorResumingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorUpdatingItemStatus": "Error updating item status: {error}",
+  "@waterErrorUpdatingItemStatus": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorUpdatingPrice": "Error updating price: {error}",
+  "@waterErrorUpdatingPrice": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterErrorUpdatingStock": "Error updating stock: {error}",
+  "@waterErrorUpdatingStock": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "waterEstValue": "Est. value",
+  "@waterEstValue": {},
+  "waterEstimatedDeliveryFee": "Estimated Delivery Fee",
+  "@waterEstimatedDeliveryFee": {},
+  "waterEvening": "Evening",
+  "@waterEvening": {},
+  "waterExpressDelivery": "Express Delivery",
+  "@waterExpressDelivery": {},
+  "waterFailedToAcceptOrder": "Failed to accept order",
+  "@waterFailedToAcceptOrder": {},
+  "waterFailedToAcceptSubscription": "Failed to accept subscription",
+  "@waterFailedToAcceptSubscription": {},
+  "waterFailedToAddProduct": "Failed to add product",
+  "@waterFailedToAddProduct": {},
+  "waterFailedToCancelLeave": "Failed to cancel leave",
+  "@waterFailedToCancelLeave": {},
+  "waterFailedToCancelOrder": "Failed to cancel order",
+  "@waterFailedToCancelOrder": {},
+  "waterFailedToDeleteAccount": "Failed to delete account",
+  "@waterFailedToDeleteAccount": {},
+  "waterFailedToDeleteProduct": "Failed to delete product",
+  "@waterFailedToDeleteProduct": {},
+  "waterFailedToLoadImage": "Failed to load image",
+  "@waterFailedToLoadImage": {},
+  "waterFailedToMarkLeave": "Failed to mark leave",
+  "@waterFailedToMarkLeave": {},
+  "waterFailedToMarkOrderAsReady": "Failed to mark order as ready",
+  "@waterFailedToMarkOrderAsReady": {},
+  "waterFailedToPauseSubscription": "Failed to pause subscription",
+  "@waterFailedToPauseSubscription": {},
+  "waterFailedToPrepareOrder": "Failed to prepare order",
+  "@waterFailedToPrepareOrder": {},
+  "waterFailedToRejectSubscription": "Failed to reject subscription",
+  "@waterFailedToRejectSubscription": {},
+  "waterFailedToResumeSubscription": "Failed to resume subscription",
+  "@waterFailedToResumeSubscription": {},
+  "waterFailedToUpdateBusinessSettings": "Failed to update business settings",
+  "@waterFailedToUpdateBusinessSettings": {},
+  "waterFailedToUpdateItemStatus": "Failed to update item status",
+  "@waterFailedToUpdateItemStatus": {},
+  "waterFailedToUpdatePrice": "Failed to update price",
+  "@waterFailedToUpdatePrice": {},
+  "waterFailedToUpdateStock": "Failed to update stock",
+  "@waterFailedToUpdateStock": {},
+  "waterFailedToUpdateWorkingHours": "Failed to update working hours",
+  "@waterFailedToUpdateWorkingHours": {},
+  "waterFillInEveryField": "Fill in every field",
+  "@waterFillInEveryField": {},
+  "waterFilterAllCount": "All {count}",
+  "@waterFilterAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterFilterByCategory": "Filter by category",
+  "@waterFilterByCategory": {},
+  "waterFilterInStockCount": "In Stock {count}",
+  "@waterFilterInStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterFilterLowStockCount": "Low Stock {count}",
+  "@waterFilterLowStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterFlat": "Flat",
+  "@waterFlat": {},
+  "waterFrequency": "Frequency",
+  "@waterFrequency": {},
+  "waterIdLabel": "ID: {id}",
+  "@waterIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "waterImage": "Image",
+  "@waterImage": {},
+  "waterImageFormatHint": "PNG, JPG up to 5MB",
+  "@waterImageFormatHint": {},
+  "waterImagesSelected": "{count} images selected",
+  "@waterImagesSelected": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterInStock": "In Stock",
+  "@waterInStock": {},
+  "waterInventory": "Inventory",
+  "@waterInventory": {},
+  "waterInventoryControl": "INVENTORY CONTROL",
+  "@waterInventoryControl": {},
+  "waterItem": "Water Item",
+  "@waterItem": {},
+  "waterItemMarkedAvailable": "Item marked as available successfully",
+  "@waterItemMarkedAvailable": {},
+  "waterItemMarkedOutOfStock": "Item marked as out of stock successfully",
+  "@waterItemMarkedOutOfStock": {},
+  "waterLastSold": "Last Sold: {date}",
+  "@waterLastSold": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "waterLeaveCancelledSuccessfully": "Leave cancelled successfully",
+  "@waterLeaveCancelledSuccessfully": {},
+  "waterLeaveManagement": "Leave Management",
+  "@waterLeaveManagement": {},
+  "waterLeaveMarkedSuccessfully": "Leave marked successfully",
+  "@waterLeaveMarkedSuccessfully": {},
+  "waterLogoutFailed": "Logout failed.",
+  "@waterLogoutFailed": {},
+  "waterLowStock": "Low Stock",
+  "@waterLowStock": {},
+  "waterLowStockAlert": "Low Stock Alert",
+  "@waterLowStockAlert": {},
+  "waterMarkAsPickedUp": "Mark as Picked Up",
+  "@waterMarkAsPickedUp": {},
+  "waterMarkAvailable": "Mark Available",
+  "@waterMarkAvailable": {},
+  "waterMarkLeaveConfirm": "Are you sure you want to mark leave for the selected dates?",
+  "@waterMarkLeaveConfirm": {},
+  "waterMarkOutOfStock": "Mark Out Of Stock",
+  "@waterMarkOutOfStock": {},
+  "waterMarkStoreBusy": "Mark Store Busy",
+  "@waterMarkStoreBusy": {},
+  "waterMarkedLeavesAppearHere": "Marked leaves will appear here",
+  "@waterMarkedLeavesAppearHere": {},
+  "waterMaxGreaterThanMin": "Maximum must be greater than minimum",
+  "@waterMaxGreaterThanMin": {},
+  "waterMaximumDistance": "Maximum Distance",
+  "@waterMaximumDistance": {},
+  "waterMessages": "Messages",
+  "@waterMessages": {},
+  "waterMinimumDistance": "Minimum Distance",
+  "@waterMinimumDistance": {},
+  "waterMonth": "Month",
+  "@waterMonth": {},
+  "waterMore": "More",
+  "@waterMore": {},
+  "waterMoreProducts": "+{count} More Products",
+  "@waterMoreProducts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterMorning": "Morning",
+  "@waterMorning": {},
+  "waterNewBadge": "NEW",
+  "@waterNewBadge": {},
+  "waterNewOrders": "New Orders",
+  "@waterNewOrders": {},
+  "waterNextDelivery": "Next Delivery",
+  "@waterNextDelivery": {},
+  "waterNoContactDetails": "No contact details available",
+  "@waterNoContactDetails": {},
+  "waterNoLeavesFound": "No Leaves Found",
+  "@waterNoLeavesFound": {},
+  "waterNoOrdersHere": "No orders here",
+  "@waterNoOrdersHere": {},
+  "waterNoPayoutsFound": "No Payouts Found",
+  "@waterNoPayoutsFound": {},
+  "waterNoPrivacyPolicyAvailable": "No privacy policy available",
+  "@waterNoPrivacyPolicyAvailable": {},
+  "waterNoProductsFound": "No Products Found",
+  "@waterNoProductsFound": {},
+  "waterNoStockHistoryFound": "No Stock History Found",
+  "@waterNoStockHistoryFound": {},
+  "waterNoStockRecordsYet": "No stock records recorded for this item yet",
+  "@waterNoStockRecordsYet": {},
+  "waterNoSubscriptionOrdersHere": "No subscription orders here",
+  "@waterNoSubscriptionOrdersHere": {},
+  "waterNoTermsAvailable": "No terms & conditions available",
+  "@waterNoTermsAvailable": {},
+  "waterNotAccepting": "Not accepting",
+  "@waterNotAccepting": {},
+  "waterNotAvailable": "N/A",
+  "@waterNotAvailable": {},
+  "waterOfferPrice": "Offer Price",
+  "@waterOfferPrice": {},
+  "waterOffline": "Offline",
+  "@waterOffline": {},
+  "waterOneImageSelected": "1 image selected",
+  "@waterOneImageSelected": {},
+  "waterOneTimeOrders": "One-Time Orders",
+  "@waterOneTimeOrders": {},
+  "waterOnline": "Online",
+  "@waterOnline": {},
+  "waterOpen": "Open",
+  "@waterOpen": {},
+  "waterOpen24Hours": "24-Hour Open",
+  "@waterOpen24Hours": {},
+  "waterOrderCancelledSuccessfully": "Order cancelled successfully",
+  "@waterOrderCancelledSuccessfully": {},
+  "waterOrderDelivered": "Order Delivered",
+  "@waterOrderDelivered": {},
+  "waterOrderItemsCount": "ORDER ITEMS ({count})",
+  "@waterOrderItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterOrderMarkedAsReady": "Order marked as ready successfully",
+  "@waterOrderMarkedAsReady": {},
+  "waterOrderMovedToPreparing": "Order moved to preparing successfully",
+  "@waterOrderMovedToPreparing": {},
+  "waterOrderReceived": "Order Received",
+  "@waterOrderReceived": {},
+  "waterOrdersAppearHere": "Orders will appear here",
+  "@waterOrdersAppearHere": {},
+  "waterOther": "Other",
+  "@waterOther": {},
+  "waterOtherReason": "Other Reason",
+  "@waterOtherReason": {},
+  "waterOwnerIdentityProof": "Owner Identity Proof",
+  "@waterOwnerIdentityProof": {},
+  "waterPause": "Pause",
+  "@waterPause": {},
+  "waterPauseSubscription": "Pause Subscription",
+  "@waterPauseSubscription": {},
+  "waterPauseSubscriptionHint": "Future deliveries will be paused. Today's active order won't be affected",
+  "@waterPauseSubscriptionHint": {},
+  "waterPaused": "Paused",
+  "@waterPaused": {},
+  "waterPausedByLabel": "PAUSED BY:",
+  "@waterPausedByLabel": {},
+  "waterPausedOn": "Paused on: {date}",
+  "@waterPausedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPausedOnLabel": "PAUSED ON:",
+  "@waterPausedOnLabel": {},
+  "waterPaymentDetails": "Payment Details",
+  "@waterPaymentDetails": {},
+  "waterPaymentProof": "Payment Proof",
+  "@waterPaymentProof": {},
+  "waterPayoutAmount": "Payout Amount",
+  "@waterPayoutAmount": {},
+  "waterPayoutHistoryAppearHere": "Payout history will appear here",
+  "@waterPayoutHistoryAppearHere": {},
+  "waterPayoutOrdersAppearHere": "Orders related to this payout will appear here",
+  "@waterPayoutOrdersAppearHere": {},
+  "waterPickImagesFromGallery": "Pick one or more images from gallery",
+  "@waterPickImagesFromGallery": {},
+  "waterPickedUpByCustomer": "Picked Up by Customer",
+  "@waterPickedUpByCustomer": {},
+  "waterPickedUpByRider": "Picked Up by Rider",
+  "@waterPickedUpByRider": {},
+  "waterPlan": "Plan",
+  "@waterPlan": {},
+  "waterPlanRangeStart": "Start {start}",
+  "@waterPlanRangeStart": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPlanRangeStartEnd": "Start {start} - End {end}",
+  "@waterPlanRangeStartEnd": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPlanSummary": "PLAN SUMMARY",
+  "@waterPlanSummary": {},
+  "waterPleaseEnterAvailableStock": "Please enter available stock",
+  "@waterPleaseEnterAvailableStock": {},
+  "waterPleaseEnterPrice": "Please enter price",
+  "@waterPleaseEnterPrice": {},
+  "waterPleaseEnterProductName": "Please enter product name",
+  "@waterPleaseEnterProductName": {},
+  "waterPleaseEnterSellingPrice": "Please enter selling price",
+  "@waterPleaseEnterSellingPrice": {},
+  "waterPleaseEnterValidPrice": "Please enter a valid price",
+  "@waterPleaseEnterValidPrice": {},
+  "waterPleaseSelectProductImage": "Please select at least one product image",
+  "@waterPleaseSelectProductImage": {},
+  "waterPriceExampleHint": "e.g. 50",
+  "@waterPriceExampleHint": {},
+  "waterPriceUpdatedSuccessfully": "Price updated successfully",
+  "@waterPriceUpdatedSuccessfully": {},
+  "waterPricing": "Pricing",
+  "@waterPricing": {},
+  "waterPricingMru": "PRICING (MRU)",
+  "@waterPricingMru": {},
+  "waterPrivacySecurity": "Privacy & Security",
+  "@waterPrivacySecurity": {},
+  "waterProductAddedSuccessfully": "Product added successfully",
+  "@waterProductAddedSuccessfully": {},
+  "waterProductDeletedSuccessfully": "Product deleted successfully",
+  "@waterProductDeletedSuccessfully": {},
+  "waterProductDescription": "Product Description",
+  "@waterProductDescription": {},
+  "waterProductDescriptionHint": "Describe the source, pH level, or benefits...",
+  "@waterProductDescriptionHint": {},
+  "waterProductDetails": "Product Details",
+  "@waterProductDetails": {},
+  "waterProductImage": "Product Image",
+  "@waterProductImage": {},
+  "waterProductNameEnglish": "Product Name (English)",
+  "@waterProductNameEnglish": {},
+  "waterProductNameHint": "e.g. Drinking Water",
+  "@waterProductNameHint": {},
+  "waterQuantityLabel": "QUANTITY: ",
+  "@waterQuantityLabel": {},
+  "waterRangeOverlaps": "This range overlaps an existing range",
+  "@waterRangeOverlaps": {},
+  "waterReadyForDispatch": "Ready for Dispatch",
+  "@waterReadyForDispatch": {},
+  "waterReadyForPickup": "Ready for Pickup",
+  "@waterReadyForPickup": {},
+  "waterReasonForPausing": "Reason For Pausing",
+  "@waterReasonForPausing": {},
+  "waterReasonForRejecting": "Reason For Rejecting",
+  "@waterReasonForRejecting": {},
+  "waterReasonLabel": "REASON:",
+  "@waterReasonLabel": {},
+  "waterRegistrationDetails": "Registration Details",
+  "@waterRegistrationDetails": {},
+  "waterRejectOrder": "Reject Order",
+  "@waterRejectOrder": {},
+  "waterRejectOrderHint": "Please select a reason. The customer will be notified accordingly",
+  "@waterRejectOrderHint": {},
+  "waterRemainingLabel": "REMAINING: ",
+  "@waterRemainingLabel": {},
+  "waterRequestId": "REQUEST ID",
+  "@waterRequestId": {},
+  "waterResume": "Resume",
+  "@waterResume": {},
+  "waterResumeSubscription": "Resume Subscription",
+  "@waterResumeSubscription": {},
+  "waterResumeSubscriptionConfirm": "Are you sure you want to resume this subscription order?",
+  "@waterResumeSubscriptionConfirm": {},
+  "waterReturnableBottle": "Returnable Bottle",
+  "@waterReturnableBottle": {},
+  "waterReturnableBottleHint": "Enable this option if customers must return the empty bottle after delivery or self pickup",
+  "@waterReturnableBottleHint": {},
+  "waterRevenueHeader": "REVENUE",
+  "@waterRevenueHeader": {},
+  "waterRevenueSummary": "Revenue Summary",
+  "@waterRevenueSummary": {},
+  "waterReviewsCount": "({count} reviews)",
+  "@waterReviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "waterSalesPerformance": "Sales Performance",
+  "@waterSalesPerformance": {},
+  "waterSaveProduct": "Save Product",
+  "@waterSaveProduct": {},
+  "waterScanOrEnterBarcode": "Scan or enter barcode",
+  "@waterScanOrEnterBarcode": {},
+  "waterSearchBySubscriptionIdName": "Search by subscription ID, name",
+  "@waterSearchBySubscriptionIdName": {},
+  "waterSearchCustomerOrOrderHint": "Search customer name or order ID...",
+  "@waterSearchCustomerOrOrderHint": {},
+  "waterSearchDeliveryBoy": "Search Delivery Boy",
+  "@waterSearchDeliveryBoy": {},
+  "waterSearchProductsHint": "Search products, ID",
+  "@waterSearchProductsHint": {},
+  "waterSelectFromAndToDates": "Select from and to dates",
+  "@waterSelectFromAndToDates": {},
+  "waterSelectImageSource": "Select Image Source",
+  "@waterSelectImageSource": {},
+  "waterSellingPrice": "Selling Price",
+  "@waterSellingPrice": {},
+  "waterSendMail": "Send Mail",
+  "@waterSendMail": {},
+  "waterSize": "Size",
+  "@waterSize": {},
+  "waterStart": "Start",
+  "@waterStart": {},
+  "waterStartTime": "Start Time",
+  "@waterStartTime": {},
+  "waterStockAdded": "Stock Added",
+  "@waterStockAdded": {},
+  "waterStockHistory": "Stock History",
+  "@waterStockHistory": {},
+  "waterStockIdLabel": "STOCK ID: {id}",
+  "@waterStockIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "waterStockRemoved": "Stock Removed",
+  "@waterStockRemoved": {},
+  "waterStockUpdatedSuccessfully": "Stock updated successfully",
+  "@waterStockUpdatedSuccessfully": {},
+  "waterStorage": "Storage",
+  "@waterStorage": {},
+  "waterStoreAvailability": "Store Availability",
+  "@waterStoreAvailability": {},
+  "waterStoreDetails": "Store Details",
+  "@waterStoreDetails": {},
+  "waterStoreProfile": "Store Profile",
+  "@waterStoreProfile": {},
+  "waterStoreStatusOpen": "Store Status (Open)",
+  "@waterStoreStatusOpen": {},
+  "waterSubscriptionAcceptedSuccessfully": "Subscription accepted successfully",
+  "@waterSubscriptionAcceptedSuccessfully": {},
+  "waterSubscriptionAmount": "Subscription Amount",
+  "@waterSubscriptionAmount": {},
+  "waterSubscriptionCalendar": "Subscription Calendar",
+  "@waterSubscriptionCalendar": {},
+  "waterSubscriptionDetails": "Subscription Details",
+  "@waterSubscriptionDetails": {},
+  "waterSubscriptionOrders": "Subscription Orders",
+  "@waterSubscriptionOrders": {},
+  "waterSubscriptionPausedSuccessfully": "Subscription paused successfully",
+  "@waterSubscriptionPausedSuccessfully": {},
+  "waterSubscriptionRejectedSuccessfully": "Subscription rejected successfully",
+  "@waterSubscriptionRejectedSuccessfully": {},
+  "waterSubscriptionResumedSuccessfully": "Subscription resumed successfully",
+  "@waterSubscriptionResumedSuccessfully": {},
+  "waterSubscriptionSavings": "Subscription Savings",
+  "@waterSubscriptionSavings": {},
+  "waterSupportLegal": "Support & Legal",
+  "@waterSupportLegal": {},
+  "waterTakeAPhoto": "Take a photo",
+  "@waterTakeAPhoto": {},
+  "waterTapToUploadImage": "Tap to upload image",
+  "@waterTapToUploadImage": {},
+  "waterTemporaryStoreClosure": "Temporary Store Closure",
+  "@waterTemporaryStoreClosure": {},
+  "waterTimeSlot": "Time Slot",
+  "@waterTimeSlot": {},
+  "waterTinNifNumber": "TIN/NIF Number",
+  "@waterTinNifNumber": {},
+  "waterToDateAfterFromDate": "To date must be after from date",
+  "@waterToDateAfterFromDate": {},
+  "waterTodayTimings": "Today: {open} - {close}",
+  "@waterTodayTimings": {
+    "placeholders": {
+      "open": {
+        "type": "String"
+      },
+      "close": {
+        "type": "String"
+      }
+    }
+  },
+  "waterTotalHeader": "TOTAL",
+  "@waterTotalHeader": {},
+  "waterTotalPaid": "Total paid",
+  "@waterTotalPaid": {},
+  "waterTotalSoldAllTime": "Total Sold (All Time)",
+  "@waterTotalSoldAllTime": {},
+  "waterTryAnotherStatusFilter": "Try another status filter above",
+  "@waterTryAnotherStatusFilter": {},
+  "waterUnitType": "Unit Type",
+  "@waterUnitType": {},
+  "waterUpcomingDeliveries": "UPCOMING DELIVERIES",
+  "@waterUpcomingDeliveries": {},
+  "waterUpdateStock": "Update Stock",
+  "@waterUpdateStock": {},
+  "waterValidUpto": "Valid Upto",
+  "@waterValidUpto": {},
+  "waterVoiceMessage": "Voice message",
+  "@waterVoiceMessage": {},
+  "waterWaterSupplyIssue": "Water Supply Issue",
+  "@waterWaterSupplyIssue": {},
+  "waterWeek": "Week",
+  "@waterWeek": {},
+  "waterWeeklyPlanner": "WEEKLY PLANNER",
+  "@waterWeeklyPlanner": {},
+  "waterWeeklySchedule": "Weekly Schedule",
+  "@waterWeeklySchedule": {},
+  "waterWelcomeToShop": "Welcome to {name}!",
+  "@waterWelcomeToShop": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waterWorkingHoursUpdated": "Working hours updated successfully",
+  "@waterWorkingHoursUpdated": {},
+  "waterYou": "You",
+  "@waterYou": {},
+  "cleaningBookingAvailabilityFailed": "Couldn't update availability. Please try again.",
+  "@cleaningBookingAvailabilityFailed": {},
+  "cleaningBookingCancelReasonHeader": "CANCELLATION REASON",
+  "@cleaningBookingCancelReasonHeader": {},
+  "cleaningBookingDaysAgo": "{count} d ago",
+  "@cleaningBookingDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingHoursAgo": "{count} h ago",
+  "@cleaningBookingHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingLoadFailed": "Couldn't load the data. Please try again.",
+  "@cleaningBookingLoadFailed": {},
+  "cleaningBookingMinutesAgo": "{count} min ago",
+  "@cleaningBookingMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingStatusCancelled": "CANCELLED",
+  "@cleaningBookingStatusCancelled": {},
+  "cleaningBookingStatusOnTheWay": "ON THE WAY",
+  "@cleaningBookingStatusOnTheWay": {},
+  "cleaningBookingUpdateFailed": "Couldn't update the booking. Please try again.",
+  "@cleaningBookingUpdateFailed": {},
+  "cleaningSvcAddOneSpace": "Add at least one space with its price.",
+  "@cleaningSvcAddOneSpace": {},
+  "cleaningSvcChatLoadError": "Couldn't load messages.",
+  "@cleaningSvcChatLoadError": {},
+  "cleaningSvcChatUnavailable": "Chat with this customer isn't available yet.",
+  "@cleaningSvcChatUnavailable": {},
+  "cleaningSvcGenericError": "Something went wrong. Please try again.",
+  "@cleaningSvcGenericError": {},
+  "cleaningSvcLoadError": "Couldn't load your services.",
+  "@cleaningSvcLoadError": {},
+  "cleaningSvcSelectServiceType": "Please select a service type.",
+  "@cleaningSvcSelectServiceType": {},
+  "cleaningSvcTypesLoadError": "Couldn't load service types.",
+  "@cleaningSvcTypesLoadError": {},
+  "waterAmountDue": "Amount due",
+  "@waterAmountDue": {},
+  "waterBiWeekly": "Every 2 weeks",
+  "@waterBiWeekly": {},
+  "waterCalendarNotAvailable": "Delivery calendar not available yet",
+  "@waterCalendarNotAvailable": {},
+  "waterCalendarNotAvailableHint": "Scheduled subscription deliveries will appear here once this feature is ready. You can see each subscription's next delivery in its details.",
+  "@waterCalendarNotAvailableHint": {},
+  "waterEveryNDays": "Every {days} days",
+  "@waterEveryNDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "waterMonthly": "Monthly",
+  "@waterMonthly": {},
+  "waterSomethingWentWrong": "Something went wrong. Please try again.",
+  "@waterSomethingWentWrong": {},
+  "waterTomorrow": "Tomorrow",
+  "@waterTomorrow": {},
+  "waterWallet": "Wallet",
+  "@waterWallet": {},
+  "waterWeekly": "Weekly",
+  "@waterWeekly": {}
 }

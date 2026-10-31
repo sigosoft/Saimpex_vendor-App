@@ -5,11 +5,144 @@ import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/pause_subscription_sheet.dart';
+import 'package:get/get.dart';
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/water/controller/home_controller.dart';
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/water/core/water_state_view.dart';
 
-class SubscriptionDetailsView extends StatelessWidget {
+/// Values from `GET vendorapp/waterSubscriptionDetails?subscription_id=`
+/// (`data.subscription`). Only fields the backend returns are shown.
+class _Details {
+  const _Details(this.json);
+
+  final Map<String, dynamic> json;
+
+  String _str(String key) {
+    final v = json[key]?.toString().trim() ?? '';
+    return v == 'null' ? '' : v;
+  }
+
+  String get phone => _str('phone').isNotEmpty ? _str('phone') : _str('customer_mobile');
+  String get requestedOn => WaterApi.formatDateTime(json['created_at']);
+  String get address => _str('address_line1');
+  String get product => _str('service').isNotEmpty ? _str('service') : _str('product_name');
+
+  int get _bottles => int.tryParse(_str('bottles_per_delivery')) ?? int.tryParse(_str('qty')) ?? 1;
+  int get _quantity {
+    final q = int.tryParse(_str('quantity')) ?? 1;
+    return q < 1 ? 1 : q;
+  }
+
+  /// Bottles per delivery × subscribed quantity (amount = price × quantity, §6.14).
+  int get qty => _bottles * _quantity;
+
+  int get frequencyDays => int.tryParse(_str('frequency_days')) ?? 0;
+
+  String get frequency {
+    return switch (frequencyDays) {
+      1 => S.current.waterDaily,
+      7 => S.current.waterWeekly,
+      14 => S.current.waterBiWeekly,
+      30 => S.current.waterMonthly,
+      final d when d > 0 => S.current.waterEveryNDays(d.toString()),
+      _ => _str('frequency').isNotEmpty ? _str('frequency') : '—',
+    };
+  }
+
+  String get slot => _str('slot').isNotEmpty ? _str('slot') : (_str('delivery_slot').isNotEmpty ? _str('delivery_slot') : '—');
+
+  String get startDate => WaterApi.formatDate(
+        _str('starts_at').isNotEmpty ? json['starts_at'] : json['created_at'],
+      );
+  String get endDate => WaterApi.formatDate(json['ends_at']);
+
+  DateTime? get nextDeliveryAt => WaterApi.parseDate(json['next_delivery_at']);
+
+  String get nextDelivery {
+    final next = nextDeliveryAt;
+    if (next == null) return '—';
+    return _isTomorrow(next) ? S.current.waterTomorrow : WaterApi.formatDate(json['next_delivery_at']);
+  }
+
+  /// The backend sends `upcoming` (3 rows) built from `next_delivery_at` +
+  /// `frequency_days`; the same dates are rebuilt here so the weekday is
+  /// localised.
+  List<(String date, String label, String time)> get upcoming {
+    final raw = json['upcoming'];
+    final next = nextDeliveryAt;
+    if (raw is! List || raw.isEmpty || next == null || frequencyDays <= 0) {
+      return const [];
+    }
+    return [
+      for (var i = 0; i < raw.length; i++)
+        () {
+          final at = next.add(Duration(days: frequencyDays * i));
+          return (
+            at.day.toString().padLeft(2, '0'),
+            _isTomorrow(at) ? S.current.waterTomorrow : WaterApi.weekday(at),
+            WaterApi.formatTime(at),
+          );
+        }(),
+    ];
+  }
+
+  String? get pausedOn {
+    final v = WaterApi.formatDateTime(json['paused_at']);
+    return v == '—' ? null : v;
+  }
+
+  String get paymentType => _str('payment_type');
+  bool get isPaid => _str('payment_status') == '2';
+
+  String get paymentMethod => switch (paymentType) {
+        '2' => S.current.onlinePayment,
+        '3' => S.current.waterWallet,
+        '1' => S.current.cashOnDelivery,
+        _ => '—',
+      };
+
+  /// `amount` (price × quantity); older rows have 0, then plan price × quantity.
+  String get amount {
+    final a = double.tryParse(_str('amount'));
+    if (a != null && a > 0) return WaterApi.money(a);
+    final price = double.tryParse(_str('plan_price')) ?? double.tryParse(_str('value'));
+    if (price == null) return '—';
+    return WaterApi.money(price * _quantity);
+  }
+
+  String? get paidOn {
+    final v = WaterApi.formatDateTime(json['paid_at']);
+    return v == '—' ? null : v;
+  }
+
+  static bool _isTomorrow(DateTime dt) {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    return dt.year == tomorrow.year && dt.month == tomorrow.month && dt.day == tomorrow.day;
+  }
+}
+
+class SubscriptionDetailsView extends StatefulWidget {
   const SubscriptionDetailsView({super.key, required this.order});
 
+  /// Row from the home list; the screen reloads the full record by its id.
   final SubscriptionOrder order;
+
+  @override
+  State<SubscriptionDetailsView> createState() => _SubscriptionDetailsViewState();
+}
+
+class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
+  _Details? _details;
+  bool _loading = true;
+  String? _error;
+
+  SubscriptionOrder get order => _details != null
+      ? SubscriptionOrder.fromJson(_details!.json)
+      : widget.order;
   bool get _isPaused => order.status == SubscriptionOrderStatus.paused;
   bool get _isActive => order.status == SubscriptionOrderStatus.active;
   bool get _isNew => order.status == SubscriptionOrderStatus.newOrder;
@@ -18,7 +151,86 @@ class SubscriptionDetailsView extends StatelessWidget {
   bool get _showDeliverySchedule => _isActive || _isNew;
 
   @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      await WaterApi.prepare();
+      final id = widget.order.subscriptionId;
+      final response = await DioClient().get(
+        ApiEndPoints.waterSubscriptionDetails,
+        query: {'subscription_id': id},
+      );
+      final body = response.data;
+      final data = body is Map ? body['data'] : null;
+      if (!WaterApi.isOk(body) || data is! Map || data['subscription'] is! Map) {
+        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+      }
+      if (!mounted) return;
+      setState(() {
+        _details = _Details(Map<String, dynamic>.from(data['subscription'] as Map));
+      });
+    } catch (e) {
+      if (mounted) setState(() => _error = WaterApi.errorText(e));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  WaterHomeController get _homeController => Get.isRegistered<WaterHomeController>()
+      ? Get.find<WaterHomeController>()
+      : Get.put(WaterHomeController());
+
+  Future<void> _pause() async {
+    final reason = await showPauseSubscriptionSheet(context);
+    if (reason == null || !mounted) return;
+    await _homeController.pauseWaterSubscription(
+      order.subscriptionId,
+      reason: reason,
+      context: context,
+    );
+    if (mounted) _load();
+  }
+
+  Future<void> _resume() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(S.of(dialogContext).waterResumeSubscription),
+        content: Text(S.of(dialogContext).waterResumeSubscriptionConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(S.of(dialogContext).cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              S.of(dialogContext).waterResume,
+              style: const TextStyle(color: AppColors.primaryOrange),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    await _homeController.resumeWaterSubscription(
+      order.subscriptionId,
+      context: context,
+    );
+    if (mounted) _load();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final details = _details;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
@@ -45,18 +257,35 @@ class SubscriptionDetailsView extends StatelessWidget {
                 _Header(onBack: () => Navigator.of(context).maybePop()),
                 const SizedBox(height: 12),
                 Expanded(
-                  child: ListView(
+                  child: RefreshIndicator(
+                    color: AppColors.primaryOrange,
+                    onRefresh: _load,
+                    child: details == null
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: [
+                              if (_loading)
+                                const WaterStateView.loading()
+                              else
+                                WaterStateView.error(
+                                  message: _error ?? S.of(context).waterSomethingWentWrong,
+                                  onRetry: _load,
+                                ),
+                            ],
+                          )
+                        : ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     children: [
-                      _CustomerCard(order: order),
+                      _CustomerCard(order: order, details: details),
                       if (_isPaused) ...[
                         const SizedBox(height: 12),
-                        _PausedStatusCard(order: order),
+                        _PausedStatusCard(order: order, pausedOn: details.pausedOn),
                       ],
                       const SizedBox(height: 16),
-                      const Text(
-                        'PLAN SUMMARY',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterPlanSummary,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
@@ -64,39 +293,33 @@ class SubscriptionDetailsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const _ProductCard(),
+                      _ProductCard(name: details.product, qty: details.qty),
                       const SizedBox(height: 12),
                       _PlanGrid(
-                        frequency: order.planName,
-                        timeSlot: order.timeSlot,
-                        startDate: 'Jul-22-2026',
-                        endDate: 'Aug-22-2026',
+                        frequency: details.frequency,
+                        timeSlot: details.slot,
+                        startDate: details.startDate,
+                        endDate: details.endDate,
                       ),
                       if (_showDeliverySchedule) ...[
                         const SizedBox(height: 10),
-                        _NextDeliveryBar(
-                          value: order.nextDelivery ?? 'Tomorrow',
-                        ),
-                        const SizedBox(height: 18),
-                        const _SectionTitle(
-                          title: 'UPCOMING DELIVERIES',
-                          action: 'See All',
-                        ),
-                        const SizedBox(height: 10),
-                        const _UpcomingDeliveriesCard(),
+                        _NextDeliveryBar(value: details.nextDelivery),
+                        if (details.upcoming.isNotEmpty) ...[
+                          const SizedBox(height: 18),
+                          _SectionTitle(
+                            title: S.of(context).waterUpcomingDeliveries,
+                          ),
+                          const SizedBox(height: 10),
+                          _UpcomingDeliveriesCard(items: details.upcoming),
+                        ],
                       ],
+                      // Delivery history: the details endpoint returns no
+                      // delivered orders for a subscription yet, so the block
+                      // is hidden (issue draft in issues_water.md).
                       const SizedBox(height: 18),
-                      const _SectionTitle(
-                        title: 'DELIVERY HISTORY',
-                        action: 'See All',
-                        titleColor: AppColors.sectionTitle,
-                      ),
-                      const SizedBox(height: 10),
-                      const _DeliveryHistoryCard(),
-                      const SizedBox(height: 18),
-                      const Text(
-                        'PAYMENT SUMMARY',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).paymentSummary,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
@@ -104,19 +327,22 @@ class SubscriptionDetailsView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const _PaymentSummary(),
+                      _PaymentSummary(details: details),
                     ],
                   ),
+                  ),
                 ),
-                _BottomActions(
-                  status: order.status,
-                  pausedByVendor: order.pausedByVendor,
-                  customerName: order.customerName,
-                  customerId: order.resolvedCustomerId,
-                  orderId: order.subscriptionId,
-                  avatarUrl: order.customerAvatar,
-                  onPause: () => showPauseSubscriptionSheet(context),
-                ),
+                if (details != null)
+                  _BottomActions(
+                    status: order.status,
+                    pausedByVendor: order.pausedByVendor,
+                    customerName: order.customerName,
+                    customerId: order.resolvedCustomerId,
+                    orderId: order.subscriptionId,
+                    avatarUrl: order.customerAvatar,
+                    onPause: _pause,
+                    onResume: _resume,
+                  ),
               ],
             ),
           ),
@@ -140,16 +366,16 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Subscription Details',
-              style: TextStyle(
+            Text(
+              S.of(context).waterSubscriptionDetails,
+              style: const TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -186,9 +412,10 @@ class _Header extends StatelessWidget {
 }
 
 class _CustomerCard extends StatelessWidget {
-  const _CustomerCard({required this.order});
+  const _CustomerCard({required this.order, required this.details});
 
   final SubscriptionOrder order;
+  final _Details details;
 
   static List<BoxShadow> get _softShadow => [
     BoxShadow(
@@ -206,9 +433,9 @@ class _CustomerCard extends StatelessWidget {
 
     final (badgeLabel, badgeColor) = switch (order.status) {
       SubscriptionOrderStatus.newOrder ||
-      SubscriptionOrderStatus.active => ('ACTIVE', AppColors.activeGreen),
-      SubscriptionOrderStatus.paused => ('PAUSED', AppColors.primaryOrange),
-      SubscriptionOrderStatus.cancelled => ('CANCELLED', AppColors.textMuted),
+      SubscriptionOrderStatus.active => (S.current.active, AppColors.activeGreen),
+      SubscriptionOrderStatus.paused => (S.current.waterPaused.toUpperCase(), AppColors.primaryOrange),
+      SubscriptionOrderStatus.cancelled => (S.current.cancelled.toUpperCase(), AppColors.textMuted),
     };
 
     return Container(
@@ -235,9 +462,9 @@ class _CustomerCard extends StatelessWidget {
                 size: 18,
               ),
               const SizedBox(width: 6),
-              const Text(
-                'CUSTOMER',
-                style: TextStyle(
+              Text(
+                S.of(context).waterCustomerHeader,
+                style: const TextStyle(
                   color: AppColors.primaryOrange,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -280,7 +507,7 @@ class _CustomerCard extends StatelessWidget {
                   radius: 22,
                   backgroundColor: AppColors.avatarPink,
                   child: Text(
-                    order.customerName[0].toUpperCase(),
+                    order.customerName.isEmpty ? '?' : order.customerName[0].toUpperCase(),
                     style: const TextStyle(
                       color: AppColors.avatarText,
                       fontWeight: FontWeight.w700,
@@ -302,9 +529,9 @@ class _CustomerCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 3),
-                      const Text(
-                        '+222 45 12 34 56',
-                        style: TextStyle(
+                      Text(
+                        details.phone.isEmpty ? '—' : details.phone,
+                        style: const TextStyle(
                           color: AppColors.textMuted,
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
@@ -348,9 +575,9 @@ class _CustomerCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'REQUEST ID',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterRequestId,
+                        style: const TextStyle(
                           color: AppColors.textHint,
                           fontWeight: FontWeight.w600,
                           fontSize: 10,
@@ -369,9 +596,9 @@ class _CustomerCard extends StatelessWidget {
                                 fontSize: 12,
                               ),
                             ),
-                            const TextSpan(
-                              text: ' • Today • 10:45 AM',
-                              style: TextStyle(
+                            TextSpan(
+                              text: ' • ${details.requestedOn}',
+                              style: const TextStyle(
                                 color: AppColors.textMeta,
                                 fontWeight: FontWeight.w400,
                                 fontSize: 11,
@@ -398,9 +625,9 @@ class _CustomerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: const Text(
-                          'DELIVERY TYPE',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).waterDeliveryTypeHeader,
+                          style: const TextStyle(
                             color: AppColors.textHint,
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
@@ -453,7 +680,9 @@ class _CustomerCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              order.isDelivery ? 'Delivery' : 'Self Pickup',
+                              order.isDelivery
+                                  ? S.of(context).delivery
+                                  : S.of(context).selfPickup,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -473,17 +702,17 @@ class _CustomerCard extends StatelessWidget {
           ),
           if (order.isDelivery) ...[
             const SizedBox(height: 14),
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.location_on_outlined,
                   color: AppColors.primaryOrange,
                   size: 16,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  'DELIVERY ADDRESS',
-                  style: TextStyle(
+                  S.of(context).deliveryAddress,
+                  style: const TextStyle(
                     color: AppColors.primaryOrange,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -501,9 +730,9 @@ class _CustomerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
                 boxShadow: _softShadow,
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 20,
                     backgroundColor: AppColors.orangeSoftBg,
                     child: Icon(
@@ -512,29 +741,17 @@ class _CustomerCard extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Sahara View Home',
-                          style: TextStyle(
-                            color: AppColors.textDark,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Near Marhaba Supermarket, Nouakchott',
-                          style: TextStyle(
-                            color: AppColors.textMuted,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12.5,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      details.address.isEmpty
+                          ? S.of(context).addressNotAvailable
+                          : details.address,
+                      style: const TextStyle(
+                        color: AppColors.textDark,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
@@ -548,7 +765,10 @@ class _CustomerCard extends StatelessWidget {
 }
 
 class _ProductCard extends StatelessWidget {
-  const _ProductCard();
+  const _ProductCard({required this.name, required this.qty});
+
+  final String name;
+  final int qty;
 
   @override
   Widget build(BuildContext context) {
@@ -586,9 +806,9 @@ class _ProductCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Drinking Water 19L',
-                  style: TextStyle(
+                Text(
+                  name.isEmpty ? '—' : name,
+                  style: const TextStyle(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w600,
                     fontSize: 14.5,
@@ -604,9 +824,9 @@ class _ProductCard extends StatelessWidget {
                     color: AppColors.softGray,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'Qty: 1',
-                    style: TextStyle(
+                  child: Text(
+                    S.of(context).qtyLabel('$qty'),
+                    style: const TextStyle(
                       color: AppColors.textLabel,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -644,7 +864,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.sync_rounded,
-                label: 'Frequency',
+                label: S.of(context).waterFrequency,
                 value: frequency,
               ),
             ),
@@ -652,7 +872,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.access_time_rounded,
-                label: 'Time Slot',
+                label: S.of(context).waterTimeSlot,
                 value: timeSlot,
               ),
             ),
@@ -664,7 +884,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.calendar_month_outlined,
-                label: 'Start',
+                label: S.of(context).waterStart,
                 value: startDate,
               ),
             ),
@@ -672,7 +892,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.calendar_month_outlined,
-                label: 'End',
+                label: S.of(context).waterEnd,
                 value: endDate,
               ),
             ),
@@ -755,9 +975,9 @@ class _NextDeliveryBar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Next Delivery',
-                  style: TextStyle(
+                Text(
+                  S.of(context).waterNextDelivery,
+                  style: const TextStyle(
                     color: AppColors.planPurpleSoft,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -787,13 +1007,18 @@ class _NextDeliveryBar extends StatelessWidget {
 }
 
 class _PausedStatusCard extends StatelessWidget {
-  const _PausedStatusCard({required this.order});
+  const _PausedStatusCard({required this.order, this.pausedOn});
 
   final SubscriptionOrder order;
+
+  /// `paused_at`, formatted; null when the backend has none.
+  final String? pausedOn;
   @override
   Widget build(BuildContext context) {
-    final pausedBy = order.pausedByVendor ? 'You' : 'Customer';
-    final pausedOn = order.pausedOn ?? 'Jul-24-2026 - 10:30 AM';
+    final pausedBy = order.pausedByVendor
+        ? S.of(context).waterYou
+        : S.of(context).waterCustomer;
+    final pausedOn = this.pausedOn ?? order.pausedOn ?? '—';
     final reason = order.pauseReason;
 
     return Container(
@@ -824,9 +1049,9 @@ class _PausedStatusCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Currently Paused',
-                style: TextStyle(
+              Text(
+                S.of(context).waterCurrentlyPaused,
+                style: const TextStyle(
                   color: AppColors.pausedAmber,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -835,14 +1060,14 @@ class _PausedStatusCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _PausedMetaRow(label: 'PAUSED BY:', value: pausedBy),
+          _PausedMetaRow(label: S.of(context).waterPausedByLabel, value: pausedBy),
           const SizedBox(height: 6),
-          _PausedMetaRow(label: 'PAUSED ON:', value: pausedOn),
+          _PausedMetaRow(label: S.of(context).waterPausedOnLabel, value: pausedOn),
           if (order.pausedByVendor &&
               reason != null &&
               reason.trim().isNotEmpty) ...[
             const SizedBox(height: 6),
-            _PausedMetaRow(label: 'REASON:', value: reason),
+            _PausedMetaRow(label: S.of(context).waterReasonLabel, value: reason),
           ],
         ],
       ),
@@ -884,15 +1109,10 @@ class _PausedMetaRow extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
-    required this.title,
-    required this.action,
-    this.titleColor = AppColors.textSecondary,
-  });
+  const _SectionTitle({required this.title});
 
   final String title;
-  final String action;
-  final Color titleColor;
+  static const Color titleColor = AppColors.textSecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -909,27 +1129,16 @@ class _SectionTitle extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          action,
-          style: const TextStyle(
-            color: AppColors.primaryOrange,
-            fontWeight: FontWeight.w500,
-            fontSize: 13,
-          ),
-        ),
       ],
     );
   }
 }
 
 class _UpcomingDeliveriesCard extends StatelessWidget {
-  const _UpcomingDeliveriesCard();
+  const _UpcomingDeliveriesCard({required this.items});
 
-  static const items = [
-    ('23', 'Tomorrow', '08:30 AM'),
-    ('24', 'Sunday', '08:30 AM'),
-    ('25', 'Saturday', '08:30 AM'),
-  ];
+  /// (day of month, weekday label, time)
+  final List<(String, String, String)> items;
 
   @override
   Widget build(BuildContext context) {
@@ -1001,116 +1210,14 @@ class _UpcomingDeliveriesCard extends StatelessWidget {
   }
 }
 
-class _DeliveryHistoryCard extends StatelessWidget {
-  const _DeliveryHistoryCard();
-  static const items = [
-    (true, 'Delivered', 'Order #22789104 • 23-Jul-2026'),
-    (true, 'Delivered', 'Order #22789104 • 24-Jul-2026'),
-    (false, 'In Progress', 'Order #22789112 • Processing'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          for (var i = 0; i < items.length; i++) ...[
-            if (i > 0) const SizedBox(height: 22),
-            _DeliveryHistoryRow(
-              delivered: items[i].$1,
-              title: items[i].$2,
-              subtitle: items[i].$3,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _DeliveryHistoryRow extends StatelessWidget {
-  const _DeliveryHistoryRow({
-    required this.delivered,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final bool delivered;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = delivered
-        ? AppColors.deliveredGreen
-        : AppColors.progressBlue;
-    final bg = delivered ? AppColors.deliveredBg : AppColors.progressBg;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-          alignment: Alignment.center,
-          child: Icon(
-            delivered ? Icons.check_circle_outline_rounded : Icons.sync_rounded,
-            size: 20,
-            color: accent,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: accent,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  height: 1.2,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: AppColors.detailGray,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13,
-                  height: 1.25,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _PaymentSummary extends StatelessWidget {
-  const _PaymentSummary();
+  const _PaymentSummary({required this.details});
+
+  final _Details details;
 
   @override
   Widget build(BuildContext context) {
+    final paidOn = details.paidOn;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
@@ -1118,43 +1225,39 @@ class _PaymentSummary extends StatelessWidget {
         color: AppColors.paymentCard,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          _PayRow(label: 'Subscription Amount', value: '9000 MRU'),
-          SizedBox(height: 10),
-          _PayRow(
-            label: 'Subscription Savings',
-            value: '-4500 MRU',
-            valueColor: AppColors.primaryOrange,
-          ),
-          SizedBox(height: 10),
-          _PayRow(label: 'Estimated Delivery Fee', value: '900 MRU'),
-          SizedBox(height: 10),
-          _PayRow(label: 'Tax', value: '100 MRU'),
-          SizedBox(height: 10),
-          _PayRow(
-            label: 'Payment on',
-            value: 'Feb 07, 2026 10:45 AM, Today',
-            valueColor: AppColors.textHint,
-            valueSize: 12,
-          ),
-          SizedBox(height: 12),
-          Divider(color: AppColors.paymentDivider, height: 1),
-          SizedBox(height: 12),
+          _PayRow(label: S.of(context).waterSubscriptionAmount, value: details.amount),
+          const SizedBox(height: 10),
+          _PayRow(label: S.of(context).paymentMethod, value: details.paymentMethod),
+          if (details.isPaid && paidOn != null) ...[
+            const SizedBox(height: 10),
+            _PayRow(
+              label: S.of(context).paymentOn,
+              value: paidOn,
+              valueColor: AppColors.textHint,
+              valueSize: 12,
+            ),
+          ],
+          const SizedBox(height: 12),
+          const Divider(color: AppColors.paymentDivider, height: 1),
+          const SizedBox(height: 12),
           Row(
             children: [
               Text(
-                'Total payed',
-                style: TextStyle(
+                details.isPaid
+                    ? S.of(context).waterTotalPaid
+                    : S.of(context).waterAmountDue,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
-                '5500 MRU',
-                style: TextStyle(
+                details.amount,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -1197,7 +1300,7 @@ class _PayRow extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.end,
             style: TextStyle(
               color: valueColor,
               fontWeight: FontWeight.w500,
@@ -1216,6 +1319,7 @@ class _BottomActions extends StatelessWidget {
     required this.pausedByVendor,
     required this.customerName,
     required this.onPause,
+    required this.onResume,
     this.customerId,
     this.orderId,
     this.avatarUrl,
@@ -1225,6 +1329,7 @@ class _BottomActions extends StatelessWidget {
   final bool pausedByVendor;
   final String customerName;
   final VoidCallback onPause;
+  final VoidCallback onResume;
   final int? customerId;
   final dynamic orderId;
   final String? avatarUrl;
@@ -1264,7 +1369,7 @@ class _BottomActions extends StatelessWidget {
               ),
               SizedBox(width: 6),
               Text(
-                'Chat With Customer',
+                S.of(context).waterChatWithCustomer,
                 maxLines: 1,
                 softWrap: false,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
@@ -1346,13 +1451,13 @@ class _BottomActions extends StatelessWidget {
                   Expanded(
                     child: isVendorPaused
                         ? _primaryButton(
-                            label: 'Resume',
+                            label: S.of(context).waterResume,
                             icon: Icons.play_arrow_rounded,
                             iconSize: 20,
-                            onPressed: () {},
+                            onPressed: onResume,
                           )
                         : _primaryButton(
-                            label: 'Pause',
+                            label: S.of(context).waterPause,
                             icon: Icons.pause,
                             onPressed: onPause,
                           ),

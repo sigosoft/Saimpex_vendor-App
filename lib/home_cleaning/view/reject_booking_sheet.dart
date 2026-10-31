@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
-Future<String?> showRejectBookingSheet(BuildContext context) {
-  return showModalBottomSheet<String>(
+/// What the vendor picked; sent to POST updateServiceBookingStatus as
+/// `status=10`, `reason` (required, max 255) and `note` (optional, max 100).
+class RejectBookingResult {
+  const RejectBookingResult({required this.reason, this.note});
+
+  final String reason;
+  final String? note;
+}
+
+Future<RejectBookingResult?> showRejectBookingSheet(BuildContext context) {
+  return showModalBottomSheet<RejectBookingResult>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -31,6 +41,16 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
     'Service temporarily unavailable',
     'Other',
   ];
+  // English values above are sent as `reason` (the API returns no reject
+  // reasons for home cleaning, so the list is app-side); only the displayed
+  // label is localised. For "Other" the typed text goes in `note`, the same
+  // reason/note split the backend uses when it reads the remark back.
+  static List<String> _reasonLabels(BuildContext context) => [
+        S.of(context).cleaningRejectReasonNoCleaner,
+        S.of(context).cleaningRejectReasonOutsideArea,
+        S.of(context).cleaningRejectReasonServiceUnavailable,
+        S.of(context).cleaningRejectReasonOther,
+      ];
   static const _otherIndex = 3;
   static const _otherMax = 100;
 
@@ -54,8 +74,13 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
   void _confirm() {
     if (!_canConfirm) return;
     HapticFeedback.lightImpact();
-    final reason = _isOther ? _otherController.text.trim() : _reasons[_selected!];
-    Navigator.of(context).pop(reason);
+    final result = _isOther
+        ? RejectBookingResult(
+            reason: _reasons[_otherIndex],
+            note: _otherController.text.trim(),
+          )
+        : RejectBookingResult(reason: _reasons[_selected!]);
+    Navigator.of(context).pop(result);
   }
 
   @override
@@ -82,7 +107,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Reject Booking',
+                  S.of(context).cleaningRejectBooking,
                   style: GoogleFonts.inter(
                     color: _red,
                     fontWeight: FontWeight.w700,
@@ -108,7 +133,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
           ),
           const SizedBox(height: 10),
           Text(
-            'Please select a reason. The customer will be\nnotified accordingly',
+            S.of(context).cleaningRejectSheetSubtitle,
             style: GoogleFonts.inter(
               color: const Color(0xFF9E9E9E),
               fontWeight: FontWeight.w400,
@@ -120,7 +145,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
           for (var i = 0; i < _reasons.length; i++) ...[
             if (i > 0) const SizedBox(height: 10),
             _ReasonTile(
-              label: _reasons[i],
+              label: _reasonLabels(context)[i],
               selected: _selected == i,
               onTap: () {
                 HapticFeedback.selectionClick();
@@ -134,7 +159,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    'Other Reason',
+                    S.of(context).cleaningOtherReason,
                     style: GoogleFonts.inter(
                       color: const Color(0xFF212121),
                       fontWeight: FontWeight.w700,
@@ -203,7 +228,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      S.of(context).cancel,
                       style: GoogleFonts.inter(
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
@@ -240,7 +265,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                         ),
                       ),
                       child: Text(
-                        'Confirm Reject',
+                        S.of(context).cleaningConfirmReject,
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
@@ -72,9 +73,9 @@ class _UpdateStockDialogState extends State<UpdateStockDialog> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Update Stock',
+                    S.of(context).waterUpdateStock,
                     style: TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w700,
@@ -104,8 +105,8 @@ class _UpdateStockDialogState extends State<UpdateStockDialog> {
               ],
             ),
             const SizedBox(height: 18),
-            const Text(
-              'Enter Quantity',
+            Text(
+              S.of(context).waterEnterQuantity,
               style: TextStyle(
                 color: AppColors.textLabel,
                 fontWeight: FontWeight.w500,
@@ -171,8 +172,8 @@ class _UpdateStockDialogState extends State<UpdateStockDialog> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Cancel',
+                      child: Text(
+                        S.of(context).cancel,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -195,8 +196,8 @@ class _UpdateStockDialogState extends State<UpdateStockDialog> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Update',
+                      child: Text(
+                        S.of(context).update,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,

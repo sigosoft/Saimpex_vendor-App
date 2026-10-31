@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:dio/dio.dart' show FormData;
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/water/core/water_state_view.dart';
 import 'package:saimpex_vendor/water/view/account/add_coupon_view.dart';
 
 class CouponsView extends StatefulWidget {
@@ -35,6 +39,7 @@ class _Coupon {
     required this.validUntil,
     required this.createdOn,
     required this.updatedOn,
+    required this.draft,
     this.active = true,
   });
 
@@ -47,12 +52,16 @@ class _Coupon {
   final String validUntil;
   final String createdOn;
   final String updatedOn;
+
+  /// Raw values for the edit form.
+  final WaterCouponDraft draft;
   bool active;
 }
 
 class _CouponsViewState extends State<CouponsView> {
   final _search = TextEditingController();
   bool _isLoading = true;
+  String? _error;
   List<_Coupon> _coupons = [];
 
   @override
@@ -64,6 +73,7 @@ class _CouponsViewState extends State<CouponsView> {
   Future<void> _fetchCoupons() async {
     setState(() {
       _isLoading = true;
+      _error = null;
     });
 
     try {
@@ -112,52 +122,59 @@ class _CouponsViewState extends State<CouponsView> {
         }
       }
 
+      if (!mounted) return;
+      final lang = Localizations.localeOf(context).languageCode;
       final List<_Coupon> loaded = [];
       for (final item in rawList) {
         if (item is Map) {
           final map = Map<String, dynamic>.from(item);
           final id = map['id'];
-          final String name = map['name_en']?.toString() ??
+          final String? localName = map['name_$lang']?.toString();
+          final String name = (localName != null && localName.trim().isNotEmpty ? localName : null) ??
+              map['name_en']?.toString() ??
               map['name_ar']?.toString() ??
               map['name_fr']?.toString() ??
               map['name']?.toString() ??
               map['title']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
           final int statusInt = int.tryParse(map['status']?.toString() ?? '0') ?? 0;
           final bool active = statusInt == 1 ||
               map['status'] == true ||
               map['status']?.toString() == '1';
-          final String code = map['code']?.toString() ?? 'N/A';
+          final String code = map['code']?.toString() ?? S.current.waterNotAvailable;
 
+          // `type`: 1 fixed amount, 2 percentage.
           final int typeInt = int.tryParse(map['type']?.toString() ?? '1') ?? 1;
-          String kind = typeInt == 2 ? 'PERCENTAGE' : 'AMOUNT';
-          if (map['kind'] != null && map['kind'].toString().isNotEmpty) {
-            kind = map['kind'].toString().toUpperCase();
-          } else if (map['discount_type'] != null && map['discount_type'].toString().isNotEmpty) {
-            kind = map['discount_type'].toString().toUpperCase();
-          }
-
-          final String discountValue = map['discount_value']?.toString() ??
-              map['discount']?.toString() ??
-              '0.00';
-          final String discount = (typeInt == 2 || kind.contains('PERCENT'))
-              ? (discountValue.endsWith('%') ? discountValue : '$discountValue%')
-              : discountValue;
-          final String count = map['count']?.toString() ??
-              map['usage_count']?.toString() ??
-              map['limit']?.toString() ??
-              '0';
-          final String validUntil = map['valid_upto']?.toString() ??
-              map['valid_until']?.toString() ??
-              map['expiry_date']?.toString() ??
-              map['end_date']?.toString() ??
-              'N/A';
+          final String kind = typeInt == 2 ? 'PERCENTAGE' : 'AMOUNT';
+          final String discountValue = map['discount_value']?.toString() ?? '';
+          final double? discountNum = double.tryParse(discountValue);
+          final String discount = discountNum == null
+              ? S.current.waterNotAvailable
+              : (typeInt == 2
+                  ? '${discountNum.toStringAsFixed(discountNum % 1 == 0 ? 0 : 2)}%'
+                  : WaterApi.money(discountNum));
+          final String rawCount = map['count']?.toString() ?? '';
+          final String count =
+              (rawCount.isEmpty || rawCount == 'null') ? S.current.waterNotAvailable : rawCount;
+          final DateTime? validDate = WaterApi.parseDate(map['valid_upto']);
+          final String validUntil = validDate == null
+              ? S.current.waterNotAvailable
+              : WaterApi.formatDate(map['valid_upto']);
           final String createdOn = map['formatted_created_on']?.toString() ??
-              map['created_at']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
           final String updatedOn = map['formatted_updated_on']?.toString() ??
-              map['updated_at']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
+          final draft = WaterCouponDraft(
+            id: id,
+            name: map['name_en']?.toString() ?? name,
+            code: code == S.current.waterNotAvailable ? '' : code,
+            type: typeInt,
+            discount: discountNum == null
+                ? ''
+                : discountNum.toStringAsFixed(discountNum % 1 == 0 ? 0 : 2),
+            count: (rawCount.isEmpty || rawCount == 'null') ? '' : rawCount,
+            validUntil: validDate,
+          );
 
           loaded.add(
             _Coupon(
@@ -170,6 +187,7 @@ class _CouponsViewState extends State<CouponsView> {
               validUntil: validUntil,
               createdOn: createdOn,
               updatedOn: updatedOn,
+              draft: draft,
               active: active,
             ),
           );
@@ -187,11 +205,54 @@ class _CouponsViewState extends State<CouponsView> {
       if (mounted) {
         setState(() {
           _coupons = [];
+          _error = WaterApi.errorText(e);
           _isLoading = false;
         });
       }
     }
   }
+
+  Future<void> _openForm([WaterCouponDraft? initial]) async {
+    final saved = await AddCouponView.open(context, initial: initial);
+    if (saved == true && mounted) _fetchCoupons();
+  }
+
+  /// Runs a coupon action; on success shows the server message and reloads.
+  Future<void> _run(Future<dynamic> Function() call) async {
+    showLoadingDialog(context);
+    String? message;
+    bool ok = false;
+    try {
+      await WaterApi.prepare();
+      final response = await call();
+      final data = response.data;
+      ok = WaterApi.isOk(data);
+      message = WaterApi.message(data);
+    } catch (e) {
+      message = WaterApi.errorText(e);
+    }
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    final text = message ?? (ok ? null : S.current.waterSomethingWentWrong);
+    if (text != null) showToast(context, text);
+    if (ok) _fetchCoupons();
+  }
+
+  /// `GET updateCouponStatus?coupon_id=&status=` (1 active, 2 blocked).
+  Future<void> _setStatus(_Coupon coupon, bool active) => _run(
+        () => DioClient().get(
+          ApiEndPoints.updateCouponStatus,
+          query: {'coupon_id': coupon.id, 'status': active ? 1 : 2},
+        ),
+      );
+
+  /// `POST deleteCoupon` {coupon_id}.
+  Future<void> _delete(_Coupon coupon) => _run(
+        () => DioClient().post(
+          ApiEndPoints.deleteCoupon,
+          body: FormData.fromMap({'coupon_id': coupon.id.toString()}),
+        ),
+      );
 
   @override
   void dispose() {
@@ -250,7 +311,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Search Coupon',
+                                hintText: S.of(context).searchCoupon,
                                 hintStyle: GoogleFonts.inter(
                                   color: const Color(0xFFA9AEB6),
                                   fontWeight: FontWeight.w500,
@@ -271,27 +332,7 @@ class _CouponsViewState extends State<CouponsView> {
                           SizedBox(
                             height: 44,
                             child: FilledButton(
-                              onPressed: () async {
-                                final draft = await Navigator.of(context).push<WaterCouponDraft>(
-                                  MaterialPageRoute(builder: (_) => const AddCouponView()),
-                                );
-                                if (draft == null || !mounted) return;
-                                setState(() {
-                                  _coupons.insert(
-                                    0,
-                                    _Coupon(
-                                      name: draft.name,
-                                      code: draft.code,
-                                      kind: draft.kind,
-                                      discount: draft.discount,
-                                      count: draft.count,
-                                      validUntil: draft.validUntil,
-                                      createdOn: draft.createdOn,
-                                      updatedOn: draft.createdOn,
-                                    ),
-                                  );
-                                });
-                              },
+                              onPressed: () => _openForm(),
                               style: FilledButton.styleFrom(
                                 backgroundColor: CouponsView.orange,
                                 foregroundColor: Colors.white,
@@ -304,7 +345,7 @@ class _CouponsViewState extends State<CouponsView> {
                                   const _AddPlusIcon(),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Add Coupon',
+                                    S.of(context).addCoupon,
                                     style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
                                   ),
                                 ],
@@ -314,7 +355,9 @@ class _CouponsViewState extends State<CouponsView> {
                         ],
                       ),
                       const SizedBox(height: 14),
-                      if (_isLoading)
+                      if (!_isLoading && _error != null && _coupons.isEmpty)
+                        WaterStateView.error(message: _error!, onRetry: _fetchCoupons)
+                      else if (_isLoading)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 40),
                           child: Center(
@@ -338,7 +381,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No Coupons Found',
+                                  S.of(context).noCouponsFound,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
@@ -348,7 +391,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Created coupons will appear here',
+                                  S.of(context).waterCreatedCouponsAppearHere,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
@@ -371,18 +414,19 @@ class _CouponsViewState extends State<CouponsView> {
                                 barrierColor: const Color(0x80000000),
                                 builder: (context) => _CouponConfirmDialog(
                                   message: blocking
-                                      ? 'Are you sure you want to block this\nCoupon?'
-                                      : 'Are you sure you want to unblock this\nCoupon?',
+                                      ? S.of(context).areYouSureYouWantToBlockThisCoupon
+                                      : S.of(context).areYouSureYouWantToActivateThisCoupon,
                                   yesColor: const Color(0xFFFF5317),
                                 ),
                               );
                               if (confirmed != true || !mounted) return;
                               HapticFeedback.lightImpact();
-                              setState(() => coupon.active = !coupon.active);
+                              await _setStatus(coupon, !blocking);
                             },
+                            onEdit: () => _openForm(coupon.draft),
                             onDelete: () {
                               HapticFeedback.lightImpact();
-                              setState(() => _coupons.remove(coupon));
+                              _delete(coupon);
                             },
                           ),
                           const SizedBox(height: 12),
@@ -419,7 +463,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Coupons',
+              S.of(context).coupons,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -427,7 +471,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -458,11 +502,13 @@ class _CouponCard extends StatelessWidget {
   const _CouponCard({
     required this.coupon,
     required this.onUpdateStatus,
+    required this.onEdit,
     required this.onDelete,
   });
 
   final _Coupon coupon;
   final VoidCallback onUpdateStatus;
+  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   @override
@@ -495,7 +541,7 @@ class _CouponCard extends StatelessWidget {
                 ),
               ),
               _Pill(
-                text: coupon.active ? 'ACTIVE' : 'INACTIVE',
+                text: coupon.active ? S.of(context).active : S.of(context).inactive,
                 background: coupon.active ? const Color(0xFFD1FAE5) : const Color(0xFFF3F4F6),
                 foreground: coupon.active ? const Color(0xFF059669) : const Color(0xFF6B7280),
               ),
@@ -505,7 +551,7 @@ class _CouponCard extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       HapticFeedback.selectionClick();
-                      _showCouponMenu(iconContext, onDelete: onDelete);
+                      _showCouponMenu(iconContext, onEdit: onEdit, onDelete: onDelete);
                     },
                     behavior: HitTestBehavior.opaque,
                     child: const Padding(
@@ -521,7 +567,7 @@ class _CouponCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'CODE: ',
+                '${S.of(context).codeLabel}: ',
                 style: GoogleFonts.inter(
                   color: const Color(0xFF4C5260),
                   fontWeight: FontWeight.w600,
@@ -538,7 +584,7 @@ class _CouponCard extends StatelessWidget {
               ),
               const Spacer(),
               _Pill(
-                text: coupon.kind,
+                text: _kindLabel(context, coupon.kind),
                 background: const Color(0xFFFFCDBC),
                 foreground: const Color(0xFFFF5317),
               ),
@@ -549,19 +595,19 @@ class _CouponCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: _Stat(label: 'DISCOUNT', value: coupon.discount)),
+              Expanded(child: _Stat(label: S.of(context).discountLabel, value: coupon.discount)),
               const _StatDivider(),
-              Expanded(child: _Stat(label: 'COUNT', value: coupon.count)),
+              Expanded(child: _Stat(label: S.of(context).countLabel, value: coupon.count)),
               const _StatDivider(),
-              Expanded(child: _Stat(label: 'VALID UPTO', value: coupon.validUntil)),
+              Expanded(child: _Stat(label: S.of(context).validUptoLabel, value: coupon.validUntil)),
             ],
           ),
           const SizedBox(height: 14),
           const _DashedLine(),
           const SizedBox(height: 14),
-          _MetaRow(label: 'CREATED ON:', value: coupon.createdOn),
+          _MetaRow(label: '${S.of(context).createdOnLabel}:', value: coupon.createdOn),
           const SizedBox(height: 8),
-          _MetaRow(label: 'UPDATED ON:', value: coupon.updatedOn),
+          _MetaRow(label: '${S.of(context).updatedOnLabel}:', value: coupon.updatedOn),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -574,7 +620,7 @@ class _CouponCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text(
-                'Update Coupon Status',
+                S.of(context).updateCouponStatus,
                 style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -583,6 +629,14 @@ class _CouponCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _kindLabel(BuildContext context, String kind) {
+  final upper = kind.toUpperCase();
+  if (upper.contains('PERCENT')) return S.of(context).percentage.toUpperCase();
+  if (upper == 'AMOUNT') return S.of(context).amount.toUpperCase();
+  if (upper == 'FLAT') return S.of(context).waterFlat.toUpperCase();
+  return kind;
 }
 
 class _Pill extends StatelessWidget {
@@ -657,16 +711,21 @@ class _StatDivider extends StatelessWidget {
   }
 }
 
-void _showCouponMenu(BuildContext iconContext, {required VoidCallback onDelete}) {
+void _showCouponMenu(
+  BuildContext iconContext, {
+  required VoidCallback onEdit,
+  required VoidCallback onDelete,
+}) {
   final box = iconContext.findRenderObject() as RenderBox?;
   if (box == null || !box.hasSize) return;
   final origin = box.localToGlobal(Offset.zero);
   final screen = MediaQuery.sizeOf(iconContext);
+  final isRtl = Directionality.of(iconContext) == TextDirection.rtl;
 
   showGeneralDialog<void>(
     context: iconContext,
     barrierDismissible: true,
-    barrierLabel: 'Close',
+    barrierLabel: MaterialLocalizations.of(iconContext).closeButtonLabel,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 140),
     pageBuilder: (dialogContext, animation, secondaryAnimation) {
@@ -675,9 +734,13 @@ void _showCouponMenu(BuildContext iconContext, {required VoidCallback onDelete})
           children: [
             Positioned(
               top: origin.dy - 4,
-              right: screen.width - origin.dx + 6,
+              left: isRtl ? origin.dx + box.size.width + 6 : null,
+              right: isRtl ? null : screen.width - origin.dx + 6,
               child: _CouponMenu(
-                onEdit: () => Navigator.of(dialogContext).pop(),
+                onEdit: () {
+                  Navigator.of(dialogContext).pop();
+                  onEdit();
+                },
                 onDelete: () {
                   Navigator.of(dialogContext).pop();
                   _confirmDeleteCoupon(iconContext, onDelete);
@@ -698,9 +761,9 @@ Future<void> _confirmDeleteCoupon(BuildContext context, VoidCallback onDelete) a
   final confirmed = await showDialog<bool>(
     context: context,
     barrierColor: const Color(0x80000000),
-    builder: (context) => const _CouponConfirmDialog(
-      message: 'Are you sure you want to delete this\nCoupon?',
-      yesColor: Color(0xFFFF3939),
+    builder: (context) => _CouponConfirmDialog(
+      message: S.of(context).areYouSureYouWantToDeleteThisCoupon,
+      yesColor: const Color(0xFFFF3939),
     ),
   );
   if (confirmed == true) onDelete();
@@ -725,7 +788,7 @@ class _CouponConfirmDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(false),
                 borderRadius: BorderRadius.circular(6),
@@ -768,7 +831,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text(
-                        'No',
+                        S.of(context).no,
                         style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
@@ -786,7 +849,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text(
-                        'Yes',
+                        S.of(context).yes,
                         style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
@@ -821,8 +884,8 @@ class _CouponMenu extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CouponMenuRow(icon: Icons.edit_outlined, label: 'Edit', onTap: onEdit),
-          _CouponMenuRow(label: 'Delete', onTap: onDelete, leading: const _MenuDeleteIcon()),
+          _CouponMenuRow(icon: Icons.edit_outlined, label: S.of(context).edit, onTap: onEdit),
+          _CouponMenuRow(label: S.of(context).delete, onTap: onDelete, leading: const _MenuDeleteIcon()),
         ],
       ),
     );

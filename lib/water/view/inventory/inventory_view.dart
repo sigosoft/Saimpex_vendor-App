@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -228,8 +229,8 @@ class _InventoryViewState extends State<InventoryView> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'No Products Found',
+                          Text(
+                            S.of(context).waterNoProductsFound,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
@@ -238,8 +239,8 @@ class _InventoryViewState extends State<InventoryView> {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'Added products will appear here',
+                          Text(
+                            S.of(context).waterAddedProductsWillAppearHere,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
@@ -341,8 +342,8 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Inventory',
+            Text(
+              S.of(context).waterInventory,
               style: TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -351,7 +352,7 @@ class _Header extends StatelessWidget {
             ),
             if (showBack)
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: _HeaderIconButton(
                   onTap: onBack,
                   icon: Icons.chevron_left_rounded,
@@ -359,7 +360,7 @@ class _Header extends StatelessWidget {
                 ),
               ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: _HeaderIconButton(
                 onTap: () {},
                 icon: Icons.qr_code_scanner_rounded,
@@ -425,7 +426,7 @@ class _StatsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: 'AVAILABLE',
+                label: S.of(context).available.toUpperCase(),
                 value: summary.available.toString(),
                 accent: AppColors.inventoryAvailable,
                 iconBg: AppColors.inventoryAvailableBg,
@@ -435,7 +436,7 @@ class _StatsGrid extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: _StatCard(
-                label: "TODAY'S ORDERS",
+                label: S.of(context).todaysOrders.toUpperCase(),
                 value: summary.todayOrders.toString(),
                 accent: AppColors.inventoryOrders,
                 iconBg: AppColors.inventoryOrdersBg,
@@ -449,7 +450,7 @@ class _StatsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: 'LOW STOCK',
+                label: S.of(context).waterLowStock.toUpperCase(),
                 value: summary.lowStock.toString(),
                 accent: AppColors.inventoryLowStock,
                 iconBg: AppColors.inventoryLowStockBg,
@@ -459,7 +460,7 @@ class _StatsGrid extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: _StatCard(
-                label: 'OUT OF STOCK',
+                label: S.of(context).outOfStock.toUpperCase(),
                 value: summary.outOfStock.toString(),
                 accent: AppColors.inventoryOutOfStock,
                 iconBg: AppColors.inventoryOutOfStockBg,
@@ -593,12 +594,12 @@ class _LowStockAlertCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Row(
+          Row(
             children: [
-              _LowStockHeaderIcon(),
-              SizedBox(width: 10),
+              const _LowStockHeaderIcon(),
+              const SizedBox(width: 10),
               Text(
-                'Low Stock Alert',
+                S.of(context).waterLowStockAlert,
                 style: TextStyle(
                   color: AppColors.textDark,
                   fontWeight: FontWeight.w700,
@@ -614,7 +615,9 @@ class _LowStockAlertCard extends StatelessWidget {
               name: displayItems[i].name,
               remaining: displayItems[i].stockLabel.isNotEmpty
                   ? displayItems[i].stockLabel
-                  : '${displayItems[i].bottles} Bottles Left',
+                  : S.of(context).waterBottlesLeft(
+                      displayItems[i].bottles.toString(),
+                    ),
               onUpdateStock: () => onUpdateStock(displayItems[i]),
             ),
           ],
@@ -623,7 +626,7 @@ class _LowStockAlertCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '+$remainingCount More Products',
+                  S.of(context).waterMoreProducts(remainingCount.toString()),
                   style: const TextStyle(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w500,
@@ -633,8 +636,8 @@ class _LowStockAlertCard extends StatelessWidget {
                 const Spacer(),
                 GestureDetector(
                   onTap: () {},
-                  child: const Text(
-                    'See All',
+                  child: Text(
+                    S.of(context).viewAll,
                     style: TextStyle(
                       color: AppColors.primaryOrange,
                       fontWeight: FontWeight.w700,
@@ -719,13 +722,13 @@ class _LowStockAlertRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Row(
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.circle, size: 7, color: AppColors.inventoryLowStock),
-              SizedBox(width: 5),
+              const Icon(Icons.circle, size: 7, color: AppColors.inventoryLowStock),
+              const SizedBox(width: 5),
               Text(
-                'Low Stock',
+                S.of(context).waterLowStock,
                 style: TextStyle(
                   color: AppColors.inventoryLowStock,
                   fontWeight: FontWeight.w600,
@@ -748,8 +751,8 @@ class _LowStockAlertRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'Update Stock',
+              child: Text(
+                S.of(context).waterUpdateStock,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
               ),
             ),
@@ -782,9 +785,9 @@ class _SearchField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'Search products, ID',
-                hintStyle: TextStyle(
+              decoration: InputDecoration(
+                hintText: S.of(context).waterSearchProductsHint,
+                hintStyle: const TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
@@ -821,15 +824,15 @@ class _FilterChips extends StatelessWidget {
   final int inStockCount;
   final int lowStockCount;
 
-  List<String> get labels => [
-    'All $allCount',
-    'In Stock $inStockCount',
-    'Low Stock $lowStockCount',
+  List<String> _labels(BuildContext context) => [
+    S.of(context).waterFilterAllCount(allCount.toString()),
+    S.of(context).waterFilterInStockCount(inStockCount.toString()),
+    S.of(context).waterFilterLowStockCount(lowStockCount.toString()),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final list = labels;
+    final list = _labels(context);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -892,7 +895,7 @@ class _CategoryActionsRow extends StatelessWidget {
       children: [
         Expanded(
           child: PopupMenuButton<String>(
-            tooltip: 'Filter by category',
+            tooltip: S.of(context).waterFilterByCategory,
             offset: const Offset(0, 46),
             padding: EdgeInsets.zero,
             color: Colors.white,
@@ -905,7 +908,7 @@ class _CategoryActionsRow extends StatelessWidget {
                   (cat) => PopupMenuItem<String>(
                     value: cat,
                     child: Text(
-                      cat,
+                      _categoryLabel(context, cat),
                       style: TextStyle(
                         color: cat == selectedCategory
                             ? AppColors.primaryOrange
@@ -930,7 +933,7 @@ class _CategoryActionsRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      selectedCategory,
+                      _categoryLabel(context, selectedCategory),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -966,12 +969,12 @@ class _CategoryActionsRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               border: Border.all(color: AppColors.primaryOrange, width: 1.2),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.add, color: AppColors.primaryOrange, size: 18),
-                SizedBox(width: 4),
+                const Icon(Icons.add, color: AppColors.primaryOrange, size: 18),
+                const SizedBox(width: 4),
                 Text(
-                  'Add Item',
+                  S.of(context).addItem,
                   style: TextStyle(
                     color: AppColors.primaryOrange,
                     fontWeight: FontWeight.w700,
@@ -986,6 +989,11 @@ class _CategoryActionsRow extends StatelessWidget {
     );
   }
 }
+
+/// The controller uses the English 'All Categories' value as a sentinel;
+/// only its displayed label is localised.
+String _categoryLabel(BuildContext context, String category) =>
+    category == 'All Categories' ? S.of(context).allCategories : category;
 
 Widget _buildItemImage(String? imagePath) {
   if (imagePath == null || imagePath.trim().isEmpty) {
@@ -1070,9 +1078,9 @@ class _ProductCard extends StatelessWidget {
         ? const Color(0xFFFFEBEB)
         : (isLow ? const Color(0xFFFFF7ED) : const Color(0xFFE9FAEF));
     final stockLabel = switch (product.status) {
-      InventoryStockStatus.inStock => 'In Stock',
-      InventoryStockStatus.lowStock => 'Low Stock',
-      InventoryStockStatus.outOfStock => 'Out Of Stock',
+      InventoryStockStatus.inStock => S.of(context).waterInStock,
+      InventoryStockStatus.lowStock => S.of(context).waterLowStock,
+      InventoryStockStatus.outOfStock => S.of(context).outOfStock,
     };
     final actionColor = _isOut
         ? const Color.fromARGB(255, 29, 172, 81)
@@ -1122,7 +1130,15 @@ class _ProductCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                'ID: ${product.id.isNotEmpty ? (product.id.startsWith('#') ? product.id : '# ${product.id}') : (product.rawId != null ? '# ${product.rawId}' : '—')}',
+                                S.of(context).waterIdLabel(
+                                  product.id.isNotEmpty
+                                      ? (product.id.startsWith('#')
+                                            ? product.id
+                                            : '# ${product.id}')
+                                      : (product.rawId != null
+                                            ? '# ${product.rawId}'
+                                            : '—'),
+                                ),
                                 style: const TextStyle(
                                   color: Color(0xFF9CA3AF),
                                   fontWeight: FontWeight.w500,
@@ -1193,19 +1209,19 @@ class _ProductCard extends StatelessWidget {
                                     }
                                   },
                                   itemBuilder: (context) => [
-                                    const PopupMenuItem(
+                                    PopupMenuItem(
                                       value: _ProductMenuAction.edit,
                                       height: 38,
                                       child: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.edit_outlined,
                                             size: 16,
                                             color: Color(0xFF374151),
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Text(
-                                            'Edit',
+                                            S.of(context).edit,
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
@@ -1216,19 +1232,19 @@ class _ProductCard extends StatelessWidget {
                                       ),
                                     ),
                                     const PopupMenuDivider(height: 1),
-                                    const PopupMenuItem(
+                                    PopupMenuItem(
                                       value: _ProductMenuAction.delete,
                                       height: 38,
                                       child: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.delete_outline_rounded,
                                             size: 16,
                                             color: Color(0xFFEF4444),
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Text(
-                                            'Delete',
+                                            S.of(context).delete,
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
@@ -1338,8 +1354,8 @@ class _ProductCard extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 2),
-                                    const Text(
-                                      'Bottles',
+                                    Text(
+                                      S.of(context).waterBottles,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -1377,7 +1393,9 @@ class _ProductCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           child: Text(
-                            _isOut ? 'Mark Available' : 'Mark Out Of Stock',
+                            _isOut
+                                ? S.of(context).waterMarkAvailable
+                                : S.of(context).waterMarkOutOfStock,
                             maxLines: 1,
                             softWrap: false,
                             style: TextStyle(
@@ -1404,8 +1422,8 @@ class _ProductCard extends StatelessWidget {
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
-                          child: const Text(
-                            'Update Stock',
+                          child: Text(
+                            S.of(context).waterUpdateStock,
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -1434,10 +1452,10 @@ class _ProductCard extends StatelessWidget {
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(40),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(23, 8, 18, 8),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(23, 8, 18, 8),
                   child: Text(
-                    'View Details',
+                    S.of(context).viewDetails,
                     style: TextStyle(
                       color: Color(0xFFFF5216),
                       fontWeight: FontWeight.w500,
@@ -1464,7 +1482,13 @@ class _InventoryBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Home', 'Orders', 'Chat', 'Inventory', 'Account'];
+    final labels = [
+      S.of(context).home,
+      S.of(context).orders,
+      S.of(context).chat,
+      S.of(context).waterInventory,
+      S.of(context).account,
+    ];
     const icons = [
       Icons.home_rounded,
       Icons.assignment_outlined,

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -246,9 +247,9 @@ class _StoreProfileViewState extends State<StoreProfileView> {
         '';
     final rawStatus = _profileData?.status ?? _rawVendorData?['status']?.toString();
     final status = (rawStatus == '1' || rawStatus?.toLowerCase() == 'active' || rawStatus?.toLowerCase() == 'true')
-        ? 'ACTIVE'
+        ? S.of(context).active
         : (rawStatus == '0' || rawStatus?.toLowerCase() == 'inactive' || rawStatus?.toLowerCase() == 'false'
-            ? 'INACTIVE'
+            ? S.of(context).inactive
             : (rawStatus != null && rawStatus != 'null' ? rawStatus.toUpperCase() : ''));
     final address = _profileData?.address ??
         _rawVendorData?['address']?.toString() ??
@@ -330,54 +331,55 @@ class _StoreProfileViewState extends State<StoreProfileView> {
                         child: ListView(
                           padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
                           children: [
-                            const _SectionTitle('Store Details'),
+                            _SectionTitle(S.of(context).waterStoreDetails),
                             const SizedBox(height: 8),
                             _InfoCard(
                               rows: [
-                                _InfoRow('Name', storeName),
-                                _InfoRow('Owner', ownerName),
-                                _InfoRow('ID', storeId),
-                                _InfoRow('Contact', contact),
-                                _InfoRow('Email', email),
-                                _InfoRow('Status', status, badge: true),
-                                _InfoRow('Address', address),
+                                _InfoRow(S.of(context).name, storeName),
+                                _InfoRow(S.of(context).owner, ownerName),
+                                _InfoRow(S.of(context).idNumber, storeId),
+                                // Phone number is embedded LTR so "+222…" keeps its order in RTL.
+                                _InfoRow(S.of(context).contact, contact.isEmpty ? '' : '\u202A$contact\u202C'),
+                                _InfoRow(S.of(context).email, email),
+                                _InfoRow(S.of(context).status, status, badge: true),
+                                _InfoRow(S.of(context).address, address),
                               ],
                             ),
                             const SizedBox(height: 18),
-                            const _SectionTitle('Bank Details'),
+                            _SectionTitle(S.of(context).waterBankDetails),
                             const SizedBox(height: 8),
                             _InfoCard(
                               rows: [
-                                _InfoRow('Holder Name', holderName),
-                                _InfoRow('IBAN Number', ibanNumber),
-                                _InfoRow('SWIFT Code', swiftCode),
+                                _InfoRow(S.of(context).holderName, holderName),
+                                _InfoRow(S.of(context).ibanNumber, ibanNumber),
+                                _InfoRow(S.of(context).swiftCode, swiftCode),
                               ],
                             ),
                             const SizedBox(height: 18),
-                            const _SectionTitle('Registration Details'),
+                            _SectionTitle(S.of(context).waterRegistrationDetails),
                             const SizedBox(height: 8),
                             _InfoCard(
                               rows: [
-                                _InfoRow('Reg. Number', regNumber),
-                                _InfoRow('Reg. Date', regDate),
-                                _InfoRow('TIN/NIF Number', tinNumber),
+                                _InfoRow(S.of(context).regNumber, regNumber),
+                                _InfoRow(S.of(context).regDate, regDate),
+                                _InfoRow(S.of(context).waterTinNifNumber, tinNumber),
                               ],
                             ),
                             const SizedBox(height: 18),
-                            const _SectionTitle('Payment Details'),
+                            _SectionTitle(S.of(context).waterPaymentDetails),
                             const SizedBox(height: 8),
                             _InfoCard(
                               rows: [
-                                _InfoRow('Commission %', commission),
-                                _InfoRow('Total Profit', totalProfit, emphasize: true),
+                                _InfoRow(S.of(context).commissionPercentage, commission),
+                                _InfoRow(S.of(context).totalProfit, totalProfit, emphasize: true),
                               ],
                             ),
                             const SizedBox(height: 18),
-                            const _SectionTitle('Owner Identity Proof'),
+                            _SectionTitle(S.of(context).waterOwnerIdentityProof),
                             const SizedBox(height: 8),
                             _EmptyCard(imageUrl: ownerIdProof),
                             const SizedBox(height: 18),
-                            const _SectionTitle('Certificate'),
+                            _SectionTitle(S.of(context).waterCertificate),
                             const SizedBox(height: 8),
                             _EmptyCard(imageUrl: certificate),
                             const SizedBox(height: 20),
@@ -415,7 +417,7 @@ class _StoreProfileViewState extends State<StoreProfileView> {
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
-                                        'No Rating & Reviews Found',
+                                        S.of(context).noReviewsFound,
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.inter(
                                           fontSize: 15,
@@ -454,7 +456,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Store Profile',
+              S.of(context).waterStoreProfile,
               style: GoogleFonts.inter(
                 color: StoreProfileView._ink,
                 fontWeight: FontWeight.w700,
@@ -462,7 +464,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -578,7 +580,7 @@ class _InfoCard extends StatelessWidget {
                       flex: 6,
                       child: Text(
                         rows[i].value,
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.end,
                         style: GoogleFonts.inter(
                           color: rows[i].emphasize
                               ? StoreProfileView._ink
@@ -651,7 +653,7 @@ class _ReviewsHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'RATING & REVIEWS',
+          S.of(context).ratingReviews.toUpperCase(),
           style: GoogleFonts.inter(
             color: const Color(0xFF2E3032),
             fontWeight: FontWeight.w700,
@@ -664,7 +666,7 @@ class _ReviewsHeader extends StatelessWidget {
           onTap: onSeeAll,
           behavior: HitTestBehavior.opaque,
           child: Text(
-            'See All',
+            S.of(context).viewAll,
             style: GoogleFonts.inter(
               color: StoreProfileView._orange,
               fontWeight: FontWeight.w600,
@@ -682,12 +684,12 @@ class _ReviewCard extends StatelessWidget {
 
   final ReviewItem? review;
 
-  String _formatDate(String? raw) {
+  String _formatDate(String? raw, String locale) {
     if (raw == null || raw.trim().isEmpty || raw == 'null') return '';
     final dt = DateTime.tryParse(raw.trim());
     if (dt != null) {
       try {
-        return DateFormat('MMM dd yyyy, hh:mm a')
+        return DateFormat('MMM dd yyyy, hh:mm a', locale)
             .format(dt)
             .replaceAll('AM', 'am')
             .replaceAll('PM', 'pm');
@@ -704,7 +706,10 @@ class _ReviewCard extends StatelessWidget {
         ? review!.username!.trim()
         : '';
     final initial = username.isNotEmpty ? username[0].toUpperCase() : 'S';
-    final dateStr = _formatDate(review?.createdAt);
+    final dateStr = _formatDate(
+      review?.createdAt,
+      Localizations.localeOf(context).languageCode,
+    );
 
     final ratingVal = double.tryParse(review?.rating?.toString() ?? '0') ?? 0.0;
     final ratingDisplay = review?.rating?.toString().trim().isNotEmpty == true
@@ -717,7 +722,7 @@ class _ReviewCard extends StatelessWidget {
     final orderDisplay = rawOrder.isNotEmpty
         ? (rawOrder.toLowerCase().startsWith('order:')
             ? rawOrder
-            : 'Order: $rawOrder')
+            : '${S.of(context).orderColon}$rawOrder')
         : '';
 
     final hasUserImage = review?.userImage != null &&
@@ -856,7 +861,7 @@ class _ReviewCard extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 34,
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFFF8FAFC),

@@ -24,26 +24,100 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(date) => "Cancelled On ${date}";
 
-  static String m2(date) => "Created ${date}";
+  static String m2(count) => "${count} d ago";
 
-  static String m3(hours, minutes) => "In ${hours} h ${minutes} min";
+  static String m3(count) => "${count} h ago";
 
-  static String m4(minutes) => "In ${minutes} min";
+  static String m4(count) => "${count} min ago";
 
-  static String m5(days) => "Expires in ${days} days";
+  static String m5(hours) => "Today: ${hours}";
 
-  static String m6(id) => "ORDER #${id}";
+  static String m6(date) => "Created ${date}";
 
-  static String m7(code, time) =>
+  static String m7(hours, minutes) => "In ${hours} h ${minutes} min";
+
+  static String m8(minutes) => "In ${minutes} min";
+
+  static String m9(days) => "Expires in ${days} days";
+
+  static String m10(id) => "ORDER #${id}";
+
+  static String m11(code, time) =>
       "Pre-order ${code} is due at ${time}. Please have it ready.";
 
-  static String m8(qty) => "Qty: ${qty}";
+  static String m12(qty) => "Qty: ${qty}";
 
-  static String m9(reason) => "Reason: ${reason}";
+  static String m13(reason) => "Reason: ${reason}";
 
-  static String m10(time) => "Scheduled for ${time}";
+  static String m14(time) => "Scheduled for ${time}";
 
-  static String m11(count) => "Upcoming pre-orders (${count})";
+  static String m15(count) => "Upcoming pre-orders (${count})";
+
+  static String m16(count) => "${count} Bottles";
+
+  static String m17(count) => "${count} Bottles Left";
+
+  static String m18(name) => "Are you sure you want to delete \"${name}\"?";
+
+  static String m19(min, max) => "${min} - ${max} km";
+
+  static String m20(error) => "Error accepting order: ${error}";
+
+  static String m21(error) => "Error accepting subscription: ${error}";
+
+  static String m22(error) => "Error adding product: ${error}";
+
+  static String m23(error) => "Error cancelling order: ${error}";
+
+  static String m24(error) => "Error deleting product: ${error}";
+
+  static String m25(error) => "Error marking order as ready: ${error}";
+
+  static String m26(error) => "Error pausing subscription: ${error}";
+
+  static String m27(error) => "Error preparing order: ${error}";
+
+  static String m28(error) => "Error rejecting subscription: ${error}";
+
+  static String m29(error) => "Error resuming subscription: ${error}";
+
+  static String m30(error) => "Error updating item status: ${error}";
+
+  static String m31(error) => "Error updating price: ${error}";
+
+  static String m32(error) => "Error updating stock: ${error}";
+
+  static String m33(days) => "Every ${days} days";
+
+  static String m34(count) => "All ${count}";
+
+  static String m35(count) => "In Stock ${count}";
+
+  static String m36(count) => "Low Stock ${count}";
+
+  static String m37(id) => "ID: ${id}";
+
+  static String m38(count) => "${count} images selected";
+
+  static String m39(date) => "Last Sold: ${date}";
+
+  static String m40(count) => "+${count} More Products";
+
+  static String m41(count) => "ORDER ITEMS (${count})";
+
+  static String m42(date) => "Paused on: ${date}";
+
+  static String m43(start) => "Start ${start}";
+
+  static String m44(start, end) => "Start ${start} - End ${end}";
+
+  static String m45(count) => "(${count} reviews)";
+
+  static String m46(id) => "STOCK ID: ${id}";
+
+  static String m47(open, close) => "Today: ${open} - ${close}";
+
+  static String m48(name) => "Welcome to ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -234,6 +308,301 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose Image From :",
     ),
     "classicBasket": MessageLookupByLibrary.simpleMessage("Classic Basket"),
+    "cleaningAcceptBooking": MessageLookupByLibrary.simpleMessage(
+      "Accept Booking",
+    ),
+    "cleaningAcceptingBookings": MessageLookupByLibrary.simpleMessage(
+      "Accepting bookings",
+    ),
+    "cleaningAddAddon": MessageLookupByLibrary.simpleMessage("Add Add-on"),
+    "cleaningAddAddonButton": MessageLookupByLibrary.simpleMessage(
+      "+ Add Add-on",
+    ),
+    "cleaningAddService": MessageLookupByLibrary.simpleMessage("Add Service"),
+    "cleaningAddServiceButton": MessageLookupByLibrary.simpleMessage(
+      "+ Add Service",
+    ),
+    "cleaningAddSpace": MessageLookupByLibrary.simpleMessage("Add Space"),
+    "cleaningAddSpaceButton": MessageLookupByLibrary.simpleMessage(
+      "+ Add Space",
+    ),
+    "cleaningAddonName": MessageLookupByLibrary.simpleMessage("Add-on Name"),
+    "cleaningAddonNameHint": MessageLookupByLibrary.simpleMessage(
+      "e.g. Fridge Cleaning, Oven Cleaning",
+    ),
+    "cleaningAddonServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "ADD-ON SERVICES",
+    ),
+    "cleaningApartment": MessageLookupByLibrary.simpleMessage("Apartment"),
+    "cleaningBasicInformationHeader": MessageLookupByLibrary.simpleMessage(
+      "BASIC INFORMATION",
+    ),
+    "cleaningBookingAvailabilityFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t update availability. Please try again.",
+    ),
+    "cleaningBookingCancelReasonHeader": MessageLookupByLibrary.simpleMessage(
+      "CANCELLATION REASON",
+    ),
+    "cleaningBookingDaysAgo": m2,
+    "cleaningBookingDetails": MessageLookupByLibrary.simpleMessage(
+      "Booking Details",
+    ),
+    "cleaningBookingHoursAgo": m3,
+    "cleaningBookingLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t load the data. Please try again.",
+    ),
+    "cleaningBookingMinutesAgo": m4,
+    "cleaningBookingStatusCancelled": MessageLookupByLibrary.simpleMessage(
+      "CANCELLED",
+    ),
+    "cleaningBookingStatusOnTheWay": MessageLookupByLibrary.simpleMessage(
+      "ON THE WAY",
+    ),
+    "cleaningBookingUpdateFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t update the booking. Please try again.",
+    ),
+    "cleaningBookings": MessageLookupByLibrary.simpleMessage("Bookings"),
+    "cleaningBookingsHeader": MessageLookupByLibrary.simpleMessage("BOOKINGS"),
+    "cleaningBusinessSection": MessageLookupByLibrary.simpleMessage("Business"),
+    "cleaningBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Business settings",
+    ),
+    "cleaningChangeImage": MessageLookupByLibrary.simpleMessage("Change Image"),
+    "cleaningCleaningProducts": MessageLookupByLibrary.simpleMessage(
+      "Cleaning Products",
+    ),
+    "cleaningCleaningProductsHeader": MessageLookupByLibrary.simpleMessage(
+      "CLEANING PRODUCTS",
+    ),
+    "cleaningClosedStatus": MessageLookupByLibrary.simpleMessage("Closed"),
+    "cleaningCompleted": MessageLookupByLibrary.simpleMessage("Completed"),
+    "cleaningConfirmReject": MessageLookupByLibrary.simpleMessage(
+      "Confirm Reject",
+    ),
+    "cleaningCustomerHeader": MessageLookupByLibrary.simpleMessage("CUSTOMER"),
+    "cleaningCustomerProvidesProducts": MessageLookupByLibrary.simpleMessage(
+      "Customer provides products",
+    ),
+    "cleaningCustomerProvidesProductsDesc":
+        MessageLookupByLibrary.simpleMessage(
+          "Customer brings their own detergents, mop, and cleaning cloths.",
+        ),
+    "cleaningDeleteAccountConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete your account? This action cannot be undone.",
+    ),
+    "cleaningEditAddon": MessageLookupByLibrary.simpleMessage("Edit Add-on"),
+    "cleaningEditService": MessageLookupByLibrary.simpleMessage("Edit Service"),
+    "cleaningEditSpace": MessageLookupByLibrary.simpleMessage("Edit Space"),
+    "cleaningEnterDescription": MessageLookupByLibrary.simpleMessage(
+      "Enter Description",
+    ),
+    "cleaningEnterServiceType": MessageLookupByLibrary.simpleMessage(
+      "Enter service type",
+    ),
+    "cleaningEnterThePrice": MessageLookupByLibrary.simpleMessage(
+      "Enter the Price",
+    ),
+    "cleaningIProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "I provide the products",
+    ),
+    "cleaningIProvideProductsDesc": MessageLookupByLibrary.simpleMessage(
+      "Your team brings professional cleaning detergents, vacuums & cloths.",
+    ),
+    "cleaningImageFormatsHint": MessageLookupByLibrary.simpleMessage(
+      "PNG, JPG up to 5MB",
+    ),
+    "cleaningInProgress": MessageLookupByLibrary.simpleMessage("In Progress"),
+    "cleaningIssuesCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "ISSUES COVERED",
+    ),
+    "cleaningJustNow": MessageLookupByLibrary.simpleMessage("Just now"),
+    "cleaningLanguageArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "cleaningLanguageEnglish": MessageLookupByLibrary.simpleMessage("English"),
+    "cleaningLanguageFrench": MessageLookupByLibrary.simpleMessage("French"),
+    "cleaningMakeItExtraCleanHeader": MessageLookupByLibrary.simpleMessage(
+      "MAKE IT EXTRA CLEAN",
+    ),
+    "cleaningMarkAsCompleted": MessageLookupByLibrary.simpleMessage(
+      "Mark as Completed",
+    ),
+    "cleaningMessages": MessageLookupByLibrary.simpleMessage("Messages"),
+    "cleaningMyServices": MessageLookupByLibrary.simpleMessage("My Services"),
+    "cleaningNewBookings": MessageLookupByLibrary.simpleMessage("New Bookings"),
+    "cleaningNoBookingsHere": MessageLookupByLibrary.simpleMessage(
+      "No bookings here",
+    ),
+    "cleaningNoMessagesFound": MessageLookupByLibrary.simpleMessage(
+      "No messages found",
+    ),
+    "cleaningNoServicesFound": MessageLookupByLibrary.simpleMessage(
+      "No services found",
+    ),
+    "cleaningNotAccepting": MessageLookupByLibrary.simpleMessage(
+      "Not accepting",
+    ),
+    "cleaningOffline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "cleaningOnline": MessageLookupByLibrary.simpleMessage("Online"),
+    "cleaningOpenStatus": MessageLookupByLibrary.simpleMessage("Open"),
+    "cleaningOtherReason": MessageLookupByLibrary.simpleMessage("Other Reason"),
+    "cleaningPestAnts": MessageLookupByLibrary.simpleMessage("Ants"),
+    "cleaningPestBedBugs": MessageLookupByLibrary.simpleMessage("Bed Bugs"),
+    "cleaningPestCockroaches": MessageLookupByLibrary.simpleMessage(
+      "Cockroaches",
+    ),
+    "cleaningPestFlies": MessageLookupByLibrary.simpleMessage("Flies"),
+    "cleaningPestGeneralSanitization": MessageLookupByLibrary.simpleMessage(
+      "General\nSanitization",
+    ),
+    "cleaningPestMosquitoes": MessageLookupByLibrary.simpleMessage(
+      "Mosquitoes",
+    ),
+    "cleaningPestOtherPests": MessageLookupByLibrary.simpleMessage(
+      "Other Pests",
+    ),
+    "cleaningPestRodents": MessageLookupByLibrary.simpleMessage("Rodents"),
+    "cleaningPestTermites": MessageLookupByLibrary.simpleMessage("Termites"),
+    "cleaningProductSupplyFee": MessageLookupByLibrary.simpleMessage(
+      "Product Supply Fee",
+    ),
+    "cleaningProductsProvidedByProvider": MessageLookupByLibrary.simpleMessage(
+      "Cleaning products will be provided by the service provider",
+    ),
+    "cleaningPropertyTypesHeader": MessageLookupByLibrary.simpleMessage(
+      "PROPERTY TYPES",
+    ),
+    "cleaningProvidedBySaimpex": MessageLookupByLibrary.simpleMessage(
+      "Provided by SAIMPEX",
+    ),
+    "cleaningProviderWillProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "Provider will provide products",
+    ),
+    "cleaningReasonDescription": MessageLookupByLibrary.simpleMessage(
+      "Reason / Description",
+    ),
+    "cleaningRejectBooking": MessageLookupByLibrary.simpleMessage(
+      "Reject Booking",
+    ),
+    "cleaningRejectReasonNoCleaner": MessageLookupByLibrary.simpleMessage(
+      "No cleaner available",
+    ),
+    "cleaningRejectReasonOther": MessageLookupByLibrary.simpleMessage("Other"),
+    "cleaningRejectReasonOutsideArea": MessageLookupByLibrary.simpleMessage(
+      "Outside our service area",
+    ),
+    "cleaningRejectReasonServiceUnavailable":
+        MessageLookupByLibrary.simpleMessage("Service temporarily unavailable"),
+    "cleaningRejectSheetSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Please select a reason. The customer will be\nnotified accordingly",
+    ),
+    "cleaningRequestIdHeader": MessageLookupByLibrary.simpleMessage(
+      "REQUEST ID",
+    ),
+    "cleaningRequestNewServiceType": MessageLookupByLibrary.simpleMessage(
+      "Request New Service Type",
+    ),
+    "cleaningRequestNewServiceTypeLink": MessageLookupByLibrary.simpleMessage(
+      "+ Request New Service Type",
+    ),
+    "cleaningRevenueHeader": MessageLookupByLibrary.simpleMessage("REVENUE"),
+    "cleaningSaveAddon": MessageLookupByLibrary.simpleMessage("Save Add-on"),
+    "cleaningSaveSpace": MessageLookupByLibrary.simpleMessage("Save Space"),
+    "cleaningSearchCustomerOrOrderId": MessageLookupByLibrary.simpleMessage(
+      "Search customer name or order ID..",
+    ),
+    "cleaningSearchServices": MessageLookupByLibrary.simpleMessage(
+      "Search Services",
+    ),
+    "cleaningSelectService": MessageLookupByLibrary.simpleMessage(
+      "Select Service",
+    ),
+    "cleaningServiceImage": MessageLookupByLibrary.simpleMessage(
+      "Service Image",
+    ),
+    "cleaningServiceType": MessageLookupByLibrary.simpleMessage("Service Type"),
+    "cleaningServiceTypeName": MessageLookupByLibrary.simpleMessage(
+      "Service Type Name",
+    ),
+    "cleaningServiceTypeReasonHint": MessageLookupByLibrary.simpleMessage(
+      "Briefly describe why you need this service type",
+    ),
+    "cleaningShortDescription": MessageLookupByLibrary.simpleMessage(
+      "Short Description",
+    ),
+    "cleaningSpaceName": MessageLookupByLibrary.simpleMessage("Space Name"),
+    "cleaningSpaceNameHint": MessageLookupByLibrary.simpleMessage(
+      "e.g. Master Bedroom, Living Room, Corridor, Balcony",
+    ),
+    "cleaningSpacePricingHeader": MessageLookupByLibrary.simpleMessage(
+      "SPACE PRICING",
+    ),
+    "cleaningSpacesHeader": MessageLookupByLibrary.simpleMessage("SPACES"),
+    "cleaningSpecialNotesHeader": MessageLookupByLibrary.simpleMessage(
+      "SPECIAL NOTES",
+    ),
+    "cleaningStartCleaning": MessageLookupByLibrary.simpleMessage(
+      "Start Cleaning",
+    ),
+    "cleaningStartingRateHeader": MessageLookupByLibrary.simpleMessage(
+      "STARTING RATE",
+    ),
+    "cleaningStatusAccepted": MessageLookupByLibrary.simpleMessage("ACCEPTED"),
+    "cleaningStatusInProgress": MessageLookupByLibrary.simpleMessage(
+      "IN PROGRESS",
+    ),
+    "cleaningStatusNew": MessageLookupByLibrary.simpleMessage("NEW"),
+    "cleaningSubmitRequest": MessageLookupByLibrary.simpleMessage(
+      "Submit Request",
+    ),
+    "cleaningSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "Support & Legal",
+    ),
+    "cleaningSvcAddOneSpace": MessageLookupByLibrary.simpleMessage(
+      "Add at least one space with its price.",
+    ),
+    "cleaningSvcChatLoadError": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t load messages.",
+    ),
+    "cleaningSvcChatUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Chat with this customer isn\'t available yet.",
+    ),
+    "cleaningSvcGenericError": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again.",
+    ),
+    "cleaningSvcLoadError": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t load your services.",
+    ),
+    "cleaningSvcSelectServiceType": MessageLookupByLibrary.simpleMessage(
+      "Please select a service type.",
+    ),
+    "cleaningSvcTypesLoadError": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t load service types.",
+    ),
+    "cleaningTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "Tap to upload image",
+    ),
+    "cleaningTodayHours": m5,
+    "cleaningTodaysBookings": MessageLookupByLibrary.simpleMessage(
+      "Today\'s Bookings",
+    ),
+    "cleaningTotal": MessageLookupByLibrary.simpleMessage("Total"),
+    "cleaningTotalPaid": MessageLookupByLibrary.simpleMessage("Total paid"),
+    "cleaningUnitHour": MessageLookupByLibrary.simpleMessage("Hour"),
+    "cleaningUnitLabel": MessageLookupByLibrary.simpleMessage("Unit"),
+    "cleaningUnitPiece": MessageLookupByLibrary.simpleMessage("Piece"),
+    "cleaningUnitRoom": MessageLookupByLibrary.simpleMessage("Room"),
+    "cleaningUnitSqFt": MessageLookupByLibrary.simpleMessage("Sq. Ft"),
+    "cleaningUnitUnit": MessageLookupByLibrary.simpleMessage("Unit"),
+    "cleaningUpcoming": MessageLookupByLibrary.simpleMessage("Upcoming"),
+    "cleaningVendorProfile": MessageLookupByLibrary.simpleMessage(
+      "Vendor Profile",
+    ),
+    "cleaningVilla": MessageLookupByLibrary.simpleMessage("Villa"),
+    "cleaningWorkingHoursBookingSlots": MessageLookupByLibrary.simpleMessage(
+      "Working hours & Booking Slots",
+    ),
+    "cleaningYourServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "YOUR SERVICES",
+    ),
     "clearAll": MessageLookupByLibrary.simpleMessage("Clear All"),
     "clickToView": MessageLookupByLibrary.simpleMessage("Click to View"),
     "codeLabel": MessageLookupByLibrary.simpleMessage("CODE"),
@@ -270,7 +639,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "CREATE NEW BASKET",
     ),
     "createdDate": MessageLookupByLibrary.simpleMessage("CREATED DATE"),
-    "createdLabel": m2,
+    "createdLabel": m6,
     "createdOnLabel": MessageLookupByLibrary.simpleMessage("CREATED ON"),
     "credit": MessageLookupByLibrary.simpleMessage("Credit"),
     "credited": MessageLookupByLibrary.simpleMessage("Credited"),
@@ -363,8 +732,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "driverAssigned": MessageLookupByLibrary.simpleMessage("Driver assigned"),
     "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
     "driverRequested": MessageLookupByLibrary.simpleMessage("Driver requested"),
-    "dueInHoursMinutes": m3,
-    "dueInMinutes": m4,
+    "dueInHoursMinutes": m7,
+    "dueInMinutes": m8,
     "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
     "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -433,7 +802,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourWhatsappNumber": MessageLookupByLibrary.simpleMessage(
       "Enter your whatsapp number",
     ),
-    "expiresInDays": m5,
+    "expiresInDays": m9,
     "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
       "Failed to update item",
     ),
@@ -698,7 +1067,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "Order Duration Breakdown",
     ),
-    "orderIdLabel": m6,
+    "orderIdLabel": m10,
     "orderItems": MessageLookupByLibrary.simpleMessage("ORDER ITEMS"),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("Order Picked Up"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("Order Placed"),
@@ -819,7 +1188,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "preOrders": MessageLookupByLibrary.simpleMessage("Pre-orders"),
     "preorderBadge": MessageLookupByLibrary.simpleMessage("Pre-order"),
     "preorderDueNow": MessageLookupByLibrary.simpleMessage("Due now"),
-    "preorderReminderBody": m7,
+    "preorderReminderBody": m11,
     "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
       "Pre-order due soon",
     ),
@@ -846,7 +1215,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "products": MessageLookupByLibrary.simpleMessage("Products"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
-    "qtyLabel": m8,
+    "qtyLabel": m12,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("Rate Order"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -867,7 +1236,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "REACHED RESTAURANT",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Ready"),
-    "reasonColonLabel": m9,
+    "reasonColonLabel": m13,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Reason For Leave"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Reason"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("Received Payouts"),
@@ -936,7 +1305,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
     "scheduled": MessageLookupByLibrary.simpleMessage("SCHEDULED"),
-    "scheduledForTime": m10,
+    "scheduledForTime": m14,
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "Search amount or Transaction ID",
@@ -1063,7 +1432,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("Unknown Driver"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("Unknown Vendor"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("Upcoming Leaves"),
-    "upcomingPreordersCount": m11,
+    "upcomingPreordersCount": m15,
     "update": MessageLookupByLibrary.simpleMessage("Update"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("Update Coupon"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -1101,6 +1470,618 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("View Reports"),
     "walletPayment": MessageLookupByLibrary.simpleMessage("SAIMPEX Wallet"),
+    "waterAcceptingOrders": MessageLookupByLibrary.simpleMessage(
+      "Accepting orders",
+    ),
+    "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Account deleted successfully",
+    ),
+    "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "Add Delivery Boy",
+    ),
+    "waterAddDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "Add Distance Range",
+    ),
+    "waterAddMore": MessageLookupByLibrary.simpleMessage("Add More"),
+    "waterAddProduct": MessageLookupByLibrary.simpleMessage("Add Product"),
+    "waterAddedDeliveryBoysAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Added delivery boys will appear here",
+    ),
+    "waterAddedProductsWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Added products will appear here",
+    ),
+    "waterAfternoon": MessageLookupByLibrary.simpleMessage("Afternoon"),
+    "waterAmountDue": MessageLookupByLibrary.simpleMessage("Amount due"),
+    "waterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "Available Stock",
+    ),
+    "waterBankDetails": MessageLookupByLibrary.simpleMessage("Bank Details"),
+    "waterBarcode": MessageLookupByLibrary.simpleMessage("Barcode"),
+    "waterBasicInformation": MessageLookupByLibrary.simpleMessage(
+      "BASIC INFORMATION",
+    ),
+    "waterBiWeekly": MessageLookupByLibrary.simpleMessage("Every 2 weeks"),
+    "waterBottleReturnSettings": MessageLookupByLibrary.simpleMessage(
+      "BOTTLE RETURN SETTINGS",
+    ),
+    "waterBottleSize": MessageLookupByLibrary.simpleMessage("Bottle Size"),
+    "waterBottles": MessageLookupByLibrary.simpleMessage("Bottles"),
+    "waterBottlesCount": m16,
+    "waterBottlesLeft": m17,
+    "waterBrand": MessageLookupByLibrary.simpleMessage("Brand"),
+    "waterBrandName": MessageLookupByLibrary.simpleMessage("Brand Name"),
+    "waterBusiness": MessageLookupByLibrary.simpleMessage("Business"),
+    "waterBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Business settings",
+    ),
+    "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
+      "Business settings updated successfully",
+    ),
+    "waterCalendarNotAvailable": MessageLookupByLibrary.simpleMessage(
+      "Delivery calendar not available yet",
+    ),
+    "waterCalendarNotAvailableHint": MessageLookupByLibrary.simpleMessage(
+      "Scheduled subscription deliveries will appear here once this feature is ready. You can see each subscription\'s next delivery in its details.",
+    ),
+    "waterCallNow": MessageLookupByLibrary.simpleMessage("Call Now"),
+    "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to cancel this leave?",
+    ),
+    "waterCertificate": MessageLookupByLibrary.simpleMessage("Certificate"),
+    "waterChatWithCustomer": MessageLookupByLibrary.simpleMessage(
+      "Chat With Customer",
+    ),
+    "waterClosed": MessageLookupByLibrary.simpleMessage("Closed"),
+    "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete this item?",
+    ),
+    "waterConfirmDeleteNamedItem": m18,
+    "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to mark this item as available?",
+    ),
+    "waterConfirmMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to mark this item as out of stock?",
+    ),
+    "waterConfirmReject": MessageLookupByLibrary.simpleMessage(
+      "Confirm Reject",
+    ),
+    "waterCount": MessageLookupByLibrary.simpleMessage("Count"),
+    "waterCreatedCouponsAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Created coupons will appear here",
+    ),
+    "waterCurrentStatus": MessageLookupByLibrary.simpleMessage(
+      "Current Status",
+    ),
+    "waterCurrentlyPaused": MessageLookupByLibrary.simpleMessage(
+      "Currently Paused",
+    ),
+    "waterCustomer": MessageLookupByLibrary.simpleMessage("Customer"),
+    "waterCustomerHeader": MessageLookupByLibrary.simpleMessage("CUSTOMER"),
+    "waterCustomerMessagesWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Customer messages will appear here",
+    ),
+    "waterCustomerRequestedPause": MessageLookupByLibrary.simpleMessage(
+      "Customer Requested Pause",
+    ),
+    "waterDaily": MessageLookupByLibrary.simpleMessage("Daily"),
+    "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("dd-mm-yyyy"),
+    "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
+      "Delivery Address",
+    ),
+    "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage(
+      "DELIVERY HISTORY",
+    ),
+    "waterDeliveryPartnerAssigned": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partner Assigned",
+    ),
+    "waterDeliveryPartnerHeader": MessageLookupByLibrary.simpleMessage(
+      "DELIVERY PARTNER",
+    ),
+    "waterDeliveryTypeHeader": MessageLookupByLibrary.simpleMessage(
+      "DELIVERY TYPE",
+    ),
+    "waterDescription": MessageLookupByLibrary.simpleMessage("Description"),
+    "waterDistanceRangeKm": m19,
+    "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "Edit Distance Range",
+    ),
+    "waterEditPrice": MessageLookupByLibrary.simpleMessage("Edit Price"),
+    "waterEditWorkingHour": MessageLookupByLibrary.simpleMessage(
+      "Edit Working Hour",
+    ),
+    "waterEnd": MessageLookupByLibrary.simpleMessage("End"),
+    "waterEndTime": MessageLookupByLibrary.simpleMessage("End Time"),
+    "waterEndTimeAfterStartTime": MessageLookupByLibrary.simpleMessage(
+      "End time must be after start time",
+    ),
+    "waterEnterMinMaxDistance": MessageLookupByLibrary.simpleMessage(
+      "Enter minimum and maximum distance",
+    ),
+    "waterEnterPrice": MessageLookupByLibrary.simpleMessage("Enter a price"),
+    "waterEnterQuantity": MessageLookupByLibrary.simpleMessage(
+      "Enter Quantity",
+    ),
+    "waterEnterReason": MessageLookupByLibrary.simpleMessage("Enter a reason"),
+    "waterErrorAcceptingOrder": m20,
+    "waterErrorAcceptingSubscription": m21,
+    "waterErrorAddingProduct": m22,
+    "waterErrorCancellingOrder": m23,
+    "waterErrorDeletingProduct": m24,
+    "waterErrorMarkingOrderAsReady": m25,
+    "waterErrorPausingSubscription": m26,
+    "waterErrorPreparingOrder": m27,
+    "waterErrorRejectingSubscription": m28,
+    "waterErrorResumingSubscription": m29,
+    "waterErrorUpdatingItemStatus": m30,
+    "waterErrorUpdatingPrice": m31,
+    "waterErrorUpdatingStock": m32,
+    "waterEstValue": MessageLookupByLibrary.simpleMessage("Est. value"),
+    "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
+      "Estimated Delivery Fee",
+    ),
+    "waterEvening": MessageLookupByLibrary.simpleMessage("Evening"),
+    "waterEveryNDays": m33,
+    "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
+      "Express Delivery",
+    ),
+    "waterFailedToAcceptOrder": MessageLookupByLibrary.simpleMessage(
+      "Failed to accept order",
+    ),
+    "waterFailedToAcceptSubscription": MessageLookupByLibrary.simpleMessage(
+      "Failed to accept subscription",
+    ),
+    "waterFailedToAddProduct": MessageLookupByLibrary.simpleMessage(
+      "Failed to add product",
+    ),
+    "waterFailedToCancelLeave": MessageLookupByLibrary.simpleMessage(
+      "Failed to cancel leave",
+    ),
+    "waterFailedToCancelOrder": MessageLookupByLibrary.simpleMessage(
+      "Failed to cancel order",
+    ),
+    "waterFailedToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "Failed to delete account",
+    ),
+    "waterFailedToDeleteProduct": MessageLookupByLibrary.simpleMessage(
+      "Failed to delete product",
+    ),
+    "waterFailedToLoadImage": MessageLookupByLibrary.simpleMessage(
+      "Failed to load image",
+    ),
+    "waterFailedToMarkLeave": MessageLookupByLibrary.simpleMessage(
+      "Failed to mark leave",
+    ),
+    "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
+      "Failed to mark order as ready",
+    ),
+    "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "Failed to pause subscription",
+    ),
+    "waterFailedToPrepareOrder": MessageLookupByLibrary.simpleMessage(
+      "Failed to prepare order",
+    ),
+    "waterFailedToRejectSubscription": MessageLookupByLibrary.simpleMessage(
+      "Failed to reject subscription",
+    ),
+    "waterFailedToResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "Failed to resume subscription",
+    ),
+    "waterFailedToUpdateBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Failed to update business settings",
+    ),
+    "waterFailedToUpdateItemStatus": MessageLookupByLibrary.simpleMessage(
+      "Failed to update item status",
+    ),
+    "waterFailedToUpdatePrice": MessageLookupByLibrary.simpleMessage(
+      "Failed to update price",
+    ),
+    "waterFailedToUpdateStock": MessageLookupByLibrary.simpleMessage(
+      "Failed to update stock",
+    ),
+    "waterFailedToUpdateWorkingHours": MessageLookupByLibrary.simpleMessage(
+      "Failed to update working hours",
+    ),
+    "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
+      "Fill in every field",
+    ),
+    "waterFilterAllCount": m34,
+    "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
+      "Filter by category",
+    ),
+    "waterFilterInStockCount": m35,
+    "waterFilterLowStockCount": m36,
+    "waterFlat": MessageLookupByLibrary.simpleMessage("Flat"),
+    "waterFrequency": MessageLookupByLibrary.simpleMessage("Frequency"),
+    "waterIdLabel": m37,
+    "waterImage": MessageLookupByLibrary.simpleMessage("Image"),
+    "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
+      "PNG, JPG up to 5MB",
+    ),
+    "waterImagesSelected": m38,
+    "waterInStock": MessageLookupByLibrary.simpleMessage("In Stock"),
+    "waterInventory": MessageLookupByLibrary.simpleMessage("Inventory"),
+    "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
+      "INVENTORY CONTROL",
+    ),
+    "waterItem": MessageLookupByLibrary.simpleMessage("Water Item"),
+    "waterItemMarkedAvailable": MessageLookupByLibrary.simpleMessage(
+      "Item marked as available successfully",
+    ),
+    "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Item marked as out of stock successfully",
+    ),
+    "waterLastSold": m39,
+    "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Leave cancelled successfully",
+    ),
+    "waterLeaveManagement": MessageLookupByLibrary.simpleMessage(
+      "Leave Management",
+    ),
+    "waterLeaveMarkedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Leave marked successfully",
+    ),
+    "waterLogoutFailed": MessageLookupByLibrary.simpleMessage("Logout failed."),
+    "waterLowStock": MessageLookupByLibrary.simpleMessage("Low Stock"),
+    "waterLowStockAlert": MessageLookupByLibrary.simpleMessage(
+      "Low Stock Alert",
+    ),
+    "waterMarkAsPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Mark as Picked Up",
+    ),
+    "waterMarkAvailable": MessageLookupByLibrary.simpleMessage(
+      "Mark Available",
+    ),
+    "waterMarkLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to mark leave for the selected dates?",
+    ),
+    "waterMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Mark Out Of Stock",
+    ),
+    "waterMarkStoreBusy": MessageLookupByLibrary.simpleMessage(
+      "Mark Store Busy",
+    ),
+    "waterMarkedLeavesAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Marked leaves will appear here",
+    ),
+    "waterMaxGreaterThanMin": MessageLookupByLibrary.simpleMessage(
+      "Maximum must be greater than minimum",
+    ),
+    "waterMaximumDistance": MessageLookupByLibrary.simpleMessage(
+      "Maximum Distance",
+    ),
+    "waterMessages": MessageLookupByLibrary.simpleMessage("Messages"),
+    "waterMinimumDistance": MessageLookupByLibrary.simpleMessage(
+      "Minimum Distance",
+    ),
+    "waterMonth": MessageLookupByLibrary.simpleMessage("Month"),
+    "waterMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
+    "waterMore": MessageLookupByLibrary.simpleMessage("More"),
+    "waterMoreProducts": m40,
+    "waterMorning": MessageLookupByLibrary.simpleMessage("Morning"),
+    "waterNewBadge": MessageLookupByLibrary.simpleMessage("NEW"),
+    "waterNewOrders": MessageLookupByLibrary.simpleMessage("New Orders"),
+    "waterNextDelivery": MessageLookupByLibrary.simpleMessage("Next Delivery"),
+    "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
+      "No contact details available",
+    ),
+    "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
+      "No Leaves Found",
+    ),
+    "waterNoOrdersHere": MessageLookupByLibrary.simpleMessage("No orders here"),
+    "waterNoPayoutsFound": MessageLookupByLibrary.simpleMessage(
+      "No Payouts Found",
+    ),
+    "waterNoPrivacyPolicyAvailable": MessageLookupByLibrary.simpleMessage(
+      "No privacy policy available",
+    ),
+    "waterNoProductsFound": MessageLookupByLibrary.simpleMessage(
+      "No Products Found",
+    ),
+    "waterNoStockHistoryFound": MessageLookupByLibrary.simpleMessage(
+      "No Stock History Found",
+    ),
+    "waterNoStockRecordsYet": MessageLookupByLibrary.simpleMessage(
+      "No stock records recorded for this item yet",
+    ),
+    "waterNoSubscriptionOrdersHere": MessageLookupByLibrary.simpleMessage(
+      "No subscription orders here",
+    ),
+    "waterNoTermsAvailable": MessageLookupByLibrary.simpleMessage(
+      "No terms & conditions available",
+    ),
+    "waterNotAccepting": MessageLookupByLibrary.simpleMessage("Not accepting"),
+    "waterNotAvailable": MessageLookupByLibrary.simpleMessage("N/A"),
+    "waterOfferPrice": MessageLookupByLibrary.simpleMessage("Offer Price"),
+    "waterOffline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "waterOneImageSelected": MessageLookupByLibrary.simpleMessage(
+      "1 image selected",
+    ),
+    "waterOneTimeOrders": MessageLookupByLibrary.simpleMessage(
+      "One-Time Orders",
+    ),
+    "waterOnline": MessageLookupByLibrary.simpleMessage("Online"),
+    "waterOpen": MessageLookupByLibrary.simpleMessage("Open"),
+    "waterOpen24Hours": MessageLookupByLibrary.simpleMessage("24-Hour Open"),
+    "waterOrderCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Order cancelled successfully",
+    ),
+    "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
+      "Order Delivered",
+    ),
+    "waterOrderItemsCount": m41,
+    "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
+      "Order marked as ready successfully",
+    ),
+    "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
+      "Order moved to preparing successfully",
+    ),
+    "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
+      "Order Received",
+    ),
+    "waterOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Orders will appear here",
+    ),
+    "waterOther": MessageLookupByLibrary.simpleMessage("Other"),
+    "waterOtherReason": MessageLookupByLibrary.simpleMessage("Other Reason"),
+    "waterOwnerIdentityProof": MessageLookupByLibrary.simpleMessage(
+      "Owner Identity Proof",
+    ),
+    "waterPause": MessageLookupByLibrary.simpleMessage("Pause"),
+    "waterPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "Pause Subscription",
+    ),
+    "waterPauseSubscriptionHint": MessageLookupByLibrary.simpleMessage(
+      "Future deliveries will be paused. Today\'s active order won\'t be affected",
+    ),
+    "waterPaused": MessageLookupByLibrary.simpleMessage("Paused"),
+    "waterPausedByLabel": MessageLookupByLibrary.simpleMessage("PAUSED BY:"),
+    "waterPausedOn": m42,
+    "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage("PAUSED ON:"),
+    "waterPaymentDetails": MessageLookupByLibrary.simpleMessage(
+      "Payment Details",
+    ),
+    "waterPaymentProof": MessageLookupByLibrary.simpleMessage("Payment Proof"),
+    "waterPayoutAmount": MessageLookupByLibrary.simpleMessage("Payout Amount"),
+    "waterPayoutHistoryAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Payout history will appear here",
+    ),
+    "waterPayoutOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Orders related to this payout will appear here",
+    ),
+    "waterPickImagesFromGallery": MessageLookupByLibrary.simpleMessage(
+      "Pick one or more images from gallery",
+    ),
+    "waterPickedUpByCustomer": MessageLookupByLibrary.simpleMessage(
+      "Picked Up by Customer",
+    ),
+    "waterPickedUpByRider": MessageLookupByLibrary.simpleMessage(
+      "Picked Up by Rider",
+    ),
+    "waterPlan": MessageLookupByLibrary.simpleMessage("Plan"),
+    "waterPlanRangeStart": m43,
+    "waterPlanRangeStartEnd": m44,
+    "waterPlanSummary": MessageLookupByLibrary.simpleMessage("PLAN SUMMARY"),
+    "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "Please enter available stock",
+    ),
+    "waterPleaseEnterPrice": MessageLookupByLibrary.simpleMessage(
+      "Please enter price",
+    ),
+    "waterPleaseEnterProductName": MessageLookupByLibrary.simpleMessage(
+      "Please enter product name",
+    ),
+    "waterPleaseEnterSellingPrice": MessageLookupByLibrary.simpleMessage(
+      "Please enter selling price",
+    ),
+    "waterPleaseEnterValidPrice": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid price",
+    ),
+    "waterPleaseSelectProductImage": MessageLookupByLibrary.simpleMessage(
+      "Please select at least one product image",
+    ),
+    "waterPriceExampleHint": MessageLookupByLibrary.simpleMessage("e.g. 50"),
+    "waterPriceUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Price updated successfully",
+    ),
+    "waterPricing": MessageLookupByLibrary.simpleMessage("Pricing"),
+    "waterPricingMru": MessageLookupByLibrary.simpleMessage("PRICING (MRU)"),
+    "waterPrivacySecurity": MessageLookupByLibrary.simpleMessage(
+      "Privacy & Security",
+    ),
+    "waterProductAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Product added successfully",
+    ),
+    "waterProductDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Product deleted successfully",
+    ),
+    "waterProductDescription": MessageLookupByLibrary.simpleMessage(
+      "Product Description",
+    ),
+    "waterProductDescriptionHint": MessageLookupByLibrary.simpleMessage(
+      "Describe the source, pH level, or benefits...",
+    ),
+    "waterProductDetails": MessageLookupByLibrary.simpleMessage(
+      "Product Details",
+    ),
+    "waterProductImage": MessageLookupByLibrary.simpleMessage("Product Image"),
+    "waterProductNameEnglish": MessageLookupByLibrary.simpleMessage(
+      "Product Name (English)",
+    ),
+    "waterProductNameHint": MessageLookupByLibrary.simpleMessage(
+      "e.g. Drinking Water",
+    ),
+    "waterQuantityLabel": MessageLookupByLibrary.simpleMessage("QUANTITY: "),
+    "waterRangeOverlaps": MessageLookupByLibrary.simpleMessage(
+      "This range overlaps an existing range",
+    ),
+    "waterReadyForDispatch": MessageLookupByLibrary.simpleMessage(
+      "Ready for Dispatch",
+    ),
+    "waterReadyForPickup": MessageLookupByLibrary.simpleMessage(
+      "Ready for Pickup",
+    ),
+    "waterReasonForPausing": MessageLookupByLibrary.simpleMessage(
+      "Reason For Pausing",
+    ),
+    "waterReasonForRejecting": MessageLookupByLibrary.simpleMessage(
+      "Reason For Rejecting",
+    ),
+    "waterReasonLabel": MessageLookupByLibrary.simpleMessage("REASON:"),
+    "waterRegistrationDetails": MessageLookupByLibrary.simpleMessage(
+      "Registration Details",
+    ),
+    "waterRejectOrder": MessageLookupByLibrary.simpleMessage("Reject Order"),
+    "waterRejectOrderHint": MessageLookupByLibrary.simpleMessage(
+      "Please select a reason. The customer will be notified accordingly",
+    ),
+    "waterRemainingLabel": MessageLookupByLibrary.simpleMessage("REMAINING: "),
+    "waterRequestId": MessageLookupByLibrary.simpleMessage("REQUEST ID"),
+    "waterResume": MessageLookupByLibrary.simpleMessage("Resume"),
+    "waterResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "Resume Subscription",
+    ),
+    "waterResumeSubscriptionConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to resume this subscription order?",
+    ),
+    "waterReturnableBottle": MessageLookupByLibrary.simpleMessage(
+      "Returnable Bottle",
+    ),
+    "waterReturnableBottleHint": MessageLookupByLibrary.simpleMessage(
+      "Enable this option if customers must return the empty bottle after delivery or self pickup",
+    ),
+    "waterRevenueHeader": MessageLookupByLibrary.simpleMessage("REVENUE"),
+    "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
+      "Revenue Summary",
+    ),
+    "waterReviewsCount": m45,
+    "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
+      "Sales Performance",
+    ),
+    "waterSaveProduct": MessageLookupByLibrary.simpleMessage("Save Product"),
+    "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
+      "Scan or enter barcode",
+    ),
+    "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
+      "Search by subscription ID, name",
+    ),
+    "waterSearchCustomerOrOrderHint": MessageLookupByLibrary.simpleMessage(
+      "Search customer name or order ID...",
+    ),
+    "waterSearchDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "Search Delivery Boy",
+    ),
+    "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
+      "Search products, ID",
+    ),
+    "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
+      "Select from and to dates",
+    ),
+    "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
+      "Select Image Source",
+    ),
+    "waterSellingPrice": MessageLookupByLibrary.simpleMessage("Selling Price"),
+    "waterSendMail": MessageLookupByLibrary.simpleMessage("Send Mail"),
+    "waterSize": MessageLookupByLibrary.simpleMessage("Size"),
+    "waterSomethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again.",
+    ),
+    "waterStart": MessageLookupByLibrary.simpleMessage("Start"),
+    "waterStartTime": MessageLookupByLibrary.simpleMessage("Start Time"),
+    "waterStockAdded": MessageLookupByLibrary.simpleMessage("Stock Added"),
+    "waterStockHistory": MessageLookupByLibrary.simpleMessage("Stock History"),
+    "waterStockIdLabel": m46,
+    "waterStockRemoved": MessageLookupByLibrary.simpleMessage("Stock Removed"),
+    "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Stock updated successfully",
+    ),
+    "waterStorage": MessageLookupByLibrary.simpleMessage("Storage"),
+    "waterStoreAvailability": MessageLookupByLibrary.simpleMessage(
+      "Store Availability",
+    ),
+    "waterStoreDetails": MessageLookupByLibrary.simpleMessage("Store Details"),
+    "waterStoreProfile": MessageLookupByLibrary.simpleMessage("Store Profile"),
+    "waterStoreStatusOpen": MessageLookupByLibrary.simpleMessage(
+      "Store Status (Open)",
+    ),
+    "waterSubscriptionAcceptedSuccessfully":
+        MessageLookupByLibrary.simpleMessage(
+          "Subscription accepted successfully",
+        ),
+    "waterSubscriptionAmount": MessageLookupByLibrary.simpleMessage(
+      "Subscription Amount",
+    ),
+    "waterSubscriptionCalendar": MessageLookupByLibrary.simpleMessage(
+      "Subscription Calendar",
+    ),
+    "waterSubscriptionDetails": MessageLookupByLibrary.simpleMessage(
+      "Subscription Details",
+    ),
+    "waterSubscriptionOrders": MessageLookupByLibrary.simpleMessage(
+      "Subscription Orders",
+    ),
+    "waterSubscriptionPausedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Subscription paused successfully",
+    ),
+    "waterSubscriptionRejectedSuccessfully":
+        MessageLookupByLibrary.simpleMessage(
+          "Subscription rejected successfully",
+        ),
+    "waterSubscriptionResumedSuccessfully":
+        MessageLookupByLibrary.simpleMessage(
+          "Subscription resumed successfully",
+        ),
+    "waterSubscriptionSavings": MessageLookupByLibrary.simpleMessage(
+      "Subscription Savings",
+    ),
+    "waterSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "Support & Legal",
+    ),
+    "waterTakeAPhoto": MessageLookupByLibrary.simpleMessage("Take a photo"),
+    "waterTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "Tap to upload image",
+    ),
+    "waterTemporaryStoreClosure": MessageLookupByLibrary.simpleMessage(
+      "Temporary Store Closure",
+    ),
+    "waterTimeSlot": MessageLookupByLibrary.simpleMessage("Time Slot"),
+    "waterTinNifNumber": MessageLookupByLibrary.simpleMessage("TIN/NIF Number"),
+    "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
+      "To date must be after from date",
+    ),
+    "waterTodayTimings": m47,
+    "waterTomorrow": MessageLookupByLibrary.simpleMessage("Tomorrow"),
+    "waterTotalHeader": MessageLookupByLibrary.simpleMessage("TOTAL"),
+    "waterTotalPaid": MessageLookupByLibrary.simpleMessage("Total paid"),
+    "waterTotalSoldAllTime": MessageLookupByLibrary.simpleMessage(
+      "Total Sold (All Time)",
+    ),
+    "waterTryAnotherStatusFilter": MessageLookupByLibrary.simpleMessage(
+      "Try another status filter above",
+    ),
+    "waterUnitType": MessageLookupByLibrary.simpleMessage("Unit Type"),
+    "waterUpcomingDeliveries": MessageLookupByLibrary.simpleMessage(
+      "UPCOMING DELIVERIES",
+    ),
+    "waterUpdateStock": MessageLookupByLibrary.simpleMessage("Update Stock"),
+    "waterValidUpto": MessageLookupByLibrary.simpleMessage("Valid Upto"),
+    "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("Voice message"),
+    "waterWallet": MessageLookupByLibrary.simpleMessage("Wallet"),
+    "waterWaterSupplyIssue": MessageLookupByLibrary.simpleMessage(
+      "Water Supply Issue",
+    ),
+    "waterWeek": MessageLookupByLibrary.simpleMessage("Week"),
+    "waterWeekly": MessageLookupByLibrary.simpleMessage("Weekly"),
+    "waterWeeklyPlanner": MessageLookupByLibrary.simpleMessage(
+      "WEEKLY PLANNER",
+    ),
+    "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
+      "Weekly Schedule",
+    ),
+    "waterWelcomeToShop": m48,
+    "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
+      "Working hours updated successfully",
+    ),
+    "waterYou": MessageLookupByLibrary.simpleMessage("You"),
     "wednesday": MessageLookupByLibrary.simpleMessage("Wednesday"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("Welcome to"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

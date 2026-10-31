@@ -1,36 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart' show FormData;
+import 'package:intl/intl.dart' show DateFormat;
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
+/// Existing coupon values for editing (`coupons` row).
 class WaterCouponDraft {
   const WaterCouponDraft({
+    required this.id,
     required this.name,
     required this.code,
-    required this.kind,
+    required this.type,
     required this.discount,
     required this.count,
     required this.validUntil,
-    required this.createdOn,
   });
 
+  final dynamic id;
   final String name;
   final String code;
-  final String kind;
+
+  /// Backend `type`: 1 fixed amount, 2 percentage.
+  final int type;
   final String discount;
   final String count;
-  final String validUntil;
-  final String createdOn;
+  final DateTime? validUntil;
 }
 
 class AddCouponView extends StatefulWidget {
-  const AddCouponView({super.key});
+  const AddCouponView({super.key, this.initial});
+
+  /// When set, the form edits this coupon (`POST updateCoupon`); otherwise it
+  /// creates one (`POST addCoupon`).
+  final WaterCouponDraft? initial;
 
   static const orange = Color(0xFFFF5317);
   static const ink = Color(0xFF10182B);
 
-  static Future<WaterCouponDraft?> open(BuildContext context) {
-    return Navigator.of(context).push<WaterCouponDraft>(
-      MaterialPageRoute(builder: (_) => const AddCouponView()),
+  /// Resolves to true when the coupon was saved on the server.
+  static Future<bool?> open(BuildContext context, {WaterCouponDraft? initial}) {
+    return Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => AddCouponView(initial: initial)),
     );
   }
 
@@ -48,6 +63,23 @@ class _AddCouponViewState extends State<AddCouponView> {
   String? _kind;
   DateTime? _validUntil;
   String? _error;
+  bool _saving = false;
+
+  bool get _isEditing => widget.initial != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initial;
+    if (initial != null) {
+      _name.text = initial.name;
+      _code.text = initial.code;
+      _discount.text = initial.discount;
+      _count.text = initial.count;
+      _kind = initial.type == 2 ? 'PERCENTAGE' : 'FLAT';
+      _validUntil = initial.validUntil;
+    }
+  }
 
   @override
   void dispose() {
@@ -76,11 +108,11 @@ class _AddCouponViewState extends State<AddCouponView> {
       items: [
         PopupMenuItem(
           value: 'PERCENTAGE',
-          child: Text('Percentage', style: _valueStyle),
+          child: Text(S.of(context).percentage, style: _valueStyle),
         ),
         PopupMenuItem(
           value: 'FLAT',
-          child: Text('Flat', style: _valueStyle),
+          child: Text(S.of(context).waterFlat, style: _valueStyle),
         ),
       ],
     );
@@ -92,10 +124,13 @@ class _AddCouponViewState extends State<AddCouponView> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final current = _validUntil;
     final picked = await showDatePicker(
       context: context,
-      initialDate: _validUntil ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: current == null || current.isBefore(today) ? today : current,
+      firstDate: today,
       lastDate: DateTime(2035),
       builder: (context, child) {
         return Theme(
@@ -117,28 +152,50 @@ class _AddCouponViewState extends State<AddCouponView> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    if (_saving) return;
     final name = _name.text.trim();
     final code = _code.text.trim();
     final discount = double.tryParse(_discount.text.trim());
     final count = int.tryParse(_count.text.trim());
     if (name.isEmpty || code.isEmpty || _kind == null || discount == null || count == null || _validUntil == null) {
-      setState(() => _error = 'Fill in every field');
+      setState(() => _error = S.of(context).waterFillInEveryField);
       return;
     }
     HapticFeedback.lightImpact();
-    final suffix = _kind == 'PERCENTAGE' ? '%' : ' MRU';
-    Navigator.of(context).pop(
-      WaterCouponDraft(
-        name: name.toUpperCase(),
-        code: code.toUpperCase(),
-        kind: _kind!,
-        discount: '${discount.toStringAsFixed(2)}$suffix',
-        count: '$count',
-        validUntil: _formatShort(_validUntil!),
-        createdOn: _formatStamp(DateTime.now()),
-      ),
-    );
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await WaterApi.prepare();
+      final body = <String, dynamic>{
+        if (_isEditing) 'coupon_id': widget.initial!.id.toString(),
+        'name': name,
+        'code': code.toUpperCase(),
+        'type': _kind == 'PERCENTAGE' ? '2' : '1',
+        'discount_value': _discount.text.trim(),
+        'count': '$count',
+        'valid_upto': DateFormat('yyyy-MM-dd').format(_validUntil!),
+      };
+      final response = await DioClient().post(
+        _isEditing ? ApiEndPoints.updateCoupon : ApiEndPoints.addCoupon,
+        body: FormData.fromMap(body),
+      );
+      final data = response.data;
+      if (!mounted) return;
+      if (WaterApi.isOk(data)) {
+        final msg = WaterApi.message(data);
+        if (msg != null) showToast(context, msg);
+        Navigator.of(context).pop(true);
+      } else {
+        setState(() => _error = WaterApi.message(data) ?? S.of(context).waterSomethingWentWrong);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = WaterApi.errorText(e));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -161,55 +218,57 @@ class _AddCouponViewState extends State<AddCouponView> {
           child: Column(
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-              const _Header(),
+              _Header(title: _isEditing ? S.of(context).updateCoupon : S.of(context).addCoupon),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
                   children: [
                     _Field(
-                      label: 'Coupon Name',
+                      label: S.of(context).couponName,
                       controller: _name,
-                      hint: 'Enter coupon name',
+                      hint: S.of(context).enterCouponName,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Coupon Code',
+                      label: S.of(context).couponCode,
                       controller: _code,
-                      hint: 'Enter coupon code',
+                      hint: S.of(context).enterCouponCode,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
-                    _label('Coupon Type'),
+                    _label(S.of(context).couponType),
                     const SizedBox(height: 8),
                     _SelectBox(
                       key: _typeKey,
-                      text: _kind == null ? 'Select' : (_kind == 'PERCENTAGE' ? 'Percentage' : 'Flat'),
+                      text: _kind == null
+                          ? S.of(context).select
+                          : (_kind == 'PERCENTAGE' ? S.of(context).percentage : S.of(context).waterFlat),
                       filled: _kind != null,
                       icon: Icons.keyboard_arrow_down_rounded,
                       onTap: _pickType,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Discount',
+                      label: S.of(context).discount,
                       controller: _discount,
-                      hint: 'Enter discount',
+                      hint: S.of(context).enterDiscount,
                       keyboard: const TextInputType.numberWithOptions(decimal: true),
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Count',
+                      label: S.of(context).waterCount,
                       controller: _count,
-                      hint: 'Enter count',
+                      hint: S.of(context).enterCount,
                       keyboard: TextInputType.number,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
-                    _label('Valid Upto'),
+                    _label(S.of(context).waterValidUpto),
                     const SizedBox(height: 8),
                     _SelectBox(
-                      text: _validUntil == null ? 'dd-mm-yyyy' : _formatInput(_validUntil!),
+                      text: _validUntil == null ? S.of(context).waterDatePlaceholder : _formatInput(_validUntil!),
                       filled: _validUntil != null,
                       calendar: true,
                       onTap: _pickDate,
@@ -245,7 +304,7 @@ class _AddCouponViewState extends State<AddCouponView> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           child: Text(
-                            'Cancel',
+                            S.of(context).cancel,
                             style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
@@ -256,16 +315,22 @@ class _AddCouponViewState extends State<AddCouponView> {
                       child: SizedBox(
                         height: 48,
                         child: FilledButton(
-                          onPressed: _submit,
+                          onPressed: _saving ? null : _submit,
                           style: FilledButton.styleFrom(
                             backgroundColor: AddCouponView.orange,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text(
-                            'Add Coupon',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
-                          ),
+                          child: _saving
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text(
+                                  _isEditing ? S.of(context).updateCoupon : S.of(context).addCoupon,
+                                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                ),
                         ),
                       ),
                     ),
@@ -301,29 +366,16 @@ Widget _label(String text) {
   );
 }
 
-const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 String _formatInput(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');
   final month = date.month.toString().padLeft(2, '0');
   return '$day-$month-${date.year}';
 }
 
-String _formatShort(DateTime date) {
-  return '${_months[date.month - 1]} ${date.day},${date.year}';
-}
-
-String _formatStamp(DateTime date) {
-  final day = date.day.toString().padLeft(2, '0');
-  var hour = date.hour % 12;
-  if (hour == 0) hour = 12;
-  final minute = date.minute.toString().padLeft(2, '0');
-  final suffix = date.hour < 12 ? 'AM' : 'PM';
-  return '${_months[date.month - 1]} $day, ${date.year} $hour:$minute $suffix, Today';
-}
-
 class _Header extends StatelessWidget {
-  const _Header();
+  const _Header({required this.title});
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -335,7 +387,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Add Coupon',
+              title,
               style: GoogleFonts.inter(
                 color: AddCouponView.ink,
                 fontWeight: FontWeight.w700,
@@ -343,7 +395,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
