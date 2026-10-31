@@ -1,5 +1,7 @@
 # SAIMPEX V2 Vendor App: Developer Handover
 
+> **Read first:** the complete V2 scope, [`praveensigo/saimpex-backend-new` → `docs/V2_COMPLETE_SCOPE.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_COMPLETE_SCOPE.md). Then this handover, then the API change log.
+
 Last updated: 31 Oct 2026. Branch at time of writing: `fix/save-item-variants-options` (HEAD `706c74e`).
 Repo: `sigosoft/Saimpex_vendor-App`. Flutter, Android first (iOS builds but is not set up for release).
 
@@ -23,6 +25,7 @@ Five computers build SAIMPEX V2 in parallel: backend API (Praveen's Mac), custom
 
 | What | Where | When to read it |
 |---|---|---|
+| **Complete final scope — read first** | [`docs/V2_COMPLETE_SCOPE.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_COMPLETE_SCOPE.md) | Before you start building anything; it describes every app and rule |
 | **API change log** — every API change, which apps must act, where it's documented | [`praveensigo/saimpex-backend-new` → `docs/API_CHANGELOG.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/API_CHANGELOG.md) (branch `integration/v2`) | Every day before you start; look for `[vendor]` |
 | **Client decisions + build plan** | [`docs/V2_DECISIONS_AND_PLAN.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_DECISIONS_AND_PLAN.md) | Before building any feature; it overrides the scope PDF |
 | **API contracts** | [`docs/SAIMPEX_V2_CUSTOMER_API.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/SAIMPEX_V2_CUSTOMER_API.md) | When wiring an endpoint |
