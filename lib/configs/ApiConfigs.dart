@@ -104,6 +104,7 @@ class ApiEndPoints {
   static String restaurantCatalogItemDetail =
       "vendor/restaurantCatalogItemDetail";
   static String restaurantCatalogItemDetailAlt = "restaurantCatalogItemDetail";
+  static String updateRestaurantCatalogItem = "updateRestaurantCatalogItem";
   static String updateRestaurantCatalogItemStatus =
       "updateRestaurantCatalogItemStatus";
   static String updateRestaurantCatalogItemStatusAlt =

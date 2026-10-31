@@ -1231,5 +1231,7 @@
   "completedLeaves": "Congés terminés",
   "noCompletedLeavesFound": "Aucun congé terminé trouvé",
   "pleaseSelectAnXlsxFileOnly": "Veuillez sélectionner un fichier .xlsx uniquement",
-  "couldNotAccessTheSelectedFile": "Impossible d'accéder au fichier sélectionné"
+  "couldNotAccessTheSelectedFile": "Impossible d'accéder au fichier sélectionné",
+  "itemUpdatedSuccessfully": "Article mis à jour avec succès",
+  "failedToUpdateItem": "Échec de la mise à jour de l'article"
 }

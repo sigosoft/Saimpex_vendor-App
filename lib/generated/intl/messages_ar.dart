@@ -392,6 +392,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل رقم واتساب الخاص بك",
     ),
     "expiresInDays": m3,
+    "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث المنتج",
+    ),
     "filters": MessageLookupByLibrary.simpleMessage("الفلاتر"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("الفلاتر والترتيب"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -466,6 +469,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("إجمالي العنصر"),
     "itemType": MessageLookupByLibrary.simpleMessage("نوع العنصر"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الصنف"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث المنتج بنجاح",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("الأصناف"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("عدد الأصناف"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("إجمالي العناصر"),
