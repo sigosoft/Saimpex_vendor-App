@@ -4,7 +4,7 @@
 > **Owner:** **Stephy**. Week-by-week task list to the 1 Dec launch: [`docs/TEAM_ASSIGNMENTS.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md).
 
 Last updated: 31 Oct 2026. Branch at time of writing: `fix/save-item-variants-options` (HEAD `706c74e`).
-Repo: `sigosoft/Saimpex_vendor-App`. Flutter, Android first (iOS builds but is not set up for release).
+Repo: `sigosoft/Saimpex_vendor-App`. Flutter, for **Android and iOS**; **Android first** (decided 31 Oct). iOS builds but is not set up for release yet.
 
 Binding product decisions live in the backend repo:
 **`praveensigo/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`**.
@@ -58,10 +58,10 @@ One app serves all vendor types. After login the app opens a section based on th
 | 11 | Local store | Grocery/Restaurant screens on the `localStore*` endpoints (`feature/vendor-routing`) | same |
 | 3 | Pharmacy | Pharmacy | `lib/pharmacy/` |
 | 4 | Water | Water | `lib/water/` |
-| 10 | Gas | Water (see Risks: backend treats gas as a service vertical) | `lib/water/` |
+| 10 | Gas | Water design (decided 31 Oct): one-time orders + refills, no subscriptions. Gas bookings are service bookings, so it **waits for backend #84** to show them on the water endpoints | `lib/water/` |
 | 9 | Home cleaning | Home Cleaning (UI only, mock data) | `lib/home_cleaning/` |
-| 7 | Laundry | none: login shows "use the vendor web panel" | - |
-| 8 | Car wash | none: login shows "use the vendor web panel" | - |
+| 7 | Laundry | **To build (V14)**: app section per *Saimpex Laundry Vendor UI 08-09-2026*; also on the web panel | `service*` |
+| 8 | Car wash | **To build (V14)**: app section per *Saimpex Car Wash Vendor UI 03-09-2026*; also on the web panel | `service*` |
 
 Mapping code: `lib/utils/vendor_app_type.dart` (`VendorAppTypeX.fromVendorType`). Navigation: `lib/utils/vendor_app_router.dart`.
 
@@ -248,8 +248,8 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
-| Laundry (7) | **Not started** in app | Blocked at login; use web panel. |
-| Car wash (8) | **Not started** in app | Blocked at login; use web panel. |
+| Laundry (7) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
+| Car wash (8) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
 | Home cleaning (9) | **Partial (UI only)** | Screens from Figma with hard-coded bookings (`lib/home_cleaning/view/home_cleaning_home.dart`). Only profile, logout and delete account call the API (`lib/home_cleaning/view/home_cleaning_account_view.dart`). Backend `service*` endpoints exist but are not used. |
 
 ### 4.2 By feature, Grocery / Restaurant / Local store section
@@ -437,7 +437,7 @@ AC: no hard-coded sample data remains in `lib/water/view/`.
 **P10. Home Cleaning on `service*` endpoints.** ✅ V6 for bookings, services and chat; account hours/earnings still on the Water screens (follow-up). 18 backend gaps in `docs/V6_BACKEND_ISSUES.md`.
 AC: bookings, booking detail/status changes, services CRUD and hours use the backend; no hard-coded bookings.
 
-**P11. Laundry and car wash sections (if confirmed for the app).**
+**P11. Laundry and car wash sections.** ✅ **Confirmed by Praveen (31 Oct): build them (task V14).** Designs: Drive "Vendor App" folder, *Saimpex Laundry Vendor UI 08-09-2026* and *Saimpex Car Wash Vendor UI 03-09-2026*. Vendors use both the app and the web panel.
 Today these vendors use the web panel. Only build when Praveen confirms; then use `service*` endpoints and Figma.
 AC: login no longer blocks types 7 and 8; bookings flow works.
 
@@ -517,3 +517,4 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | **Change:** hide product is now `POST vendorapp/updateProductVisibility` {`vertical`: food/grocery/local_store/pharmacy/water, `menu_id`, `hide_for`: 1h/4h/today/forever/until/show}. The `products/visibility` endpoint from this morning is removed. | Build V10 against this one (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules` also returns `delivery_fee_type`, `delivery_fee_value`, `delivery_fee_paid_by`, `delivery_model` (Admin-set). If the vendor pays delivery, the fee is deducted from its earnings. | Show them read-only on the store settings screen (§6.22). |
 | 31 Oct 2026 | `GET vendorapp/commissionRules`: the store's commission rules (read-only) and `fallback_percent`. | Optional: show on earnings/settings (§6.24). |
+| 31 Oct 2026 | **Vendor app decisions (Praveen):** laundry (7) and car wash (8) get app sections (V14) and keep the web panel; grocery and local store use the restaurant design; gas uses the water design with one-time orders + refills only (no subscriptions; backend #84); home cleaning matches its design (V15); Android + iOS, Android first. | Backend `V2_DECISIONS_AND_PLAN.md` §14 |
