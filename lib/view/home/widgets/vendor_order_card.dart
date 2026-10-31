@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/order_fulfillment.dart';
 import 'package:saimpex_vendor/view/home/widgets/order_fulfillment_badge.dart';
+import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 
 class VendorOrderCard extends StatelessWidget {
   final String orderId;
@@ -23,6 +24,8 @@ class VendorOrderCard extends StatelessWidget {
   final String? type;
   final dynamic deliveryType;
   final dynamic isSelfPickup;
+  /// Delivery time when this order is a pre-order.
+  final DateTime? scheduledFor;
   final VoidCallback? onMarkSelfPickupCompleted;
 
   const VendorOrderCard({
@@ -44,6 +47,7 @@ class VendorOrderCard extends StatelessWidget {
     this.type,
     this.deliveryType,
     this.isSelfPickup,
+    this.scheduledFor,
     this.onMarkSelfPickupCompleted,
   });
 
@@ -103,6 +107,8 @@ class VendorOrderCard extends StatelessWidget {
                             deliveryType: deliveryType,
                             isSelfPickup: isSelfPickup,
                           ),
+                          if (scheduledFor != null)
+                            PreorderBadge(scheduledFor: scheduledFor!),
                         ],
                       ),
                       if (type?.trim().toLowerCase().contains("basket") ==

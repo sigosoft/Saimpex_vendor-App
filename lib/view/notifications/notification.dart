@@ -13,6 +13,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
+import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../Utils/Utils.dart';
 import '../Home/Home.dart';
 
@@ -51,6 +54,9 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
     print("Background notification: $notification");
   }
 }
+
+/// Push `type` for the vendor's pre-order reminder (API §6.10).
+const String preorderReminderType = 'preorder_reminder';
 
 class FCM {
   final streamCtlr = StreamController<String>.broadcast();
@@ -167,12 +173,15 @@ class FCM {
       final String? orderNumber = orderData['orderNumber'];
       final bool hasOrderInfo = (orderId != null && orderId.isNotEmpty) || (orderNumber != null && orderNumber.isNotEmpty);
 
-      final bool isOrderRequestType = notificationType == 'order_request' || 
+      // A pre-order reminder carries an order_id but is not a new order.
+      final bool isPreorderReminder = notificationType == preorderReminderType;
+      final bool isOrderRequestType = !isPreorderReminder &&
+                                      (notificationType == 'order_request' || 
                                        notificationType == 'new_order_request' || 
                                        notificationType == 'other_order_request' ||
                                        hasOrderInfo ||
                                        title.toLowerCase().contains('order') ||
-                                       body.toLowerCase().contains('order');
+                                       body.toLowerCase().contains('order'));
 
       if (message.data.containsKey('data')) {
         streamCtlr.sink.add(message.data['data'].toString());
@@ -204,7 +213,9 @@ class FCM {
         "Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}",
       );
 
-      if (isOrderRequestType) {
+      if (isPreorderReminder) {
+        await refreshHomeUI();
+      } else if (isOrderRequestType) {
         // Refresh Home UI & Show In-App Dialog Alert in real-time
         await refreshHomeUI();
         showInAppNewOrderAlert(message.data, notificationBody: body);
@@ -411,6 +422,19 @@ class FCM {
       return;
     }
 
+    // Pre-order reminder: open that order's details.
+    final effective = getEffectiveData(notificationData);
+    if (effective['type']?.toString() == preorderReminderType) {
+      final orderId = effective['order_id']?.toString() ?? '';
+      if (orderId.isEmpty || !await isUserLoggedIn()) return;
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.context == null) return;
+        Get.offAll(() => Home());
+        Get.to(() => VendorOrderDetails(orderId: orderId));
+      });
+      return;
+    }
+
     // Cancel any active notifications when navigating
     // await flutterLocalNotificationsPlugin.cancelAll();
 
@@ -558,6 +582,14 @@ class FCM {
     Map<String, dynamic>? notificationData;
     if (response.payload != null && response.payload!.isNotEmpty) {
       try {
+        final decoded = jsonDecode(response.payload!);
+        if (decoded is Map &&
+            decoded['type']?.toString() == preorderReminderType) {
+          navigateToAcceptOrderIfLoggedIn(
+            notificationData: Map<String, dynamic>.from(decoded),
+          );
+          return;
+        }
         // If payload is JSON string, parse it
         notificationData = <String, dynamic>{};
         // For now, we'll try to get data from stored notification if available
@@ -741,7 +773,8 @@ class FCM {
         final bool isOrderRequestType =
             notificationType == 'order_request' ||
             notificationType == 'new_order_request' ||
-            notificationType == 'other_order_request';
+            notificationType == 'other_order_request' ||
+            notificationType == preorderReminderType;
         if (isOrderRequestType) {
           await navigateToAcceptOrderIfLoggedIn(notificationData: storedData);
         } else {
@@ -777,12 +810,29 @@ class FCM {
     final String? orderNumberVal = orderData['orderNumber'];
     final bool hasOrderInfo = (orderId != null && orderId.isNotEmpty) || (orderNumberVal != null && orderNumberVal.isNotEmpty);
 
-    final bool isOrderRequest = notificationType == 'new_order_request' ||
-        notificationType == 'order_request' ||
-        notificationType == 'other_order_request' ||
-        hasOrderInfo ||
-        title.toLowerCase().contains('order') ||
-        body.toLowerCase().contains('order');
+    final bool isPreorderReminder = notificationType == preorderReminderType;
+    final bool isOrderRequest = !isPreorderReminder &&
+        (notificationType == 'new_order_request' ||
+            notificationType == 'order_request' ||
+            notificationType == 'other_order_request' ||
+            hasOrderInfo ||
+            title.toLowerCase().contains('order') ||
+            body.toLowerCase().contains('order'));
+    String? payloadJson;
+    if (isPreorderReminder) {
+      // The server sends English text; show it in the app's language.
+      try {
+        final code = effectiveData['order_code']?.toString() ?? '';
+        final at = DateTime.tryParse(
+          effectiveData['scheduled_for']?.toString() ?? '',
+        );
+        title = S.current.preorderReminderTitle;
+        if (at != null) {
+          body = S.current.preorderReminderBody(code, formatPreorderTime(at));
+        }
+      } catch (_) {}
+      payloadJson = jsonEncode(effectiveData);
+    }
 
     if (isOrderRequest) {
       var orderNumber = orderNumberVal ?? orderId ?? '';
@@ -862,6 +912,7 @@ class FCM {
         title,
         body,
         platformChannelSpecifics,
+        payload: payloadJson,
       );
       if (isOrderRequest) {
         print(
@@ -906,6 +957,7 @@ class FCM {
           title,
           body,
           fallbackDetails,
+          payload: payloadJson,
         );
         print(
           "Foreground notification shown with default system sound (fallback)",

@@ -24,6 +24,7 @@ class VendorOrderListItem extends StatelessWidget {
     this.deliveryType,
     this.isSelfPickup,
     this.onMarkSelfPickupCompleted,
+    this.scheduledFor,
   });
 
   final double horizontalPadding;
@@ -44,6 +45,7 @@ class VendorOrderListItem extends StatelessWidget {
   final dynamic deliveryType;
   final dynamic isSelfPickup;
   final VoidCallback? onMarkSelfPickupCompleted;
+  final DateTime? scheduledFor;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,7 @@ class VendorOrderListItem extends StatelessWidget {
         deliveryType: deliveryType,
         isSelfPickup: isSelfPickup,
         onMarkSelfPickupCompleted: onMarkSelfPickupCompleted,
+        scheduledFor: scheduledFor,
         onTap: () {
           if (status.toLowerCase() != 'cancelled') {
             Get.to(
