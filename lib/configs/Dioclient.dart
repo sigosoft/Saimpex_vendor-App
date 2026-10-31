@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
+import 'package:saimpex_vendor/configs/store_endpoints.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class DioClient {
@@ -38,6 +39,9 @@ class DioClient {
   InterceptorsWrapper _authInterceptor() {
     return InterceptorsWrapper(
       onRequest: (options, handler) async {
+        // Local store vendors: grocery endpoints → localStore* (V12, §6.23).
+        final vendorType = (await getSavedObject('vendorType'))?.toString();
+        options.path = StoreEndpoints.forVendorType(options.path, vendorType);
         final path = options.path;
         final isLogin = path.contains(ApiEndPoints.login) || path.contains('/login');
         if (!isLogin) {
