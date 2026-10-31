@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -80,7 +81,7 @@ class FCM {
       final isLoggedIn = await isUserLoggedIn();
       if (!isLoggedIn) return;
       final savedUsername = await getSavedObject("username");
-      final savedPassword = await getSavedObject("password");
+      final savedPassword = await SecureCredentials.readPassword();
       if (savedUsername != null && savedPassword != null) {
         print("Background FCM token sync started...");
         final response = await DioClient().post(
@@ -127,12 +128,12 @@ class FCM {
 
     // Get FCM token
     String token = await getDeviceToken();
-    print("firebase token $token");
+    debugPrint("firebase token received");
     await savename("fcm", token);
     await syncFcmToken(token);
 
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      print("FCM token refreshed: $newToken");
+      debugPrint("FCM token refreshed");
       await savename("fcm", newToken);
       await syncFcmToken(newToken);
     });

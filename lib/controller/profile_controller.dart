@@ -847,72 +847,152 @@ class ProfileController extends GetxController {
     }
   }
 
+  /// The server's message in the app language, or [fallback].
+  String _serverMessage(dynamic data, String fallback) {
+    final message = data is Map ? data['message'] : null;
+    if (message is! Map) return fallback;
+    final lang = localization.currentLocale?.languageCode ?? 'en';
+    final list = message['message_$lang'] ?? message['message_en'];
+    if (list is List && list.isNotEmpty) return list.first.toString();
+    return fallback;
+  }
+
+  bool _isSuccess(dynamic data) =>
+      data is Map && (data['status'] == true || data['status'] == 'true');
+
+  Future<void> _useSavedToken() async {
+    final token = await getSavedObject("token");
+    DioClient().updateToken(token?.toString() ?? "");
+  }
+
+  /// Sends a WhatsApp code to the new number (vendorapp/profile/sendOtp).
   Future<void> sendOtp(
     BuildContext context,
     String countryCode,
     String mobile,
   ) async {
+    otpController.clear();
+    isOtpSent = false;
     try {
-      otpController.clear();
-      await Future.delayed(const Duration(seconds: 1));
-      showToast(context, "OTP sent successfully (Mock)");
-      isOtpSent = true;
-      update();
+      showLoadingDialog(context);
+      await _useSavedToken();
+      final response = await DioClient().post(
+        ApiEndPoints.profileSendOtp,
+        body: {"country_code": countryCode, "mobile": mobile},
+      );
+      if (context.mounted) Get.back();
+      isOtpSent = _isSuccess(response.data);
+      if (context.mounted) {
+        showToast(
+          context,
+          _serverMessage(
+            response.data,
+            isOtpSent ? "Verification code sent" : "Could not send the code",
+          ),
+        );
+      }
     } catch (error) {
-      debugPrint("Otp Mock Error: $error");
-      isOtpSent = false;
-      update();
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+      debugPrint("sendOtp error: $error");
     }
+    update();
   }
 
+  /// Saves the new number with its code, plus any name/photo change.
   Future<void> verifyOtp(
     BuildContext context,
     String countryCode,
     String mobile,
     String otp,
   ) async {
-    try {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (context.mounted) {
-        Get.back();
-        showToast(context, "OTP Verified successfully (Mock)");
-        await postEditProfile(
-          context,
-          nameController.text,
-          countryCode,
-          phoneController.text,
-        );
-        isOtpVerified = true;
-        Navigator.of(context).pop();
-      }
-      update();
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
-      debugPrint("verify otp Mock Error: $error");
-      isOtpVerified = false;
+    if (otp.trim().length != 6) {
+      showToast(context, "Enter the 6-digit code");
+      return;
     }
+    isOtpVerified = await _saveProfile(
+      context,
+      name: nameController.text.trim(),
+      countryCode: countryCode,
+      mobile: mobile,
+      otp: otp.trim(),
+    );
+    if (isOtpVerified && context.mounted) {
+      // Close the OTP dialog.
+      Navigator.of(context).pop();
+    }
+    update();
   }
 
+  /// Saves a name or photo change that doesn't touch the phone number.
   Future<void> postEditProfile(
     BuildContext context,
     String name,
     String countryCode,
     String mobile,
   ) async {
+    await _saveProfile(context, name: name);
+  }
+
+  Future<bool> _saveProfile(
+    BuildContext context, {
+    required String name,
+    String? countryCode,
+    String? mobile,
+    String? otp,
+  }) async {
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      showToast(context, "Profile updated successfully (Mock)");
-      isOtpSent = true;
-      imageSource = null;
+      showLoadingDialog(context);
+      await _useSavedToken();
+      final form = dio.FormData.fromMap({
+        if (name.isNotEmpty) "name": name,
+        if (mobile != null) "country_code": countryCode,
+        "mobile": ?mobile,
+        "otp": ?otp,
+      });
+      if (imageSource != null) {
+        final path = imageSource!.path;
+        form.files.add(
+          MapEntry(
+            "image",
+            await dio.MultipartFile.fromFile(
+              path,
+              filename: path.split(RegExp(r'[/\\]')).last,
+            ),
+          ),
+        );
+      }
+      final response = await DioClient().post(
+        ApiEndPoints.profileUpdate,
+        body: form,
+      );
+      if (context.mounted) Get.back();
+      final ok = _isSuccess(response.data);
+      if (context.mounted) {
+        showToast(
+          context,
+          _serverMessage(
+            response.data,
+            ok ? "Profile updated" : "Could not update the profile",
+          ),
+        );
+      }
+      if (ok) {
+        imageSource = null;
+        if (context.mounted) await getProfile(context);
+      }
       update();
+      return ok;
     } catch (error) {
-      debugPrint("postEditProfile Mock Error: $error");
-      isOtpSent = false;
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+      debugPrint("saveProfile error: $error");
       update();
+      return false;
     }
   }
 

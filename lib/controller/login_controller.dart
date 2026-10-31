@@ -1,4 +1,5 @@
 import 'package:country_picker/country_picker.dart';
+import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -79,7 +80,6 @@ class LoginController extends GetxController {
       debugPrint("==================================================");
       debugPrint("[LOGIN REQUEST] Selected Vendor Type: ${selectedAppType.label}");
       debugPrint("[LOGIN REQUEST] Username: $userName");
-      debugPrint("[LOGIN REQUEST] FCM Token: $fcm_token");
       debugPrint("==================================================");
       final response = await DioClient().post(
         ApiEndPoints.login,
@@ -100,13 +100,23 @@ class LoginController extends GetxController {
         debugPrint("==================================================");
         debugPrint("[LOGIN SUCCESS] Selected Vendor Type: ${selectedAppType.label}");
         debugPrint("[LOGIN SUCCESS] API Vendor Type: $apiVendorType");
-        debugPrint("[LOGIN SUCCESS] Auth Token: $authToken");
-        debugPrint("[LOGIN SUCCESS] FCM Token: $fcm_token");
         debugPrint("[LOGIN SUCCESS] User ID: ${loginModel.data?.details?.id}");
         debugPrint("[LOGIN SUCCESS] Vendor ID: ${loginModel.data?.details?.vendorId}");
         debugPrint("==================================================");
+        // Open the section for the vendor's real type, not the one picked on
+        // the login screen; a mismatched pick opened the wrong vertical.
+        final serverAppType = VendorAppTypeX.fromVendorType(apiVendorType);
+        if (apiVendorType != null && serverAppType == null) {
+          showToast(
+            context,
+            "This vendor type isn't supported in the app yet. "
+            "Please use the SAIMPEX vendor web panel.",
+          );
+          return;
+        }
+        if (serverAppType != null) selectedAppType = serverAppType;
         await savename("username", userName);
-        await savename("password", password);
+        await SecureCredentials.savePassword(password);
         await savename("token", authToken);
         if (authToken.isNotEmpty) {
           DioClient().updateToken(authToken);

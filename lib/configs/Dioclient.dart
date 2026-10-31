@@ -30,7 +30,8 @@ class DioClient {
 
     dio.interceptors.add(_authInterceptor());
     dio.interceptors.add(RetryInterceptor(dio: dio));
-    dio.interceptors.add(_loggingInterceptor());
+    // Request logs only in debug builds; release builds log nothing.
+    if (kDebugMode) dio.interceptors.add(_loggingInterceptor());
   }
 
   /// Auth Interceptor: guarantees Authorization header is automatically attached to every request
@@ -67,7 +68,10 @@ class DioClient {
     return InterceptorsWrapper(
       onRequest: (options, handler) {
         log("➡️ REQUEST: ${options.method} ${options.uri}");
-        log("Headers: ${options.headers}");
+        // Never print the bearer token, even in debug logs.
+        final safeHeaders = Map.of(options.headers)
+          ..updateAll((k, v) => k.toLowerCase() == 'authorization' ? 'Bearer ***' : v);
+        log("Headers: $safeHeaders");
         final requestData = options.data;
         if (requestData is FormData) {
           final fields = requestData.fields

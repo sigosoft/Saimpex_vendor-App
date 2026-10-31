@@ -55,4 +55,24 @@ extension VendorAppTypeX on VendorAppType {
         return VendorAppType.groceryRestaurant;
     }
   }
+
+  /// The app section for the vendor_type the login API returns, or null when
+  /// the app has no section for it (laundry 7, car wash 8, courier, express).
+  static VendorAppType? fromVendorType(int? vendorType) {
+    switch (vendorType) {
+      case 1: // food
+      case 2: // grocery
+      case 11: // local store
+        return VendorAppType.groceryRestaurant;
+      case 3:
+        return VendorAppType.pharmacy;
+      case 4: // water
+      case 10: // gas
+        return VendorAppType.water;
+      case 9:
+        return VendorAppType.homeCleaning;
+      default:
+        return null;
+    }
+  }
 }
