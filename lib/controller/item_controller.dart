@@ -20,12 +20,15 @@ import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/restaurant_menu_item_stock_logs_model.dart';
 
 class CatalogExtraItem {
+  /// Server id when editing an existing extra; null for a new one.
+  final int? id;
   final String name;
   final num additionalPrice;
   final int availableStatus;
   final String? imagePath;
 
   CatalogExtraItem({
+    this.id,
     required this.name,
     required this.additionalPrice,
     this.availableStatus = 1,
@@ -35,12 +38,15 @@ class CatalogExtraItem {
 
 /// A size/portion of a restaurant catalog item; each has its own price.
 class CatalogVariant {
+  /// Server id (restaurant_menu_items.id) when editing; null for a new variant.
+  final int? id;
   final String name;
   final num price;
   final String selectionRequirement;
   final String? imagePath;
 
   CatalogVariant({
+    this.id,
     required this.name,
     required this.price,
     this.selectionRequirement = 'optional',
@@ -49,19 +55,26 @@ class CatalogVariant {
 }
 
 class CatalogOption {
+  /// Server id when editing; keeps the id stable so carts that picked it stay valid.
+  final int? id;
   final String name;
   final num additionalPrice;
+  final int availableStatus;
   final String? imagePath;
 
   CatalogOption({
+    this.id,
     required this.name,
     required this.additionalPrice,
+    this.availableStatus = 1,
     this.imagePath,
   });
 }
 
 /// A group of choices on a catalog item (e.g. "Choose your sauce").
 class CatalogOptionGroup {
+  /// Server id when editing; null for a new group.
+  final int? id;
   final String name;
   final String selectionRequirement;
   final int? minSelections;
@@ -69,6 +82,7 @@ class CatalogOptionGroup {
   final List<CatalogOption> options;
 
   CatalogOptionGroup({
+    this.id,
     required this.name,
     required this.options,
     this.selectionRequirement = 'optional',
@@ -1062,6 +1076,328 @@ class ItemController extends GetxController {
       isRestaurantAttributesLoading = false;
       update();
     }
+  }
+
+  // ── Restaurant catalog edit (V1) ──────────────────────────────────────────
+  // Restaurant items are catalog items: the edit screen loads them from
+  // restaurantCatalogItemDetail (variants, option groups and extras with ids)
+  // and saves with updateRestaurantCatalogItem, the same body as add + item_id.
+
+  /// True when the item being edited is a restaurant catalog item.
+  bool isCatalogEdit = false;
+
+  /// Raw `data` of restaurantCatalogItemDetail for the item being edited.
+  Map<String, dynamic>? catalogItemDetail;
+
+  /// Gallery images already on the item: [{id, image_url}].
+  List<Map<String, dynamic>> catalogImages = [];
+
+  /// Gallery image ids the vendor removed in this edit.
+  final List<int> removedCatalogImageIds = [];
+
+  /// Loads the item for the edit screen: catalog detail for restaurants,
+  /// the legacy menu-item detail for grocery.
+  Future<void> loadItemForEdit(String itemId) async {
+    final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
+    isCatalogEdit = vendorType == "1";
+    if (isCatalogEdit) {
+      await getRestaurantCatalogItemForEdit(itemId);
+    } else {
+      await getRestaurantMenuItemDetails(itemId);
+    }
+  }
+
+  Future<void> getRestaurantCatalogItemForEdit(String itemId) async {
+    try {
+      isRestaurantAttributesLoading = true;
+      update();
+      final token = await getSavedObject("token");
+      DioClient().updateToken(token ?? "");
+
+      final response = await DioClient().get(
+        ApiEndPoints.restaurantCatalogItemDetailAlt,
+        query: {"item_id": itemId},
+      );
+      final raw = response.data;
+      if (raw is! Map || raw['data'] is! Map) return;
+      final data = Map<String, dynamic>.from(raw['data'] as Map);
+      catalogItemDetail = data;
+
+      String text(dynamic v) => v == null ? '' : v.toString();
+
+      priceCtrl.text = text(data['price']);
+      discountPriceCtrl.text = text(data['discount_price']);
+      prepTimeCtrl.text = text(data['preparation_time']);
+      serialNumberCtrl.text = text(data['serial_no']);
+
+      final categoryIds = (data['category_ids'] as List? ?? const [])
+          .map((e) => int.tryParse(e.toString()))
+          .whereType<int>()
+          .toList();
+      if (categoryIds.isNotEmpty) {
+        selectedMenuId = categoryIds.first;
+        final menuMatch = menuList
+            .where((m) => m.categoryId.contains(categoryIds.first.toString()))
+            .toList();
+        if (menuMatch.isNotEmpty) {
+          selectedType = menuMatch.first.nameEn;
+        }
+      }
+
+      final tagIds = (data['tags'] as List? ?? const [])
+          .map((e) => int.tryParse(e.toString()))
+          .whereType<int>()
+          .toList();
+      selectedRestaurantTagIds
+        ..clear()
+        ..addAll(tagIds);
+      selectedRestaurantTagId = tagIds.isNotEmpty ? tagIds.first : null;
+
+      catalogImages = (data['images'] as List? ?? const [])
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+      removedCatalogImageIds.clear();
+    } catch (error, stackTrace) {
+      debugPrint("getRestaurantCatalogItemForEdit Error: $error");
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      isRestaurantAttributesLoading = false;
+      update();
+    }
+  }
+
+  /// Main image to show on the edit screen: first gallery image still kept.
+  String? get catalogImageUrl {
+    for (final image in catalogImages) {
+      final id = int.tryParse(image['id'].toString());
+      if (id != null && removedCatalogImageIds.contains(id)) continue;
+      final url = image['image_url']?.toString();
+      if (url != null && url.isNotEmpty) return url;
+    }
+    final fallback = catalogItemDetail?['image_url']?.toString();
+    return (fallback != null && fallback.isNotEmpty) ? fallback : null;
+  }
+
+  /// Saves a restaurant catalog item. Items sent with an `id` are updated in
+  /// place; options and extras left out are hidden by the server, not deleted.
+  Future<void> updateCatalogItem(
+    BuildContext context, {
+    required String itemId,
+    required String menuId,
+    String? itemName,
+    String? description,
+    String? isVeg,
+    String? extraSelectionRequirement,
+    String? extraMaxSelections,
+    List<CatalogExtraItem>? catalogExtras,
+    String? variantGroupName,
+    List<CatalogVariant> variants = const [],
+    List<CatalogOptionGroup> optionGroups = const [],
+  }) async {
+    final isValid = addItemValidation(
+      context,
+      menuId: menuId,
+      menuItemId: itemId,
+      restaurantAttributeId: '',
+      itemName: itemName,
+      isRestaurantCatalog: true,
+      variants: variants,
+      optionGroups: optionGroups,
+    );
+    if (!isValid) return;
+
+    try {
+      showLoadingDialog(context);
+      final token = await getSavedObject("token");
+      DioClient().updateToken(token ?? "");
+
+      final catId = int.tryParse(menuId.trim()) ?? selectedMenuId;
+      final hasVariants = variants.isNotEmpty;
+
+      // The screen shows one photo. A newly picked photo replaces the one shown
+      // (the first gallery image); other gallery images set on the web panel stay.
+      final removeImageIds = [...removedCatalogImageIds];
+      if (pickedImageFile != null) {
+        for (final image in catalogImages) {
+          final id = int.tryParse(image['id'].toString());
+          if (id != null && !removeImageIds.contains(id)) {
+            removeImageIds.add(id);
+            break;
+          }
+        }
+      }
+
+      final name = (itemName ?? '').trim().isNotEmpty
+          ? itemName!.trim()
+          : (catalogItemDetail?['name_en']?.toString() ?? '');
+
+      final formDataMap = <String, dynamic>{
+        "item_id": itemId,
+        "name_en": name,
+        "category_ids": jsonEncode(catId != null ? [catId] : []),
+        "has_variants": hasVariants ? '1' : '0',
+        if (!hasVariants) "price": priceCtrl.text.trim(),
+        if (!hasVariants) "discount_price": discountPriceCtrl.text.trim(),
+        "description_en": (description ?? '').trim(),
+        if (isVeg != null) "is_veg": isVeg == 'Yes' ? '1' : '0',
+        if (prepTimeCtrl.text.trim().isNotEmpty)
+          "preparation_time": formatPreparationTimeToHi(prepTimeCtrl.text),
+        if (serialNumberCtrl.text.trim().isNotEmpty)
+          "serial_no": serialNumberCtrl.text.trim(),
+        if (hasVariants && (variantGroupName ?? '').trim().isNotEmpty)
+          "variant_group_name": variantGroupName!.trim(),
+        "variants": jsonEncode([
+          for (final v in variants)
+            {
+              "id": ?v.id,
+              "name": v.name,
+              "price": v.price,
+              "selection_requirement": v.selectionRequirement,
+            },
+        ]),
+        // Always sent on edit: an empty list removes all option groups.
+        "option_groups": jsonEncode([
+          for (final g in optionGroups)
+            {
+              "id": ?g.id,
+              "name": g.name,
+              "selection_requirement": g.selectionRequirement,
+              "min_selections": ?g.minSelections,
+              "max_selections": ?g.maxSelections,
+              "options": [
+                for (final o in g.options)
+                  {
+                    "id": ?o.id,
+                    "name": o.name,
+                    "additional_price": o.additionalPrice,
+                    "available_status": o.availableStatus,
+                  },
+              ],
+            },
+        ]),
+        "remove_image_ids": jsonEncode(removeImageIds),
+      };
+
+      final formData = dio.FormData.fromMap(formDataMap);
+
+      Future<dio.MultipartFile> upload(String path) => dio.MultipartFile.fromFile(
+            path,
+            filename: path.split(RegExp(r'[/\\]')).last,
+          );
+      for (int i = 0; i < variants.length; i++) {
+        final path = variants[i].imagePath?.trim() ?? '';
+        if (hasVariants && path.isNotEmpty) {
+          formData.files.add(MapEntry("variant_images[$i]", await upload(path)));
+        }
+      }
+      for (int g = 0; g < optionGroups.length; g++) {
+        final options = optionGroups[g].options;
+        for (int o = 0; o < options.length; o++) {
+          final path = options[o].imagePath?.trim() ?? '';
+          if (path.isNotEmpty) {
+            formData.files.add(MapEntry("option_images[$g][$o]", await upload(path)));
+          }
+        }
+      }
+
+      final tagIds = selectedRestaurantTagIds.isNotEmpty
+          ? selectedRestaurantTagIds
+          : (selectedRestaurantTagId != null
+              ? [selectedRestaurantTagId!]
+              : const <int>[]);
+      for (int i = 0; i < tagIds.length; i++) {
+        formData.fields.add(MapEntry("tags[$i]", tagIds[i].toString()));
+      }
+
+      // Extras: always sent on edit so removed extras are hidden on the server.
+      final validExtras =
+          (catalogExtras ?? []).where((e) => e.name.trim().isNotEmpty).toList();
+      final reqLower =
+          (extraSelectionRequirement?.trim().toLowerCase() == 'required')
+              ? 'required'
+              : 'optional';
+      final parsedMax = int.tryParse(extraMaxSelections?.trim() ?? '');
+      formData.fields.add(MapEntry(
+        "extras",
+        jsonEncode({
+          "selection_requirement": reqLower,
+          "max_selections": ?parsedMax,
+          "items": [
+            for (final e in validExtras)
+              {
+                "id": ?e.id,
+                "name": e.name.trim(),
+                "additional_price": e.additionalPrice,
+                "available_status": e.availableStatus,
+              },
+          ],
+        }),
+      ));
+      for (int i = 0; i < validExtras.length; i++) {
+        final path = validExtras[i].imagePath?.trim() ?? '';
+        if (path.isNotEmpty) {
+          formData.files.add(MapEntry("extra_images[$i]", await upload(path)));
+        }
+      }
+
+      // A newly picked main image is added to the gallery (images[]).
+      if (pickedImageFile != null) {
+        formData.files.add(MapEntry('images[]', await upload(pickedImageFile!.path)));
+      }
+
+      printFormData(formData);
+      final response = await DioClient().post(
+        ApiEndPoints.updateRestaurantCatalogItem,
+        body: formData,
+      );
+
+      if (context.mounted) Get.back();
+      final ok = response.data['status'] == 'true' || response.data['status'] == true;
+      if (!context.mounted) return;
+      if (ok) {
+        showToast(context, _serverMessage(response.data, "Item updated successfully"));
+        if (Get.isRegistered<ProfileController>()) {
+          await Get.find<ProfileController>().fetchGroceryMenuItems();
+        }
+        if (context.mounted) Get.back();
+      } else {
+        showToast(context, _serverMessage(response.data, "Failed to update item"));
+      }
+    } on dio.DioException catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, _serverMessage(error.response?.data, "Failed to update item"));
+      }
+      debugPrint("updateCatalogItem Error: $error");
+    } catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, error.toString());
+      }
+      debugPrint("updateCatalogItem Error: $error");
+    }
+  }
+
+  /// First readable message from the API envelope ({message: {message_en: [...]}} or
+  /// validation errors {field_en: [...]}), else the fallback.
+  String _serverMessage(dynamic body, String fallback) {
+    if (body is! Map) return fallback;
+    final message = body['message'];
+    if (message is String && message.isNotEmpty) return message;
+    if (message is Map) {
+      final lang = Get.locale?.languageCode ?? 'en';
+      for (final key in ['message_$lang', 'message_en']) {
+        final v = message[key];
+        if (v is List && v.isNotEmpty) return v.first.toString();
+        if (v is String && v.isNotEmpty) return v;
+      }
+      for (final v in message.values) {
+        if (v is List && v.isNotEmpty) return v.first.toString();
+        if (v is String && v.isNotEmpty) return v;
+      }
+    }
+    return fallback;
   }
 
   Future<void> updateItemAfterEdit(
