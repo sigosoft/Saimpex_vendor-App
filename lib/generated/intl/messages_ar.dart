@@ -70,6 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "العنوان غير متوفر",
     ),
+    "adminAdjustment": MessageLookupByLibrary.simpleMessage("تعديل من الإدارة"),
     "afterAttributesReferenceYouCanEditTheAttributesListBelow":
         MessageLookupByLibrary.simpleMessage(
           "بعد مرجع السمات، يمكنك تعديل قائمة السمات أدناه واستخدام معرف السمة في عمود attribute_id مع قيمته المقابلة.",
@@ -162,6 +163,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "availableTimeHeader": MessageLookupByLibrary.simpleMessage("الوقت المتاح"),
     "averageRating": MessageLookupByLibrary.simpleMessage("التقييم المتوسط"),
     "averageRatingLabel": MessageLookupByLibrary.simpleMessage("متوسط التقييم"),
+    "balanceAdjustments": MessageLookupByLibrary.simpleMessage(
+      "تعديلات الرصيد",
+    ),
+    "balanceAfter": MessageLookupByLibrary.simpleMessage("الرصيد بعد"),
     "balanceAfterPayout": MessageLookupByLibrary.simpleMessage(
       "الرصيد بعد الدفع",
     ),
@@ -538,6 +543,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage("يحتاج إلى تحديث"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
+    "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
+      "لا توجد تعديلات على الرصيد بعد",
+    ),
     "noBasketsFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على سلال",
     ),
@@ -706,6 +714,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "packagingCost": MessageLookupByLibrary.simpleMessage("تكلفة التغليف"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pay": MessageLookupByLibrary.simpleMessage("ادفع"),
+    "payAfterDelivery": MessageLookupByLibrary.simpleMessage(
+      "الدفع بعد التوصيل",
+    ),
     "paymentDetails": MessageLookupByLibrary.simpleMessage("تفاصيل الدفع"),
     "paymentId": MessageLookupByLibrary.simpleMessage("معرف الدفع"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
@@ -1044,6 +1055,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewOrders": MessageLookupByLibrary.simpleMessage("عرض الطلبات"),
     "viewPaymentProof": MessageLookupByLibrary.simpleMessage("عرض إثبات الدفع"),
     "viewReports": MessageLookupByLibrary.simpleMessage("عرض التقارير"),
+    "walletPayment": MessageLookupByLibrary.simpleMessage("محفظة SAIMPEX"),
     "wednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("مرحباً بك في"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

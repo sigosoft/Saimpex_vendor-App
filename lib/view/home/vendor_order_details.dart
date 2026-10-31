@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -758,11 +759,9 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       // Gap 16px
                                       _summaryRow(
                                         S.of(context).paymentType,
-                                        controller.orderData!.paymentType
-                                                    .toString() ==
-                                                "1"
-                                            ? S.of(context).cashOnDelivery
-                                            : S.of(context).onlinePayment,
+                                        paymentTypeLabel(
+                                          controller.orderData!.paymentType,
+                                        ),
                                         isGreen: true,
                                       ),
                                       const SizedBox(height: 8),
