@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
+import 'package:saimpex_vendor/controller/preorders_controller.dart';
+import 'package:saimpex_vendor/view/home/preorders_screen.dart';
+import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import 'package:saimpex_vendor/controller/vendor_home_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
@@ -46,6 +49,10 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
   final VendorHomeController vendorHomeController =
       const VendorHomeController();
   final HomeController homeController = Get.find<HomeController>();
+  final PreordersController preordersController =
+      Get.isRegistered<PreordersController>()
+          ? Get.find<PreordersController>()
+          : Get.put(PreordersController());
   final OrderDetailsController detailsController = Get.put(
     OrderDetailsController(),
   );
@@ -234,6 +241,60 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
     }
   }
 
+  /// Entry to the pre-orders list: count and the next delivery time.
+  Widget _preordersTile() {
+    final next = preordersController.preorders.first;
+    return GestureDetector(
+      onTap: () async {
+        await Get.to(() => const PreordersScreen());
+        if (mounted) setState(() {});
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: preorderTint,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.event_note, color: preorderColor, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).upcomingPreordersCount(
+                          '${preordersController.preorders.length}',
+                        ),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1F2937),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${S.of(context).orderIdLabel(next.orderCode)} · '
+                    '${formatPreorderTime(next.scheduledFor)} · '
+                    '${preorderDueText(next.scheduledFor)}',
+                    style: const TextStyle(fontSize: 12, color: preorderColor),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.chevron_left
+                  : Icons.chevron_right,
+              color: preorderColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _statusLabel(int? status) {
     switch (status) {
       case 1:
@@ -271,6 +332,11 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
         selectedTab = "Accepted";
       });
     }
+
+    // Pre-order badges come from GET preorders (home orders carry no scheduled_for).
+    preordersController.fetch().then((_) {
+      if (mounted) setState(() {});
+    });
 
     await homeController.fetchHome(
       context,
@@ -515,6 +581,16 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                             ),
                           ),
                           const SizedBox(height: 10),
+                          if (preordersController.preorders.isNotEmpty)
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                layout.horizontalPadding,
+                                0,
+                                layout.horizontalPadding,
+                                10,
+                              ),
+                              child: _preordersTile(),
+                            ),
                           VendorOrdersHeader(
                             horizontalPadding: layout.horizontalPadding,
                             onViewAllPressed: () {
@@ -607,6 +683,9 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                                         type: order.type,
                                         deliveryType: order.deliveryType,
                                         isSelfPickup: order.isSelfPickup,
+                                        scheduledFor: preordersController
+                                            .forOrder(order.id?.toString())
+                                            ?.scheduledFor,
                                         onMarkSelfPickupCompleted: () =>
                                             _handleMarkSelfPickupCompleted(
                                               order.id?.toString() ?? "",

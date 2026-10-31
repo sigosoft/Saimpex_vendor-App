@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/controller/preorders_controller.dart';
+import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -38,6 +41,48 @@ class VendorOrderDetails extends StatefulWidget {
 
 class _VendorOrderDetailsState extends State<VendorOrderDetails> {
   final FlutterLocalization localization = FlutterLocalization.instance;
+
+  // Order details carry no scheduled_for; pre-orders come from GET preorders.
+  final PreordersController _preorders =
+      Get.isRegistered<PreordersController>()
+          ? Get.find<PreordersController>()
+          : Get.put(PreordersController());
+
+  @override
+  void initState() {
+    super.initState();
+    if (_preorders.forOrder(widget.orderId) == null) {
+      _preorders.fetch().then((_) {
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
+  Widget _scheduledFor(DateTime time) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: preorderTint,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.schedule, size: 16, color: preorderColor),
+          const SizedBox(width: 6),
+          Text(
+            '${S.of(context).scheduledForTime(formatPreorderTime(time))} · '
+            '${preorderDueText(time)}',
+            style: GoogleFonts.rubik(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: preorderColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +218,17 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                   ),
                                                 ],
                                               ),
+                                              if (_preorders.forOrder(
+                                                    widget.orderId,
+                                                  ) !=
+                                                  null) ...[
+                                                const SizedBox(height: 8),
+                                                _scheduledFor(
+                                                  _preorders
+                                                      .forOrder(widget.orderId)!
+                                                      .scheduledFor,
+                                                ),
+                                              ],
                                               if (widget.orderType
                                                           ?.trim()
                                                           .toLowerCase()
@@ -758,11 +814,9 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       // Gap 16px
                                       _summaryRow(
                                         S.of(context).paymentType,
-                                        controller.orderData!.paymentType
-                                                    .toString() ==
-                                                "1"
-                                            ? S.of(context).cashOnDelivery
-                                            : S.of(context).onlinePayment,
+                                        paymentTypeLabel(
+                                          controller.orderData!.paymentType,
+                                        ),
                                         isGreen: true,
                                       ),
                                       const SizedBox(height: 8),

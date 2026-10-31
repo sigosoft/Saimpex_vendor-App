@@ -1204,6 +1204,66 @@ class S {
     );
   }
 
+  /// `SAIMPEX Wallet`
+  String get walletPayment {
+    return Intl.message(
+      'SAIMPEX Wallet',
+      name: 'walletPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pay After Delivery`
+  String get payAfterDelivery {
+    return Intl.message(
+      'Pay After Delivery',
+      name: 'payAfterDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance adjustments`
+  String get balanceAdjustments {
+    return Intl.message(
+      'Balance adjustments',
+      name: 'balanceAdjustments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No balance adjustments yet`
+  String get noBalanceAdjustmentsYet {
+    return Intl.message(
+      'No balance adjustments yet',
+      name: 'noBalanceAdjustmentsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Admin adjustment`
+  String get adminAdjustment {
+    return Intl.message(
+      'Admin adjustment',
+      name: 'adminAdjustment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance after`
+  String get balanceAfter {
+    return Intl.message(
+      'Balance after',
+      name: 'balanceAfter',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Order Details`
   String get orderDetails {
     return Intl.message(
@@ -3096,6 +3156,111 @@ class S {
       name: 'orderIdLabel',
       desc: '',
       args: [id],
+    );
+  }
+
+  /// `Pre-orders`
+  String get preOrders {
+    return Intl.message('Pre-orders', name: 'preOrders', desc: '', args: []);
+  }
+
+  /// `Upcoming pre-orders ({count})`
+  String upcomingPreordersCount(String count) {
+    return Intl.message(
+      'Upcoming pre-orders ($count)',
+      name: 'upcomingPreordersCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No upcoming pre-orders`
+  String get noUpcomingPreorders {
+    return Intl.message(
+      'No upcoming pre-orders',
+      name: 'noUpcomingPreorders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order`
+  String get preorderBadge {
+    return Intl.message('Pre-order', name: 'preorderBadge', desc: '', args: []);
+  }
+
+  /// `Scheduled for {time}`
+  String scheduledForTime(String time) {
+    return Intl.message(
+      'Scheduled for $time',
+      name: 'scheduledForTime',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `In {hours} h {minutes} min`
+  String dueInHoursMinutes(String hours, String minutes) {
+    return Intl.message(
+      'In $hours h $minutes min',
+      name: 'dueInHoursMinutes',
+      desc: '',
+      args: [hours, minutes],
+    );
+  }
+
+  /// `In {minutes} min`
+  String dueInMinutes(String minutes) {
+    return Intl.message(
+      'In $minutes min',
+      name: 'dueInMinutes',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Due now`
+  String get preorderDueNow {
+    return Intl.message('Due now', name: 'preorderDueNow', desc: '', args: []);
+  }
+
+  /// `Driver requested`
+  String get driverRequested {
+    return Intl.message(
+      'Driver requested',
+      name: 'driverRequested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Driver assigned`
+  String get driverAssigned {
+    return Intl.message(
+      'Driver assigned',
+      name: 'driverAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order due soon`
+  String get preorderReminderTitle {
+    return Intl.message(
+      'Pre-order due soon',
+      name: 'preorderReminderTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order {code} is due at {time}. Please have it ready.`
+  String preorderReminderBody(String code, String time) {
+    return Intl.message(
+      'Pre-order $code is due at $time. Please have it ready.',
+      name: 'preorderReminderBody',
+      desc: '',
+      args: [code, time],
     );
   }
 
@@ -5111,6 +5276,11 @@ class S {
     return Intl.message(
       'Accept Booking',
       name: 'cleaningAcceptBooking',
+  /// `Item updated successfully`
+  String get itemUpdatedSuccessfully {
+    return Intl.message(
+      'Item updated successfully',
+      name: 'itemUpdatedSuccessfully',
       desc: '',
       args: [],
     );
@@ -5121,6 +5291,11 @@ class S {
     return Intl.message(
       'Accepting bookings',
       name: 'cleaningAcceptingBookings',
+  /// `Failed to update item`
+  String get failedToUpdateItem {
+    return Intl.message(
+      'Failed to update item',
+      name: 'failedToUpdateItem',
       desc: '',
       args: [],
     );

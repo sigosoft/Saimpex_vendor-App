@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -473,8 +474,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     // Payment
     final paymentType = orderMap['payment_type']?.toString().trim() ??
         orderMap['payment_method']?.toString().trim();
-    final isCod = paymentType?.toLowerCase().contains('cash') == true ||
-        paymentType?.toLowerCase().contains('cod') == true;
+    final isCod = isCashPayment(paymentType);
     final isOnlinePayment = paymentType != null && paymentType.isNotEmpty
         ? !isCod
         : widget.order.isOnlinePayment;
@@ -1290,6 +1290,7 @@ class _PaymentSummary extends StatelessWidget {
         : (isOnline
             ? S.of(context).onlinePayment
             : S.of(context).cashOnDelivery);
+    final payTypeLabel = paymentTypeLabel(paymentType, cashFallback: !isOnline);
 
     return Container(
       width: double.infinity,

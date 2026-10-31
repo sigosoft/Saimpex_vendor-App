@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
@@ -93,14 +94,12 @@ class HomeOrder {
             ?.toString()
             .toLowerCase() ??
         '';
-    final isCod =
-        paymentMethod.contains('cash') ||
-        paymentMethod.contains('cod') ||
-        paymentMethod == '1';
+    final isCod = isCashPayment(paymentMethod);
     final isOnlinePayment = !isCod;
     final paymentLabel = isOnlinePayment
         ? S.current.onlinePayment
         : S.current.cashOnDelivery;
+    final paymentLabel = paymentTypeLabel(paymentMethod, cashFallback: isCod);
 
     final total = order.total?.toString() ?? raw['total']?.toString() ?? '0';
     String itemLabel = '';

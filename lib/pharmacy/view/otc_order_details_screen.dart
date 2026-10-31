@@ -518,6 +518,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                 const SizedBox(height: 10),
                                 _OtcPaymentSummary(
                                   cashOnDelivery: cashOnDelivery,
+                                  paymentType: order?.paymentType,
                                   itemTotal: order?.subtotal,
                                   deliveryFee: order?.deliveryFee,
                                   tax: order?.tax,
@@ -1190,6 +1191,7 @@ class _OtcItemCard extends StatelessWidget {
 class _OtcPaymentSummary extends StatelessWidget {
   const _OtcPaymentSummary({
     required this.cashOnDelivery,
+    this.paymentType,
     this.itemTotal,
     this.deliveryFee,
     this.tax,
@@ -1198,6 +1200,7 @@ class _OtcPaymentSummary extends StatelessWidget {
   });
 
   final bool cashOnDelivery;
+  final dynamic paymentType;
   final String? itemTotal;
   final String? deliveryFee;
   final String? tax;
@@ -1232,7 +1235,7 @@ class _OtcPaymentSummary extends StatelessWidget {
           const SizedBox(height: 12),
           _OtcPayRow(
             label: 'Payment type',
-            value: cashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
+            value: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
             valueColor: _orange,
           ),
           if (paymentOn != null && paymentOn!.trim().isNotEmpty) ...[

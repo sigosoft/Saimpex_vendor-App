@@ -99,6 +99,24 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m38(open, close) => "اليوم: ${open} - ${close}";
 
   static String m39(name) => "مرحبًا بك في ${name}!";
+  static String m3(hours, minutes) => "بعد ${hours} س ${minutes} د";
+
+  static String m4(minutes) => "بعد ${minutes} د";
+
+  static String m5(days) => "تنتهي خلال ${days} أيام";
+
+  static String m6(id) => "طلب #${id}";
+
+  static String m7(code, time) =>
+      "الطلب المسبق ${code} موعده ${time}. يرجى تجهيزه.";
+
+  static String m8(qty) => "الكمية: ${qty}";
+
+  static String m9(reason) => "السبب: ${reason}";
+
+  static String m10(time) => "مجدول في ${time}";
+
+  static String m11(count) => "الطلبات المسبقة القادمة (${count})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -136,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "العنوان غير متوفر",
     ),
+    "adminAdjustment": MessageLookupByLibrary.simpleMessage("تعديل من الإدارة"),
     "afterAttributesReferenceYouCanEditTheAttributesListBelow":
         MessageLookupByLibrary.simpleMessage(
           "بعد مرجع السمات، يمكنك تعديل قائمة السمات أدناه واستخدام معرف السمة في عمود attribute_id مع قيمته المقابلة.",
@@ -228,6 +247,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "availableTimeHeader": MessageLookupByLibrary.simpleMessage("الوقت المتاح"),
     "averageRating": MessageLookupByLibrary.simpleMessage("التقييم المتوسط"),
     "averageRatingLabel": MessageLookupByLibrary.simpleMessage("متوسط التقييم"),
+    "balanceAdjustments": MessageLookupByLibrary.simpleMessage(
+      "تعديلات الرصيد",
+    ),
+    "balanceAfter": MessageLookupByLibrary.simpleMessage("الرصيد بعد"),
     "balanceAfterPayout": MessageLookupByLibrary.simpleMessage(
       "الرصيد بعد الدفع",
     ),
@@ -647,7 +670,11 @@ class MessageLookup extends MessageLookupByLibrary {
           "قم بتنزيل ملف القالب واملأه بالبيانات المناسبة.",
         ),
     "driver": MessageLookupByLibrary.simpleMessage("سائق"),
+    "driverAssigned": MessageLookupByLibrary.simpleMessage("تم تعيين سائق"),
     "driverDetails": MessageLookupByLibrary.simpleMessage("تفاصيل السائق"),
+    "driverRequested": MessageLookupByLibrary.simpleMessage("تم طلب سائق"),
+    "dueInHoursMinutes": m3,
+    "dueInMinutes": m4,
     "durationLabel": MessageLookupByLibrary.simpleMessage("المدة"),
     "earnings": MessageLookupByLibrary.simpleMessage("الأرباح"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
@@ -711,6 +738,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل رقم واتساب الخاص بك",
     ),
     "expiresInDays": m4,
+    "expiresInDays": m5,
     "filters": MessageLookupByLibrary.simpleMessage("الفلاتر"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("الفلاتر والترتيب"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -785,6 +813,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("إجمالي العنصر"),
     "itemType": MessageLookupByLibrary.simpleMessage("نوع العنصر"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الصنف"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث المنتج بنجاح",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("الأصناف"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("عدد الأصناف"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("إجمالي العناصر"),
@@ -851,6 +882,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage("يحتاج إلى تحديث"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
+    "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
+      "لا توجد تعديلات على الرصيد بعد",
+    ),
     "noBasketsFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على سلال",
     ),
@@ -956,6 +990,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noUpcomingLeavesFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على إجازات قادمة",
     ),
+    "noUpcomingPreorders": MessageLookupByLibrary.simpleMessage(
+      "لا توجد طلبات مسبقة قادمة",
+    ),
     "nonVeg": MessageLookupByLibrary.simpleMessage("غير نباتي"),
     "notes": MessageLookupByLibrary.simpleMessage("ملاحظات"),
     "notification": MessageLookupByLibrary.simpleMessage("إشعار"),
@@ -986,6 +1023,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تفصيل مدة الطلب",
     ),
     "orderIdLabel": m5,
+    "orderIdLabel": m6,
     "orderItems": MessageLookupByLibrary.simpleMessage("عناصر الطلب"),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("تم الاستلام"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("تم تقديم الطلب"),
@@ -1019,6 +1057,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "packagingCost": MessageLookupByLibrary.simpleMessage("تكلفة التغليف"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pay": MessageLookupByLibrary.simpleMessage("ادفع"),
+    "payAfterDelivery": MessageLookupByLibrary.simpleMessage(
+      "الدفع بعد التوصيل",
+    ),
     "paymentDetails": MessageLookupByLibrary.simpleMessage("تفاصيل الدفع"),
     "paymentId": MessageLookupByLibrary.simpleMessage("معرف الدفع"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
@@ -1104,6 +1145,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "postuploadEditing": MessageLookupByLibrary.simpleMessage(
       "تعديل بعد الرفع",
     ),
+    "preOrders": MessageLookupByLibrary.simpleMessage("الطلبات المسبقة"),
+    "preorderBadge": MessageLookupByLibrary.simpleMessage("طلب مسبق"),
+    "preorderDueNow": MessageLookupByLibrary.simpleMessage("موعده الآن"),
+    "preorderReminderBody": m7,
+    "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
+      "طلب مسبق قريب الموعد",
+    ),
     "preparationTime": MessageLookupByLibrary.simpleMessage("وقت التحضير"),
     "preparationTimeLabel": MessageLookupByLibrary.simpleMessage("وقت التحضير"),
     "preparationTimeMinutes": MessageLookupByLibrary.simpleMessage(
@@ -1125,6 +1173,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "products": MessageLookupByLibrary.simpleMessage("المنتجات"),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "qtyLabel": m6,
+    "qtyLabel": m8,
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("قيّم الطلب"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -1148,6 +1197,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
     "reasonColonLabel": m7,
+    "reasonColonLabel": m9,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("سبب الإجازة"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("السبب"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("الدفعات المستلمة"),
@@ -1210,6 +1260,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("مسح الرمز الشريطي"),
     "scheduled": MessageLookupByLibrary.simpleMessage("مجدول"),
+    "scheduledForTime": m10,
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "ابحث عن المبلغ أو رقم المعاملة",
@@ -1328,6 +1379,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("سائق غير معروف"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("بائع غير معروف"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("الإجازات القادمة"),
+    "upcomingPreordersCount": m11,
     "update": MessageLookupByLibrary.simpleMessage("تحديث"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("تحديث القسيمة"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -1949,6 +2001,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم تحديث ساعات العمل بنجاح",
     ),
     "waterYou": MessageLookupByLibrary.simpleMessage("أنت"),
+    "walletPayment": MessageLookupByLibrary.simpleMessage("محفظة SAIMPEX"),
     "wednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("مرحباً بك في"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

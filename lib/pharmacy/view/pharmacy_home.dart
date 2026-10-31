@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -881,6 +882,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
             isCashOnDelivery: item.isCashOnDeliveryBool,
+            paymentType: item.paymentType,
           ),
         );
       }
@@ -938,6 +940,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
             isCashOnDelivery: item.isCashOnDeliveryBool,
+            paymentType: item.paymentType,
           ),
         );
       }
@@ -992,6 +995,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
             isCashOnDelivery: item.isCashOnDeliveryBool,
+            paymentType: item.paymentType,
           ),
         );
       }
@@ -1049,6 +1053,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
             isCashOnDelivery: item.isCashOnDeliveryBool,
+            paymentType: item.paymentType,
           ),
         );
       }
@@ -1097,6 +1102,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: false,
             preparing: false,
             ready: false,
@@ -1166,6 +1172,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: true,
             preparing: false,
             ready: false,
@@ -1229,6 +1236,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: false,
             preparing: true,
             ready: false,
@@ -1294,6 +1302,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: false,
             preparing: false,
             ready: true,
@@ -1350,6 +1359,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: false,
             preparing: false,
             ready: false,
@@ -1406,6 +1416,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
+            paymentType: order.paymentType,
             accepted: false,
             preparing: false,
             ready: false,
@@ -3028,6 +3039,7 @@ class _ToPrepareCard extends StatelessWidget {
     this.prescriptionFileName,
     this.prescriptionImageUrl,
     this.isCashOnDelivery = false,
+    this.paymentType,
     this.scheduledDate,
     this.scheduledTime,
   });
@@ -3042,6 +3054,7 @@ class _ToPrepareCard extends StatelessWidget {
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
   final bool isCashOnDelivery;
+  final dynamic paymentType;
   final String? scheduledDate;
   final String? scheduledTime;
 
@@ -3273,9 +3286,7 @@ class _ToPrepareCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        isCashOnDelivery
-                            ? 'Cash on Delivery'
-                            : 'Online Payment',
+                        paymentTypeLabel(paymentType, cashFallback: isCashOnDelivery),
                         style: const TextStyle(
                           color: _orange,
                           fontSize: 13,
@@ -3386,6 +3397,7 @@ class _PreparingCard extends StatelessWidget {
     this.prescriptionFileName,
     this.prescriptionImageUrl,
     this.isCashOnDelivery = false,
+    this.paymentType,
   });
 
   final String customerName;
@@ -3397,6 +3409,7 @@ class _PreparingCard extends StatelessWidget {
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
   final bool isCashOnDelivery;
+  final dynamic paymentType;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -3654,7 +3667,7 @@ class _PreparingCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      isCashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
+                      paymentTypeLabel(paymentType, cashFallback: isCashOnDelivery),
                       style: const TextStyle(
                         color: _orange,
                         fontSize: 13,
@@ -3705,6 +3718,7 @@ class _ReadyCard extends StatelessWidget {
     this.prescriptionFileName,
     this.prescriptionImageUrl,
     this.isCashOnDelivery = false,
+    this.paymentType,
   });
 
   final String customerName;
@@ -3717,6 +3731,7 @@ class _ReadyCard extends StatelessWidget {
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
   final bool isCashOnDelivery;
+  final dynamic paymentType;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -4042,9 +4057,7 @@ class _ReadyCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          isCashOnDelivery
-                              ? 'Cash on Delivery'
-                              : 'Online Payment',
+                          paymentTypeLabel(paymentType, cashFallback: isCashOnDelivery),
                           style: const TextStyle(
                             color: _orange,
                             fontSize: 12,
@@ -4076,6 +4089,7 @@ class _DeliveredCard extends StatelessWidget {
     this.prescriptionFileName,
     this.prescriptionImageUrl,
     this.isCashOnDelivery = false,
+    this.paymentType,
   });
 
   final String customerName;
@@ -4087,6 +4101,7 @@ class _DeliveredCard extends StatelessWidget {
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
   final bool isCashOnDelivery;
+  final dynamic paymentType;
 
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
@@ -4345,7 +4360,7 @@ class _DeliveredCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    isCashOnDelivery ? 'Cash on Delivery' : 'Online Payment',
+                    paymentTypeLabel(paymentType, cashFallback: isCashOnDelivery),
                     style: const TextStyle(
                       color: _orange,
                       fontSize: 13,
@@ -4759,6 +4774,7 @@ class _OtcNewOrderCard extends StatelessWidget {
     this.timeAgo = '',
     this.selfPickup = false,
     this.cashOnDelivery = false,
+    this.paymentType,
     this.scheduled = false,
     this.accepted = false,
     this.preparing = false,
@@ -4784,6 +4800,7 @@ class _OtcNewOrderCard extends StatelessWidget {
   final String timeAgo;
   final bool selfPickup;
   final bool cashOnDelivery;
+  final dynamic paymentType;
   final bool scheduled;
   final bool accepted;
   final bool preparing;
@@ -5156,9 +5173,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                         height: 16,
                         fit: BoxFit.contain,
                       ),
-                      label: cashOnDelivery
-                          ? 'Cash on Delivery'
-                          : 'Online Payment',
+                      label: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
                     ),
                   ],
                 ),
@@ -5191,9 +5206,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                         height: cashOnDelivery ? 18 : 16,
                         fit: BoxFit.contain,
                       ),
-                      label: cashOnDelivery
-                          ? 'Cash on Delivery'
-                          : 'Online Payment',
+                      label: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
                     ),
                   ],
                 ),

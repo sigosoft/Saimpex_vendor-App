@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
 class PharmacyOrderDetailModel {
@@ -274,10 +275,7 @@ class PharmacyOrderDetailOrder {
         isSelfPickup?.toString().toLowerCase() == 'true';
   }
 
-  bool get isCashOnDeliveryBool {
-    final pt = paymentType?.toString().trim().toLowerCase() ?? '';
-    return pt == '1' || pt == 'cash' || pt == 'cod';
-  }
+  bool get isCashOnDeliveryBool => isCashPayment(paymentType);
 
   String get displayOrderCode {
     if (orderCode != null && orderCode!.trim().isNotEmpty) {

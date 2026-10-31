@@ -99,6 +99,24 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m38(open, close) => "Today: ${open} - ${close}";
 
   static String m39(name) => "Welcome to ${name}!";
+  static String m3(hours, minutes) => "In ${hours} h ${minutes} min";
+
+  static String m4(minutes) => "In ${minutes} min";
+
+  static String m5(days) => "Expires in ${days} days";
+
+  static String m6(id) => "ORDER #${id}";
+
+  static String m7(code, time) =>
+      "Pre-order ${code} is due at ${time}. Please have it ready.";
+
+  static String m8(qty) => "Qty: ${qty}";
+
+  static String m9(reason) => "Reason: ${reason}";
+
+  static String m10(time) => "Scheduled for ${time}";
+
+  static String m11(count) => "Upcoming pre-orders (${count})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -136,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Address not available",
     ),
+    "adminAdjustment": MessageLookupByLibrary.simpleMessage("Admin adjustment"),
     "afterAttributesReferenceYouCanEditTheAttributesListBelow":
         MessageLookupByLibrary.simpleMessage(
           "After Attributes reference, you can edit the attributes list below and use the attribute ID in the attribute_id column along with its corresponding value.",
@@ -234,6 +253,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "averageRatingLabel": MessageLookupByLibrary.simpleMessage(
       "Average Rating",
     ),
+    "balanceAdjustments": MessageLookupByLibrary.simpleMessage(
+      "Balance adjustments",
+    ),
+    "balanceAfter": MessageLookupByLibrary.simpleMessage("Balance after"),
     "balanceAfterPayout": MessageLookupByLibrary.simpleMessage(
       "BALANCE AFTER PAYOUT",
     ),
@@ -663,7 +686,11 @@ class MessageLookup extends MessageLookupByLibrary {
           "Download the template file and fill it with proper data.",
         ),
     "driver": MessageLookupByLibrary.simpleMessage("Driver"),
+    "driverAssigned": MessageLookupByLibrary.simpleMessage("Driver assigned"),
     "driverDetails": MessageLookupByLibrary.simpleMessage("Driver Details"),
+    "driverRequested": MessageLookupByLibrary.simpleMessage("Driver requested"),
+    "dueInHoursMinutes": m3,
+    "dueInMinutes": m4,
     "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
     "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -733,6 +760,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter your whatsapp number",
     ),
     "expiresInDays": m4,
+    "expiresInDays": m5,
     "filters": MessageLookupByLibrary.simpleMessage("Filters"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("Filters & Sorting"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -803,6 +831,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemTotal": MessageLookupByLibrary.simpleMessage("Item Total"),
     "itemType": MessageLookupByLibrary.simpleMessage("Item Type"),
     "itemTypeLabel": MessageLookupByLibrary.simpleMessage("Item Type"),
+    "itemUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Item updated successfully",
+    ),
     "items": MessageLookupByLibrary.simpleMessage("Items"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("ITEMS COUNT"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),
@@ -867,6 +898,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage("Needs An Update"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
+    "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
+      "No balance adjustments yet",
+    ),
     "noBasketsFound": MessageLookupByLibrary.simpleMessage("No baskets found"),
     "noCategoriesFound": MessageLookupByLibrary.simpleMessage(
       "No Categories Found",
@@ -956,6 +990,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noUpcomingLeavesFound": MessageLookupByLibrary.simpleMessage(
       "No upcoming leaves found",
     ),
+    "noUpcomingPreorders": MessageLookupByLibrary.simpleMessage(
+      "No upcoming pre-orders",
+    ),
     "nonVeg": MessageLookupByLibrary.simpleMessage("Non-Veg"),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
     "notification": MessageLookupByLibrary.simpleMessage("Notification"),
@@ -986,6 +1023,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Order Duration Breakdown",
     ),
     "orderIdLabel": m5,
+    "orderIdLabel": m6,
     "orderItems": MessageLookupByLibrary.simpleMessage("ORDER ITEMS"),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("Order Picked Up"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("Order Placed"),
@@ -1017,6 +1055,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "packagingCost": MessageLookupByLibrary.simpleMessage("Packaging Cost"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
+    "payAfterDelivery": MessageLookupByLibrary.simpleMessage(
+      "Pay After Delivery",
+    ),
     "paymentDetails": MessageLookupByLibrary.simpleMessage("PAYMENT DETAILS"),
     "paymentId": MessageLookupByLibrary.simpleMessage("Payment ID"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
@@ -1100,6 +1141,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "postuploadEditing": MessageLookupByLibrary.simpleMessage(
       "Post-Upload Editing",
     ),
+    "preOrders": MessageLookupByLibrary.simpleMessage("Pre-orders"),
+    "preorderBadge": MessageLookupByLibrary.simpleMessage("Pre-order"),
+    "preorderDueNow": MessageLookupByLibrary.simpleMessage("Due now"),
+    "preorderReminderBody": m7,
+    "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
+      "Pre-order due soon",
+    ),
     "preparationTime": MessageLookupByLibrary.simpleMessage("PREPARATION TIME"),
     "preparationTimeLabel": MessageLookupByLibrary.simpleMessage(
       "Preparation Time",
@@ -1124,6 +1172,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
     "qtyLabel": m6,
+    "qtyLabel": m8,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("Rate Order"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -1145,6 +1194,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Ready"),
     "reasonColonLabel": m7,
+    "reasonColonLabel": m9,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Reason For Leave"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Reason"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("Received Payouts"),
@@ -1213,6 +1263,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
     "scheduled": MessageLookupByLibrary.simpleMessage("SCHEDULED"),
+    "scheduledForTime": m10,
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "Search amount or Transaction ID",
@@ -1339,6 +1390,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("Unknown Driver"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("Unknown Vendor"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("Upcoming Leaves"),
+    "upcomingPreordersCount": m11,
     "update": MessageLookupByLibrary.simpleMessage("Update"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("Update Coupon"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -1971,6 +2023,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Working hours updated successfully",
     ),
     "waterYou": MessageLookupByLibrary.simpleMessage("You"),
+    "walletPayment": MessageLookupByLibrary.simpleMessage("SAIMPEX Wallet"),
     "wednesday": MessageLookupByLibrary.simpleMessage("Wednesday"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("Welcome to"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

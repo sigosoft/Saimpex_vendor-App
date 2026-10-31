@@ -159,6 +159,8 @@ class AddItemsTextField extends StatelessWidget {
               ? Padding(
                   padding: const EdgeInsets.only(right: 14),
                   child: Align(
+                    // Size to the suffix only; a full-width Align hid the typed value.
+                    widthFactor: 1,
                     alignment: Alignment.centerRight,
                     child: Text(
                       suffixText!,
