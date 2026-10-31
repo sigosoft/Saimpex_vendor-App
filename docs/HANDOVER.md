@@ -479,3 +479,9 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 - Figma: file `gcPrdiT2s5VbO51zOdwT36`, page "Vendor Apps & Driver App", node `5:4744` (view only)
 - Older vendor design reference: ourworks.co.in/saimpex-vendor-design
 - Team scope: `docs-scope/V2_TEAM_SCOPE.txt`, `docs-scope/FUNCTIONAL_REQUIREMENTS.txt` (on Praveen's Mac; ask for a copy)
+
+## Backend updates since this handover
+
+| Date | Change | What the app must do |
+|---|---|---|
+| 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
