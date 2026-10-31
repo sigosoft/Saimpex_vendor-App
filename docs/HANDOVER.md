@@ -486,3 +486,4 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 |---|---|---|
 | 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
 | 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. |
+| 31 Oct 2026 | Grocery substitution: on a grocery order before Ready, pick a line → choose a substitute from own items (or "unavailable") → `POST vendorapp/orders/{id}/substitutions`; list with `GET` same path. Customer has 10 min, then auto-accept. | Add a "Suggest substitute" action per line and a status chip (pending / accepted / rejected / auto). |
