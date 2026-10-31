@@ -3159,6 +3159,111 @@ class S {
     );
   }
 
+  /// `Pre-orders`
+  String get preOrders {
+    return Intl.message('Pre-orders', name: 'preOrders', desc: '', args: []);
+  }
+
+  /// `Upcoming pre-orders ({count})`
+  String upcomingPreordersCount(String count) {
+    return Intl.message(
+      'Upcoming pre-orders ($count)',
+      name: 'upcomingPreordersCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No upcoming pre-orders`
+  String get noUpcomingPreorders {
+    return Intl.message(
+      'No upcoming pre-orders',
+      name: 'noUpcomingPreorders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order`
+  String get preorderBadge {
+    return Intl.message('Pre-order', name: 'preorderBadge', desc: '', args: []);
+  }
+
+  /// `Scheduled for {time}`
+  String scheduledForTime(String time) {
+    return Intl.message(
+      'Scheduled for $time',
+      name: 'scheduledForTime',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `In {hours} h {minutes} min`
+  String dueInHoursMinutes(String hours, String minutes) {
+    return Intl.message(
+      'In $hours h $minutes min',
+      name: 'dueInHoursMinutes',
+      desc: '',
+      args: [hours, minutes],
+    );
+  }
+
+  /// `In {minutes} min`
+  String dueInMinutes(String minutes) {
+    return Intl.message(
+      'In $minutes min',
+      name: 'dueInMinutes',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Due now`
+  String get preorderDueNow {
+    return Intl.message('Due now', name: 'preorderDueNow', desc: '', args: []);
+  }
+
+  /// `Driver requested`
+  String get driverRequested {
+    return Intl.message(
+      'Driver requested',
+      name: 'driverRequested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Driver assigned`
+  String get driverAssigned {
+    return Intl.message(
+      'Driver assigned',
+      name: 'driverAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order due soon`
+  String get preorderReminderTitle {
+    return Intl.message(
+      'Pre-order due soon',
+      name: 'preorderReminderTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pre-order {code} is due at {time}. Please have it ready.`
+  String preorderReminderBody(String code, String time) {
+    return Intl.message(
+      'Pre-order $code is due at $time. Please have it ready.',
+      name: 'preorderReminderBody',
+      desc: '',
+      args: [code, time],
+    );
+  }
+
   /// `Assigned`
   String get assignedStatus {
     return Intl.message('Assigned', name: 'assignedStatus', desc: '', args: []);

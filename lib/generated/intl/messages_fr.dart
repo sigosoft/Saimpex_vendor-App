@@ -26,13 +26,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(date) => "Créé le ${date}";
 
-  static String m3(days) => "Expire dans ${days} jours";
+  static String m3(hours, minutes) => "Dans ${hours} h ${minutes} min";
 
-  static String m4(id) => "COMMANDE #${id}";
+  static String m4(minutes) => "Dans ${minutes} min";
 
-  static String m5(qty) => "Qté : ${qty}";
+  static String m5(days) => "Expire dans ${days} jours";
 
-  static String m6(reason) => "Raison : ${reason}";
+  static String m6(id) => "COMMANDE #${id}";
+
+  static String m7(code, time) =>
+      "La précommande ${code} est prévue à ${time}. Merci de la préparer.";
+
+  static String m8(qty) => "Qté : ${qty}";
+
+  static String m9(reason) => "Raison : ${reason}";
+
+  static String m10(time) => "Prévue pour ${time}";
+
+  static String m11(count) => "Précommandes à venir (${count})";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -387,9 +398,13 @@ class MessageLookup extends MessageLookupByLibrary {
           "Téléchargez le fichier modèle et remplissez-le avec les données appropriées.",
         ),
     "driver": MessageLookupByLibrary.simpleMessage("Chauffeur"),
+    "driverAssigned": MessageLookupByLibrary.simpleMessage("Livreur assigné"),
     "driverDetails": MessageLookupByLibrary.simpleMessage(
       "Détails du chauffeur",
     ),
+    "driverRequested": MessageLookupByLibrary.simpleMessage("Livreur demandé"),
+    "dueInHoursMinutes": m3,
+    "dueInMinutes": m4,
     "durationLabel": MessageLookupByLibrary.simpleMessage("Durée"),
     "earnings": MessageLookupByLibrary.simpleMessage("Gains"),
     "edit": MessageLookupByLibrary.simpleMessage("Modifier"),
@@ -462,7 +477,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourWhatsappNumber": MessageLookupByLibrary.simpleMessage(
       "Entrez votre numéro WhatsApp",
     ),
-    "expiresInDays": m3,
+    "expiresInDays": m5,
     "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
       "Échec de la mise à jour de l\'article",
     ),
@@ -735,6 +750,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noUpcomingLeavesFound": MessageLookupByLibrary.simpleMessage(
       "Aucun congé à venir trouvé",
     ),
+    "noUpcomingPreorders": MessageLookupByLibrary.simpleMessage(
+      "Aucune précommande à venir",
+    ),
     "nonVeg": MessageLookupByLibrary.simpleMessage("Non végétarien"),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
     "notification": MessageLookupByLibrary.simpleMessage("Notification"),
@@ -768,7 +786,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "Détail de la durée de la commande",
     ),
-    "orderIdLabel": m4,
+    "orderIdLabel": m6,
     "orderItems": MessageLookupByLibrary.simpleMessage(
       "Articles de la commande",
     ),
@@ -902,6 +920,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "postuploadEditing": MessageLookupByLibrary.simpleMessage(
       "Modification après téléchargement",
     ),
+    "preOrders": MessageLookupByLibrary.simpleMessage("Précommandes"),
+    "preorderBadge": MessageLookupByLibrary.simpleMessage("Précommande"),
+    "preorderDueNow": MessageLookupByLibrary.simpleMessage(
+      "À livrer maintenant",
+    ),
+    "preorderReminderBody": m7,
+    "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
+      "Précommande bientôt due",
+    ),
     "preparationTime": MessageLookupByLibrary.simpleMessage(
       "TEMPS DE PRÉPARATION",
     ),
@@ -932,7 +959,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "products": MessageLookupByLibrary.simpleMessage("Produits"),
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
-    "qtyLabel": m5,
+    "qtyLabel": m8,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantité"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("Évaluer la commande"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -957,7 +984,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "ARRIVÉ AU RESTAURANT",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Prêt"),
-    "reasonColonLabel": m6,
+    "reasonColonLabel": m9,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Motif du Congé"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Raison"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("Paiements reçus"),
@@ -1030,6 +1057,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Scanner le code-barres",
     ),
     "scheduled": MessageLookupByLibrary.simpleMessage("PROGRAMMÉ"),
+    "scheduledForTime": m10,
     "search": MessageLookupByLibrary.simpleMessage("Rechercher"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "Rechercher le montant ou l\'ID de transaction",
@@ -1178,6 +1206,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("Chauffeur inconnu"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("Vendeur inconnu"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("Congés à venir"),
+    "upcomingPreordersCount": m11,
     "update": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage(
       "Mettre à jour le coupon",

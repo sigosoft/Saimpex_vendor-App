@@ -28,6 +28,7 @@ class ApiEndPoints {
   static String home = "home";
 
   static String restaurantOrderDetails = "restaurantOrderDetail";
+  static String preorders = "preorders";
   static String groceryOrderDetails = "groceryOrderDetail";
   static String profile = "profile";
   static String deliveryBoys = "deliveryBoys";
