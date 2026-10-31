@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
@@ -22,6 +23,8 @@ class WaterInventoryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Gas vendors share these screens; hide stock and subscriptions for them.
+    WaterApi.loadIsGas().then((_) => update());
     searchController.addListener(_onSearchChanged);
     fetchWaterMenuItems();
   }

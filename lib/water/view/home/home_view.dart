@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -148,6 +149,7 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(height: 18),
                 _OrdersHeader(onSeeAll: () => controller.onBottomNavSelect(1)),
                 const SizedBox(height: 12),
+                if (!WaterApi.isGas)
                 _OrderTypeTabs(
                   selectedIndex: controller.selectedTabIndex,
                   onSelect: controller.selectOrderType,
@@ -294,6 +296,7 @@ class _HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
+                if (!WaterApi.isGas)
                 _OrderTypeTabs(
                   selectedIndex: controller.selectedTabIndex,
                   onSelect: controller.selectOrderType,
@@ -1588,6 +1591,16 @@ class _OrderCard extends StatelessWidget {
                         : Icons.handshake_outlined,
                     label: order.paymentLabel,
                   ),
+                  // Gas refills: empty cylinders the driver collects (#84).
+                  if (order.emptyCylindersToCollect > 0) ...[
+                    const SizedBox(width: 8),
+                    _OrderChip(
+                      icon: Icons.recycling_outlined,
+                      label: S.of(context).gasEmptyCylindersToCollect(
+                        '${order.emptyCylindersToCollect}',
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
