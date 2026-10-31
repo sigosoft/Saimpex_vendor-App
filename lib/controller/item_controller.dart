@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/attributes_model.dart';
@@ -1356,18 +1357,18 @@ class ItemController extends GetxController {
       final ok = response.data['status'] == 'true' || response.data['status'] == true;
       if (!context.mounted) return;
       if (ok) {
-        showToast(context, _serverMessage(response.data, "Item updated successfully"));
+        showToast(context, _serverMessage(response.data, S.current.itemUpdatedSuccessfully));
         if (Get.isRegistered<ProfileController>()) {
           await Get.find<ProfileController>().fetchGroceryMenuItems();
         }
         if (context.mounted) Get.back();
       } else {
-        showToast(context, _serverMessage(response.data, "Failed to update item"));
+        showToast(context, _serverMessage(response.data, S.current.failedToUpdateItem));
       }
     } on dio.DioException catch (error) {
       if (context.mounted) {
         Get.back();
-        showToast(context, _serverMessage(error.response?.data, "Failed to update item"));
+        showToast(context, _serverMessage(error.response?.data, S.current.failedToUpdateItem));
       }
       debugPrint("updateCatalogItem Error: $error");
     } catch (error) {

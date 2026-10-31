@@ -1229,5 +1229,7 @@
   "completedLeaves": "الإجازات المكتملة",
   "noCompletedLeavesFound": "لم يتم العثور على إجازات مكتملة",
   "pleaseSelectAnXlsxFileOnly": "يرجى اختيار ملف .xlsx فقط",
-  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار"
+  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار",
+  "itemUpdatedSuccessfully": "تم تحديث المنتج بنجاح",
+  "failedToUpdateItem": "فشل تحديث المنتج"
 }
