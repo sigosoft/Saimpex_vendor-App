@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
-import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
@@ -22,10 +23,7 @@ import 'package:saimpex_vendor/water/view/account/store_profile_view.dart';
 import 'package:saimpex_vendor/water/view/account/working_hours_view.dart';
 
 class HomeCleaningAccountView extends StatefulWidget {
-  const HomeCleaningAccountView({
-    super.key,
-    required this.controller,
-  });
+  const HomeCleaningAccountView({super.key, required this.controller});
 
   final HomeCleaningController controller;
 
@@ -39,16 +37,35 @@ class HomeCleaningAccountView extends StatefulWidget {
 
 class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
   int _selectedLanguage = 0;
-  bool _notifications = true;
 
-  ProfileData? _profileData;
   Map<String, dynamic>? _rawVendorData;
+  bool? _storeOpen;
+  String? _appVersion;
 
   @override
   void initState() {
     super.initState();
     _initLanguage();
     _loadProfile();
+    _loadStoreStatus();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) setState(() => _appVersion = info.version);
+    } catch (_) {}
+  }
+
+  /// Today's open/closed state from GET serviceHours.
+  Future<void> _loadStoreStatus() async {
+    try {
+      final hours = await CleaningServicesApi.fetchHours();
+      final open = hours['store_open'];
+      if (!mounted || open == null) return;
+      setState(() => _storeOpen = open == true || open.toString() == '1');
+    } on CleaningApiException catch (_) {}
   }
 
   void _initLanguage() {
@@ -71,27 +88,33 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         return;
       }
 
-      final response = await DioClient().get(ApiEndPoints.profile);
+      // GET profile requires vendor_type (home cleaning = 9).
+      final saved = (await getSavedObject('vendorType'))?.toString() ?? '';
+      final vendorType = saved.isNotEmpty && saved != 'null' && saved != '0'
+          ? saved
+          : '9';
+      final response = await DioClient().get(
+        ApiEndPoints.profile,
+        query: {'vendor_type': vendorType},
+      );
       if (mounted) {
         Map<String, dynamic>? dataMap;
         if (response.data is Map<String, dynamic>) {
           dataMap = response.data as Map<String, dynamic>;
         } else if (response.data is String) {
           try {
-            dataMap = jsonDecode(response.data as String) as Map<String, dynamic>?;
+            dataMap =
+                jsonDecode(response.data as String) as Map<String, dynamic>?;
           } catch (_) {}
         }
 
-        if (dataMap != null) {
-          final profileModel = ProfileModel.fromJson(dataMap);
-          final fetchedData = profileModel.data;
+        if (dataMap != null && CleaningServicesApi.isOk(dataMap)) {
           final rawData = (dataMap['data'] is Map<String, dynamic>)
               ? ((dataMap['data']['vendor'] as Map<String, dynamic>?) ??
-                  dataMap['data'] as Map<String, dynamic>?)
+                    dataMap['data'] as Map<String, dynamic>?)
               : null;
 
           setState(() {
-            _profileData = fetchedData;
             _rawVendorData = rawData;
           });
         }
@@ -125,14 +148,20 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         ),
         content: Text(
           S.of(context).areYouSureYouWantToLogout,
-          style: GoogleFonts.inter(fontSize: 13.5, color: const Color(0xFF424242)),
+          style: GoogleFonts.inter(
+            fontSize: 13.5,
+            color: const Color(0xFF424242),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               S.of(context).cancel,
-              style: GoogleFonts.inter(color: const Color(0xFF757575), fontWeight: FontWeight.w600),
+              style: GoogleFonts.inter(
+                color: const Color(0xFF757575),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           ElevatedButton(
@@ -140,11 +169,16 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             style: ElevatedButton.styleFrom(
               backgroundColor: HomeCleaningAccountView._orange,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text(
               S.of(context).logout,
-              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -381,9 +415,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Theme(
-                data: Theme.of(context).copyWith(
-                  cardColor: Colors.white,
-                ),
+                data: Theme.of(context).copyWith(cardColor: Colors.white),
                 child: PopupMenuButton<String>(
                   onSelected: (val) {
                     if (val == 'delete') {
@@ -403,7 +435,10 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                   itemBuilder: (ctx) => [
                     PopupMenuItem<String>(
                       value: 'delete',
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -440,10 +475,31 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
     );
   }
 
+  String? _text(dynamic value) {
+    final text = value?.toString().trim();
+    return text == null || text.isEmpty || text == 'null' ? null : text;
+  }
+
   Widget _buildProfileCard() {
-    final String storeName = _profileData?.name ??
-        _rawVendorData?['store_name']?.toString() ??
-        'CleanPro Elite';
+    final vendor = _rawVendorData;
+    final lang = LocalizationService.currentLanguageCode;
+    final String storeName =
+        (lang == 'fr' ? _text(vendor?['name_fr']) : null) ??
+        (lang == 'ar' ? _text(vendor?['name_ar']) : null) ??
+        _text(vendor?['name']) ??
+        '';
+    final image = _text(vendor?['image']);
+    final imageUrl = image == null
+        ? null
+        : (image.startsWith('http') ? image : '${ApiConfigs.IMAGE_URL}$image');
+    final totalReviews = int.tryParse('${vendor?['total_reviews'] ?? 0}') ?? 0;
+    final rating = double.tryParse('${vendor?['rating'] ?? ''}');
+    final isActive = vendor?['status']?.toString() == '1';
+    const imagePlaceholder = Icon(
+      Icons.storefront_outlined,
+      color: HomeCleaningAccountView._orange,
+      size: 30,
+    );
 
     return Container(
       width: double.infinity,
@@ -474,29 +530,33 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                   border: Border.all(color: const Color(0xFFE8E8E8)),
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Image.asset(
-                  'lib/home_cleaning/Assets/images/regularcleaning.png',
-                  fit: BoxFit.cover,
-                ),
+                child: imageUrl == null
+                    ? imagePlaceholder
+                    : Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => imagePlaceholder,
+                      ),
               ),
-              Positioned(
-                right: -2,
-                bottom: -2,
-                child: Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF22C55E),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 11,
+              if (isActive)
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF22C55E),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 11,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -512,38 +572,48 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.star_rounded,
-                size: 16,
-                color: Color(0xFFFF9800),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '4.8',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFFF9800),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12.5,
+              if (rating != null && totalReviews > 0) ...[
+                const Icon(
+                  Icons.star_rounded,
+                  size: 16,
+                  color: Color(0xFFFF9800),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                width: 5,
-                height: 5,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF22C55E),
-                  shape: BoxShape.circle,
+                const SizedBox(width: 4),
+                Text(
+                  rating.toStringAsFixed(1),
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFFFF9800),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.5,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                S.of(context).cleaningOpenStatus,
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF22C55E),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
+                const SizedBox(width: 8),
+              ],
+              if (_storeOpen != null) ...[
+                Container(
+                  width: 5,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: _storeOpen!
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFF9E9E9E),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 4),
+                Text(
+                  _storeOpen!
+                      ? S.of(context).cleaningOpenStatus
+                      : S.of(context).cleaningClosedStatus,
+                  style: GoogleFonts.inter(
+                    color: _storeOpen!
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFF9E9E9E),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -592,7 +662,9 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           duration: const Duration(milliseconds: 180),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? HomeCleaningAccountView._orange : Colors.transparent,
+            color: isSelected
+                ? HomeCleaningAccountView._orange
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -623,24 +695,8 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
-            _buildSettingRow(
-              icon: Icons.notifications_none_rounded,
-              title: S.of(context).notification,
-              trailing: Transform.scale(
-                scale: 0.8,
-                child: Switch(
-                  value: _notifications,
-                  activeThumbColor: Colors.white,
-                  activeTrackColor: HomeCleaningAccountView._orange,
-                  inactiveThumbColor: Colors.white,
-                  inactiveTrackColor: const Color(0xFFE0E0E0),
-                  onChanged: (val) {
-                    HapticFeedback.lightImpact();
-                    setState(() => _notifications = val);
-                  },
-                ),
-              ),
-            ),
+            // The notification on/off switch was local only: the backend
+            // has no notification preference endpoint, so it is hidden.
             _buildSettingRow(
               icon: Icons.storefront_outlined,
               title: S.of(context).cleaningVendorProfile,
@@ -854,14 +910,15 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
   Widget _buildVersionFooter() {
     return Column(
       children: [
-        Text(
-          'V2.8.1',
-          style: GoogleFonts.inter(
-            color: const Color(0xFF9E9E9E),
-            fontWeight: FontWeight.w500,
-            fontSize: 11,
+        if (_appVersion != null)
+          Text(
+            'V$_appVersion',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF9E9E9E),
+              fontWeight: FontWeight.w500,
+              fontSize: 11,
+            ),
           ),
-        ),
         const SizedBox(height: 3),
         Text(
           S.of(context).checkForUpdate,

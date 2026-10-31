@@ -246,7 +246,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. No substitution. |
 | Local store (11) | **Partial / likely broken** | Opens grocery screens and calls grocery endpoints. Backend `groceryOrders` filters `order_type = 2`, so local store orders probably do not show. Backend `localStore*` endpoints are not used. Needs testing with a real local store account. |
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
-| Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, add coupon, subscription details/calendar are static mock UI. EN/FR/AR since V5. |
+| Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
 | Laundry (7) | **Not started** in app | Blocked at login; use web panel. |
 | Car wash (8) | **Not started** in app | Blocked at login; use web panel. |
@@ -322,10 +322,10 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 
 | Feature | Status | Files |
 |---|---|---|
-| Home / bookings | Partial (mock) | `lib/home_cleaning/view/home_cleaning_home.dart`, `lib/home_cleaning/view/booking_details_view.dart`, `lib/home_cleaning/view/reject_booking_sheet.dart` |
-| Services | Partial (mock) | `lib/home_cleaning/view/my_services_view.dart`, `lib/home_cleaning/view/add_service_view.dart` |
-| Chat | Partial (mock) | `lib/home_cleaning/view/chat/home_cleaning_messages_view.dart`, `lib/home_cleaning/view/chat/home_cleaning_conversation_view.dart` |
-| Account | Partial | `lib/home_cleaning/view/home_cleaning_account_view.dart` (profile, logout, delete on API) |
+| Home / bookings | Done (V6, not run against a real account) — `serviceDashboard`, `serviceBookings`, `serviceBookingDetail`, `updateServiceBookingStatus`, `serviceAvailability`; flow 1→2→8→3→9, 10 cancelled | `lib/home_cleaning/view/home_cleaning_home.dart`, `lib/home_cleaning/view/booking_details_view.dart`, `lib/home_cleaning/view/reject_booking_sheet.dart` |
+| Services | Done (V6, not run against a real account) — `serviceItems`, `serviceTypes`, `addServiceItem`/`updateServiceItem` (multipart, lists as JSON strings), `deleteServiceItem` | `lib/home_cleaning/view/my_services_view.dart`, `lib/home_cleaning/view/add_service_view.dart` |
+| Chat | Done (V6, not run against a real account) — shared `ChatController` (`chat/allConversations`, `getConversation`, `sendMessage`) | `lib/home_cleaning/view/chat/home_cleaning_messages_view.dart`, `lib/home_cleaning/view/chat/home_cleaning_conversation_view.dart` |
+| Account | Partial | `lib/home_cleaning/view/home_cleaning_account_view.dart` (profile now sends `vendor_type`; store open from `serviceHours`). Working hours, earnings and business settings rows still open the Water screens (`profile`/`updateWorkingHours`, `earnings/summary`) instead of `serviceHours`/`saveServiceHours`/`serviceEarnings`: follow-up. |
 
 ---
 
@@ -430,11 +430,11 @@ AC: a quick-edit path (name, price, availability, photo) in one screen; advanced
 Move literals to the ARB files.
 AC: switching to French or Arabic translates every visible string in these sections; Arabic layout is right-to-left with no clipped or mirrored-wrong icons.
 
-**P9. Replace mock screens in Water.**
+**P9. Replace mock screens in Water.** ✅ V6 (`feature/water-cleaning-api`), except the delivery calendar and history (no endpoint; hidden).
 Notifications, received payouts, add/edit coupon, subscription details and calendar must use the API.
 AC: no hard-coded sample data remains in `lib/water/view/`.
 
-**P10. Home Cleaning on `service*` endpoints.**
+**P10. Home Cleaning on `service*` endpoints.** ✅ V6 for bookings, services and chat; account hours/earnings still on the Water screens (follow-up). 18 backend gaps in `docs/V6_BACKEND_ISSUES.md`.
 AC: bookings, booking detail/status changes, services CRUD and hours use the backend; no hard-coded bookings.
 
 **P11. Laundry and car wash sections (if confirmed for the app).**
@@ -469,7 +469,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 2. **Gas routed to Water section**, but backend `HomeController` treats type 10 as a service vertical. Needs a backend decision.
 3. **Edit item loses variants/options** (UI shows them, save does not send them).
 4. **Endpoints with no backend route**: `exportMenuItems`, `importRestaurantMenuItems`, `vendor/...` fallbacks (see 5.2). These buttons fail.
-5. **Mock data** in Water notifications, received payouts, add coupon, subscription details/calendar, and all of Home Cleaning bookings/services/chat.
+5. **Mock data**: removed in V6. Where the backend has no data (Water delivery calendar/history, some Home Cleaning fields) the block is hidden; gaps in `docs/V6_BACKEND_ISSUES.md`.
 6. **Dead OTP login path** saves a fake `mock_token` (`lib/controller/otp_controller.dart`). Not reachable now; remove.
 7. **Release signed with the debug key**; iOS not configured (template bundle id, no Firebase plist).
 8. **Localisation gaps**: Pharmacy mostly English; FR/AR missing a few older keys; Water/Home Cleaning mock data still English (V6). Reject/pause reasons are sent to the API in English while shown translated.
@@ -505,7 +505,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 
 | Date | Change | What the app must do |
 |---|---|---|
-| 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
+| 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. ✅ V4: `lib/utils/payment_type.dart` (`paymentTypeLabel`, `isCashPayment`) used in restaurant/grocery order details, sales report details, pharmacy cards + OTC detail, water order list + detail, and the printed receipt (English). Also fixes water detail showing the raw code and pharmacy pending orders treating `1` as online. Mapping covered by `test/payment_type_test.dart`; no Wallet / Pay After Delivery order on dev yet to see on screen. |
 | 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. ✅ V3 (`feature/preorders`). |
 | 31 Oct 2026 | Grocery substitution: on a grocery order before Ready, pick a line → choose a substitute from own items (or "unavailable") → `POST vendorapp/orders/{id}/substitutions`; list with `GET` same path. Customer has 10 min, then auto-accept. | Add a "Suggest substitute" action per line and a status chip (pending / accepted / rejected / auto). |
 | 31 Oct 2026 | Substitution rule change: customers pay the extra for pricier substitutes (wallet, then cash/online). An unanswered pricier substitute is removed, not auto-accepted. | Show the result status; no app change needed beyond that. |
@@ -514,3 +514,6 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | Hide / unhide a product: `POST vendorapp/products/visibility` {`product_type`, `id` (catalog item id for restaurants), `hidden`}. Response `status` 1 visible / 2 blocked by Admin / 3 hidden. | Add a Hide/Show toggle and a "Hidden" chip on the product list (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules`: minimum order value and default preparation time (set by Admin, read-only). | Show both on the store settings/profile screen (§6.22). |
 | 31 Oct 2026 | **Routing answered (V12, P3/P4):** login returns `app_section` (`restaurant`, `grocery`, `pharmacy`, `water`, `local_store`, `service`). Local store (11) → `localStore*` endpoints (grocery ones filter order_type 2, so its orders never show there). Gas (10) → `service*` endpoints, **not** `water*`; bookings include `empty_cylinders_to_collect`. | Route by `app_section` instead of mapping types in the app (§6.23). |
+| 31 Oct 2026 | **Change:** hide product is now `POST vendorapp/updateProductVisibility` {`vertical`: food/grocery/local_store/pharmacy/water, `menu_id`, `hide_for`: 1h/4h/today/forever/until/show}. The `products/visibility` endpoint from this morning is removed. | Build V10 against this one (§6.21). |
+| 31 Oct 2026 | `GET vendorapp/orderRules` also returns `delivery_fee_type`, `delivery_fee_value`, `delivery_fee_paid_by`, `delivery_model` (Admin-set). If the vendor pays delivery, the fee is deducted from its earnings. | Show them read-only on the store settings screen (§6.22). |
+| 31 Oct 2026 | `GET vendorapp/commissionRules`: the store's commission rules (read-only) and `fallback_percent`. | Optional: show on earnings/settings (§6.24). |

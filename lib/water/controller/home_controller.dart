@@ -253,6 +253,8 @@ class WaterHomeController extends GetxController {
           if (subList is List) {
             subscriptionOrders = subList
                 .whereType<Map>()
+                // Online purchases stay `pending_payment` until paid (§6.14).
+                .where((e) => e['status']?.toString() != 'pending_payment')
                 .map(
                   (e) =>
                       SubscriptionOrder.fromJson(Map<String, dynamic>.from(e)),
@@ -500,6 +502,8 @@ class WaterHomeController extends GetxController {
         for (final item in rawList) {
           if (item is Map) {
             final map = Map<String, dynamic>.from(item);
+            // Online purchases stay `pending_payment` until paid (§6.14).
+            if (map['status']?.toString() == 'pending_payment') continue;
             loadedSubscriptions.add(SubscriptionOrder.fromJson(map));
           }
         }

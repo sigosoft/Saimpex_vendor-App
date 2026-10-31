@@ -182,7 +182,7 @@
   "@invalidProductInformation": {},
   "item": "عنصر",
   "@item": {},
-  "items": "العناصر",
+  "items": "الأصناف",
   "@items": {},
   "itemTotal": "إجمالي العنصر",
   "@itemTotal": {},
@@ -534,7 +534,7 @@
   "@youSaved": {},
   "owner": "المالك",
   "idNumber": "الهوية",
-  "contact": "جهة الاتصال",
+  "contact": "الاتصال",
   "email": "البريد الإلكتروني",
   "status": "الحالة",
   "address": "العنوان",
@@ -580,7 +580,7 @@
   "@restaurantReports": {},
   "restaurantDetails": "تفاصيل المطعم",
   "@restaurantDetails": {},
-  "bankDetails": "التفاصيل البنكية",
+  "bankDetails": "تفاصيل البنك",
   "@bankDetails": {},
   "aboutTheRestaurant": "عن المطعم",
   "@aboutTheRestaurant": {},
@@ -600,21 +600,21 @@
   "@holderName": {},
   "ibanNumber": "رقم الآيبان",
   "@ibanNumber": {},
-  "swiftCode": "رمز السويفت",
+  "swiftCode": "رمز SWIFT",
   "@swiftCode": {},
   "regNumber": "رقم التسجيل",
   "@regNumber": {},
   "regDate": "تاريخ التسجيل",
   "@regDate": {},
-  "gstNumber": "الرقم الضريبي",
+  "gstNumber": "رقم ضريبة السلع والخدمات",
   "@gstNumber": {},
-  "commissionPercentage": "% العمولة",
+  "commissionPercentage": "نسبة العموله",
   "@commissionPercentage": {},
   "totalProfit": "إجمالي الربح",
   "@totalProfit": {},
   "orderColon": "الطلب: ",
   "@orderColon": {},
-  "markLeave": "تسجيل إجازة",
+  "markLeave": "تحديد إجازة",
   "@markLeave": {},
   "leavesHistory": "سجل الإجازات",
   "@leavesHistory": {},
@@ -730,7 +730,7 @@
   "@allMenus": {},
   "allItems": "جميع الأصناف",
   "@allItems": {},
-  "restaurantOne": "مطعم 1",
+  "restaurantOne": "المطعم 1",
   "@restaurantOne": {},
   "aboutDescription": "تقديم نكهات أصيلة بمكونات طازجة. متخصصون في المأكولات القارية والشرقية.",
   "@aboutDescription": {},
@@ -783,17 +783,44 @@
   "preOrders": "الطلبات المسبقة",
   "@preOrders": {},
   "upcomingPreordersCount": "الطلبات المسبقة القادمة ({count})",
-  "@upcomingPreordersCount": {"placeholders": {"count": {"type": "String"}}},
+  "@upcomingPreordersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "noUpcomingPreorders": "لا توجد طلبات مسبقة قادمة",
   "@noUpcomingPreorders": {},
   "preorderBadge": "طلب مسبق",
   "@preorderBadge": {},
   "scheduledForTime": "مجدول في {time}",
-  "@scheduledForTime": {"placeholders": {"time": {"type": "String"}}},
+  "@scheduledForTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "dueInHoursMinutes": "بعد {hours} س {minutes} د",
-  "@dueInHoursMinutes": {"placeholders": {"hours": {"type": "String"}, "minutes": {"type": "String"}}},
+  "@dueInHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "dueInMinutes": "بعد {minutes} د",
-  "@dueInMinutes": {"placeholders": {"minutes": {"type": "String"}}},
+  "@dueInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "preorderDueNow": "موعده الآن",
   "@preorderDueNow": {},
   "driverRequested": "تم طلب سائق",
@@ -803,7 +830,16 @@
   "preorderReminderTitle": "طلب مسبق قريب الموعد",
   "@preorderReminderTitle": {},
   "preorderReminderBody": "الطلب المسبق {code} موعده {time}. يرجى تجهيزه.",
-  "@preorderReminderBody": {"placeholders": {"code": {"type": "String"}, "time": {"type": "String"}}},
+  "@preorderReminderBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "assignedStatus": "تم التعيين",
   "@assignedStatus": {},
   "cancelledOnLabel": "تم الإلغاء في {date}",
@@ -979,7 +1015,7 @@
   "@noReportsInThisDateRange": {},
   "noReviewsFound": "لم يتم العثور على مراجعات",
   "@noReviewsFound": {},
-  "noUpcomingLeavesFound": "لا توجد إجازات قادمة",
+  "noUpcomingLeavesFound": "لم يتم العثور على إجازات قادمة",
   "@noUpcomingLeavesFound": {},
   "ongoing": "قيد التنفيذ",
   "@ongoing": {},
@@ -1013,13 +1049,11 @@
   "@paymentSummary": {},
   "pickedUp": "تم الاستلام",
   "@pickedUp": {},
-  "pleaseLeaveThePackageAtTheFrontDoorAndRing":
-      "يرجى ترك الطرد عند باب المنزل والاتصال",
+  "pleaseLeaveThePackageAtTheFrontDoorAndRing": "يرجى ترك الطرد عند باب المنزل والاتصال",
   "@pleaseLeaveThePackageAtTheFrontDoorAndRing": {},
   "pleaseSelectFromDateAndToDate": "يرجى تحديد التاريخ من والتاريخ إلى",
   "@pleaseSelectFromDateAndToDate": {},
-  "pleaseSigninToYourAccountAndStartTheAdventure":
-      "يرجى تسجيل الدخول إلى حسابك والبدء في المغامرة",
+  "pleaseSigninToYourAccountAndStartTheAdventure": "يرجى تسجيل الدخول إلى حسابك والبدء في المغامرة",
   "@pleaseSigninToYourAccountAndStartTheAdventure": {},
   "popularItems": "الأصناف الشائعة",
   "@popularItems": {},
@@ -1061,7 +1095,7 @@
   "@welcomeToSaimpexVendor": {},
   "storeReports": "تقارير المتجر",
   "@storeReports": {},
-  "amount": "المبلغ",
+  "amount": "مبلغ",
   "@amount": {},
   "balanceAfterPayout": "الرصيد بعد الدفع",
   "@balanceAfterPayout": {},
@@ -1111,7 +1145,7 @@
   "averageRating": "التقييم المتوسط",
   "cancelLeave": "إلغاء الإجازة",
   "category": "فئة",
-  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المحدد",
+  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار",
   "createdDate": "تاريخ الإنشاء",
   "description": "الوصف",
   "descriptionArabic": "الوصف (العربية)",
@@ -1197,11 +1231,9 @@
   "couponType": "نوع القسيمة",
   "select": "اختيار",
   "percentage": "نسبة مئوية",
-  "amount": "مبلغ",
   "enterDiscount": "أدخل الخصم",
   "enterCount": "أدخل العدد",
   "pleaseSelectCouponType": "يرجى اختيار نوع القسيمة",
-  "earnings": "الأرباح",
   "orderAmount": "مبلغ الطلب",
   "payouts": "الدفعات",
   "credited": "تم الإيداع",
@@ -1215,57 +1247,13 @@
   "notes": "ملاحظات",
   "available": "متاح",
   "workHours": "ساعات العمل",
-  "menuBulkImport": "استيراد القائمة بالجملة",
-  "receivedPayouts": "الدفعات المستلمة",
-  "storeReports": "تقارير المتجر",
   "restaurantStatus": "حالة المطعم",
   "busy": "مشغول",
-  "owner": "المالك",
   "storeId": "معرف المتجر",
-  "name": "الاسم",
-  "contact": "الاتصال",
-  "email": "البريد الإلكتروني",
-  "status": "الحالة",
-  "address": "العنوان",
-  "holderName": "اسم صاحب الحساب",
-  "accountNumber": "رقم الحساب",
-  "swiftCode": "رمز SWIFT",
-  "regNumber": "رقم التسجيل",
-  "regDate": "تاريخ التسجيل",
-  "gstNumber": "رقم ضريبة السلع والخدمات",
-  "commissionPercentage": "نسبة العموله",
-  "totalProfit": "إجمالي الربح",
-  "restaurantOne": "المطعم 1",
-  "categoryLabel": "الفئة",
   "veg": "نباتي",
   "nonVeg": "غير نباتي",
-  "all": "الكل",
-  "pending": "قيد الانتظار",
-  "cancelled": "ملغي",
-  "account": "الحساب",
-  "leaves": "الإجازات",
-  "menu": "القائمة",
-  "items": "الأصناف",
-  "basket": "السلة",
-  "bankDetails": "تفاصيل البنك",
-  "registrationDetails": "تفاصيل التسجيل",
-  "paymentDetails": "تفاصيل الدفع",
-  "ownerIdentityProof": "إثبات هوية المالك",
-  "certificates": "الشهادات",
-  "ratingReviews": "التقييمات والمراجعات",
-  "viewAll": "عرض الكل",
-  "anonymous": "مجهول",
-  "noComment": "لا يوجد تعليق",
-  "noReviewsFound": "لم يتم العثور على مراجعات",
-  "markLeave": "تحديد إجازة",
-  "leavesHistory": "سجل الإجازات",
-  "upcomingLeaves": "الإجازات القادمة",
-  "leave": "إجازة",
-  "noUpcomingLeavesFound": "لم يتم العثور على إجازات قادمة",
-  "completedLeaves": "الإجازات المكتملة",
-  "noCompletedLeavesFound": "لم يتم العثور على إجازات مكتملة",
-  "pleaseSelectAnXlsxFileOnly": "يرجى اختيار ملف .xlsx فقط",
-  "couldNotAccessTheSelectedFile": "تعذر الوصول إلى الملف المختار",
+  "itemUpdatedSuccessfully": "تم تحديث المنتج بنجاح",
+  "failedToUpdateItem": "فشل تحديث المنتج",
   "cleaningAcceptBooking": "قبول الحجز",
   "@cleaningAcceptBooking": {},
   "cleaningAcceptingBookings": "يستقبل الحجوزات",
@@ -1475,7 +1463,13 @@
   "cleaningTapToUploadImage": "اضغط لرفع صورة",
   "@cleaningTapToUploadImage": {},
   "cleaningTodayHours": "اليوم: {hours}",
-  "@cleaningTodayHours": {"placeholders": {"hours": {"type": "String"}}},
+  "@cleaningTodayHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
   "cleaningTodaysBookings": "حجوزات اليوم",
   "@cleaningTodaysBookings": {},
   "cleaningTotal": "المجموع",
@@ -1537,9 +1531,21 @@
   "waterBottles": "قوارير",
   "@waterBottles": {},
   "waterBottlesCount": "{count} قارورة",
-  "@waterBottlesCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterBottlesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterBottlesLeft": "متبقي {count} قارورة",
-  "@waterBottlesLeft": {"placeholders": {"count": {"type": "String"}}},
+  "@waterBottlesLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterBrand": "العلامة التجارية",
   "@waterBrand": {},
   "waterBrandName": "اسم العلامة التجارية",
@@ -1563,7 +1569,13 @@
   "waterConfirmDeleteItem": "هل أنت متأكد من أنك تريد حذف هذا المنتج؟",
   "@waterConfirmDeleteItem": {},
   "waterConfirmDeleteNamedItem": "هل أنت متأكد من أنك تريد حذف \"{name}\"؟",
-  "@waterConfirmDeleteNamedItem": {"placeholders": {"name": {"type": "String"}}},
+  "@waterConfirmDeleteNamedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "waterConfirmMarkAvailable": "هل أنت متأكد من أنك تريد تحديد هذا المنتج كمتوفر؟",
   "@waterConfirmMarkAvailable": {},
   "waterConfirmMarkOutOfStock": "هل أنت متأكد من أنك تريد تحديد هذا المنتج كغير متوفر؟",
@@ -1603,7 +1615,16 @@
   "waterDescription": "الوصف",
   "@waterDescription": {},
   "waterDistanceRangeKm": "من {min} إلى {max} كم",
-  "@waterDistanceRangeKm": {"placeholders": {"min": {"type": "String"}, "max": {"type": "String"}}},
+  "@waterDistanceRangeKm": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "waterEditDistanceRange": "تعديل نطاق المسافة",
   "@waterEditDistanceRange": {},
   "waterEditPrice": "تعديل السعر",
@@ -1625,31 +1646,109 @@
   "waterEnterReason": "أدخل السبب",
   "@waterEnterReason": {},
   "waterErrorAcceptingOrder": "خطأ أثناء قبول الطلب: {error}",
-  "@waterErrorAcceptingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAcceptingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorAcceptingSubscription": "خطأ أثناء قبول الاشتراك: {error}",
-  "@waterErrorAcceptingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAcceptingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorAddingProduct": "خطأ في إضافة المنتج: {error}",
-  "@waterErrorAddingProduct": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAddingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorCancellingOrder": "خطأ أثناء إلغاء الطلب: {error}",
-  "@waterErrorCancellingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorCancellingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorDeletingProduct": "خطأ في حذف المنتج: {error}",
-  "@waterErrorDeletingProduct": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorDeletingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorMarkingOrderAsReady": "خطأ أثناء تحديد الطلب كجاهز: {error}",
-  "@waterErrorMarkingOrderAsReady": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorMarkingOrderAsReady": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorPausingSubscription": "خطأ أثناء إيقاف الاشتراك مؤقتًا: {error}",
-  "@waterErrorPausingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorPausingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorPreparingOrder": "خطأ أثناء تحضير الطلب: {error}",
-  "@waterErrorPreparingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorPreparingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorRejectingSubscription": "خطأ أثناء رفض الاشتراك: {error}",
-  "@waterErrorRejectingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorRejectingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorResumingSubscription": "خطأ أثناء استئناف الاشتراك: {error}",
-  "@waterErrorResumingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorResumingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingItemStatus": "خطأ في تحديث حالة المنتج: {error}",
-  "@waterErrorUpdatingItemStatus": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingItemStatus": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingPrice": "خطأ في تحديث السعر: {error}",
-  "@waterErrorUpdatingPrice": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingPrice": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingStock": "خطأ في تحديث المخزون: {error}",
-  "@waterErrorUpdatingStock": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingStock": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterEstValue": "القيمة التقديرية",
   "@waterEstValue": {},
   "waterEstimatedDeliveryFee": "رسوم التوصيل التقديرية",
@@ -1699,25 +1798,55 @@
   "waterFillInEveryField": "يرجى ملء جميع الحقول",
   "@waterFillInEveryField": {},
   "waterFilterAllCount": "الكل {count}",
-  "@waterFilterAllCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFilterByCategory": "تصفية حسب الفئة",
   "@waterFilterByCategory": {},
   "waterFilterInStockCount": "متوفر {count}",
-  "@waterFilterInStockCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterInStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFilterLowStockCount": "مخزون منخفض {count}",
-  "@waterFilterLowStockCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterLowStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFlat": "مبلغ ثابت",
   "@waterFlat": {},
   "waterFrequency": "التكرار",
   "@waterFrequency": {},
   "waterIdLabel": "الرقم: {id}",
-  "@waterIdLabel": {"placeholders": {"id": {"type": "String"}}},
+  "@waterIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "waterImage": "صورة",
   "@waterImage": {},
   "waterImageFormatHint": "PNG أو JPG حتى 5 ميغابايت",
   "@waterImageFormatHint": {},
   "waterImagesSelected": "تم اختيار {count} صور",
-  "@waterImagesSelected": {"placeholders": {"count": {"type": "String"}}},
+  "@waterImagesSelected": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterInStock": "متوفر",
   "@waterInStock": {},
   "waterInventory": "المخزون",
@@ -1731,7 +1860,13 @@
   "waterItemMarkedOutOfStock": "تم تحديد المنتج كغير متوفر بنجاح",
   "@waterItemMarkedOutOfStock": {},
   "waterLastSold": "آخر بيع: {date}",
-  "@waterLastSold": {"placeholders": {"date": {"type": "String"}}},
+  "@waterLastSold": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "waterLeaveCancelledSuccessfully": "تم إلغاء الإجازة بنجاح",
   "@waterLeaveCancelledSuccessfully": {},
   "waterLeaveManagement": "إدارة الإجازات",
@@ -1769,7 +1904,13 @@
   "waterMore": "المزيد",
   "@waterMore": {},
   "waterMoreProducts": "+{count} منتجات أخرى",
-  "@waterMoreProducts": {"placeholders": {"count": {"type": "String"}}},
+  "@waterMoreProducts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterMorning": "الصباح",
   "@waterMorning": {},
   "waterNewBadge": "جديد",
@@ -1821,7 +1962,13 @@
   "waterOrderDelivered": "تم توصيل الطلب",
   "@waterOrderDelivered": {},
   "waterOrderItemsCount": "عناصر الطلب ({count})",
-  "@waterOrderItemsCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterOrderItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterOrderMarkedAsReady": "تم تحديد الطلب كجاهز بنجاح",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "تم نقل الطلب إلى التحضير بنجاح",
@@ -1847,7 +1994,13 @@
   "waterPausedByLabel": "أوقفه:",
   "@waterPausedByLabel": {},
   "waterPausedOn": "أُوقف في: {date}",
-  "@waterPausedOn": {"placeholders": {"date": {"type": "String"}}},
+  "@waterPausedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "waterPausedOnLabel": "تاريخ الإيقاف:",
   "@waterPausedOnLabel": {},
   "waterPaymentDetails": "تفاصيل الدفع",
@@ -1869,9 +2022,24 @@
   "waterPlan": "الخطة",
   "@waterPlan": {},
   "waterPlanRangeStart": "البداية {start}",
-  "@waterPlanRangeStart": {"placeholders": {"start": {"type": "String"}}},
+  "@waterPlanRangeStart": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      }
+    }
+  },
   "waterPlanRangeStartEnd": "البداية {start} - النهاية {end}",
-  "@waterPlanRangeStartEnd": {"placeholders": {"start": {"type": "String"}, "end": {"type": "String"}}},
+  "@waterPlanRangeStartEnd": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
   "waterPlanSummary": "ملخص الخطة",
   "@waterPlanSummary": {},
   "waterPleaseEnterAvailableStock": "يرجى إدخال المخزون المتاح",
@@ -1951,7 +2119,13 @@
   "waterRevenueSummary": "ملخص الإيرادات",
   "@waterRevenueSummary": {},
   "waterReviewsCount": "({count} تقييم)",
-  "@waterReviewsCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterReviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterSalesPerformance": "أداء المبيعات",
   "@waterSalesPerformance": {},
   "waterSaveProduct": "حفظ المنتج",
@@ -1985,7 +2159,13 @@
   "waterStockHistory": "سجل المخزون",
   "@waterStockHistory": {},
   "waterStockIdLabel": "رقم المخزون: {id}",
-  "@waterStockIdLabel": {"placeholders": {"id": {"type": "String"}}},
+  "@waterStockIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "waterStockRemoved": "تم سحب المخزون",
   "@waterStockRemoved": {},
   "waterStockUpdatedSuccessfully": "تم تحديث المخزون بنجاح",
@@ -2033,7 +2213,16 @@
   "waterToDateAfterFromDate": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
   "@waterToDateAfterFromDate": {},
   "waterTodayTimings": "اليوم: {open} - {close}",
-  "@waterTodayTimings": {"placeholders": {"open": {"type": "String"}, "close": {"type": "String"}}},
+  "@waterTodayTimings": {
+    "placeholders": {
+      "open": {
+        "type": "String"
+      },
+      "close": {
+        "type": "String"
+      }
+    }
+  },
   "waterTotalHeader": "الإجمالي",
   "@waterTotalHeader": {},
   "waterTotalPaid": "إجمالي المدفوع",
@@ -2061,11 +2250,91 @@
   "waterWeeklySchedule": "الجدول الأسبوعي",
   "@waterWeeklySchedule": {},
   "waterWelcomeToShop": "مرحبًا بك في {name}!",
-  "@waterWelcomeToShop": {"placeholders": {"name": {"type": "String"}}},
+  "@waterWelcomeToShop": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "waterWorkingHoursUpdated": "تم تحديث ساعات العمل بنجاح",
   "@waterWorkingHoursUpdated": {},
   "waterYou": "أنت",
-  "@waterYou": {}
-  "itemUpdatedSuccessfully": "تم تحديث المنتج بنجاح",
-  "failedToUpdateItem": "فشل تحديث المنتج"
+  "@waterYou": {},
+  "cleaningBookingAvailabilityFailed": "تعذر تحديث التوفر. يرجى المحاولة مرة أخرى.",
+  "@cleaningBookingAvailabilityFailed": {},
+  "cleaningBookingCancelReasonHeader": "سبب الإلغاء",
+  "@cleaningBookingCancelReasonHeader": {},
+  "cleaningBookingDaysAgo": "منذ {count} يوم",
+  "@cleaningBookingDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingHoursAgo": "منذ {count} ساعة",
+  "@cleaningBookingHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingLoadFailed": "تعذر تحميل البيانات. يرجى المحاولة مرة أخرى.",
+  "@cleaningBookingLoadFailed": {},
+  "cleaningBookingMinutesAgo": "منذ {count} دقيقة",
+  "@cleaningBookingMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingStatusCancelled": "ملغاة",
+  "@cleaningBookingStatusCancelled": {},
+  "cleaningBookingStatusOnTheWay": "في الطريق",
+  "@cleaningBookingStatusOnTheWay": {},
+  "cleaningBookingUpdateFailed": "تعذر تحديث الحجز. يرجى المحاولة مرة أخرى.",
+  "@cleaningBookingUpdateFailed": {},
+  "cleaningSvcAddOneSpace": "أضف مساحة واحدة على الأقل مع سعرها.",
+  "@cleaningSvcAddOneSpace": {},
+  "cleaningSvcChatLoadError": "تعذر تحميل الرسائل.",
+  "@cleaningSvcChatLoadError": {},
+  "cleaningSvcChatUnavailable": "المحادثة مع هذا العميل غير متاحة بعد.",
+  "@cleaningSvcChatUnavailable": {},
+  "cleaningSvcGenericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "@cleaningSvcGenericError": {},
+  "cleaningSvcLoadError": "تعذر تحميل خدماتك.",
+  "@cleaningSvcLoadError": {},
+  "cleaningSvcSelectServiceType": "يرجى اختيار نوع الخدمة.",
+  "@cleaningSvcSelectServiceType": {},
+  "cleaningSvcTypesLoadError": "تعذر تحميل أنواع الخدمات.",
+  "@cleaningSvcTypesLoadError": {},
+  "waterAmountDue": "المبلغ المستحق",
+  "@waterAmountDue": {},
+  "waterBiWeekly": "كل أسبوعين",
+  "@waterBiWeekly": {},
+  "waterCalendarNotAvailable": "تقويم التوصيل غير متاح بعد",
+  "@waterCalendarNotAvailable": {},
+  "waterCalendarNotAvailableHint": "ستظهر هنا عمليات توصيل الاشتراكات المجدولة عندما تصبح هذه الميزة جاهزة. يمكنك رؤية موعد التوصيل التالي لكل اشتراك في تفاصيله.",
+  "@waterCalendarNotAvailableHint": {},
+  "waterEveryNDays": "كل {days} أيام",
+  "@waterEveryNDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "waterMonthly": "شهري",
+  "@waterMonthly": {},
+  "waterSomethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "@waterSomethingWentWrong": {},
+  "waterTomorrow": "غدًا",
+  "@waterTomorrow": {},
+  "waterWallet": "المحفظة",
+  "@waterWallet": {},
+  "waterWeekly": "أسبوعي",
+  "@waterWeekly": {}
 }

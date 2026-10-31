@@ -1285,11 +1285,6 @@ class _PaymentSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final payTypeLabel = (paymentType != null && paymentType!.trim().isNotEmpty)
-        ? paymentType!.trim()
-        : (isOnline
-            ? S.of(context).onlinePayment
-            : S.of(context).cashOnDelivery);
     final payTypeLabel = paymentTypeLabel(paymentType, cashFallback: !isOnline);
 
     return Container(

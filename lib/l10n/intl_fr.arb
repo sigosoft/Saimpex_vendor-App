@@ -304,7 +304,7 @@
   "@outOfStock": {},
   "pay": "Payer",
   "@pay": {},
-  "paymentDetails": "Détails du paiement",
+  "paymentDetails": "DÉTAILS DU PAIEMENT",
   "@paymentDetails": {},
   "paymentType": "Type de paiement",
   "@paymentType": {},
@@ -536,13 +536,13 @@
   "@leaves": {},
   "menu": "Menu",
   "@menu": {},
-  "menuBulkImport": "Importation Massive de Menu",
+  "menuBulkImport": "Importation en gros du menu",
   "@menuBulkImport": {},
   "basket": "Panier",
   "@basket": {},
   "basketSearchHint": "Recherche par ID, nom d'article",
   "@basketSearchHint": {},
-  "receivedPayouts": "Paiements Reçus",
+  "receivedPayouts": "Paiements reçus",
   "@receivedPayouts": {},
   "restaurantReports": "Rapports du Restaurant",
   "@restaurantReports": {},
@@ -552,7 +552,7 @@
   "@bankDetails": {},
   "aboutTheRestaurant": "À PROPOS DU RESTAURANT",
   "@aboutTheRestaurant": {},
-  "registrationDetails": "DÉTAILS D'INSCRIPTION",
+  "registrationDetails": "DÉTAILS DE L'ENREGISTREMENT",
   "@registrationDetails": {},
   "paymentSummaryDetails": "DÉTAILS DE PAIEMENT",
   "@paymentSummaryDetails": {},
@@ -560,25 +560,25 @@
   "@ownerIdentityProof": {},
   "certificates": "CERTIFICATS",
   "@certificates": {},
-  "ratingReviews": "ÉVALUATIONS ET AVIS",
+  "ratingReviews": "Évaluations et commentaires",
   "@ratingReviews": {},
-  "viewAll": "Voir Tout",
+  "viewAll": "Voir tout",
   "@viewAll": {},
-  "holderName": "Nom du Titulaire",
+  "holderName": "Nom du titulaire",
   "@holderName": {},
   "ibanNumber": "Numéro IBAN",
   "@ibanNumber": {},
   "swiftCode": "Code SWIFT",
   "@swiftCode": {},
-  "regNumber": "Numéro d'Enreg.",
+  "regNumber": "Numéro d'enreg.",
   "@regNumber": {},
-  "regDate": "Date d'Enreg.",
+  "regDate": "Date d'enreg.",
   "@regDate": {},
   "gstNumber": "Numéro de TVA",
   "@gstNumber": {},
-  "commissionPercentage": "Commission %",
+  "commissionPercentage": "Pourcentage de commission",
   "@commissionPercentage": {},
-  "totalProfit": "Bénéfice Total",
+  "totalProfit": "Bénéfice total",
   "@totalProfit": {},
   "orderColon": "Commande : ",
   "@orderColon": {},
@@ -586,9 +586,9 @@
   "@markLeave": {},
   "leavesHistory": "HISTORIQUE DES CONGÉS",
   "@leavesHistory": {},
-  "upcomingLeaves": "Congés à Venir",
+  "upcomingLeaves": "Congés à venir",
   "@upcomingLeaves": {},
-  "completedLeaves": "Congés Terminés",
+  "completedLeaves": "Congés terminés",
   "@completedLeaves": {},
   "fromDate": "Date de Début",
   "@fromDate": {},
@@ -602,7 +602,7 @@
   "@scheduled": {},
   "completed": "TERMINÉ",
   "@completed": {},
-  "pending": "En Attente",
+  "pending": "En attente",
   "@pending": {},
   "accepted": "Accepté",
   "@accepted": {},
@@ -751,17 +751,44 @@
   "preOrders": "Précommandes",
   "@preOrders": {},
   "upcomingPreordersCount": "Précommandes à venir ({count})",
-  "@upcomingPreordersCount": {"placeholders": {"count": {"type": "String"}}},
+  "@upcomingPreordersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "noUpcomingPreorders": "Aucune précommande à venir",
   "@noUpcomingPreorders": {},
   "preorderBadge": "Précommande",
   "@preorderBadge": {},
   "scheduledForTime": "Prévue pour {time}",
-  "@scheduledForTime": {"placeholders": {"time": {"type": "String"}}},
+  "@scheduledForTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "dueInHoursMinutes": "Dans {hours} h {minutes} min",
-  "@dueInHoursMinutes": {"placeholders": {"hours": {"type": "String"}, "minutes": {"type": "String"}}},
+  "@dueInHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "dueInMinutes": "Dans {minutes} min",
-  "@dueInMinutes": {"placeholders": {"minutes": {"type": "String"}}},
+  "@dueInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "preorderDueNow": "À livrer maintenant",
   "@preorderDueNow": {},
   "driverRequested": "Livreur demandé",
@@ -771,7 +798,16 @@
   "preorderReminderTitle": "Précommande bientôt due",
   "@preorderReminderTitle": {},
   "preorderReminderBody": "La précommande {code} est prévue à {time}. Merci de la préparer.",
-  "@preorderReminderBody": {"placeholders": {"code": {"type": "String"}, "time": {"type": "String"}}},
+  "@preorderReminderBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "assignedStatus": "Assigné",
   "@assignedStatus": {},
   "cancelledOnLabel": "Annulé le {date}",
@@ -1024,14 +1060,11 @@
   "@paymentSummary": {},
   "pickedUp": "RÉCUPÉRÉ",
   "@pickedUp": {},
-  "pleaseLeaveThePackageAtTheFrontDoorAndRing":
-      "Veuillez laisser le colis à la porte d'entrée et sonner",
+  "pleaseLeaveThePackageAtTheFrontDoorAndRing": "Veuillez laisser le colis à la porte d'entrée et sonner",
   "@pleaseLeaveThePackageAtTheFrontDoorAndRing": {},
-  "pleaseSelectFromDateAndToDate":
-      "Veuillez sélectionner la date de début et la date de fin",
+  "pleaseSelectFromDateAndToDate": "Veuillez sélectionner la date de début et la date de fin",
   "@pleaseSelectFromDateAndToDate": {},
-  "pleaseSigninToYourAccountAndStartTheAdventure":
-      "Veuillez vous connecter à votre compte et commencer l'aventure",
+  "pleaseSigninToYourAccountAndStartTheAdventure": "Veuillez vous connecter à votre compte et commencer l'aventure",
   "@pleaseSigninToYourAccountAndStartTheAdventure": {},
   "popularItems": "Articles populaires",
   "@popularItems": {},
@@ -1077,7 +1110,7 @@
   "@dashboard": {},
   "discount": "Remise",
   "@discount": {},
-  "earnings": "Revenus",
+  "earnings": "Gains",
   "@earnings": {},
   "goToDashboard": "Aller au tableau de bord",
   "@goToDashboard": {},
@@ -1153,7 +1186,7 @@
   "noLeaveHistoryFound": "Aucun historique de congés trouvé.",
   "onceYouHaveDownloadedAndFilledTheTemplateSelectThe": "Une fois le modèle téléchargé et rempli, sélectionnez la catégorie correspondante et téléversez le fichier.",
   "openWithAnotherApp": "Ouvrir avec une autre application",
-  "pleaseSelectAnXlsxFileOnly": "Veuillez sélectionner uniquement un fichier .xlsx",
+  "pleaseSelectAnXlsxFileOnly": "Veuillez sélectionner un fichier .xlsx uniquement",
   "postuploadEditing": "Modification après téléchargement",
   "preparationTime": "TEMPS DE PRÉPARATION",
   "preparationTimeMinutes": "Temps de préparation (minutes)",
@@ -1199,11 +1232,9 @@
   "couponType": "Type de coupon",
   "select": "Sélectionner",
   "percentage": "Pourcentage",
-  "amount": "Montant",
   "enterDiscount": "Entrez la remise",
   "enterCount": "Entrez le nombre",
   "pleaseSelectCouponType": "Veuillez sélectionner le type de coupon",
-  "earnings": "Gains",
   "orderAmount": "Montant de la commande",
   "payouts": "Paiements",
   "credited": "Crédité",
@@ -1217,57 +1248,13 @@
   "notes": "Notes",
   "available": "Disponible",
   "workHours": "Heures de travail",
-  "menuBulkImport": "Importation en gros du menu",
-  "receivedPayouts": "Paiements reçus",
-  "storeReports": "Rapports du magasin",
   "restaurantStatus": "Statut du restaurant",
   "busy": "Occupé",
-  "owner": "Propriétaire",
   "storeId": "ID du magasin",
-  "name": "Nom",
-  "contact": "Contact",
-  "email": "E-mail",
-  "status": "Statut",
-  "address": "Adresse",
-  "holderName": "Nom du titulaire",
-  "accountNumber": "Numéro de compte",
-  "swiftCode": "Code SWIFT",
-  "regNumber": "Numéro d'enreg.",
-  "regDate": "Date d'enreg.",
-  "gstNumber": "Numéro de TVA",
-  "commissionPercentage": "Pourcentage de commission",
-  "totalProfit": "Bénéfice total",
-  "restaurantOne": "Restaurant 1",
-  "categoryLabel": "Catégorie",
   "veg": "Végétarien",
   "nonVeg": "Non végétarien",
-  "all": "Tout",
-  "pending": "En attente",
-  "cancelled": "Annulé",
-  "account": "Compte",
-  "leaves": "Congés",
-  "menu": "Menu",
-  "items": "Articles",
-  "basket": "Panier",
-  "bankDetails": "COORDONNÉES BANCAIRES",
-  "registrationDetails": "DÉTAILS DE L'ENREGISTREMENT",
-  "paymentDetails": "DÉTAILS DU PAIEMENT",
-  "ownerIdentityProof": "PREUVE D'IDENTITÉ DU PROPRIÉTAIRE",
-  "certificates": "CERTIFICATS",
-  "ratingReviews": "Évaluations et commentaires",
-  "viewAll": "Voir tout",
-  "anonymous": "Anonyme",
-  "noComment": "Aucun commentaire",
-  "noReviewsFound": "Aucun avis trouvé",
-  "markLeave": "MARQUER UN CONGÉ",
-  "leavesHistory": "HISTORIQUE DES CONGÉS",
-  "upcomingLeaves": "Congés à venir",
-  "leave": "Congé",
-  "noUpcomingLeavesFound": "Aucun congé à venir trouvé",
-  "completedLeaves": "Congés terminés",
-  "noCompletedLeavesFound": "Aucun congé terminé trouvé",
-  "pleaseSelectAnXlsxFileOnly": "Veuillez sélectionner un fichier .xlsx uniquement",
-  "couldNotAccessTheSelectedFile": "Impossible d'accéder au fichier sélectionné",
+  "itemUpdatedSuccessfully": "Article mis à jour avec succès",
+  "failedToUpdateItem": "Échec de la mise à jour de l'article",
   "cleaningAcceptBooking": "Accepter la réservation",
   "@cleaningAcceptBooking": {},
   "cleaningAcceptingBookings": "Réservations acceptées",
@@ -1477,7 +1464,13 @@
   "cleaningTapToUploadImage": "Appuyez pour ajouter une image",
   "@cleaningTapToUploadImage": {},
   "cleaningTodayHours": "Aujourd'hui : {hours}",
-  "@cleaningTodayHours": {"placeholders": {"hours": {"type": "String"}}},
+  "@cleaningTodayHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
   "cleaningTodaysBookings": "Réservations du jour",
   "@cleaningTodaysBookings": {},
   "cleaningTotal": "Total",
@@ -1539,9 +1532,21 @@
   "waterBottles": "Bouteilles",
   "@waterBottles": {},
   "waterBottlesCount": "{count} bouteilles",
-  "@waterBottlesCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterBottlesCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterBottlesLeft": "{count} bouteilles restantes",
-  "@waterBottlesLeft": {"placeholders": {"count": {"type": "String"}}},
+  "@waterBottlesLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterBrand": "Marque",
   "@waterBrand": {},
   "waterBrandName": "Nom de la marque",
@@ -1565,7 +1570,13 @@
   "waterConfirmDeleteItem": "Voulez-vous vraiment supprimer cet article ?",
   "@waterConfirmDeleteItem": {},
   "waterConfirmDeleteNamedItem": "Voulez-vous vraiment supprimer « {name} » ?",
-  "@waterConfirmDeleteNamedItem": {"placeholders": {"name": {"type": "String"}}},
+  "@waterConfirmDeleteNamedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "waterConfirmMarkAvailable": "Voulez-vous vraiment marquer cet article comme disponible ?",
   "@waterConfirmMarkAvailable": {},
   "waterConfirmMarkOutOfStock": "Voulez-vous vraiment marquer cet article en rupture de stock ?",
@@ -1605,7 +1616,16 @@
   "waterDescription": "Description",
   "@waterDescription": {},
   "waterDistanceRangeKm": "{min} - {max} km",
-  "@waterDistanceRangeKm": {"placeholders": {"min": {"type": "String"}, "max": {"type": "String"}}},
+  "@waterDistanceRangeKm": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "waterEditDistanceRange": "Modifier la tranche de distance",
   "@waterEditDistanceRange": {},
   "waterEditPrice": "Modifier le prix",
@@ -1627,31 +1647,109 @@
   "waterEnterReason": "Saisissez un motif",
   "@waterEnterReason": {},
   "waterErrorAcceptingOrder": "Erreur lors de l'acceptation de la commande : {error}",
-  "@waterErrorAcceptingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAcceptingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorAcceptingSubscription": "Erreur lors de l'acceptation de l'abonnement : {error}",
-  "@waterErrorAcceptingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAcceptingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorAddingProduct": "Erreur lors de l'ajout du produit : {error}",
-  "@waterErrorAddingProduct": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorAddingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorCancellingOrder": "Erreur lors de l'annulation de la commande : {error}",
-  "@waterErrorCancellingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorCancellingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorDeletingProduct": "Erreur lors de la suppression du produit : {error}",
-  "@waterErrorDeletingProduct": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorDeletingProduct": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorMarkingOrderAsReady": "Erreur lors du marquage de la commande comme prête : {error}",
-  "@waterErrorMarkingOrderAsReady": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorMarkingOrderAsReady": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorPausingSubscription": "Erreur lors de la suspension de l'abonnement : {error}",
-  "@waterErrorPausingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorPausingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorPreparingOrder": "Erreur lors de la préparation de la commande : {error}",
-  "@waterErrorPreparingOrder": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorPreparingOrder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorRejectingSubscription": "Erreur lors du refus de l'abonnement : {error}",
-  "@waterErrorRejectingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorRejectingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorResumingSubscription": "Erreur lors de la reprise de l'abonnement : {error}",
-  "@waterErrorResumingSubscription": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorResumingSubscription": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingItemStatus": "Erreur lors de la mise à jour du statut : {error}",
-  "@waterErrorUpdatingItemStatus": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingItemStatus": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingPrice": "Erreur lors de la mise à jour du prix : {error}",
-  "@waterErrorUpdatingPrice": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingPrice": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterErrorUpdatingStock": "Erreur lors de la mise à jour du stock : {error}",
-  "@waterErrorUpdatingStock": {"placeholders": {"error": {"type": "String"}}},
+  "@waterErrorUpdatingStock": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "waterEstValue": "Valeur est.",
   "@waterEstValue": {},
   "waterEstimatedDeliveryFee": "Frais de livraison estimés",
@@ -1701,25 +1799,55 @@
   "waterFillInEveryField": "Veuillez remplir tous les champs",
   "@waterFillInEveryField": {},
   "waterFilterAllCount": "Tous {count}",
-  "@waterFilterAllCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFilterByCategory": "Filtrer par catégorie",
   "@waterFilterByCategory": {},
   "waterFilterInStockCount": "En stock {count}",
-  "@waterFilterInStockCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterInStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFilterLowStockCount": "Stock faible {count}",
-  "@waterFilterLowStockCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterFilterLowStockCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterFlat": "Montant fixe",
   "@waterFlat": {},
   "waterFrequency": "Fréquence",
   "@waterFrequency": {},
   "waterIdLabel": "ID : {id}",
-  "@waterIdLabel": {"placeholders": {"id": {"type": "String"}}},
+  "@waterIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "waterImage": "Image",
   "@waterImage": {},
   "waterImageFormatHint": "PNG, JPG jusqu'à 5 Mo",
   "@waterImageFormatHint": {},
   "waterImagesSelected": "{count} images sélectionnées",
-  "@waterImagesSelected": {"placeholders": {"count": {"type": "String"}}},
+  "@waterImagesSelected": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterInStock": "En stock",
   "@waterInStock": {},
   "waterInventory": "Inventaire",
@@ -1733,7 +1861,13 @@
   "waterItemMarkedOutOfStock": "Article marqué en rupture de stock",
   "@waterItemMarkedOutOfStock": {},
   "waterLastSold": "Dernière vente : {date}",
-  "@waterLastSold": {"placeholders": {"date": {"type": "String"}}},
+  "@waterLastSold": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "waterLeaveCancelledSuccessfully": "Congé annulé avec succès",
   "@waterLeaveCancelledSuccessfully": {},
   "waterLeaveManagement": "Gestion des congés",
@@ -1771,7 +1905,13 @@
   "waterMore": "Plus",
   "@waterMore": {},
   "waterMoreProducts": "+{count} autres produits",
-  "@waterMoreProducts": {"placeholders": {"count": {"type": "String"}}},
+  "@waterMoreProducts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterMorning": "Matin",
   "@waterMorning": {},
   "waterNewBadge": "NOUVEAU",
@@ -1823,7 +1963,13 @@
   "waterOrderDelivered": "Commande livrée",
   "@waterOrderDelivered": {},
   "waterOrderItemsCount": "ARTICLES ({count})",
-  "@waterOrderItemsCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterOrderItemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterOrderMarkedAsReady": "Commande marquée comme prête",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Commande passée en préparation",
@@ -1849,7 +1995,13 @@
   "waterPausedByLabel": "SUSPENDU PAR :",
   "@waterPausedByLabel": {},
   "waterPausedOn": "Suspendu le : {date}",
-  "@waterPausedOn": {"placeholders": {"date": {"type": "String"}}},
+  "@waterPausedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "waterPausedOnLabel": "SUSPENDU LE :",
   "@waterPausedOnLabel": {},
   "waterPaymentDetails": "Détails de paiement",
@@ -1871,9 +2023,24 @@
   "waterPlan": "Formule",
   "@waterPlan": {},
   "waterPlanRangeStart": "Début {start}",
-  "@waterPlanRangeStart": {"placeholders": {"start": {"type": "String"}}},
+  "@waterPlanRangeStart": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      }
+    }
+  },
   "waterPlanRangeStartEnd": "Début {start} - Fin {end}",
-  "@waterPlanRangeStartEnd": {"placeholders": {"start": {"type": "String"}, "end": {"type": "String"}}},
+  "@waterPlanRangeStartEnd": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
   "waterPlanSummary": "RÉSUMÉ DE LA FORMULE",
   "@waterPlanSummary": {},
   "waterPleaseEnterAvailableStock": "Veuillez saisir le stock disponible",
@@ -1953,7 +2120,13 @@
   "waterRevenueSummary": "Résumé des revenus",
   "@waterRevenueSummary": {},
   "waterReviewsCount": "({count} avis)",
-  "@waterReviewsCount": {"placeholders": {"count": {"type": "String"}}},
+  "@waterReviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "waterSalesPerformance": "Performance des ventes",
   "@waterSalesPerformance": {},
   "waterSaveProduct": "Enregistrer le produit",
@@ -1987,7 +2160,13 @@
   "waterStockHistory": "Historique du stock",
   "@waterStockHistory": {},
   "waterStockIdLabel": "ID STOCK : {id}",
-  "@waterStockIdLabel": {"placeholders": {"id": {"type": "String"}}},
+  "@waterStockIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "waterStockRemoved": "Stock retiré",
   "@waterStockRemoved": {},
   "waterStockUpdatedSuccessfully": "Stock mis à jour avec succès",
@@ -2035,7 +2214,16 @@
   "waterToDateAfterFromDate": "La date de fin doit être postérieure à la date de début",
   "@waterToDateAfterFromDate": {},
   "waterTodayTimings": "Aujourd'hui : {open} - {close}",
-  "@waterTodayTimings": {"placeholders": {"open": {"type": "String"}, "close": {"type": "String"}}},
+  "@waterTodayTimings": {
+    "placeholders": {
+      "open": {
+        "type": "String"
+      },
+      "close": {
+        "type": "String"
+      }
+    }
+  },
   "waterTotalHeader": "TOTAL",
   "@waterTotalHeader": {},
   "waterTotalPaid": "Total payé",
@@ -2063,11 +2251,91 @@
   "waterWeeklySchedule": "Planning hebdomadaire",
   "@waterWeeklySchedule": {},
   "waterWelcomeToShop": "Bienvenue chez {name} !",
-  "@waterWelcomeToShop": {"placeholders": {"name": {"type": "String"}}},
+  "@waterWelcomeToShop": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "waterWorkingHoursUpdated": "Horaires mis à jour avec succès",
   "@waterWorkingHoursUpdated": {},
   "waterYou": "Vous",
-  "@waterYou": {}
-  "itemUpdatedSuccessfully": "Article mis à jour avec succès",
-  "failedToUpdateItem": "Échec de la mise à jour de l'article"
+  "@waterYou": {},
+  "cleaningBookingAvailabilityFailed": "Impossible de mettre à jour la disponibilité. Veuillez réessayer.",
+  "@cleaningBookingAvailabilityFailed": {},
+  "cleaningBookingCancelReasonHeader": "MOTIF D'ANNULATION",
+  "@cleaningBookingCancelReasonHeader": {},
+  "cleaningBookingDaysAgo": "il y a {count} j",
+  "@cleaningBookingDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingHoursAgo": "il y a {count} h",
+  "@cleaningBookingHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingLoadFailed": "Impossible de charger les données. Veuillez réessayer.",
+  "@cleaningBookingLoadFailed": {},
+  "cleaningBookingMinutesAgo": "il y a {count} min",
+  "@cleaningBookingMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "cleaningBookingStatusCancelled": "ANNULÉE",
+  "@cleaningBookingStatusCancelled": {},
+  "cleaningBookingStatusOnTheWay": "EN ROUTE",
+  "@cleaningBookingStatusOnTheWay": {},
+  "cleaningBookingUpdateFailed": "Impossible de mettre à jour la réservation. Veuillez réessayer.",
+  "@cleaningBookingUpdateFailed": {},
+  "cleaningSvcAddOneSpace": "Ajoutez au moins un espace avec son prix.",
+  "@cleaningSvcAddOneSpace": {},
+  "cleaningSvcChatLoadError": "Impossible de charger les messages.",
+  "@cleaningSvcChatLoadError": {},
+  "cleaningSvcChatUnavailable": "La discussion avec ce client n'est pas encore disponible.",
+  "@cleaningSvcChatUnavailable": {},
+  "cleaningSvcGenericError": "Une erreur s'est produite. Veuillez réessayer.",
+  "@cleaningSvcGenericError": {},
+  "cleaningSvcLoadError": "Impossible de charger vos services.",
+  "@cleaningSvcLoadError": {},
+  "cleaningSvcSelectServiceType": "Veuillez choisir un type de service.",
+  "@cleaningSvcSelectServiceType": {},
+  "cleaningSvcTypesLoadError": "Impossible de charger les types de service.",
+  "@cleaningSvcTypesLoadError": {},
+  "waterAmountDue": "Montant dû",
+  "@waterAmountDue": {},
+  "waterBiWeekly": "Toutes les 2 semaines",
+  "@waterBiWeekly": {},
+  "waterCalendarNotAvailable": "Calendrier des livraisons pas encore disponible",
+  "@waterCalendarNotAvailable": {},
+  "waterCalendarNotAvailableHint": "Les livraisons d'abonnement prévues s'afficheront ici dès que cette fonction sera prête. La prochaine livraison de chaque abonnement est visible dans ses détails.",
+  "@waterCalendarNotAvailableHint": {},
+  "waterEveryNDays": "Tous les {days} jours",
+  "@waterEveryNDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "waterMonthly": "Mensuel",
+  "@waterMonthly": {},
+  "waterSomethingWentWrong": "Une erreur s'est produite. Veuillez réessayer.",
+  "@waterSomethingWentWrong": {},
+  "waterTomorrow": "Demain",
+  "@waterTomorrow": {},
+  "waterWallet": "Portefeuille",
+  "@waterWallet": {},
+  "waterWeekly": "Hebdomadaire",
+  "@waterWeekly": {}
 }

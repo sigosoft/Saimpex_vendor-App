@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/controller/preorders_controller.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
-import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

@@ -1,38 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+import 'package:dio/dio.dart' show FormData;
+import 'package:intl/intl.dart' show DateFormat;
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
+/// Existing coupon values for editing (`coupons` row).
 class WaterCouponDraft {
   const WaterCouponDraft({
+    required this.id,
     required this.name,
     required this.code,
-    required this.kind,
+    required this.type,
     required this.discount,
     required this.count,
     required this.validUntil,
-    required this.createdOn,
   });
 
+  final dynamic id;
   final String name;
   final String code;
-  final String kind;
+
+  /// Backend `type`: 1 fixed amount, 2 percentage.
+  final int type;
   final String discount;
   final String count;
-  final String validUntil;
-  final String createdOn;
+  final DateTime? validUntil;
 }
 
 class AddCouponView extends StatefulWidget {
-  const AddCouponView({super.key});
+  const AddCouponView({super.key, this.initial});
+
+  /// When set, the form edits this coupon (`POST updateCoupon`); otherwise it
+  /// creates one (`POST addCoupon`).
+  final WaterCouponDraft? initial;
 
   static const orange = Color(0xFFFF5317);
   static const ink = Color(0xFF10182B);
 
-  static Future<WaterCouponDraft?> open(BuildContext context) {
-    return Navigator.of(context).push<WaterCouponDraft>(
-      MaterialPageRoute(builder: (_) => const AddCouponView()),
+  /// Resolves to true when the coupon was saved on the server.
+  static Future<bool?> open(BuildContext context, {WaterCouponDraft? initial}) {
+    return Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => AddCouponView(initial: initial)),
     );
   }
 
@@ -50,6 +63,23 @@ class _AddCouponViewState extends State<AddCouponView> {
   String? _kind;
   DateTime? _validUntil;
   String? _error;
+  bool _saving = false;
+
+  bool get _isEditing => widget.initial != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initial;
+    if (initial != null) {
+      _name.text = initial.name;
+      _code.text = initial.code;
+      _discount.text = initial.discount;
+      _count.text = initial.count;
+      _kind = initial.type == 2 ? 'PERCENTAGE' : 'FLAT';
+      _validUntil = initial.validUntil;
+    }
+  }
 
   @override
   void dispose() {
@@ -94,10 +124,13 @@ class _AddCouponViewState extends State<AddCouponView> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final current = _validUntil;
     final picked = await showDatePicker(
       context: context,
-      initialDate: _validUntil ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: current == null || current.isBefore(today) ? today : current,
+      firstDate: today,
       lastDate: DateTime(2035),
       builder: (context, child) {
         return Theme(
@@ -119,7 +152,8 @@ class _AddCouponViewState extends State<AddCouponView> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    if (_saving) return;
     final name = _name.text.trim();
     final code = _code.text.trim();
     final discount = double.tryParse(_discount.text.trim());
@@ -129,19 +163,39 @@ class _AddCouponViewState extends State<AddCouponView> {
       return;
     }
     HapticFeedback.lightImpact();
-    final suffix = _kind == 'PERCENTAGE' ? '%' : ' MRU';
-    final locale = Localizations.localeOf(context).languageCode;
-    Navigator.of(context).pop(
-      WaterCouponDraft(
-        name: name.toUpperCase(),
-        code: code.toUpperCase(),
-        kind: _kind!,
-        discount: '${discount.toStringAsFixed(2)}$suffix',
-        count: '$count',
-        validUntil: _formatShort(_validUntil!, locale),
-        createdOn: _formatStamp(DateTime.now(), locale),
-      ),
-    );
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await WaterApi.prepare();
+      final body = <String, dynamic>{
+        if (_isEditing) 'coupon_id': widget.initial!.id.toString(),
+        'name': name,
+        'code': code.toUpperCase(),
+        'type': _kind == 'PERCENTAGE' ? '2' : '1',
+        'discount_value': _discount.text.trim(),
+        'count': '$count',
+        'valid_upto': DateFormat('yyyy-MM-dd').format(_validUntil!),
+      };
+      final response = await DioClient().post(
+        _isEditing ? ApiEndPoints.updateCoupon : ApiEndPoints.addCoupon,
+        body: FormData.fromMap(body),
+      );
+      final data = response.data;
+      if (!mounted) return;
+      if (WaterApi.isOk(data)) {
+        final msg = WaterApi.message(data);
+        if (msg != null) showToast(context, msg);
+        Navigator.of(context).pop(true);
+      } else {
+        setState(() => _error = WaterApi.message(data) ?? S.of(context).waterSomethingWentWrong);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = WaterApi.errorText(e));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -164,7 +218,7 @@ class _AddCouponViewState extends State<AddCouponView> {
           child: Column(
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-              const _Header(),
+              _Header(title: _isEditing ? S.of(context).updateCoupon : S.of(context).addCoupon),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
@@ -261,16 +315,22 @@ class _AddCouponViewState extends State<AddCouponView> {
                       child: SizedBox(
                         height: 48,
                         child: FilledButton(
-                          onPressed: _submit,
+                          onPressed: _saving ? null : _submit,
                           style: FilledButton.styleFrom(
                             backgroundColor: AddCouponView.orange,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text(
-                            S.of(context).addCoupon,
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
-                          ),
+                          child: _saving
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text(
+                                  _isEditing ? S.of(context).updateCoupon : S.of(context).addCoupon,
+                                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                ),
                         ),
                       ),
                     ),
@@ -312,16 +372,10 @@ String _formatInput(DateTime date) {
   return '$day-$month-${date.year}';
 }
 
-String _formatShort(DateTime date, String locale) {
-  return DateFormat('MMM d,y', locale).format(date);
-}
-
-String _formatStamp(DateTime date, String locale) {
-  return '${DateFormat('MMM dd, y h:mm a', locale).format(date)}, ${S.current.today}';
-}
-
 class _Header extends StatelessWidget {
-  const _Header();
+  const _Header({required this.title});
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +387,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              S.of(context).addCoupon,
+              title,
               style: GoogleFonts.inter(
                 color: AddCouponView.ink,
                 fontWeight: FontWeight.w700,

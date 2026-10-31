@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' show NumberFormat;
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/water/core/water_state_view.dart';
 
 class ReceivedPayoutsView extends StatefulWidget {
   const ReceivedPayoutsView({super.key});
@@ -36,51 +44,123 @@ class _Payout {
 }
 
 class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
-  final _search = TextEditingController();
+  static const _limit = 20;
 
-  static const _payouts = [
-    _Payout(
-      id: '#PYT240',
-      when: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '400.00 MRU',
-      balance: '1,000.00 MRU',
-    ),
-    _Payout(
-      id: '#PYT240',
-      when: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '400.00 MRU',
-      balance: '1,000.00 MRU',
-    ),
-    _Payout(
-      id: '#PYT240',
-      when: 'Feb 07, 2026 10:45 AM, Today',
-      amount: '400.00 MRU',
-      balance: '1,000.00 MRU',
-    ),
-  ];
+  final _search = TextEditingController();
+  final _scroll = ScrollController();
+  final List<_Payout> _payouts = [];
+  Timer? _debounce;
+  String? _balance;
+  bool _loading = true;
+  bool _loadingMore = false;
+  bool _hasMore = false;
+  int _page = 1;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_onScroll);
+    _load();
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _search.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
-  List<_Payout> get _visible {
-    final query = _search.text.trim().toLowerCase();
-    if (query.isEmpty) return _payouts;
-    return _payouts
-        .where(
-          (payout) =>
-              payout.id.toLowerCase().contains(query) ||
-              payout.amount.toLowerCase().contains(query) ||
-              payout.balance.toLowerCase().contains(query),
-        )
-        .toList();
+  void _onScroll() {
+    if (_hasMore &&
+        !_loadingMore &&
+        !_loading &&
+        _scroll.position.extentAfter < 300) {
+      _load(more: true);
+    }
+  }
+
+  void _onSearchChanged(String _) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      if (mounted) _load();
+    });
+  }
+
+  /// `GET vendorapp/receivedPayouts` → `data.vendor.current_balance` and
+  /// `data.received_payouts` (paginated: `id`, `amount`, `balance_amount`, `paid_at`).
+  Future<void> _load({bool more = false}) async {
+    setState(() {
+      if (more) {
+        _loadingMore = true;
+      } else {
+        _loading = true;
+        _error = null;
+      }
+    });
+    final page = more ? _page + 1 : 1;
+    try {
+      await WaterApi.prepare();
+      final keyword = _search.text.trim().replaceAll('#', '').replaceFirst(
+            RegExp(r'^PYT', caseSensitive: false),
+            '',
+          );
+      final response = await DioClient().get(
+        ApiEndPoints.receivedPayouts,
+        query: {
+          'vendor_type': await WaterApi.vendorType(),
+          'limit': _limit,
+          'page': page,
+          if (keyword.isNotEmpty) 'keyword': keyword,
+        },
+      );
+      final body = response.data;
+      if (!WaterApi.isOk(body)) {
+        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+      }
+      final data = body['data'] is Map ? body['data'] as Map : const {};
+      final pageData = data['received_payouts'];
+      final rows = WaterApi.pageItems(pageData).map((e) {
+        final id = e['id']?.toString() ?? '';
+        return _Payout(
+          id: id.isEmpty ? '' : '#PYT$id',
+          when: WaterApi.formatDateTime(e['paid_at']),
+          amount: WaterApi.money(e['amount']),
+          balance: WaterApi.money(e['balance_amount']),
+        );
+      }).toList();
+      if (!mounted) return;
+      setState(() {
+        if (!more) _payouts.clear();
+        _payouts.addAll(rows);
+        final vendor = data['vendor'];
+        if (vendor is Map && vendor['current_balance'] != null) {
+          _balance = vendor['current_balance'].toString();
+        }
+        _page = page;
+        _hasMore = WaterApi.hasMore(pageData);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      if (more) {
+        showToast(context, WaterApi.errorText(e));
+      } else {
+        setState(() => _error = WaterApi.errorText(e));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _loadingMore = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final payouts = _visible;
+    final payouts = _payouts;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
       child: Scaffold(
@@ -99,10 +179,15 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(onBack: () => Navigator.of(context).maybePop()),
               Expanded(
-                child: ListView(
+                child: RefreshIndicator(
+                  color: ReceivedPayoutsView.orange,
+                  onRefresh: _load,
+                  child: ListView(
+                  controller: _scroll,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                   children: [
-                    const _BalanceCard(),
+                    _BalanceCard(balance: _balance),
                     const SizedBox(height: 18),
                     Text(
                       S.of(context).history,
@@ -115,7 +200,7 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: _search,
-                      onChanged: (_) => setState(() {}),
+                      onChanged: _onSearchChanged,
                       style: GoogleFonts.inter(
                         color: ReceivedPayoutsView.ink,
                         fontWeight: FontWeight.w500,
@@ -139,11 +224,32 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    for (final payout in payouts) ...[
-                      _PayoutCard(payout: payout),
-                      const SizedBox(height: 12),
+                    if (_loading && payouts.isEmpty)
+                      const WaterStateView.loading()
+                    else if (_error != null && payouts.isEmpty)
+                      WaterStateView.error(message: _error!, onRetry: _load)
+                    else if (payouts.isEmpty)
+                      WaterStateView.empty(
+                        title: S.of(context).waterNoPayoutsFound,
+                        icon: Icons.account_balance_wallet_outlined,
+                      )
+                    else ...[
+                      for (final payout in payouts) ...[
+                        _PayoutCard(payout: payout),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_loadingMore)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: ReceivedPayoutsView.orange,
+                            ),
+                          ),
+                        ),
                     ],
                   ],
+                ),
                 ),
               ),
             ],
@@ -210,7 +316,10 @@ class _Header extends StatelessWidget {
 }
 
 class _BalanceCard extends StatelessWidget {
-  const _BalanceCard();
+  const _BalanceCard({required this.balance});
+
+  /// `vendor.current_balance`; null until loaded.
+  final String? balance;
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +350,7 @@ class _BalanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '10,140.00',
+                      _amountOnly(balance),
                       style: GoogleFonts.inter(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -270,6 +379,12 @@ class _BalanceCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _amountOnly(String? value) {
+  final n = double.tryParse(value ?? '');
+  if (n == null) return '—';
+  return NumberFormat('#,##0.00', 'en').format(n);
 }
 
 class _BalanceBackdropPainter extends CustomPainter {

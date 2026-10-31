@@ -3,8 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
-Future<String?> showRejectBookingSheet(BuildContext context) {
-  return showModalBottomSheet<String>(
+/// What the vendor picked; sent to POST updateServiceBookingStatus as
+/// `status=10`, `reason` (required, max 255) and `note` (optional, max 100).
+class RejectBookingResult {
+  const RejectBookingResult({required this.reason, this.note});
+
+  final String reason;
+  final String? note;
+}
+
+Future<RejectBookingResult?> showRejectBookingSheet(BuildContext context) {
+  return showModalBottomSheet<RejectBookingResult>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -32,8 +41,10 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
     'Service temporarily unavailable',
     'Other',
   ];
-  // English values above are what is returned to the caller (sent as the
-  // reason); only the displayed label is localised.
+  // English values above are sent as `reason` (the API returns no reject
+  // reasons for home cleaning, so the list is app-side); only the displayed
+  // label is localised. For "Other" the typed text goes in `note`, the same
+  // reason/note split the backend uses when it reads the remark back.
   static List<String> _reasonLabels(BuildContext context) => [
         S.of(context).cleaningRejectReasonNoCleaner,
         S.of(context).cleaningRejectReasonOutsideArea,
@@ -63,8 +74,13 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
   void _confirm() {
     if (!_canConfirm) return;
     HapticFeedback.lightImpact();
-    final reason = _isOther ? _otherController.text.trim() : _reasons[_selected!];
-    Navigator.of(context).pop(reason);
+    final result = _isOther
+        ? RejectBookingResult(
+            reason: _reasons[_otherIndex],
+            note: _otherController.text.trim(),
+          )
+        : RejectBookingResult(reason: _reasons[_selected!]);
+    Navigator.of(context).pop(result);
   }
 
   @override

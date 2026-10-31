@@ -152,7 +152,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
           String orderId = item['order_code']?.toString().trim() ?? '';
           if (orderId.isEmpty) {
             final rawOrderId = item['order_id'] ?? item['id'];
-            orderId = rawOrderId != null ? '#ORD-$rawOrderId' : '#ORD-000000';
+            orderId = rawOrderId != null ? '#ORD-$rawOrderId' : '';
           } else if (!orderId.startsWith('#')) {
             orderId = '#$orderId';
           }

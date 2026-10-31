@@ -96,9 +96,6 @@ class HomeOrder {
         '';
     final isCod = isCashPayment(paymentMethod);
     final isOnlinePayment = !isCod;
-    final paymentLabel = isOnlinePayment
-        ? S.current.onlinePayment
-        : S.current.cashOnDelivery;
     final paymentLabel = paymentTypeLabel(paymentMethod, cashFallback: isCod);
 
     final total = order.total?.toString() ?? raw['total']?.toString() ?? '0';
@@ -111,7 +108,7 @@ class HomeOrder {
             first['name'] ??
             first['product_name'] ??
             first['item_name'] ??
-            'Bottle';
+            S.current.item;
         final qty = first['quantity'] ?? first['qty'] ?? 1;
         itemLabel = '$qty $itemName • $total MRU';
       }
@@ -252,7 +249,8 @@ class SubscriptionOrder {
         json['item']?['name']?.toString() ??
         json['item_name']?.toString() ??
         (json['plan'] is Map ? json['plan']['name']?.toString() : null) ??
-        'Drinking Water 19L';
+        json['service']?.toString() ??
+        '';
 
     final rawOrderId =
         json['order_code']?.toString() ??
@@ -270,8 +268,13 @@ class SubscriptionOrder {
         json['created_at']?.toString() ??
         '';
 
-    final isDelivery =
-        json['is_delivery'] == true ||
+    // waterSubscriptions returns `delivery_type`: "Delivery" | "Self Pickup".
+    final deliveryTypeText = json['delivery_type'] is String
+        ? (json['delivery_type'] as String).toLowerCase()
+        : '';
+    final isDelivery = deliveryTypeText.contains('pickup')
+        ? false
+        : json['is_delivery'] == true ||
         json['is_delivery'] == 1 ||
         json['is_delivery'] == '1' ||
         json['delivery_type'] == 1 ||
@@ -283,7 +286,8 @@ class SubscriptionOrder {
         (json['plan'] is Map
             ? json['plan']['name']?.toString()
             : json['plan']?.toString()) ??
-        S.current.waterDaily;
+        json['frequency']?.toString() ??
+        '';
 
     final planRange =
         json['plan_range']?.toString() ??
@@ -294,7 +298,16 @@ class SubscriptionOrder {
               )
             : (json['start_date'] != null
                   ? S.current.waterPlanRangeStart(json['start_date'].toString())
-                  : ''));
+                  : (json['start'] != null && json['end'] != null
+                        ? S.current.waterPlanRangeStartEnd(
+                            json['start'].toString(),
+                            json['end'].toString(),
+                          )
+                        : (json['start'] != null
+                              ? S.current.waterPlanRangeStart(
+                                  json['start'].toString(),
+                                )
+                              : ''))));
 
     final timeSlot =
         json['time_slot']?.toString() ??
@@ -302,7 +315,10 @@ class SubscriptionOrder {
         json['slot']?.toString() ??
         '';
 
-    final total =
+    final paidAmount = double.tryParse(json['amount']?.toString() ?? '');
+    final total = (paidAmount != null && paidAmount > 0
+            ? json['amount'].toString()
+            : null) ??
         json['total']?.toString() ??
         json['total_amount']?.toString() ??
         json['amount']?.toString() ??
@@ -311,15 +327,17 @@ class SubscriptionOrder {
         '';
     final estimatedValue = total.isNotEmpty
         ? (total.contains('MRU') ? total : '$total MRU')
-        : '0 MRU';
+        : '—';
 
-    final nextDelivery = json['next_delivery']?.toString();
+    final nextDelivery =
+        json['next_delivery']?.toString() ?? json['next']?.toString();
     final pausedOn = json['paused_on']?.toString();
     final pauseReason = json['pause_reason']?.toString();
     final pausedByVendor =
         json['paused_by_vendor'] == true ||
         json['paused_by_vendor'] == 1 ||
-        json['paused_by_vendor'] == '1';
+        json['paused_by_vendor'] == '1' ||
+        json['paused_by']?.toString() == 'vendor';
 
     SubscriptionOrderStatus status = SubscriptionOrderStatus.newOrder;
     final s = json['status']?.toString().toLowerCase();
