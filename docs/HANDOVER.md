@@ -417,7 +417,7 @@ AC: a local store test account sees its orders, can accept → prepare → ready
 Ask backend whether gas uses `water*` or `service*` endpoints, then route accordingly.
 AC: a gas test account sees its orders and can process them end to end.
 
-**P5. Pre-orders (after backend phase 2 contract).**
+**P5. Pre-orders.** ✅ Built in V3 (`feature/preorders`), not yet seen with a real pre-order (dev had none for the test restaurant). `PreordersController` loads `GET vendorapp/preorders`; home shows an "Upcoming pre-orders (N)" tile (hidden when none) opening `lib/view/home/preorders_screen.dart` (delivery time, time left, status, total, self pickup, driver requested/assigned); home order cards get a "Pre-order · DD/MM HH:mm" badge and order details a "Scheduled for …" line. The home list and order details don't return `is_preorder`/`scheduled_for`, so screens match order ids against the pre-orders list. Push `preorder_reminder` is no longer treated as a new order: no "A new order!" text or accept dialog; when the app is open it shows the reminder in the app language; tapping opens the order. Built without checking Figma (Figma MCP call limit reached); compare with Figma before release.
 AC: scheduled orders show the scheduled date/time and a badge; the vendor gets a push 30 minutes before; tapping it opens the order.
 
 **P6. Grocery substitution (after backend phase 2 contract).**
@@ -506,7 +506,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | Date | Change | What the app must do |
 |---|---|---|
 | 31 Oct 2026 | Orders can have `payment_type` 3 = Wallet and 4 = Pay After Delivery. | Label them "Wallet" and "Pay After Delivery". Neither is cash; vendor earnings follow the existing paid/unpaid rules. |
-| 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. |
+| 31 Oct 2026 | Pre-orders: `GET vendorapp/preorders` (upcoming, soonest first); push `type: preorder_reminder` 30 min before. Accepting a pre-order does not call a driver; marking it Ready does. | Show a Pre-orders list/badge with the delivery time; handle the reminder push. ✅ V3 (`feature/preorders`). |
 | 31 Oct 2026 | Grocery substitution: on a grocery order before Ready, pick a line → choose a substitute from own items (or "unavailable") → `POST vendorapp/orders/{id}/substitutions`; list with `GET` same path. Customer has 10 min, then auto-accept. | Add a "Suggest substitute" action per line and a status chip (pending / accepted / rejected / auto). |
 | 31 Oct 2026 | Substitution rule change: customers pay the extra for pricier substitutes (wallet, then cash/online). An unanswered pricier substitute is removed, not auto-accepted. | Show the result status; no app change needed beyond that. |
 | 31 Oct 2026 | **Token logging removed** (merged). **V1 (edit item saves variants/option groups) is not done**: the edit screen never loads the item's variants/options from the server, saves through the legacy `updateRestaurantMenuItem`, and uses the legacy menu-item id. Proper fix: load `restaurantCatalogItemDetail` (variants with ids, option groups, extras) into the screen models and save with `updateRestaurantCatalogItem` (same body as add + `item_id`; variants with `id` update in place). Needs device testing — Stephy's first task when back. | Known limitation in the 31 Oct review build. |
