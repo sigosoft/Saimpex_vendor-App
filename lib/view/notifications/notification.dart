@@ -128,12 +128,12 @@ class FCM {
 
     // Get FCM token
     String token = await getDeviceToken();
-    print("firebase token $token");
+    debugPrint("firebase token received");
     await savename("fcm", token);
     await syncFcmToken(token);
 
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      print("FCM token refreshed: $newToken");
+      debugPrint("FCM token refreshed");
       await savename("fcm", newToken);
       await syncFcmToken(newToken);
     });
