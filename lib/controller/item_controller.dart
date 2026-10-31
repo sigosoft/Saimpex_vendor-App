@@ -843,18 +843,43 @@ class ItemController extends GetxController {
         DioClient().updateToken("");
       }
       final vendorType = (await getSavedObject("vendorType"))?.toString() ?? '';
-      final response = await DioClient().get(
-        vendorType == "1"
-            ? ApiEndPoints.getRestaurantMenus
-            : ApiEndPoints.getGroceryMenus,
-      );
-      final model = MenuListingModel.fromJson(
-        response.data is Map<String, dynamic>
-            ? response.data
-            : Map<String, dynamic>.from(response.data as Map),
-      );
-      if (model.status) {
-        menuList = model.data;
+      if (vendorType == "1") {
+        // Restaurant catalog items take restaurant_categories ids in
+        // category_ids; getRestaurantMenus now lists the items themselves.
+        final response =
+            await DioClient().get(ApiEndPoints.getRestaurantCategories);
+        final body = response.data;
+        if (body is Map && body['status'].toString() == 'true' && body['data'] is List) {
+          menuList = (body['data'] as List)
+              .whereType<Map>()
+              .map((c) => MenuItem(
+                    id: int.tryParse(c['id'].toString()) ?? 0,
+                    nameEn: c['name_en']?.toString() ?? '',
+                    nameAr: c['name_ar']?.toString() ?? '',
+                    nameFr: c['name_fr']?.toString() ?? '',
+                    categoryId: [c['id'].toString()],
+                    image: c['image']?.toString() ?? '',
+                  ))
+              .toList();
+        }
+      } else {
+        final response = await DioClient().get(ApiEndPoints.getGroceryMenus);
+        final model = MenuListingModel.fromJson(
+          response.data is Map<String, dynamic>
+              ? response.data
+              : Map<String, dynamic>.from(response.data as Map),
+        );
+        if (model.status) {
+          menuList = model.data;
+        }
+      }
+      // The item may have loaded first: show the name of its category.
+      if ((selectedType == null || selectedType!.isEmpty) &&
+          selectedMenuId != null) {
+        final match = menuList.where((m) => m.id == selectedMenuId).toList();
+        if (match.isNotEmpty) {
+          selectedType = match.first.nameEn;
+        }
       }
       if (selectedType != null &&
           selectedType!.isNotEmpty &&
