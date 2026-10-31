@@ -4,7 +4,7 @@ Last updated: 31 Oct 2026. Branch at time of writing: `fix/save-item-variants-op
 Repo: `sigosoft/Saimpex_vendor-App`. Flutter, Android first (iOS builds but is not set up for release).
 
 Binding product decisions live in the backend repo:
-**`sigosoft/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`**.
+**`praveensigo/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`**.
 Where that file differs from the V2 scope PDF, the FRD or V1 behaviour, that file wins.
 
 Status words used in this document:
@@ -15,6 +15,23 @@ Status words used in this document:
 - **Unverified**: code was not read closely enough, or depends on server behaviour that was not checked.
 
 ---
+
+
+## Team communication (read first)
+
+Five computers build SAIMPEX V2 in parallel: backend API (Praveen's Mac), customer app, vendor app, delivery + kitchen apps, admin panel. They stay in sync through two shared files in the backend repo:
+
+| What | Where | When to read it |
+|---|---|---|
+| **API change log** — every API change, which apps must act, where it's documented | [`praveensigo/saimpex-backend-new` → `docs/API_CHANGELOG.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/API_CHANGELOG.md) (branch `integration/v2`) | Every day before you start; look for `[vendor]` |
+| **Client decisions + build plan** | [`docs/V2_DECISIONS_AND_PLAN.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_DECISIONS_AND_PLAN.md) | Before building any feature; it overrides the scope PDF |
+| **API contracts** | [`docs/SAIMPEX_V2_CUSTOMER_API.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/SAIMPEX_V2_CUSTOMER_API.md) | When wiring an endpoint |
+
+This file's **"Backend updates since this handover"** table (at the end) repeats the entries that concern this app.
+
+**Need something from the backend?** Open a GitHub issue in `praveensigo/saimpex-backend-new` titled `[vendor-app] <short description>`: the screen, the endpoint, what you sent, what you got, what you need. Don't build against a guessed contract. Product questions go to Praveen; answers are recorded in the decisions doc.
+
+**Changing something other teams depend on** (e.g. a push payload this app sends or expects, a shared asset)? Add a line to the change log via the backend owner, or mention it in an issue, so every team sees it.
 
 ## 1. Purpose and overview
 
@@ -108,7 +125,7 @@ There are no build flavours and no `.env`. The server is set in code:
 - To point at a local Laravel server, change both values (for an Android emulator use `http://10.0.2.2:8000/api/vendorapp/`). Do not commit that change.
 - Pusher (chat realtime) app key and cluster are hard-coded in `lib/configs/PusherConfig.dart`. Channel names there must match the backend broadcast channels.
 
-The backend for V2 is `sigosoft/saimpex-backend-new`, branch **`integration/v2`**. Vendor app routes are in `routes/vendorapp.php` (prefix `vendorapp/`, Sanctum auth).
+The backend for V2 is `praveensigo/saimpex-backend-new`, branch **`integration/v2`**. Vendor app routes are in `routes/vendorapp.php` (prefix `vendorapp/`, Sanctum auth).
 Some app commits need a backend branch that may not be deployed to DEV yet (for example the profile OTP commit says "Needs backend branch feat/vendor-profile-otp"; that work is now in `integration/v2`). Check that DEV runs `integration/v2` before you report a bug.
 
 ### 2.4 Firebase
@@ -474,8 +491,8 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 
 ## 10. Useful references
 
-- Decisions and API phases: `sigosoft/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`
-- Backend vendor app routes: `sigosoft/saimpex-backend-new/routes/vendorapp.php` (branch `integration/v2`)
+- Decisions and API phases: `praveensigo/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`
+- Backend vendor app routes: `praveensigo/saimpex-backend-new/routes/vendorapp.php` (branch `integration/v2`)
 - Figma: file `gcPrdiT2s5VbO51zOdwT36`, page "Vendor Apps & Driver App", node `5:4744` (view only)
 - Older vendor design reference: ourworks.co.in/saimpex-vendor-design
 - Team scope: `docs-scope/V2_TEAM_SCOPE.txt`, `docs-scope/FUNCTIONAL_REQUIREMENTS.txt` (on Praveen's Mac; ask for a copy)
