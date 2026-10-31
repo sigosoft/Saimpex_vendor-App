@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_conversation_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
 
@@ -153,7 +154,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           alignment: Alignment.center,
           children: [
             Text(
-              'Messages',
+              S.of(context).cleaningMessages,
               style: GoogleFonts.inter(
                 color: HomeCleaningMessagesView._ink,
                 fontWeight: FontWeight.w700,
@@ -161,7 +162,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: () {
                   HapticFeedback.lightImpact();
@@ -206,7 +207,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           color: HomeCleaningMessagesView._ink,
         ),
         decoration: InputDecoration(
-          hintText: 'Search customer name or order ID..',
+          hintText: S.of(context).cleaningSearchCustomerOrOrderId,
           hintStyle: GoogleFonts.inter(
             color: const Color(0xFF94A3B8),
             fontSize: 12.5,
@@ -367,7 +368,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           ),
           const SizedBox(height: 12),
           Text(
-            'No messages found',
+            S.of(context).cleaningNoMessagesFound,
             style: GoogleFonts.inter(
               color: const Color(0xFF9E9E9E),
               fontSize: 14,

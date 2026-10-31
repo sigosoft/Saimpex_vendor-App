@@ -24,15 +24,81 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(date) => "تم الإلغاء في ${date}";
 
-  static String m2(date) => "تم الإنشاء في ${date}";
+  static String m2(hours) => "اليوم: ${hours}";
 
-  static String m3(days) => "تنتهي خلال ${days} أيام";
+  static String m3(date) => "تم الإنشاء في ${date}";
 
-  static String m4(id) => "طلب #${id}";
+  static String m4(days) => "تنتهي خلال ${days} أيام";
 
-  static String m5(qty) => "الكمية: ${qty}";
+  static String m5(id) => "طلب #${id}";
 
-  static String m6(reason) => "السبب: ${reason}";
+  static String m6(qty) => "الكمية: ${qty}";
+
+  static String m7(reason) => "السبب: ${reason}";
+
+  static String m8(count) => "${count} قارورة";
+
+  static String m9(count) => "متبقي ${count} قارورة";
+
+  static String m10(name) => "هل أنت متأكد من أنك تريد حذف \"${name}\"؟";
+
+  static String m11(min, max) => "من ${min} إلى ${max} كم";
+
+  static String m12(error) => "خطأ أثناء قبول الطلب: ${error}";
+
+  static String m13(error) => "خطأ أثناء قبول الاشتراك: ${error}";
+
+  static String m14(error) => "خطأ في إضافة المنتج: ${error}";
+
+  static String m15(error) => "خطأ أثناء إلغاء الطلب: ${error}";
+
+  static String m16(error) => "خطأ في حذف المنتج: ${error}";
+
+  static String m17(error) => "خطأ أثناء تحديد الطلب كجاهز: ${error}";
+
+  static String m18(error) => "خطأ أثناء إيقاف الاشتراك مؤقتًا: ${error}";
+
+  static String m19(error) => "خطأ أثناء تحضير الطلب: ${error}";
+
+  static String m20(error) => "خطأ أثناء رفض الاشتراك: ${error}";
+
+  static String m21(error) => "خطأ أثناء استئناف الاشتراك: ${error}";
+
+  static String m22(error) => "خطأ في تحديث حالة المنتج: ${error}";
+
+  static String m23(error) => "خطأ في تحديث السعر: ${error}";
+
+  static String m24(error) => "خطأ في تحديث المخزون: ${error}";
+
+  static String m25(count) => "الكل ${count}";
+
+  static String m26(count) => "متوفر ${count}";
+
+  static String m27(count) => "مخزون منخفض ${count}";
+
+  static String m28(id) => "الرقم: ${id}";
+
+  static String m29(count) => "تم اختيار ${count} صور";
+
+  static String m30(date) => "آخر بيع: ${date}";
+
+  static String m31(count) => "+${count} منتجات أخرى";
+
+  static String m32(count) => "عناصر الطلب (${count})";
+
+  static String m33(date) => "أُوقف في: ${date}";
+
+  static String m34(start) => "البداية ${start}";
+
+  static String m35(start, end) => "البداية ${start} - النهاية ${end}";
+
+  static String m36(count) => "(${count} تقييم)";
+
+  static String m37(id) => "رقم المخزون: ${id}";
+
+  static String m38(open, close) => "اليوم: ${open} - ${close}";
+
+  static String m39(name) => "مرحبًا بك في ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -212,6 +278,259 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkout": MessageLookupByLibrary.simpleMessage("إتمام الشراء"),
     "chooseImageFrom": MessageLookupByLibrary.simpleMessage("اختر الصورة من:"),
     "classicBasket": MessageLookupByLibrary.simpleMessage("سلة كلاسيكية"),
+    "cleaningAcceptBooking": MessageLookupByLibrary.simpleMessage("قبول الحجز"),
+    "cleaningAcceptingBookings": MessageLookupByLibrary.simpleMessage(
+      "يستقبل الحجوزات",
+    ),
+    "cleaningAddAddon": MessageLookupByLibrary.simpleMessage(
+      "إضافة خدمة إضافية",
+    ),
+    "cleaningAddAddonButton": MessageLookupByLibrary.simpleMessage(
+      "+ إضافة خدمة إضافية",
+    ),
+    "cleaningAddService": MessageLookupByLibrary.simpleMessage("إضافة خدمة"),
+    "cleaningAddServiceButton": MessageLookupByLibrary.simpleMessage(
+      "+ إضافة خدمة",
+    ),
+    "cleaningAddSpace": MessageLookupByLibrary.simpleMessage("إضافة مساحة"),
+    "cleaningAddSpaceButton": MessageLookupByLibrary.simpleMessage(
+      "+ إضافة مساحة",
+    ),
+    "cleaningAddonName": MessageLookupByLibrary.simpleMessage(
+      "اسم الخدمة الإضافية",
+    ),
+    "cleaningAddonNameHint": MessageLookupByLibrary.simpleMessage(
+      "مثال: تنظيف الثلاجة، تنظيف الفرن",
+    ),
+    "cleaningAddonServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "الخدمات الإضافية",
+    ),
+    "cleaningApartment": MessageLookupByLibrary.simpleMessage("شقة"),
+    "cleaningBasicInformationHeader": MessageLookupByLibrary.simpleMessage(
+      "المعلومات الأساسية",
+    ),
+    "cleaningBookingDetails": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الحجز",
+    ),
+    "cleaningBookings": MessageLookupByLibrary.simpleMessage("الحجوزات"),
+    "cleaningBookingsHeader": MessageLookupByLibrary.simpleMessage("الحجوزات"),
+    "cleaningBusinessSection": MessageLookupByLibrary.simpleMessage(
+      "النشاط التجاري",
+    ),
+    "cleaningBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "إعدادات النشاط",
+    ),
+    "cleaningChangeImage": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
+    "cleaningCleaningProducts": MessageLookupByLibrary.simpleMessage(
+      "مواد التنظيف",
+    ),
+    "cleaningCleaningProductsHeader": MessageLookupByLibrary.simpleMessage(
+      "مواد التنظيف",
+    ),
+    "cleaningClosedStatus": MessageLookupByLibrary.simpleMessage("مغلق"),
+    "cleaningCompleted": MessageLookupByLibrary.simpleMessage("مكتملة"),
+    "cleaningConfirmReject": MessageLookupByLibrary.simpleMessage(
+      "تأكيد الرفض",
+    ),
+    "cleaningCustomerHeader": MessageLookupByLibrary.simpleMessage("العميل"),
+    "cleaningCustomerProvidesProducts": MessageLookupByLibrary.simpleMessage(
+      "العميل يوفر المواد",
+    ),
+    "cleaningCustomerProvidesProductsDesc":
+        MessageLookupByLibrary.simpleMessage(
+          "يوفر العميل المنظفات والممسحة وأقمشة التنظيف الخاصة به.",
+        ),
+    "cleaningDeleteAccountConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+    ),
+    "cleaningEditAddon": MessageLookupByLibrary.simpleMessage(
+      "تعديل الخدمة الإضافية",
+    ),
+    "cleaningEditService": MessageLookupByLibrary.simpleMessage("تعديل الخدمة"),
+    "cleaningEditSpace": MessageLookupByLibrary.simpleMessage("تعديل المساحة"),
+    "cleaningEnterDescription": MessageLookupByLibrary.simpleMessage(
+      "أدخل الوصف",
+    ),
+    "cleaningEnterServiceType": MessageLookupByLibrary.simpleMessage(
+      "أدخل نوع الخدمة",
+    ),
+    "cleaningEnterThePrice": MessageLookupByLibrary.simpleMessage("أدخل السعر"),
+    "cleaningIProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "أنا أوفر المواد",
+    ),
+    "cleaningIProvideProductsDesc": MessageLookupByLibrary.simpleMessage(
+      "يحضر فريقك منظفات احترافية ومكانس كهربائية وأقمشة.",
+    ),
+    "cleaningImageFormatsHint": MessageLookupByLibrary.simpleMessage(
+      "PNG أو JPG حتى 5 ميغابايت",
+    ),
+    "cleaningInProgress": MessageLookupByLibrary.simpleMessage("قيد التنفيذ"),
+    "cleaningIssuesCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "المشاكل المشمولة",
+    ),
+    "cleaningJustNow": MessageLookupByLibrary.simpleMessage("الآن"),
+    "cleaningLanguageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
+    "cleaningLanguageEnglish": MessageLookupByLibrary.simpleMessage(
+      "الإنجليزية",
+    ),
+    "cleaningLanguageFrench": MessageLookupByLibrary.simpleMessage("الفرنسية"),
+    "cleaningMakeItExtraCleanHeader": MessageLookupByLibrary.simpleMessage(
+      "تنظيف إضافي",
+    ),
+    "cleaningMarkAsCompleted": MessageLookupByLibrary.simpleMessage(
+      "تحديد كمكتمل",
+    ),
+    "cleaningMessages": MessageLookupByLibrary.simpleMessage("الرسائل"),
+    "cleaningMyServices": MessageLookupByLibrary.simpleMessage("خدماتي"),
+    "cleaningNewBookings": MessageLookupByLibrary.simpleMessage("حجوزات جديدة"),
+    "cleaningNoBookingsHere": MessageLookupByLibrary.simpleMessage(
+      "لا توجد حجوزات هنا",
+    ),
+    "cleaningNoMessagesFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد رسائل",
+    ),
+    "cleaningNoServicesFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد خدمات",
+    ),
+    "cleaningNotAccepting": MessageLookupByLibrary.simpleMessage(
+      "لا يستقبل الحجوزات",
+    ),
+    "cleaningOffline": MessageLookupByLibrary.simpleMessage("غير متصل"),
+    "cleaningOnline": MessageLookupByLibrary.simpleMessage("متصل"),
+    "cleaningOpenStatus": MessageLookupByLibrary.simpleMessage("مفتوح"),
+    "cleaningOtherReason": MessageLookupByLibrary.simpleMessage("سبب آخر"),
+    "cleaningPestAnts": MessageLookupByLibrary.simpleMessage("النمل"),
+    "cleaningPestBedBugs": MessageLookupByLibrary.simpleMessage("بق الفراش"),
+    "cleaningPestCockroaches": MessageLookupByLibrary.simpleMessage("الصراصير"),
+    "cleaningPestFlies": MessageLookupByLibrary.simpleMessage("الذباب"),
+    "cleaningPestGeneralSanitization": MessageLookupByLibrary.simpleMessage(
+      "تعقيم\nعام",
+    ),
+    "cleaningPestMosquitoes": MessageLookupByLibrary.simpleMessage("البعوض"),
+    "cleaningPestOtherPests": MessageLookupByLibrary.simpleMessage("آفات أخرى"),
+    "cleaningPestRodents": MessageLookupByLibrary.simpleMessage("القوارض"),
+    "cleaningPestTermites": MessageLookupByLibrary.simpleMessage(
+      "النمل الأبيض",
+    ),
+    "cleaningProductSupplyFee": MessageLookupByLibrary.simpleMessage(
+      "رسوم توفير المواد",
+    ),
+    "cleaningProductsProvidedByProvider": MessageLookupByLibrary.simpleMessage(
+      "سيتم توفير مواد التنظيف من قبل مقدم الخدمة",
+    ),
+    "cleaningPropertyTypesHeader": MessageLookupByLibrary.simpleMessage(
+      "أنواع العقارات",
+    ),
+    "cleaningProvidedBySaimpex": MessageLookupByLibrary.simpleMessage(
+      "مقدمة من SAIMPEX",
+    ),
+    "cleaningProviderWillProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "سيوفر مقدم الخدمة المواد",
+    ),
+    "cleaningReasonDescription": MessageLookupByLibrary.simpleMessage(
+      "السبب / الوصف",
+    ),
+    "cleaningRejectBooking": MessageLookupByLibrary.simpleMessage("رفض الحجز"),
+    "cleaningRejectReasonNoCleaner": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد عامل تنظيف متاح",
+    ),
+    "cleaningRejectReasonOther": MessageLookupByLibrary.simpleMessage("أخرى"),
+    "cleaningRejectReasonOutsideArea": MessageLookupByLibrary.simpleMessage(
+      "خارج منطقة خدمتنا",
+    ),
+    "cleaningRejectReasonServiceUnavailable":
+        MessageLookupByLibrary.simpleMessage("الخدمة غير متاحة مؤقتًا"),
+    "cleaningRejectSheetSubtitle": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار سبب. سيتم إبلاغ العميل\nبذلك",
+    ),
+    "cleaningRequestIdHeader": MessageLookupByLibrary.simpleMessage(
+      "رقم الطلب",
+    ),
+    "cleaningRequestNewServiceType": MessageLookupByLibrary.simpleMessage(
+      "طلب نوع خدمة جديد",
+    ),
+    "cleaningRequestNewServiceTypeLink": MessageLookupByLibrary.simpleMessage(
+      "+ طلب نوع خدمة جديد",
+    ),
+    "cleaningRevenueHeader": MessageLookupByLibrary.simpleMessage("الإيرادات"),
+    "cleaningSaveAddon": MessageLookupByLibrary.simpleMessage(
+      "حفظ الخدمة الإضافية",
+    ),
+    "cleaningSaveSpace": MessageLookupByLibrary.simpleMessage("حفظ المساحة"),
+    "cleaningSearchCustomerOrOrderId": MessageLookupByLibrary.simpleMessage(
+      "ابحث باسم العميل أو رقم الطلب..",
+    ),
+    "cleaningSearchServices": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن الخدمات",
+    ),
+    "cleaningSelectService": MessageLookupByLibrary.simpleMessage(
+      "اختر الخدمة",
+    ),
+    "cleaningServiceImage": MessageLookupByLibrary.simpleMessage("صورة الخدمة"),
+    "cleaningServiceType": MessageLookupByLibrary.simpleMessage("نوع الخدمة"),
+    "cleaningServiceTypeName": MessageLookupByLibrary.simpleMessage(
+      "اسم نوع الخدمة",
+    ),
+    "cleaningServiceTypeReasonHint": MessageLookupByLibrary.simpleMessage(
+      "صف باختصار سبب حاجتك لهذا النوع من الخدمة",
+    ),
+    "cleaningShortDescription": MessageLookupByLibrary.simpleMessage(
+      "وصف مختصر",
+    ),
+    "cleaningSpaceName": MessageLookupByLibrary.simpleMessage("اسم المساحة"),
+    "cleaningSpaceNameHint": MessageLookupByLibrary.simpleMessage(
+      "مثال: غرفة النوم الرئيسية، غرفة المعيشة، الممر، الشرفة",
+    ),
+    "cleaningSpacePricingHeader": MessageLookupByLibrary.simpleMessage(
+      "تسعير المساحات",
+    ),
+    "cleaningSpacesHeader": MessageLookupByLibrary.simpleMessage("المساحات"),
+    "cleaningSpecialNotesHeader": MessageLookupByLibrary.simpleMessage(
+      "ملاحظات خاصة",
+    ),
+    "cleaningStartCleaning": MessageLookupByLibrary.simpleMessage(
+      "بدء التنظيف",
+    ),
+    "cleaningStartingRateHeader": MessageLookupByLibrary.simpleMessage(
+      "السعر الابتدائي",
+    ),
+    "cleaningStatusAccepted": MessageLookupByLibrary.simpleMessage("مقبول"),
+    "cleaningStatusInProgress": MessageLookupByLibrary.simpleMessage(
+      "قيد التنفيذ",
+    ),
+    "cleaningStatusNew": MessageLookupByLibrary.simpleMessage("جديد"),
+    "cleaningSubmitRequest": MessageLookupByLibrary.simpleMessage(
+      "إرسال الطلب",
+    ),
+    "cleaningSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "الدعم والشؤون القانونية",
+    ),
+    "cleaningTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "اضغط لرفع صورة",
+    ),
+    "cleaningTodayHours": m2,
+    "cleaningTodaysBookings": MessageLookupByLibrary.simpleMessage(
+      "حجوزات اليوم",
+    ),
+    "cleaningTotal": MessageLookupByLibrary.simpleMessage("المجموع"),
+    "cleaningTotalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المدفوع"),
+    "cleaningUnitHour": MessageLookupByLibrary.simpleMessage("ساعة"),
+    "cleaningUnitLabel": MessageLookupByLibrary.simpleMessage("الوحدة"),
+    "cleaningUnitPiece": MessageLookupByLibrary.simpleMessage("قطعة"),
+    "cleaningUnitRoom": MessageLookupByLibrary.simpleMessage("غرفة"),
+    "cleaningUnitSqFt": MessageLookupByLibrary.simpleMessage("قدم²"),
+    "cleaningUnitUnit": MessageLookupByLibrary.simpleMessage("وحدة"),
+    "cleaningUpcoming": MessageLookupByLibrary.simpleMessage("القادمة"),
+    "cleaningVendorProfile": MessageLookupByLibrary.simpleMessage(
+      "ملف المزوّد",
+    ),
+    "cleaningVilla": MessageLookupByLibrary.simpleMessage("فيلا"),
+    "cleaningWorkingHoursBookingSlots": MessageLookupByLibrary.simpleMessage(
+      "ساعات العمل ومواعيد الحجز",
+    ),
+    "cleaningYourServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "خدماتك",
+    ),
     "clearAll": MessageLookupByLibrary.simpleMessage("مسح الكل"),
     "clickToView": MessageLookupByLibrary.simpleMessage("اضغط للعرض"),
     "codeLabel": MessageLookupByLibrary.simpleMessage("الرمز"),
@@ -248,7 +567,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "createNewBasket": MessageLookupByLibrary.simpleMessage("إنشاء سلة جديدة"),
     "createdDate": MessageLookupByLibrary.simpleMessage("تاريخ الإنشاء"),
-    "createdLabel": m2,
+    "createdLabel": m3,
     "createdOnLabel": MessageLookupByLibrary.simpleMessage("تم الإنشاء في"),
     "credit": MessageLookupByLibrary.simpleMessage("إضافة"),
     "credited": MessageLookupByLibrary.simpleMessage("تم الإيداع"),
@@ -391,7 +710,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourWhatsappNumber": MessageLookupByLibrary.simpleMessage(
       "أدخل رقم واتساب الخاص بك",
     ),
-    "expiresInDays": m3,
+    "expiresInDays": m4,
     "filters": MessageLookupByLibrary.simpleMessage("الفلاتر"),
     "filtersSorting": MessageLookupByLibrary.simpleMessage("الفلاتر والترتيب"),
     "findSomethingFromThisRestaurant": MessageLookupByLibrary.simpleMessage(
@@ -666,7 +985,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "تفصيل مدة الطلب",
     ),
-    "orderIdLabel": m4,
+    "orderIdLabel": m5,
     "orderItems": MessageLookupByLibrary.simpleMessage("عناصر الطلب"),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("تم الاستلام"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("تم تقديم الطلب"),
@@ -805,7 +1124,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "products": MessageLookupByLibrary.simpleMessage("المنتجات"),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
-    "qtyLabel": m5,
+    "qtyLabel": m6,
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("قيّم الطلب"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -828,7 +1147,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم الوصول إلى المطعم",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
-    "reasonColonLabel": m6,
+    "reasonColonLabel": m7,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("سبب الإجازة"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("السبب"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("الدفعات المستلمة"),
@@ -1038,6 +1357,598 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewOrders": MessageLookupByLibrary.simpleMessage("عرض الطلبات"),
     "viewPaymentProof": MessageLookupByLibrary.simpleMessage("عرض إثبات الدفع"),
     "viewReports": MessageLookupByLibrary.simpleMessage("عرض التقارير"),
+    "waterAcceptingOrders": MessageLookupByLibrary.simpleMessage(
+      "يستقبل الطلبات",
+    ),
+    "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم حذف الحساب بنجاح",
+    ),
+    "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "إضافة عامل توصيل",
+    ),
+    "waterAddDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "إضافة نطاق مسافة",
+    ),
+    "waterAddMore": MessageLookupByLibrary.simpleMessage("إضافة المزيد"),
+    "waterAddProduct": MessageLookupByLibrary.simpleMessage("إضافة منتج"),
+    "waterAddedDeliveryBoysAppearHere": MessageLookupByLibrary.simpleMessage(
+      "سيظهر عمال التوصيل المضافون هنا",
+    ),
+    "waterAddedProductsWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر المنتجات المضافة هنا",
+    ),
+    "waterAfternoon": MessageLookupByLibrary.simpleMessage("بعد الظهر"),
+    "waterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "المخزون المتاح",
+    ),
+    "waterBankDetails": MessageLookupByLibrary.simpleMessage(
+      "التفاصيل البنكية",
+    ),
+    "waterBarcode": MessageLookupByLibrary.simpleMessage("الباركود"),
+    "waterBasicInformation": MessageLookupByLibrary.simpleMessage(
+      "المعلومات الأساسية",
+    ),
+    "waterBottleReturnSettings": MessageLookupByLibrary.simpleMessage(
+      "إعدادات إرجاع القوارير",
+    ),
+    "waterBottleSize": MessageLookupByLibrary.simpleMessage("حجم القارورة"),
+    "waterBottles": MessageLookupByLibrary.simpleMessage("قوارير"),
+    "waterBottlesCount": m8,
+    "waterBottlesLeft": m9,
+    "waterBrand": MessageLookupByLibrary.simpleMessage("العلامة التجارية"),
+    "waterBrandName": MessageLookupByLibrary.simpleMessage(
+      "اسم العلامة التجارية",
+    ),
+    "waterBusiness": MessageLookupByLibrary.simpleMessage("النشاط التجاري"),
+    "waterBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "إعدادات النشاط",
+    ),
+    "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث إعدادات النشاط بنجاح",
+    ),
+    "waterCallNow": MessageLookupByLibrary.simpleMessage("اتصل الآن"),
+    "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من إلغاء هذه الإجازة؟",
+    ),
+    "waterCertificate": MessageLookupByLibrary.simpleMessage("الشهادة"),
+    "waterChatWithCustomer": MessageLookupByLibrary.simpleMessage(
+      "مراسلة العميل",
+    ),
+    "waterClosed": MessageLookupByLibrary.simpleMessage("مغلق"),
+    "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من أنك تريد حذف هذا المنتج؟",
+    ),
+    "waterConfirmDeleteNamedItem": m10,
+    "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من أنك تريد تحديد هذا المنتج كمتوفر؟",
+    ),
+    "waterConfirmMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من أنك تريد تحديد هذا المنتج كغير متوفر؟",
+    ),
+    "waterConfirmReject": MessageLookupByLibrary.simpleMessage("تأكيد الرفض"),
+    "waterCount": MessageLookupByLibrary.simpleMessage("العدد"),
+    "waterCreatedCouponsAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر القسائم المنشأة هنا",
+    ),
+    "waterCurrentStatus": MessageLookupByLibrary.simpleMessage(
+      "الحالة الحالية",
+    ),
+    "waterCurrentlyPaused": MessageLookupByLibrary.simpleMessage(
+      "متوقف مؤقتًا حاليًا",
+    ),
+    "waterCustomer": MessageLookupByLibrary.simpleMessage("العميل"),
+    "waterCustomerHeader": MessageLookupByLibrary.simpleMessage("العميل"),
+    "waterCustomerMessagesWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر رسائل العملاء هنا",
+    ),
+    "waterCustomerRequestedPause": MessageLookupByLibrary.simpleMessage(
+      "إيقاف مؤقت بطلب من العميل",
+    ),
+    "waterDaily": MessageLookupByLibrary.simpleMessage("يومي"),
+    "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("يوم-شهر-سنة"),
+    "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
+      "عنوان التوصيل",
+    ),
+    "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage("سجل التوصيل"),
+    "waterDeliveryPartnerAssigned": MessageLookupByLibrary.simpleMessage(
+      "تم تعيين مندوب التوصيل",
+    ),
+    "waterDeliveryPartnerHeader": MessageLookupByLibrary.simpleMessage(
+      "مندوب التوصيل",
+    ),
+    "waterDeliveryTypeHeader": MessageLookupByLibrary.simpleMessage(
+      "نوع التوصيل",
+    ),
+    "waterDescription": MessageLookupByLibrary.simpleMessage("الوصف"),
+    "waterDistanceRangeKm": m11,
+    "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "تعديل نطاق المسافة",
+    ),
+    "waterEditPrice": MessageLookupByLibrary.simpleMessage("تعديل السعر"),
+    "waterEditWorkingHour": MessageLookupByLibrary.simpleMessage(
+      "تعديل ساعات العمل",
+    ),
+    "waterEnd": MessageLookupByLibrary.simpleMessage("النهاية"),
+    "waterEndTime": MessageLookupByLibrary.simpleMessage("وقت الانتهاء"),
+    "waterEndTimeAfterStartTime": MessageLookupByLibrary.simpleMessage(
+      "يجب أن يكون وقت الانتهاء بعد وقت البدء",
+    ),
+    "waterEnterMinMaxDistance": MessageLookupByLibrary.simpleMessage(
+      "أدخل الحد الأدنى والأقصى للمسافة",
+    ),
+    "waterEnterPrice": MessageLookupByLibrary.simpleMessage("أدخل السعر"),
+    "waterEnterQuantity": MessageLookupByLibrary.simpleMessage("أدخل الكمية"),
+    "waterEnterReason": MessageLookupByLibrary.simpleMessage("أدخل السبب"),
+    "waterErrorAcceptingOrder": m12,
+    "waterErrorAcceptingSubscription": m13,
+    "waterErrorAddingProduct": m14,
+    "waterErrorCancellingOrder": m15,
+    "waterErrorDeletingProduct": m16,
+    "waterErrorMarkingOrderAsReady": m17,
+    "waterErrorPausingSubscription": m18,
+    "waterErrorPreparingOrder": m19,
+    "waterErrorRejectingSubscription": m20,
+    "waterErrorResumingSubscription": m21,
+    "waterErrorUpdatingItemStatus": m22,
+    "waterErrorUpdatingPrice": m23,
+    "waterErrorUpdatingStock": m24,
+    "waterEstValue": MessageLookupByLibrary.simpleMessage("القيمة التقديرية"),
+    "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
+      "رسوم التوصيل التقديرية",
+    ),
+    "waterEvening": MessageLookupByLibrary.simpleMessage("المساء"),
+    "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
+      "التوصيل السريع",
+    ),
+    "waterFailedToAcceptOrder": MessageLookupByLibrary.simpleMessage(
+      "تعذّر قبول الطلب",
+    ),
+    "waterFailedToAcceptSubscription": MessageLookupByLibrary.simpleMessage(
+      "تعذّر قبول الاشتراك",
+    ),
+    "waterFailedToAddProduct": MessageLookupByLibrary.simpleMessage(
+      "فشل إضافة المنتج",
+    ),
+    "waterFailedToCancelLeave": MessageLookupByLibrary.simpleMessage(
+      "فشل إلغاء الإجازة",
+    ),
+    "waterFailedToCancelOrder": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إلغاء الطلب",
+    ),
+    "waterFailedToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "فشل حذف الحساب",
+    ),
+    "waterFailedToDeleteProduct": MessageLookupByLibrary.simpleMessage(
+      "فشل حذف المنتج",
+    ),
+    "waterFailedToLoadImage": MessageLookupByLibrary.simpleMessage(
+      "تعذر تحميل الصورة",
+    ),
+    "waterFailedToMarkLeave": MessageLookupByLibrary.simpleMessage(
+      "فشل تسجيل الإجازة",
+    ),
+    "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
+      "تعذّر تحديد الطلب كجاهز",
+    ),
+    "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إيقاف الاشتراك مؤقتًا",
+    ),
+    "waterFailedToPrepareOrder": MessageLookupByLibrary.simpleMessage(
+      "تعذّر تحضير الطلب",
+    ),
+    "waterFailedToRejectSubscription": MessageLookupByLibrary.simpleMessage(
+      "تعذّر رفض الاشتراك",
+    ),
+    "waterFailedToResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "تعذّر استئناف الاشتراك",
+    ),
+    "waterFailedToUpdateBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث إعدادات النشاط",
+    ),
+    "waterFailedToUpdateItemStatus": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث حالة المنتج",
+    ),
+    "waterFailedToUpdatePrice": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث السعر",
+    ),
+    "waterFailedToUpdateStock": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث المخزون",
+    ),
+    "waterFailedToUpdateWorkingHours": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث ساعات العمل",
+    ),
+    "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
+      "يرجى ملء جميع الحقول",
+    ),
+    "waterFilterAllCount": m25,
+    "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
+      "تصفية حسب الفئة",
+    ),
+    "waterFilterInStockCount": m26,
+    "waterFilterLowStockCount": m27,
+    "waterFlat": MessageLookupByLibrary.simpleMessage("مبلغ ثابت"),
+    "waterFrequency": MessageLookupByLibrary.simpleMessage("التكرار"),
+    "waterIdLabel": m28,
+    "waterImage": MessageLookupByLibrary.simpleMessage("صورة"),
+    "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
+      "PNG أو JPG حتى 5 ميغابايت",
+    ),
+    "waterImagesSelected": m29,
+    "waterInStock": MessageLookupByLibrary.simpleMessage("متوفر"),
+    "waterInventory": MessageLookupByLibrary.simpleMessage("المخزون"),
+    "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
+      "إدارة المخزون",
+    ),
+    "waterItem": MessageLookupByLibrary.simpleMessage("منتج مياه"),
+    "waterItemMarkedAvailable": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد المنتج كمتوفر بنجاح",
+    ),
+    "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد المنتج كغير متوفر بنجاح",
+    ),
+    "waterLastSold": m30,
+    "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء الإجازة بنجاح",
+    ),
+    "waterLeaveManagement": MessageLookupByLibrary.simpleMessage(
+      "إدارة الإجازات",
+    ),
+    "waterLeaveMarkedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تسجيل الإجازة بنجاح",
+    ),
+    "waterLogoutFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل تسجيل الخروج.",
+    ),
+    "waterLowStock": MessageLookupByLibrary.simpleMessage("مخزون منخفض"),
+    "waterLowStockAlert": MessageLookupByLibrary.simpleMessage(
+      "تنبيه انخفاض المخزون",
+    ),
+    "waterMarkAsPickedUp": MessageLookupByLibrary.simpleMessage(
+      "تحديد كمُستلَم",
+    ),
+    "waterMarkAvailable": MessageLookupByLibrary.simpleMessage("تحديد كمتوفر"),
+    "waterMarkLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من تسجيل إجازة للتواريخ المحددة؟",
+    ),
+    "waterMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "تحديد كغير متوفر",
+    ),
+    "waterMarkStoreBusy": MessageLookupByLibrary.simpleMessage(
+      "تعيين المتجر كمشغول",
+    ),
+    "waterMarkedLeavesAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر الإجازات المسجلة هنا",
+    ),
+    "waterMaxGreaterThanMin": MessageLookupByLibrary.simpleMessage(
+      "يجب أن يكون الحد الأقصى أكبر من الحد الأدنى",
+    ),
+    "waterMaximumDistance": MessageLookupByLibrary.simpleMessage("أقصى مسافة"),
+    "waterMessages": MessageLookupByLibrary.simpleMessage("الرسائل"),
+    "waterMinimumDistance": MessageLookupByLibrary.simpleMessage("أقل مسافة"),
+    "waterMonth": MessageLookupByLibrary.simpleMessage("الشهر"),
+    "waterMore": MessageLookupByLibrary.simpleMessage("المزيد"),
+    "waterMoreProducts": m31,
+    "waterMorning": MessageLookupByLibrary.simpleMessage("الصباح"),
+    "waterNewBadge": MessageLookupByLibrary.simpleMessage("جديد"),
+    "waterNewOrders": MessageLookupByLibrary.simpleMessage("طلبات جديدة"),
+    "waterNextDelivery": MessageLookupByLibrary.simpleMessage("التوصيل القادم"),
+    "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
+      "لا توجد بيانات اتصال",
+    ),
+    "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد إجازات",
+    ),
+    "waterNoOrdersHere": MessageLookupByLibrary.simpleMessage(
+      "لا توجد طلبات هنا",
+    ),
+    "waterNoPayoutsFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد دفعات",
+    ),
+    "waterNoPrivacyPolicyAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد سياسة خصوصية متاحة",
+    ),
+    "waterNoProductsFound": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على منتجات",
+    ),
+    "waterNoStockHistoryFound": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد سجل للمخزون",
+    ),
+    "waterNoStockRecordsYet": MessageLookupByLibrary.simpleMessage(
+      "لم يتم تسجيل أي حركة مخزون لهذا المنتج بعد",
+    ),
+    "waterNoSubscriptionOrdersHere": MessageLookupByLibrary.simpleMessage(
+      "لا توجد طلبات اشتراك هنا",
+    ),
+    "waterNoTermsAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد شروط وأحكام متاحة",
+    ),
+    "waterNotAccepting": MessageLookupByLibrary.simpleMessage(
+      "لا يستقبل الطلبات",
+    ),
+    "waterNotAvailable": MessageLookupByLibrary.simpleMessage("غير متوفر"),
+    "waterOfferPrice": MessageLookupByLibrary.simpleMessage("سعر العرض"),
+    "waterOffline": MessageLookupByLibrary.simpleMessage("غير متصل"),
+    "waterOneImageSelected": MessageLookupByLibrary.simpleMessage(
+      "تم اختيار صورة واحدة",
+    ),
+    "waterOneTimeOrders": MessageLookupByLibrary.simpleMessage(
+      "طلبات لمرة واحدة",
+    ),
+    "waterOnline": MessageLookupByLibrary.simpleMessage("متصل"),
+    "waterOpen": MessageLookupByLibrary.simpleMessage("مفتوح"),
+    "waterOpen24Hours": MessageLookupByLibrary.simpleMessage("مفتوح 24 ساعة"),
+    "waterOrderCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء الطلب بنجاح",
+    ),
+    "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
+      "تم توصيل الطلب",
+    ),
+    "waterOrderItemsCount": m32,
+    "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد الطلب كجاهز بنجاح",
+    ),
+    "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
+      "تم نقل الطلب إلى التحضير بنجاح",
+    ),
+    "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
+      "تم استلام الطلب",
+    ),
+    "waterOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر الطلبات هنا",
+    ),
+    "waterOther": MessageLookupByLibrary.simpleMessage("أخرى"),
+    "waterOtherReason": MessageLookupByLibrary.simpleMessage("سبب آخر"),
+    "waterOwnerIdentityProof": MessageLookupByLibrary.simpleMessage(
+      "إثبات هوية المالك",
+    ),
+    "waterPause": MessageLookupByLibrary.simpleMessage("إيقاف مؤقت"),
+    "waterPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "إيقاف الاشتراك مؤقتًا",
+    ),
+    "waterPauseSubscriptionHint": MessageLookupByLibrary.simpleMessage(
+      "سيتم إيقاف التوصيلات القادمة مؤقتًا. لن يتأثر طلب اليوم النشط",
+    ),
+    "waterPaused": MessageLookupByLibrary.simpleMessage("متوقف مؤقتًا"),
+    "waterPausedByLabel": MessageLookupByLibrary.simpleMessage("أوقفه:"),
+    "waterPausedOn": m33,
+    "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage(
+      "تاريخ الإيقاف:",
+    ),
+    "waterPaymentDetails": MessageLookupByLibrary.simpleMessage("تفاصيل الدفع"),
+    "waterPaymentProof": MessageLookupByLibrary.simpleMessage("إثبات الدفع"),
+    "waterPayoutAmount": MessageLookupByLibrary.simpleMessage("مبلغ الدفعة"),
+    "waterPayoutHistoryAppearHere": MessageLookupByLibrary.simpleMessage(
+      "سيظهر سجل الدفعات هنا",
+    ),
+    "waterPayoutOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "ستظهر الطلبات المرتبطة بهذه الدفعة هنا",
+    ),
+    "waterPickImagesFromGallery": MessageLookupByLibrary.simpleMessage(
+      "اختر صورة أو أكثر من المعرض",
+    ),
+    "waterPickedUpByCustomer": MessageLookupByLibrary.simpleMessage(
+      "استلمها العميل",
+    ),
+    "waterPickedUpByRider": MessageLookupByLibrary.simpleMessage(
+      "استلمها المندوب",
+    ),
+    "waterPlan": MessageLookupByLibrary.simpleMessage("الخطة"),
+    "waterPlanRangeStart": m34,
+    "waterPlanRangeStartEnd": m35,
+    "waterPlanSummary": MessageLookupByLibrary.simpleMessage("ملخص الخطة"),
+    "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال المخزون المتاح",
+    ),
+    "waterPleaseEnterPrice": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال السعر",
+    ),
+    "waterPleaseEnterProductName": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال اسم المنتج",
+    ),
+    "waterPleaseEnterSellingPrice": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال سعر البيع",
+    ),
+    "waterPleaseEnterValidPrice": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال سعر صحيح",
+    ),
+    "waterPleaseSelectProductImage": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار صورة واحدة على الأقل للمنتج",
+    ),
+    "waterPriceExampleHint": MessageLookupByLibrary.simpleMessage("مثال: 50"),
+    "waterPriceUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث السعر بنجاح",
+    ),
+    "waterPricing": MessageLookupByLibrary.simpleMessage("التسعير"),
+    "waterPricingMru": MessageLookupByLibrary.simpleMessage("الأسعار (MRU)"),
+    "waterPrivacySecurity": MessageLookupByLibrary.simpleMessage(
+      "الخصوصية والأمان",
+    ),
+    "waterProductAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تمت إضافة المنتج بنجاح",
+    ),
+    "waterProductDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم حذف المنتج بنجاح",
+    ),
+    "waterProductDescription": MessageLookupByLibrary.simpleMessage(
+      "وصف المنتج",
+    ),
+    "waterProductDescriptionHint": MessageLookupByLibrary.simpleMessage(
+      "صف المصدر أو درجة الحموضة أو الفوائد...",
+    ),
+    "waterProductDetails": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل المنتج",
+    ),
+    "waterProductImage": MessageLookupByLibrary.simpleMessage("صورة المنتج"),
+    "waterProductNameEnglish": MessageLookupByLibrary.simpleMessage(
+      "اسم المنتج (بالإنجليزية)",
+    ),
+    "waterProductNameHint": MessageLookupByLibrary.simpleMessage(
+      "مثال: مياه الشرب",
+    ),
+    "waterQuantityLabel": MessageLookupByLibrary.simpleMessage("الكمية: "),
+    "waterRangeOverlaps": MessageLookupByLibrary.simpleMessage(
+      "هذا النطاق يتداخل مع نطاق موجود",
+    ),
+    "waterReadyForDispatch": MessageLookupByLibrary.simpleMessage(
+      "جاهز للإرسال",
+    ),
+    "waterReadyForPickup": MessageLookupByLibrary.simpleMessage(
+      "جاهز للاستلام",
+    ),
+    "waterReasonForPausing": MessageLookupByLibrary.simpleMessage(
+      "سبب الإيقاف المؤقت",
+    ),
+    "waterReasonForRejecting": MessageLookupByLibrary.simpleMessage(
+      "سبب الرفض",
+    ),
+    "waterReasonLabel": MessageLookupByLibrary.simpleMessage("السبب:"),
+    "waterRegistrationDetails": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل التسجيل",
+    ),
+    "waterRejectOrder": MessageLookupByLibrary.simpleMessage("رفض الطلب"),
+    "waterRejectOrderHint": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار سبب. سيتم إبلاغ العميل بذلك",
+    ),
+    "waterRemainingLabel": MessageLookupByLibrary.simpleMessage("المتبقي: "),
+    "waterRequestId": MessageLookupByLibrary.simpleMessage("رقم الطلب"),
+    "waterResume": MessageLookupByLibrary.simpleMessage("استئناف"),
+    "waterResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "استئناف الاشتراك",
+    ),
+    "waterResumeSubscriptionConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من استئناف طلب الاشتراك هذا؟",
+    ),
+    "waterReturnableBottle": MessageLookupByLibrary.simpleMessage(
+      "قارورة قابلة للإرجاع",
+    ),
+    "waterReturnableBottleHint": MessageLookupByLibrary.simpleMessage(
+      "فعّل هذا الخيار إذا كان على العملاء إرجاع القارورة الفارغة بعد التوصيل أو الاستلام الذاتي",
+    ),
+    "waterRevenueHeader": MessageLookupByLibrary.simpleMessage("الإيرادات"),
+    "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
+      "ملخص الإيرادات",
+    ),
+    "waterReviewsCount": m36,
+    "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
+      "أداء المبيعات",
+    ),
+    "waterSaveProduct": MessageLookupByLibrary.simpleMessage("حفظ المنتج"),
+    "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
+      "امسح الباركود أو أدخله",
+    ),
+    "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
+      "ابحث برقم الاشتراك أو الاسم",
+    ),
+    "waterSearchCustomerOrOrderHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث باسم العميل أو رقم الطلب...",
+    ),
+    "waterSearchDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن عامل توصيل",
+    ),
+    "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن منتج أو رقم",
+    ),
+    "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
+      "اختر تاريخ البداية والنهاية",
+    ),
+    "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
+      "اختر مصدر الصورة",
+    ),
+    "waterSellingPrice": MessageLookupByLibrary.simpleMessage("سعر البيع"),
+    "waterSendMail": MessageLookupByLibrary.simpleMessage("إرسال بريد"),
+    "waterSize": MessageLookupByLibrary.simpleMessage("الحجم"),
+    "waterStart": MessageLookupByLibrary.simpleMessage("البداية"),
+    "waterStartTime": MessageLookupByLibrary.simpleMessage("وقت البدء"),
+    "waterStockAdded": MessageLookupByLibrary.simpleMessage(
+      "تمت إضافة المخزون",
+    ),
+    "waterStockHistory": MessageLookupByLibrary.simpleMessage("سجل المخزون"),
+    "waterStockIdLabel": m37,
+    "waterStockRemoved": MessageLookupByLibrary.simpleMessage("تم سحب المخزون"),
+    "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث المخزون بنجاح",
+    ),
+    "waterStorage": MessageLookupByLibrary.simpleMessage("التخزين"),
+    "waterStoreAvailability": MessageLookupByLibrary.simpleMessage(
+      "توفر المتجر",
+    ),
+    "waterStoreDetails": MessageLookupByLibrary.simpleMessage("تفاصيل المتجر"),
+    "waterStoreProfile": MessageLookupByLibrary.simpleMessage("ملف المتجر"),
+    "waterStoreStatusOpen": MessageLookupByLibrary.simpleMessage(
+      "حالة المتجر (مفتوح)",
+    ),
+    "waterSubscriptionAcceptedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("تم قبول الاشتراك بنجاح"),
+    "waterSubscriptionAmount": MessageLookupByLibrary.simpleMessage(
+      "مبلغ الاشتراك",
+    ),
+    "waterSubscriptionCalendar": MessageLookupByLibrary.simpleMessage(
+      "تقويم الاشتراكات",
+    ),
+    "waterSubscriptionDetails": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الاشتراك",
+    ),
+    "waterSubscriptionOrders": MessageLookupByLibrary.simpleMessage(
+      "طلبات الاشتراك",
+    ),
+    "waterSubscriptionPausedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم إيقاف الاشتراك مؤقتًا بنجاح",
+    ),
+    "waterSubscriptionRejectedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("تم رفض الاشتراك بنجاح"),
+    "waterSubscriptionResumedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("تم استئناف الاشتراك بنجاح"),
+    "waterSubscriptionSavings": MessageLookupByLibrary.simpleMessage(
+      "توفير الاشتراك",
+    ),
+    "waterSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "الدعم والشؤون القانونية",
+    ),
+    "waterTakeAPhoto": MessageLookupByLibrary.simpleMessage("التقط صورة"),
+    "waterTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "اضغط لرفع صورة",
+    ),
+    "waterTemporaryStoreClosure": MessageLookupByLibrary.simpleMessage(
+      "إغلاق مؤقت للمتجر",
+    ),
+    "waterTimeSlot": MessageLookupByLibrary.simpleMessage("الفترة الزمنية"),
+    "waterTinNifNumber": MessageLookupByLibrary.simpleMessage(
+      "الرقم الضريبي (NIF)",
+    ),
+    "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
+      "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
+    ),
+    "waterTodayTimings": m38,
+    "waterTotalHeader": MessageLookupByLibrary.simpleMessage("الإجمالي"),
+    "waterTotalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المدفوع"),
+    "waterTotalSoldAllTime": MessageLookupByLibrary.simpleMessage(
+      "إجمالي المبيعات (منذ البداية)",
+    ),
+    "waterTryAnotherStatusFilter": MessageLookupByLibrary.simpleMessage(
+      "جرّب فلتر حالة آخر في الأعلى",
+    ),
+    "waterUnitType": MessageLookupByLibrary.simpleMessage("نوع الوحدة"),
+    "waterUpcomingDeliveries": MessageLookupByLibrary.simpleMessage(
+      "التوصيلات القادمة",
+    ),
+    "waterUpdateStock": MessageLookupByLibrary.simpleMessage("تحديث المخزون"),
+    "waterValidUpto": MessageLookupByLibrary.simpleMessage("صالح حتى"),
+    "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("رسالة صوتية"),
+    "waterWaterSupplyIssue": MessageLookupByLibrary.simpleMessage(
+      "مشكلة في إمدادات المياه",
+    ),
+    "waterWeek": MessageLookupByLibrary.simpleMessage("الأسبوع"),
+    "waterWeeklyPlanner": MessageLookupByLibrary.simpleMessage(
+      "المخطط الأسبوعي",
+    ),
+    "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
+      "الجدول الأسبوعي",
+    ),
+    "waterWelcomeToShop": m39,
+    "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث ساعات العمل بنجاح",
+    ),
+    "waterYou": MessageLookupByLibrary.simpleMessage("أنت"),
     "wednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("مرحباً بك في"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(

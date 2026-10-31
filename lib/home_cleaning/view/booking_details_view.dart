@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_conversation_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
 
@@ -91,7 +92,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       alignment: Alignment.center,
                       children: [
                         Text(
-                          'Booking Details',
+                          S.of(context).cleaningBookingDetails,
                           style: GoogleFonts.inter(
                             color: BookingDetailsView._ink,
                             fontWeight: FontWeight.w700,
@@ -99,7 +100,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                           ),
                         ),
                         Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: InkWell(
                             onTap: () => Navigator.of(context).maybePop(),
                             borderRadius: BorderRadius.circular(12),
@@ -141,7 +142,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'SPACES',
+                        S.of(context).cleaningSpacesHeader,
                         style: GoogleFonts.inter(
                           color: const Color(0xFF9AA3B2),
                           fontWeight: FontWeight.w600,
@@ -153,7 +154,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       const _SpacesCard(),
                       const SizedBox(height: 16),
                       Text(
-                        'MAKE IT EXTRA CLEAN',
+                        S.of(context).cleaningMakeItExtraCleanHeader,
                         style: GoogleFonts.inter(
                           color: const Color(0xFF9AA3B2),
                           fontWeight: FontWeight.w600,
@@ -173,7 +174,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       _ProductsCard(isCompleted: widget.isCompleted),
                       const SizedBox(height: 16),
                       Text(
-                        'SPECIAL NOTES',
+                        S.of(context).cleaningSpecialNotesHeader,
                         style: GoogleFonts.inter(
                           color: const Color(0xFF9AA3B2),
                           fontWeight: FontWeight.w600,
@@ -216,7 +217,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       const _LocationCard(),
                       const SizedBox(height: 16),
                       Text(
-                        'PAYMENT SUMMARY',
+                        S.of(context).paymentSummary,
                         style: GoogleFonts.inter(
                           color: const Color(0xFF9AA3B2),
                           fontWeight: FontWeight.w600,
@@ -245,7 +246,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                 ),
                               ),
                               child: Text(
-                                'Mark as Completed',
+                                S.of(context).cleaningMarkAsCompleted,
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -269,7 +270,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                 ),
                               ),
                               child: Text(
-                                'Start Cleaning',
+                                S.of(context).cleaningStartCleaning,
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -300,7 +301,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                       ),
                                     ),
                                     child: Text(
-                                      'Reject',
+                                      S.of(context).reject,
                                       style: GoogleFonts.inter(
                                         color: const Color(0xFF424242),
                                         fontWeight: FontWeight.w700,
@@ -327,7 +328,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                       ),
                                     ),
                                     child: Text(
-                                      'Accept Booking',
+                                      S.of(context).cleaningAcceptBooking,
                                       style: GoogleFonts.inter(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 15,
@@ -409,7 +410,7 @@ class _CustomerCard extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'CUSTOMER',
+                S.of(context).cleaningCustomerHeader,
                 style: GoogleFonts.inter(
                   color: BookingDetailsView._orange,
                   fontWeight: FontWeight.w700,
@@ -433,12 +434,12 @@ class _CustomerCard extends StatelessWidget {
                 ),
                 child: Text(
                   isInProgress
-                      ? 'IN PROGRESS'
+                      ? S.of(context).cleaningStatusInProgress
                       : isCompleted
-                      ? 'COMPLETED'
+                      ? S.of(context).completed
                       : isAccepted
-                      ? 'ACCEPTED'
-                      : 'NEW',
+                      ? S.of(context).cleaningStatusAccepted
+                      : S.of(context).cleaningStatusNew,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -541,7 +542,7 @@ class _CustomerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'REQUEST ID',
+                  S.of(context).cleaningRequestIdHeader,
                   style: GoogleFonts.inter(
                     color: BookingDetailsView._muted,
                     fontWeight: FontWeight.w500,
@@ -744,7 +745,9 @@ class _ProductsCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              isCompleted ? 'Cleaning Products' : 'CLEANING PRODUCTS',
+              isCompleted
+                  ? S.of(context).cleaningCleaningProducts
+                  : S.of(context).cleaningCleaningProductsHeader,
               style: GoogleFonts.inter(
                 color: isCompleted
                     ? const Color(0xFF1A1A1A)
@@ -778,8 +781,8 @@ class _ProductsCard extends StatelessWidget {
             children: [
               Text(
                 isCompleted
-                    ? 'Provided by SAIMPEX'
-                    : 'Provider will provide products',
+                    ? S.of(context).cleaningProvidedBySaimpex
+                    : S.of(context).cleaningProviderWillProvideProducts,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.w700,
@@ -788,7 +791,7 @@ class _ProductsCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Cleaning products will be provided by the service provider',
+                S.of(context).cleaningProductsProvidedByProvider,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF5C534E),
                   fontWeight: FontWeight.w400,
@@ -839,8 +842,8 @@ class _LocationCard extends StatelessWidget {
                         size: 50,
                       ),
                     ),
-                    Positioned(
-                      left: 12,
+                    PositionedDirectional(
+                      start: 12,
                       bottom: 12,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -965,7 +968,7 @@ class _PaymentCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PAYMENT DETAILS',
+            S.of(context).paymentDetails,
             style: GoogleFonts.inter(
               color: const Color(0xFFFF5722),
               fontWeight: FontWeight.w700,
@@ -974,20 +977,20 @@ class _PaymentCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const _PayRow('Total', '730 MRU'),
+          _PayRow(S.of(context).cleaningTotal, '730 MRU'),
           const SizedBox(height: 12),
-          const _PayRow(
-            'Payment type',
+          _PayRow(
+            S.of(context).paymentType,
             'Online Payment',
             valueColor: Color(0xFFFF5722),
           ),
           const SizedBox(height: 12),
-          const _PayRow('Payment on', 'Aug 25, 2026 10:45 AM, Today'),
+          _PayRow(S.of(context).paymentOn, 'Aug 25, 2026 10:45 AM, Today'),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 14),
             child: Divider(height: 1, thickness: 1, color: Color(0xFF3A3A3A)),
           ),
-          const _PayRow('Total paid', '730 MRU', emphasize: true),
+          _PayRow(S.of(context).cleaningTotalPaid, '730 MRU', emphasize: true),
         ],
       ),
     );
@@ -1026,7 +1029,7 @@ class _PayRow extends StatelessWidget {
         Text(label, style: labelStyle),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(value, textAlign: TextAlign.right, style: valueStyle),
+          child: Text(value, textAlign: TextAlign.end, style: valueStyle),
         ),
       ],
     );

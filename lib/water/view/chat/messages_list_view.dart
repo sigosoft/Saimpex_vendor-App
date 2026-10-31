@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -87,14 +88,14 @@ class _MessagesListViewState extends State<MessagesListView> {
     final customerName = conv.customer?.name?.trim();
     final name = (customerName != null && customerName.isNotEmpty)
         ? customerName
-        : 'Customer';
+        : S.of(context).waterCustomer;
 
     String preview = '';
     if (conv.lastMessage != null) {
       if (conv.lastMessage?.messageType == 'image') {
-        preview = '📷 Image';
+        preview = '📷 ${S.of(context).waterImage}';
       } else if (conv.lastMessage?.messageType == 'voice') {
-        preview = '🎤 Voice message';
+        preview = '🎤 ${S.of(context).waterVoiceMessage}';
       } else {
         preview = conv.lastMessage?.message ?? '';
       }
@@ -149,7 +150,7 @@ class _MessagesListViewState extends State<MessagesListView> {
       if (dt.year == yesterday.year &&
           dt.month == yesterday.month &&
           dt.day == yesterday.day) {
-        return 'Yesterday';
+        return S.of(context).yesterday;
       }
       return DateFormat('dd/MM/yyyy').format(dt);
     } catch (_) {
@@ -238,8 +239,8 @@ class _MessagesListViewState extends State<MessagesListView> {
                                           fit: BoxFit.contain,
                                         ),
                                         const SizedBox(height: 16),
-                                        const Text(
-                                          'No messages yet',
+                                        Text(
+                                          S.of(context).noMessagesYet,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 16,
@@ -248,8 +249,8 @@ class _MessagesListViewState extends State<MessagesListView> {
                                           ),
                                         ),
                                         const SizedBox(height: 6),
-                                        const Text(
-                                          'Customer messages will appear here',
+                                        Text(
+                                          S.of(context).waterCustomerMessagesWillAppearHere,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 13,
@@ -377,8 +378,8 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Messages',
+            Text(
+              S.of(context).waterMessages,
               style: TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -387,7 +388,7 @@ class _Header extends StatelessWidget {
             ),
             if (showBack)
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: InkWell(
                   onTap: onBack,
                   borderRadius: BorderRadius.circular(12),
@@ -455,12 +456,12 @@ class _SearchField extends StatelessWidget {
                 fontSize: 13.5,
               ),
               cursorColor: AppColors.primaryOrange,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
                 border: InputBorder.none,
-                hintText: 'Search customer name or order ID...',
-                hintStyle: TextStyle(
+                hintText: S.of(context).waterSearchCustomerOrOrderHint,
+                hintStyle: const TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -617,7 +618,7 @@ class _ChatListTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Align(
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerEnd,
                     child: Text(
                       thread.time,
                       style: const TextStyle(
@@ -648,7 +649,13 @@ class _MessagesBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Home', 'Orders', 'Chat', 'Inventory', 'Account'];
+    final labels = [
+      S.of(context).home,
+      S.of(context).orders,
+      S.of(context).chat,
+      S.of(context).waterInventory,
+      S.of(context).account,
+    ];
     const icons = [
       Icons.home_rounded,
       Icons.assignment_outlined,

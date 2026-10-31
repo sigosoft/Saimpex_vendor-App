@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -446,14 +447,14 @@ class _EarningsViewState extends State<EarningsView> {
                       _SummaryCard(
                         rows: ordersTab
                             ? [
-                                ('Pending Order Balance', '${_formatVal(orderTab?['pending_order_balance'])} MRU'),
-                                ('Available Order Balance', '${_formatVal(orderTab?['available_order_balance'])} MRU'),
-                                ('Total Payout Received', '${_formatVal(orderTab?['total_payout_received'])} MRU'),
+                                (S.of(context).pendingOrderBalance, '${_formatVal(orderTab?['pending_order_balance'])} MRU'),
+                                (S.of(context).availableOrderBalance, '${_formatVal(orderTab?['available_order_balance'])} MRU'),
+                                (S.of(context).totalPayoutReceived, '${_formatVal(orderTab?['total_payout_received'])} MRU'),
                               ]
                             : [
-                                ('Total Sale Amount', '${_formatVal(payoutsTab?['total_sale_amount'] ?? '1300.00')} MRU'),
-                                ('Available Payout Balance', '${_formatVal(payoutsTab?['available_payout_balance'] ?? '300.00')} MRU'),
-                                ('Total Payout Received', '${_formatVal(payoutsTab?['total_payout_received'] ?? '00.00')} MRU'),
+                                (S.of(context).totalSaleAmount, '${_formatVal(payoutsTab?['total_sale_amount'] ?? '1300.00')} MRU'),
+                                (S.of(context).availablePayoutBalance, '${_formatVal(payoutsTab?['available_payout_balance'] ?? '300.00')} MRU'),
+                                (S.of(context).totalPayoutReceived, '${_formatVal(payoutsTab?['total_payout_received'] ?? '00.00')} MRU'),
                               ],
                       ),
                       const SizedBox(height: 14),
@@ -490,7 +491,7 @@ class _EarningsViewState extends State<EarningsView> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'No Orders Found',
+                                    S.of(context).noOrdersFound,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.inter(
                                       fontSize: 16,
@@ -500,7 +501,7 @@ class _EarningsViewState extends State<EarningsView> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    'Orders will appear here',
+                                    S.of(context).waterOrdersAppearHere,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.inter(
                                       fontSize: 13,
@@ -542,7 +543,7 @@ class _EarningsViewState extends State<EarningsView> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'No Payouts Found',
+                                    S.of(context).waterNoPayoutsFound,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.inter(
                                       fontSize: 16,
@@ -552,7 +553,7 @@ class _EarningsViewState extends State<EarningsView> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    'Payout history will appear here',
+                                    S.of(context).waterPayoutHistoryAppearHere,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.inter(
                                       fontSize: 13,
@@ -610,7 +611,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Earnings',
+              S.of(context).earnings,
               style: GoogleFonts.inter(
                 color: EarningsView.ink,
                 fontWeight: FontWeight.w700,
@@ -618,7 +619,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -651,10 +652,9 @@ class _TabSwitch extends StatelessWidget {
   final bool orders;
   final ValueChanged<bool> onChanged;
 
-  static const _labels = ['Order Amount', 'Payouts'];
-
   @override
   Widget build(BuildContext context) {
+    final labels = [S.of(context).orderAmount, S.of(context).payouts];
     final selected = orders ? 0 : 1;
     return Container(
       height: 44,
@@ -665,15 +665,15 @@ class _TabSwitch extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final segment = constraints.maxWidth / _labels.length;
+          final segment = constraints.maxWidth / labels.length;
           return SizedBox(
             height: 38,
             child: Stack(
               children: [
-                AnimatedPositioned(
+                AnimatedPositionedDirectional(
                   duration: const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
-                  left: selected * segment,
+                  start: selected * segment,
                   top: 0,
                   bottom: 0,
                   width: segment,
@@ -685,7 +685,7 @@ class _TabSwitch extends StatelessWidget {
                   ),
                 ),
                 Row(
-                  children: List.generate(_labels.length, (index) {
+                  children: List.generate(labels.length, (index) {
                     final isSelected = selected == index;
                     return Expanded(
                       child: GestureDetector(
@@ -705,7 +705,7 @@ class _TabSwitch extends StatelessWidget {
                               fontSize: 14,
                               height: 1.1,
                             ),
-                            child: Text(_labels[index]),
+                            child: Text(labels[index]),
                           ),
                         ),
                       ),
@@ -792,11 +792,11 @@ class _Filters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (_OrderFilter.all, 'All'),
-      (_OrderFilter.available, 'Available'),
-      (_OrderFilter.pending, 'Pending'),
-      (_OrderFilter.cancelled, 'Cancelled'),
+    final items = [
+      (_OrderFilter.all, S.of(context).all),
+      (_OrderFilter.available, S.of(context).available),
+      (_OrderFilter.pending, S.of(context).pending),
+      (_OrderFilter.cancelled, S.of(context).cancelled),
     ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -863,9 +863,9 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = switch (order.status) {
-      _OrderStatus.available => ('AVAILABLE', const Color(0xFF16A34A)),
-      _OrderStatus.pending => ('PENDING', const Color(0xFFF59E0B)),
-      _OrderStatus.cancelled => ('CANCELLED', const Color(0xFFF01E1E)),
+      _OrderStatus.available => (S.of(context).available.toUpperCase(), const Color(0xFF16A34A)),
+      _OrderStatus.pending => (S.of(context).pending.toUpperCase(), const Color(0xFFF59E0B)),
+      _OrderStatus.cancelled => (S.of(context).cancelled.toUpperCase(), const Color(0xFFF01E1E)),
     };
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -939,6 +939,21 @@ class _OrderCard extends StatelessWidget {
   }
 }
 
+String _payoutStatusLabel(BuildContext context, String status) {
+  switch (status.trim().toUpperCase()) {
+    case 'CREDITED':
+      return S.of(context).credited.toUpperCase();
+    case 'CANCELLED':
+      return S.of(context).cancelled.toUpperCase();
+    case 'PENDING':
+      return S.of(context).pending.toUpperCase();
+    case 'AVAILABLE':
+      return S.of(context).available.toUpperCase();
+    default:
+      return status.toUpperCase();
+  }
+}
+
 class _PayoutCard extends StatelessWidget {
   const _PayoutCard({
     required this.payout,
@@ -1003,7 +1018,7 @@ class _PayoutCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    payout.status.toUpperCase(),
+                    _payoutStatusLabel(context, payout.status),
                     style: GoogleFonts.inter(
                       color: statusColor,
                       fontWeight: FontWeight.w700,
@@ -1036,7 +1051,7 @@ class _PayoutCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
-                'View Details',
+                S.of(context).viewDetails,
                 style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
               ),
             ),

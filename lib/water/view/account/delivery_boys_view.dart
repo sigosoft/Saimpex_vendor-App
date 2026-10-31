@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/delivery_boys_model.dart';
@@ -205,7 +206,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                           fontSize: 13,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Search Delivery Boy',
+                          hintText: S.of(context).waterSearchDeliveryBoy,
                           hintStyle: GoogleFonts.inter(
                             color: const Color(0xFFA9AEB6),
                             fontWeight: FontWeight.w500,
@@ -248,7 +249,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No Delivery Boys Found',
+                                  S.of(context).noDeliveryBoysFound,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
@@ -258,7 +259,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Added delivery boys will appear here',
+                                  S.of(context).waterAddedDeliveryBoysAppearHere,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
@@ -344,7 +345,7 @@ class _Header extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Delivery Boys',
+                S.of(context).deliveryBoys,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
@@ -376,7 +377,7 @@ class _Header extends StatelessWidget {
                           color: DeliveryBoysView.orange, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        'Add Delivery Boy',
+                        S.of(context).waterAddDeliveryBoy,
                         style: GoogleFonts.inter(
                           color: DeliveryBoysView.orange,
                           fontSize: 12,
@@ -435,7 +436,11 @@ class _BoyCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  _MetaRow(icon: Icons.phone_outlined, text: boy.phone),
+                  // Phone stays LTR ("+222 …") inside RTL text.
+                  _MetaRow(
+                    icon: Icons.phone_outlined,
+                    text: boy.phone.isEmpty ? '' : '\u202A${boy.phone}\u202C',
+                  ),
                   const SizedBox(height: 4),
                   _MetaRow(icon: Icons.location_on_outlined, text: boy.address),
                 ],
@@ -503,7 +508,7 @@ class _ActivePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isActive ? 'ACTIVE' : 'INACTIVE',
+        isActive ? S.of(context).active : S.of(context).inactive,
         style: GoogleFonts.inter(
           color: isActive ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
           fontWeight: FontWeight.w700,

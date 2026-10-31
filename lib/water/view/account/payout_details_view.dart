@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -256,7 +257,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Payment Proof',
+                      S.of(context).waterPaymentProof,
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -274,9 +275,9 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                   child: Image.network(
                     url,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => const Padding(
-                      padding: EdgeInsets.all(32),
-                      child: Text('Failed to load image'),
+                    errorBuilder: (_, __, ___) => Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Text(S.of(context).waterFailedToLoadImage),
                     ),
                   ),
                 ),
@@ -317,12 +318,12 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
     final paymentId = _payoutDetails?['transaction_ref']?.toString() ??
         _payoutDetails?['payment_id']?.toString() ??
         _payoutDetails?['reference_number']?.toString() ??
-        'N/A';
+        S.current.waterNotAvailable;
 
     final notes = _payoutDetails?['payment_note']?.toString() ??
         _payoutDetails?['note']?.toString() ??
         _payoutDetails?['notes']?.toString() ??
-        'N/A';
+        S.current.waterNotAvailable;
 
     final proofUrl = _payoutDetails?['payment_proof']?.toString() ??
         _payoutDetails?['proof']?.toString() ??
@@ -345,7 +346,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: InkWell(
@@ -432,7 +433,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        statusStr,
+                                        _statusLabel(context, statusStr),
                                         style: GoogleFonts.inter(
                                           color: statusColor,
                                           fontWeight: FontWeight.w700,
@@ -458,7 +459,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Payment ID: $paymentId',
+                                      '${S.of(context).paymentId}: $paymentId',
                                       style: GoogleFonts.inter(
                                         color: const Color(0xFF6B7280),
                                         fontWeight: FontWeight.w500,
@@ -473,7 +474,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                       }
                                     },
                                     child: Text(
-                                      'View Payment Proof',
+                                      S.of(context).viewPaymentProof,
                                       style: GoogleFonts.inter(
                                         color: PayoutDetailsView.orange,
                                         fontWeight: FontWeight.w600,
@@ -487,8 +488,8 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                               ),
                               const SizedBox(height: 8),
                               _ExpandableLine(
-                                title: 'Notes',
-                                text: 'Notes: $notes',
+                                title: S.of(context).notes,
+                                text: '${S.of(context).notes}: $notes',
                                 style: GoogleFonts.inter(
                                   color: const Color(0xFF9AA3B2),
                                   fontWeight: FontWeight.w500,
@@ -524,7 +525,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No Orders Found',
+                                  S.of(context).noOrdersFound,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
@@ -534,7 +535,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Orders related to this payout will appear here',
+                                  S.of(context).waterPayoutOrdersAppearHere,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
@@ -567,6 +568,19 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
         ),
       ),
     );
+  }
+}
+
+String _statusLabel(BuildContext context, String status) {
+  switch (status.trim().toUpperCase()) {
+    case 'CREDITED':
+      return S.of(context).credited.toUpperCase();
+    case 'CANCELLED':
+      return S.of(context).cancelled.toUpperCase();
+    case 'PENDING':
+      return S.of(context).pending.toUpperCase();
+    default:
+      return status;
   }
 }
 
@@ -631,8 +645,8 @@ class _DetailOrderCard extends StatelessWidget {
                 if (reason != null) ...[
                   const SizedBox(height: 10),
                   _ExpandableLine(
-                    title: 'Reason',
-                    text: 'Reason: $reason',
+                    title: S.of(context).reasonLabel,
+                    text: S.of(context).reasonColonLabel(reason!),
                     fill: const Color(0xFFFDECEC),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     style: GoogleFonts.inter(
@@ -659,9 +673,9 @@ class _DetailOrderCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                _amountLine('Payout Amount', payout!),
+                _amountLine(S.of(context).waterPayoutAmount, payout!),
                 const SizedBox(height: 10),
-                _amountLine('Order Amount', orderAmount!),
+                _amountLine(S.of(context).orderAmount, orderAmount!),
               ],
             ),
         ],
@@ -749,7 +763,7 @@ class _ExpandableLine extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: Text(
-                      'Close',
+                      MaterialLocalizations.of(context).closeButtonLabel,
                       style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
                     ),
                   ),

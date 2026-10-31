@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -228,7 +230,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 to: parsed.$2,
                 reason: (item.reason != null && item.reason!.isNotEmpty)
                     ? item.reason!
-                    : 'Leave',
+                    : S.current.leave,
                 completed: false,
               ));
             }
@@ -244,7 +246,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 to: parsed.$2,
                 reason: (item.reason != null && item.reason!.isNotEmpty)
                     ? item.reason!
-                    : 'Leave',
+                    : S.current.leave,
                 completed: true,
               ));
             }
@@ -335,7 +337,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Mark Leave',
+                  S.of(context).markLeaveButton,
                   style: GoogleFonts.inter(
                     color: LeaveManagementView.ink,
                     fontWeight: FontWeight.w700,
@@ -344,7 +346,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Are you sure you want to mark leave for the selected dates?',
+                  S.of(context).waterMarkLeaveConfirm,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF6B7280),
@@ -369,7 +371,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                             ),
                           ),
                           child: Text(
-                            'No',
+                            S.of(context).no,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -392,7 +394,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                             ),
                           ),
                           child: Text(
-                            'Yes',
+                            S.of(context).yes,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -443,7 +445,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Cancel Leave',
+                  S.of(context).cancelLeave,
                   style: GoogleFonts.inter(
                     color: LeaveManagementView.ink,
                     fontWeight: FontWeight.w700,
@@ -452,7 +454,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Are you sure you want to cancel this leave?',
+                  S.of(context).waterCancelLeaveConfirm,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF6B7280),
@@ -477,7 +479,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                             ),
                           ),
                           child: Text(
-                            'No',
+                            S.of(context).no,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -500,7 +502,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                             ),
                           ),
                           child: Text(
-                            'Yes',
+                            S.of(context).yes,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -522,15 +524,15 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
   Future<void> _markLeave() async {
     final reason = _reason.text.trim();
     if (_from == null || _to == null) {
-      setState(() => _error = 'Select from and to dates');
+      setState(() => _error = S.of(context).waterSelectFromAndToDates);
       return;
     }
     if (_to!.isBefore(_from!)) {
-      setState(() => _error = 'To date must be after from date');
+      setState(() => _error = S.of(context).waterToDateAfterFromDate);
       return;
     }
     if (reason.isEmpty) {
-      setState(() => _error = 'Enter a reason');
+      setState(() => _error = S.of(context).waterEnterReason);
       return;
     }
 
@@ -602,7 +604,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
       if (isSuccess) {
         HapticFeedback.lightImpact();
         if (mounted) {
-          String message = _extractMessage(resData, 'Leave marked successfully');
+          String message = _extractMessage(resData, S.current.waterLeaveMarkedSuccessfully);
           showToast(context, message);
           setState(() {
             _from = null;
@@ -614,7 +616,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
         }
       } else {
         if (mounted) {
-          String message = _extractMessage(resData, 'Failed to mark leave');
+          String message = _extractMessage(resData, S.current.waterFailedToMarkLeave);
           showToast(context, message);
         }
       }
@@ -642,7 +644,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
     HapticFeedback.lightImpact();
     if (leave.id == null || leave.id!.isEmpty) {
       setState(() => _leaves.remove(leave));
-      showToast(context, 'Leave cancelled successfully');
+      showToast(context, S.current.waterLeaveCancelledSuccessfully);
       return;
     }
 
@@ -703,13 +705,13 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
       if (isSuccess) {
         HapticFeedback.lightImpact();
         if (mounted) {
-          String message = _extractMessage(resData, 'Leave cancelled successfully');
+          String message = _extractMessage(resData, S.current.waterLeaveCancelledSuccessfully);
           showToast(context, message);
           _fetchLeaves();
         }
       } else {
         if (mounted) {
-          String message = _extractMessage(resData, 'Failed to cancel leave');
+          String message = _extractMessage(resData, S.current.waterFailedToCancelLeave);
           showToast(context, message);
         }
       }
@@ -760,7 +762,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                     children: [
                       Text(
-                        'Mark Leave',
+                        S.of(context).markLeaveButton,
                         style: GoogleFonts.inter(
                           color: LeaveManagementView.ink,
                           fontWeight: FontWeight.w700,
@@ -786,9 +788,9 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                           children: [
                             Row(
                               children: [
-                                Expanded(child: _fieldLabel('From Date')),
+                                Expanded(child: _fieldLabel(S.of(context).fromDate)),
                                 const SizedBox(width: 12),
-                                Expanded(child: _fieldLabel('To Date')),
+                                Expanded(child: _fieldLabel(S.of(context).toDate)),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -810,7 +812,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                               ],
                             ),
                             const SizedBox(height: 14),
-                            _fieldLabel('Reason For Leave'),
+                            _fieldLabel(S.of(context).reasonForLeave),
                             const SizedBox(height: 8),
                             TextField(
                               controller: _reason,
@@ -824,7 +826,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'e.g. Annual vacation, renovation...',
+                                hintText: S.of(context).egAnnualVacationRenovation,
                                 hintStyle: GoogleFonts.inter(
                                   color: const Color(0xFFB7C2D0),
                                   fontWeight: FontWeight.w500,
@@ -868,7 +870,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
                                   child: Text(
-                                    'Mark Leave',
+                                    S.of(context).markLeaveButton,
                                     style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
                                   ),
                                 ),
@@ -904,7 +906,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No Leaves Found',
+                                  S.of(context).waterNoLeavesFound,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
@@ -914,7 +916,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Marked leaves will appear here',
+                                  S.of(context).waterMarkedLeavesAppearHere,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
@@ -928,7 +930,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                         )
                       else ...[
                         if (upcoming.isNotEmpty) ...[
-                          const _GroupTitle('Upcoming Leaves', color: Color(0xFF3B82F6)),
+                          _GroupTitle(S.of(context).upcomingLeaves, color: const Color(0xFF3B82F6)),
                           const SizedBox(height: 10),
                           for (final leave in upcoming) ...[
                             _LeaveCard(
@@ -940,11 +942,11 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                         ],
                         if (completed.isNotEmpty) ...[
                           const SizedBox(height: 6),
-                          const Row(
+                          Row(
                             children: [
-                              _GroupTitle('Completed Leaves', color: Color(0xFF16A34A)),
-                              Spacer(),
-                              _SeeAll(),
+                              _GroupTitle(S.of(context).completedLeaves, color: const Color(0xFF16A34A)),
+                              const Spacer(),
+                              const _SeeAll(),
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -997,7 +999,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Leave Management',
+              S.of(context).waterLeaveManagement,
               style: GoogleFonts.inter(
                 color: LeaveManagementView.ink,
                 fontWeight: FontWeight.w700,
@@ -1005,7 +1007,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -1041,7 +1043,7 @@ class _DateBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = value == null
-        ? 'dd-mm-yyyy'
+        ? S.of(context).waterDatePlaceholder
         : '${value!.day.toString().padLeft(2, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.year}';
     return Material(
       color: const Color(0xFFF8FAFC),
@@ -1090,7 +1092,7 @@ class _HistoryHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'LEAVES HISTORY',
+          S.of(context).leavesHistory,
           style: GoogleFonts.inter(
             color: const Color(0xFF3F4454),
             fontWeight: FontWeight.w700,
@@ -1111,7 +1113,7 @@ class _SeeAll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'See All',
+      S.of(context).viewAll,
       style: GoogleFonts.inter(
         color: LeaveManagementView.orange,
         fontWeight: FontWeight.w600,
@@ -1146,9 +1148,8 @@ class _LeaveCard extends StatelessWidget {
   final _Leave leave;
   final VoidCallback? onCancel;
 
-  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  String _date(DateTime date) => '${_months[date.month - 1]} ${date.day}';
+  String _date(BuildContext context, DateTime date) =>
+      DateFormat('MMM d', Localizations.localeOf(context).languageCode).format(date);
 
   @override
   Widget build(BuildContext context) {
@@ -1170,7 +1171,7 @@ class _LeaveCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${_date(leave.from)} - ${_date(leave.to)}, ${leave.to.year}',
+                      '${_date(context, leave.from)} - ${_date(context, leave.to)}, ${leave.to.year}',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF3F4555),
                         fontWeight: FontWeight.w700,
@@ -1196,7 +1197,7 @@ class _LeaveCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  scheduled ? 'SCHEDULED' : 'COMPLETED',
+                  scheduled ? S.of(context).scheduled : S.of(context).completed,
                   style: GoogleFonts.inter(
                     color: scheduled ? const Color(0xFF3B82F6) : const Color(0xFF16A34A),
                     fontWeight: FontWeight.w700,
@@ -1220,7 +1221,7 @@ class _LeaveCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
-                  'Cancel Leave',
+                  S.of(context).cancelLeave,
                   style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),

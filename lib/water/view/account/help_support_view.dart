@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
-import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -152,7 +152,7 @@ class _HelpSupportViewState extends State<HelpSupportView> {
             height: MediaQuery.of(context).size.height * 0.4,
             child: Center(
               child: Text(
-                'No contact details available',
+                S.of(context).waterNoContactDetails,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF626466),
                   fontWeight: FontWeight.w500,
@@ -172,9 +172,10 @@ class _HelpSupportViewState extends State<HelpSupportView> {
         if (hasPhone) ...[
           _SupportCard(
             icon: Icons.phone,
-            label: 'Call Us',
-            value: _phone,
-            action: 'Call Now',
+            label: S.of(context).callUs,
+            // Phone stays LTR ("+222 …") inside RTL text.
+            value: '\u202A$_phone\u202C',
+            action: S.of(context).waterCallNow,
             onTap: () {
               final raw = _phone.replaceAll(' ', '');
               _open(Uri.parse('tel:$raw'));
@@ -185,9 +186,9 @@ class _HelpSupportViewState extends State<HelpSupportView> {
         if (hasEmail) ...[
           _SupportCard(
             icon: Icons.mail,
-            label: 'Email Us',
+            label: S.of(context).emailUs,
             value: _email,
-            action: 'Send Mail',
+            action: S.of(context).waterSendMail,
             onTap: () => _open(Uri.parse('mailto:$_email')),
           ),
         ],
@@ -211,7 +212,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              LocalizationService.tr('Help & Support'),
+              S.of(context).helpSupport,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -219,7 +220,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),

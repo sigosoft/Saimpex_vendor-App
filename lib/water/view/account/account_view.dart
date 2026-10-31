@@ -22,6 +22,7 @@ import 'package:saimpex_vendor/water/view/account/help_support_view.dart';
 import 'package:saimpex_vendor/water/view/account/terms_conditions_view.dart';
 import 'package:saimpex_vendor/water/view/account/privacy_security_view.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({super.key, this.embedded = false});
@@ -83,7 +84,7 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  LocalizationService.tr('Delete Account'),
+                  S.of(context).deleteAccount,
                   style: GoogleFonts.inter(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
@@ -92,7 +93,7 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  LocalizationService.tr('Are you sure you want to delete your account?'),
+                  S.of(context).areYouSureYouWantToDeleteYourAccount,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF6B7280),
@@ -117,7 +118,7 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                           child: Text(
-                            LocalizationService.tr('No'),
+                            S.of(context).no,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -140,7 +141,7 @@ class _AccountViewState extends State<AccountView> {
                             ),
                           ),
                           child: Text(
-                            LocalizationService.tr('Yes'),
+                            S.of(context).yes,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -194,7 +195,7 @@ class _AccountViewState extends State<AccountView> {
               response.data['status'] == 1 ||
               response.data['status'] == '1')) {
         final rawMsg = response.data['message'];
-        String toastMessage = 'Account deleted successfully';
+        String toastMessage = S.current.waterAccountDeletedSuccessfully;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           toastMessage = rawMsg;
         } else if (rawMsg is Map) {
@@ -216,7 +217,7 @@ class _AccountViewState extends State<AccountView> {
         Get.offAll(() => const LoginScreen());
       } else {
         final rawMsg = response.data is Map ? response.data['message'] : null;
-        String errorMsg = 'Failed to delete account';
+        String errorMsg = S.current.waterFailedToDeleteAccount;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           errorMsg = rawMsg;
         }
@@ -298,7 +299,7 @@ class _AccountViewState extends State<AccountView> {
               response.data['status'] == 1 ||
               response.data['status'] == '1')) {
         final rawMsg = response.data['message'];
-        String toastMessage = 'You are logged out successfully.';
+        String toastMessage = S.current.youAreLoggedOutSuccessfully;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           toastMessage = rawMsg;
         } else if (rawMsg is Map) {
@@ -320,7 +321,7 @@ class _AccountViewState extends State<AccountView> {
         Get.offAll(() => const LoginScreen());
       } else {
         final rawMsg = response.data is Map ? response.data['message'] : null;
-        String errorMsg = 'Logout failed.';
+        String errorMsg = S.current.waterLogoutFailed;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           errorMsg = rawMsg;
         }
@@ -374,7 +375,7 @@ class _AccountViewState extends State<AccountView> {
               children: [
                 _ProfileCard(controller: controller),
                 const SizedBox(height: 18),
-                const _SectionLabel('Language'),
+                _SectionLabel(S.of(context).language),
                 const SizedBox(height: 10),
                 _LanguageSelector(
                   selectedIndex: controller.languageIndex,
@@ -382,7 +383,7 @@ class _AccountViewState extends State<AccountView> {
                   onSelect: controller.selectLanguage,
                 ),
                 const SizedBox(height: 18),
-                const _SectionLabel('Business'),
+                _SectionLabel(S.of(context).waterBusiness),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   children: [
@@ -390,7 +391,7 @@ class _AccountViewState extends State<AccountView> {
                       edgeDivider: true,
                       icon: Icons.notifications_none_rounded,
                       iconSize: 26,
-                      title: 'Notification',
+                      title: S.of(context).notification,
                       trailing: Switch(
                         value: controller.notificationsEnabled,
                         thumbColor: const WidgetStatePropertyAll(Colors.white),
@@ -417,13 +418,13 @@ class _AccountViewState extends State<AccountView> {
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.apartment_rounded,
-                      title: 'Store Profile',
+                      title: S.of(context).waterStoreProfile,
                       onTap: () => StoreProfileView.open(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.access_time_rounded,
-                      title: 'Working hours',
+                      title: S.of(context).workingHours,
                       onTap: () => WorkingHoursView.open(context),
                     ),
                     _SettingsTile(
@@ -431,20 +432,20 @@ class _AccountViewState extends State<AccountView> {
                       imageAsset:
                           'lib/water/Assets/Images/business_settings.png',
                       imageSize: 20,
-                      title: 'Business settings',
+                      title: S.of(context).waterBusinessSettings,
                       onTap: () => BusinessSettingsView.open(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.event_busy_outlined,
-                      title: 'Leave Management',
+                      title: S.of(context).waterLeaveManagement,
                       onTap: () => LeaveManagementView.open(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,
                       imageAsset: 'lib/water/Assets/Images/currency.png',
                       imageSize: 20,
-                      title: 'Earnings',
+                      title: S.of(context).earnings,
                       onTap: () => EarningsView.open(context),
                     ),
                     _SettingsTile(
@@ -452,43 +453,43 @@ class _AccountViewState extends State<AccountView> {
                       imageAsset:
                           'lib/water/Assets/Images/received_payouts.png',
                       imageSize: 22,
-                      title: 'Received Payouts',
+                      title: S.of(context).receivedPayouts,
                       onTap: () => ReceivedPayoutsView.open(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.local_offer_outlined,
-                      title: 'Coupons',
+                      title: S.of(context).coupons,
                       onTap: () => CouponsView.open(context),
                     ),
                     _SettingsTile(
                       icon: Icons.delivery_dining_outlined,
-                      title: 'Delivery Boys',
+                      title: S.of(context).deliveryBoys,
                       onTap: () => DeliveryBoysView.open(context),
                       showDivider: false,
                     ),
                   ],
                 ),
                 const SizedBox(height: 18),
-                const _SectionLabel('Support & Legal'),
+                _SectionLabel(S.of(context).waterSupportLegal),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   children: [
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.help_outline_rounded,
-                      title: 'Help & Support',
+                      title: S.of(context).helpSupport,
                       onTap: () => HelpSupportView.open(context),
                     ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.description_outlined,
-                      title: 'Terms & Conditions',
+                      title: S.of(context).termsConditions,
                       onTap: () => TermsConditionsView.open(context),
                     ),
                     _SettingsTile(
                       icon: Icons.privacy_tip_outlined,
-                      title: 'Privacy Policy',
+                      title: S.of(context).privacyPolicy,
                       onTap: () => PrivacySecurityView.open(context),
                       showDivider: false,
                     ),
@@ -508,7 +509,7 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  LocalizationService.tr('Check for update'),
+                  S.of(context).checkForUpdate,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: AppColors.textMuted,
@@ -576,7 +577,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              LocalizationService.tr('Account'),
+              S.of(context).account,
               style: const TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -585,7 +586,7 @@ class _Header extends StatelessWidget {
             ),
             if (showBack)
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: InkWell(
                   onTap: onBack,
                   borderRadius: BorderRadius.circular(12),
@@ -612,9 +613,9 @@ class _Header extends StatelessWidget {
                 ),
               ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: PopupMenuButton<String>(
-                tooltip: 'More',
+                tooltip: S.of(context).waterMore,
                 offset: const Offset(0, 40),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 180),
@@ -649,7 +650,7 @@ class _Header extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            LocalizationService.tr('Delete Account'),
+                            S.of(context).deleteAccount,
                             style: const TextStyle(
                               color: AppColors.primaryOrange,
                               fontWeight: FontWeight.w600,
@@ -764,7 +765,11 @@ class _ProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 5),
                   Text(
-                    LocalizationService.tr(status),
+                    status == 'Open'
+                        ? S.of(context).waterOpen
+                        : status == 'Closed'
+                            ? S.of(context).waterClosed
+                            : status,
                     style: TextStyle(
                       color: isOpen
                           ? AppColors.inventoryAvailable
@@ -806,7 +811,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      LocalizationService.tr(text),
+      text,
       style: const TextStyle(
         color: AppColors.primaryOrange,
         fontWeight: FontWeight.w700,
@@ -829,72 +834,69 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: AppColors.orangeSoftBg,
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final segment = constraints.maxWidth / languages.length;
-            return Stack(
-              children: [
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 280),
-                  curve: Curves.easeOutCubic,
-                  left: selectedIndex * segment,
-                  top: 0,
-                  bottom: 0,
-                  width: segment,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryOrange,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryOrange.withValues(alpha: 0.28),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.orangeSoftBg,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final segment = constraints.maxWidth / languages.length;
+          return Stack(
+            children: [
+              AnimatedPositionedDirectional(
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.easeOutCubic,
+                start: selectedIndex * segment,
+                top: 0,
+                bottom: 0,
+                width: segment,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryOrange,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryOrange.withValues(alpha: 0.28),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                 ),
-                Row(
-                  children: List.generate(languages.length, (index) {
-                    final selected = selectedIndex == index;
-                    return Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          if (index == selectedIndex) return;
-                          HapticFeedback.selectionClick();
-                          onSelect(index);
-                        },
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
-                            style: TextStyle(
-                              color: selected ? Colors.white : AppColors.textDark,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13.5,
-                            ),
-                            child: Text(languages[index]),
+              ),
+              Row(
+                children: List.generate(languages.length, (index) {
+                  final selected = selectedIndex == index;
+                  return Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (index == selectedIndex) return;
+                        HapticFeedback.selectionClick();
+                        onSelect(index);
+                      },
+                      child: Center(
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                          style: TextStyle(
+                            color: selected ? Colors.white : AppColors.textDark,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13.5,
                           ),
+                          child: Text(languages[index]),
                         ),
                       ),
-                    );
-                  }),
-                ),
-              ],
-            );
-          },
-        ),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -984,7 +986,7 @@ class _SettingsTile extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    LocalizationService.tr(title),
+                    title,
                     style: const TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w600,
@@ -1010,7 +1012,7 @@ class _SettingsTile extends StatelessWidget {
                   color: AppColors.divider,
                 )
               : const Padding(
-                  padding: EdgeInsets.only(left: 64),
+                  padding: EdgeInsetsDirectional.only(start: 64),
                   child: Divider(height: 1, color: AppColors.divider),
                 ),
       ],
@@ -1040,7 +1042,7 @@ class _LogoutButton extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              LocalizationService.tr('Logout'),
+              S.of(context).logout,
               style: const TextStyle(
                 color: AppColors.primaryOrange,
                 fontWeight: FontWeight.w700,
@@ -1095,7 +1097,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                LocalizationService.tr('Are you sure you want to log out?'),
+                S.of(context).areYouSureYouWantToLogout,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF4A4A4A),
@@ -1124,7 +1126,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          LocalizationService.tr('No'),
+                          S.of(context).no,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -1147,7 +1149,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          LocalizationService.tr('Yes'),
+                          S.of(context).yes,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,

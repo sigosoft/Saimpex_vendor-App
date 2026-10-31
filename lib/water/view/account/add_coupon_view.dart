@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class WaterCouponDraft {
   const WaterCouponDraft({
@@ -76,11 +78,11 @@ class _AddCouponViewState extends State<AddCouponView> {
       items: [
         PopupMenuItem(
           value: 'PERCENTAGE',
-          child: Text('Percentage', style: _valueStyle),
+          child: Text(S.of(context).percentage, style: _valueStyle),
         ),
         PopupMenuItem(
           value: 'FLAT',
-          child: Text('Flat', style: _valueStyle),
+          child: Text(S.of(context).waterFlat, style: _valueStyle),
         ),
       ],
     );
@@ -123,11 +125,12 @@ class _AddCouponViewState extends State<AddCouponView> {
     final discount = double.tryParse(_discount.text.trim());
     final count = int.tryParse(_count.text.trim());
     if (name.isEmpty || code.isEmpty || _kind == null || discount == null || count == null || _validUntil == null) {
-      setState(() => _error = 'Fill in every field');
+      setState(() => _error = S.of(context).waterFillInEveryField);
       return;
     }
     HapticFeedback.lightImpact();
     final suffix = _kind == 'PERCENTAGE' ? '%' : ' MRU';
+    final locale = Localizations.localeOf(context).languageCode;
     Navigator.of(context).pop(
       WaterCouponDraft(
         name: name.toUpperCase(),
@@ -135,8 +138,8 @@ class _AddCouponViewState extends State<AddCouponView> {
         kind: _kind!,
         discount: '${discount.toStringAsFixed(2)}$suffix',
         count: '$count',
-        validUntil: _formatShort(_validUntil!),
-        createdOn: _formatStamp(DateTime.now()),
+        validUntil: _formatShort(_validUntil!, locale),
+        createdOn: _formatStamp(DateTime.now(), locale),
       ),
     );
   }
@@ -167,49 +170,51 @@ class _AddCouponViewState extends State<AddCouponView> {
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
                   children: [
                     _Field(
-                      label: 'Coupon Name',
+                      label: S.of(context).couponName,
                       controller: _name,
-                      hint: 'Enter coupon name',
+                      hint: S.of(context).enterCouponName,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Coupon Code',
+                      label: S.of(context).couponCode,
                       controller: _code,
-                      hint: 'Enter coupon code',
+                      hint: S.of(context).enterCouponCode,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
-                    _label('Coupon Type'),
+                    _label(S.of(context).couponType),
                     const SizedBox(height: 8),
                     _SelectBox(
                       key: _typeKey,
-                      text: _kind == null ? 'Select' : (_kind == 'PERCENTAGE' ? 'Percentage' : 'Flat'),
+                      text: _kind == null
+                          ? S.of(context).select
+                          : (_kind == 'PERCENTAGE' ? S.of(context).percentage : S.of(context).waterFlat),
                       filled: _kind != null,
                       icon: Icons.keyboard_arrow_down_rounded,
                       onTap: _pickType,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Discount',
+                      label: S.of(context).discount,
                       controller: _discount,
-                      hint: 'Enter discount',
+                      hint: S.of(context).enterDiscount,
                       keyboard: const TextInputType.numberWithOptions(decimal: true),
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Count',
+                      label: S.of(context).waterCount,
                       controller: _count,
-                      hint: 'Enter count',
+                      hint: S.of(context).enterCount,
                       keyboard: TextInputType.number,
                       onChanged: _clearError,
                     ),
                     const SizedBox(height: 16),
-                    _label('Valid Upto'),
+                    _label(S.of(context).waterValidUpto),
                     const SizedBox(height: 8),
                     _SelectBox(
-                      text: _validUntil == null ? 'dd-mm-yyyy' : _formatInput(_validUntil!),
+                      text: _validUntil == null ? S.of(context).waterDatePlaceholder : _formatInput(_validUntil!),
                       filled: _validUntil != null,
                       calendar: true,
                       onTap: _pickDate,
@@ -245,7 +250,7 @@ class _AddCouponViewState extends State<AddCouponView> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           child: Text(
-                            'Cancel',
+                            S.of(context).cancel,
                             style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
@@ -263,7 +268,7 @@ class _AddCouponViewState extends State<AddCouponView> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           child: Text(
-                            'Add Coupon',
+                            S.of(context).addCoupon,
                             style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
                           ),
                         ),
@@ -301,25 +306,18 @@ Widget _label(String text) {
   );
 }
 
-const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 String _formatInput(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');
   final month = date.month.toString().padLeft(2, '0');
   return '$day-$month-${date.year}';
 }
 
-String _formatShort(DateTime date) {
-  return '${_months[date.month - 1]} ${date.day},${date.year}';
+String _formatShort(DateTime date, String locale) {
+  return DateFormat('MMM d,y', locale).format(date);
 }
 
-String _formatStamp(DateTime date) {
-  final day = date.day.toString().padLeft(2, '0');
-  var hour = date.hour % 12;
-  if (hour == 0) hour = 12;
-  final minute = date.minute.toString().padLeft(2, '0');
-  final suffix = date.hour < 12 ? 'AM' : 'PM';
-  return '${_months[date.month - 1]} $day, ${date.year} $hour:$minute $suffix, Today';
+String _formatStamp(DateTime date, String locale) {
+  return '${DateFormat('MMM dd, y h:mm a', locale).format(date)}, ${S.current.today}';
 }
 
 class _Header extends StatelessWidget {
@@ -335,7 +333,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Add Coupon',
+              S.of(context).addCoupon,
               style: GoogleFonts.inter(
                 color: AddCouponView.ink,
                 fontWeight: FontWeight.w700,
@@ -343,7 +341,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),

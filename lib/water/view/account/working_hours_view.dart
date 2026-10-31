@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -296,13 +297,13 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
       if (isSuccess) {
         HapticFeedback.lightImpact();
         if (mounted) {
-          String message = _extractMessage(resData, 'Working hours updated successfully');
+          String message = _extractMessage(resData, S.current.waterWorkingHoursUpdated);
           showToast(context, message);
         }
         return true;
       } else {
         if (mounted) {
-          String message = _extractMessage(resData, 'Failed to update working hours');
+          String message = _extractMessage(resData, S.current.waterFailedToUpdateWorkingHours);
           showToast(context, message);
         }
         return false;
@@ -330,7 +331,7 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
     final item = schedule[index];
     final result = await showEditWorkingHourDialog(
       context,
-      day: item.day,
+      day: _dayLabel(context, index),
       startTime: item.startTime,
       endTime: item.endTime,
       open24Hours: item.open24Hours,
@@ -382,7 +383,9 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
   @override
   Widget build(BuildContext context) {
     final today = schedule[DateTime.now().weekday - 1];
-    final todayHours = open24Hours ? WorkingHoursView.allDayHours : today.hours;
+    final todayHours = open24Hours
+        ? _ltr(WorkingHoursView.allDayHours)
+        : _hoursLabel(context, today);
     final todayClosed = !open24Hours && today.closed;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -426,7 +429,7 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
                       ),
                       const SizedBox(height: 22),
                       Text(
-                        'Weekly Schedule',
+                        S.of(context).waterWeeklySchedule,
                         style: GoogleFonts.inter(
                           color: WorkingHoursView.ink,
                           fontWeight: FontWeight.w700,
@@ -454,6 +457,7 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
                                 const Divider(height: 1, thickness: 1, color: Color(0xFFF3F3F3)),
                               _DayRow(
                                 item: schedule[i],
+                                dayLabel: _dayLabel(context, i),
                                 hours: open24Hours ? WorkingHoursView.allDayHours : null,
                                 onEdit: () => _editDay(i),
                               ),
@@ -472,6 +476,29 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
     );
   }
 }
+
+String _dayLabel(BuildContext context, int index) {
+  final s = S.of(context);
+  return [
+    s.monday,
+    s.tuesday,
+    s.wednesday,
+    s.thursday,
+    s.friday,
+    s.saturday,
+    s.sunday,
+  ][index];
+}
+
+/// Display label for a day's hours. Time ranges are wrapped in an LTR
+/// embedding so "08:00 AM - 10:00 PM" keeps its order inside RTL (Arabic) text.
+String _hoursLabel(BuildContext context, _DayHours item) {
+  if (item.open24Hours) return S.of(context).waterOpen24Hours;
+  if (item.closed) return S.of(context).waterClosed;
+  return _ltr(item.hours);
+}
+
+String _ltr(String text) => '\u202A$text\u202C';
 
 class _DayHours {
   const _DayHours({
@@ -523,7 +550,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Working Hours',
+              S.of(context).workingHours,
               style: GoogleFonts.inter(
                 color: WorkingHoursView.ink,
                 fontWeight: FontWeight.w700,
@@ -531,7 +558,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -590,7 +617,7 @@ class _CurrentStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Current Status',
+            S.of(context).waterCurrentStatus,
             style: GoogleFonts.inter(
               color: const Color(0xFF8A7B76),
               fontWeight: FontWeight.w500,
@@ -606,7 +633,7 @@ class _CurrentStatusCard extends StatelessWidget {
                 fontSize: 15,
               ),
               children: [
-                const TextSpan(text: 'Today: '),
+                TextSpan(text: '${S.of(context).today}: '),
                 TextSpan(
                   text: todayHours,
                   style: TextStyle(
@@ -626,7 +653,7 @@ class _CurrentStatusCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '24-Hour Open',
+                S.of(context).waterOpen24Hours,
                 style: GoogleFonts.inter(
                   color: WorkingHoursView.ink,
                   fontWeight: FontWeight.w600,
@@ -658,18 +685,20 @@ class _CurrentStatusCard extends StatelessWidget {
 class _DayRow extends StatelessWidget {
   const _DayRow({
     required this.item,
+    required this.dayLabel,
     this.hours,
     required this.onEdit,
   });
 
   final _DayHours item;
+  final String dayLabel;
   final String? hours;
   final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
     final closed = hours == null && item.closed;
-    final label = hours ?? item.hours;
+    final label = hours != null ? _ltr(hours!) : _hoursLabel(context, item);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       child: Row(
@@ -679,7 +708,7 @@ class _DayRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.day,
+                  dayLabel,
                   style: GoogleFonts.inter(
                     color: WorkingHoursView.day,
                     fontWeight: FontWeight.w700,

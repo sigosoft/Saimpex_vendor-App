@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -212,8 +213,8 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Details',
+            Text(
+              S.of(context).details,
               style: TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
@@ -221,7 +222,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -554,11 +555,17 @@ class _InfoGrid extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _InfoTile(label: 'Available Stock', value: availableStock),
+              child: _InfoTile(
+                label: S.of(context).waterAvailableStock,
+                value: availableStock,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _InfoTile(label: 'Today Orders', value: todayOrders),
+              child: _InfoTile(
+                label: S.of(context).todaysOrders,
+                value: todayOrders,
+              ),
             ),
           ],
         ),
@@ -566,7 +573,10 @@ class _InfoGrid extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _InfoTile(label: 'Selling Price', value: sellingPrice),
+              child: _InfoTile(
+                label: S.of(context).waterSellingPrice,
+                value: sellingPrice,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -655,8 +665,8 @@ class _StatusTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Status',
+          Text(
+            S.of(context).status,
             style: TextStyle(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
@@ -676,7 +686,7 @@ class _StatusTile extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                inStock ? 'In Stock' : 'Out Of Stock',
+                inStock ? S.of(context).waterInStock : S.of(context).outOfStock,
                 style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.w700,
@@ -708,8 +718,8 @@ class _BarcodeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Barcode',
+          Text(
+            S.of(context).waterBarcode,
             style: TextStyle(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
@@ -756,8 +766,8 @@ class _ActionButtons extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text(
-                'Edit',
+              child: Text(
+                S.of(context).edit,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -777,8 +787,8 @@ class _ActionButtons extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text(
-                'Update Stock',
+              child: Text(
+                S.of(context).waterUpdateStock,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -811,16 +821,16 @@ class _BottleReturnCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.recycling_rounded,
                 color: AppColors.inventoryBottleGreen,
                 size: 18,
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Text(
-                'BOTTLE RETURN SETTINGS',
+                S.of(context).waterBottleReturnSettings,
                 style: TextStyle(
                   color: AppColors.inventoryBottleGreen,
                   fontWeight: FontWeight.w700,
@@ -834,21 +844,21 @@ class _BottleReturnCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Returnable Bottle',
+                      S.of(context).waterReturnableBottle,
                       style: TextStyle(
                         color: AppColors.textDark,
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text(
-                      'Enable this option if customers must return the empty bottle after delivery or self pickup',
+                      S.of(context).waterReturnableBottleHint,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w400,
@@ -910,11 +920,11 @@ class _ProductDetailsCard extends StatelessWidget {
             storage != 'null')
         ? storage!.trim()
         : '—';
-    final descVal = (description != null &&
-            description!.trim().isNotEmpty &&
-            description != 'null')
-        ? description!.trim()
-        : 'No description available';
+    final hasDesc = description != null &&
+        description!.trim().isNotEmpty &&
+        description != 'null';
+    final descVal =
+        hasDesc ? description!.trim() : S.of(context).noDescriptionAvailable;
 
     return Container(
       width: double.infinity,
@@ -933,16 +943,16 @@ class _ProductDetailsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline_rounded,
                 color: AppColors.primaryOrange,
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                'Product Details',
+                S.of(context).waterProductDetails,
                 style: TextStyle(
                   color: AppColors.textDark,
                   fontWeight: FontWeight.w700,
@@ -960,12 +970,12 @@ class _ProductDetailsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _DetailPair(
-                      label: 'Category',
+                      label: S.of(context).category,
                       value: catVal,
                     ),
                     const SizedBox(height: 12),
                     _DetailPair(
-                      label: 'Unit Type',
+                      label: S.of(context).waterUnitType,
                       value: unitVal,
                     ),
                   ],
@@ -976,12 +986,12 @@ class _ProductDetailsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _DetailPair(
-                      label: 'Size',
+                      label: S.of(context).waterSize,
                       value: sizeVal,
                     ),
                     const SizedBox(height: 12),
                     _DetailPair(
-                      label: 'Storage',
+                      label: S.of(context).waterStorage,
                       value: storageVal,
                     ),
                   ],
@@ -990,8 +1000,8 @@ class _ProductDetailsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          const Text(
-            'Description',
+          Text(
+            S.of(context).waterDescription,
             style: TextStyle(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
@@ -1002,7 +1012,7 @@ class _ProductDetailsCard extends StatelessWidget {
           Text(
             descVal,
             style: TextStyle(
-              color: descVal == 'No description available'
+              color: !hasDesc
                   ? AppColors.textSecondary
                   : AppColors.textDark,
               fontWeight: FontWeight.w400,
@@ -1099,9 +1109,9 @@ class _SalesPerformanceCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Sales Performance',
+                  S.of(context).waterSalesPerformance,
                   style: TextStyle(
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
@@ -1110,7 +1120,7 @@ class _SalesPerformanceCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'Last Sold: $lastSold',
+                S.of(context).waterLastSold(lastSold),
                 style: const TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w400,
@@ -1122,9 +1132,9 @@ class _SalesPerformanceCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: _SalesStat(label: 'Today', value: todaySold)),
-              Expanded(child: _SalesStat(label: 'Week', value: weekSold)),
-              Expanded(child: _SalesStat(label: 'Month', value: monthSold)),
+              Expanded(child: _SalesStat(label: S.of(context).today, value: todaySold)),
+              Expanded(child: _SalesStat(label: S.of(context).waterWeek, value: weekSold)),
+              Expanded(child: _SalesStat(label: S.of(context).waterMonth, value: monthSold)),
             ],
           ),
           const SizedBox(height: 12),
@@ -1137,9 +1147,9 @@ class _SalesPerformanceCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Total Sold (All Time)',
+                    S.of(context).waterTotalSoldAllTime,
                     style: TextStyle(
                       color: AppColors.textMuted,
                       fontWeight: FontWeight.w500,
@@ -1159,8 +1169,8 @@ class _SalesPerformanceCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const Text(
-            'Revenue Summary',
+          Text(
+            S.of(context).waterRevenueSummary,
             style: TextStyle(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w700,
@@ -1171,13 +1181,13 @@ class _SalesPerformanceCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _RevenueStat(label: 'Today', value: todayRev),
+                child: _RevenueStat(label: S.of(context).today, value: todayRev),
               ),
               Expanded(
-                child: _RevenueStat(label: 'Week', value: weekRev),
+                child: _RevenueStat(label: S.of(context).waterWeek, value: weekRev),
               ),
               Expanded(
-                child: _RevenueStat(label: 'Month', value: monthRev),
+                child: _RevenueStat(label: S.of(context).waterMonth, value: monthRev),
               ),
             ],
           ),
@@ -1263,9 +1273,9 @@ class _StockHistorySection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
-                'Stock History',
+                S.of(context).waterStockHistory,
                 style: TextStyle(
                   color: AppColors.textDark,
                   fontWeight: FontWeight.w700,
@@ -1274,8 +1284,8 @@ class _StockHistorySection extends StatelessWidget {
               ),
             ),
             if (stockLogs.isNotEmpty)
-              const Text(
-                'See All',
+              Text(
+                S.of(context).viewAll,
                 style: TextStyle(
                   color: AppColors.primaryOrange,
                   fontWeight: FontWeight.w600,
@@ -1316,8 +1326,8 @@ class _StockHistorySection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'No Stock History Found',
+                Text(
+                  S.of(context).waterNoStockHistoryFound,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -1326,8 +1336,8 @@ class _StockHistorySection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'No stock records recorded for this item yet',
+                Text(
+                  S.of(context).waterNoStockRecordsYet,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12.5,
@@ -1372,7 +1382,9 @@ class _StockHistorySection extends StatelessWidget {
         (map['quantity'] != null &&
             map['quantity'].toString().startsWith('-'));
     final title = map['title']?.toString() ??
-        (isRemoval ? 'Stock Removed' : 'Stock Added');
+        (isRemoval
+            ? S.current.waterStockRemoved
+            : S.current.waterStockAdded);
     final quantityRaw = map['quantity']?.toString() ??
         map['stock']?.toString() ??
         '0';
@@ -1439,7 +1451,7 @@ class _HistoryCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'STOCK ID: $stockId',
+                S.of(context).waterStockIdLabel(stockId),
                 style: const TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w500,
@@ -1482,7 +1494,7 @@ class _HistoryCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'QUANTITY: ',
+                S.of(context).waterQuantityLabel,
                 style: TextStyle(
                   color: accent,
                   fontWeight: FontWeight.w600,
@@ -1491,6 +1503,7 @@ class _HistoryCard extends StatelessWidget {
               ),
               Text(
                 quantity,
+                textDirection: TextDirection.ltr,
                 style: TextStyle(
                   color: accent,
                   fontWeight: FontWeight.w800,
@@ -1498,8 +1511,8 @@ class _HistoryCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const Text(
-                'REMAINING: ',
+              Text(
+                S.of(context).waterRemainingLabel,
                 style: TextStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.w500,

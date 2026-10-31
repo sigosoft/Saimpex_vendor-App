@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class EditWorkingHourResult {
   const EditWorkingHourResult({
@@ -113,7 +114,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
 
   void _save() {
     if (!open24Hours && _minutes(endTime) <= _minutes(startTime)) {
-      setState(() => _error = 'End time must be after start time');
+      setState(() => _error = S.of(context).waterEndTimeAfterStartTime);
       return;
     }
     Navigator.of(context).pop(
@@ -141,7 +142,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
             padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
             child: Center(
               child: Text(
-                'Edit Working Hour',
+                S.of(context).waterEditWorkingHour,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF111111),
                   fontWeight: FontWeight.w700,
@@ -168,7 +169,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                 Row(
                   children: [
                     Text(
-                      '24-Hour Open',
+                      S.of(context).waterOpen24Hours,
                       style: GoogleFonts.inter(
                         color: const Color(0xFF1C1D1B),
                         fontWeight: FontWeight.w600,
@@ -204,9 +205,9 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Expanded(child: _timeLabel('Start Time')),
+                    Expanded(child: _timeLabel(S.of(context).waterStartTime)),
                     const SizedBox(width: 12),
-                    Expanded(child: _timeLabel('End Time')),
+                    Expanded(child: _timeLabel(S.of(context).waterEndTime)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -254,7 +255,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                             ),
                           ),
                           child: Text(
-                            'Cancel',
+                            S.of(context).cancel,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
@@ -288,7 +289,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                               ),
                             ),
                             child: Text(
-                              'Save',
+                              S.of(context).save,
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,

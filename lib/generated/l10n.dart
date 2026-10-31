@@ -5105,6 +5105,3721 @@ class S {
   String get nonVeg {
     return Intl.message('Non-Veg', name: 'nonVeg', desc: '', args: []);
   }
+
+  /// `Accept Booking`
+  String get cleaningAcceptBooking {
+    return Intl.message(
+      'Accept Booking',
+      name: 'cleaningAcceptBooking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accepting bookings`
+  String get cleaningAcceptingBookings {
+    return Intl.message(
+      'Accepting bookings',
+      name: 'cleaningAcceptingBookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Add-on`
+  String get cleaningAddAddon {
+    return Intl.message(
+      'Add Add-on',
+      name: 'cleaningAddAddon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+ Add Add-on`
+  String get cleaningAddAddonButton {
+    return Intl.message(
+      '+ Add Add-on',
+      name: 'cleaningAddAddonButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Service`
+  String get cleaningAddService {
+    return Intl.message(
+      'Add Service',
+      name: 'cleaningAddService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+ Add Service`
+  String get cleaningAddServiceButton {
+    return Intl.message(
+      '+ Add Service',
+      name: 'cleaningAddServiceButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Space`
+  String get cleaningAddSpace {
+    return Intl.message(
+      'Add Space',
+      name: 'cleaningAddSpace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+ Add Space`
+  String get cleaningAddSpaceButton {
+    return Intl.message(
+      '+ Add Space',
+      name: 'cleaningAddSpaceButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add-on Name`
+  String get cleaningAddonName {
+    return Intl.message(
+      'Add-on Name',
+      name: 'cleaningAddonName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Fridge Cleaning, Oven Cleaning`
+  String get cleaningAddonNameHint {
+    return Intl.message(
+      'e.g. Fridge Cleaning, Oven Cleaning',
+      name: 'cleaningAddonNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ADD-ON SERVICES`
+  String get cleaningAddonServicesHeader {
+    return Intl.message(
+      'ADD-ON SERVICES',
+      name: 'cleaningAddonServicesHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apartment`
+  String get cleaningApartment {
+    return Intl.message(
+      'Apartment',
+      name: 'cleaningApartment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BASIC INFORMATION`
+  String get cleaningBasicInformationHeader {
+    return Intl.message(
+      'BASIC INFORMATION',
+      name: 'cleaningBasicInformationHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Booking Details`
+  String get cleaningBookingDetails {
+    return Intl.message(
+      'Booking Details',
+      name: 'cleaningBookingDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bookings`
+  String get cleaningBookings {
+    return Intl.message(
+      'Bookings',
+      name: 'cleaningBookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BOOKINGS`
+  String get cleaningBookingsHeader {
+    return Intl.message(
+      'BOOKINGS',
+      name: 'cleaningBookingsHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Business`
+  String get cleaningBusinessSection {
+    return Intl.message(
+      'Business',
+      name: 'cleaningBusinessSection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Business settings`
+  String get cleaningBusinessSettings {
+    return Intl.message(
+      'Business settings',
+      name: 'cleaningBusinessSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Image`
+  String get cleaningChangeImage {
+    return Intl.message(
+      'Change Image',
+      name: 'cleaningChangeImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cleaning Products`
+  String get cleaningCleaningProducts {
+    return Intl.message(
+      'Cleaning Products',
+      name: 'cleaningCleaningProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CLEANING PRODUCTS`
+  String get cleaningCleaningProductsHeader {
+    return Intl.message(
+      'CLEANING PRODUCTS',
+      name: 'cleaningCleaningProductsHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closed`
+  String get cleaningClosedStatus {
+    return Intl.message(
+      'Closed',
+      name: 'cleaningClosedStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get cleaningCompleted {
+    return Intl.message(
+      'Completed',
+      name: 'cleaningCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Reject`
+  String get cleaningConfirmReject {
+    return Intl.message(
+      'Confirm Reject',
+      name: 'cleaningConfirmReject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CUSTOMER`
+  String get cleaningCustomerHeader {
+    return Intl.message(
+      'CUSTOMER',
+      name: 'cleaningCustomerHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer provides products`
+  String get cleaningCustomerProvidesProducts {
+    return Intl.message(
+      'Customer provides products',
+      name: 'cleaningCustomerProvidesProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer brings their own detergents, mop, and cleaning cloths.`
+  String get cleaningCustomerProvidesProductsDesc {
+    return Intl.message(
+      'Customer brings their own detergents, mop, and cleaning cloths.',
+      name: 'cleaningCustomerProvidesProductsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete your account? This action cannot be undone.`
+  String get cleaningDeleteAccountConfirm {
+    return Intl.message(
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      name: 'cleaningDeleteAccountConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Add-on`
+  String get cleaningEditAddon {
+    return Intl.message(
+      'Edit Add-on',
+      name: 'cleaningEditAddon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Service`
+  String get cleaningEditService {
+    return Intl.message(
+      'Edit Service',
+      name: 'cleaningEditService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Space`
+  String get cleaningEditSpace {
+    return Intl.message(
+      'Edit Space',
+      name: 'cleaningEditSpace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Description`
+  String get cleaningEnterDescription {
+    return Intl.message(
+      'Enter Description',
+      name: 'cleaningEnterDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter service type`
+  String get cleaningEnterServiceType {
+    return Intl.message(
+      'Enter service type',
+      name: 'cleaningEnterServiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the Price`
+  String get cleaningEnterThePrice {
+    return Intl.message(
+      'Enter the Price',
+      name: 'cleaningEnterThePrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I provide the products`
+  String get cleaningIProvideProducts {
+    return Intl.message(
+      'I provide the products',
+      name: 'cleaningIProvideProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your team brings professional cleaning detergents, vacuums & cloths.`
+  String get cleaningIProvideProductsDesc {
+    return Intl.message(
+      'Your team brings professional cleaning detergents, vacuums & cloths.',
+      name: 'cleaningIProvideProductsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PNG, JPG up to 5MB`
+  String get cleaningImageFormatsHint {
+    return Intl.message(
+      'PNG, JPG up to 5MB',
+      name: 'cleaningImageFormatsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In Progress`
+  String get cleaningInProgress {
+    return Intl.message(
+      'In Progress',
+      name: 'cleaningInProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ISSUES COVERED`
+  String get cleaningIssuesCoveredHeader {
+    return Intl.message(
+      'ISSUES COVERED',
+      name: 'cleaningIssuesCoveredHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Just now`
+  String get cleaningJustNow {
+    return Intl.message(
+      'Just now',
+      name: 'cleaningJustNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Arabic`
+  String get cleaningLanguageArabic {
+    return Intl.message(
+      'Arabic',
+      name: 'cleaningLanguageArabic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get cleaningLanguageEnglish {
+    return Intl.message(
+      'English',
+      name: 'cleaningLanguageEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `French`
+  String get cleaningLanguageFrench {
+    return Intl.message(
+      'French',
+      name: 'cleaningLanguageFrench',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MAKE IT EXTRA CLEAN`
+  String get cleaningMakeItExtraCleanHeader {
+    return Intl.message(
+      'MAKE IT EXTRA CLEAN',
+      name: 'cleaningMakeItExtraCleanHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Completed`
+  String get cleaningMarkAsCompleted {
+    return Intl.message(
+      'Mark as Completed',
+      name: 'cleaningMarkAsCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Messages`
+  String get cleaningMessages {
+    return Intl.message(
+      'Messages',
+      name: 'cleaningMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Services`
+  String get cleaningMyServices {
+    return Intl.message(
+      'My Services',
+      name: 'cleaningMyServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New Bookings`
+  String get cleaningNewBookings {
+    return Intl.message(
+      'New Bookings',
+      name: 'cleaningNewBookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No bookings here`
+  String get cleaningNoBookingsHere {
+    return Intl.message(
+      'No bookings here',
+      name: 'cleaningNoBookingsHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No messages found`
+  String get cleaningNoMessagesFound {
+    return Intl.message(
+      'No messages found',
+      name: 'cleaningNoMessagesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No services found`
+  String get cleaningNoServicesFound {
+    return Intl.message(
+      'No services found',
+      name: 'cleaningNoServicesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not accepting`
+  String get cleaningNotAccepting {
+    return Intl.message(
+      'Not accepting',
+      name: 'cleaningNotAccepting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Offline`
+  String get cleaningOffline {
+    return Intl.message('Offline', name: 'cleaningOffline', desc: '', args: []);
+  }
+
+  /// `Online`
+  String get cleaningOnline {
+    return Intl.message('Online', name: 'cleaningOnline', desc: '', args: []);
+  }
+
+  /// `Open`
+  String get cleaningOpenStatus {
+    return Intl.message('Open', name: 'cleaningOpenStatus', desc: '', args: []);
+  }
+
+  /// `Other Reason`
+  String get cleaningOtherReason {
+    return Intl.message(
+      'Other Reason',
+      name: 'cleaningOtherReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ants`
+  String get cleaningPestAnts {
+    return Intl.message('Ants', name: 'cleaningPestAnts', desc: '', args: []);
+  }
+
+  /// `Bed Bugs`
+  String get cleaningPestBedBugs {
+    return Intl.message(
+      'Bed Bugs',
+      name: 'cleaningPestBedBugs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cockroaches`
+  String get cleaningPestCockroaches {
+    return Intl.message(
+      'Cockroaches',
+      name: 'cleaningPestCockroaches',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flies`
+  String get cleaningPestFlies {
+    return Intl.message('Flies', name: 'cleaningPestFlies', desc: '', args: []);
+  }
+
+  /// `General\nSanitization`
+  String get cleaningPestGeneralSanitization {
+    return Intl.message(
+      'General\nSanitization',
+      name: 'cleaningPestGeneralSanitization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mosquitoes`
+  String get cleaningPestMosquitoes {
+    return Intl.message(
+      'Mosquitoes',
+      name: 'cleaningPestMosquitoes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other Pests`
+  String get cleaningPestOtherPests {
+    return Intl.message(
+      'Other Pests',
+      name: 'cleaningPestOtherPests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rodents`
+  String get cleaningPestRodents {
+    return Intl.message(
+      'Rodents',
+      name: 'cleaningPestRodents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Termites`
+  String get cleaningPestTermites {
+    return Intl.message(
+      'Termites',
+      name: 'cleaningPestTermites',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Supply Fee`
+  String get cleaningProductSupplyFee {
+    return Intl.message(
+      'Product Supply Fee',
+      name: 'cleaningProductSupplyFee',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cleaning products will be provided by the service provider`
+  String get cleaningProductsProvidedByProvider {
+    return Intl.message(
+      'Cleaning products will be provided by the service provider',
+      name: 'cleaningProductsProvidedByProvider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PROPERTY TYPES`
+  String get cleaningPropertyTypesHeader {
+    return Intl.message(
+      'PROPERTY TYPES',
+      name: 'cleaningPropertyTypesHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Provided by SAIMPEX`
+  String get cleaningProvidedBySaimpex {
+    return Intl.message(
+      'Provided by SAIMPEX',
+      name: 'cleaningProvidedBySaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Provider will provide products`
+  String get cleaningProviderWillProvideProducts {
+    return Intl.message(
+      'Provider will provide products',
+      name: 'cleaningProviderWillProvideProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reason / Description`
+  String get cleaningReasonDescription {
+    return Intl.message(
+      'Reason / Description',
+      name: 'cleaningReasonDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject Booking`
+  String get cleaningRejectBooking {
+    return Intl.message(
+      'Reject Booking',
+      name: 'cleaningRejectBooking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No cleaner available`
+  String get cleaningRejectReasonNoCleaner {
+    return Intl.message(
+      'No cleaner available',
+      name: 'cleaningRejectReasonNoCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get cleaningRejectReasonOther {
+    return Intl.message(
+      'Other',
+      name: 'cleaningRejectReasonOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outside our service area`
+  String get cleaningRejectReasonOutsideArea {
+    return Intl.message(
+      'Outside our service area',
+      name: 'cleaningRejectReasonOutsideArea',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service temporarily unavailable`
+  String get cleaningRejectReasonServiceUnavailable {
+    return Intl.message(
+      'Service temporarily unavailable',
+      name: 'cleaningRejectReasonServiceUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a reason. The customer will be\nnotified accordingly`
+  String get cleaningRejectSheetSubtitle {
+    return Intl.message(
+      'Please select a reason. The customer will be\nnotified accordingly',
+      name: 'cleaningRejectSheetSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REQUEST ID`
+  String get cleaningRequestIdHeader {
+    return Intl.message(
+      'REQUEST ID',
+      name: 'cleaningRequestIdHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request New Service Type`
+  String get cleaningRequestNewServiceType {
+    return Intl.message(
+      'Request New Service Type',
+      name: 'cleaningRequestNewServiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+ Request New Service Type`
+  String get cleaningRequestNewServiceTypeLink {
+    return Intl.message(
+      '+ Request New Service Type',
+      name: 'cleaningRequestNewServiceTypeLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REVENUE`
+  String get cleaningRevenueHeader {
+    return Intl.message(
+      'REVENUE',
+      name: 'cleaningRevenueHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Add-on`
+  String get cleaningSaveAddon {
+    return Intl.message(
+      'Save Add-on',
+      name: 'cleaningSaveAddon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Space`
+  String get cleaningSaveSpace {
+    return Intl.message(
+      'Save Space',
+      name: 'cleaningSaveSpace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search customer name or order ID..`
+  String get cleaningSearchCustomerOrOrderId {
+    return Intl.message(
+      'Search customer name or order ID..',
+      name: 'cleaningSearchCustomerOrOrderId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search Services`
+  String get cleaningSearchServices {
+    return Intl.message(
+      'Search Services',
+      name: 'cleaningSearchServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Service`
+  String get cleaningSelectService {
+    return Intl.message(
+      'Select Service',
+      name: 'cleaningSelectService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service Image`
+  String get cleaningServiceImage {
+    return Intl.message(
+      'Service Image',
+      name: 'cleaningServiceImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service Type`
+  String get cleaningServiceType {
+    return Intl.message(
+      'Service Type',
+      name: 'cleaningServiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service Type Name`
+  String get cleaningServiceTypeName {
+    return Intl.message(
+      'Service Type Name',
+      name: 'cleaningServiceTypeName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Briefly describe why you need this service type`
+  String get cleaningServiceTypeReasonHint {
+    return Intl.message(
+      'Briefly describe why you need this service type',
+      name: 'cleaningServiceTypeReasonHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Short Description`
+  String get cleaningShortDescription {
+    return Intl.message(
+      'Short Description',
+      name: 'cleaningShortDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Space Name`
+  String get cleaningSpaceName {
+    return Intl.message(
+      'Space Name',
+      name: 'cleaningSpaceName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Master Bedroom, Living Room, Corridor, Balcony`
+  String get cleaningSpaceNameHint {
+    return Intl.message(
+      'e.g. Master Bedroom, Living Room, Corridor, Balcony',
+      name: 'cleaningSpaceNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SPACE PRICING`
+  String get cleaningSpacePricingHeader {
+    return Intl.message(
+      'SPACE PRICING',
+      name: 'cleaningSpacePricingHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SPACES`
+  String get cleaningSpacesHeader {
+    return Intl.message(
+      'SPACES',
+      name: 'cleaningSpacesHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SPECIAL NOTES`
+  String get cleaningSpecialNotesHeader {
+    return Intl.message(
+      'SPECIAL NOTES',
+      name: 'cleaningSpecialNotesHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Cleaning`
+  String get cleaningStartCleaning {
+    return Intl.message(
+      'Start Cleaning',
+      name: 'cleaningStartCleaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `STARTING RATE`
+  String get cleaningStartingRateHeader {
+    return Intl.message(
+      'STARTING RATE',
+      name: 'cleaningStartingRateHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ACCEPTED`
+  String get cleaningStatusAccepted {
+    return Intl.message(
+      'ACCEPTED',
+      name: 'cleaningStatusAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IN PROGRESS`
+  String get cleaningStatusInProgress {
+    return Intl.message(
+      'IN PROGRESS',
+      name: 'cleaningStatusInProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NEW`
+  String get cleaningStatusNew {
+    return Intl.message('NEW', name: 'cleaningStatusNew', desc: '', args: []);
+  }
+
+  /// `Submit Request`
+  String get cleaningSubmitRequest {
+    return Intl.message(
+      'Submit Request',
+      name: 'cleaningSubmitRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support & Legal`
+  String get cleaningSupportLegal {
+    return Intl.message(
+      'Support & Legal',
+      name: 'cleaningSupportLegal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to upload image`
+  String get cleaningTapToUploadImage {
+    return Intl.message(
+      'Tap to upload image',
+      name: 'cleaningTapToUploadImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today: {hours}`
+  String cleaningTodayHours(String hours) {
+    return Intl.message(
+      'Today: $hours',
+      name: 'cleaningTodayHours',
+      desc: '',
+      args: [hours],
+    );
+  }
+
+  /// `Today's Bookings`
+  String get cleaningTodaysBookings {
+    return Intl.message(
+      'Today\'s Bookings',
+      name: 'cleaningTodaysBookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get cleaningTotal {
+    return Intl.message('Total', name: 'cleaningTotal', desc: '', args: []);
+  }
+
+  /// `Total paid`
+  String get cleaningTotalPaid {
+    return Intl.message(
+      'Total paid',
+      name: 'cleaningTotalPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hour`
+  String get cleaningUnitHour {
+    return Intl.message('Hour', name: 'cleaningUnitHour', desc: '', args: []);
+  }
+
+  /// `Unit`
+  String get cleaningUnitLabel {
+    return Intl.message('Unit', name: 'cleaningUnitLabel', desc: '', args: []);
+  }
+
+  /// `Piece`
+  String get cleaningUnitPiece {
+    return Intl.message('Piece', name: 'cleaningUnitPiece', desc: '', args: []);
+  }
+
+  /// `Room`
+  String get cleaningUnitRoom {
+    return Intl.message('Room', name: 'cleaningUnitRoom', desc: '', args: []);
+  }
+
+  /// `Sq. Ft`
+  String get cleaningUnitSqFt {
+    return Intl.message('Sq. Ft', name: 'cleaningUnitSqFt', desc: '', args: []);
+  }
+
+  /// `Unit`
+  String get cleaningUnitUnit {
+    return Intl.message('Unit', name: 'cleaningUnitUnit', desc: '', args: []);
+  }
+
+  /// `Upcoming`
+  String get cleaningUpcoming {
+    return Intl.message(
+      'Upcoming',
+      name: 'cleaningUpcoming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vendor Profile`
+  String get cleaningVendorProfile {
+    return Intl.message(
+      'Vendor Profile',
+      name: 'cleaningVendorProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Villa`
+  String get cleaningVilla {
+    return Intl.message('Villa', name: 'cleaningVilla', desc: '', args: []);
+  }
+
+  /// `Working hours & Booking Slots`
+  String get cleaningWorkingHoursBookingSlots {
+    return Intl.message(
+      'Working hours & Booking Slots',
+      name: 'cleaningWorkingHoursBookingSlots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `YOUR SERVICES`
+  String get cleaningYourServicesHeader {
+    return Intl.message(
+      'YOUR SERVICES',
+      name: 'cleaningYourServicesHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accepting orders`
+  String get waterAcceptingOrders {
+    return Intl.message(
+      'Accepting orders',
+      name: 'waterAcceptingOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account deleted successfully`
+  String get waterAccountDeletedSuccessfully {
+    return Intl.message(
+      'Account deleted successfully',
+      name: 'waterAccountDeletedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Delivery Boy`
+  String get waterAddDeliveryBoy {
+    return Intl.message(
+      'Add Delivery Boy',
+      name: 'waterAddDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Distance Range`
+  String get waterAddDistanceRange {
+    return Intl.message(
+      'Add Distance Range',
+      name: 'waterAddDistanceRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add More`
+  String get waterAddMore {
+    return Intl.message('Add More', name: 'waterAddMore', desc: '', args: []);
+  }
+
+  /// `Add Product`
+  String get waterAddProduct {
+    return Intl.message(
+      'Add Product',
+      name: 'waterAddProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added delivery boys will appear here`
+  String get waterAddedDeliveryBoysAppearHere {
+    return Intl.message(
+      'Added delivery boys will appear here',
+      name: 'waterAddedDeliveryBoysAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added products will appear here`
+  String get waterAddedProductsWillAppearHere {
+    return Intl.message(
+      'Added products will appear here',
+      name: 'waterAddedProductsWillAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Afternoon`
+  String get waterAfternoon {
+    return Intl.message(
+      'Afternoon',
+      name: 'waterAfternoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Stock`
+  String get waterAvailableStock {
+    return Intl.message(
+      'Available Stock',
+      name: 'waterAvailableStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bank Details`
+  String get waterBankDetails {
+    return Intl.message(
+      'Bank Details',
+      name: 'waterBankDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Barcode`
+  String get waterBarcode {
+    return Intl.message('Barcode', name: 'waterBarcode', desc: '', args: []);
+  }
+
+  /// `BASIC INFORMATION`
+  String get waterBasicInformation {
+    return Intl.message(
+      'BASIC INFORMATION',
+      name: 'waterBasicInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BOTTLE RETURN SETTINGS`
+  String get waterBottleReturnSettings {
+    return Intl.message(
+      'BOTTLE RETURN SETTINGS',
+      name: 'waterBottleReturnSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bottle Size`
+  String get waterBottleSize {
+    return Intl.message(
+      'Bottle Size',
+      name: 'waterBottleSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bottles`
+  String get waterBottles {
+    return Intl.message('Bottles', name: 'waterBottles', desc: '', args: []);
+  }
+
+  /// `{count} Bottles`
+  String waterBottlesCount(String count) {
+    return Intl.message(
+      '$count Bottles',
+      name: 'waterBottlesCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} Bottles Left`
+  String waterBottlesLeft(String count) {
+    return Intl.message(
+      '$count Bottles Left',
+      name: 'waterBottlesLeft',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Brand`
+  String get waterBrand {
+    return Intl.message('Brand', name: 'waterBrand', desc: '', args: []);
+  }
+
+  /// `Brand Name`
+  String get waterBrandName {
+    return Intl.message(
+      'Brand Name',
+      name: 'waterBrandName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Business`
+  String get waterBusiness {
+    return Intl.message('Business', name: 'waterBusiness', desc: '', args: []);
+  }
+
+  /// `Business settings`
+  String get waterBusinessSettings {
+    return Intl.message(
+      'Business settings',
+      name: 'waterBusinessSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Business settings updated successfully`
+  String get waterBusinessSettingsUpdated {
+    return Intl.message(
+      'Business settings updated successfully',
+      name: 'waterBusinessSettingsUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Call Now`
+  String get waterCallNow {
+    return Intl.message('Call Now', name: 'waterCallNow', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to cancel this leave?`
+  String get waterCancelLeaveConfirm {
+    return Intl.message(
+      'Are you sure you want to cancel this leave?',
+      name: 'waterCancelLeaveConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Certificate`
+  String get waterCertificate {
+    return Intl.message(
+      'Certificate',
+      name: 'waterCertificate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat With Customer`
+  String get waterChatWithCustomer {
+    return Intl.message(
+      'Chat With Customer',
+      name: 'waterChatWithCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closed`
+  String get waterClosed {
+    return Intl.message('Closed', name: 'waterClosed', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to delete this item?`
+  String get waterConfirmDeleteItem {
+    return Intl.message(
+      'Are you sure you want to delete this item?',
+      name: 'waterConfirmDeleteItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete "{name}"?`
+  String waterConfirmDeleteNamedItem(String name) {
+    return Intl.message(
+      'Are you sure you want to delete "$name"?',
+      name: 'waterConfirmDeleteNamedItem',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Are you sure you want to mark this item as available?`
+  String get waterConfirmMarkAvailable {
+    return Intl.message(
+      'Are you sure you want to mark this item as available?',
+      name: 'waterConfirmMarkAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to mark this item as out of stock?`
+  String get waterConfirmMarkOutOfStock {
+    return Intl.message(
+      'Are you sure you want to mark this item as out of stock?',
+      name: 'waterConfirmMarkOutOfStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Reject`
+  String get waterConfirmReject {
+    return Intl.message(
+      'Confirm Reject',
+      name: 'waterConfirmReject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Count`
+  String get waterCount {
+    return Intl.message('Count', name: 'waterCount', desc: '', args: []);
+  }
+
+  /// `Created coupons will appear here`
+  String get waterCreatedCouponsAppearHere {
+    return Intl.message(
+      'Created coupons will appear here',
+      name: 'waterCreatedCouponsAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Status`
+  String get waterCurrentStatus {
+    return Intl.message(
+      'Current Status',
+      name: 'waterCurrentStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currently Paused`
+  String get waterCurrentlyPaused {
+    return Intl.message(
+      'Currently Paused',
+      name: 'waterCurrentlyPaused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer`
+  String get waterCustomer {
+    return Intl.message('Customer', name: 'waterCustomer', desc: '', args: []);
+  }
+
+  /// `CUSTOMER`
+  String get waterCustomerHeader {
+    return Intl.message(
+      'CUSTOMER',
+      name: 'waterCustomerHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer messages will appear here`
+  String get waterCustomerMessagesWillAppearHere {
+    return Intl.message(
+      'Customer messages will appear here',
+      name: 'waterCustomerMessagesWillAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer Requested Pause`
+  String get waterCustomerRequestedPause {
+    return Intl.message(
+      'Customer Requested Pause',
+      name: 'waterCustomerRequestedPause',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily`
+  String get waterDaily {
+    return Intl.message('Daily', name: 'waterDaily', desc: '', args: []);
+  }
+
+  /// `dd-mm-yyyy`
+  String get waterDatePlaceholder {
+    return Intl.message(
+      'dd-mm-yyyy',
+      name: 'waterDatePlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Address`
+  String get waterDeliveryAddressTitle {
+    return Intl.message(
+      'Delivery Address',
+      name: 'waterDeliveryAddressTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY HISTORY`
+  String get waterDeliveryHistory {
+    return Intl.message(
+      'DELIVERY HISTORY',
+      name: 'waterDeliveryHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partner Assigned`
+  String get waterDeliveryPartnerAssigned {
+    return Intl.message(
+      'Delivery Partner Assigned',
+      name: 'waterDeliveryPartnerAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY PARTNER`
+  String get waterDeliveryPartnerHeader {
+    return Intl.message(
+      'DELIVERY PARTNER',
+      name: 'waterDeliveryPartnerHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY TYPE`
+  String get waterDeliveryTypeHeader {
+    return Intl.message(
+      'DELIVERY TYPE',
+      name: 'waterDeliveryTypeHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get waterDescription {
+    return Intl.message(
+      'Description',
+      name: 'waterDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{min} - {max} km`
+  String waterDistanceRangeKm(String min, String max) {
+    return Intl.message(
+      '$min - $max km',
+      name: 'waterDistanceRangeKm',
+      desc: '',
+      args: [min, max],
+    );
+  }
+
+  /// `Edit Distance Range`
+  String get waterEditDistanceRange {
+    return Intl.message(
+      'Edit Distance Range',
+      name: 'waterEditDistanceRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Price`
+  String get waterEditPrice {
+    return Intl.message(
+      'Edit Price',
+      name: 'waterEditPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Working Hour`
+  String get waterEditWorkingHour {
+    return Intl.message(
+      'Edit Working Hour',
+      name: 'waterEditWorkingHour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End`
+  String get waterEnd {
+    return Intl.message('End', name: 'waterEnd', desc: '', args: []);
+  }
+
+  /// `End Time`
+  String get waterEndTime {
+    return Intl.message('End Time', name: 'waterEndTime', desc: '', args: []);
+  }
+
+  /// `End time must be after start time`
+  String get waterEndTimeAfterStartTime {
+    return Intl.message(
+      'End time must be after start time',
+      name: 'waterEndTimeAfterStartTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter minimum and maximum distance`
+  String get waterEnterMinMaxDistance {
+    return Intl.message(
+      'Enter minimum and maximum distance',
+      name: 'waterEnterMinMaxDistance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a price`
+  String get waterEnterPrice {
+    return Intl.message(
+      'Enter a price',
+      name: 'waterEnterPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Quantity`
+  String get waterEnterQuantity {
+    return Intl.message(
+      'Enter Quantity',
+      name: 'waterEnterQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a reason`
+  String get waterEnterReason {
+    return Intl.message(
+      'Enter a reason',
+      name: 'waterEnterReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error accepting order: {error}`
+  String waterErrorAcceptingOrder(String error) {
+    return Intl.message(
+      'Error accepting order: $error',
+      name: 'waterErrorAcceptingOrder',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error accepting subscription: {error}`
+  String waterErrorAcceptingSubscription(String error) {
+    return Intl.message(
+      'Error accepting subscription: $error',
+      name: 'waterErrorAcceptingSubscription',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error adding product: {error}`
+  String waterErrorAddingProduct(String error) {
+    return Intl.message(
+      'Error adding product: $error',
+      name: 'waterErrorAddingProduct',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error cancelling order: {error}`
+  String waterErrorCancellingOrder(String error) {
+    return Intl.message(
+      'Error cancelling order: $error',
+      name: 'waterErrorCancellingOrder',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error deleting product: {error}`
+  String waterErrorDeletingProduct(String error) {
+    return Intl.message(
+      'Error deleting product: $error',
+      name: 'waterErrorDeletingProduct',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error marking order as ready: {error}`
+  String waterErrorMarkingOrderAsReady(String error) {
+    return Intl.message(
+      'Error marking order as ready: $error',
+      name: 'waterErrorMarkingOrderAsReady',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error pausing subscription: {error}`
+  String waterErrorPausingSubscription(String error) {
+    return Intl.message(
+      'Error pausing subscription: $error',
+      name: 'waterErrorPausingSubscription',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error preparing order: {error}`
+  String waterErrorPreparingOrder(String error) {
+    return Intl.message(
+      'Error preparing order: $error',
+      name: 'waterErrorPreparingOrder',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error rejecting subscription: {error}`
+  String waterErrorRejectingSubscription(String error) {
+    return Intl.message(
+      'Error rejecting subscription: $error',
+      name: 'waterErrorRejectingSubscription',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error resuming subscription: {error}`
+  String waterErrorResumingSubscription(String error) {
+    return Intl.message(
+      'Error resuming subscription: $error',
+      name: 'waterErrorResumingSubscription',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error updating item status: {error}`
+  String waterErrorUpdatingItemStatus(String error) {
+    return Intl.message(
+      'Error updating item status: $error',
+      name: 'waterErrorUpdatingItemStatus',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error updating price: {error}`
+  String waterErrorUpdatingPrice(String error) {
+    return Intl.message(
+      'Error updating price: $error',
+      name: 'waterErrorUpdatingPrice',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Error updating stock: {error}`
+  String waterErrorUpdatingStock(String error) {
+    return Intl.message(
+      'Error updating stock: $error',
+      name: 'waterErrorUpdatingStock',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Est. value`
+  String get waterEstValue {
+    return Intl.message(
+      'Est. value',
+      name: 'waterEstValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Estimated Delivery Fee`
+  String get waterEstimatedDeliveryFee {
+    return Intl.message(
+      'Estimated Delivery Fee',
+      name: 'waterEstimatedDeliveryFee',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Evening`
+  String get waterEvening {
+    return Intl.message('Evening', name: 'waterEvening', desc: '', args: []);
+  }
+
+  /// `Express Delivery`
+  String get waterExpressDelivery {
+    return Intl.message(
+      'Express Delivery',
+      name: 'waterExpressDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to accept order`
+  String get waterFailedToAcceptOrder {
+    return Intl.message(
+      'Failed to accept order',
+      name: 'waterFailedToAcceptOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to accept subscription`
+  String get waterFailedToAcceptSubscription {
+    return Intl.message(
+      'Failed to accept subscription',
+      name: 'waterFailedToAcceptSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to add product`
+  String get waterFailedToAddProduct {
+    return Intl.message(
+      'Failed to add product',
+      name: 'waterFailedToAddProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to cancel leave`
+  String get waterFailedToCancelLeave {
+    return Intl.message(
+      'Failed to cancel leave',
+      name: 'waterFailedToCancelLeave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to cancel order`
+  String get waterFailedToCancelOrder {
+    return Intl.message(
+      'Failed to cancel order',
+      name: 'waterFailedToCancelOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to delete account`
+  String get waterFailedToDeleteAccount {
+    return Intl.message(
+      'Failed to delete account',
+      name: 'waterFailedToDeleteAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to delete product`
+  String get waterFailedToDeleteProduct {
+    return Intl.message(
+      'Failed to delete product',
+      name: 'waterFailedToDeleteProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load image`
+  String get waterFailedToLoadImage {
+    return Intl.message(
+      'Failed to load image',
+      name: 'waterFailedToLoadImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to mark leave`
+  String get waterFailedToMarkLeave {
+    return Intl.message(
+      'Failed to mark leave',
+      name: 'waterFailedToMarkLeave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to mark order as ready`
+  String get waterFailedToMarkOrderAsReady {
+    return Intl.message(
+      'Failed to mark order as ready',
+      name: 'waterFailedToMarkOrderAsReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to pause subscription`
+  String get waterFailedToPauseSubscription {
+    return Intl.message(
+      'Failed to pause subscription',
+      name: 'waterFailedToPauseSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to prepare order`
+  String get waterFailedToPrepareOrder {
+    return Intl.message(
+      'Failed to prepare order',
+      name: 'waterFailedToPrepareOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to reject subscription`
+  String get waterFailedToRejectSubscription {
+    return Intl.message(
+      'Failed to reject subscription',
+      name: 'waterFailedToRejectSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to resume subscription`
+  String get waterFailedToResumeSubscription {
+    return Intl.message(
+      'Failed to resume subscription',
+      name: 'waterFailedToResumeSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update business settings`
+  String get waterFailedToUpdateBusinessSettings {
+    return Intl.message(
+      'Failed to update business settings',
+      name: 'waterFailedToUpdateBusinessSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update item status`
+  String get waterFailedToUpdateItemStatus {
+    return Intl.message(
+      'Failed to update item status',
+      name: 'waterFailedToUpdateItemStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update price`
+  String get waterFailedToUpdatePrice {
+    return Intl.message(
+      'Failed to update price',
+      name: 'waterFailedToUpdatePrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update stock`
+  String get waterFailedToUpdateStock {
+    return Intl.message(
+      'Failed to update stock',
+      name: 'waterFailedToUpdateStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update working hours`
+  String get waterFailedToUpdateWorkingHours {
+    return Intl.message(
+      'Failed to update working hours',
+      name: 'waterFailedToUpdateWorkingHours',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill in every field`
+  String get waterFillInEveryField {
+    return Intl.message(
+      'Fill in every field',
+      name: 'waterFillInEveryField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All {count}`
+  String waterFilterAllCount(String count) {
+    return Intl.message(
+      'All $count',
+      name: 'waterFilterAllCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Filter by category`
+  String get waterFilterByCategory {
+    return Intl.message(
+      'Filter by category',
+      name: 'waterFilterByCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In Stock {count}`
+  String waterFilterInStockCount(String count) {
+    return Intl.message(
+      'In Stock $count',
+      name: 'waterFilterInStockCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Low Stock {count}`
+  String waterFilterLowStockCount(String count) {
+    return Intl.message(
+      'Low Stock $count',
+      name: 'waterFilterLowStockCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Flat`
+  String get waterFlat {
+    return Intl.message('Flat', name: 'waterFlat', desc: '', args: []);
+  }
+
+  /// `Frequency`
+  String get waterFrequency {
+    return Intl.message(
+      'Frequency',
+      name: 'waterFrequency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ID: {id}`
+  String waterIdLabel(String id) {
+    return Intl.message('ID: $id', name: 'waterIdLabel', desc: '', args: [id]);
+  }
+
+  /// `Image`
+  String get waterImage {
+    return Intl.message('Image', name: 'waterImage', desc: '', args: []);
+  }
+
+  /// `PNG, JPG up to 5MB`
+  String get waterImageFormatHint {
+    return Intl.message(
+      'PNG, JPG up to 5MB',
+      name: 'waterImageFormatHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} images selected`
+  String waterImagesSelected(String count) {
+    return Intl.message(
+      '$count images selected',
+      name: 'waterImagesSelected',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `In Stock`
+  String get waterInStock {
+    return Intl.message('In Stock', name: 'waterInStock', desc: '', args: []);
+  }
+
+  /// `Inventory`
+  String get waterInventory {
+    return Intl.message(
+      'Inventory',
+      name: 'waterInventory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `INVENTORY CONTROL`
+  String get waterInventoryControl {
+    return Intl.message(
+      'INVENTORY CONTROL',
+      name: 'waterInventoryControl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water Item`
+  String get waterItem {
+    return Intl.message('Water Item', name: 'waterItem', desc: '', args: []);
+  }
+
+  /// `Item marked as available successfully`
+  String get waterItemMarkedAvailable {
+    return Intl.message(
+      'Item marked as available successfully',
+      name: 'waterItemMarkedAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item marked as out of stock successfully`
+  String get waterItemMarkedOutOfStock {
+    return Intl.message(
+      'Item marked as out of stock successfully',
+      name: 'waterItemMarkedOutOfStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last Sold: {date}`
+  String waterLastSold(String date) {
+    return Intl.message(
+      'Last Sold: $date',
+      name: 'waterLastSold',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Leave cancelled successfully`
+  String get waterLeaveCancelledSuccessfully {
+    return Intl.message(
+      'Leave cancelled successfully',
+      name: 'waterLeaveCancelledSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Leave Management`
+  String get waterLeaveManagement {
+    return Intl.message(
+      'Leave Management',
+      name: 'waterLeaveManagement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Leave marked successfully`
+  String get waterLeaveMarkedSuccessfully {
+    return Intl.message(
+      'Leave marked successfully',
+      name: 'waterLeaveMarkedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout failed.`
+  String get waterLogoutFailed {
+    return Intl.message(
+      'Logout failed.',
+      name: 'waterLogoutFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Low Stock`
+  String get waterLowStock {
+    return Intl.message('Low Stock', name: 'waterLowStock', desc: '', args: []);
+  }
+
+  /// `Low Stock Alert`
+  String get waterLowStockAlert {
+    return Intl.message(
+      'Low Stock Alert',
+      name: 'waterLowStockAlert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Picked Up`
+  String get waterMarkAsPickedUp {
+    return Intl.message(
+      'Mark as Picked Up',
+      name: 'waterMarkAsPickedUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Available`
+  String get waterMarkAvailable {
+    return Intl.message(
+      'Mark Available',
+      name: 'waterMarkAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to mark leave for the selected dates?`
+  String get waterMarkLeaveConfirm {
+    return Intl.message(
+      'Are you sure you want to mark leave for the selected dates?',
+      name: 'waterMarkLeaveConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Out Of Stock`
+  String get waterMarkOutOfStock {
+    return Intl.message(
+      'Mark Out Of Stock',
+      name: 'waterMarkOutOfStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Store Busy`
+  String get waterMarkStoreBusy {
+    return Intl.message(
+      'Mark Store Busy',
+      name: 'waterMarkStoreBusy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Marked leaves will appear here`
+  String get waterMarkedLeavesAppearHere {
+    return Intl.message(
+      'Marked leaves will appear here',
+      name: 'waterMarkedLeavesAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum must be greater than minimum`
+  String get waterMaxGreaterThanMin {
+    return Intl.message(
+      'Maximum must be greater than minimum',
+      name: 'waterMaxGreaterThanMin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum Distance`
+  String get waterMaximumDistance {
+    return Intl.message(
+      'Maximum Distance',
+      name: 'waterMaximumDistance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Messages`
+  String get waterMessages {
+    return Intl.message('Messages', name: 'waterMessages', desc: '', args: []);
+  }
+
+  /// `Minimum Distance`
+  String get waterMinimumDistance {
+    return Intl.message(
+      'Minimum Distance',
+      name: 'waterMinimumDistance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Month`
+  String get waterMonth {
+    return Intl.message('Month', name: 'waterMonth', desc: '', args: []);
+  }
+
+  /// `More`
+  String get waterMore {
+    return Intl.message('More', name: 'waterMore', desc: '', args: []);
+  }
+
+  /// `+{count} More Products`
+  String waterMoreProducts(String count) {
+    return Intl.message(
+      '+$count More Products',
+      name: 'waterMoreProducts',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Morning`
+  String get waterMorning {
+    return Intl.message('Morning', name: 'waterMorning', desc: '', args: []);
+  }
+
+  /// `NEW`
+  String get waterNewBadge {
+    return Intl.message('NEW', name: 'waterNewBadge', desc: '', args: []);
+  }
+
+  /// `New Orders`
+  String get waterNewOrders {
+    return Intl.message(
+      'New Orders',
+      name: 'waterNewOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next Delivery`
+  String get waterNextDelivery {
+    return Intl.message(
+      'Next Delivery',
+      name: 'waterNextDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No contact details available`
+  String get waterNoContactDetails {
+    return Intl.message(
+      'No contact details available',
+      name: 'waterNoContactDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Leaves Found`
+  String get waterNoLeavesFound {
+    return Intl.message(
+      'No Leaves Found',
+      name: 'waterNoLeavesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No orders here`
+  String get waterNoOrdersHere {
+    return Intl.message(
+      'No orders here',
+      name: 'waterNoOrdersHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Payouts Found`
+  String get waterNoPayoutsFound {
+    return Intl.message(
+      'No Payouts Found',
+      name: 'waterNoPayoutsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No privacy policy available`
+  String get waterNoPrivacyPolicyAvailable {
+    return Intl.message(
+      'No privacy policy available',
+      name: 'waterNoPrivacyPolicyAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Products Found`
+  String get waterNoProductsFound {
+    return Intl.message(
+      'No Products Found',
+      name: 'waterNoProductsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Stock History Found`
+  String get waterNoStockHistoryFound {
+    return Intl.message(
+      'No Stock History Found',
+      name: 'waterNoStockHistoryFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No stock records recorded for this item yet`
+  String get waterNoStockRecordsYet {
+    return Intl.message(
+      'No stock records recorded for this item yet',
+      name: 'waterNoStockRecordsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No subscription orders here`
+  String get waterNoSubscriptionOrdersHere {
+    return Intl.message(
+      'No subscription orders here',
+      name: 'waterNoSubscriptionOrdersHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No terms & conditions available`
+  String get waterNoTermsAvailable {
+    return Intl.message(
+      'No terms & conditions available',
+      name: 'waterNoTermsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not accepting`
+  String get waterNotAccepting {
+    return Intl.message(
+      'Not accepting',
+      name: 'waterNotAccepting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `N/A`
+  String get waterNotAvailable {
+    return Intl.message('N/A', name: 'waterNotAvailable', desc: '', args: []);
+  }
+
+  /// `Offer Price`
+  String get waterOfferPrice {
+    return Intl.message(
+      'Offer Price',
+      name: 'waterOfferPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Offline`
+  String get waterOffline {
+    return Intl.message('Offline', name: 'waterOffline', desc: '', args: []);
+  }
+
+  /// `1 image selected`
+  String get waterOneImageSelected {
+    return Intl.message(
+      '1 image selected',
+      name: 'waterOneImageSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One-Time Orders`
+  String get waterOneTimeOrders {
+    return Intl.message(
+      'One-Time Orders',
+      name: 'waterOneTimeOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Online`
+  String get waterOnline {
+    return Intl.message('Online', name: 'waterOnline', desc: '', args: []);
+  }
+
+  /// `Open`
+  String get waterOpen {
+    return Intl.message('Open', name: 'waterOpen', desc: '', args: []);
+  }
+
+  /// `24-Hour Open`
+  String get waterOpen24Hours {
+    return Intl.message(
+      '24-Hour Open',
+      name: 'waterOpen24Hours',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order cancelled successfully`
+  String get waterOrderCancelledSuccessfully {
+    return Intl.message(
+      'Order cancelled successfully',
+      name: 'waterOrderCancelledSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Delivered`
+  String get waterOrderDelivered {
+    return Intl.message(
+      'Order Delivered',
+      name: 'waterOrderDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ORDER ITEMS ({count})`
+  String waterOrderItemsCount(String count) {
+    return Intl.message(
+      'ORDER ITEMS ($count)',
+      name: 'waterOrderItemsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Order marked as ready successfully`
+  String get waterOrderMarkedAsReady {
+    return Intl.message(
+      'Order marked as ready successfully',
+      name: 'waterOrderMarkedAsReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order moved to preparing successfully`
+  String get waterOrderMovedToPreparing {
+    return Intl.message(
+      'Order moved to preparing successfully',
+      name: 'waterOrderMovedToPreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Received`
+  String get waterOrderReceived {
+    return Intl.message(
+      'Order Received',
+      name: 'waterOrderReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orders will appear here`
+  String get waterOrdersAppearHere {
+    return Intl.message(
+      'Orders will appear here',
+      name: 'waterOrdersAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get waterOther {
+    return Intl.message('Other', name: 'waterOther', desc: '', args: []);
+  }
+
+  /// `Other Reason`
+  String get waterOtherReason {
+    return Intl.message(
+      'Other Reason',
+      name: 'waterOtherReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Owner Identity Proof`
+  String get waterOwnerIdentityProof {
+    return Intl.message(
+      'Owner Identity Proof',
+      name: 'waterOwnerIdentityProof',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pause`
+  String get waterPause {
+    return Intl.message('Pause', name: 'waterPause', desc: '', args: []);
+  }
+
+  /// `Pause Subscription`
+  String get waterPauseSubscription {
+    return Intl.message(
+      'Pause Subscription',
+      name: 'waterPauseSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Future deliveries will be paused. Today's active order won't be affected`
+  String get waterPauseSubscriptionHint {
+    return Intl.message(
+      'Future deliveries will be paused. Today\'s active order won\'t be affected',
+      name: 'waterPauseSubscriptionHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paused`
+  String get waterPaused {
+    return Intl.message('Paused', name: 'waterPaused', desc: '', args: []);
+  }
+
+  /// `PAUSED BY:`
+  String get waterPausedByLabel {
+    return Intl.message(
+      'PAUSED BY:',
+      name: 'waterPausedByLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paused on: {date}`
+  String waterPausedOn(String date) {
+    return Intl.message(
+      'Paused on: $date',
+      name: 'waterPausedOn',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `PAUSED ON:`
+  String get waterPausedOnLabel {
+    return Intl.message(
+      'PAUSED ON:',
+      name: 'waterPausedOnLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Details`
+  String get waterPaymentDetails {
+    return Intl.message(
+      'Payment Details',
+      name: 'waterPaymentDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Proof`
+  String get waterPaymentProof {
+    return Intl.message(
+      'Payment Proof',
+      name: 'waterPaymentProof',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payout Amount`
+  String get waterPayoutAmount {
+    return Intl.message(
+      'Payout Amount',
+      name: 'waterPayoutAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payout history will appear here`
+  String get waterPayoutHistoryAppearHere {
+    return Intl.message(
+      'Payout history will appear here',
+      name: 'waterPayoutHistoryAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orders related to this payout will appear here`
+  String get waterPayoutOrdersAppearHere {
+    return Intl.message(
+      'Orders related to this payout will appear here',
+      name: 'waterPayoutOrdersAppearHere',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick one or more images from gallery`
+  String get waterPickImagesFromGallery {
+    return Intl.message(
+      'Pick one or more images from gallery',
+      name: 'waterPickImagesFromGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Customer`
+  String get waterPickedUpByCustomer {
+    return Intl.message(
+      'Picked Up by Customer',
+      name: 'waterPickedUpByCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Rider`
+  String get waterPickedUpByRider {
+    return Intl.message(
+      'Picked Up by Rider',
+      name: 'waterPickedUpByRider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Plan`
+  String get waterPlan {
+    return Intl.message('Plan', name: 'waterPlan', desc: '', args: []);
+  }
+
+  /// `Start {start}`
+  String waterPlanRangeStart(String start) {
+    return Intl.message(
+      'Start $start',
+      name: 'waterPlanRangeStart',
+      desc: '',
+      args: [start],
+    );
+  }
+
+  /// `Start {start} - End {end}`
+  String waterPlanRangeStartEnd(String start, String end) {
+    return Intl.message(
+      'Start $start - End $end',
+      name: 'waterPlanRangeStartEnd',
+      desc: '',
+      args: [start, end],
+    );
+  }
+
+  /// `PLAN SUMMARY`
+  String get waterPlanSummary {
+    return Intl.message(
+      'PLAN SUMMARY',
+      name: 'waterPlanSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter available stock`
+  String get waterPleaseEnterAvailableStock {
+    return Intl.message(
+      'Please enter available stock',
+      name: 'waterPleaseEnterAvailableStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter price`
+  String get waterPleaseEnterPrice {
+    return Intl.message(
+      'Please enter price',
+      name: 'waterPleaseEnterPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter product name`
+  String get waterPleaseEnterProductName {
+    return Intl.message(
+      'Please enter product name',
+      name: 'waterPleaseEnterProductName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter selling price`
+  String get waterPleaseEnterSellingPrice {
+    return Intl.message(
+      'Please enter selling price',
+      name: 'waterPleaseEnterSellingPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid price`
+  String get waterPleaseEnterValidPrice {
+    return Intl.message(
+      'Please enter a valid price',
+      name: 'waterPleaseEnterValidPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select at least one product image`
+  String get waterPleaseSelectProductImage {
+    return Intl.message(
+      'Please select at least one product image',
+      name: 'waterPleaseSelectProductImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. 50`
+  String get waterPriceExampleHint {
+    return Intl.message(
+      'e.g. 50',
+      name: 'waterPriceExampleHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price updated successfully`
+  String get waterPriceUpdatedSuccessfully {
+    return Intl.message(
+      'Price updated successfully',
+      name: 'waterPriceUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pricing`
+  String get waterPricing {
+    return Intl.message('Pricing', name: 'waterPricing', desc: '', args: []);
+  }
+
+  /// `PRICING (MRU)`
+  String get waterPricingMru {
+    return Intl.message(
+      'PRICING (MRU)',
+      name: 'waterPricingMru',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy & Security`
+  String get waterPrivacySecurity {
+    return Intl.message(
+      'Privacy & Security',
+      name: 'waterPrivacySecurity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product added successfully`
+  String get waterProductAddedSuccessfully {
+    return Intl.message(
+      'Product added successfully',
+      name: 'waterProductAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product deleted successfully`
+  String get waterProductDeletedSuccessfully {
+    return Intl.message(
+      'Product deleted successfully',
+      name: 'waterProductDeletedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Description`
+  String get waterProductDescription {
+    return Intl.message(
+      'Product Description',
+      name: 'waterProductDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Describe the source, pH level, or benefits...`
+  String get waterProductDescriptionHint {
+    return Intl.message(
+      'Describe the source, pH level, or benefits...',
+      name: 'waterProductDescriptionHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Details`
+  String get waterProductDetails {
+    return Intl.message(
+      'Product Details',
+      name: 'waterProductDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Image`
+  String get waterProductImage {
+    return Intl.message(
+      'Product Image',
+      name: 'waterProductImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Name (English)`
+  String get waterProductNameEnglish {
+    return Intl.message(
+      'Product Name (English)',
+      name: 'waterProductNameEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Drinking Water`
+  String get waterProductNameHint {
+    return Intl.message(
+      'e.g. Drinking Water',
+      name: 'waterProductNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QUANTITY: `
+  String get waterQuantityLabel {
+    return Intl.message(
+      'QUANTITY: ',
+      name: 'waterQuantityLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This range overlaps an existing range`
+  String get waterRangeOverlaps {
+    return Intl.message(
+      'This range overlaps an existing range',
+      name: 'waterRangeOverlaps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Dispatch`
+  String get waterReadyForDispatch {
+    return Intl.message(
+      'Ready for Dispatch',
+      name: 'waterReadyForDispatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Pickup`
+  String get waterReadyForPickup {
+    return Intl.message(
+      'Ready for Pickup',
+      name: 'waterReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reason For Pausing`
+  String get waterReasonForPausing {
+    return Intl.message(
+      'Reason For Pausing',
+      name: 'waterReasonForPausing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reason For Rejecting`
+  String get waterReasonForRejecting {
+    return Intl.message(
+      'Reason For Rejecting',
+      name: 'waterReasonForRejecting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REASON:`
+  String get waterReasonLabel {
+    return Intl.message(
+      'REASON:',
+      name: 'waterReasonLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registration Details`
+  String get waterRegistrationDetails {
+    return Intl.message(
+      'Registration Details',
+      name: 'waterRegistrationDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject Order`
+  String get waterRejectOrder {
+    return Intl.message(
+      'Reject Order',
+      name: 'waterRejectOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a reason. The customer will be notified accordingly`
+  String get waterRejectOrderHint {
+    return Intl.message(
+      'Please select a reason. The customer will be notified accordingly',
+      name: 'waterRejectOrderHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REMAINING: `
+  String get waterRemainingLabel {
+    return Intl.message(
+      'REMAINING: ',
+      name: 'waterRemainingLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REQUEST ID`
+  String get waterRequestId {
+    return Intl.message(
+      'REQUEST ID',
+      name: 'waterRequestId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resume`
+  String get waterResume {
+    return Intl.message('Resume', name: 'waterResume', desc: '', args: []);
+  }
+
+  /// `Resume Subscription`
+  String get waterResumeSubscription {
+    return Intl.message(
+      'Resume Subscription',
+      name: 'waterResumeSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to resume this subscription order?`
+  String get waterResumeSubscriptionConfirm {
+    return Intl.message(
+      'Are you sure you want to resume this subscription order?',
+      name: 'waterResumeSubscriptionConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Returnable Bottle`
+  String get waterReturnableBottle {
+    return Intl.message(
+      'Returnable Bottle',
+      name: 'waterReturnableBottle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable this option if customers must return the empty bottle after delivery or self pickup`
+  String get waterReturnableBottleHint {
+    return Intl.message(
+      'Enable this option if customers must return the empty bottle after delivery or self pickup',
+      name: 'waterReturnableBottleHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REVENUE`
+  String get waterRevenueHeader {
+    return Intl.message(
+      'REVENUE',
+      name: 'waterRevenueHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Revenue Summary`
+  String get waterRevenueSummary {
+    return Intl.message(
+      'Revenue Summary',
+      name: 'waterRevenueSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `({count} reviews)`
+  String waterReviewsCount(String count) {
+    return Intl.message(
+      '($count reviews)',
+      name: 'waterReviewsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Sales Performance`
+  String get waterSalesPerformance {
+    return Intl.message(
+      'Sales Performance',
+      name: 'waterSalesPerformance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Product`
+  String get waterSaveProduct {
+    return Intl.message(
+      'Save Product',
+      name: 'waterSaveProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scan or enter barcode`
+  String get waterScanOrEnterBarcode {
+    return Intl.message(
+      'Scan or enter barcode',
+      name: 'waterScanOrEnterBarcode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search by subscription ID, name`
+  String get waterSearchBySubscriptionIdName {
+    return Intl.message(
+      'Search by subscription ID, name',
+      name: 'waterSearchBySubscriptionIdName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search customer name or order ID...`
+  String get waterSearchCustomerOrOrderHint {
+    return Intl.message(
+      'Search customer name or order ID...',
+      name: 'waterSearchCustomerOrOrderHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search Delivery Boy`
+  String get waterSearchDeliveryBoy {
+    return Intl.message(
+      'Search Delivery Boy',
+      name: 'waterSearchDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search products, ID`
+  String get waterSearchProductsHint {
+    return Intl.message(
+      'Search products, ID',
+      name: 'waterSearchProductsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select from and to dates`
+  String get waterSelectFromAndToDates {
+    return Intl.message(
+      'Select from and to dates',
+      name: 'waterSelectFromAndToDates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Image Source`
+  String get waterSelectImageSource {
+    return Intl.message(
+      'Select Image Source',
+      name: 'waterSelectImageSource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selling Price`
+  String get waterSellingPrice {
+    return Intl.message(
+      'Selling Price',
+      name: 'waterSellingPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Mail`
+  String get waterSendMail {
+    return Intl.message('Send Mail', name: 'waterSendMail', desc: '', args: []);
+  }
+
+  /// `Size`
+  String get waterSize {
+    return Intl.message('Size', name: 'waterSize', desc: '', args: []);
+  }
+
+  /// `Start`
+  String get waterStart {
+    return Intl.message('Start', name: 'waterStart', desc: '', args: []);
+  }
+
+  /// `Start Time`
+  String get waterStartTime {
+    return Intl.message(
+      'Start Time',
+      name: 'waterStartTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stock Added`
+  String get waterStockAdded {
+    return Intl.message(
+      'Stock Added',
+      name: 'waterStockAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stock History`
+  String get waterStockHistory {
+    return Intl.message(
+      'Stock History',
+      name: 'waterStockHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `STOCK ID: {id}`
+  String waterStockIdLabel(String id) {
+    return Intl.message(
+      'STOCK ID: $id',
+      name: 'waterStockIdLabel',
+      desc: '',
+      args: [id],
+    );
+  }
+
+  /// `Stock Removed`
+  String get waterStockRemoved {
+    return Intl.message(
+      'Stock Removed',
+      name: 'waterStockRemoved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stock updated successfully`
+  String get waterStockUpdatedSuccessfully {
+    return Intl.message(
+      'Stock updated successfully',
+      name: 'waterStockUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Storage`
+  String get waterStorage {
+    return Intl.message('Storage', name: 'waterStorage', desc: '', args: []);
+  }
+
+  /// `Store Availability`
+  String get waterStoreAvailability {
+    return Intl.message(
+      'Store Availability',
+      name: 'waterStoreAvailability',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Details`
+  String get waterStoreDetails {
+    return Intl.message(
+      'Store Details',
+      name: 'waterStoreDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Profile`
+  String get waterStoreProfile {
+    return Intl.message(
+      'Store Profile',
+      name: 'waterStoreProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Status (Open)`
+  String get waterStoreStatusOpen {
+    return Intl.message(
+      'Store Status (Open)',
+      name: 'waterStoreStatusOpen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription accepted successfully`
+  String get waterSubscriptionAcceptedSuccessfully {
+    return Intl.message(
+      'Subscription accepted successfully',
+      name: 'waterSubscriptionAcceptedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription Amount`
+  String get waterSubscriptionAmount {
+    return Intl.message(
+      'Subscription Amount',
+      name: 'waterSubscriptionAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription Calendar`
+  String get waterSubscriptionCalendar {
+    return Intl.message(
+      'Subscription Calendar',
+      name: 'waterSubscriptionCalendar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription Details`
+  String get waterSubscriptionDetails {
+    return Intl.message(
+      'Subscription Details',
+      name: 'waterSubscriptionDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription Orders`
+  String get waterSubscriptionOrders {
+    return Intl.message(
+      'Subscription Orders',
+      name: 'waterSubscriptionOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription paused successfully`
+  String get waterSubscriptionPausedSuccessfully {
+    return Intl.message(
+      'Subscription paused successfully',
+      name: 'waterSubscriptionPausedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription rejected successfully`
+  String get waterSubscriptionRejectedSuccessfully {
+    return Intl.message(
+      'Subscription rejected successfully',
+      name: 'waterSubscriptionRejectedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription resumed successfully`
+  String get waterSubscriptionResumedSuccessfully {
+    return Intl.message(
+      'Subscription resumed successfully',
+      name: 'waterSubscriptionResumedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription Savings`
+  String get waterSubscriptionSavings {
+    return Intl.message(
+      'Subscription Savings',
+      name: 'waterSubscriptionSavings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support & Legal`
+  String get waterSupportLegal {
+    return Intl.message(
+      'Support & Legal',
+      name: 'waterSupportLegal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a photo`
+  String get waterTakeAPhoto {
+    return Intl.message(
+      'Take a photo',
+      name: 'waterTakeAPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to upload image`
+  String get waterTapToUploadImage {
+    return Intl.message(
+      'Tap to upload image',
+      name: 'waterTapToUploadImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temporary Store Closure`
+  String get waterTemporaryStoreClosure {
+    return Intl.message(
+      'Temporary Store Closure',
+      name: 'waterTemporaryStoreClosure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time Slot`
+  String get waterTimeSlot {
+    return Intl.message('Time Slot', name: 'waterTimeSlot', desc: '', args: []);
+  }
+
+  /// `TIN/NIF Number`
+  String get waterTinNifNumber {
+    return Intl.message(
+      'TIN/NIF Number',
+      name: 'waterTinNifNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To date must be after from date`
+  String get waterToDateAfterFromDate {
+    return Intl.message(
+      'To date must be after from date',
+      name: 'waterToDateAfterFromDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today: {open} - {close}`
+  String waterTodayTimings(String open, String close) {
+    return Intl.message(
+      'Today: $open - $close',
+      name: 'waterTodayTimings',
+      desc: '',
+      args: [open, close],
+    );
+  }
+
+  /// `TOTAL`
+  String get waterTotalHeader {
+    return Intl.message('TOTAL', name: 'waterTotalHeader', desc: '', args: []);
+  }
+
+  /// `Total paid`
+  String get waterTotalPaid {
+    return Intl.message(
+      'Total paid',
+      name: 'waterTotalPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Sold (All Time)`
+  String get waterTotalSoldAllTime {
+    return Intl.message(
+      'Total Sold (All Time)',
+      name: 'waterTotalSoldAllTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try another status filter above`
+  String get waterTryAnotherStatusFilter {
+    return Intl.message(
+      'Try another status filter above',
+      name: 'waterTryAnotherStatusFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unit Type`
+  String get waterUnitType {
+    return Intl.message('Unit Type', name: 'waterUnitType', desc: '', args: []);
+  }
+
+  /// `UPCOMING DELIVERIES`
+  String get waterUpcomingDeliveries {
+    return Intl.message(
+      'UPCOMING DELIVERIES',
+      name: 'waterUpcomingDeliveries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Stock`
+  String get waterUpdateStock {
+    return Intl.message(
+      'Update Stock',
+      name: 'waterUpdateStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valid Upto`
+  String get waterValidUpto {
+    return Intl.message(
+      'Valid Upto',
+      name: 'waterValidUpto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Voice message`
+  String get waterVoiceMessage {
+    return Intl.message(
+      'Voice message',
+      name: 'waterVoiceMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water Supply Issue`
+  String get waterWaterSupplyIssue {
+    return Intl.message(
+      'Water Supply Issue',
+      name: 'waterWaterSupplyIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Week`
+  String get waterWeek {
+    return Intl.message('Week', name: 'waterWeek', desc: '', args: []);
+  }
+
+  /// `WEEKLY PLANNER`
+  String get waterWeeklyPlanner {
+    return Intl.message(
+      'WEEKLY PLANNER',
+      name: 'waterWeeklyPlanner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weekly Schedule`
+  String get waterWeeklySchedule {
+    return Intl.message(
+      'Weekly Schedule',
+      name: 'waterWeeklySchedule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome to {name}!`
+  String waterWelcomeToShop(String name) {
+    return Intl.message(
+      'Welcome to $name!',
+      name: 'waterWelcomeToShop',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Working hours updated successfully`
+  String get waterWorkingHoursUpdated {
+    return Intl.message(
+      'Working hours updated successfully',
+      name: 'waterWorkingHoursUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You`
+  String get waterYou {
+    return Intl.message('You', name: 'waterYou', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

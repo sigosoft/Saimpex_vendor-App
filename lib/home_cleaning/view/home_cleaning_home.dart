@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_messages_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_account_view.dart';
@@ -68,7 +69,7 @@ class _HomeCleaningHomeState extends State<HomeCleaningHome> {
                 Expanded(
                   child: switch (controller.navIndex) {
                     0 => _HomeTab(controller: controller),
-                    1 => const _PlaceholderTab(title: 'Bookings'),
+                    1 => _PlaceholderTab(title: S.of(context).cleaningBookings),
                     2 => MyServicesView(controller: controller),
                     3 => HomeCleaningMessagesView(controller: controller),
                     _ => HomeCleaningAccountView(controller: controller),
@@ -212,7 +213,7 @@ class _HomeTab extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 28),
               child: Text(
-                'No bookings here',
+                S.of(context).cleaningNoBookingsHere,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF9E9E9E),
@@ -282,7 +283,7 @@ class _WelcomeHeader extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            'Welcome to Saimpex Vendor!',
+            S.of(context).welcomeToSaimpexVendor,
             style: GoogleFonts.inter(
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
@@ -362,7 +363,7 @@ class _MemberCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Expires in 7 days',
+              S.of(context).expiresInDays('7'),
               style: GoogleFonts.inter(
                 color: Colors.deepOrange,
                 fontWeight: FontWeight.w700,
@@ -418,7 +419,9 @@ class _StatusCard extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: accepting ? 'Open' : 'Closed',
+                        text: accepting
+                            ? S.of(context).cleaningOpenStatus
+                            : S.of(context).cleaningClosedStatus,
                         style: GoogleFonts.inter(
                           color: accepting ? green  : const Color(0xFF1A1A1A),
                           fontWeight: FontWeight.w700,
@@ -426,7 +429,7 @@ class _StatusCard extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: accepting ? ' • Accepting bookings' : ' • Not accepting',
+                        text: ' • ${accepting ? S.of(context).cleaningAcceptingBookings : S.of(context).cleaningNotAccepting}',
                         style: GoogleFonts.inter(
                           color: accepting ? green : const Color(0xFFBA1B1B),
                           fontWeight: FontWeight.w700,
@@ -438,7 +441,7 @@ class _StatusCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Today: 08:00 - 22:00',
+                  S.of(context).cleaningTodayHours('08:00 - 22:00'),
                   style: GoogleFonts.inter(
                     color: const Color(0xFF757575),
                     fontWeight: FontWeight.w500,
@@ -459,7 +462,9 @@ class _StatusCard extends StatelessWidget {
                 color: accepting ? const Color(0xFFFF6B00) : const Color(0xFFBDBDBD),
                 borderRadius: BorderRadius.circular(20),
               ),
-              alignment: accepting ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: accepting
+                  ? AlignmentDirectional.centerEnd
+                  : AlignmentDirectional.centerStart,
               child: Container(
                 width: 24,
                 height: 24,
@@ -478,7 +483,7 @@ class _MetricsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,43 +491,43 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: '2',
-                label: "Today's Bookings",
+                label: S.of(context).cleaningTodaysBookings,
                 countColor: Colors.white,
-                circleGradient: LinearGradient(
+                circleGradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Color(0xFFFF8A3D), Color(0xFFFFB300)],
                 ),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
                 count: '2',
-                label: 'Upcoming',
+                label: S.of(context).cleaningUpcoming,
                 circle: Color(0xFFC8E6C9),
                 countColor: Color(0xFF2E7D32),
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _MetricCard(
                 count: '2',
-                label: 'In Progress',
+                label: S.of(context).cleaningInProgress,
                 circle: Color(0xFFFFB300),
                 countColor: Colors.white,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
                 count: '2',
-                label: 'Completed',
+                label: S.of(context).cleaningCompleted,
                 circle: Color(0xFF43A047),
                 countColor: Colors.white,
               ),
@@ -612,17 +617,17 @@ class _TotalsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(4, 6, 4, 2),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 6, 4, 2),
       child: Row(
         children: [
-          Expanded(child: _TotalItem(title: 'BOOKINGS', value: '15')),
-          _TotalDivider(),
-          Expanded(child: _TotalItem(title: 'COMPLETED', value: '2')),
-          _TotalDivider(),
+          Expanded(child: _TotalItem(title: S.of(context).cleaningBookingsHeader, value: '15')),
+          const _TotalDivider(),
+          Expanded(child: _TotalItem(title: S.of(context).completed, value: '2')),
+          const _TotalDivider(),
           Expanded(
             child: _TotalItem(
-              title: 'REVENUE',
+              title: S.of(context).cleaningRevenueHeader,
               value: '830',
               suffix: 'MRU',
               showTrend: true,
@@ -732,7 +737,7 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'BOOKINGS',
+          S.of(context).cleaningBookingsHeader,
           style: GoogleFonts.inter(
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w700,
@@ -744,7 +749,7 @@ class _SectionHeader extends StatelessWidget {
         GestureDetector(
           onTap: onSeeAll,
           child: Text(
-            'See All',
+            S.of(context).viewAll,
             style: GoogleFonts.inter(
               color: const Color(0xFFFF5722),
               fontWeight: FontWeight.w600,
@@ -767,7 +772,7 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         style: GoogleFonts.inter(color: const Color(0xFF1A1A1A), fontSize: 14),
         decoration: InputDecoration(
-          hintText: 'Search by ID, name',
+          hintText: S.of(context).searchByIdName,
           hintStyle: GoogleFonts.inter(
             color: const Color(0xFFBDBDBD),
             fontSize: 14,
@@ -797,22 +802,23 @@ class _Filters extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
-  static const _labels = [
-    'New Bookings',
-    'Accepted',
-    'In Progress',
-    'Completed',
-    'Cancelled',
-  ];
+  static List<String> _labelsOf(BuildContext context) => [
+        S.of(context).cleaningNewBookings,
+        S.of(context).accepted,
+        S.of(context).cleaningInProgress,
+        S.of(context).cleaningCompleted,
+        S.of(context).cancelled,
+      ];
 
   @override
   Widget build(BuildContext context) {
+    final labels = _labelsOf(context);
     return SizedBox(
       height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
-        itemCount: _labels.length,
+        itemCount: labels.length,
         separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final selected = index == selectedIndex;
@@ -838,7 +844,7 @@ class _Filters extends StatelessWidget {
                     border: selected ? null : Border.all(color: const Color(0xFFE0E0E0)),
                   ),
                   child: Text(
-                    _labels[index],
+                    labels[index],
                     style: GoogleFonts.inter(
                       color: selected ? Colors.white : const Color(0xFF424242),
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
@@ -847,8 +853,8 @@ class _Filters extends StatelessWidget {
                   ),
                 ),
                 if (selected && (index == 0 || index == 1 || index == 2 || index == 3))
-                  Positioned(
-                    right: -2,
+                  PositionedDirectional(
+                    end: -2,
                     top: -8,
                     child: Container(
                       width: 22,
@@ -960,10 +966,10 @@ class _BookingCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   booking.isInProgress
-                                      ? 'IN PROGRESS'
+                                      ? S.of(context).cleaningStatusInProgress
                                       : booking.isCompleted
-                                          ? 'COMPLETED'
-                                          : 'ACCEPTED',
+                                          ? S.of(context).completed
+                                          : S.of(context).cleaningStatusAccepted,
                                   style: GoogleFonts.inter(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
@@ -1042,7 +1048,7 @@ class _BookingCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    'NEW',
+                    S.of(context).cleaningStatusNew,
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -1153,7 +1159,7 @@ class _BookingCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
-                    'Mark as Completed',
+                    S.of(context).cleaningMarkAsCompleted,
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -1175,7 +1181,7 @@ class _BookingCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
-                    'Start Cleaning',
+                    S.of(context).cleaningStartCleaning,
                     style: GoogleFonts.inter(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -1202,7 +1208,7 @@ class _BookingCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: Text(
-                          'Reject',
+                          S.of(context).reject,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w700,
@@ -1225,7 +1231,7 @@ class _BookingCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: Text(
-                          'Accept Booking',
+                          S.of(context).cleaningAcceptBooking,
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -1273,7 +1279,13 @@ class _BottomNav extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
-  static const _labels = ['Home', 'Bookings', 'My Services', 'Chat', 'Account'];
+  static List<String> _labelsOf(BuildContext context) => [
+        S.of(context).home,
+        S.of(context).cleaningBookings,
+        S.of(context).cleaningMyServices,
+        S.of(context).chat,
+        S.of(context).account,
+      ];
   static const _icons = [
     'lib/home_cleaning/Assets/images/home.png',
     'lib/home_cleaning/Assets/images/bookings.png',
@@ -1284,6 +1296,7 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labels = _labelsOf(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1305,15 +1318,15 @@ class _BottomNav extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(4, 8, 4, 6),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final segment = constraints.maxWidth / _labels.length;
+              final segment = constraints.maxWidth / labels.length;
               return SizedBox(
                 width: constraints.maxWidth,
                 child: Stack(
                   children: [
-                    AnimatedPositioned(
+                    AnimatedPositionedDirectional(
                       duration: const Duration(milliseconds: 280),
                       curve: Curves.easeOutCubic,
-                      left: selectedIndex * segment + (segment - 40) / 2,
+                      start: selectedIndex * segment + (segment - 40) / 2,
                       top: 0,
                       width: 40,
                       height: 40,
@@ -1325,7 +1338,7 @@ class _BottomNav extends StatelessWidget {
                       ),
                     ),
                     Row(
-                      children: List.generate(_labels.length, (index) {
+                      children: List.generate(labels.length, (index) {
                         final selected = selectedIndex == index;
                         return Expanded(
                           child: GestureDetector(
@@ -1372,7 +1385,7 @@ class _BottomNav extends StatelessWidget {
                                         : const Color(0xFF8D7B74),
                                   ),
                                   child: Text(
-                                    _labels[index],
+                                    labels[index],
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
