@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/controller/account_controller.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class WaterHomeController extends GetxController {
   bool isStoreOpen = true;
@@ -22,20 +23,22 @@ class WaterHomeController extends GetxController {
   Map<String, dynamic>? rawVendor;
   Map<String, dynamic>? rawScreen;
 
-  final filters = const [
-    'New Orders',
-    'Accepted',
-    'Preparing',
-    'Ready',
-    'Delivered',
-    'Cancelled',
+  // Filter labels are index-based (see filteredOrders /
+  // filteredSubscriptionOrders); they are localised at read time.
+  List<String> get filters => [
+    S.current.waterNewOrders,
+    S.current.accepted,
+    S.current.preparing,
+    S.current.ready,
+    S.current.delivered,
+    S.current.cancelled,
   ];
 
-  final subscriptionFilters = const [
-    'New Orders',
-    'Active',
-    'Paused',
-    'Cancelled',
+  List<String> get subscriptionFilters => [
+    S.current.waterNewOrders,
+    S.current.activeLabel,
+    S.current.waterPaused,
+    S.current.cancelled,
   ];
 
   int unreadChatCount = 0;
@@ -142,10 +145,10 @@ class WaterHomeController extends GetxController {
           open.isNotEmpty &&
           close != null &&
           close.isNotEmpty) {
-        return 'Today: $open - $close';
+        return S.current.waterTodayTimings(open, close);
       }
     }
-    return 'Today: 08:00 - 22:00';
+    return S.current.waterTodayTimings('08:00', '22:00');
   }
 
   String get shopName {
@@ -165,9 +168,9 @@ class WaterHomeController extends GetxController {
 
   String get welcomeText {
     if (shopName.isNotEmpty) {
-      return 'Welcome to $shopName!';
+      return S.current.waterWelcomeToShop(shopName);
     }
-    return 'Welcome to Saimpex Vendor!';
+    return S.current.welcomeToSaimpexVendor;
   }
 
   Future<void> fetchHome({
@@ -598,7 +601,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Subscription accepted successfully';
+            dataMap['message']?.toString() ?? S.current.waterSubscriptionAcceptedSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -617,7 +620,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to accept subscription';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToAcceptSubscription;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -639,7 +642,7 @@ class WaterHomeController extends GetxController {
         '========================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error accepting subscription: $e');
+        showToast(context, S.current.waterErrorAcceptingSubscription('$e'));
       }
     } finally {
       update();
@@ -723,7 +726,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Subscription rejected successfully';
+            dataMap['message']?.toString() ?? S.current.waterSubscriptionRejectedSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -742,7 +745,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to reject subscription';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToRejectSubscription;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -764,7 +767,7 @@ class WaterHomeController extends GetxController {
         '========================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error rejecting subscription: $e');
+        showToast(context, S.current.waterErrorRejectingSubscription('$e'));
       }
     } finally {
       update();
@@ -848,7 +851,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Subscription paused successfully';
+            dataMap['message']?.toString() ?? S.current.waterSubscriptionPausedSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -867,7 +870,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to pause subscription';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToPauseSubscription;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -889,7 +892,7 @@ class WaterHomeController extends GetxController {
         '========================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error pausing subscription: $e');
+        showToast(context, S.current.waterErrorPausingSubscription('$e'));
       }
     } finally {
       update();
@@ -969,7 +972,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Subscription resumed successfully';
+            dataMap['message']?.toString() ?? S.current.waterSubscriptionResumedSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -988,7 +991,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to resume subscription';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToResumeSubscription;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1010,7 +1013,7 @@ class WaterHomeController extends GetxController {
         '========================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error resuming subscription: $e');
+        showToast(context, S.current.waterErrorResumingSubscription('$e'));
       }
     } finally {
       update();
@@ -1087,7 +1090,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Order accepted successfully';
+            dataMap['message']?.toString() ?? S.current.orderAcceptedSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1106,7 +1109,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to accept order';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToAcceptOrder;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1128,7 +1131,7 @@ class WaterHomeController extends GetxController {
         '================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error accepting order: $e');
+        showToast(context, S.current.waterErrorAcceptingOrder('$e'));
       }
     } finally {
       update();
@@ -1208,7 +1211,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == '1')) {
         final message =
             dataMap['message']?.toString() ??
-            'Order moved to preparing successfully';
+            S.current.waterOrderMovedToPreparing;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1227,7 +1230,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to prepare order';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToPrepareOrder;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1249,7 +1252,7 @@ class WaterHomeController extends GetxController {
         '==================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error preparing order: $e');
+        showToast(context, S.current.waterErrorPreparingOrder('$e'));
       }
     } finally {
       update();
@@ -1329,7 +1332,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == '1')) {
         final message =
             dataMap['message']?.toString() ??
-            'Order marked as ready successfully';
+            S.current.waterOrderMarkedAsReady;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1348,7 +1351,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to mark order as ready';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToMarkOrderAsReady;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1370,7 +1373,7 @@ class WaterHomeController extends GetxController {
         '========================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error marking order as ready: $e');
+        showToast(context, S.current.waterErrorMarkingOrderAsReady('$e'));
       }
     } finally {
       update();
@@ -1451,7 +1454,7 @@ class WaterHomeController extends GetxController {
               dataMap['status'] == 1 ||
               dataMap['status'] == '1')) {
         final message =
-            dataMap['message']?.toString() ?? 'Order cancelled successfully';
+            dataMap['message']?.toString() ?? S.current.waterOrderCancelledSuccessfully;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1470,7 +1473,7 @@ class WaterHomeController extends GetxController {
         await fetchHome();
       } else {
         final message =
-            dataMap?['message']?.toString() ?? 'Failed to cancel order';
+            dataMap?['message']?.toString() ?? S.current.waterFailedToCancelOrder;
         if (context != null && context.mounted) {
           showToast(context, message);
         }
@@ -1492,7 +1495,7 @@ class WaterHomeController extends GetxController {
         '================================================================',
       );
       if (context != null && context.mounted) {
-        showToast(context, 'Error cancelling order: $e');
+        showToast(context, S.current.waterErrorCancellingOrder('$e'));
       }
     } finally {
       update();

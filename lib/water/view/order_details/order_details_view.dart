@@ -2,7 +2,7 @@ import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -13,6 +13,7 @@ import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/view/chat/ChatDetails.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/reject_order_sheet.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class OrderDetailsView extends StatefulWidget {
   const OrderDetailsView({super.key, required this.order, this.orderId});
@@ -115,7 +116,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           _orderDetail = raw;
         }
       } else {
-        _errorMessage = raw?['message']?.toString() ?? 'Order details not found';
+        _errorMessage = raw?['message']?.toString() ?? S.current.orderDetailsNotFound;
       }
     } catch (e) {
       debugPrint("==================== GET WATER ORDER DETAIL ERROR ====================");
@@ -162,7 +163,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       }
     }
 
-    if (convId == 0 && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer') {
+    if (convId == 0 && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer' && name.trim() != S.current.waterCustomer) {
       for (final c in chatCtrl.conversations) {
         final cName = c.customer?.name?.trim();
         if (cName != null && cName.toLowerCase() == name.trim().toLowerCase()) {
@@ -175,7 +176,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       }
     }
 
-    if (convId == 0 && finalCustomerId == null && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer') {
+    if (convId == 0 && finalCustomerId == null && name.trim().isNotEmpty && name.trim().toLowerCase() != 'customer' && name.trim() != S.current.waterCustomer) {
       try {
         await chatCtrl.searchCustomers(name.trim());
         if (chatCtrl.customerResults.isNotEmpty) {
@@ -200,7 +201,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
     ChatView.open(
       context,
-      customerName: name.isNotEmpty ? name : 'Customer',
+      customerName: name.isNotEmpty ? name : S.of(context).waterCustomer,
       conversationId: convId > 0 ? convId : null,
       customerId: finalCustomerId,
       avatarUrl: avatarUrl,
@@ -379,7 +380,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text('Retry'),
+                child: Text(S.of(context).tryAgain),
               ),
             ],
           ),
@@ -468,7 +469,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     final addressTitle = orderMap['address_title']?.toString().trim() ??
         orderMap['building_name']?.toString().trim() ??
         orderMap['address_name']?.toString().trim() ??
-        ((fullAddress != null && fullAddress.isNotEmpty) ? 'Delivery Address' : null);
+        ((fullAddress != null && fullAddress.isNotEmpty) ? S.of(context).waterDeliveryAddressTitle : null);
 
     // Payment
     final paymentType = orderMap['payment_type']?.toString().trim() ??
@@ -548,7 +549,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   customerPhone: customerPhone,
                   orderId: orderCode,
                   placedTime: placedTime.isNotEmpty ? placedTime : widget.order.timeAgo,
-                  orderType: isDelivery ? 'Delivery' : 'Self Pickup',
+                  orderType: isDelivery ? S.of(context).delivery : S.of(context).selfPickup,
                   isDelivery: isDelivery,
                   status: currentStatus,
                   addressTitle: addressTitle,
@@ -562,9 +563,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                 ),
                 if (partnerName != null && partnerName.isNotEmpty && partnerName != 'null') ...[
                   const SizedBox(height: 16),
-                  const Text(
-                    'DELIVERY PARTNER',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).waterDeliveryPartnerHeader,
+                    style: const TextStyle(
                       color: OrderDetailsView._muted,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
@@ -587,7 +588,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                 if (items.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Text(
-                    'ORDER ITEMS (${items.length})',
+                    S.of(context).waterOrderItemsCount('${items.length}'),
                     style: const TextStyle(
                       color: OrderDetailsView._muted,
                       fontWeight: FontWeight.w700,
@@ -602,9 +603,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   ],
                 ],
                 const SizedBox(height: 16),
-                const Text(
-                  'PAYMENT SUMMARY',
-                  style: TextStyle(
+                Text(
+                  S.of(context).paymentSummary,
+                  style: const TextStyle(
                     color: OrderDetailsView._muted,
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
@@ -624,9 +625,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   isDelivery: isDelivery,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Order Timeline',
-                  style: TextStyle(
+                Text(
+                  S.of(context).orderTimeline,
+                  style: const TextStyle(
                     color: OrderDetailsView._title,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -671,16 +672,16 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Order Details',
-              style: TextStyle(
+            Text(
+              S.of(context).orderDetails,
+              style: const TextStyle(
                 color: OrderDetailsView._title,
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -745,12 +746,12 @@ class _CustomerCard extends StatelessWidget {
 
   (String, Color) get _statusBadge {
     return switch (status) {
-      HomeOrderStatus.newOrder => ('NEW', _newBadge),
-      HomeOrderStatus.accepted => ('ACCEPTED', _acceptedBadge),
-      HomeOrderStatus.preparing => ('PREPARING', const Color(0xFFFF8A00)),
-      HomeOrderStatus.ready => ('READY', const Color(0xFF2EAD5B)),
-      HomeOrderStatus.delivered => ('DELIVERED', const Color(0xFF2EAD5B)),
-      HomeOrderStatus.cancelled => ('CANCELLED', const Color(0xFF9E9E9E)),
+      HomeOrderStatus.newOrder => (S.current.waterNewBadge, _newBadge),
+      HomeOrderStatus.accepted => (S.current.accepted.toUpperCase(), _acceptedBadge),
+      HomeOrderStatus.preparing => (S.current.preparing.toUpperCase(), const Color(0xFFFF8A00)),
+      HomeOrderStatus.ready => (S.current.ready.toUpperCase(), const Color(0xFF2EAD5B)),
+      HomeOrderStatus.delivered => (S.current.delivered.toUpperCase(), const Color(0xFF2EAD5B)),
+      HomeOrderStatus.cancelled => (S.current.cancelled.toUpperCase(), const Color(0xFF9E9E9E)),
     };
   }
 
@@ -787,9 +788,9 @@ class _CustomerCard extends StatelessWidget {
                 size: 18,
               ),
               const SizedBox(width: 6),
-              const Text(
-                'CUSTOMER',
-                style: TextStyle(
+              Text(
+                S.of(context).waterCustomerHeader,
+                style: const TextStyle(
                   color: Color.fromARGB(255, 247, 80, 2),
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -849,6 +850,8 @@ class _CustomerCard extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(
                           customerPhone,
+                          // Phone numbers always read left-to-right.
+                          textDirection: TextDirection.ltr,
                           style: const TextStyle(
                             color: Color(0xFF9E9E9E),
                             fontWeight: FontWeight.w400,
@@ -900,9 +903,9 @@ class _CustomerCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'REQUEST ID',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterRequestId,
+                        style: const TextStyle(
                           color: Color(0xFFB0B0B0),
                           fontWeight: FontWeight.w600,
                           fontSize: 10,
@@ -948,9 +951,9 @@ class _CustomerCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        'DELIVERY TYPE',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterDeliveryTypeHeader,
+                        style: const TextStyle(
                           color: Color(0xFFB0B0B0),
                           fontWeight: FontWeight.w600,
                           fontSize: 10,
@@ -1025,17 +1028,17 @@ class _CustomerCard extends StatelessWidget {
           ),
           if (isDelivery && (fullAddress != null && fullAddress!.trim().isNotEmpty)) ...[
             const SizedBox(height: 14),
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.location_on_outlined,
                   color: _labelOrange,
                   size: 16,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  'DELIVERY ADDRESS',
-                  style: TextStyle(
+                  S.of(context).deliveryAddress,
+                  style: const TextStyle(
                     color: _labelOrange,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -1215,7 +1218,7 @@ class _OrderItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name.isNotEmpty ? name : 'Water Item',
+                  name.isNotEmpty ? name : S.of(context).waterItem,
                   style: const TextStyle(
                     color: OrderDetailsView._title,
                     fontWeight: FontWeight.w600,
@@ -1243,7 +1246,7 @@ class _OrderItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              'Qty: $qty',
+              S.of(context).qtyLabel(qty),
               style: const TextStyle(
                 color: Color(0xFF555555),
                 fontWeight: FontWeight.w600,
@@ -1282,6 +1285,11 @@ class _PaymentSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final payTypeLabel = (paymentType != null && paymentType!.trim().isNotEmpty)
+        ? paymentType!.trim()
+        : (isOnline
+            ? S.of(context).onlinePayment
+            : S.of(context).cashOnDelivery);
     final payTypeLabel = paymentTypeLabel(paymentType, cashFallback: !isOnline);
 
     return Container(
@@ -1294,34 +1302,34 @@ class _PaymentSummary extends StatelessWidget {
       child: Column(
         children: [
           if (subtotal != null && subtotal!.isNotEmpty) ...[
-            _PayRow(label: 'Item total', value: '$subtotal MRU'),
+            _PayRow(label: S.of(context).itemTotal, value: '$subtotal MRU'),
             const SizedBox(height: 10),
           ],
           if (isDelivery && deliveryFee != null && deliveryFee!.isNotEmpty) ...[
-            _PayRow(label: 'Delivery fee', value: '$deliveryFee MRU'),
+            _PayRow(label: S.of(context).deliveryFee, value: '$deliveryFee MRU'),
             const SizedBox(height: 10),
           ],
           if (tax != null && tax!.isNotEmpty && tax != '0' && tax != '0.00') ...[
-            _PayRow(label: 'Tax', value: '$tax MRU'),
+            _PayRow(label: S.of(context).tax, value: '$tax MRU'),
             const SizedBox(height: 10),
           ],
           if (discount != null && discount!.isNotEmpty && discount != '0' && discount != '0.00') ...[
             _PayRow(
-              label: 'Discount',
+              label: S.of(context).discount,
               value: '-$discount MRU',
               valueColor: const Color(0xFF2EAD5B),
             ),
             const SizedBox(height: 10),
           ],
           _PayRow(
-            label: 'Payment type',
+            label: S.of(context).paymentType,
             value: payTypeLabel,
             valueColor: OrderDetailsView._orange,
           ),
           if (payedOn != null && payedOn!.trim().isNotEmpty) ...[
             const SizedBox(height: 10),
             _PayRow(
-              label: 'Payment on',
+              label: S.of(context).paymentOn,
               value: payedOn!.trim(),
               valueColor: const Color(0xFFB0B0B0),
               valueSize: 12,
@@ -1332,9 +1340,9 @@ class _PaymentSummary extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Text(
-                'Total payed',
-                style: TextStyle(
+              Text(
+                S.of(context).waterTotalPaid,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -1386,7 +1394,7 @@ class _PayRow extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.end,
             style: TextStyle(
               color: valueColor,
               fontWeight: FontWeight.w500,
@@ -1501,7 +1509,7 @@ class _DeliveryPartnerCard extends StatelessWidget {
                       if (reviews != null && reviews!.trim().isNotEmpty) ...[
                         const SizedBox(width: 4),
                         Text(
-                          '(${reviews!.trim()} reviews)',
+                          S.of(context).waterReviewsCount(reviews!.trim()),
                           style: const TextStyle(
                             color: Color(0xFF9E9E9E),
                             fontWeight: FontWeight.w400,
@@ -1564,22 +1572,22 @@ class _OrderTimeline extends StatelessWidget {
 
   static const Color _containerBg = Color(0xFFF8F7F4);
 
-  static const deliveryBase = [
-    (Icons.check_rounded, 'Order Received', [1]),
-    (Icons.check_rounded, 'Order Accepted', [2]),
-    (Icons.local_drink_outlined, 'Preparing', [3]),
-    (Icons.check_rounded, 'Ready for Dispatch', [4]),
-    (Icons.delivery_dining_outlined, 'Delivery Partner Assigned', [5]),
-    (Icons.check_rounded, 'Picked Up by Rider', [6, 7]),
-    (Icons.home_outlined, 'Order Delivered', [8, 9]),
+  static List<(IconData, String, List<int>)> get deliveryBase => [
+    (Icons.check_rounded, S.current.waterOrderReceived, [1]),
+    (Icons.check_rounded, S.current.orderAccepted, [2]),
+    (Icons.local_drink_outlined, S.current.preparing, [3]),
+    (Icons.check_rounded, S.current.waterReadyForDispatch, [4]),
+    (Icons.delivery_dining_outlined, S.current.waterDeliveryPartnerAssigned, [5]),
+    (Icons.check_rounded, S.current.waterPickedUpByRider, [6, 7]),
+    (Icons.home_outlined, S.current.waterOrderDelivered, [8, 9]),
   ];
 
-  static const selfPickupBase = [
-    (Icons.check_rounded, 'Order Received', [1]),
-    (Icons.check_rounded, 'Order Accepted', [2]),
-    (Icons.local_drink_outlined, 'Preparing', [3]),
-    (Icons.check_rounded, 'Ready for Pickup', [4]),
-    (Icons.check_rounded, 'Picked Up by Customer', [5, 6, 7, 8, 9]),
+  static List<(IconData, String, List<int>)> get selfPickupBase => [
+    (Icons.check_rounded, S.current.waterOrderReceived, [1]),
+    (Icons.check_rounded, S.current.orderAccepted, [2]),
+    (Icons.local_drink_outlined, S.current.preparing, [3]),
+    (Icons.check_rounded, S.current.waterReadyForPickup, [4]),
+    (Icons.check_rounded, S.current.waterPickedUpByCustomer, [5, 6, 7, 8, 9]),
   ];
 
   int get _completedCount {
@@ -1765,9 +1773,9 @@ class _BottomActions extends StatelessWidget {
 
   String? get _primaryLabel {
     return switch (status) {
-      HomeOrderStatus.accepted => 'Prepare Order',
-      HomeOrderStatus.preparing => 'Mark as Ready',
-      HomeOrderStatus.ready when !isDelivery => 'Mark as Picked Up',
+      HomeOrderStatus.accepted => S.current.prepareOrder,
+      HomeOrderStatus.preparing => S.current.markAsReady,
+      HomeOrderStatus.ready when !isDelivery => S.current.waterMarkAsPickedUp,
       _ => null,
     };
   }
@@ -1838,9 +1846,9 @@ class _BottomActions extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).reject,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),
@@ -1875,9 +1883,9 @@ class _BottomActions extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Accept Order',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(context).acceptOrder,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),

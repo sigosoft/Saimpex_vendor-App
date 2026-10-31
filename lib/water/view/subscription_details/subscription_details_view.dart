@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/pause_subscription_sheet.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class SubscriptionDetailsView extends StatelessWidget {
   const SubscriptionDetailsView({super.key, required this.order});
@@ -54,9 +55,9 @@ class SubscriptionDetailsView extends StatelessWidget {
                         _PausedStatusCard(order: order),
                       ],
                       const SizedBox(height: 16),
-                      const Text(
-                        'PLAN SUMMARY',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterPlanSummary,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
@@ -78,25 +79,25 @@ class SubscriptionDetailsView extends StatelessWidget {
                           value: order.nextDelivery ?? 'Tomorrow',
                         ),
                         const SizedBox(height: 18),
-                        const _SectionTitle(
-                          title: 'UPCOMING DELIVERIES',
-                          action: 'See All',
+                        _SectionTitle(
+                          title: S.of(context).waterUpcomingDeliveries,
+                          action: S.of(context).viewAll,
                         ),
                         const SizedBox(height: 10),
                         const _UpcomingDeliveriesCard(),
                       ],
                       const SizedBox(height: 18),
-                      const _SectionTitle(
-                        title: 'DELIVERY HISTORY',
-                        action: 'See All',
+                      _SectionTitle(
+                        title: S.of(context).waterDeliveryHistory,
+                        action: S.of(context).viewAll,
                         titleColor: AppColors.sectionTitle,
                       ),
                       const SizedBox(height: 10),
                       const _DeliveryHistoryCard(),
                       const SizedBox(height: 18),
-                      const Text(
-                        'PAYMENT SUMMARY',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).paymentSummary,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
@@ -140,16 +141,16 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Subscription Details',
-              style: TextStyle(
+            Text(
+              S.of(context).waterSubscriptionDetails,
+              style: const TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -206,9 +207,9 @@ class _CustomerCard extends StatelessWidget {
 
     final (badgeLabel, badgeColor) = switch (order.status) {
       SubscriptionOrderStatus.newOrder ||
-      SubscriptionOrderStatus.active => ('ACTIVE', AppColors.activeGreen),
-      SubscriptionOrderStatus.paused => ('PAUSED', AppColors.primaryOrange),
-      SubscriptionOrderStatus.cancelled => ('CANCELLED', AppColors.textMuted),
+      SubscriptionOrderStatus.active => (S.current.active, AppColors.activeGreen),
+      SubscriptionOrderStatus.paused => (S.current.waterPaused.toUpperCase(), AppColors.primaryOrange),
+      SubscriptionOrderStatus.cancelled => (S.current.cancelled.toUpperCase(), AppColors.textMuted),
     };
 
     return Container(
@@ -235,9 +236,9 @@ class _CustomerCard extends StatelessWidget {
                 size: 18,
               ),
               const SizedBox(width: 6),
-              const Text(
-                'CUSTOMER',
-                style: TextStyle(
+              Text(
+                S.of(context).waterCustomerHeader,
+                style: const TextStyle(
                   color: AppColors.primaryOrange,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -348,9 +349,9 @@ class _CustomerCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'REQUEST ID',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).waterRequestId,
+                        style: const TextStyle(
                           color: AppColors.textHint,
                           fontWeight: FontWeight.w600,
                           fontSize: 10,
@@ -398,9 +399,9 @@ class _CustomerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: const Text(
-                          'DELIVERY TYPE',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).waterDeliveryTypeHeader,
+                          style: const TextStyle(
                             color: AppColors.textHint,
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
@@ -453,7 +454,9 @@ class _CustomerCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              order.isDelivery ? 'Delivery' : 'Self Pickup',
+                              order.isDelivery
+                                  ? S.of(context).delivery
+                                  : S.of(context).selfPickup,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -473,17 +476,17 @@ class _CustomerCard extends StatelessWidget {
           ),
           if (order.isDelivery) ...[
             const SizedBox(height: 14),
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.location_on_outlined,
                   color: AppColors.primaryOrange,
                   size: 16,
                 ),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  'DELIVERY ADDRESS',
-                  style: TextStyle(
+                  S.of(context).deliveryAddress,
+                  style: const TextStyle(
                     color: AppColors.primaryOrange,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -604,9 +607,9 @@ class _ProductCard extends StatelessWidget {
                     color: AppColors.softGray,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'Qty: 1',
-                    style: TextStyle(
+                  child: Text(
+                    S.of(context).qtyLabel('1'),
+                    style: const TextStyle(
                       color: AppColors.textLabel,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -644,7 +647,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.sync_rounded,
-                label: 'Frequency',
+                label: S.of(context).waterFrequency,
                 value: frequency,
               ),
             ),
@@ -652,7 +655,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.access_time_rounded,
-                label: 'Time Slot',
+                label: S.of(context).waterTimeSlot,
                 value: timeSlot,
               ),
             ),
@@ -664,7 +667,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.calendar_month_outlined,
-                label: 'Start',
+                label: S.of(context).waterStart,
                 value: startDate,
               ),
             ),
@@ -672,7 +675,7 @@ class _PlanGrid extends StatelessWidget {
             Expanded(
               child: _PlanTile(
                 icon: Icons.calendar_month_outlined,
-                label: 'End',
+                label: S.of(context).waterEnd,
                 value: endDate,
               ),
             ),
@@ -755,9 +758,9 @@ class _NextDeliveryBar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Next Delivery',
-                  style: TextStyle(
+                Text(
+                  S.of(context).waterNextDelivery,
+                  style: const TextStyle(
                     color: AppColors.planPurpleSoft,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -792,7 +795,9 @@ class _PausedStatusCard extends StatelessWidget {
   final SubscriptionOrder order;
   @override
   Widget build(BuildContext context) {
-    final pausedBy = order.pausedByVendor ? 'You' : 'Customer';
+    final pausedBy = order.pausedByVendor
+        ? S.of(context).waterYou
+        : S.of(context).waterCustomer;
     final pausedOn = order.pausedOn ?? 'Jul-24-2026 - 10:30 AM';
     final reason = order.pauseReason;
 
@@ -824,9 +829,9 @@ class _PausedStatusCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Currently Paused',
-                style: TextStyle(
+              Text(
+                S.of(context).waterCurrentlyPaused,
+                style: const TextStyle(
                   color: AppColors.pausedAmber,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -835,14 +840,14 @@ class _PausedStatusCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _PausedMetaRow(label: 'PAUSED BY:', value: pausedBy),
+          _PausedMetaRow(label: S.of(context).waterPausedByLabel, value: pausedBy),
           const SizedBox(height: 6),
-          _PausedMetaRow(label: 'PAUSED ON:', value: pausedOn),
+          _PausedMetaRow(label: S.of(context).waterPausedOnLabel, value: pausedOn),
           if (order.pausedByVendor &&
               reason != null &&
               reason.trim().isNotEmpty) ...[
             const SizedBox(height: 6),
-            _PausedMetaRow(label: 'REASON:', value: reason),
+            _PausedMetaRow(label: S.of(context).waterReasonLabel, value: reason),
           ],
         ],
       ),
@@ -1118,22 +1123,22 @@ class _PaymentSummary extends StatelessWidget {
         color: AppColors.paymentCard,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          _PayRow(label: 'Subscription Amount', value: '9000 MRU'),
+          _PayRow(label: S.of(context).waterSubscriptionAmount, value: '9000 MRU'),
           SizedBox(height: 10),
           _PayRow(
-            label: 'Subscription Savings',
+            label: S.of(context).waterSubscriptionSavings,
             value: '-4500 MRU',
             valueColor: AppColors.primaryOrange,
           ),
           SizedBox(height: 10),
-          _PayRow(label: 'Estimated Delivery Fee', value: '900 MRU'),
+          _PayRow(label: S.of(context).waterEstimatedDeliveryFee, value: '900 MRU'),
           SizedBox(height: 10),
-          _PayRow(label: 'Tax', value: '100 MRU'),
+          _PayRow(label: S.of(context).tax, value: '100 MRU'),
           SizedBox(height: 10),
           _PayRow(
-            label: 'Payment on',
+            label: S.of(context).paymentOn,
             value: 'Feb 07, 2026 10:45 AM, Today',
             valueColor: AppColors.textHint,
             valueSize: 12,
@@ -1144,7 +1149,7 @@ class _PaymentSummary extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Total payed',
+                S.of(context).waterTotalPaid,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -1197,7 +1202,7 @@ class _PayRow extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.end,
             style: TextStyle(
               color: valueColor,
               fontWeight: FontWeight.w500,
@@ -1264,7 +1269,7 @@ class _BottomActions extends StatelessWidget {
               ),
               SizedBox(width: 6),
               Text(
-                'Chat With Customer',
+                S.of(context).waterChatWithCustomer,
                 maxLines: 1,
                 softWrap: false,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
@@ -1346,13 +1351,13 @@ class _BottomActions extends StatelessWidget {
                   Expanded(
                     child: isVendorPaused
                         ? _primaryButton(
-                            label: 'Resume',
+                            label: S.of(context).waterResume,
                             icon: Icons.play_arrow_rounded,
                             iconSize: 20,
                             onPressed: () {},
                           )
                         : _primaryButton(
-                            label: 'Pause',
+                            label: S.of(context).waterPause,
                             icon: Icons.pause,
                             onPressed: onPause,
                           ),

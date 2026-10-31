@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 enum MessageType { text, audio }
 
@@ -109,7 +110,7 @@ class _HomeCleaningConversationViewState
           sender: MessageSender.me,
           type: MessageType.text,
           text: text,
-          time: 'Just now',
+          time: S.of(context).cleaningJustNow,
           isRead: false,
         ),
       );
@@ -204,7 +205,9 @@ class _HomeCleaningConversationViewState
               ),
               const SizedBox(height: 2),
               Text(
-                widget.isOnline ? 'Online' : 'Offline',
+                widget.isOnline
+                    ? S.of(context).cleaningOnline
+                    : S.of(context).cleaningOffline,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF757575),
                   fontWeight: FontWeight.w400,
@@ -227,7 +230,7 @@ class _HomeCleaningConversationViewState
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
-          'Today',
+          S.of(context).today,
           style: GoogleFonts.inter(
             color: const Color(0xFF6B7280),
             fontWeight: FontWeight.w600,
@@ -418,7 +421,7 @@ class _HomeCleaningConversationViewState
                         fontSize: 13,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: S.of(context).typeAMessage,
                         hintStyle: GoogleFonts.inter(
                           color: const Color(0xFF9E9E9E),
                           fontSize: 13,

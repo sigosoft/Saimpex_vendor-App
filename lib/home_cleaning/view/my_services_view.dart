@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
 
@@ -127,7 +128,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                 alignment: Alignment.center,
                 children: [
                   Text(
-                    'My Services',
+                    S.of(context).cleaningMyServices,
                     style: GoogleFonts.inter(
                       color: MyServicesView._ink,
                       fontWeight: FontWeight.w700,
@@ -135,7 +136,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                     ),
                   ),
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: InkWell(
                       onTap: () {
                         HapticFeedback.lightImpact();
@@ -175,7 +176,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                   fontSize: 14,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Search Services',
+                  hintText: S.of(context).cleaningSearchServices,
                   hintStyle: GoogleFonts.inter(
                     color: const Color(0xFFBDBDBD),
                     fontSize: 14,
@@ -205,9 +206,9 @@ class _MyServicesViewState extends State<MyServicesView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: Text(
-                'YOUR SERVICES',
+                S.of(context).cleaningYourServicesHeader,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF9AA3B2),
                   fontWeight: FontWeight.w600,
@@ -222,7 +223,7 @@ class _MyServicesViewState extends State<MyServicesView> {
             child: services.isEmpty
                 ? Center(
                     child: Text(
-                      'No services found',
+                      S.of(context).cleaningNoServicesFound,
                       style: GoogleFonts.inter(
                         color: const Color(0xFF9E9E9E),
                         fontWeight: FontWeight.w500,
@@ -267,7 +268,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                   ),
                 ),
                 child: Text(
-                  '+ Add Service',
+                  S.of(context).cleaningAddServiceButton,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -373,7 +374,7 @@ class _ServiceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'STARTING RATE',
+                        S.of(context).cleaningStartingRateHeader,
                         style: GoogleFonts.inter(
                           color: MyServicesView._orange,
                           fontWeight: FontWeight.w700,
@@ -538,7 +539,7 @@ class _ServicePopupMenu extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Edit',
+                  S.of(context).edit,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF212121),
                     fontSize: 13,
@@ -569,7 +570,7 @@ class _ServicePopupMenu extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Delete',
+                  S.of(context).delete,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF212121),
                     fontSize: 13,

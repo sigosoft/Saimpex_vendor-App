@@ -1,10 +1,11 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
 Future<bool> showMarkOutOfStockDialog(BuildContext context) {
   return showInventoryStatusDialog(
     context,
-    message: 'Are you sure you want to mark this item as out of stock?',
+    message: S.of(context).waterConfirmMarkOutOfStock,
     confirmColor: AppColors.inventoryOutOfStock,
   );
 }
@@ -12,7 +13,7 @@ Future<bool> showMarkOutOfStockDialog(BuildContext context) {
 Future<bool> showMarkAvailableDialog(BuildContext context) {
   return showInventoryStatusDialog(
     context,
-    message: 'Are you sure you want to mark this item as available?',
+    message: S.of(context).waterConfirmMarkAvailable,
     confirmColor: AppColors.inventoryAvailable,
   );
 }
@@ -21,12 +22,12 @@ Future<bool> showDeleteProductDialog(
   BuildContext context, {
   String? productName,
 }) {
-  final nameText = productName != null && productName.trim().isNotEmpty
-      ? ' "${productName.trim()}"'
-      : ' this item';
+  final message = productName != null && productName.trim().isNotEmpty
+      ? S.of(context).waterConfirmDeleteNamedItem(productName.trim())
+      : S.of(context).waterConfirmDeleteItem;
   return showInventoryStatusDialog(
     context,
-    message: 'Are you sure you want to delete$nameText?',
+    message: message,
     confirmColor: AppColors.inventoryOutOfStock,
   );
 }
@@ -81,7 +82,7 @@ class InventoryStatusDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(false),
                 borderRadius: BorderRadius.circular(20),
@@ -126,8 +127,8 @@ class InventoryStatusDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'No',
+                      child: Text(
+                        S.of(context).no,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -150,8 +151,8 @@ class InventoryStatusDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Yes',
+                      child: Text(
+                        S.of(context).yes,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -171,9 +172,9 @@ class InventoryStatusDialog extends StatelessWidget {
 
 /// Kept for existing call sites / clarity.
 class MarkOutOfStockDialog extends InventoryStatusDialog {
-  const MarkOutOfStockDialog({super.key})
+  MarkOutOfStockDialog({super.key})
       : super(
-          message: 'Are you sure you want to mark this item as out of stock?',
+          message: S.current.waterConfirmMarkOutOfStock,
           confirmColor: AppColors.inventoryOutOfStock,
         );
 }

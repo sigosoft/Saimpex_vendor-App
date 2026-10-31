@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -122,12 +123,12 @@ class _CouponsViewState extends State<CouponsView> {
               map['name_fr']?.toString() ??
               map['name']?.toString() ??
               map['title']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
           final int statusInt = int.tryParse(map['status']?.toString() ?? '0') ?? 0;
           final bool active = statusInt == 1 ||
               map['status'] == true ||
               map['status']?.toString() == '1';
-          final String code = map['code']?.toString() ?? 'N/A';
+          final String code = map['code']?.toString() ?? S.current.waterNotAvailable;
 
           final int typeInt = int.tryParse(map['type']?.toString() ?? '1') ?? 1;
           String kind = typeInt == 2 ? 'PERCENTAGE' : 'AMOUNT';
@@ -151,13 +152,13 @@ class _CouponsViewState extends State<CouponsView> {
               map['valid_until']?.toString() ??
               map['expiry_date']?.toString() ??
               map['end_date']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
           final String createdOn = map['formatted_created_on']?.toString() ??
               map['created_at']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
           final String updatedOn = map['formatted_updated_on']?.toString() ??
               map['updated_at']?.toString() ??
-              'N/A';
+              S.current.waterNotAvailable;
 
           loaded.add(
             _Coupon(
@@ -250,7 +251,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Search Coupon',
+                                hintText: S.of(context).searchCoupon,
                                 hintStyle: GoogleFonts.inter(
                                   color: const Color(0xFFA9AEB6),
                                   fontWeight: FontWeight.w500,
@@ -304,7 +305,7 @@ class _CouponsViewState extends State<CouponsView> {
                                   const _AddPlusIcon(),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Add Coupon',
+                                    S.of(context).addCoupon,
                                     style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
                                   ),
                                 ],
@@ -338,7 +339,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No Coupons Found',
+                                  S.of(context).noCouponsFound,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
@@ -348,7 +349,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Created coupons will appear here',
+                                  S.of(context).waterCreatedCouponsAppearHere,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
@@ -371,8 +372,8 @@ class _CouponsViewState extends State<CouponsView> {
                                 barrierColor: const Color(0x80000000),
                                 builder: (context) => _CouponConfirmDialog(
                                   message: blocking
-                                      ? 'Are you sure you want to block this\nCoupon?'
-                                      : 'Are you sure you want to unblock this\nCoupon?',
+                                      ? S.of(context).areYouSureYouWantToBlockThisCoupon
+                                      : S.of(context).areYouSureYouWantToActivateThisCoupon,
                                   yesColor: const Color(0xFFFF5317),
                                 ),
                               );
@@ -419,7 +420,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Coupons',
+              S.of(context).coupons,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -427,7 +428,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -495,7 +496,7 @@ class _CouponCard extends StatelessWidget {
                 ),
               ),
               _Pill(
-                text: coupon.active ? 'ACTIVE' : 'INACTIVE',
+                text: coupon.active ? S.of(context).active : S.of(context).inactive,
                 background: coupon.active ? const Color(0xFFD1FAE5) : const Color(0xFFF3F4F6),
                 foreground: coupon.active ? const Color(0xFF059669) : const Color(0xFF6B7280),
               ),
@@ -521,7 +522,7 @@ class _CouponCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'CODE: ',
+                '${S.of(context).codeLabel}: ',
                 style: GoogleFonts.inter(
                   color: const Color(0xFF4C5260),
                   fontWeight: FontWeight.w600,
@@ -538,7 +539,7 @@ class _CouponCard extends StatelessWidget {
               ),
               const Spacer(),
               _Pill(
-                text: coupon.kind,
+                text: _kindLabel(context, coupon.kind),
                 background: const Color(0xFFFFCDBC),
                 foreground: const Color(0xFFFF5317),
               ),
@@ -549,19 +550,19 @@ class _CouponCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: _Stat(label: 'DISCOUNT', value: coupon.discount)),
+              Expanded(child: _Stat(label: S.of(context).discountLabel, value: coupon.discount)),
               const _StatDivider(),
-              Expanded(child: _Stat(label: 'COUNT', value: coupon.count)),
+              Expanded(child: _Stat(label: S.of(context).countLabel, value: coupon.count)),
               const _StatDivider(),
-              Expanded(child: _Stat(label: 'VALID UPTO', value: coupon.validUntil)),
+              Expanded(child: _Stat(label: S.of(context).validUptoLabel, value: coupon.validUntil)),
             ],
           ),
           const SizedBox(height: 14),
           const _DashedLine(),
           const SizedBox(height: 14),
-          _MetaRow(label: 'CREATED ON:', value: coupon.createdOn),
+          _MetaRow(label: '${S.of(context).createdOnLabel}:', value: coupon.createdOn),
           const SizedBox(height: 8),
-          _MetaRow(label: 'UPDATED ON:', value: coupon.updatedOn),
+          _MetaRow(label: '${S.of(context).updatedOnLabel}:', value: coupon.updatedOn),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -574,7 +575,7 @@ class _CouponCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               child: Text(
-                'Update Coupon Status',
+                S.of(context).updateCouponStatus,
                 style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -583,6 +584,14 @@ class _CouponCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _kindLabel(BuildContext context, String kind) {
+  final upper = kind.toUpperCase();
+  if (upper.contains('PERCENT')) return S.of(context).percentage.toUpperCase();
+  if (upper == 'AMOUNT') return S.of(context).amount.toUpperCase();
+  if (upper == 'FLAT') return S.of(context).waterFlat.toUpperCase();
+  return kind;
 }
 
 class _Pill extends StatelessWidget {
@@ -662,11 +671,12 @@ void _showCouponMenu(BuildContext iconContext, {required VoidCallback onDelete})
   if (box == null || !box.hasSize) return;
   final origin = box.localToGlobal(Offset.zero);
   final screen = MediaQuery.sizeOf(iconContext);
+  final isRtl = Directionality.of(iconContext) == TextDirection.rtl;
 
   showGeneralDialog<void>(
     context: iconContext,
     barrierDismissible: true,
-    barrierLabel: 'Close',
+    barrierLabel: MaterialLocalizations.of(iconContext).closeButtonLabel,
     barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 140),
     pageBuilder: (dialogContext, animation, secondaryAnimation) {
@@ -675,7 +685,8 @@ void _showCouponMenu(BuildContext iconContext, {required VoidCallback onDelete})
           children: [
             Positioned(
               top: origin.dy - 4,
-              right: screen.width - origin.dx + 6,
+              left: isRtl ? origin.dx + box.size.width + 6 : null,
+              right: isRtl ? null : screen.width - origin.dx + 6,
               child: _CouponMenu(
                 onEdit: () => Navigator.of(dialogContext).pop(),
                 onDelete: () {
@@ -698,9 +709,9 @@ Future<void> _confirmDeleteCoupon(BuildContext context, VoidCallback onDelete) a
   final confirmed = await showDialog<bool>(
     context: context,
     barrierColor: const Color(0x80000000),
-    builder: (context) => const _CouponConfirmDialog(
-      message: 'Are you sure you want to delete this\nCoupon?',
-      yesColor: Color(0xFFFF3939),
+    builder: (context) => _CouponConfirmDialog(
+      message: S.of(context).areYouSureYouWantToDeleteThisCoupon,
+      yesColor: const Color(0xFFFF3939),
     ),
   );
   if (confirmed == true) onDelete();
@@ -725,7 +736,7 @@ class _CouponConfirmDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: InkWell(
                 onTap: () => Navigator.of(context).pop(false),
                 borderRadius: BorderRadius.circular(6),
@@ -768,7 +779,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text(
-                        'No',
+                        S.of(context).no,
                         style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
@@ -786,7 +797,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       child: Text(
-                        'Yes',
+                        S.of(context).yes,
                         style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
@@ -821,8 +832,8 @@ class _CouponMenu extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CouponMenuRow(icon: Icons.edit_outlined, label: 'Edit', onTap: onEdit),
-          _CouponMenuRow(label: 'Delete', onTap: onDelete, leading: const _MenuDeleteIcon()),
+          _CouponMenuRow(icon: Icons.edit_outlined, label: S.of(context).edit, onTap: onEdit),
+          _CouponMenuRow(label: S.of(context).delete, onTap: onDelete, leading: const _MenuDeleteIcon()),
         ],
       ),
     );

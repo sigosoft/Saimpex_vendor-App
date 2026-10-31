@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
@@ -16,6 +15,7 @@ import 'package:saimpex_vendor/water/view/notifications/notifications_view.dart'
 import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/water/view/subscription_calendar/subscription_calendar_view.dart';
 import 'package:saimpex_vendor/water/view/subscription_details/subscription_details_view.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -173,14 +173,16 @@ class _HomeViewState extends State<HomeView> {
                 if (controller.isSubscriptionTab) ...[
                   const SizedBox(height: 10),
                   const Align(
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerEnd,
                     child: _SubscriptionCalendarLink(),
                   ),
                 ],
                 const SizedBox(height: 12),
                 if (controller.isSubscriptionTab)
                   if (controller.filteredSubscriptionOrders.isEmpty)
-                    const _EmptyOrders(message: 'No subscription orders here')
+                    _EmptyOrders(
+                      message: S.of(context).waterNoSubscriptionOrdersHere,
+                    )
                   else
                     for (final order
                         in controller.filteredSubscriptionOrders.take(3))
@@ -189,7 +191,7 @@ class _HomeViewState extends State<HomeView> {
                         child: _SubscriptionOrderCard(order: order),
                       )
                 else if (controller.filteredOrders.isEmpty)
-                  const _EmptyOrders(message: 'No orders here')
+                  _EmptyOrders(message: S.of(context).waterNoOrdersHere)
                 else
                   for (final order in controller.filteredOrders.take(3))
                     Padding(
@@ -247,16 +249,16 @@ class _HomeViewState extends State<HomeView> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Text(
-                    'Orders',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).orders,
+                    style: const TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w700,
                       fontSize: 17,
                     ),
                   ),
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: InkWell(
                       onTap: () => controller.onBottomNavSelect(0),
                       borderRadius: BorderRadius.circular(12),
@@ -321,7 +323,7 @@ class _HomeViewState extends State<HomeView> {
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
               child: Align(
-                alignment: Alignment.centerRight,
+                alignment: AlignmentDirectional.centerEnd,
                 child: _SubscriptionCalendarLink(),
               ),
             ),
@@ -329,10 +331,12 @@ class _HomeViewState extends State<HomeView> {
           Expanded(
             child: subscription
                 ? (subscriptions.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
                           child: _EmptyOrders(
-                            message: 'No subscription orders here',
+                            message: S
+                                .of(context)
+                                .waterNoSubscriptionOrdersHere,
                           ),
                         )
                       : ListView.separated(
@@ -347,9 +351,11 @@ class _HomeViewState extends State<HomeView> {
                           },
                         ))
                 : (oneTime.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
-                          child: _EmptyOrders(message: 'No orders here'),
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                          child: _EmptyOrders(
+                            message: S.of(context).waterNoOrdersHere,
+                          ),
                         )
                       : ListView.separated(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
@@ -410,7 +416,7 @@ class _EmptyOrders extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            subMessage ?? 'Try another status filter above',
+            subMessage ?? S.of(context).waterTryAnotherStatusFilter,
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.textHint,
@@ -457,7 +463,7 @@ class _Header extends StatelessWidget {
           child: Text(
             welcomeText?.isNotEmpty == true
                 ? welcomeText!
-                : 'Welcome to Saimpex Vendor!',
+                : S.of(context).welcomeToSaimpexVendor,
             style: const TextStyle(
               color: AppColors.textDark,
               fontSize: 16,
@@ -497,12 +503,12 @@ class _StoreStatusCard extends StatelessWidget {
   const _StoreStatusCard({
     required this.isOpen,
     required this.onToggle,
-    this.timings = 'Today: 08:00 - 22:00',
+    this.timings,
   });
 
   final bool isOpen;
   final ValueChanged<bool> onToggle;
-  final String timings;
+  final String? timings;
 
   static const Color _iconGreen = AppColors.iconGreen;
   static const Color _iconBg = AppColors.iconGreenBg;
@@ -551,17 +557,17 @@ class _StoreStatusCard extends StatelessWidget {
               children: [
                 Text.rich(
                   isOpen
-                      ? const TextSpan(
+                      ? TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Open',
-                              style: TextStyle(
+                              text: S.of(context).waterOpen,
+                              style: const TextStyle(
                                 color: _iconGreen,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14.5,
                               ),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: ' • ',
                               style: TextStyle(
                                 color: _iconGreen,
@@ -570,8 +576,8 @@ class _StoreStatusCard extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'Accepting orders',
-                              style: TextStyle(
+                              text: S.of(context).waterAcceptingOrders,
+                              style: const TextStyle(
                                 color: _iconGreen,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14.5,
@@ -581,16 +587,16 @@ class _StoreStatusCard extends StatelessWidget {
                         )
                       : TextSpan(
                           children: [
-                            const TextSpan(
-                              text: 'Closed',
-                              style: TextStyle(
+                            TextSpan(
+                              text: S.of(context).waterClosed,
+                              style: const TextStyle(
                                 color: Color(0xFF1A1A1A),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14.5,
                               ),
                             ),
                             TextSpan(
-                              text: ' • Not accepting',
+                              text: ' • ${S.of(context).waterNotAccepting}',
                               style: TextStyle(
                                 color: AppColors.error,
                                 fontWeight: FontWeight.w700,
@@ -602,7 +608,7 @@ class _StoreStatusCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  timings,
+                  timings ?? S.of(context).waterTodayTimings('08:00', '22:00'),
                   style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
@@ -628,7 +634,9 @@ class _StoreStatusCard extends StatelessWidget {
                     : const Color(0xFFBDBDBD),
                 borderRadius: BorderRadius.circular(20),
               ),
-              alignment: isOpen ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: isOpen
+                  ? AlignmentDirectional.centerEnd
+                  : AlignmentDirectional.centerStart,
               child: Container(
                 width: 24,
                 height: 24,
@@ -668,7 +676,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: newOrders,
-                label: 'New Orders',
+                label: S.of(context).waterNewOrders,
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -681,7 +689,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: subscriptionOrders,
-                label: 'Subscription Orders',
+                label: S.of(context).waterSubscriptionOrders,
                 badgeColor: const Color(0xFFB2DFDB),
                 countColor: const Color(0xFF00695C),
               ),
@@ -695,7 +703,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: preparing,
-                label: 'Preparing',
+                label: S.of(context).preparing,
                 badgeColor: const Color(0xFFFFB300),
                 countColor: Colors.white,
               ),
@@ -704,7 +712,7 @@ class _MetricsGrid extends StatelessWidget {
             Expanded(
               child: _MetricCard(
                 count: ready,
-                label: 'Ready',
+                label: S.of(context).ready,
                 badgeColor: const Color(0xFF43A047),
                 countColor: Colors.white,
               ),
@@ -808,16 +816,16 @@ class _TotalsRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _TotalItem(title: 'ORDERS', value: orders),
+            child: _TotalItem(title: S.of(context).ordersHeader, value: orders),
           ),
           const _Line(),
           Expanded(
-            child: _TotalItem(title: 'COMPLETED', value: completed),
+            child: _TotalItem(title: S.of(context).completed, value: completed),
           ),
           const _Line(),
           Expanded(
             child: _TotalItem(
-              title: 'REVENUE',
+              title: S.of(context).waterRevenueHeader,
               value: revenue,
               suffix: 'MRU',
               showTrend: true,
@@ -922,9 +930,9 @@ class _OrdersHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'ORDERS',
-          style: TextStyle(
+        Text(
+          S.of(context).ordersHeader,
+          style: const TextStyle(
             color: Color(0xFF000000),
             fontWeight: FontWeight.w600,
             fontSize: 15,
@@ -934,11 +942,11 @@ class _OrdersHeader extends StatelessWidget {
         InkWell(
           onTap: onSeeAll,
           borderRadius: BorderRadius.circular(8),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Text(
-              'See All',
-              style: TextStyle(
+              S.of(context).viewAll,
+              style: const TextStyle(
                 color: Color(0xFFFF5722),
                 fontWeight: FontWeight.w600,
                 fontSize: 13.5,
@@ -964,7 +972,10 @@ class _OrderTypeTabs extends StatelessWidget {
   final String? oneTimeBadge;
   final String? subscriptionBadge;
 
-  static const _labels = ['One-Time Orders', 'Subscription Orders'];
+  static List<String> get _labels => [
+    S.current.waterOneTimeOrders,
+    S.current.waterSubscriptionOrders,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -988,10 +999,10 @@ class _OrderTypeTabs extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                AnimatedPositioned(
+                AnimatedPositionedDirectional(
                   duration: const Duration(milliseconds: 420),
                   curve: Curves.easeInOutCubic,
-                  left: selectedIndex * segment,
+                  start: selectedIndex * segment,
                   top: 0,
                   bottom: 0,
                   width: segment,
@@ -1068,8 +1079,8 @@ class _Seg extends StatelessWidget {
             ),
           ),
           if (badge != null && selected)
-            Positioned(
-              right: 2,
+            PositionedDirectional(
+              end: 2,
               top: -3,
               child: Container(
                 width: 18,
@@ -1116,7 +1127,7 @@ class _SubscriptionCalendarLink extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.calendarPurple),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
@@ -1126,7 +1137,7 @@ class _SubscriptionCalendarLink extends StatelessWidget {
             ),
             SizedBox(width: 4),
             Text(
-              'Subscription Calendar',
+              S.of(context).waterSubscriptionCalendar,
               style: TextStyle(
                 color: AppColors.calendarPurple,
                 fontSize: 10,
@@ -1167,7 +1178,7 @@ class _SearchBlock extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-          hintText: 'Search by ID, name',
+          hintText: S.of(context).searchByIdName,
           hintStyle: const TextStyle(
             color: Color(0xFF9CA3AF),
             fontSize: 14,
@@ -1342,20 +1353,33 @@ class _OrderCard extends StatelessWidget {
 
   (String, Color) get _statusBadge {
     return switch (order.status) {
-      HomeOrderStatus.newOrder => ('NEW', _newBadge),
-      HomeOrderStatus.accepted => ('ACCEPTED', _acceptedBadge),
-      HomeOrderStatus.preparing => ('PREPARING', _preparingBadge),
-      HomeOrderStatus.ready => ('READY', _readyBadge),
-      HomeOrderStatus.delivered => ('DELIVERED', _readyBadge),
-      HomeOrderStatus.cancelled => ('CANCELLED', AppColors.cancelledGray),
+      HomeOrderStatus.newOrder => (S.current.waterNewBadge, _newBadge),
+      HomeOrderStatus.accepted => (
+        S.current.accepted.toUpperCase(),
+        _acceptedBadge,
+      ),
+      HomeOrderStatus.preparing => (
+        S.current.preparing.toUpperCase(),
+        _preparingBadge,
+      ),
+      HomeOrderStatus.ready => (S.current.ready.toUpperCase(), _readyBadge),
+      HomeOrderStatus.delivered => (
+        S.current.delivered.toUpperCase(),
+        _readyBadge,
+      ),
+      HomeOrderStatus.cancelled => (
+        S.current.cancelled.toUpperCase(),
+        AppColors.cancelledGray,
+      ),
     };
   }
 
   String? get _primaryActionLabel {
     return switch (order.status) {
-      HomeOrderStatus.accepted => 'Prepare Order',
-      HomeOrderStatus.preparing => 'Mark as Ready',
-      HomeOrderStatus.ready when !order.isDelivery => 'Mark as Picked Up',
+      HomeOrderStatus.accepted => S.current.prepareOrder,
+      HomeOrderStatus.preparing => S.current.markAsReady,
+      HomeOrderStatus.ready when !order.isDelivery =>
+        S.current.waterMarkAsPickedUp,
       _ => null,
     };
   }
@@ -1421,7 +1445,7 @@ class _OrderCard extends StatelessWidget {
                       const SizedBox(height: 5),
                       FittedBox(
                         fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -1520,9 +1544,9 @@ class _OrderCard extends StatelessWidget {
                       child: Text.rich(
                         TextSpan(
                           children: [
-                            const TextSpan(
-                              text: 'Assigned Delivery Partner ',
-                              style: TextStyle(
+                            TextSpan(
+                              text: '${S.of(context).assignedDeliveryPartner} ',
+                              style: const TextStyle(
                                 color: _partnerPurple,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 12,
@@ -1590,9 +1614,9 @@ class _OrderCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Text(
-                      'SCHEDULED',
-                      style: TextStyle(
+                    Text(
+                      S.of(context).scheduled,
+                      style: const TextStyle(
                         color: _scheduledBlue,
                         fontWeight: FontWeight.w700,
                         fontSize: 11,
@@ -1652,7 +1676,7 @@ class _OrderCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (order.status == HomeOrderStatus.accepted ||
-                          _primaryActionLabel == 'Prepare Order') {
+                          _primaryActionLabel == S.current.prepareOrder) {
                         final dynamic id =
                             order.rawId ??
                             order.orderData?.id ??
@@ -1666,7 +1690,7 @@ class _OrderCard extends StatelessWidget {
                           );
                         }
                       } else if (order.status == HomeOrderStatus.preparing ||
-                          _primaryActionLabel == 'Mark as Ready') {
+                          _primaryActionLabel == S.current.markAsReady) {
                         final dynamic id =
                             order.rawId ??
                             order.orderData?.id ??
@@ -1738,9 +1762,9 @@ class _OrderCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).reject,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                           ),
@@ -1787,9 +1811,9 @@ class _OrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Accept Order',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(context).acceptOrder,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -1822,7 +1846,9 @@ class _OrderTypeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isDelivery ? _OrderCard._orange : _OrderCard._selfPickupBlue;
-    final label = isDelivery ? 'Delivery' : 'Self Pickup';
+    final label = isDelivery
+        ? S.of(context).delivery
+        : S.of(context).selfPickup;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -1966,11 +1992,14 @@ class _SubscriptionOrderCard extends StatelessWidget {
 
   (String, Color) get _statusBadge {
     return switch (order.status) {
-      SubscriptionOrderStatus.newOrder => ('NEW', _newBadge),
-      SubscriptionOrderStatus.active => ('ACTIVE', _activeBadge),
-      SubscriptionOrderStatus.paused => ('PAUSED', _orange),
+      SubscriptionOrderStatus.newOrder => (S.current.waterNewBadge, _newBadge),
+      SubscriptionOrderStatus.active => (S.current.active, _activeBadge),
+      SubscriptionOrderStatus.paused => (
+        S.current.waterPaused.toUpperCase(),
+        _orange,
+      ),
       SubscriptionOrderStatus.cancelled => (
-        'CANCELLED',
+        S.current.cancelled.toUpperCase(),
         AppColors.cancelledGray,
       ),
     };
@@ -2098,7 +2127,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            order.isDelivery ? 'Delivery' : 'Self Pickup',
+                            order.isDelivery
+                                ? S.of(context).delivery
+                                : S.of(context).selfPickup,
                             style: TextStyle(
                               color: typeColor,
                               fontWeight: FontWeight.w500,
@@ -2161,9 +2192,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                     child: Text.rich(
                       TextSpan(
                         children: [
-                          const TextSpan(
-                            text: 'Next Delivery : ',
-                            style: TextStyle(
+                          TextSpan(
+                            text: '${S.of(context).waterNextDelivery} : ',
+                            style: const TextStyle(
                               color: _metaGray,
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
@@ -2220,10 +2251,10 @@ class _SubscriptionOrderCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const FittedBox(
+                        child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            'Chat With Customer',
+                            S.of(context).waterChatWithCustomer,
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             softWrap: false,
@@ -2253,8 +2284,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                         ),
                         child: ElevatedButton(
                           onPressed: () async {
-                            final reason =
-                                await showPauseSubscriptionSheet(context);
+                            final reason = await showPauseSubscriptionSheet(
+                              context,
+                            );
                             if (reason != null && context.mounted) {
                               final controller =
                                   Get.isRegistered<WaterHomeController>()
@@ -2276,14 +2308,14 @@ class _SubscriptionOrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.pause, size: 18),
-                              SizedBox(width: 6),
+                              const Icon(Icons.pause, size: 18),
+                              const SizedBox(width: 6),
                               Text(
-                                'Pause',
-                                style: TextStyle(
+                                S.of(context).waterPause,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
                                 ),
@@ -2307,7 +2339,7 @@ class _SubscriptionOrderCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'Paused on: ${order.pausedOn ?? ''}',
+                      S.of(context).waterPausedOn(order.pausedOn ?? ''),
                       style: const TextStyle(
                         color: _metaGray,
                         fontWeight: FontWeight.w500,
@@ -2358,10 +2390,10 @@ class _SubscriptionOrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const FittedBox(
+                          child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              'Chat With Customer',
+                              S.of(context).waterChatWithCustomer,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               softWrap: false,
@@ -2413,14 +2445,14 @@ class _SubscriptionOrderCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.play_arrow_rounded, size: 20),
-                                SizedBox(width: 4),
+                                const Icon(Icons.play_arrow_rounded, size: 20),
+                                const SizedBox(width: 4),
                                 Text(
-                                  'Resume',
-                                  style: TextStyle(
+                                  S.of(context).waterResume,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 14,
                                   ),
@@ -2453,10 +2485,10 @@ class _SubscriptionOrderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const FittedBox(
+                    child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        'Chat With Customer',
+                        S.of(context).waterChatWithCustomer,
                         maxLines: 1,
                         softWrap: false,
                         style: TextStyle(
@@ -2471,9 +2503,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Plan :',
-                    style: TextStyle(
+                  Text(
+                    '${S.of(context).waterPlan} :',
+                    style: const TextStyle(
                       color: _metaGray,
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
@@ -2536,9 +2568,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Text(
-                    'Time Slot :',
-                    style: TextStyle(
+                  Text(
+                    '${S.of(context).waterTimeSlot} :',
+                    style: const TextStyle(
                       color: _metaGray,
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
@@ -2558,9 +2590,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Text(
-                    'Est. value :',
-                    style: TextStyle(
+                  Text(
+                    '${S.of(context).waterEstValue} :',
+                    style: const TextStyle(
                       color: _metaGray,
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
@@ -2609,9 +2641,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).reject,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                           ),
@@ -2654,9 +2686,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Accept Order',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(context).acceptOrder,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -2693,7 +2725,7 @@ class _SubscriptionOrderCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () => Navigator.of(ctx).pop(false),
                     borderRadius: BorderRadius.circular(8),
@@ -2715,19 +2747,19 @@ class _SubscriptionOrderCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Resume Subscription',
-                  style: TextStyle(
+                Text(
+                  S.of(ctx).waterResumeSubscription,
+                  style: const TextStyle(
                     color: _orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Are you sure you want to resume this subscription order?',
+                Text(
+                  S.of(ctx).waterResumeSubscriptionConfirm,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.textBody,
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -2745,14 +2777,16 @@ class _SubscriptionOrderCard extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textBody,
-                            side: const BorderSide(color: AppColors.fieldBorder),
+                            side: const BorderSide(
+                              color: AppColors.fieldBorder,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: const Text(
-                            'No',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(ctx).no,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -2774,9 +2808,9 @@ class _SubscriptionOrderCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: const Text(
-                            'Yes',
-                            style: TextStyle(
+                          child: Text(
+                            S.of(ctx).yes,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -2847,7 +2881,13 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Home', 'Orders', 'Chat', 'Inventory', 'Account'];
+    final labels = [
+      S.of(context).home,
+      S.of(context).orders,
+      S.of(context).chat,
+      S.of(context).waterInventory,
+      S.of(context).account,
+    ];
     const assetIcons = <String?>[
       null, // Home keeps Material icon
       AppAssets.ordersIcon,
@@ -2875,16 +2915,14 @@ class _BottomNav extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final segment = constraints.maxWidth / labels.length;
-              return Directionality(
-                textDirection: TextDirection.ltr,
-                child: SizedBox(
-                  width: constraints.maxWidth,
-                  child: Stack(
+              return SizedBox(
+                width: constraints.maxWidth,
+                child: Stack(
                   children: [
-                    AnimatedPositioned(
+                    AnimatedPositionedDirectional(
                       duration: const Duration(milliseconds: 280),
                       curve: Curves.easeOutCubic,
-                      left: selectedIndex * segment + (segment - 40) / 2,
+                      start: selectedIndex * segment + (segment - 40) / 2,
                       top: 0,
                       width: 40,
                       height: 40,
@@ -2940,9 +2978,9 @@ class _BottomNav extends StatelessWidget {
                                         ),
                                       ),
                                       if (index == 2 && unreadChatCount > 0)
-                                        Positioned(
+                                        PositionedDirectional(
                                           top: -2,
-                                          right: selected ? 2 : 6,
+                                          end: selected ? 2 : 6,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 4,
@@ -2989,7 +3027,7 @@ class _BottomNav extends StatelessWidget {
                                         : AppColors.navInactive,
                                   ),
                                   child: Text(
-                                    LocalizationService.tr(labels[index]),
+                                    labels[index],
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -3003,8 +3041,7 @@ class _BottomNav extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            );
+              );
             },
           ),
         ),

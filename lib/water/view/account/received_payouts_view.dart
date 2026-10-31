@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class ReceivedPayoutsView extends StatefulWidget {
   const ReceivedPayoutsView({super.key});
@@ -104,7 +105,7 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
                     const _BalanceCard(),
                     const SizedBox(height: 18),
                     Text(
-                      'History',
+                      S.of(context).history,
                       style: GoogleFonts.inter(
                         color: const Color(0xFF3F4251),
                         fontWeight: FontWeight.w700,
@@ -121,7 +122,7 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
                         fontSize: 13,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Search amount or Transaction ID',
+                        hintText: S.of(context).searchAmountOrTransactionId,
                         hintStyle: GoogleFonts.inter(
                           color: const Color(0xFFA9AEB6),
                           fontWeight: FontWeight.w500,
@@ -173,7 +174,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Received Payouts',
+              S.of(context).receivedPayouts,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -181,7 +182,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -225,7 +226,7 @@ class _BalanceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Total Payout Balance',
+                  S.of(context).totalPayoutBalance,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -234,6 +235,9 @@ class _BalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height:5),
                 Row(
+                  // Amount + currency stays LTR ("10,140.00 MRU") in every locale.
+                  textDirection: TextDirection.ltr,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
@@ -344,7 +348,7 @@ class _PayoutCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'AMOUNT',
+                      S.of(context).amount.toUpperCase(),
                       style: GoogleFonts.inter(
                         color: ReceivedPayoutsView.label,
                         fontWeight: FontWeight.w600,
@@ -374,7 +378,7 @@ class _PayoutCard extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'BALANCE AFTER PAYOUT',
+                    S.of(context).balanceAfterPayout,
                     style: GoogleFonts.inter(
                       color: ReceivedPayoutsView.label,
                       fontWeight: FontWeight.w600,

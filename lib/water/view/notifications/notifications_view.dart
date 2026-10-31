@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 enum NotificationKind { newOrder, newSubscription, lowStock }
 
@@ -107,16 +108,16 @@ class _Header extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            const Text(
-              'Notifications',
-              style: TextStyle(
+            Text(
+              S.of(context).notifications,
+              style: const TextStyle(
                 color: AppColors.textDark,
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),

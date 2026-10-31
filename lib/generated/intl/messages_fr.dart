@@ -24,8 +24,93 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(date) => "Annulé le ${date}";
 
-  static String m2(date) => "Créé le ${date}";
+  static String m2(hours) => "Aujourd\'hui : ${hours}";
 
+  static String m3(date) => "Créé le ${date}";
+
+  static String m4(days) => "Expire dans ${days} jours";
+
+  static String m5(id) => "COMMANDE #${id}";
+
+  static String m6(qty) => "Qté : ${qty}";
+
+  static String m7(reason) => "Raison : ${reason}";
+
+  static String m8(count) => "${count} bouteilles";
+
+  static String m9(count) => "${count} bouteilles restantes";
+
+  static String m10(name) => "Voulez-vous vraiment supprimer « ${name} » ?";
+
+  static String m11(min, max) => "${min} - ${max} km";
+
+  static String m12(error) =>
+      "Erreur lors de l\'acceptation de la commande : ${error}";
+
+  static String m13(error) =>
+      "Erreur lors de l\'acceptation de l\'abonnement : ${error}";
+
+  static String m14(error) => "Erreur lors de l\'ajout du produit : ${error}";
+
+  static String m15(error) =>
+      "Erreur lors de l\'annulation de la commande : ${error}";
+
+  static String m16(error) =>
+      "Erreur lors de la suppression du produit : ${error}";
+
+  static String m17(error) =>
+      "Erreur lors du marquage de la commande comme prête : ${error}";
+
+  static String m18(error) =>
+      "Erreur lors de la suspension de l\'abonnement : ${error}";
+
+  static String m19(error) =>
+      "Erreur lors de la préparation de la commande : ${error}";
+
+  static String m20(error) =>
+      "Erreur lors du refus de l\'abonnement : ${error}";
+
+  static String m21(error) =>
+      "Erreur lors de la reprise de l\'abonnement : ${error}";
+
+  static String m22(error) =>
+      "Erreur lors de la mise à jour du statut : ${error}";
+
+  static String m23(error) =>
+      "Erreur lors de la mise à jour du prix : ${error}";
+
+  static String m24(error) =>
+      "Erreur lors de la mise à jour du stock : ${error}";
+
+  static String m25(count) => "Tous ${count}";
+
+  static String m26(count) => "En stock ${count}";
+
+  static String m27(count) => "Stock faible ${count}";
+
+  static String m28(id) => "ID : ${id}";
+
+  static String m29(count) => "${count} images sélectionnées";
+
+  static String m30(date) => "Dernière vente : ${date}";
+
+  static String m31(count) => "+${count} autres produits";
+
+  static String m32(count) => "ARTICLES (${count})";
+
+  static String m33(date) => "Suspendu le : ${date}";
+
+  static String m34(start) => "Début ${start}";
+
+  static String m35(start, end) => "Début ${start} - Fin ${end}";
+
+  static String m36(count) => "(${count} avis)";
+
+  static String m37(id) => "ID STOCK : ${id}";
+
+  static String m38(open, close) => "Aujourd\'hui : ${open} - ${close}";
+
+  static String m39(name) => "Bienvenue chez ${name} !";
   static String m3(hours, minutes) => "Dans ${hours} h ${minutes} min";
 
   static String m4(minutes) => "Dans ${minutes} min";
@@ -260,6 +345,291 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choisir l’image depuis",
     ),
     "classicBasket": MessageLookupByLibrary.simpleMessage("Panier Classique"),
+    "cleaningAcceptBooking": MessageLookupByLibrary.simpleMessage(
+      "Accepter la réservation",
+    ),
+    "cleaningAcceptingBookings": MessageLookupByLibrary.simpleMessage(
+      "Réservations acceptées",
+    ),
+    "cleaningAddAddon": MessageLookupByLibrary.simpleMessage(
+      "Ajouter une option",
+    ),
+    "cleaningAddAddonButton": MessageLookupByLibrary.simpleMessage(
+      "+ Ajouter une option",
+    ),
+    "cleaningAddService": MessageLookupByLibrary.simpleMessage(
+      "Ajouter un service",
+    ),
+    "cleaningAddServiceButton": MessageLookupByLibrary.simpleMessage(
+      "+ Ajouter un service",
+    ),
+    "cleaningAddSpace": MessageLookupByLibrary.simpleMessage(
+      "Ajouter un espace",
+    ),
+    "cleaningAddSpaceButton": MessageLookupByLibrary.simpleMessage(
+      "+ Ajouter un espace",
+    ),
+    "cleaningAddonName": MessageLookupByLibrary.simpleMessage(
+      "Nom de l\'option",
+    ),
+    "cleaningAddonNameHint": MessageLookupByLibrary.simpleMessage(
+      "ex. Nettoyage du frigo, Nettoyage du four",
+    ),
+    "cleaningAddonServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "SERVICES OPTIONNELS",
+    ),
+    "cleaningApartment": MessageLookupByLibrary.simpleMessage("Appartement"),
+    "cleaningBasicInformationHeader": MessageLookupByLibrary.simpleMessage(
+      "INFORMATIONS DE BASE",
+    ),
+    "cleaningBookingDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails de la réservation",
+    ),
+    "cleaningBookings": MessageLookupByLibrary.simpleMessage("Réservations"),
+    "cleaningBookingsHeader": MessageLookupByLibrary.simpleMessage(
+      "RÉSERVATIONS",
+    ),
+    "cleaningBusinessSection": MessageLookupByLibrary.simpleMessage(
+      "Entreprise",
+    ),
+    "cleaningBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Paramètres de l\'entreprise",
+    ),
+    "cleaningChangeImage": MessageLookupByLibrary.simpleMessage(
+      "Changer l\'image",
+    ),
+    "cleaningCleaningProducts": MessageLookupByLibrary.simpleMessage(
+      "Produits de nettoyage",
+    ),
+    "cleaningCleaningProductsHeader": MessageLookupByLibrary.simpleMessage(
+      "PRODUITS DE NETTOYAGE",
+    ),
+    "cleaningClosedStatus": MessageLookupByLibrary.simpleMessage("Fermé"),
+    "cleaningCompleted": MessageLookupByLibrary.simpleMessage("Terminées"),
+    "cleaningConfirmReject": MessageLookupByLibrary.simpleMessage(
+      "Confirmer le refus",
+    ),
+    "cleaningCustomerHeader": MessageLookupByLibrary.simpleMessage("CLIENT"),
+    "cleaningCustomerProvidesProducts": MessageLookupByLibrary.simpleMessage(
+      "Le client fournit les produits",
+    ),
+    "cleaningCustomerProvidesProductsDesc":
+        MessageLookupByLibrary.simpleMessage(
+          "Le client fournit ses propres détergents, serpillière et chiffons.",
+        ),
+    "cleaningDeleteAccountConfirm": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible.",
+    ),
+    "cleaningEditAddon": MessageLookupByLibrary.simpleMessage(
+      "Modifier l\'option",
+    ),
+    "cleaningEditService": MessageLookupByLibrary.simpleMessage(
+      "Modifier le service",
+    ),
+    "cleaningEditSpace": MessageLookupByLibrary.simpleMessage(
+      "Modifier l\'espace",
+    ),
+    "cleaningEnterDescription": MessageLookupByLibrary.simpleMessage(
+      "Saisissez la description",
+    ),
+    "cleaningEnterServiceType": MessageLookupByLibrary.simpleMessage(
+      "Saisissez le type de service",
+    ),
+    "cleaningEnterThePrice": MessageLookupByLibrary.simpleMessage(
+      "Saisissez le prix",
+    ),
+    "cleaningIProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "Je fournis les produits",
+    ),
+    "cleaningIProvideProductsDesc": MessageLookupByLibrary.simpleMessage(
+      "Votre équipe apporte détergents professionnels, aspirateurs et chiffons.",
+    ),
+    "cleaningImageFormatsHint": MessageLookupByLibrary.simpleMessage(
+      "PNG, JPG jusqu\'à 5 Mo",
+    ),
+    "cleaningInProgress": MessageLookupByLibrary.simpleMessage("En cours"),
+    "cleaningIssuesCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "NUISIBLES TRAITÉS",
+    ),
+    "cleaningJustNow": MessageLookupByLibrary.simpleMessage("À l\'instant"),
+    "cleaningLanguageArabic": MessageLookupByLibrary.simpleMessage("Arabe"),
+    "cleaningLanguageEnglish": MessageLookupByLibrary.simpleMessage("Anglais"),
+    "cleaningLanguageFrench": MessageLookupByLibrary.simpleMessage("Français"),
+    "cleaningMakeItExtraCleanHeader": MessageLookupByLibrary.simpleMessage(
+      "NETTOYAGE EXTRA",
+    ),
+    "cleaningMarkAsCompleted": MessageLookupByLibrary.simpleMessage(
+      "Marquer comme terminé",
+    ),
+    "cleaningMessages": MessageLookupByLibrary.simpleMessage("Messages"),
+    "cleaningMyServices": MessageLookupByLibrary.simpleMessage("Mes services"),
+    "cleaningNewBookings": MessageLookupByLibrary.simpleMessage(
+      "Nouvelles réservations",
+    ),
+    "cleaningNoBookingsHere": MessageLookupByLibrary.simpleMessage(
+      "Aucune réservation ici",
+    ),
+    "cleaningNoMessagesFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun message trouvé",
+    ),
+    "cleaningNoServicesFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun service trouvé",
+    ),
+    "cleaningNotAccepting": MessageLookupByLibrary.simpleMessage(
+      "Réservations fermées",
+    ),
+    "cleaningOffline": MessageLookupByLibrary.simpleMessage("Hors ligne"),
+    "cleaningOnline": MessageLookupByLibrary.simpleMessage("En ligne"),
+    "cleaningOpenStatus": MessageLookupByLibrary.simpleMessage("Ouvert"),
+    "cleaningOtherReason": MessageLookupByLibrary.simpleMessage("Autre motif"),
+    "cleaningPestAnts": MessageLookupByLibrary.simpleMessage("Fourmis"),
+    "cleaningPestBedBugs": MessageLookupByLibrary.simpleMessage(
+      "Punaises de lit",
+    ),
+    "cleaningPestCockroaches": MessageLookupByLibrary.simpleMessage("Cafards"),
+    "cleaningPestFlies": MessageLookupByLibrary.simpleMessage("Mouches"),
+    "cleaningPestGeneralSanitization": MessageLookupByLibrary.simpleMessage(
+      "Désinfection\ngénérale",
+    ),
+    "cleaningPestMosquitoes": MessageLookupByLibrary.simpleMessage(
+      "Moustiques",
+    ),
+    "cleaningPestOtherPests": MessageLookupByLibrary.simpleMessage(
+      "Autres nuisibles",
+    ),
+    "cleaningPestRodents": MessageLookupByLibrary.simpleMessage("Rongeurs"),
+    "cleaningPestTermites": MessageLookupByLibrary.simpleMessage("Termites"),
+    "cleaningProductSupplyFee": MessageLookupByLibrary.simpleMessage(
+      "Frais de fourniture des produits",
+    ),
+    "cleaningProductsProvidedByProvider": MessageLookupByLibrary.simpleMessage(
+      "Les produits de nettoyage seront fournis par le prestataire",
+    ),
+    "cleaningPropertyTypesHeader": MessageLookupByLibrary.simpleMessage(
+      "TYPES DE LOGEMENT",
+    ),
+    "cleaningProvidedBySaimpex": MessageLookupByLibrary.simpleMessage(
+      "Fournis par SAIMPEX",
+    ),
+    "cleaningProviderWillProvideProducts": MessageLookupByLibrary.simpleMessage(
+      "Le prestataire fournira les produits",
+    ),
+    "cleaningReasonDescription": MessageLookupByLibrary.simpleMessage(
+      "Motif / Description",
+    ),
+    "cleaningRejectBooking": MessageLookupByLibrary.simpleMessage(
+      "Refuser la réservation",
+    ),
+    "cleaningRejectReasonNoCleaner": MessageLookupByLibrary.simpleMessage(
+      "Aucun agent de nettoyage disponible",
+    ),
+    "cleaningRejectReasonOther": MessageLookupByLibrary.simpleMessage("Autre"),
+    "cleaningRejectReasonOutsideArea": MessageLookupByLibrary.simpleMessage(
+      "Hors de notre zone de service",
+    ),
+    "cleaningRejectReasonServiceUnavailable":
+        MessageLookupByLibrary.simpleMessage(
+          "Service temporairement indisponible",
+        ),
+    "cleaningRejectSheetSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Veuillez choisir un motif. Le client\nsera informé en conséquence",
+    ),
+    "cleaningRequestIdHeader": MessageLookupByLibrary.simpleMessage(
+      "N° DE DEMANDE",
+    ),
+    "cleaningRequestNewServiceType": MessageLookupByLibrary.simpleMessage(
+      "Demander un nouveau type de service",
+    ),
+    "cleaningRequestNewServiceTypeLink": MessageLookupByLibrary.simpleMessage(
+      "+ Demander un nouveau type",
+    ),
+    "cleaningRevenueHeader": MessageLookupByLibrary.simpleMessage("REVENUS"),
+    "cleaningSaveAddon": MessageLookupByLibrary.simpleMessage(
+      "Enregistrer l\'option",
+    ),
+    "cleaningSaveSpace": MessageLookupByLibrary.simpleMessage(
+      "Enregistrer l\'espace",
+    ),
+    "cleaningSearchCustomerOrOrderId": MessageLookupByLibrary.simpleMessage(
+      "Rechercher un client ou un n° de commande..",
+    ),
+    "cleaningSearchServices": MessageLookupByLibrary.simpleMessage(
+      "Rechercher des services",
+    ),
+    "cleaningSelectService": MessageLookupByLibrary.simpleMessage(
+      "Choisir un service",
+    ),
+    "cleaningServiceImage": MessageLookupByLibrary.simpleMessage(
+      "Image du service",
+    ),
+    "cleaningServiceType": MessageLookupByLibrary.simpleMessage(
+      "Type de service",
+    ),
+    "cleaningServiceTypeName": MessageLookupByLibrary.simpleMessage(
+      "Nom du type de service",
+    ),
+    "cleaningServiceTypeReasonHint": MessageLookupByLibrary.simpleMessage(
+      "Expliquez brièvement pourquoi vous avez besoin de ce service",
+    ),
+    "cleaningShortDescription": MessageLookupByLibrary.simpleMessage(
+      "Description courte",
+    ),
+    "cleaningSpaceName": MessageLookupByLibrary.simpleMessage(
+      "Nom de l\'espace",
+    ),
+    "cleaningSpaceNameHint": MessageLookupByLibrary.simpleMessage(
+      "ex. Chambre principale, Salon, Couloir, Balcon",
+    ),
+    "cleaningSpacePricingHeader": MessageLookupByLibrary.simpleMessage(
+      "TARIFS PAR ESPACE",
+    ),
+    "cleaningSpacesHeader": MessageLookupByLibrary.simpleMessage("ESPACES"),
+    "cleaningSpecialNotesHeader": MessageLookupByLibrary.simpleMessage(
+      "NOTES PARTICULIÈRES",
+    ),
+    "cleaningStartCleaning": MessageLookupByLibrary.simpleMessage(
+      "Commencer le nettoyage",
+    ),
+    "cleaningStartingRateHeader": MessageLookupByLibrary.simpleMessage(
+      "TARIF DE DÉPART",
+    ),
+    "cleaningStatusAccepted": MessageLookupByLibrary.simpleMessage("ACCEPTÉE"),
+    "cleaningStatusInProgress": MessageLookupByLibrary.simpleMessage(
+      "EN COURS",
+    ),
+    "cleaningStatusNew": MessageLookupByLibrary.simpleMessage("NOUVELLE"),
+    "cleaningSubmitRequest": MessageLookupByLibrary.simpleMessage(
+      "Envoyer la demande",
+    ),
+    "cleaningSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "Assistance et mentions légales",
+    ),
+    "cleaningTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "Appuyez pour ajouter une image",
+    ),
+    "cleaningTodayHours": m2,
+    "cleaningTodaysBookings": MessageLookupByLibrary.simpleMessage(
+      "Réservations du jour",
+    ),
+    "cleaningTotal": MessageLookupByLibrary.simpleMessage("Total"),
+    "cleaningTotalPaid": MessageLookupByLibrary.simpleMessage("Total payé"),
+    "cleaningUnitHour": MessageLookupByLibrary.simpleMessage("Heure"),
+    "cleaningUnitLabel": MessageLookupByLibrary.simpleMessage("Unité"),
+    "cleaningUnitPiece": MessageLookupByLibrary.simpleMessage("Pièce"),
+    "cleaningUnitRoom": MessageLookupByLibrary.simpleMessage("Pièce"),
+    "cleaningUnitSqFt": MessageLookupByLibrary.simpleMessage("pi²"),
+    "cleaningUnitUnit": MessageLookupByLibrary.simpleMessage("Unité"),
+    "cleaningUpcoming": MessageLookupByLibrary.simpleMessage("À venir"),
+    "cleaningVendorProfile": MessageLookupByLibrary.simpleMessage(
+      "Profil du prestataire",
+    ),
+    "cleaningVilla": MessageLookupByLibrary.simpleMessage("Villa"),
+    "cleaningWorkingHoursBookingSlots": MessageLookupByLibrary.simpleMessage(
+      "Horaires et créneaux de réservation",
+    ),
+    "cleaningYourServicesHeader": MessageLookupByLibrary.simpleMessage(
+      "VOS SERVICES",
+    ),
     "clearAll": MessageLookupByLibrary.simpleMessage("Tout effacer"),
     "clickToView": MessageLookupByLibrary.simpleMessage("Cliquer pour voir"),
     "codeLabel": MessageLookupByLibrary.simpleMessage("CODE"),
@@ -298,7 +668,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "CRÉER UN NOUVEAU PANIER",
     ),
     "createdDate": MessageLookupByLibrary.simpleMessage("DATE DE CRÉATION"),
-    "createdLabel": m2,
+    "createdLabel": m3,
     "createdOnLabel": MessageLookupByLibrary.simpleMessage("CRÉÉ LE"),
     "credit": MessageLookupByLibrary.simpleMessage("Crédit"),
     "credited": MessageLookupByLibrary.simpleMessage("Crédité"),
@@ -477,6 +847,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourWhatsappNumber": MessageLookupByLibrary.simpleMessage(
       "Entrez votre numéro WhatsApp",
     ),
+    "expiresInDays": m4,
     "expiresInDays": m5,
     "expiresInDays": m3,
     "failedToUpdateItem": MessageLookupByLibrary.simpleMessage(
@@ -787,6 +1158,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "Détail de la durée de la commande",
     ),
+    "orderIdLabel": m5,
     "orderIdLabel": m6,
     "orderItems": MessageLookupByLibrary.simpleMessage(
       "Articles de la commande",
@@ -960,6 +1332,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "products": MessageLookupByLibrary.simpleMessage("Produits"),
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
+    "qtyLabel": m6,
     "qtyLabel": m8,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantité"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("Évaluer la commande"),
@@ -985,6 +1358,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "ARRIVÉ AU RESTAURANT",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Prêt"),
+    "reasonColonLabel": m7,
     "reasonColonLabel": m9,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Motif du Congé"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Raison"),
@@ -1249,6 +1623,638 @@ class MessageLookup extends MessageLookupByLibrary {
       "Voir la preuve de paiement",
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("Voir les rapports"),
+    "waterAcceptingOrders": MessageLookupByLibrary.simpleMessage(
+      "Accepte les commandes",
+    ),
+    "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Compte supprimé avec succès",
+    ),
+    "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "Ajouter un livreur",
+    ),
+    "waterAddDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "Ajouter une tranche de distance",
+    ),
+    "waterAddMore": MessageLookupByLibrary.simpleMessage("Ajouter"),
+    "waterAddProduct": MessageLookupByLibrary.simpleMessage(
+      "Ajouter un produit",
+    ),
+    "waterAddedDeliveryBoysAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les livreurs ajoutés apparaîtront ici",
+    ),
+    "waterAddedProductsWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les produits ajoutés apparaîtront ici",
+    ),
+    "waterAfternoon": MessageLookupByLibrary.simpleMessage("Après-midi"),
+    "waterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "Stock disponible",
+    ),
+    "waterBankDetails": MessageLookupByLibrary.simpleMessage(
+      "Coordonnées bancaires",
+    ),
+    "waterBarcode": MessageLookupByLibrary.simpleMessage("Code-barres"),
+    "waterBasicInformation": MessageLookupByLibrary.simpleMessage(
+      "INFORMATIONS DE BASE",
+    ),
+    "waterBottleReturnSettings": MessageLookupByLibrary.simpleMessage(
+      "RETOUR DES BOUTEILLES",
+    ),
+    "waterBottleSize": MessageLookupByLibrary.simpleMessage(
+      "Taille de la bouteille",
+    ),
+    "waterBottles": MessageLookupByLibrary.simpleMessage("Bouteilles"),
+    "waterBottlesCount": m8,
+    "waterBottlesLeft": m9,
+    "waterBrand": MessageLookupByLibrary.simpleMessage("Marque"),
+    "waterBrandName": MessageLookupByLibrary.simpleMessage("Nom de la marque"),
+    "waterBusiness": MessageLookupByLibrary.simpleMessage("Entreprise"),
+    "waterBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Paramètres de l\'entreprise",
+    ),
+    "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
+      "Paramètres de l\'entreprise mis à jour",
+    ),
+    "waterCallNow": MessageLookupByLibrary.simpleMessage("Appeler"),
+    "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment annuler ce congé ?",
+    ),
+    "waterCertificate": MessageLookupByLibrary.simpleMessage("Certificat"),
+    "waterChatWithCustomer": MessageLookupByLibrary.simpleMessage(
+      "Discuter avec le client",
+    ),
+    "waterClosed": MessageLookupByLibrary.simpleMessage("Fermé"),
+    "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment supprimer cet article ?",
+    ),
+    "waterConfirmDeleteNamedItem": m10,
+    "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment marquer cet article comme disponible ?",
+    ),
+    "waterConfirmMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment marquer cet article en rupture de stock ?",
+    ),
+    "waterConfirmReject": MessageLookupByLibrary.simpleMessage(
+      "Confirmer le refus",
+    ),
+    "waterCount": MessageLookupByLibrary.simpleMessage("Nombre"),
+    "waterCreatedCouponsAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les coupons créés apparaîtront ici",
+    ),
+    "waterCurrentStatus": MessageLookupByLibrary.simpleMessage("Statut actuel"),
+    "waterCurrentlyPaused": MessageLookupByLibrary.simpleMessage(
+      "Actuellement suspendu",
+    ),
+    "waterCustomer": MessageLookupByLibrary.simpleMessage("Client"),
+    "waterCustomerHeader": MessageLookupByLibrary.simpleMessage("CLIENT"),
+    "waterCustomerMessagesWillAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les messages des clients apparaîtront ici",
+    ),
+    "waterCustomerRequestedPause": MessageLookupByLibrary.simpleMessage(
+      "Suspension demandée par le client",
+    ),
+    "waterDaily": MessageLookupByLibrary.simpleMessage("Quotidien"),
+    "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("jj-mm-aaaa"),
+    "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
+      "Adresse de livraison",
+    ),
+    "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage(
+      "HISTORIQUE DES LIVRAISONS",
+    ),
+    "waterDeliveryPartnerAssigned": MessageLookupByLibrary.simpleMessage(
+      "Livreur assigné",
+    ),
+    "waterDeliveryPartnerHeader": MessageLookupByLibrary.simpleMessage(
+      "LIVREUR",
+    ),
+    "waterDeliveryTypeHeader": MessageLookupByLibrary.simpleMessage(
+      "TYPE DE LIVRAISON",
+    ),
+    "waterDescription": MessageLookupByLibrary.simpleMessage("Description"),
+    "waterDistanceRangeKm": m11,
+    "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
+      "Modifier la tranche de distance",
+    ),
+    "waterEditPrice": MessageLookupByLibrary.simpleMessage("Modifier le prix"),
+    "waterEditWorkingHour": MessageLookupByLibrary.simpleMessage(
+      "Modifier l\'horaire",
+    ),
+    "waterEnd": MessageLookupByLibrary.simpleMessage("Fin"),
+    "waterEndTime": MessageLookupByLibrary.simpleMessage("Heure de fin"),
+    "waterEndTimeAfterStartTime": MessageLookupByLibrary.simpleMessage(
+      "L\'heure de fin doit être après l\'heure de début",
+    ),
+    "waterEnterMinMaxDistance": MessageLookupByLibrary.simpleMessage(
+      "Saisissez la distance minimale et maximale",
+    ),
+    "waterEnterPrice": MessageLookupByLibrary.simpleMessage(
+      "Saisissez un prix",
+    ),
+    "waterEnterQuantity": MessageLookupByLibrary.simpleMessage(
+      "Saisir la quantité",
+    ),
+    "waterEnterReason": MessageLookupByLibrary.simpleMessage(
+      "Saisissez un motif",
+    ),
+    "waterErrorAcceptingOrder": m12,
+    "waterErrorAcceptingSubscription": m13,
+    "waterErrorAddingProduct": m14,
+    "waterErrorCancellingOrder": m15,
+    "waterErrorDeletingProduct": m16,
+    "waterErrorMarkingOrderAsReady": m17,
+    "waterErrorPausingSubscription": m18,
+    "waterErrorPreparingOrder": m19,
+    "waterErrorRejectingSubscription": m20,
+    "waterErrorResumingSubscription": m21,
+    "waterErrorUpdatingItemStatus": m22,
+    "waterErrorUpdatingPrice": m23,
+    "waterErrorUpdatingStock": m24,
+    "waterEstValue": MessageLookupByLibrary.simpleMessage("Valeur est."),
+    "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
+      "Frais de livraison estimés",
+    ),
+    "waterEvening": MessageLookupByLibrary.simpleMessage("Soir"),
+    "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
+      "Livraison express",
+    ),
+    "waterFailedToAcceptOrder": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'accepter la commande",
+    ),
+    "waterFailedToAcceptSubscription": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'accepter l\'abonnement",
+    ),
+    "waterFailedToAddProduct": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'ajout du produit",
+    ),
+    "waterFailedToCancelLeave": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'annulation du congé",
+    ),
+    "waterFailedToCancelOrder": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'annuler la commande",
+    ),
+    "waterFailedToDeleteAccount": MessageLookupByLibrary.simpleMessage(
+      "Échec de la suppression du compte",
+    ),
+    "waterFailedToDeleteProduct": MessageLookupByLibrary.simpleMessage(
+      "Échec de la suppression du produit",
+    ),
+    "waterFailedToLoadImage": MessageLookupByLibrary.simpleMessage(
+      "Impossible de charger l\'image",
+    ),
+    "waterFailedToMarkLeave": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'enregistrement du congé",
+    ),
+    "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
+      "Impossible de marquer la commande comme prête",
+    ),
+    "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "Impossible de suspendre l\'abonnement",
+    ),
+    "waterFailedToPrepareOrder": MessageLookupByLibrary.simpleMessage(
+      "Impossible de préparer la commande",
+    ),
+    "waterFailedToRejectSubscription": MessageLookupByLibrary.simpleMessage(
+      "Impossible de refuser l\'abonnement",
+    ),
+    "waterFailedToResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "Impossible de reprendre l\'abonnement",
+    ),
+    "waterFailedToUpdateBusinessSettings": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour des paramètres",
+    ),
+    "waterFailedToUpdateItemStatus": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour du statut de l\'article",
+    ),
+    "waterFailedToUpdatePrice": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour du prix",
+    ),
+    "waterFailedToUpdateStock": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour du stock",
+    ),
+    "waterFailedToUpdateWorkingHours": MessageLookupByLibrary.simpleMessage(
+      "Échec de la mise à jour des horaires",
+    ),
+    "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
+      "Veuillez remplir tous les champs",
+    ),
+    "waterFilterAllCount": m25,
+    "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
+      "Filtrer par catégorie",
+    ),
+    "waterFilterInStockCount": m26,
+    "waterFilterLowStockCount": m27,
+    "waterFlat": MessageLookupByLibrary.simpleMessage("Montant fixe"),
+    "waterFrequency": MessageLookupByLibrary.simpleMessage("Fréquence"),
+    "waterIdLabel": m28,
+    "waterImage": MessageLookupByLibrary.simpleMessage("Image"),
+    "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
+      "PNG, JPG jusqu\'à 5 Mo",
+    ),
+    "waterImagesSelected": m29,
+    "waterInStock": MessageLookupByLibrary.simpleMessage("En stock"),
+    "waterInventory": MessageLookupByLibrary.simpleMessage("Inventaire"),
+    "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
+      "GESTION DU STOCK",
+    ),
+    "waterItem": MessageLookupByLibrary.simpleMessage("Article d\'eau"),
+    "waterItemMarkedAvailable": MessageLookupByLibrary.simpleMessage(
+      "Article marqué comme disponible",
+    ),
+    "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Article marqué en rupture de stock",
+    ),
+    "waterLastSold": m30,
+    "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Congé annulé avec succès",
+    ),
+    "waterLeaveManagement": MessageLookupByLibrary.simpleMessage(
+      "Gestion des congés",
+    ),
+    "waterLeaveMarkedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Congé enregistré avec succès",
+    ),
+    "waterLogoutFailed": MessageLookupByLibrary.simpleMessage(
+      "Échec de la déconnexion.",
+    ),
+    "waterLowStock": MessageLookupByLibrary.simpleMessage("Stock faible"),
+    "waterLowStockAlert": MessageLookupByLibrary.simpleMessage(
+      "Alerte stock faible",
+    ),
+    "waterMarkAsPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Marquer comme retirée",
+    ),
+    "waterMarkAvailable": MessageLookupByLibrary.simpleMessage(
+      "Marquer disponible",
+    ),
+    "waterMarkLeaveConfirm": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment marquer un congé pour les dates sélectionnées ?",
+    ),
+    "waterMarkOutOfStock": MessageLookupByLibrary.simpleMessage(
+      "Marquer en rupture",
+    ),
+    "waterMarkStoreBusy": MessageLookupByLibrary.simpleMessage(
+      "Marquer le magasin occupé",
+    ),
+    "waterMarkedLeavesAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les congés enregistrés apparaîtront ici",
+    ),
+    "waterMaxGreaterThanMin": MessageLookupByLibrary.simpleMessage(
+      "Le maximum doit être supérieur au minimum",
+    ),
+    "waterMaximumDistance": MessageLookupByLibrary.simpleMessage(
+      "Distance maximale",
+    ),
+    "waterMessages": MessageLookupByLibrary.simpleMessage("Messages"),
+    "waterMinimumDistance": MessageLookupByLibrary.simpleMessage(
+      "Distance minimale",
+    ),
+    "waterMonth": MessageLookupByLibrary.simpleMessage("Mois"),
+    "waterMore": MessageLookupByLibrary.simpleMessage("Plus"),
+    "waterMoreProducts": m31,
+    "waterMorning": MessageLookupByLibrary.simpleMessage("Matin"),
+    "waterNewBadge": MessageLookupByLibrary.simpleMessage("NOUVEAU"),
+    "waterNewOrders": MessageLookupByLibrary.simpleMessage(
+      "Nouvelles commandes",
+    ),
+    "waterNextDelivery": MessageLookupByLibrary.simpleMessage(
+      "Prochaine livraison",
+    ),
+    "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
+      "Aucune coordonnée disponible",
+    ),
+    "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun congé trouvé",
+    ),
+    "waterNoOrdersHere": MessageLookupByLibrary.simpleMessage(
+      "Aucune commande ici",
+    ),
+    "waterNoPayoutsFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun paiement trouvé",
+    ),
+    "waterNoPrivacyPolicyAvailable": MessageLookupByLibrary.simpleMessage(
+      "Aucune politique de confidentialité disponible",
+    ),
+    "waterNoProductsFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun produit trouvé",
+    ),
+    "waterNoStockHistoryFound": MessageLookupByLibrary.simpleMessage(
+      "Aucun historique de stock",
+    ),
+    "waterNoStockRecordsYet": MessageLookupByLibrary.simpleMessage(
+      "Aucun mouvement de stock enregistré pour cet article",
+    ),
+    "waterNoSubscriptionOrdersHere": MessageLookupByLibrary.simpleMessage(
+      "Aucune commande d\'abonnement ici",
+    ),
+    "waterNoTermsAvailable": MessageLookupByLibrary.simpleMessage(
+      "Aucune condition générale disponible",
+    ),
+    "waterNotAccepting": MessageLookupByLibrary.simpleMessage(
+      "Commandes suspendues",
+    ),
+    "waterNotAvailable": MessageLookupByLibrary.simpleMessage("N/D"),
+    "waterOfferPrice": MessageLookupByLibrary.simpleMessage("Prix promo"),
+    "waterOffline": MessageLookupByLibrary.simpleMessage("Hors ligne"),
+    "waterOneImageSelected": MessageLookupByLibrary.simpleMessage(
+      "1 image sélectionnée",
+    ),
+    "waterOneTimeOrders": MessageLookupByLibrary.simpleMessage(
+      "Commandes uniques",
+    ),
+    "waterOnline": MessageLookupByLibrary.simpleMessage("En ligne"),
+    "waterOpen": MessageLookupByLibrary.simpleMessage("Ouvert"),
+    "waterOpen24Hours": MessageLookupByLibrary.simpleMessage("Ouvert 24h/24"),
+    "waterOrderCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Commande annulée avec succès",
+    ),
+    "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
+      "Commande livrée",
+    ),
+    "waterOrderItemsCount": m32,
+    "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
+      "Commande marquée comme prête",
+    ),
+    "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
+      "Commande passée en préparation",
+    ),
+    "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
+      "Commande reçue",
+    ),
+    "waterOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les commandes apparaîtront ici",
+    ),
+    "waterOther": MessageLookupByLibrary.simpleMessage("Autre"),
+    "waterOtherReason": MessageLookupByLibrary.simpleMessage("Autre motif"),
+    "waterOwnerIdentityProof": MessageLookupByLibrary.simpleMessage(
+      "Pièce d\'identité du propriétaire",
+    ),
+    "waterPause": MessageLookupByLibrary.simpleMessage("Suspendre"),
+    "waterPauseSubscription": MessageLookupByLibrary.simpleMessage(
+      "Suspendre l\'abonnement",
+    ),
+    "waterPauseSubscriptionHint": MessageLookupByLibrary.simpleMessage(
+      "Les prochaines livraisons seront suspendues. La commande en cours d\'aujourd\'hui n\'est pas concernée",
+    ),
+    "waterPaused": MessageLookupByLibrary.simpleMessage("En pause"),
+    "waterPausedByLabel": MessageLookupByLibrary.simpleMessage(
+      "SUSPENDU PAR :",
+    ),
+    "waterPausedOn": m33,
+    "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage("SUSPENDU LE :"),
+    "waterPaymentDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails de paiement",
+    ),
+    "waterPaymentProof": MessageLookupByLibrary.simpleMessage(
+      "Preuve de paiement",
+    ),
+    "waterPayoutAmount": MessageLookupByLibrary.simpleMessage(
+      "Montant du paiement",
+    ),
+    "waterPayoutHistoryAppearHere": MessageLookupByLibrary.simpleMessage(
+      "L\'historique des paiements apparaîtra ici",
+    ),
+    "waterPayoutOrdersAppearHere": MessageLookupByLibrary.simpleMessage(
+      "Les commandes liées à ce paiement apparaîtront ici",
+    ),
+    "waterPickImagesFromGallery": MessageLookupByLibrary.simpleMessage(
+      "Choisir une ou plusieurs images de la galerie",
+    ),
+    "waterPickedUpByCustomer": MessageLookupByLibrary.simpleMessage(
+      "Retirée par le client",
+    ),
+    "waterPickedUpByRider": MessageLookupByLibrary.simpleMessage(
+      "Récupérée par le livreur",
+    ),
+    "waterPlan": MessageLookupByLibrary.simpleMessage("Formule"),
+    "waterPlanRangeStart": m34,
+    "waterPlanRangeStartEnd": m35,
+    "waterPlanSummary": MessageLookupByLibrary.simpleMessage(
+      "RÉSUMÉ DE LA FORMULE",
+    ),
+    "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir le stock disponible",
+    ),
+    "waterPleaseEnterPrice": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir le prix",
+    ),
+    "waterPleaseEnterProductName": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir le nom du produit",
+    ),
+    "waterPleaseEnterSellingPrice": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir le prix de vente",
+    ),
+    "waterPleaseEnterValidPrice": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir un prix valide",
+    ),
+    "waterPleaseSelectProductImage": MessageLookupByLibrary.simpleMessage(
+      "Veuillez sélectionner au moins une image du produit",
+    ),
+    "waterPriceExampleHint": MessageLookupByLibrary.simpleMessage("ex. 50"),
+    "waterPriceUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Prix mis à jour avec succès",
+    ),
+    "waterPricing": MessageLookupByLibrary.simpleMessage("Tarification"),
+    "waterPricingMru": MessageLookupByLibrary.simpleMessage("TARIFS (MRU)"),
+    "waterPrivacySecurity": MessageLookupByLibrary.simpleMessage(
+      "Confidentialité et sécurité",
+    ),
+    "waterProductAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Produit ajouté avec succès",
+    ),
+    "waterProductDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Produit supprimé avec succès",
+    ),
+    "waterProductDescription": MessageLookupByLibrary.simpleMessage(
+      "Description du produit",
+    ),
+    "waterProductDescriptionHint": MessageLookupByLibrary.simpleMessage(
+      "Décrivez la source, le pH ou les bienfaits...",
+    ),
+    "waterProductDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails du produit",
+    ),
+    "waterProductImage": MessageLookupByLibrary.simpleMessage(
+      "Image du produit",
+    ),
+    "waterProductNameEnglish": MessageLookupByLibrary.simpleMessage(
+      "Nom du produit (anglais)",
+    ),
+    "waterProductNameHint": MessageLookupByLibrary.simpleMessage(
+      "ex. Eau potable",
+    ),
+    "waterQuantityLabel": MessageLookupByLibrary.simpleMessage("QUANTITÉ : "),
+    "waterRangeOverlaps": MessageLookupByLibrary.simpleMessage(
+      "Cette tranche chevauche une tranche existante",
+    ),
+    "waterReadyForDispatch": MessageLookupByLibrary.simpleMessage(
+      "Prête à expédier",
+    ),
+    "waterReadyForPickup": MessageLookupByLibrary.simpleMessage(
+      "Prête à retirer",
+    ),
+    "waterReasonForPausing": MessageLookupByLibrary.simpleMessage(
+      "Motif de la suspension",
+    ),
+    "waterReasonForRejecting": MessageLookupByLibrary.simpleMessage(
+      "Motif du refus",
+    ),
+    "waterReasonLabel": MessageLookupByLibrary.simpleMessage("MOTIF :"),
+    "waterRegistrationDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails d\'enregistrement",
+    ),
+    "waterRejectOrder": MessageLookupByLibrary.simpleMessage(
+      "Refuser la commande",
+    ),
+    "waterRejectOrderHint": MessageLookupByLibrary.simpleMessage(
+      "Veuillez choisir un motif. Le client sera informé en conséquence",
+    ),
+    "waterRemainingLabel": MessageLookupByLibrary.simpleMessage("RESTANT : "),
+    "waterRequestId": MessageLookupByLibrary.simpleMessage("N° DE DEMANDE"),
+    "waterResume": MessageLookupByLibrary.simpleMessage("Reprendre"),
+    "waterResumeSubscription": MessageLookupByLibrary.simpleMessage(
+      "Reprendre l\'abonnement",
+    ),
+    "waterResumeSubscriptionConfirm": MessageLookupByLibrary.simpleMessage(
+      "Voulez-vous vraiment reprendre cet abonnement ?",
+    ),
+    "waterReturnableBottle": MessageLookupByLibrary.simpleMessage(
+      "Bouteille consignée",
+    ),
+    "waterReturnableBottleHint": MessageLookupByLibrary.simpleMessage(
+      "Activez cette option si les clients doivent rendre la bouteille vide après la livraison ou le retrait",
+    ),
+    "waterRevenueHeader": MessageLookupByLibrary.simpleMessage("REVENUS"),
+    "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
+      "Résumé des revenus",
+    ),
+    "waterReviewsCount": m36,
+    "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
+      "Performance des ventes",
+    ),
+    "waterSaveProduct": MessageLookupByLibrary.simpleMessage(
+      "Enregistrer le produit",
+    ),
+    "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
+      "Scanner ou saisir le code-barres",
+    ),
+    "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
+      "Rechercher par ID d\'abonnement, nom",
+    ),
+    "waterSearchCustomerOrOrderHint": MessageLookupByLibrary.simpleMessage(
+      "Rechercher un client ou n° de commande...",
+    ),
+    "waterSearchDeliveryBoy": MessageLookupByLibrary.simpleMessage(
+      "Rechercher un livreur",
+    ),
+    "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
+      "Rechercher produits, ID",
+    ),
+    "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
+      "Sélectionnez les dates de début et de fin",
+    ),
+    "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
+      "Choisir la source de l\'image",
+    ),
+    "waterSellingPrice": MessageLookupByLibrary.simpleMessage("Prix de vente"),
+    "waterSendMail": MessageLookupByLibrary.simpleMessage("Envoyer un e-mail"),
+    "waterSize": MessageLookupByLibrary.simpleMessage("Taille"),
+    "waterStart": MessageLookupByLibrary.simpleMessage("Début"),
+    "waterStartTime": MessageLookupByLibrary.simpleMessage("Heure de début"),
+    "waterStockAdded": MessageLookupByLibrary.simpleMessage("Stock ajouté"),
+    "waterStockHistory": MessageLookupByLibrary.simpleMessage(
+      "Historique du stock",
+    ),
+    "waterStockIdLabel": m37,
+    "waterStockRemoved": MessageLookupByLibrary.simpleMessage("Stock retiré"),
+    "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Stock mis à jour avec succès",
+    ),
+    "waterStorage": MessageLookupByLibrary.simpleMessage("Stockage"),
+    "waterStoreAvailability": MessageLookupByLibrary.simpleMessage(
+      "Disponibilité du magasin",
+    ),
+    "waterStoreDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails du magasin",
+    ),
+    "waterStoreProfile": MessageLookupByLibrary.simpleMessage(
+      "Profil du magasin",
+    ),
+    "waterStoreStatusOpen": MessageLookupByLibrary.simpleMessage(
+      "Statut du magasin (ouvert)",
+    ),
+    "waterSubscriptionAcceptedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("Abonnement accepté avec succès"),
+    "waterSubscriptionAmount": MessageLookupByLibrary.simpleMessage(
+      "Montant de l\'abonnement",
+    ),
+    "waterSubscriptionCalendar": MessageLookupByLibrary.simpleMessage(
+      "Calendrier des abonnements",
+    ),
+    "waterSubscriptionDetails": MessageLookupByLibrary.simpleMessage(
+      "Détails de l\'abonnement",
+    ),
+    "waterSubscriptionOrders": MessageLookupByLibrary.simpleMessage(
+      "Commandes d\'abonnement",
+    ),
+    "waterSubscriptionPausedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Abonnement suspendu avec succès",
+    ),
+    "waterSubscriptionRejectedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("Abonnement refusé avec succès"),
+    "waterSubscriptionResumedSuccessfully":
+        MessageLookupByLibrary.simpleMessage("Abonnement repris avec succès"),
+    "waterSubscriptionSavings": MessageLookupByLibrary.simpleMessage(
+      "Économies d\'abonnement",
+    ),
+    "waterSupportLegal": MessageLookupByLibrary.simpleMessage(
+      "Assistance et mentions légales",
+    ),
+    "waterTakeAPhoto": MessageLookupByLibrary.simpleMessage(
+      "Prendre une photo",
+    ),
+    "waterTapToUploadImage": MessageLookupByLibrary.simpleMessage(
+      "Appuyez pour ajouter une image",
+    ),
+    "waterTemporaryStoreClosure": MessageLookupByLibrary.simpleMessage(
+      "Fermeture temporaire du magasin",
+    ),
+    "waterTimeSlot": MessageLookupByLibrary.simpleMessage("Créneau"),
+    "waterTinNifNumber": MessageLookupByLibrary.simpleMessage("Numéro NIF"),
+    "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
+      "La date de fin doit être postérieure à la date de début",
+    ),
+    "waterTodayTimings": m38,
+    "waterTotalHeader": MessageLookupByLibrary.simpleMessage("TOTAL"),
+    "waterTotalPaid": MessageLookupByLibrary.simpleMessage("Total payé"),
+    "waterTotalSoldAllTime": MessageLookupByLibrary.simpleMessage(
+      "Total vendu (depuis le début)",
+    ),
+    "waterTryAnotherStatusFilter": MessageLookupByLibrary.simpleMessage(
+      "Essayez un autre filtre de statut ci-dessus",
+    ),
+    "waterUnitType": MessageLookupByLibrary.simpleMessage("Type d\'unité"),
+    "waterUpcomingDeliveries": MessageLookupByLibrary.simpleMessage(
+      "PROCHAINES LIVRAISONS",
+    ),
+    "waterUpdateStock": MessageLookupByLibrary.simpleMessage(
+      "Mettre à jour le stock",
+    ),
+    "waterValidUpto": MessageLookupByLibrary.simpleMessage("Valable jusqu\'au"),
+    "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("Message vocal"),
+    "waterWaterSupplyIssue": MessageLookupByLibrary.simpleMessage(
+      "Problème d\'approvisionnement en eau",
+    ),
+    "waterWeek": MessageLookupByLibrary.simpleMessage("Semaine"),
+    "waterWeeklyPlanner": MessageLookupByLibrary.simpleMessage(
+      "PLANNING HEBDOMADAIRE",
+    ),
+    "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
+      "Planning hebdomadaire",
+    ),
+    "waterWelcomeToShop": m39,
+    "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
+      "Horaires mis à jour avec succès",
+    ),
+    "waterYou": MessageLookupByLibrary.simpleMessage("Vous"),
     "walletPayment": MessageLookupByLibrary.simpleMessage(
       "Portefeuille SAIMPEX",
     ),

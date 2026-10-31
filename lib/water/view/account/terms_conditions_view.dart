@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
@@ -66,8 +66,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
 
         String resolved = '';
         if (terms is Map) {
-          final lang =
-              FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+          final lang = LocalizationService.currentLanguageCode;
           if (lang == 'fr' && terms['content_fr'] != null) {
             resolved = terms['content_fr'].toString();
           } else if (lang == 'ar' && terms['content_ar'] != null) {
@@ -150,7 +149,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
             height: MediaQuery.of(context).size.height * 0.4,
             child: Center(
               child: Text(
-                'No terms & conditions available',
+                S.of(context).waterNoTermsAvailable,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF888888),
                   fontSize: 13,
@@ -241,7 +240,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              LocalizationService.tr('Terms & Conditions'),
+              S.of(context).termsConditions,
               style: GoogleFonts.inter(
                 color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,
@@ -249,7 +248,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),

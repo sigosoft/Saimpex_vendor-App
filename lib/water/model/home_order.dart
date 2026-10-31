@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 enum HomeOrderStatus {
   newOrder,
@@ -70,7 +71,7 @@ class HomeOrder {
                     ? raw['customer_name'].toString().trim()
                     : (raw['user_name']?.toString().trim().isNotEmpty == true
                           ? raw['user_name'].toString().trim()
-                          : 'Customer')));
+                          : S.current.waterCustomer)));
 
     final orderId = (order.orderCode?.trim().isNotEmpty == true)
         ? order.orderCode!.trim()
@@ -95,6 +96,9 @@ class HomeOrder {
         '';
     final isCod = isCashPayment(paymentMethod);
     final isOnlinePayment = !isCod;
+    final paymentLabel = isOnlinePayment
+        ? S.current.onlinePayment
+        : S.current.cashOnDelivery;
     final paymentLabel = paymentTypeLabel(paymentMethod, cashFallback: isCod);
 
     final total = order.total?.toString() ?? raw['total']?.toString() ?? '0';
@@ -114,7 +118,7 @@ class HomeOrder {
     }
     if (itemLabel.isEmpty) {
       final count = order.totalItems ?? order.orderItemsCount ?? 1;
-      itemLabel = '$count ${count == 1 ? "Item" : "Items"} • $total MRU';
+      itemLabel = '$count ${count == 1 ? S.current.item : S.current.items} • $total MRU';
     }
 
     final isScheduled =
@@ -155,7 +159,7 @@ class HomeOrder {
 
     return HomeOrder(
       customerName: customerName,
-      orderType: isDelivery ? 'Delivery' : 'Self Pickup',
+      orderType: isDelivery ? S.current.delivery : S.current.selfPickup,
       orderId: orderId,
       timeAgo: timeAgo,
       itemLabel: itemLabel,
@@ -239,7 +243,7 @@ class SubscriptionOrder {
         json['user_name']?.toString() ??
         json['user']?['name']?.toString() ??
         json['customer']?['name']?.toString() ??
-        'Customer';
+        S.current.waterCustomer;
 
     final productLabel =
         json['product_label']?.toString() ??
@@ -279,14 +283,17 @@ class SubscriptionOrder {
         (json['plan'] is Map
             ? json['plan']['name']?.toString()
             : json['plan']?.toString()) ??
-        'Daily';
+        S.current.waterDaily;
 
     final planRange =
         json['plan_range']?.toString() ??
         (json['start_date'] != null && json['end_date'] != null
-            ? 'Start ${json['start_date']} - End ${json['end_date']}'
+            ? S.current.waterPlanRangeStartEnd(
+                json['start_date'].toString(),
+                json['end_date'].toString(),
+              )
             : (json['start_date'] != null
-                  ? 'Start ${json['start_date']}'
+                  ? S.current.waterPlanRangeStart(json['start_date'].toString())
                   : ''));
 
     final timeSlot =

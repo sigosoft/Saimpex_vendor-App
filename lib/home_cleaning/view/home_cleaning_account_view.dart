@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
@@ -119,18 +120,18 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Logout',
+          S.of(context).logout,
           style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16),
         ),
         content: Text(
-          'Are you sure you want to logout?',
+          S.of(context).areYouSureYouWantToLogout,
           style: GoogleFonts.inter(fontSize: 13.5, color: const Color(0xFF424242)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
-              'Cancel',
+              S.of(context).cancel,
               style: GoogleFonts.inter(color: const Color(0xFF757575), fontWeight: FontWeight.w600),
             ),
           ),
@@ -142,7 +143,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             child: Text(
-              'Logout',
+              S.of(context).logout,
               style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700),
             ),
           ),
@@ -191,7 +192,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Delete Account',
+                  S.of(context).deleteAccount,
                   style: GoogleFonts.inter(
                     color: HomeCleaningAccountView._ink,
                     fontWeight: FontWeight.w700,
@@ -200,7 +201,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Are you sure you want to delete your account? This action cannot be undone.',
+                  S.of(context).cleaningDeleteAccountConfirm,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: const Color(0xFF6B7280),
@@ -224,7 +225,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                             ),
                           ),
                           child: Text(
-                            'Cancel',
+                            S.of(context).cancel,
                             style: GoogleFonts.inter(
                               color: const Color(0xFF424242),
                               fontWeight: FontWeight.w600,
@@ -249,7 +250,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                             ),
                           ),
                           child: Text(
-                            'Delete',
+                            S.of(context).delete,
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w700,
                               fontSize: 13.5,
@@ -346,7 +347,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           alignment: Alignment.center,
           children: [
             Text(
-              'Account',
+              S.of(context).account,
               style: GoogleFonts.inter(
                 color: HomeCleaningAccountView._ink,
                 fontWeight: FontWeight.w700,
@@ -354,7 +355,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: () {
                   HapticFeedback.lightImpact();
@@ -378,7 +379,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               ),
             ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: Theme(
                 data: Theme.of(context).copyWith(
                   cardColor: Colors.white,
@@ -413,7 +414,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Delete Account',
+                            S.of(context).deleteAccount,
                             style: GoogleFonts.inter(
                               color: HomeCleaningAccountView._orange,
                               fontSize: 13,
@@ -536,7 +537,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               ),
               const SizedBox(width: 4),
               Text(
-                'Open',
+                S.of(context).cleaningOpenStatus,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF22C55E),
                   fontWeight: FontWeight.w600,
@@ -555,7 +556,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Language',
+          S.of(context).language,
           style: GoogleFonts.inter(
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
@@ -572,9 +573,9 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           ),
           child: Row(
             children: [
-              _buildLangTab('English', 0),
-              _buildLangTab('French', 1),
-              _buildLangTab('Arabic', 2),
+              _buildLangTab(S.of(context).cleaningLanguageEnglish, 0),
+              _buildLangTab(S.of(context).cleaningLanguageFrench, 1),
+              _buildLangTab(S.of(context).cleaningLanguageArabic, 2),
             ],
           ),
         ),
@@ -612,7 +613,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Business',
+          S.of(context).cleaningBusinessSection,
           style: GoogleFonts.inter(
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
@@ -624,7 +625,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           children: [
             _buildSettingRow(
               icon: Icons.notifications_none_rounded,
-              title: 'Notification',
+              title: S.of(context).notification,
               trailing: Transform.scale(
                 scale: 0.8,
                 child: Switch(
@@ -642,32 +643,32 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             ),
             _buildSettingRow(
               icon: Icons.storefront_outlined,
-              title: 'Vendor Profile',
+              title: S.of(context).cleaningVendorProfile,
               onTap: () => StoreProfileView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.access_time_rounded,
-              title: 'Working hours & Booking Slots',
+              title: S.of(context).cleaningWorkingHoursBookingSlots,
               onTap: () => WorkingHoursView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.store_mall_directory_outlined,
-              title: 'Business settings',
+              title: S.of(context).cleaningBusinessSettings,
               onTap: () => BusinessSettingsView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.payments_outlined,
-              title: 'Earnings',
+              title: S.of(context).earnings,
               onTap: () => EarningsView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.account_balance_wallet_outlined,
-              title: 'Received Payouts',
+              title: S.of(context).receivedPayouts,
               onTap: () => ReceivedPayoutsView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.local_offer_outlined,
-              title: 'Coupons',
+              title: S.of(context).coupons,
               showDivider: false,
               onTap: () => CouponsView.open(context),
             ),
@@ -682,7 +683,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Support & Legal',
+          S.of(context).cleaningSupportLegal,
           style: GoogleFonts.inter(
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
@@ -694,7 +695,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           children: [
             _buildSettingRow(
               icon: Icons.help_outline_rounded,
-              title: 'Help & Support',
+              title: S.of(context).helpSupport,
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -705,7 +706,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             ),
             _buildSettingRow(
               icon: Icons.description_outlined,
-              title: 'Terms & Conditions',
+              title: S.of(context).termsConditions,
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -716,7 +717,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             ),
             _buildSettingRow(
               icon: Icons.shield_outlined,
-              title: 'Privacy Policy',
+              title: S.of(context).privacyPolicy,
               showDivider: false,
               onTap: () {
                 Navigator.of(context).push(
@@ -836,7 +837,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Logout',
+                S.of(context).logout,
                 style: GoogleFonts.inter(
                   color: HomeCleaningAccountView._orange,
                   fontWeight: FontWeight.w700,
@@ -863,7 +864,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         ),
         const SizedBox(height: 3),
         Text(
-          'Check for update',
+          S.of(context).checkForUpdate,
           style: GoogleFonts.inter(
             color: const Color(0xFF757575),
             fontWeight: FontWeight.w400,

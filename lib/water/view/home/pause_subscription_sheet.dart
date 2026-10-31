@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Shows the Pause Subscription bottom sheet. Returns the selected reason, or null.
 Future<String?> showPauseSubscriptionSheet(BuildContext context) {
@@ -32,6 +33,16 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
     'Water Supply Issue',
     'Customer Requested Pause',
     'Other',
+  ];
+
+  // Localised labels shown for [reasons]; the English value is what is
+  // returned to the caller / sent to the API.
+  List<String> get _reasonLabels => [
+    S.of(context).outOfStock,
+    S.of(context).waterTemporaryStoreClosure,
+    S.of(context).waterWaterSupplyIssue,
+    S.of(context).waterCustomerRequestedPause,
+    S.of(context).waterOther,
   ];
 
   int? selectedIndex;
@@ -83,10 +94,10 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                     size: 26,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Pause Subscription',
-                      style: TextStyle(
+                      S.of(context).waterPauseSubscription,
+                      style: const TextStyle(
                         color: _orange,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -114,9 +125,9 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text(
-                "Future deliveries will be paused. Today's active order won't be affected",
-                style: TextStyle(
+              Text(
+                S.of(context).waterPauseSubscriptionHint,
+                style: const TextStyle(
                   color: Color.fromARGB(255, 87, 86, 86),
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -124,9 +135,9 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
-                'Reason For Pausing',
-                style: TextStyle(
+              Text(
+                S.of(context).waterReasonForPausing,
+                style: const TextStyle(
                   color: AppColors.textBody,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -136,7 +147,7 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
               for (var i = 0; i < reasons.length; i++) ...[
                 if (i > 0) const SizedBox(height: 12),
                 _PauseReasonTile(
-                  label: reasons[i],
+                  label: _reasonLabels[i],
                   selected: selectedIndex == i,
                   onTap: () => setState(() => selectedIndex = i),
                 ),
@@ -145,10 +156,10 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Other Reason',
-                        style: TextStyle(
+                        S.of(context).waterOtherReason,
+                        style: const TextStyle(
                           color: AppColors.textBody,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -212,9 +223,9 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).cancel,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),
@@ -251,14 +262,14 @@ class _PauseSubscriptionSheetState extends State<PauseSubscriptionSheet> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.pause, size: 20),
-                              SizedBox(width: 6),
+                              const Icon(Icons.pause, size: 20),
+                              const SizedBox(width: 6),
                               Text(
-                                'Pause',
-                                style: TextStyle(
+                                S.of(context).waterPause,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),

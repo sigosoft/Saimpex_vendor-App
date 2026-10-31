@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 
 enum InventoryStockStatus { inStock, lowStock, outOfStock }
@@ -264,7 +265,7 @@ class InventoryProduct {
       barcode: json['barcode']?.toString() ?? json['serial_number']?.toString(),
       description:
           json['description']?.toString() ?? json['description_en']?.toString(),
-      stockLabel: json['stock_label']?.toString() ?? '$stockInt Bottles',
+      stockLabel: json['stock_label']?.toString() ?? S.current.waterBottlesCount(stockInt.toString()),
       returnable:
           json['is_returnable'] == 1 ||
           json['is_returnable'] == '1' ||

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -47,12 +48,12 @@ class _EditPriceDialogState extends State<EditPriceDialog> {
   void _submit() {
     final text = _controller.text.trim();
     if (text.isEmpty) {
-      showToast(context, 'Please enter price');
+      showToast(context, S.of(context).waterPleaseEnterPrice);
       return;
     }
     final value = double.tryParse(text);
     if (value == null || value < 0) {
-      showToast(context, 'Please enter a valid price');
+      showToast(context, S.of(context).waterPleaseEnterValidPrice);
       return;
     }
     Navigator.of(context).pop(text);
@@ -83,9 +84,9 @@ class _EditPriceDialogState extends State<EditPriceDialog> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Edit Price',
+                    S.of(context).waterEditPrice,
                     style: TextStyle(
                       color: AppColors.textDark,
                       fontWeight: FontWeight.w700,
@@ -115,8 +116,8 @@ class _EditPriceDialogState extends State<EditPriceDialog> {
               ],
             ),
             const SizedBox(height: 18),
-            const Text(
-              'Enter Price',
+            Text(
+              S.of(context).enterPrice,
               style: TextStyle(
                 color: AppColors.textLabel,
                 fontWeight: FontWeight.w500,
@@ -186,8 +187,8 @@ class _EditPriceDialogState extends State<EditPriceDialog> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Cancel',
+                      child: Text(
+                        S.of(context).cancel,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -210,8 +211,8 @@ class _EditPriceDialogState extends State<EditPriceDialog> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Update',
+                      child: Text(
+                        S.of(context).update,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,

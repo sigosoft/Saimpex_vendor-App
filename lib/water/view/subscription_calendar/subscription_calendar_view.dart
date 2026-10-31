@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/water/controller/subscription_calendar_controller.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 class SubscriptionCalendarView extends StatefulWidget {
   const SubscriptionCalendarView({super.key});
@@ -219,7 +220,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Subscription Calendar',
+              S.of(context).waterSubscriptionCalendar,
               style: GoogleFonts.inter(
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
@@ -227,7 +228,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
@@ -259,13 +260,13 @@ class _StatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _StatCard(
-                label: 'TOTAL',
+                label: S.of(context).waterTotalHeader,
                 value: '18',
                 color: Color(0xFF1A1A1A),
                 labelColor: Color(0xFF9E9E9E),
@@ -274,7 +275,7 @@ class _StatsGrid extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: _StatCard(
-                label: 'MORNING',
+                label: S.of(context).waterMorning.toUpperCase(),
                 value: '10',
                 color: Color(0xFF2196F3),
               ),
@@ -286,7 +287,7 @@ class _StatsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: 'AFTERNOON',
+                label: S.of(context).waterAfternoon.toUpperCase(),
                 value: '6',
                 color: Color(0xFFFF5722),
               ),
@@ -294,7 +295,7 @@ class _StatsGrid extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: _StatCard(
-                label: 'PAUSED',
+                label: S.of(context).waterPaused.toUpperCase(),
                 value: '2',
                 color: Color(0xFF5D4037),
               ),
@@ -372,7 +373,7 @@ class _WeeklyPlannerHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'WEEKLY PLANNER',
+          S.of(context).waterWeeklyPlanner,
           style: GoogleFonts.inter(
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w700,
@@ -534,7 +535,7 @@ class _SearchField extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-          hintText: 'Search by subscription ID, name',
+          hintText: S.of(context).waterSearchBySubscriptionIdName,
           hintStyle: GoogleFonts.inter(
             color: const Color(0xFFBDBDBD),
             fontSize: 14,
@@ -715,7 +716,7 @@ class _SubscriptionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Delivery',
+                          S.of(context).delivery,
                           style: GoogleFonts.inter(
                             color: _orange,
                             fontWeight: FontWeight.w500,
@@ -761,7 +762,7 @@ class _SubscriptionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Active',
+                          S.of(context).activeLabel,
                           style: GoogleFonts.inter(
                             color: const Color(0xFF4CAF50),
                             fontWeight: FontWeight.w600,
@@ -855,7 +856,7 @@ class _SubscriptionCard extends StatelessWidget {
                 colorBlendMode: BlendMode.srcIn,
               ),
               label: Text(
-                'Chat with Customer',
+                S.of(context).waterChatWithCustomer,
                 style: GoogleFonts.inter(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,

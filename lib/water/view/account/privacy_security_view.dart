@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
@@ -65,8 +65,7 @@ class _PrivacySecurityViewState extends State<PrivacySecurityView> {
 
         String resolved = '';
         if (privacy is Map) {
-          final lang =
-              FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+          final lang = LocalizationService.currentLanguageCode;
           if (lang == 'fr' && privacy['content_fr'] != null) {
             resolved = privacy['content_fr'].toString();
           } else if (lang == 'ar' && privacy['content_ar'] != null) {
@@ -149,7 +148,7 @@ class _PrivacySecurityViewState extends State<PrivacySecurityView> {
             height: MediaQuery.of(context).size.height * 0.4,
             child: Center(
               child: Text(
-                'No privacy policy available',
+                S.of(context).waterNoPrivacyPolicyAvailable,
                 style: GoogleFonts.inter(
                   color: const Color(0xFF888888),
                   fontSize: 13,
@@ -240,7 +239,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              LocalizationService.tr('Privacy & Security'),
+              S.of(context).waterPrivacySecurity,
               style: GoogleFonts.inter(
                 color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,
@@ -248,7 +247,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
