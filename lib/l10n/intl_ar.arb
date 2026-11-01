@@ -2623,5 +2623,6 @@
   "addonUnitUnit": "لكل وحدة",
   "addonUnitHour": "لكل ساعة",
   "addonUnitRoom": "لكل غرفة",
-  "addonUnitPiece": "لكل قطعة"
+  "addonUnitPiece": "لكل قطعة",
+  "needsYourAttention": "يحتاج إلى انتباهك"
 }

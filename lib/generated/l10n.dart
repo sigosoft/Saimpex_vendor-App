@@ -11185,6 +11185,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Needs your attention`
+  String get needsYourAttention {
+    return Intl.message(
+      'Needs your attention',
+      name: 'needsYourAttention',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

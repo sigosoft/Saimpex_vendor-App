@@ -2561,5 +2561,6 @@
   "addonUnitUnit": "Per unit",
   "addonUnitHour": "Per hour",
   "addonUnitRoom": "Per room",
-  "addonUnitPiece": "Per piece"
+  "addonUnitPiece": "Per piece",
+  "needsYourAttention": "Needs your attention"
 }

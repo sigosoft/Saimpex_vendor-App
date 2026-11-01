@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/notification_preference.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_account_screens.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/my_cleaners_view.dart';
@@ -40,6 +41,9 @@ class HomeCleaningAccountView extends StatefulWidget {
 class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
   int _selectedLanguage = 0;
 
+  /// Push on/off (§6.42); null until loaded.
+  bool? _notifications;
+
   Map<String, dynamic>? _rawVendorData;
   bool? _storeOpen;
   String? _appVersion;
@@ -49,6 +53,9 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
     super.initState();
     _initLanguage();
     _loadProfile();
+    NotificationPreference.load().then((v) {
+      if (mounted) setState(() => _notifications = v ?? true);
+    });
     _loadStoreStatus();
     _loadVersion();
   }
@@ -697,8 +704,24 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
-            // The notification on/off switch was local only: the backend
-            // has no notification preference endpoint, so it is hidden.
+            // Push on/off, saved on the server (§6.42, V18).
+            _buildSettingRow(
+              icon: Icons.notifications_none_rounded,
+              title: S.of(context).notification,
+              trailing: Switch(
+                value: _notifications ?? true,
+                activeThumbColor: Colors.white,
+                activeTrackColor: HomeCleaningAccountView._orange,
+                onChanged: _notifications == null
+                    ? null
+                    : (v) {
+                        setState(() => _notifications = v);
+                        NotificationPreference.save(v).then((ok) {
+                          if (!ok && mounted) setState(() => _notifications = !v);
+                        });
+                      },
+              ),
+            ),
             _buildSettingRow(
               icon: Icons.storefront_outlined,
               title: S.of(context).cleaningVendorProfile,

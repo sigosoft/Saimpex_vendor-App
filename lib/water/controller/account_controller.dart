@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/notification_preference.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -25,6 +26,7 @@ class WaterAccountController extends GetxController {
     _initLanguage();
     LocalizationService.localeNotifier.addListener(_onLocaleChanged);
     fetchProfile();
+    _loadNotificationPreference();
   }
 
   @override
@@ -199,8 +201,21 @@ class WaterAccountController extends GetxController {
     update();
   }
 
-  void setNotifications(bool value) {
+  /// Push on/off is saved on the server (§6.42, V18); it used to be local.
+  Future<void> _loadNotificationPreference() async {
+    final saved = await NotificationPreference.load();
+    if (saved != null) {
+      notificationsEnabled = saved;
+      update();
+    }
+  }
+
+  Future<void> setNotifications(bool value) async {
     notificationsEnabled = value;
     update();
+    if (!await NotificationPreference.save(value)) {
+      notificationsEnabled = !value; // not saved: show the real state
+      update();
+    }
   }
 }
