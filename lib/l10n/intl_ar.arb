@@ -2730,5 +2730,14 @@
   "quickEditSave": "حفظ",
   "quickEditNameRequired": "أدخل اسم المنتج.",
   "quickEditPriceInvalid": "أدخل سعراً صحيحاً (0 أو أكثر).",
-  "quickEditOfferAbovePrice": "يجب ألا يتجاوز سعر الخصم السعر الأصلي."
+  "quickEditOfferAbovePrice": "يجب ألا يتجاوز سعر الخصم السعر الأصلي.",
+  "accept": "قبول",
+  "acceptAndPrint": "قبول وطباعة",
+  "selectVendorType": "اختر النوع",
+  "vendorTypeGroceryRestaurant": "بقالة / مطعم",
+  "vendorTypeWater": "مياه",
+  "vendorTypePharmacy": "صيدلية",
+  "vendorTypeHomeCleaning": "تنظيف منزلي",
+  "orderPreparationStartedSuccessfully": "بدأ تحضير الطلب",
+  "orderMarkedReadySuccessfully": "تم تحديد الطلب كجاهز"
 }

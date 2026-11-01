@@ -2683,5 +2683,14 @@
   "quickEditSave": "Save",
   "quickEditNameRequired": "Enter the item name.",
   "quickEditPriceInvalid": "Enter a valid price (0 or more).",
-  "quickEditOfferAbovePrice": "The discount price must not be higher than the price."
+  "quickEditOfferAbovePrice": "The discount price must not be higher than the price.",
+  "accept": "Accept",
+  "acceptAndPrint": "Accept & Print",
+  "selectVendorType": "Select type",
+  "vendorTypeGroceryRestaurant": "Grocery / Restaurant",
+  "vendorTypeWater": "Water",
+  "vendorTypePharmacy": "Pharmacy",
+  "vendorTypeHomeCleaning": "Home Cleaning",
+  "orderPreparationStartedSuccessfully": "Order preparation started",
+  "orderMarkedReadySuccessfully": "Order marked as ready"
 }

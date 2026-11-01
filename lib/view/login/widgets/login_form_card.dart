@@ -69,7 +69,7 @@ class LoginFormCard extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Select type',
+              S.of(context).selectVendorType,
               style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -4725,7 +4724,8 @@ class S {
   get imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg {
     return Intl.message(
       'Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).',
-      name: 'imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg',
+      name:
+          'imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg',
       desc: '',
       args: [],
     );
@@ -12206,6 +12206,86 @@ class S {
     return Intl.message(
       'The discount price must not be higher than the price.',
       name: 'quickEditOfferAbovePrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept`
+  String get accept {
+    return Intl.message('Accept', name: 'accept', desc: '', args: []);
+  }
+
+  /// `Accept & Print`
+  String get acceptAndPrint {
+    return Intl.message(
+      'Accept & Print',
+      name: 'acceptAndPrint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select type`
+  String get selectVendorType {
+    return Intl.message(
+      'Select type',
+      name: 'selectVendorType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grocery / Restaurant`
+  String get vendorTypeGroceryRestaurant {
+    return Intl.message(
+      'Grocery / Restaurant',
+      name: 'vendorTypeGroceryRestaurant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water`
+  String get vendorTypeWater {
+    return Intl.message('Water', name: 'vendorTypeWater', desc: '', args: []);
+  }
+
+  /// `Pharmacy`
+  String get vendorTypePharmacy {
+    return Intl.message(
+      'Pharmacy',
+      name: 'vendorTypePharmacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home Cleaning`
+  String get vendorTypeHomeCleaning {
+    return Intl.message(
+      'Home Cleaning',
+      name: 'vendorTypeHomeCleaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order preparation started`
+  String get orderPreparationStartedSuccessfully {
+    return Intl.message(
+      'Order preparation started',
+      name: 'orderPreparationStartedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order marked as ready`
+  String get orderMarkedReadySuccessfully {
+    return Intl.message(
+      'Order marked as ready',
+      name: 'orderMarkedReadySuccessfully',
       desc: '',
       args: [],
     );

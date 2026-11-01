@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 void showAcceptOrderDialog({
@@ -22,7 +23,7 @@ void showAcceptOrderDialog({
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Accept Order",
+                S.of(context).acceptOrder,
                 style: appFont('Rubik', 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -45,7 +46,7 @@ void showAcceptOrderDialog({
                   elevation: 0,
                 ),
                 child: Text(
-                  "Accept",
+                  S.of(context).accept,
                   style: appFont('Rubik', 
                     color: Colors.white,
                     fontSize: 16,
@@ -68,7 +69,7 @@ void showAcceptOrderDialog({
                   elevation: 0,
                 ),
                 child: Text(
-                  "Accept & Print",
+                  S.of(context).acceptAndPrint,
                   style: appFont('Rubik', 
                     color: Colors.white,
                     fontSize: 16,
@@ -89,7 +90,7 @@ void showAcceptOrderDialog({
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
-                  "Cancel",
+                  S.of(context).cancel,
                   style: appFont('Rubik', 
                     color: Colors.black,
                     fontSize: 16,

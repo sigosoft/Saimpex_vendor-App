@@ -728,7 +728,7 @@ class FCM {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "${_t('received')} #$formattedOrderNumber",
+                  "${_t('received')} $formattedOrderNumber",
                   style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[

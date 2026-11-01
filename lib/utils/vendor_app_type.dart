@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
+
 /// App service type selected on the login screen.
 /// This is separate from API `vendor_type` (restaurant vs grocery).
 enum VendorAppType {
@@ -32,13 +34,13 @@ extension VendorAppTypeX on VendorAppType {
   String get label {
     switch (this) {
       case VendorAppType.groceryRestaurant:
-        return 'Grocery / Restaurant';
+        return S.current.vendorTypeGroceryRestaurant;
       case VendorAppType.water:
-        return 'Water';
+        return S.current.vendorTypeWater;
       case VendorAppType.pharmacy:
-        return 'Pharmacy';
+        return S.current.vendorTypePharmacy;
       case VendorAppType.homeCleaning:
-        return 'Home Cleaning';
+        return S.current.vendorTypeHomeCleaning;
     }
   }
 
