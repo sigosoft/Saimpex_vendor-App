@@ -170,6 +170,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "aboutUs": MessageLookupByLibrary.simpleMessage("About Us"),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("Accept Order"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
+    "acceptingBookings": MessageLookupByLibrary.simpleMessage(
+      "Open · accepting bookings",
+    ),
+    "acceptingBookingsHelp": MessageLookupByLibrary.simpleMessage(
+      "Turn off to stop new bookings.",
+    ),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "accountName": MessageLookupByLibrary.simpleMessage("Account Name"),
     "accountNumber": MessageLookupByLibrary.simpleMessage("Account Number"),
@@ -344,6 +350,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bluetooth is off or not allowed. Turn it on and allow Nearby devices for this app.",
     ),
     "bookingHash": m3,
+    "bookingSlots": MessageLookupByLibrary.simpleMessage("Booking slots"),
     "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
     "busy": MessageLookupByLibrary.simpleMessage("Busy"),
     "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now"),
@@ -713,6 +720,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clearAll": MessageLookupByLibrary.simpleMessage("Clear All"),
     "clickToView": MessageLookupByLibrary.simpleMessage("Click to View"),
+    "closed": MessageLookupByLibrary.simpleMessage("Closed"),
     "codeLabel": MessageLookupByLibrary.simpleMessage("CODE"),
     "comboOffer": MessageLookupByLibrary.simpleMessage("Combo Offer"),
     "commission": MessageLookupByLibrary.simpleMessage("Commission"),
@@ -865,6 +873,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "dueInMinutes": m16,
     "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
     "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
+    "earningsAvailable": MessageLookupByLibrary.simpleMessage("Available"),
+    "earningsPending": MessageLookupByLibrary.simpleMessage("Pending"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editCleaner": MessageLookupByLibrary.simpleMessage("Edit Cleaner"),
     "editItem": MessageLookupByLibrary.simpleMessage("Edit Item"),
@@ -1121,6 +1131,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "lunchMenu": MessageLookupByLibrary.simpleMessage("Lunch Menu"),
     "mAgo": MessageLookupByLibrary.simpleMessage("m ago"),
+    "markAsBusy": MessageLookupByLibrary.simpleMessage("Mark as busy"),
+    "markAsBusyHelp": MessageLookupByLibrary.simpleMessage(
+      "Customers see you as busy and can\'t book for now.",
+    ),
     "markAsReady": MessageLookupByLibrary.simpleMessage("Mark as Ready"),
     "markLeave": MessageLookupByLibrary.simpleMessage("MARK LEAVE"),
     "markLeaveButton": MessageLookupByLibrary.simpleMessage("Mark Leave"),
@@ -1129,6 +1143,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "maxAllowedQuantityLabel": MessageLookupByLibrary.simpleMessage(
       "Maximum Allowed Quantity",
+    ),
+    "maxBookingsPerSlot": MessageLookupByLibrary.simpleMessage(
+      "Maximum bookings per slot",
     ),
     "maxKm": MessageLookupByLibrary.simpleMessage("Max"),
     "maximumAllowedQuantity": MessageLookupByLibrary.simpleMessage(
@@ -1208,6 +1225,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDescriptionAvailable": MessageLookupByLibrary.simpleMessage(
       "No description available",
     ),
+    "noEarningsYet": MessageLookupByLibrary.simpleMessage("No earnings yet."),
     "noGroceriesFound": MessageLookupByLibrary.simpleMessage(
       "No Groceries Found",
     ),
@@ -1360,6 +1378,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "PAYMENT DETAILS",
     ),
     "paymentType": MessageLookupByLibrary.simpleMessage("Payment Type"),
+    "payoutReceived": MessageLookupByLibrary.simpleMessage("Payout received"),
     "payouts": MessageLookupByLibrary.simpleMessage("Payouts"),
     "pending": MessageLookupByLibrary.simpleMessage("Pending"),
     "pendingOrderBalance": MessageLookupByLibrary.simpleMessage(
@@ -1714,6 +1733,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Short description",
     ),
     "showProductNow": MessageLookupByLibrary.simpleMessage("Show now"),
+    "slotAvailable": MessageLookupByLibrary.simpleMessage("Available"),
+    "slotUnavailable": MessageLookupByLibrary.simpleMessage("Unavailable"),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
         MessageLookupByLibrary.simpleMessage(
           "Sorry, we\'re down for maintenance  We\'ll be back up shortly.",

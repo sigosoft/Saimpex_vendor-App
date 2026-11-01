@@ -2523,5 +2523,18 @@
   "cleanerReviewOf": "Cleaner review: {name}",
   "@cleanerReviewOf": {
     "placeholders": {"name": {"type": "String"}}
-  }
+  },
+  "closed": "Closed",
+  "bookingSlots": "Booking slots",
+  "slotAvailable": "Available",
+  "slotUnavailable": "Unavailable",
+  "maxBookingsPerSlot": "Maximum bookings per slot",
+  "acceptingBookings": "Open · accepting bookings",
+  "acceptingBookingsHelp": "Turn off to stop new bookings.",
+  "markAsBusy": "Mark as busy",
+  "markAsBusyHelp": "Customers see you as busy and can't book for now.",
+  "earningsAvailable": "Available",
+  "earningsPending": "Pending",
+  "payoutReceived": "Payout received",
+  "noEarningsYet": "No earnings yet."
 }
