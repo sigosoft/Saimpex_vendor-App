@@ -1138,6 +1138,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "رصيد الطلبات المعلقة",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("نسبة مئوية"),
+    "pharmacyGenericName": MessageLookupByLibrary.simpleMessage("الاسم العلمي"),
+    "pharmacyGenericNameHint": MessageLookupByLibrary.simpleMessage(
+      "مثال: باراسيتامول",
+    ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(
       "اختر ما تريد واملأ سلتك!",

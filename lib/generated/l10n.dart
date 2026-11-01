@@ -9430,6 +9430,26 @@ class S {
       args: [code],
     );
   }
+
+  /// `Generic name`
+  String get pharmacyGenericName {
+    return Intl.message(
+      'Generic name',
+      name: 'pharmacyGenericName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Paracetamol`
+  String get pharmacyGenericNameHint {
+    return Intl.message(
+      'e.g. Paracetamol',
+      name: 'pharmacyGenericNameHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

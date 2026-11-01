@@ -207,6 +207,9 @@ class ApiEndPoints {
   static String pharmacyMenuItems = "pharmacyMenuItems";
   static String updatePharmacyItemStock = "updatePharmacyItemStock";
   static String pharmacyMenuItemDetail = "pharmacyMenuItemDetail";
+  // Product: generic name etc. (API §6.36).
+  static String pharmacyMenuDetails = "pharmacyMenuDetails";
+  static String pharmacyProductFields = "pharmacyProductFields";
   static String updatePharmacyItemAvailabilityStatus =
       "updatePharmacyItemAvailabilityStatus";
   static String updatePharmacyMenuItem = "updatePharmacyMenuItem";
