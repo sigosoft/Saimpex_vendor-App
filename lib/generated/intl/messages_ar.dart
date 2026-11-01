@@ -231,6 +231,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
       "قبول الطلبات تلقائيًا",
     ),
+    "automaticPrinter": MessageLookupByLibrary.simpleMessage("تلقائي"),
+    "automaticPrinterHint": MessageLookupByLibrary.simpleMessage(
+      "طابعة USB إذا كانت موصولة، وإلا أول طابعة بلوتوث مقترنة",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("متاح"),
     "availableAt": MessageLookupByLibrary.simpleMessage("متوفر في"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -273,6 +277,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "baskets": MessageLookupByLibrary.simpleMessage("السلال"),
     "beverages": MessageLookupByLibrary.simpleMessage("المشروبات"),
     "blocked": MessageLookupByLibrary.simpleMessage("محظور"),
+    "bluetoothUnavailable": MessageLookupByLibrary.simpleMessage(
+      "البلوتوث متوقف أو غير مسموح به. شغّله واسمح بالوصول إلى الأجهزة القريبة لهذا التطبيق.",
+    ),
     "breakfast": MessageLookupByLibrary.simpleMessage("فطور"),
     "busy": MessageLookupByLibrary.simpleMessage("مشغول"),
     "buyNow": MessageLookupByLibrary.simpleMessage("اشترِ الآن"),
@@ -999,6 +1006,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noOrdersFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على طلبات",
     ),
+    "noPairedPrinters": MessageLookupByLibrary.simpleMessage(
+      "لا توجد أجهزة بلوتوث مقترنة. اقرن الطابعة أولاً من إعدادات البلوتوث في أندرويد.",
+    ),
     "noPayoutsYet": MessageLookupByLibrary.simpleMessage(
       "لا توجد مدفوعات حتى الآن",
     ),
@@ -1209,6 +1219,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "preparingFood": MessageLookupByLibrary.simpleMessage("تحضير الطعام"),
     "price": MessageLookupByLibrary.simpleMessage("السعر"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("السعر"),
+    "printFailed": MessageLookupByLibrary.simpleMessage(
+      "فشلت الطباعة. تأكد من أن الطابعة قيد التشغيل ومقترنة.",
+    ),
+    "printOrder": MessageLookupByLibrary.simpleMessage("طباعة الطلب"),
+    "printTestPage": MessageLookupByLibrary.simpleMessage("طباعة صفحة اختبار"),
+    "printer": MessageLookupByLibrary.simpleMessage("الطابعة"),
+    "printerTest": MessageLookupByLibrary.simpleMessage("اختبار الطابعة"),
+    "printingAndroidOnly": MessageLookupByLibrary.simpleMessage(
+      "الطباعة متاحة على أجهزة أندرويد فقط.",
+    ),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
     "proceed": MessageLookupByLibrary.simpleMessage("المتابعة"),
     "productOutOfStock": MessageLookupByLibrary.simpleMessage(
@@ -1332,6 +1352,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectYourLocation": MessageLookupByLibrary.simpleMessage("اختر موقعك"),
     "selfPickup": MessageLookupByLibrary.simpleMessage("استلام من المتجر"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
+    "sendingToPrinter": MessageLookupByLibrary.simpleMessage(
+      "جارٍ الإرسال إلى الطابعة…",
+    ),
     "serialNoLabel": MessageLookupByLibrary.simpleMessage("الرقم التسلسلي"),
     "serialNumber": MessageLookupByLibrary.simpleMessage("رقم التسلسل"),
     "serverDown": MessageLookupByLibrary.simpleMessage("الخادم متوقف"),
@@ -1369,10 +1392,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tax": MessageLookupByLibrary.simpleMessage("الضريبة"),
     "templatePreview": MessageLookupByLibrary.simpleMessage("معاينة القالب"),
     "termsConditions": MessageLookupByLibrary.simpleMessage("الشروط والأحكام"),
+    "testPageSent": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال صفحة الاختبار إلى الطابعة",
+    ),
     "theRestaurantPreparingYourFood": MessageLookupByLibrary.simpleMessage(
       "المطعم يقوم بتحضير طعامك",
     ),
     "thursday": MessageLookupByLibrary.simpleMessage("الخميس"),
+    "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال التذكرة إلى الطابعة",
+    ),
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toPay": MessageLookupByLibrary.simpleMessage("المبلغ المستحق"),
     "today": MessageLookupByLibrary.simpleMessage("اليوم"),

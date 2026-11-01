@@ -24,5 +24,7 @@ If you have the backend repo cloned next to this one (`../saimpex-backend-new`, 
 
 ## Project notes
 - Base URL: `lib/configs/ApiConfigs.dart`. App section is chosen by the server's vendor type.
-- Laundry and car wash vendors use the vendor web panel (`praveensigo/saimpex-vendor-phase2`).
+- **Decided 31 Oct (Praveen):** laundry and car wash vendors use **both** this app **and** the vendor web panel (`praveensigo/saimpex-vendor-phase2`). Their app sections are task V14.
+- Designs: grocery and local store use the **restaurant** design; gas uses the **water** design (one-time orders and refills, no subscriptions). Vendor UI PDFs are in the shared Drive "Vendor App" folder.
+- Android **and** iOS; **Android first**.
 - API envelope: `{status, data, message: {message_en, message_fr, message_ar}}`.

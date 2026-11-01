@@ -4,7 +4,7 @@
 > **Owner:** **Stephy**. Week-by-week task list to the 1 Dec launch: [`docs/TEAM_ASSIGNMENTS.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md).
 
 Last updated: 31 Oct 2026. Branch at time of writing: `fix/save-item-variants-options` (HEAD `706c74e`).
-Repo: `sigosoft/Saimpex_vendor-App`. Flutter, Android first (iOS builds but is not set up for release).
+Repo: `sigosoft/Saimpex_vendor-App`. Flutter, for **Android and iOS**; **Android first** (decided 31 Oct). iOS builds but is not set up for release yet.
 
 Binding product decisions live in the backend repo:
 **`praveensigo/saimpex-backend-new/docs/V2_DECISIONS_AND_PLAN.md`**.
@@ -55,13 +55,13 @@ One app serves all vendor types. After login the app opens a section based on th
 |---|---|---|---|
 | 1 | Food / restaurant | Grocery/Restaurant | `lib/view/`, `lib/controller/` |
 | 2 | Grocery | Grocery/Restaurant | same |
-| 11 | Local store | Grocery/Restaurant (uses grocery endpoints, see Risks) | same |
+| 11 | Local store | Grocery/Restaurant screens on the `localStore*` endpoints (`feature/vendor-routing`) | same |
 | 3 | Pharmacy | Pharmacy | `lib/pharmacy/` |
 | 4 | Water | Water | `lib/water/` |
-| 10 | Gas | Water (see Risks: backend treats gas as a service vertical) | `lib/water/` |
+| 10 | Gas | Water design (decided 31 Oct): one-time orders + refills, no subscriptions. Gas bookings are service bookings, so it **waits for backend #84** to show them on the water endpoints | `lib/water/` |
 | 9 | Home cleaning | Home Cleaning (UI only, mock data) | `lib/home_cleaning/` |
-| 7 | Laundry | none: login shows "use the vendor web panel" | - |
-| 8 | Car wash | none: login shows "use the vendor web panel" | - |
+| 7 | Laundry | **To build (V14)**: app section per *Saimpex Laundry Vendor UI 08-09-2026*; also on the web panel | `service*` |
+| 8 | Car wash | **To build (V14)**: app section per *Saimpex Car Wash Vendor UI 03-09-2026*; also on the web panel | `service*` |
 
 Mapping code: `lib/utils/vendor_app_type.dart` (`VendorAppTypeX.fromVendorType`). Navigation: `lib/utils/vendor_app_router.dart`.
 
@@ -244,12 +244,12 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 |---|---|---|
 | Restaurant (1) | **Partial**, most complete | Orders, menu, items, catalogue, stock, coupons, drivers, earnings, reports, chat, printing all on API. Gaps: edit item drops variants/options; no pre-orders; no advanced/easy split. |
 | Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. No substitution. |
-| Local store (11) | **Partial / likely broken** | Opens grocery screens and calls grocery endpoints. Backend `groceryOrders` filters `order_type = 2`, so local store orders probably do not show. Backend `localStore*` endpoints are not used. Needs testing with a real local store account. |
+| Local store (11) | **Done (`feature/vendor-routing`), not yet tested on a device** | Same grocery screens, but every grocery call is switched to its `localStore*` twin (27 endpoints, `lib/configs/store_endpoints.dart`, applied in the `DioClient` interceptor when the saved `vendorType` is 11). Same parameters and response shape, checked against `integration/v2`. |
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
-| Laundry (7) | **Not started** in app | Blocked at login; use web panel. |
-| Car wash (8) | **Not started** in app | Blocked at login; use web panel. |
+| Laundry (7) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
+| Car wash (8) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
 | Home cleaning (9) | **Partial (UI only)** | Screens from Figma with hard-coded bookings (`lib/home_cleaning/view/home_cleaning_home.dart`). Only profile, logout and delete account call the API (`lib/home_cleaning/view/home_cleaning_account_view.dart`). Backend `service*` endpoints exist but are not used. |
 
 ### 4.2 By feature, Grocery / Restaurant / Local store section
@@ -277,10 +277,10 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Ratings and reviews | Done (unverified) | `lib/view/restaurant/rating_reviews_screen.dart` | |
 | Chat (text + voice) | Done | `lib/view/chat/ChatListing.dart`, `lib/view/chat/ChatDetails.dart`, `lib/controller/chat_controller.dart` | Pusher realtime, voice via `record` / `audioplayers`. |
 | Notifications | Done | `lib/view/notifications/notifications.dart`, `lib/controller/notification_controller.dart`, `lib/view/notifications/notification.dart` | |
-| Printing | Done (Android) | `lib/utils/printing/` | No iOS. Printer selection UI: unverified. |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/utils/printing/`, `lib/view/settings/widgets/printer_picker_dialog.dart` | Settings → **Printer**: paired Bluetooth devices + "Automatic" (USB first, then the first paired printer), saved as `printerAddress`, **Print test page**. Ticket text is Latin-1 safe (curly quotes / Arabic no longer fail the print). No Figma screen. No iOS. **Not yet tested on a real printer.** |
 | Pre-orders | Not started | - | Contract pending from backend. |
 | Grocery substitution | Not started | - | Contract pending from backend. |
-| Local store endpoints | Not started | - | Backend `localStore*` routes exist. |
+| Local store endpoints | Done (`feature/vendor-routing`) | `lib/configs/store_endpoints.dart` | Grocery endpoint → `localStore*` twin for vendor type 11. |
 | Kitchen board | Out of scope here | - | Separate app `sigosoft/Saimpex-Kitchen-App`. |
 
 ### 4.3 By feature, Pharmacy section
@@ -298,7 +298,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Profile, hours, leave, business settings | Done (unverified) | `lib/pharmacy/view/pharmacy_profile_screen.dart`, `lib/pharmacy/view/pharmacy_working_hours_screen.dart`, `lib/pharmacy/view/pharmacy_leave_management_screen.dart`, `lib/pharmacy/view/pharmacy_business_settings_screen.dart` | Profile edit through OTP endpoints: not wired here. |
 | Chat | Done | `lib/pharmacy/view/pharmacy_chat_screen.dart`, `lib/pharmacy/controller/pharmacy_chat_controller.dart` | |
 | Notifications | Done | `lib/pharmacy/view/pharmacy_notifications_screen.dart` | |
-| Printing | Not started | - | |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/pharmacy/view/otc_order_details_screen.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the OTC order header (hidden until the order loads); `pharmacyOrderDetail` {order, items} is mapped onto the same ticket. Printer picker in Account. Prescription requests (not orders yet) have no ticket. **Not yet tested on a real printer.** |
 | Localisation | Partial | - | Most pharmacy screens are English literals. |
 
 ### 4.4 By feature, Water / Gas section
@@ -315,7 +315,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Profile, hours, leave, business settings | Done (unverified) | `lib/water/view/account/store_profile_view.dart`, `lib/water/view/account/working_hours_view.dart`, `lib/water/view/account/leave_management_view.dart`, `lib/water/view/account/business_settings_view.dart` | |
 | Chat | Done | `lib/water/view/chat/messages_list_view.dart`, `lib/water/view/chat/chat_view.dart` | Reuses `ChatController`. |
 | Notifications | Partial (mock) | `lib/water/view/notifications/notifications_view.dart` | Hard-coded list. |
-| Printing | Not started | - | |
+| Printing | Done (Android), `feature/bluetooth-printing` | `lib/water/view/order_details/order_details_view.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the order header (hidden until the order loads); `waterOrderDetail` mapped onto the same ticket. Printer picker in Account. Gas not covered. **Not yet tested on a real printer.** |
 | Localisation | Not started | - | English literals only. |
 
 ### 4.5 Home Cleaning
@@ -437,11 +437,11 @@ AC: no hard-coded sample data remains in `lib/water/view/`.
 **P10. Home Cleaning on `service*` endpoints.** ✅ V6 for bookings, services and chat; account hours/earnings still on the Water screens (follow-up). 18 backend gaps in `docs/V6_BACKEND_ISSUES.md`.
 AC: bookings, booking detail/status changes, services CRUD and hours use the backend; no hard-coded bookings.
 
-**P11. Laundry and car wash sections (if confirmed for the app).**
+**P11. Laundry and car wash sections.** ✅ **Confirmed by Praveen (31 Oct): build them (task V14).** Designs: Drive "Vendor App" folder, *Saimpex Laundry Vendor UI 08-09-2026* and *Saimpex Car Wash Vendor UI 03-09-2026*. Vendors use both the app and the web panel.
 Today these vendors use the web panel. Only build when Praveen confirms; then use `service*` endpoints and Figma.
 AC: login no longer blocks types 7 and 8; bookings flow works.
 
-**P12. Printing beyond Android restaurant/grocery.**
+**P12. Printing beyond Android restaurant/grocery.** ✅ **Code done (`feature/bluetooth-printing`, V7); needs a real 58 mm and 80 mm printer to verify.**
 AC: print button on pharmacy and water order details; works with a generic 58/80 mm ESC/POS Bluetooth printer; printer choice remembered.
 
 **P13. Release readiness.**
@@ -513,7 +513,8 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | Pharmacy quote lines take `availability`, `requested_quantity`, `alternative_for`; the server computes the total (§6.15). Water subscriptions can be `pending_payment` (hide until paid). Gas bookings show `empty_cylinders_to_collect`. | V11 unblocked for the quote part. |
 | 31 Oct 2026 | Hide / unhide a product: `POST vendorapp/products/visibility` {`product_type`, `id` (catalog item id for restaurants), `hidden`}. Response `status` 1 visible / 2 blocked by Admin / 3 hidden. | Add a Hide/Show toggle and a "Hidden" chip on the product list (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules`: minimum order value and default preparation time (set by Admin, read-only). | Show both on the store settings/profile screen (§6.22). |
-| 31 Oct 2026 | **Routing answered (V12, P3/P4):** login returns `app_section` (`restaurant`, `grocery`, `pharmacy`, `water`, `local_store`, `service`). Local store (11) → `localStore*` endpoints (grocery ones filter order_type 2, so its orders never show there). Gas (10) → `service*` endpoints, **not** `water*`; bookings include `empty_cylinders_to_collect`. | Route by `app_section` instead of mapping types in the app (§6.23). |
+| 31 Oct 2026 | **Routing answered (V12, P3/P4):** login returns `app_section` (`restaurant`, `grocery`, `pharmacy`, `water`, `local_store`, `service`). Local store (11) → `localStore*` endpoints (grocery ones filter order_type 2, so its orders never show there). Gas (10) → `service*` endpoints, **not** `water*`; bookings include `empty_cylinders_to_collect`. | Route by `app_section` instead of mapping types in the app (§6.23). ✅ Local store done (`feature/vendor-routing`). **Gas (10): decided (Abhinav, 31 Oct) to use the Water UI** (no gas design; water's bottles + returnable bottle match cylinders + empty-cylinder exchange). It already opens the Water section, but gas bookings are service bookings, so the water endpoints return nothing for gas: **waits for backend praveensigo/saimpex-backend-new#84**. |
 | 31 Oct 2026 | **Change:** hide product is now `POST vendorapp/updateProductVisibility` {`vertical`: food/grocery/local_store/pharmacy/water, `menu_id`, `hide_for`: 1h/4h/today/forever/until/show}. The `products/visibility` endpoint from this morning is removed. | Build V10 against this one (§6.21). |
 | 31 Oct 2026 | `GET vendorapp/orderRules` also returns `delivery_fee_type`, `delivery_fee_value`, `delivery_fee_paid_by`, `delivery_model` (Admin-set). If the vendor pays delivery, the fee is deducted from its earnings. | Show them read-only on the store settings screen (§6.22). |
 | 31 Oct 2026 | `GET vendorapp/commissionRules`: the store's commission rules (read-only) and `fallback_percent`. | Optional: show on earnings/settings (§6.24). |
+| 31 Oct 2026 | **Vendor app decisions (Praveen):** laundry (7) and car wash (8) get app sections (V14) and keep the web panel; grocery and local store use the restaurant design; gas uses the water design with one-time orders + refills only (no subscriptions; backend #84); home cleaning matches its design (V15); Android + iOS, Android first. | Backend `V2_DECISIONS_AND_PLAN.md` §14 |

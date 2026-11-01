@@ -233,6 +233,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoAcceptOrdersTitle": MessageLookupByLibrary.simpleMessage(
       "Auto-Accept Orders",
     ),
+    "automaticPrinter": MessageLookupByLibrary.simpleMessage("Automatic"),
+    "automaticPrinterHint": MessageLookupByLibrary.simpleMessage(
+      "USB printer if connected, otherwise the first paired Bluetooth printer",
+    ),
     "available": MessageLookupByLibrary.simpleMessage("Available"),
     "availableAt": MessageLookupByLibrary.simpleMessage("Available at"),
     "availableAttributes": MessageLookupByLibrary.simpleMessage(
@@ -279,6 +283,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "baskets": MessageLookupByLibrary.simpleMessage("BASKETS"),
     "beverages": MessageLookupByLibrary.simpleMessage("Beverages"),
     "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
+    "bluetoothUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Bluetooth is off or not allowed. Turn it on and allow Nearby devices for this app.",
+    ),
     "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
     "busy": MessageLookupByLibrary.simpleMessage("Busy"),
     "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now"),
@@ -1005,6 +1012,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noOrders": MessageLookupByLibrary.simpleMessage("No Orders"),
     "noOrdersFound": MessageLookupByLibrary.simpleMessage("No orders found"),
+    "noPairedPrinters": MessageLookupByLibrary.simpleMessage(
+      "No paired Bluetooth devices. Pair the printer in the Android Bluetooth settings first.",
+    ),
     "noPayoutsYet": MessageLookupByLibrary.simpleMessage("No payouts yet"),
     "noPopularItemsFound": MessageLookupByLibrary.simpleMessage(
       "No popular items found",
@@ -1207,6 +1217,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "preparingFood": MessageLookupByLibrary.simpleMessage("Preparing Food"),
     "price": MessageLookupByLibrary.simpleMessage("Price"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("PRICE"),
+    "printFailed": MessageLookupByLibrary.simpleMessage(
+      "Printing failed. Check that the printer is on and paired.",
+    ),
+    "printOrder": MessageLookupByLibrary.simpleMessage("Print order"),
+    "printTestPage": MessageLookupByLibrary.simpleMessage("Print test page"),
+    "printer": MessageLookupByLibrary.simpleMessage("Printer"),
+    "printerTest": MessageLookupByLibrary.simpleMessage("Printer test"),
+    "printingAndroidOnly": MessageLookupByLibrary.simpleMessage(
+      "Printing is available on Android devices only.",
+    ),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "proceed": MessageLookupByLibrary.simpleMessage("Proceed"),
     "productOutOfStock": MessageLookupByLibrary.simpleMessage(
@@ -1343,6 +1363,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selfPickup": MessageLookupByLibrary.simpleMessage("Self Pickup"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "sendingToPrinter": MessageLookupByLibrary.simpleMessage(
+      "Sending to the printer…",
+    ),
     "serialNoLabel": MessageLookupByLibrary.simpleMessage("Serial No"),
     "serialNumber": MessageLookupByLibrary.simpleMessage("Serial Number"),
     "serverDown": MessageLookupByLibrary.simpleMessage("Server Down"),
@@ -1382,10 +1405,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "termsConditions": MessageLookupByLibrary.simpleMessage(
       "Terms & Conditions",
     ),
+    "testPageSent": MessageLookupByLibrary.simpleMessage(
+      "Test page sent to the printer",
+    ),
     "theRestaurantPreparingYourFood": MessageLookupByLibrary.simpleMessage(
       "The restaurant preparing your food",
     ),
     "thursday": MessageLookupByLibrary.simpleMessage("Thursday"),
+    "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
+      "Ticket sent to the printer",
+    ),
     "toDate": MessageLookupByLibrary.simpleMessage("To Date"),
     "toPay": MessageLookupByLibrary.simpleMessage("To Pay"),
     "today": MessageLookupByLibrary.simpleMessage("Today"),
