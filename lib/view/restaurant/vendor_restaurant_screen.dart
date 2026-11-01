@@ -1471,7 +1471,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ? "${item.discountPrice} MRU"
               : "${item.price} MRU";
           final originalPrice = hasDiscount ? "${item.price} MRU" : null;
-          return _foodItem(
+          final card = _foodItem(
             name,
             displayPrice,
             item.restaurantMenuItemId?.toString() ?? item.id?.toString() ?? "",
@@ -1481,6 +1481,24 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             category: category,
             originalPrice: originalPrice,
             availabilityStatus: item.availableStatus,
+          );
+          // Hide / unhide (§6.21, backend #132): catalog rows are menu rows,
+          // so the row id is the menu_id for vertical `food`.
+          if (profileController.vendorType != "1" || item.id == null || item.id == 0) {
+            return card;
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              card,
+              ProductVisibilityBar(
+                key: ValueKey('vis-food-${item.id}'),
+                vertical: 'food',
+                menuId: item.id!,
+                initial: item.visibility,
+              ),
+              const SizedBox(height: 8),
+            ],
           );
         }).toList(),
         const SizedBox(height: 20),

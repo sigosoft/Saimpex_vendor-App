@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../configs/ApiConfigs.dart';
+import '../utils/widgets/product_visibility.dart';
 
 class RestaurantMenuItemsModel {
   bool? status;
@@ -162,6 +163,9 @@ class RestaurantMenuItemData {
   int? availableStatus;
   String? preparationTime;
 
+  /// Hide / unhide state (§6.21, #132): `is_hidden`, `hidden_until`, `hidden_forever`.
+  ProductVisibilityState visibility;
+
   RestaurantMenuItemData({
     this.id,
     this.nameEn,
@@ -180,6 +184,7 @@ class RestaurantMenuItemData {
     this.categoryNameFr,
     this.availableStatus,
     this.preparationTime,
+    this.visibility = const ProductVisibilityState(),
   });
 
   factory RestaurantMenuItemData.fromJson(Map<String, dynamic>? json) {
@@ -234,6 +239,7 @@ class RestaurantMenuItemData {
       availableStatus: json['available_status'] is int
           ? json['available_status'] as int
           : int.tryParse(json['available_status']?.toString() ?? '0'),
+      visibility: ProductVisibilityState.fromJson(json),
       preparationTime:
           json['preparation_time']?.toString() ?? json['prep_time']?.toString(),
     );
