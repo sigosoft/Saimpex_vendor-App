@@ -1,5 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/view/support/support_chat.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'dart:convert';
@@ -11,7 +13,6 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -159,19 +160,6 @@ class FCM {
       
       final String title = message.notification?.title ?? '';
       final String body = message.notification?.body ?? '';
-
-      // Diagnostic Toast
-      try {
-        Fluttertoast.showToast(
-          msg: "FCM Received: ${title.isNotEmpty ? title : (notificationType ?? 'Order Notification')}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.black.withOpacity(0.8),
-          textColor: Colors.white,
-        );
-      } catch (e) {
-        print("Diagnostic Toast Error: $e");
-      }
 
       final orderData = _extractOrderData(message.data, notificationBody: body);
       final String? orderId = orderData['orderId'];
@@ -662,8 +650,42 @@ class FCM {
   }
 
   /// Show in-app alert dialog for a new order request when app is in foreground
+  /// Rings until the vendor responds to a new order (or 2 minutes pass), so
+  /// orders are not missed in a busy kitchen or shop (V2_DECISIONS §17).
+  static final AudioPlayer _alarm = AudioPlayer()..audioCache = AudioCache(prefix: 'lib/assets/');
+  static Timer? _alarmTimeout;
+
+  static Future<void> _startAlarm() async {
+    try {
+      await _alarm.setReleaseMode(ReleaseMode.loop);
+      await _alarm.play(AssetSource('sounds/notification_ring.mp3'));
+      _alarmTimeout?.cancel();
+      _alarmTimeout = Timer(const Duration(minutes: 2), _stopAlarm);
+    } catch (_) {}
+  }
+
+  static void _stopAlarm() {
+    _alarmTimeout?.cancel();
+    try {
+      _alarm.stop();
+    } catch (_) {}
+  }
+
+  static String _t(String key) {
+    const words = {
+      'title': {'en': 'New order!', 'fr': 'Nouvelle commande !', 'ar': 'طلب جديد!'},
+      'received': {'en': 'Order', 'fr': 'Commande', 'ar': 'الطلب'},
+      'total': {'en': 'Total', 'fr': 'Total', 'ar': 'المجموع'},
+      'dismiss': {'en': 'Later', 'fr': 'Plus tard', 'ar': 'لاحقًا'},
+      'view': {'en': 'View order', 'fr': 'Voir la commande', 'ar': 'عرض الطلب'},
+    };
+    final code = LocalizationService.currentLanguageCode;
+    return words[key]?[code] ?? words[key]?['en'] ?? key;
+  }
+
   static void showInAppNewOrderAlert(Map<String, dynamic> notificationData, {String? notificationBody}) {
     if (Get.context == null) return;
+    _startAlarm();
 
     final orderData = _extractOrderData(notificationData, notificationBody: notificationBody);
     final orderNumber = orderData['orderNumber'] ?? orderData['orderId'] ?? '';
@@ -694,7 +716,7 @@ class FCM {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "A new order!",
+                        _t('title'),
                         style: appFont('Rubik', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -706,13 +728,13 @@ class FCM {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "New order received: $formattedOrderNumber",
+                  "${_t('received')} #$formattedOrderNumber",
                   style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
-                    "Total Amount: $amount",
+                    "${_t('total')}: $amount",
                     style: appFont('Rubik', 
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -726,10 +748,11 @@ class FCM {
                   children: [
                     TextButton(
                       onPressed: () {
+                        _stopAlarm();
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        "Dismiss",
+                        _t('dismiss'),
                         style: appFont('Rubik', 
                           color: Colors.grey,
                           fontSize: 14,
@@ -740,6 +763,7 @@ class FCM {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
+                        _stopAlarm();
                         Navigator.of(context).pop();
                         // Navigate to AcceptOrder / Home Pending tab
                         navigateToAcceptOrderIfLoggedIn(
@@ -757,7 +781,7 @@ class FCM {
                         ),
                       ),
                       child: Text(
-                        "View Order",
+                        _t('view'),
                         style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 14,
