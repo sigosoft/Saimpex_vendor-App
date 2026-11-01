@@ -10310,6 +10310,361 @@ class S {
       args: [],
     );
   }
+
+  /// `Request new service type`
+  String get requestNewServiceType {
+    return Intl.message(
+      'Request new service type',
+      name: 'requestNewServiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service type name`
+  String get serviceTypeName {
+    return Intl.message(
+      'Service type name',
+      name: 'serviceTypeName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a service type`
+  String get serviceChooseType {
+    return Intl.message(
+      'Choose a service type',
+      name: 'serviceChooseType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the price per kg`
+  String get serviceEnterPrice {
+    return Intl.message(
+      'Enter the price per kg',
+      name: 'serviceEnterPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add at least one item`
+  String get serviceAddOneItem {
+    return Intl.message(
+      'Add at least one item',
+      name: 'serviceAddOneItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add at least one vehicle type`
+  String get serviceAddOneVehicleType {
+    return Intl.message(
+      'Add at least one vehicle type',
+      name: 'serviceAddOneVehicleType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Service`
+  String get addService {
+    return Intl.message('Add Service', name: 'addService', desc: '', args: []);
+  }
+
+  /// `Edit Service`
+  String get editService {
+    return Intl.message(
+      'Edit Service',
+      name: 'editService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service image`
+  String get serviceImage {
+    return Intl.message(
+      'Service image',
+      name: 'serviceImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Basic information`
+  String get basicInformation {
+    return Intl.message(
+      'Basic information',
+      name: 'basicInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service type`
+  String get serviceTypeLabel {
+    return Intl.message(
+      'Service type',
+      name: 'serviceTypeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing time`
+  String get processingTime {
+    return Intl.message(
+      'Processing time',
+      name: 'processingTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Standard (24h)`
+  String get processingStandard24h {
+    return Intl.message(
+      'Standard (24h)',
+      name: 'processingStandard24h',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Express`
+  String get processingExpress {
+    return Intl.message(
+      'Express',
+      name: 'processingExpress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pricing unit`
+  String get pricingUnit {
+    return Intl.message(
+      'Pricing unit',
+      name: 'pricingUnit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Per kg`
+  String get pricingPerKg {
+    return Intl.message('Per kg', name: 'pricingPerKg', desc: '', args: []);
+  }
+
+  /// `Per item`
+  String get pricingPerItem {
+    return Intl.message('Per item', name: 'pricingPerItem', desc: '', args: []);
+  }
+
+  /// `MRU / kg`
+  String get mruPerKg {
+    return Intl.message('MRU / kg', name: 'mruPerKg', desc: '', args: []);
+  }
+
+  /// `Short description`
+  String get shortDescription {
+    return Intl.message(
+      'Short description',
+      name: 'shortDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a description`
+  String get enterDescription {
+    return Intl.message(
+      'Enter a description',
+      name: 'enterDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item pricing`
+  String get itemPricing {
+    return Intl.message(
+      'Item pricing',
+      name: 'itemPricing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a price for each garment type. Customers choose quantities when they book.`
+  String get itemPricingHelp {
+    return Intl.message(
+      'Set a price for each garment type. Customers choose quantities when they book.',
+      name: 'itemPricingHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MRU / {unit}`
+  String mruPerUnit(String unit) {
+    return Intl.message(
+      'MRU / $unit',
+      name: 'mruPerUnit',
+      desc: '',
+      args: [unit],
+    );
+  }
+
+  /// `Add vehicle type`
+  String get addVehicleType {
+    return Intl.message(
+      'Add vehicle type',
+      name: 'addVehicleType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add-on services`
+  String get addOnServices {
+    return Intl.message(
+      'Add-on services',
+      name: 'addOnServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add add-on`
+  String get addAddOn {
+    return Intl.message('Add add-on', name: 'addAddOn', desc: '', args: []);
+  }
+
+  /// `Home / workplace pricing`
+  String get homeWorkplacePricing {
+    return Intl.message(
+      'Home / workplace pricing',
+      name: 'homeWorkplacePricing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extra charge when you go to the customer, by distance.`
+  String get homeWorkplacePricingHelp {
+    return Intl.message(
+      'Extra charge when you go to the customer, by distance.',
+      name: 'homeWorkplacePricingHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add distance range`
+  String get addDistanceRange {
+    return Intl.message(
+      'Add distance range',
+      name: 'addDistanceRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `kg`
+  String get unitKg {
+    return Intl.message('kg', name: 'unitKg', desc: '', args: []);
+  }
+
+  /// `metre`
+  String get unitMetre {
+    return Intl.message('metre', name: 'unitMetre', desc: '', args: []);
+  }
+
+  /// `piece`
+  String get unitPiece {
+    return Intl.message('piece', name: 'unitPiece', desc: '', args: []);
+  }
+
+  /// `Tap to upload image`
+  String get tapToUploadImage {
+    return Intl.message(
+      'Tap to upload image',
+      name: 'tapToUploadImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item name, e.g. Shirt`
+  String get itemNameHint {
+    return Intl.message(
+      'Item name, e.g. Shirt',
+      name: 'itemNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle type, e.g. Sedan`
+  String get vehicleTypeHint {
+    return Intl.message(
+      'Vehicle type, e.g. Sedan',
+      name: 'vehicleTypeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add-on name, e.g. Engine Wash`
+  String get addOnNameHint {
+    return Intl.message(
+      'Add-on name, e.g. Engine Wash',
+      name: 'addOnNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Short description`
+  String get addOnDescriptionHint {
+    return Intl.message(
+      'Short description',
+      name: 'addOnDescriptionHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Min`
+  String get minKm {
+    return Intl.message('Min', name: 'minKm', desc: '', args: []);
+  }
+
+  /// `Max`
+  String get maxKm {
+    return Intl.message('Max', name: 'maxKm', desc: '', args: []);
+  }
+
+  /// `Service`
+  String get laundryService {
+    return Intl.message('Service', name: 'laundryService', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

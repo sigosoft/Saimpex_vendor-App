@@ -146,7 +146,12 @@ class CleaningServiceItem {
     this.spaces = const [],
     this.addons = const [],
     this.issues = const [],
+    this.raw = const {},
   });
+
+  /// The whole row, for the laundry and car wash forms (V14 part B):
+  /// `unit`, `processing`, `garments`, `vehicles`, `distances`.
+  final Map<String, dynamic> raw;
 
   final int id;
   final int? serviceTypeId;
@@ -201,6 +206,7 @@ class CleaningServiceItem {
       spaces: spaces,
       addons: addons,
       issues: _toStringList(json['issues']),
+      raw: Map<String, dynamic>.from(json),
     );
   }
 }
