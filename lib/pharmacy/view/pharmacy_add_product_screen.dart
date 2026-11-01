@@ -9,6 +9,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/pharmacy/view/generic_equivalent_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyAddProductScreen extends StatefulWidget {
@@ -46,6 +47,11 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
   String _initialGenericName = '';
   int? _menuId;
 
+  /// Generic equivalent (API doc §6.55, backend #130): another product,
+  /// possibly from another pharmacy. Null = no link.
+  Map<String, dynamic>? _generic;
+  int? _initialGenericId;
+
   String? _category;
   String? _form;
   String? _dosage;
@@ -75,9 +81,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
       final data = res.data is Map ? res.data['data'] : null;
       final menu = data is Map ? data['pharmacy_menu'] : null;
       final name = menu is Map ? (menu['generic_name'] ?? '').toString() : '';
+      final eq = menu is Map ? menu['generic_equivalent'] : null;
       if (!mounted) return;
       _initialGenericName = name;
       if (_genericName.text.isEmpty) _genericName.text = name;
+      setState(() {
+        _generic = eq is Map ? Map<String, dynamic>.from(eq) : null;
+        _initialGenericId = int.tryParse(_generic?['menu_id']?.toString() ?? '');
+      });
     } catch (e) {
       debugPrint('pharmacyMenuDetails: $e');
     }
@@ -99,15 +110,26 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
     }
   }
 
-  /// Saves the generic name on the product when it changed
-  /// (`POST pharmacyProductFields`, §6.36). Empty clears it.
+  int? get _genericId => int.tryParse(_generic?['menu_id']?.toString() ?? '');
+
+  bool get _hasGenericFields =>
+      _genericName.text.trim().isNotEmpty || _genericId != null;
+
+  /// Saves the generic name and the generic equivalent when they changed
+  /// (`POST pharmacyProductFields`, §6.36 / §6.55). Empty / null clears.
   Future<void> _saveGenericName(int? menuId) async {
     final name = _genericName.text.trim();
-    if (menuId == null || name == _initialGenericName.trim()) return;
+    final nameChanged = name != _initialGenericName.trim();
+    final linkChanged = _genericId != _initialGenericId;
+    if (menuId == null || (!nameChanged && !linkChanged)) return;
     try {
       await DioClient().post(
         ApiEndPoints.pharmacyProductFields,
-        body: {'menu_id': menuId, 'generic_name': name},
+        body: {
+          'menu_id': menuId,
+          if (nameChanged) 'generic_name': name,
+          if (linkChanged) 'generic_menu_id': _genericId,
+        },
       );
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -847,7 +869,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
             : 'Pharmacy menu item added';
         final data = response.data['data'];
         final newItemId = data is Map ? data['pharmacy_menu_item_id'] : null;
-        if (_genericName.text.trim().isNotEmpty && newItemId != null) {
+        if (_hasGenericFields && newItemId != null) {
           await _saveGenericName(await _menuIdOfItem(newItemId));
         }
         Fluttertoast.showToast(msg: msg);
@@ -1014,6 +1036,41 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                             child: _InputField(
                               controller: _genericName,
                               hint: S.of(context).pharmacyGenericNameHint,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _Labeled(
+                            label: S.of(context).pharmacyGenericEquivalent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () async {
+                                final picked = await GenericEquivalentSheet.show(
+                                  context,
+                                  excludeMenuId: _menuId,
+                                  hasLink: _generic != null,
+                                );
+                                if (picked == null || !mounted) return;
+                                setState(() => _generic = picked.isEmpty ? null : picked);
+                              },
+                              child: InputDecorator(
+                                decoration: _fieldDecoration(
+                                  hint: S.of(context).pharmacyGenericNone,
+                                  suffixIcon: const Icon(Icons.search, size: 20),
+                                ),
+                                isEmpty: _generic == null,
+                                child: _generic == null
+                                    ? null
+                                    : Text(
+                                        genericProductName(_generic!),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: appFont('Inter',
+                                          color: const Color(0xFF1F2937),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
