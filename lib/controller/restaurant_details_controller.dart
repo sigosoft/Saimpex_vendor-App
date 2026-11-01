@@ -3,7 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/model/restaurant_details_model.dart';
 
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../model/restaurant_categories_model.dart';
 import '../model/restaurant_items_model.dart';
 

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,7 +10,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/login_model.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../view/otp/otp.dart';
 
 class LoginController extends GetxController {
@@ -107,11 +108,7 @@ class LoginController extends GetxController {
         // the login screen; a mismatched pick opened the wrong vertical.
         final serverAppType = VendorAppTypeX.fromVendorType(apiVendorType);
         if (apiVendorType != null && serverAppType == null) {
-          showToast(
-            context,
-            "This vendor type isn't supported in the app yet. "
-            "Please use the SAIMPEX vendor web panel.",
-          );
+          showToast(context, S.of(context).vendorTypeUseWebPanel);
           return;
         }
         if (serverAppType != null) selectedAppType = serverAppType;

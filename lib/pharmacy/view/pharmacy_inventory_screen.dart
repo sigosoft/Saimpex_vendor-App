@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -743,6 +744,14 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
                         onEdit: () => _onEditProduct(item),
                         onDelete: () => _onDeleteProduct(item),
                       ),
+                      // Hide / unhide (§6.21): pharmacy item rows carry menu_id.
+                      if (int.tryParse(item.rawJson?['menu_id']?.toString() ?? '') case final menuId?)
+                        ProductVisibilityBar(
+                          key: ValueKey('vis-$menuId-${item.id}'),
+                          vertical: 'pharmacy',
+                          menuId: menuId,
+                          initial: ProductVisibilityState.fromJson(item.rawJson),
+                        ),
                       const SizedBox(height: 12),
                     ],
                 ],

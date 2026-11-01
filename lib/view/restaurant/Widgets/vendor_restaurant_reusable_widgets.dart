@@ -11,7 +11,7 @@ import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/custom_search_box.dart';
 
-import '../../../Utils/Utils.dart';
+import '../../../utils/utils.dart';
 
 class VendorWorkingHoursList extends StatelessWidget {
   final void Function(int dayIndex, WorkingHour hour)? onEditDay;

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../configs/ApiConfigs.dart';
 import '../configs/Dioclient.dart';
 import '../generated/l10n.dart';
 import '../model/notification_model.dart';
-import '../view/Login/Login.dart';
+import '../view/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 

@@ -2,6 +2,7 @@ import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 
 /// What the vendor picked; sent to POST updateServiceBookingStatus as
 /// `status=10`, `reason` (required, max 255) and `note` (optional, max 100).
@@ -35,22 +36,15 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
   static const _border = Color(0xFFE0E0E0);
   static const _text = Color(0xFF424242);
 
-  static const _reasons = [
-    'No cleaner available',
-    'Outside our service area',
-    'Service temporarily unavailable',
-    'Other',
-  ];
+  // (value sent as `reason`, localised label) for this service kind (V14):
+  // cleaning, or the car wash list that laundry shares on the backend.
+  List<(String, String)> get _options => ServiceKinds.rejectReasons(context);
+  List<String> get _reasons => _options.map((o) => o.$1).toList();
   // English values above are sent as `reason` (the API returns no reject
   // reasons for home cleaning, so the list is app-side); only the displayed
   // label is localised. For "Other" the typed text goes in `note`, the same
   // reason/note split the backend uses when it reads the remark back.
-  static List<String> _reasonLabels(BuildContext context) => [
-        S.of(context).cleaningRejectReasonNoCleaner,
-        S.of(context).cleaningRejectReasonOutsideArea,
-        S.of(context).cleaningRejectReasonServiceUnavailable,
-        S.of(context).cleaningRejectReasonOther,
-      ];
+  List<String> _reasonLabels(BuildContext context) => _options.map((o) => o.$2).toList();
   static const _otherIndex = 3;
   static const _otherMax = 100;
 

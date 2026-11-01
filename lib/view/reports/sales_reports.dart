@@ -5,7 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import '../../Utils/Utils.dart';
+import '../../utils/utils.dart';
 import '../../controller/sales_report_controller.dart';
 import '../../generated/l10n.dart';
 import '../../model/sales_report_model.dart';

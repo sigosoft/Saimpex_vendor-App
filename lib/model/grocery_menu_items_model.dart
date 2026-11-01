@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
+
 class GroceryMenuItemsModel {
   bool? status;
   GroceryMenuItemsData? data;
@@ -131,6 +133,9 @@ class GroceryMenuItem {
   String? variantNameFr;
   int? status;
   int? availableStatus;
+
+  /// Hidden state (API doc §6.21): `is_hidden`, `hidden_until`, `hidden_forever`.
+  ProductVisibilityState visibility;
   String? categoryNameEn;
   String? categoryNameAr;
   String? categoryNameFr;
@@ -153,6 +158,7 @@ class GroceryMenuItem {
     this.variantNameFr,
     this.status,
     this.availableStatus,
+    this.visibility = const ProductVisibilityState(),
     this.categoryNameEn,
     this.categoryNameAr,
     this.categoryNameFr,
@@ -179,6 +185,7 @@ class GroceryMenuItem {
       variantNameFr: json['variant_name_fr']?.toString() ?? '',
       status: json['status'] as int? ?? 0,
       availableStatus: json['available_status'] as int? ?? 0,
+      visibility: ProductVisibilityState.fromJson(json),
       categoryNameEn: json['category_name_en']?.toString() ?? '',
       categoryNameAr: json['category_name_ar']?.toString() ?? '',
       categoryNameFr: json['category_name_fr']?.toString() ?? '',

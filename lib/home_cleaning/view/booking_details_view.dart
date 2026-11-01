@@ -6,6 +6,8 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
+import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_conversation_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_action.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
@@ -182,13 +184,19 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
       _CustomerCard(booking: b),
       const SizedBox(height: 12),
       _ServiceCard(key: _serviceKey, booking: b),
-      if (b.spaceLines.isNotEmpty) ...[
+      // Laundry / car wash parts (V14).
+      if (ServiceKinds.isLaundry) ...[
+        const SizedBox(height: 12),
+        LaundryBookingBlock(booking: b),
+      ],
+      if (ServiceKinds.isCarWash) CarWashBookingBlock(booking: b),
+      if (ServiceKinds.isCleaning && b.spaceLines.isNotEmpty) ...[
         const SizedBox(height: 16),
         _sectionLabel(S.of(context).cleaningSpacesHeader),
         const SizedBox(height: 8),
         _LinesCard(lines: b.spaceLines),
       ],
-      if (b.addonLines.isNotEmpty) ...[
+      if (ServiceKinds.isCleaning && b.addonLines.isNotEmpty) ...[
         const SizedBox(height: 16),
         _sectionLabel(S.of(context).cleaningMakeItExtraCleanHeader),
         const SizedBox(height: 8),
@@ -226,14 +234,9 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox.shrink()
       else ...[
         const SizedBox(height: 16),
-        if (b.isInProgress)
+        if (b.isInProgress || b.isAccepted || b.isReady)
           _primaryButton(
-            S.of(context).cleaningMarkAsCompleted,
-            () => _act(reject: false),
-          )
-        else if (b.isAccepted)
-          _primaryButton(
-            S.of(context).cleaningStartCleaning,
+            ServiceKinds.actionLabel(context, b.status),
             () => _act(reject: false),
           )
         else
@@ -467,7 +470,9 @@ class _CustomerCard extends StatelessWidget {
     final b = booking;
     final phone = b.customerPhone;
     final created = b.createdAt;
-    final ({String label, Color color}) pill = b.isInProgress
+    final ({String label, Color color}) pill = !ServiceKinds.isCleaning
+        ? ServiceKinds.statusPill(context, b.status)
+        : b.isInProgress
         ? (label: S.of(context).cleaningStatusInProgress, color: const Color(0xFF1E6BE6))
         : b.isCompleted
         ? (label: S.of(context).completed, color: const Color(0xFF009624))

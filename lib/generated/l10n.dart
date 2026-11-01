@@ -9450,6 +9450,866 @@ class S {
       args: [],
     );
   }
+
+  /// `Generic equivalent`
+  String get pharmacyGenericEquivalent {
+    return Intl.message(
+      'Generic equivalent',
+      name: 'pharmacyGenericEquivalent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The generic version customers can choose instead. It can be another pharmacy's product.`
+  String get pharmacyGenericEquivalentHelp {
+    return Intl.message(
+      'The generic version customers can choose instead. It can be another pharmacy\'s product.',
+      name: 'pharmacyGenericEquivalentHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search by name or generic name`
+  String get pharmacyGenericSearchHint {
+    return Intl.message(
+      'Search by name or generic name',
+      name: 'pharmacyGenericSearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove link`
+  String get pharmacyGenericRemoveLink {
+    return Intl.message(
+      'Remove link',
+      name: 'pharmacyGenericRemoveLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type at least 2 letters`
+  String get pharmacyGenericTypeTwo {
+    return Intl.message(
+      'Type at least 2 letters',
+      name: 'pharmacyGenericTypeTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No product found`
+  String get pharmacyGenericNoMatch {
+    return Intl.message(
+      'No product found',
+      name: 'pharmacyGenericNoMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get pharmacyGenericNone {
+    return Intl.message(
+      'None',
+      name: 'pharmacyGenericNone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visible to customers`
+  String get productVisible {
+    return Intl.message(
+      'Visible to customers',
+      name: 'productVisible',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hidden until you show it`
+  String get productHiddenForever {
+    return Intl.message(
+      'Hidden until you show it',
+      name: 'productHiddenForever',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hidden until {time}`
+  String productHiddenUntil(String time) {
+    return Intl.message(
+      'Hidden until $time',
+      name: 'productHiddenUntil',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Hide`
+  String get hideProduct {
+    return Intl.message('Hide', name: 'hideProduct', desc: '', args: []);
+  }
+
+  /// `Show now`
+  String get showProductNow {
+    return Intl.message('Show now', name: 'showProductNow', desc: '', args: []);
+  }
+
+  /// `Hide this product`
+  String get hideProductTitle {
+    return Intl.message(
+      'Hide this product',
+      name: 'hideProductTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customers can't see or order it while it is hidden.`
+  String get hideProductHelp {
+    return Intl.message(
+      'Customers can\'t see or order it while it is hidden.',
+      name: 'hideProductHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For 1 hour`
+  String get hideFor1Hour {
+    return Intl.message('For 1 hour', name: 'hideFor1Hour', desc: '', args: []);
+  }
+
+  /// `For 4 hours`
+  String get hideFor4Hours {
+    return Intl.message(
+      'For 4 hours',
+      name: 'hideFor4Hours',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until the end of today`
+  String get hideUntilEndOfToday {
+    return Intl.message(
+      'Until the end of today',
+      name: 'hideUntilEndOfToday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until I show it again`
+  String get hideUntilShown {
+    return Intl.message(
+      'Until I show it again',
+      name: 'hideUntilShown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order rules`
+  String get orderRules {
+    return Intl.message('Order rules', name: 'orderRules', desc: '', args: []);
+  }
+
+  /// `Couldn't load the order rules.`
+  String get orderRulesUnavailable {
+    return Intl.message(
+      'Couldn\'t load the order rules.',
+      name: 'orderRulesUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum order value`
+  String get minimumOrderValue {
+    return Intl.message(
+      'Minimum order value',
+      name: 'minimumOrderValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get noMinimum {
+    return Intl.message('None', name: 'noMinimum', desc: '', args: []);
+  }
+
+  /// `Preparation time`
+  String get defaultPreparationTime {
+    return Intl.message(
+      'Preparation time',
+      name: 'defaultPreparationTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{minutes} min`
+  String minutesShort(String minutes) {
+    return Intl.message(
+      '$minutes min',
+      name: 'minutesShort',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Delivery fee`
+  String get deliveryFeeLabel {
+    return Intl.message(
+      'Delivery fee',
+      name: 'deliveryFeeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{value} MRU per km`
+  String deliveryFeePerKm(String value) {
+    return Intl.message(
+      '$value MRU per km',
+      name: 'deliveryFeePerKm',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `{value} MRU`
+  String deliveryFeeFixed(String value) {
+    return Intl.message(
+      '$value MRU',
+      name: 'deliveryFeeFixed',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `{value}% of the order`
+  String deliveryFeePercent(String value) {
+    return Intl.message(
+      '$value% of the order',
+      name: 'deliveryFeePercent',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `Free`
+  String get deliveryFeeFree {
+    return Intl.message('Free', name: 'deliveryFeeFree', desc: '', args: []);
+  }
+
+  /// `Delivery fee paid by`
+  String get deliveryFeePaidBy {
+    return Intl.message(
+      'Delivery fee paid by',
+      name: 'deliveryFeePaidBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer`
+  String get feePaidByCustomer {
+    return Intl.message(
+      'Customer',
+      name: 'feePaidByCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your store`
+  String get feePaidByStore {
+    return Intl.message(
+      'Your store',
+      name: 'feePaidByStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX`
+  String get feePaidBySaimpex {
+    return Intl.message(
+      'SAIMPEX',
+      name: 'feePaidBySaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Split: your store {percent}%, the customer the rest`
+  String feePaidSplit(String percent) {
+    return Intl.message(
+      'Split: your store $percent%, the customer the rest',
+      name: 'feePaidSplit',
+      desc: '',
+      args: [percent],
+    );
+  }
+
+  /// `Drivers`
+  String get deliveryModel {
+    return Intl.message('Drivers', name: 'deliveryModel', desc: '', args: []);
+  }
+
+  /// `Your drivers and SAIMPEX drivers`
+  String get deliveryModelBoth {
+    return Intl.message(
+      'Your drivers and SAIMPEX drivers',
+      name: 'deliveryModelBoth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your drivers only`
+  String get deliveryModelOwn {
+    return Intl.message(
+      'Your drivers only',
+      name: 'deliveryModelOwn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX drivers only`
+  String get deliveryModelSaimpex {
+    return Intl.message(
+      'SAIMPEX drivers only',
+      name: 'deliveryModelSaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support.`
+  String get orderRulesSetBySaimpex {
+    return Intl.message(
+      'SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support.',
+      name: 'orderRulesSetBySaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category requests`
+  String get categoryRequests {
+    return Intl.message(
+      'Category requests',
+      name: 'categoryRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Need a category that isn't in the list? Ask SAIMPEX to add it. You can use it once it is approved.`
+  String get categoryRequestsHelp {
+    return Intl.message(
+      'Need a category that isn\'t in the list? Ask SAIMPEX to add it. You can use it once it is approved.',
+      name: 'categoryRequestsHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No requests yet.`
+  String get noCategoryRequests {
+    return Intl.message(
+      'No requests yet.',
+      name: 'noCategoryRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request a new category`
+  String get requestNewCategory {
+    return Intl.message(
+      'Request a new category',
+      name: 'requestNewCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category name`
+  String get categoryName {
+    return Intl.message(
+      'Category name',
+      name: 'categoryName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Why do you need it?`
+  String get requestReasonHint {
+    return Intl.message(
+      'Why do you need it?',
+      name: 'requestReasonHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send for approval`
+  String get sendForApproval {
+    return Intl.message(
+      'Send for approval',
+      name: 'sendForApproval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sent. SAIMPEX will review it.`
+  String get requestSentForReview {
+    return Intl.message(
+      'Sent. SAIMPEX will review it.',
+      name: 'requestSentForReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending`
+  String get requestPending {
+    return Intl.message('Pending', name: 'requestPending', desc: '', args: []);
+  }
+
+  /// `Approved`
+  String get requestApproved {
+    return Intl.message(
+      'Approved',
+      name: 'requestApproved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected`
+  String get requestRejected {
+    return Intl.message(
+      'Rejected',
+      name: 'requestRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX: {note}`
+  String adminNote(String note) {
+    return Intl.message(
+      'SAIMPEX: $note',
+      name: 'adminNote',
+      desc: '',
+      args: [note],
+    );
+  }
+
+  /// `Enter a name and a reason.`
+  String get requestNameAndReason {
+    return Intl.message(
+      'Enter a name and a reason.',
+      name: 'requestNameAndReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Laundry`
+  String get serviceKindLaundry {
+    return Intl.message(
+      'Laundry',
+      name: 'serviceKindLaundry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car wash`
+  String get serviceKindCarWash {
+    return Intl.message(
+      'Car wash',
+      name: 'serviceKindCarWash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home cleaning`
+  String get serviceKindHomeCleaning {
+    return Intl.message(
+      'Home cleaning',
+      name: 'serviceKindHomeCleaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for Pickup`
+  String get laundryWaitingForPickup {
+    return Intl.message(
+      'Waiting for Pickup',
+      name: 'laundryWaitingForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Delivery`
+  String get laundryReadyForDelivery {
+    return Intl.message(
+      'Ready for Delivery',
+      name: 'laundryReadyForDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivered`
+  String get laundryDelivered {
+    return Intl.message(
+      'Delivered',
+      name: 'laundryDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for Vehicle`
+  String get carWashWaitingForVehicle {
+    return Intl.message(
+      'Waiting for Vehicle',
+      name: 'carWashWaitingForVehicle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Pickup`
+  String get carWashReadyForPickup {
+    return Intl.message(
+      'Ready for Pickup',
+      name: 'carWashReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Pickup`
+  String get laundryConfirmPickup {
+    return Intl.message(
+      'Confirm Pickup',
+      name: 'laundryConfirmPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Ready for Delivery`
+  String get laundryMarkReadyForDelivery {
+    return Intl.message(
+      'Mark Ready for Delivery',
+      name: 'laundryMarkReadyForDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Delivered`
+  String get laundryMarkAsDelivered {
+    return Intl.message(
+      'Mark as Delivered',
+      name: 'laundryMarkAsDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Vehicles Received`
+  String get carWashMarkVehiclesReceived {
+    return Intl.message(
+      'Mark Vehicles Received',
+      name: 'carWashMarkVehiclesReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Ready for Pickup`
+  String get carWashMarkReadyForPickup {
+    return Intl.message(
+      'Mark as Ready for Pickup',
+      name: 'carWashMarkReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Slot is fully booked`
+  String get rejectReasonSlotFull {
+    return Intl.message(
+      'Slot is fully booked',
+      name: 'rejectReasonSlotFull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to accept at the selected time`
+  String get rejectReasonTimeUnavailable {
+    return Intl.message(
+      'Unable to accept at the selected time',
+      name: 'rejectReasonTimeUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temporary operational issue`
+  String get rejectReasonOperationalIssue {
+    return Intl.message(
+      'Temporary operational issue',
+      name: 'rejectReasonOperationalIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer estimate ({kg} kg)`
+  String laundryCustomerEstimate(String kg) {
+    return Intl.message(
+      'Customer estimate ($kg kg)',
+      name: 'laundryCustomerEstimate',
+      desc: '',
+      args: [kg],
+    );
+  }
+
+  /// `Actual weight ({kg} kg)`
+  String laundryActualWeight(String kg) {
+    return Intl.message(
+      'Actual weight ($kg kg)',
+      name: 'laundryActualWeight',
+      desc: '',
+      args: [kg],
+    );
+  }
+
+  /// `Pickup slot`
+  String get laundryPickupSlot {
+    return Intl.message(
+      'Pickup slot',
+      name: 'laundryPickupSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery turnaround`
+  String get laundryDeliveryTurnaround {
+    return Intl.message(
+      'Delivery turnaround',
+      name: 'laundryDeliveryTurnaround',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pickup & delivery`
+  String get laundryPickupAndDelivery {
+    return Intl.message(
+      'Pickup & delivery',
+      name: 'laundryPickupAndDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pickup`
+  String get laundryPickup {
+    return Intl.message('Pickup', name: 'laundryPickup', desc: '', args: []);
+  }
+
+  /// `Delivery`
+  String get laundryDelivery {
+    return Intl.message(
+      'Delivery',
+      name: 'laundryDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment status`
+  String get laundryPaymentStatus {
+    return Intl.message(
+      'Payment status',
+      name: 'laundryPaymentStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ADDITIONAL PAYMENT PENDING`
+  String get laundryAdditionalPaymentPending {
+    return Intl.message(
+      'ADDITIONAL PAYMENT PENDING',
+      name: 'laundryAdditionalPaymentPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already paid`
+  String get laundryAlreadyPaid {
+    return Intl.message(
+      'Already paid',
+      name: 'laundryAlreadyPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Final amount`
+  String get laundryFinalAmount {
+    return Intl.message(
+      'Final amount',
+      name: 'laundryFinalAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance due`
+  String get laundryBalanceDue {
+    return Intl.message(
+      'Balance due',
+      name: 'laundryBalanceDue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify weight`
+  String get laundryVerifyWeight {
+    return Intl.message(
+      'Verify weight',
+      name: 'laundryVerifyWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actual weight`
+  String get laundryActualWeightLabel {
+    return Intl.message(
+      'Actual weight',
+      name: 'laundryActualWeightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price breakdown`
+  String get laundryPriceBreakdown {
+    return Intl.message(
+      'Price breakdown',
+      name: 'laundryPriceBreakdown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{rate} MRU / kg`
+  String laundryRatePerKg(String rate) {
+    return Intl.message(
+      '$rate MRU / kg',
+      name: 'laundryRatePerKg',
+      desc: '',
+      args: [rate],
+    );
+  }
+
+  /// `Invoice difference`
+  String get laundryInvoiceDifference {
+    return Intl.message(
+      'Invoice difference',
+      name: 'laundryInvoiceDifference',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Payment Request`
+  String get laundrySendPaymentRequest {
+    return Intl.message(
+      'Send Payment Request',
+      name: 'laundrySendPaymentRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicles`
+  String get carWashVehicles {
+    return Intl.message(
+      'Vehicles',
+      name: 'carWashVehicles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service location`
+  String get carWashServiceLocation {
+    return Intl.message(
+      'Service location',
+      name: 'carWashServiceLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add-ons`
+  String get carWashAddOns {
+    return Intl.message('Add-ons', name: 'carWashAddOns', desc: '', args: []);
+  }
+
+  /// `Add and edit these services on the SAIMPEX vendor web panel for now.`
+  String get serviceEditOnWebPanel {
+    return Intl.message(
+      'Add and edit these services on the SAIMPEX vendor web panel for now.',
+      name: 'serviceEditOnWebPanel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This vendor type isn't in the app yet. Please use the SAIMPEX vendor web panel.`
+  String get vendorTypeUseWebPanel {
+    return Intl.message(
+      'This vendor type isn\'t in the app yet. Please use the SAIMPEX vendor web panel.',
+      name: 'vendorTypeUseWebPanel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
@@ -750,6 +751,11 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
+            _buildSettingRow(
+              icon: Icons.rule_outlined,
+              title: S.of(context).orderRules,
+              onTap: OrderRulesScreen.open,
+            ),
             _buildSettingRow(
               icon: Icons.support_agent_outlined,
               title: S.of(context).supportMessages,

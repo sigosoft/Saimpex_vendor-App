@@ -3,8 +3,11 @@ import 'package:saimpex_vendor/model/OrderDetailsModel.dart';
 import 'package:saimpex_vendor/utils/printing/esc_pos_receipt_builder.dart';
 
 void main() {
+  // buildReceipt loads the logo from the asset bundle.
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('EscPosReceiptBuilder', () {
-    test('appends feed and cut commands for 80mm receipt', () {
+    test('appends feed and cut commands for 80mm receipt', () async {
       final builder = EscPosReceiptBuilder();
       final data = Data(
         id: 101,
@@ -28,8 +31,8 @@ void main() {
         ],
       );
 
-      final result = builder.build80mmReceipt(data);
-      final bytes = result.bytes;
+      final result = await builder.buildReceipt(data);
+      final bytes = result.bytes80mm;
 
       final feedIndex = bytes.lastIndexOf(0x1B);
       expect(feedIndex, greaterThan(0));
@@ -39,7 +42,7 @@ void main() {
       expect(bytes.sublist(cutStart), equals([0x1D, 0x56, 0x00]));
     });
 
-    test('renders order item and total in preview', () {
+    test('renders order item and total in preview', () async {
       final builder = EscPosReceiptBuilder();
       final data = Data(
         orderCode: 'ORD-77',
@@ -57,13 +60,13 @@ void main() {
         ],
       );
 
-      final result = builder.build80mmReceipt(data);
+      final result = await builder.buildReceipt(data);
       expect(result.preview.contains('Fish Sandwich'), isTrue);
-      expect(result.preview.contains('TOTAL'), isTrue);
-      expect(result.preview.contains('15.00 MRU'), isTrue);
+      // Ticket layout since V7: "Total" row, amount without the currency.
+      expect(RegExp(r'Total\s+15\.00').hasMatch(result.preview), isTrue);
     });
 
-    test('supports basket orders in receipt rows', () {
+    test('supports basket orders in receipt rows', () async {
       final builder = EscPosReceiptBuilder();
       final data = Data(
         orderCode: 'BASK-1',
@@ -82,7 +85,7 @@ void main() {
         ],
       );
 
-      final result = builder.build80mmReceipt(data);
+      final result = await builder.buildReceipt(data);
       expect(result.preview.contains('Family Basket'), isTrue);
       expect(result.preview.contains('25.00'), isTrue);
     });

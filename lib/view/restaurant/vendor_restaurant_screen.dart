@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
@@ -24,7 +25,7 @@ import '../../controller/menucontroller.dart' as menu_ctrl;
 import '../../controller/item_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../configs/ApiConfigs.dart';
-import '../../Utils/Utils.dart';
+import '../../utils/utils.dart';
 import '../../utils/widgets/app_loader.dart';
 import '../../utils/widgets/no_data_widget.dart';
 
@@ -1405,7 +1406,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
               : (item.categoryNameEn ?? "");
           final price = "${item.price} MRU";
-          return _foodItem(
+          final card = _foodItem(
             name,
             price,
             item.menuItemId?.toString() ?? item.id?.toString() ?? "",
@@ -1413,6 +1414,22 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             item.menuItemId?.toString() ?? item.id.toString(),
             category: category,
             availabilityStatus: item.availableStatus,
+          );
+          // Hide / unhide (§6.21): grocery and local store rows are menu
+          // rows, so the row id is the menu_id.
+          if (item.id == null) return card;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              card,
+              ProductVisibilityBar(
+                key: ValueKey('vis-${item.id}'),
+                vertical: groceryVerticalFor(profileController.vendorType),
+                menuId: item.id!,
+                initial: item.visibility,
+              ),
+              const SizedBox(height: 8),
+            ],
           );
         }).toList(),
         ...filteredRestaurantItems.map((item) {

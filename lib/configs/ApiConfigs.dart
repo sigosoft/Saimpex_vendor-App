@@ -210,6 +210,16 @@ class ApiEndPoints {
   // Product: generic name etc. (API §6.36).
   static String pharmacyMenuDetails = "pharmacyMenuDetails";
   static String pharmacyProductFields = "pharmacyProductFields";
+  // Generic equivalent search across pharmacies (API doc §6.55, #130).
+  static String pharmacyGenericSearch = "pharmacyGenericSearch";
+  // Hide / unhide a product; read-only order rules (API doc §6.21, §6.22).
+  static String updateProductVisibility = "updateProductVisibility";
+  static String orderRules = "orderRules";
+  // New category requests for Admin approval (task V8).
+  static String pharmacyCategoryRequests = "pharmacyCategoryRequests";
+  static String requestPharmacyCategory = "requestPharmacyCategory";
+  static String waterCategoryRequests = "waterCategoryRequests";
+  static String requestWaterCategory = "requestWaterCategory";
   static String updatePharmacyItemAvailabilityStatus =
       "updatePharmacyItemAvailabilityStatus";
   static String updatePharmacyMenuItem = "updatePharmacyMenuItem";

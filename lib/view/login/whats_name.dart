@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import '../../controller/otp_controller.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
-import '../../utils/Widgets/custom_button.dart';
-import '../../utils/Widgets/custom_text_form_field.dart';
+import '../../utils/widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_button.dart';
+import '../../utils/widgets/custom_text_form_field.dart';
 
 class WhatsName extends StatefulWidget {
   const WhatsName({super.key});

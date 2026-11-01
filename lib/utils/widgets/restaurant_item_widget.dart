@@ -9,7 +9,7 @@ import 'package:saimpex_vendor/resources/colors.dart';
 // import '../../config/api_configs.dart';
 import '../../generated/l10n.dart';
 import '../../view/restaurant/restaurant_details.dart';
-import '../Utils.dart';
+import '../utils.dart';
 
 class RestaurantItemWidget extends StatelessWidget {
   final String id;

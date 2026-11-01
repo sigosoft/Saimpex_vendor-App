@@ -9,7 +9,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_button.dart';
+import '../../utils/widgets/custom_button.dart';
 
 class NeedAnUpdate extends StatelessWidget {
   NeedAnUpdate({super.key});

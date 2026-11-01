@@ -9,9 +9,9 @@ import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
-import 'package:saimpex_vendor/utils/Utils.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:saimpex_vendor/view/splash/Splash.dart';
+import 'package:saimpex_vendor/view/splash/splash.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'generated/l10n.dart';
 

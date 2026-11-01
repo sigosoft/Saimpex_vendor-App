@@ -2382,5 +2382,126 @@
     }
   },
   "pharmacyGenericName": "Nom générique",
-  "pharmacyGenericNameHint": "ex. Paracétamol"
+  "pharmacyGenericNameHint": "ex. Paracétamol",
+  "pharmacyGenericEquivalent": "Équivalent générique",
+  "pharmacyGenericEquivalentHelp": "La version générique que les clients peuvent choisir à la place. Elle peut venir d'une autre pharmacie.",
+  "pharmacyGenericSearchHint": "Rechercher par nom ou nom générique",
+  "pharmacyGenericRemoveLink": "Retirer le lien",
+  "pharmacyGenericTypeTwo": "Tapez au moins 2 lettres",
+  "pharmacyGenericNoMatch": "Aucun produit trouvé",
+  "pharmacyGenericNone": "Aucun",
+  "productVisible": "Visible par les clients",
+  "productHiddenForever": "Masqué jusqu'à ce que vous l'affichiez",
+  "productHiddenUntil": "Masqué jusqu'à {time}",
+  "@productHiddenUntil": {
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "hideProduct": "Masquer",
+  "showProductNow": "Afficher",
+  "hideProductTitle": "Masquer ce produit",
+  "hideProductHelp": "Les clients ne peuvent ni le voir ni le commander tant qu'il est masqué.",
+  "hideFor1Hour": "Pendant 1 heure",
+  "hideFor4Hours": "Pendant 4 heures",
+  "hideUntilEndOfToday": "Jusqu'à la fin de la journée",
+  "hideUntilShown": "Jusqu'à ce que je l'affiche",
+  "orderRules": "Règles de commande",
+  "orderRulesUnavailable": "Impossible de charger les règles de commande.",
+  "minimumOrderValue": "Commande minimum",
+  "noMinimum": "Aucune",
+  "defaultPreparationTime": "Temps de préparation",
+  "minutesShort": "{minutes} min",
+  "@minutesShort": {
+    "placeholders": {"minutes": {"type": "String"}}
+  },
+  "deliveryFeeLabel": "Frais de livraison",
+  "deliveryFeePerKm": "{value} MRU par km",
+  "@deliveryFeePerKm": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFixed": "{value} MRU",
+  "@deliveryFeeFixed": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeePercent": "{value} % de la commande",
+  "@deliveryFeePercent": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFree": "Gratuit",
+  "deliveryFeePaidBy": "Frais payés par",
+  "feePaidByCustomer": "Le client",
+  "feePaidByStore": "Votre magasin",
+  "feePaidBySaimpex": "SAIMPEX",
+  "feePaidSplit": "Partagés : votre magasin {percent} %, le client le reste",
+  "@feePaidSplit": {
+    "placeholders": {"percent": {"type": "String"}}
+  },
+  "deliveryModel": "Livreurs",
+  "deliveryModelBoth": "Vos livreurs et ceux de SAIMPEX",
+  "deliveryModelOwn": "Vos livreurs uniquement",
+  "deliveryModelSaimpex": "Livreurs SAIMPEX uniquement",
+  "orderRulesSetBySaimpex": "SAIMPEX fixe ces règles. Pour les changer, écrivez à SAIMPEX depuis Messages du support ou Aide et support.",
+  "categoryRequests": "Demandes de catégorie",
+  "categoryRequestsHelp": "Une catégorie manque ? Demandez à SAIMPEX de l'ajouter. Vous pourrez l'utiliser une fois approuvée.",
+  "noCategoryRequests": "Aucune demande pour l'instant.",
+  "requestNewCategory": "Demander une catégorie",
+  "categoryName": "Nom de la catégorie",
+  "requestReasonHint": "Pourquoi en avez-vous besoin ?",
+  "sendForApproval": "Envoyer pour approbation",
+  "requestSentForReview": "Envoyé. SAIMPEX va l'examiner.",
+  "requestPending": "En attente",
+  "requestApproved": "Approuvée",
+  "requestRejected": "Refusée",
+  "adminNote": "SAIMPEX : {note}",
+  "@adminNote": {
+    "placeholders": {"note": {"type": "String"}}
+  },
+  "requestNameAndReason": "Saisissez un nom et une raison.",
+  "serviceKindLaundry": "Blanchisserie",
+  "serviceKindCarWash": "Lavage auto",
+  "serviceKindHomeCleaning": "Ménage",
+  "laundryWaitingForPickup": "En attente de retrait",
+  "laundryReadyForDelivery": "Prête à livrer",
+  "laundryDelivered": "Livrée",
+  "carWashWaitingForVehicle": "En attente du véhicule",
+  "carWashReadyForPickup": "Prêt à récupérer",
+  "laundryConfirmPickup": "Confirmer le retrait",
+  "laundryMarkReadyForDelivery": "Marquer prête à livrer",
+  "laundryMarkAsDelivered": "Marquer comme livrée",
+  "carWashMarkVehiclesReceived": "Véhicules reçus",
+  "carWashMarkReadyForPickup": "Marquer prêt à récupérer",
+  "rejectReasonSlotFull": "Le créneau est complet",
+  "rejectReasonTimeUnavailable": "Impossible d'accepter à l'heure choisie",
+  "rejectReasonOperationalIssue": "Problème opérationnel temporaire",
+  "laundryCustomerEstimate": "Estimation du client ({kg} kg)",
+  "@laundryCustomerEstimate": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryActualWeight": "Poids réel ({kg} kg)",
+  "@laundryActualWeight": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryPickupSlot": "Créneau de retrait",
+  "laundryDeliveryTurnaround": "Délai de livraison",
+  "laundryPickupAndDelivery": "Retrait et livraison",
+  "laundryPickup": "Retrait",
+  "laundryDelivery": "Livraison",
+  "laundryPaymentStatus": "Statut du paiement",
+  "laundryAdditionalPaymentPending": "PAIEMENT SUPPLÉMENTAIRE EN ATTENTE",
+  "laundryAlreadyPaid": "Déjà payé",
+  "laundryFinalAmount": "Montant final",
+  "laundryBalanceDue": "Reste à payer",
+  "laundryVerifyWeight": "Vérifier le poids",
+  "laundryActualWeightLabel": "Poids réel",
+  "laundryPriceBreakdown": "Détail du prix",
+  "laundryRatePerKg": "{rate} MRU / kg",
+  "@laundryRatePerKg": {
+    "placeholders": {"rate": {"type": "String"}}
+  },
+  "laundryInvoiceDifference": "Différence de facture",
+  "laundrySendPaymentRequest": "Envoyer la demande de paiement",
+  "carWashVehicles": "Véhicules",
+  "carWashServiceLocation": "Lieu du service",
+  "carWashAddOns": "Options",
+  "serviceEditOnWebPanel": "Pour l'instant, ajoutez et modifiez ces services sur le portail web vendeur SAIMPEX.",
+  "vendorTypeUseWebPanel": "Ce type de vendeur n'est pas encore dans l'application. Utilisez le portail web vendeur SAIMPEX."
 }

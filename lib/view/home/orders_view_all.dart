@@ -15,7 +15,7 @@ import 'package:saimpex_vendor/controller/order_details_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/utils.dart';
 
 class OrdersViewAll extends StatefulWidget {

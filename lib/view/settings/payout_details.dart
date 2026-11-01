@@ -6,8 +6,8 @@ import 'package:saimpex_vendor/resources/colors.dart';
 
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
-import 'package:saimpex_vendor/Utils/Utils.dart';
-import 'package:saimpex_vendor/Utils/widgets/app_loader.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 
 class PayoutDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> payout;

@@ -2381,5 +2381,126 @@
     }
   },
   "pharmacyGenericName": "الاسم العلمي",
-  "pharmacyGenericNameHint": "مثال: باراسيتامول"
+  "pharmacyGenericNameHint": "مثال: باراسيتامول",
+  "pharmacyGenericEquivalent": "البديل الجنيس",
+  "pharmacyGenericEquivalentHelp": "النسخة الجنيسة التي يمكن للعملاء اختيارها بدلاً منه. قد تكون منتجًا من صيدلية أخرى.",
+  "pharmacyGenericSearchHint": "ابحث بالاسم أو الاسم العلمي",
+  "pharmacyGenericRemoveLink": "إزالة الربط",
+  "pharmacyGenericTypeTwo": "اكتب حرفين على الأقل",
+  "pharmacyGenericNoMatch": "لم يتم العثور على منتج",
+  "pharmacyGenericNone": "لا يوجد",
+  "productVisible": "ظاهر للعملاء",
+  "productHiddenForever": "مخفي حتى تظهره",
+  "productHiddenUntil": "مخفي حتى {time}",
+  "@productHiddenUntil": {
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "hideProduct": "إخفاء",
+  "showProductNow": "إظهار الآن",
+  "hideProductTitle": "إخفاء هذا المنتج",
+  "hideProductHelp": "لا يستطيع العملاء رؤيته أو طلبه ما دام مخفيًا.",
+  "hideFor1Hour": "لمدة ساعة",
+  "hideFor4Hours": "لمدة 4 ساعات",
+  "hideUntilEndOfToday": "حتى نهاية اليوم",
+  "hideUntilShown": "حتى أظهره مرة أخرى",
+  "orderRules": "قواعد الطلب",
+  "orderRulesUnavailable": "تعذر تحميل قواعد الطلب.",
+  "minimumOrderValue": "الحد الأدنى للطلب",
+  "noMinimum": "لا يوجد",
+  "defaultPreparationTime": "وقت التحضير",
+  "minutesShort": "{minutes} د",
+  "@minutesShort": {
+    "placeholders": {"minutes": {"type": "String"}}
+  },
+  "deliveryFeeLabel": "رسوم التوصيل",
+  "deliveryFeePerKm": "{value} أوقية لكل كم",
+  "@deliveryFeePerKm": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFixed": "{value} أوقية",
+  "@deliveryFeeFixed": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeePercent": "{value}% من الطلب",
+  "@deliveryFeePercent": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFree": "مجاني",
+  "deliveryFeePaidBy": "يدفع رسوم التوصيل",
+  "feePaidByCustomer": "العميل",
+  "feePaidByStore": "متجرك",
+  "feePaidBySaimpex": "SAIMPEX",
+  "feePaidSplit": "مقسومة: متجرك {percent}%، والعميل الباقي",
+  "@feePaidSplit": {
+    "placeholders": {"percent": {"type": "String"}}
+  },
+  "deliveryModel": "السائقون",
+  "deliveryModelBoth": "سائقوك وسائقو SAIMPEX",
+  "deliveryModelOwn": "سائقوك فقط",
+  "deliveryModelSaimpex": "سائقو SAIMPEX فقط",
+  "orderRulesSetBySaimpex": "تحدد SAIMPEX هذه القواعد. لتغييرها، راسل SAIMPEX من رسائل الدعم أو المساعدة والدعم.",
+  "categoryRequests": "طلبات الفئات",
+  "categoryRequestsHelp": "هل تحتاج فئة غير موجودة في القائمة؟ اطلب من SAIMPEX إضافتها. يمكنك استخدامها بعد الموافقة.",
+  "noCategoryRequests": "لا توجد طلبات بعد.",
+  "requestNewCategory": "طلب فئة جديدة",
+  "categoryName": "اسم الفئة",
+  "requestReasonHint": "لماذا تحتاجها؟",
+  "sendForApproval": "إرسال للموافقة",
+  "requestSentForReview": "تم الإرسال. ستراجعه SAIMPEX.",
+  "requestPending": "قيد الانتظار",
+  "requestApproved": "تمت الموافقة",
+  "requestRejected": "مرفوض",
+  "adminNote": "SAIMPEX: {note}",
+  "@adminNote": {
+    "placeholders": {"note": {"type": "String"}}
+  },
+  "requestNameAndReason": "أدخل الاسم والسبب.",
+  "serviceKindLaundry": "مغسلة",
+  "serviceKindCarWash": "غسيل السيارات",
+  "serviceKindHomeCleaning": "تنظيف المنازل",
+  "laundryWaitingForPickup": "بانتظار الاستلام",
+  "laundryReadyForDelivery": "جاهز للتوصيل",
+  "laundryDelivered": "تم التوصيل",
+  "carWashWaitingForVehicle": "بانتظار المركبة",
+  "carWashReadyForPickup": "جاهزة للاستلام",
+  "laundryConfirmPickup": "تأكيد الاستلام",
+  "laundryMarkReadyForDelivery": "جاهز للتوصيل",
+  "laundryMarkAsDelivered": "تم التوصيل",
+  "carWashMarkVehiclesReceived": "تم استلام المركبات",
+  "carWashMarkReadyForPickup": "جاهزة للاستلام",
+  "rejectReasonSlotFull": "الموعد محجوز بالكامل",
+  "rejectReasonTimeUnavailable": "لا يمكن القبول في الوقت المحدد",
+  "rejectReasonOperationalIssue": "مشكلة تشغيلية مؤقتة",
+  "laundryCustomerEstimate": "تقدير العميل ({kg} كغ)",
+  "@laundryCustomerEstimate": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryActualWeight": "الوزن الفعلي ({kg} كغ)",
+  "@laundryActualWeight": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryPickupSlot": "موعد الاستلام",
+  "laundryDeliveryTurnaround": "موعد التوصيل",
+  "laundryPickupAndDelivery": "الاستلام والتوصيل",
+  "laundryPickup": "الاستلام",
+  "laundryDelivery": "التوصيل",
+  "laundryPaymentStatus": "حالة الدفع",
+  "laundryAdditionalPaymentPending": "دفعة إضافية معلقة",
+  "laundryAlreadyPaid": "المدفوع",
+  "laundryFinalAmount": "المبلغ النهائي",
+  "laundryBalanceDue": "المتبقي",
+  "laundryVerifyWeight": "التحقق من الوزن",
+  "laundryActualWeightLabel": "الوزن الفعلي",
+  "laundryPriceBreakdown": "تفاصيل السعر",
+  "laundryRatePerKg": "{rate} أوقية / كغ",
+  "@laundryRatePerKg": {
+    "placeholders": {"rate": {"type": "String"}}
+  },
+  "laundryInvoiceDifference": "فرق الفاتورة",
+  "laundrySendPaymentRequest": "إرسال طلب الدفع",
+  "carWashVehicles": "المركبات",
+  "carWashServiceLocation": "مكان الخدمة",
+  "carWashAddOns": "الإضافات",
+  "serviceEditOnWebPanel": "أضف هذه الخدمات وعدّلها من بوابة البائع على الويب حاليًا.",
+  "vendorTypeUseWebPanel": "هذا النوع من البائعين غير متاح في التطبيق بعد. يرجى استخدام بوابة البائع على الويب."
 }

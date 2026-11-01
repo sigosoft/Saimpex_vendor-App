@@ -19,9 +19,9 @@ import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart'
     hide RestaurantMenu;
 import 'package:saimpex_vendor/model/restaurant_menus_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
-import 'package:saimpex_vendor/view/Login/login.dart';
+import 'package:saimpex_vendor/view/login/login.dart';
 
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';

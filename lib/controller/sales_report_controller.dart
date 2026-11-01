@@ -8,11 +8,11 @@ import 'package:saimpex_vendor/model/sales_report_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../configs/ApiConfigs.dart';
 import '../configs/Dioclient.dart';
 import '../generated/l10n.dart';
-import '../view/Login/Login.dart';
+import '../view/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
