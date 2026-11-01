@@ -89,11 +89,18 @@ class ServiceKinds {
 
   /// Label of the main button for a booking in [status] (not new, not
   /// done), matching the server's next step.
-  static String actionLabel(BuildContext context, int status) {
+  static String actionLabel(BuildContext context, int status, {bool needsCleaner = false}) {
     final s = S.of(context);
+    if (isCleaning && needsCleaner) return s.assignCleaner;
     switch (current) {
       case ServiceKind.homeCleaning:
-        return status == 3 ? s.cleaningMarkAsCompleted : s.cleaningStartCleaning;
+        // Backend flow (VendorScreenData): 2 → On the Way, 8 → Start Cleaning,
+        // 3 → Completed. Assign Cleaner comes first when the booking needs one.
+        return switch (status) {
+          3 => s.cleaningMarkAsCompleted,
+          8 => s.cleaningStartCleaning,
+          _ => s.cleaningMarkOnTheWay,
+        };
       case ServiceKind.laundry:
         return switch (status) {
           2 => s.laundryConfirmPickup,

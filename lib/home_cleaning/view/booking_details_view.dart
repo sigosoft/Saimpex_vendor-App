@@ -8,6 +8,9 @@ import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
+import 'package:saimpex_vendor/home_cleaning/view/cleaners/assign_cleaner_view.dart';
+import 'package:saimpex_vendor/home_cleaning/view/cleaners/cleaner_widgets.dart';
+import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_conversation_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_action.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
@@ -190,6 +193,18 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         LaundryBookingBlock(booking: b),
       ],
       if (ServiceKinds.isCarWash) CarWashBookingBlock(booking: b),
+      // Home cleaning: the assigned cleaner with Change (V16, Figma 10868:12059).
+      if (ServiceKinds.isCleaning && b.cleaner != null) ...[
+        const SizedBox(height: 12),
+        _AssignedCleanerCard(
+          cleaner: b.cleaner!,
+          canChange: !b.isCompleted && !b.isCancelled && !b.isInProgress,
+          onChange: () async {
+            final changed = await AssignCleanerView.open(context, b);
+            if (changed == true) _load();
+          },
+        ),
+      ],
       if (ServiceKinds.isCleaning && b.spaceLines.isNotEmpty) ...[
         const SizedBox(height: 16),
         _sectionLabel(S.of(context).cleaningSpacesHeader),
@@ -236,7 +251,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 16),
         if (b.isInProgress || b.isAccepted || b.isReady)
           _primaryButton(
-            ServiceKinds.actionLabel(context, b.status),
+            ServiceKinds.actionLabel(context, b.status, needsCleaner: b.needsCleaner),
             () => _act(reject: false),
           )
         else
@@ -1086,6 +1101,54 @@ class _PayRow extends StatelessWidget {
           child: Text(value, textAlign: TextAlign.end, style: valueStyle),
         ),
       ],
+    );
+  }
+}
+
+/// "Assigned cleaner" card with Change (V16).
+class _AssignedCleanerCard extends StatelessWidget {
+  const _AssignedCleanerCard({required this.cleaner, required this.canChange, required this.onChange});
+
+  final Cleaner cleaner;
+  final bool canChange;
+  final VoidCallback onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cleanerBorder),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(s.assignedCleaner, style: cleanerText(12, FontWeight.w500, cleanerMuted)),
+        const SizedBox(height: 8),
+        Row(children: [
+          CleanerAvatar(cleaner: cleaner),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(cleaner.name, style: cleanerText(15, FontWeight.w600, cleanerInk)),
+              Text(
+                [if (cleaner.rating != null) '${cleaner.rating!.toStringAsFixed(1)} ★', if ((cleaner.phone ?? '').isNotEmpty) cleaner.phone!].join(' • '),
+                style: cleanerText(12, FontWeight.w400, cleanerMuted),
+              ),
+            ]),
+          ),
+          if (canChange)
+            OutlinedButton(
+              onPressed: onChange,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: cleanerOrange),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: Text(s.change, style: cleanerText(13, FontWeight.w600, cleanerOrange)),
+            ),
+        ]),
+      ]),
     );
   }
 }

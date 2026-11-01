@@ -36,6 +36,10 @@ class _StoreProfileViewState extends State<StoreProfileView> {
   ProfileData? _profileData;
   Map<String, dynamic>? _rawVendorData;
   List<ReviewItem> _reviews = [];
+
+  /// Home cleaning: the cleaner's review per order, from `vendorapp/profile`
+  /// `reviews[].cleaner_review` (API doc §6.39, task V16).
+  Map<int, Map<String, dynamic>> _cleanerReviews = {};
   bool _isLoading = true;
 
   @override
@@ -119,9 +123,19 @@ class _StoreProfileViewState extends State<StoreProfileView> {
                 dataMap['data'] as Map<String, dynamic>?)
             : null;
 
+        final rawReviews = dataMap['data'] is Map ? (dataMap['data'] as Map)['reviews'] : null;
+        final cleanerReviews = <int, Map<String, dynamic>>{};
+        if (rawReviews is List) {
+          for (final rv in rawReviews.whereType<Map>()) {
+            final orderId = int.tryParse('${rv['order_id'] ?? ''}');
+            final cr = rv['cleaner_review'];
+            if (orderId != null && cr is Map) cleanerReviews[orderId] = Map<String, dynamic>.from(cr);
+          }
+        }
         setState(() {
           _profileData = fetchedData;
           _rawVendorData = rawData;
+          _cleanerReviews = cleanerReviews;
         });
       }
     } catch (e) {
@@ -399,7 +413,7 @@ class _StoreProfileViewState extends State<StoreProfileView> {
                             const SizedBox(height: 10),
                             if (_reviews.isNotEmpty)
                               for (var i = 0; i < _reviews.length; i++) ...[
-                                _ReviewCard(review: _reviews[i]),
+                                _ReviewCard(review: _reviews[i], cleanerReview: _cleanerReviews[_reviews[i].orderId]),
                                 if (i < _reviews.length - 1) const SizedBox(height: 10),
                               ]
                             else
@@ -680,9 +694,12 @@ class _ReviewsHeader extends StatelessWidget {
 }
 
 class _ReviewCard extends StatelessWidget {
-  const _ReviewCard({this.review});
+  const _ReviewCard({this.review, this.cleanerReview});
 
   final ReviewItem? review;
+
+  /// Home cleaning: the customer's review of the cleaner on that booking.
+  final Map<String, dynamic>? cleanerReview;
 
   String _formatDate(String? raw, String locale) {
     if (raw == null || raw.trim().isEmpty || raw == 'null') return '';
@@ -853,6 +870,36 @@ class _ReviewCard extends StatelessWidget {
                 color: const Color(0xFF3F4555),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
+              ),
+            ),
+          ],
+          if (cleanerReview != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7ED),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    [
+                      S.of(context).cleanerReviewOf('${cleanerReview!['cleaner_name'] ?? ''}'),
+                      if (cleanerReview!['rating'] != null) '${double.tryParse('${cleanerReview!['rating']}')?.toStringAsFixed(1) ?? cleanerReview!['rating']} ★',
+                    ].join('  ·  '),
+                    style: appFont('Inter', color: const Color(0xFF9A3412), fontWeight: FontWeight.w600, fontSize: 12),
+                  ),
+                  if ('${cleanerReview!['comment'] ?? ''}'.trim().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${cleanerReview!['comment']}'.trim(),
+                      style: appFont('Inter', color: const Color(0xFF3F4555), fontWeight: FontWeight.w500, fontSize: 13),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],

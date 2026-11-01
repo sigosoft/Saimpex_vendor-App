@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
+import 'package:saimpex_vendor/home_cleaning/view/cleaners/my_cleaners_view.dart';
 import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
@@ -751,6 +753,14 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
+            if (ServiceKinds.isCleaning)
+              _buildSettingRow(
+                icon: Icons.people_alt_outlined,
+                title: S.of(context).myCleaners,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const MyCleanersView()),
+                ),
+              ),
             _buildSettingRow(
               icon: Icons.rule_outlined,
               title: S.of(context).orderRules,

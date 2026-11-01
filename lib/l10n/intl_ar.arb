@@ -2546,5 +2546,44 @@
   "addOnDescriptionHint": "وصف قصير",
   "minKm": "من",
   "maxKm": "إلى",
-  "laundryService": "الخدمة"
+  "laundryService": "الخدمة",
+  "change": "تغيير",
+  "fullName": "الاسم الكامل",
+  "addPhoto": "إضافة صورة",
+  "bookingHash": "الحجز #{code}",
+  "@bookingHash": {
+    "placeholders": {"code": {"type": "String"}}
+  },
+  "cleaningMarkOnTheWay": "في الطريق",
+  "myCleaners": "عمال النظافة",
+  "addCleaner": "إضافة عامل",
+  "editCleaner": "تعديل العامل",
+  "saveCleaner": "حفظ العامل",
+  "cleanerNameHint": "مثال: فاتو با",
+  "cleanerActive": "نشط",
+  "cleanerActiveHelp": "يمكن تعيين العمال النشطين فقط",
+  "cleanerFilterAll": "الكل",
+  "cleanerAvailable": "متاح",
+  "cleanerBusy": "مشغول",
+  "cleanerInactive": "غير نشط",
+  "cleanerDeactivated": "معطل",
+  "cleanerDeactivate": "تعطيل",
+  "cleanerActivate": "تفعيل",
+  "cleanerNew": "جديد",
+  "cleanerReviewsCount": "{count} تقييم",
+  "@cleanerReviewsCount": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "noCleanersYet": "لا يوجد عمال بعد.",
+  "assignCleaner": "تعيين عامل",
+  "assignCleanerNamed": "تعيين {name}",
+  "@assignCleanerNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "searchCleaner": "ابحث عن عامل",
+  "assignedCleaner": "العامل المعيّن",
+  "cleanerReviewOf": "تقييم العامل: {name}",
+  "@cleanerReviewOf": {
+    "placeholders": {"name": {"type": "String"}}
+  }
 }

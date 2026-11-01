@@ -1317,7 +1317,7 @@ class _BookingCard extends StatelessWidget {
                   child: busy
                       ? const _ButtonSpinner()
                       : Text(
-                          ServiceKinds.actionLabel(context, booking.status),
+                          ServiceKinds.actionLabel(context, booking.status, needsCleaner: booking.needsCleaner),
                           style: appFont('Inter', 
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

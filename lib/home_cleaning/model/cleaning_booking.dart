@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
+import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 
 /// Home cleaning order statuses (vendor_type 9) as used by
@@ -104,6 +105,8 @@ class CleaningBooking {
     this.rejectReason,
     this.rejectNote,
     this.raw = const {},
+    this.cleaner,
+    this.needsCleaner = false,
   });
 
   final int id;
@@ -146,6 +149,11 @@ class CleaningBooking {
   /// `pickup_slot`, `delivery_turnaround`, `estimate_kg`, `rate_per_kg`,
   /// `actual_kg`, `balance_due`…
   final Map<String, dynamic> raw;
+
+  /// Home cleaning (§6.39, V16): the assigned cleaner, and whether the
+  /// booking is accepted and still needs one (next step Assign Cleaner).
+  final Cleaner? cleaner;
+  final bool needsCleaner;
 
   /// Laundry / car wash: Ready for Delivery / Ready for Pickup.
   bool get isReady => status == 4;
@@ -242,6 +250,8 @@ class CleaningBooking {
       rejectReason: _str(json['reject_reason']),
       rejectNote: _str(json['reject_note']),
       raw: json,
+      cleaner: Cleaner.fromJson(json['cleaner']),
+      needsCleaner: json['needs_cleaner'] == true || json['needs_cleaner'].toString() == '1' || json['next_action_key'] == 'assign_cleaner',
     );
   }
 }
