@@ -10890,6 +10890,116 @@ class S {
       args: [name],
     );
   }
+
+  /// `Closed`
+  String get closed {
+    return Intl.message('Closed', name: 'closed', desc: '', args: []);
+  }
+
+  /// `Booking slots`
+  String get bookingSlots {
+    return Intl.message(
+      'Booking slots',
+      name: 'bookingSlots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available`
+  String get slotAvailable {
+    return Intl.message('Available', name: 'slotAvailable', desc: '', args: []);
+  }
+
+  /// `Unavailable`
+  String get slotUnavailable {
+    return Intl.message(
+      'Unavailable',
+      name: 'slotUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum bookings per slot`
+  String get maxBookingsPerSlot {
+    return Intl.message(
+      'Maximum bookings per slot',
+      name: 'maxBookingsPerSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open · accepting bookings`
+  String get acceptingBookings {
+    return Intl.message(
+      'Open · accepting bookings',
+      name: 'acceptingBookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn off to stop new bookings.`
+  String get acceptingBookingsHelp {
+    return Intl.message(
+      'Turn off to stop new bookings.',
+      name: 'acceptingBookingsHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as busy`
+  String get markAsBusy {
+    return Intl.message('Mark as busy', name: 'markAsBusy', desc: '', args: []);
+  }
+
+  /// `Customers see you as busy and can't book for now.`
+  String get markAsBusyHelp {
+    return Intl.message(
+      'Customers see you as busy and can\'t book for now.',
+      name: 'markAsBusyHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available`
+  String get earningsAvailable {
+    return Intl.message(
+      'Available',
+      name: 'earningsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending`
+  String get earningsPending {
+    return Intl.message('Pending', name: 'earningsPending', desc: '', args: []);
+  }
+
+  /// `Payout received`
+  String get payoutReceived {
+    return Intl.message(
+      'Payout received',
+      name: 'payoutReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No earnings yet.`
+  String get noEarningsYet {
+    return Intl.message(
+      'No earnings yet.',
+      name: 'noEarningsYet',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

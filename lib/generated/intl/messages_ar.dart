@@ -167,6 +167,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "aboutUs": MessageLookupByLibrary.simpleMessage("من نحن"),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("قبول الطلب"),
     "accepted": MessageLookupByLibrary.simpleMessage("تم القبول"),
+    "acceptingBookings": MessageLookupByLibrary.simpleMessage(
+      "مفتوح · يقبل الحجوزات",
+    ),
+    "acceptingBookingsHelp": MessageLookupByLibrary.simpleMessage(
+      "أوقفه لإيقاف الحجوزات الجديدة.",
+    ),
     "account": MessageLookupByLibrary.simpleMessage("الحساب"),
     "accountName": MessageLookupByLibrary.simpleMessage("اسم الحساب"),
     "accountNumber": MessageLookupByLibrary.simpleMessage("رقم الحساب"),
@@ -335,6 +341,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "البلوتوث متوقف أو غير مسموح به. شغّله واسمح بالوصول إلى الأجهزة القريبة لهذا التطبيق.",
     ),
     "bookingHash": m3,
+    "bookingSlots": MessageLookupByLibrary.simpleMessage("مواعيد الحجز"),
     "breakfast": MessageLookupByLibrary.simpleMessage("فطور"),
     "busy": MessageLookupByLibrary.simpleMessage("مشغول"),
     "buyNow": MessageLookupByLibrary.simpleMessage("اشترِ الآن"),
@@ -700,6 +707,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "clearAll": MessageLookupByLibrary.simpleMessage("مسح الكل"),
     "clickToView": MessageLookupByLibrary.simpleMessage("اضغط للعرض"),
+    "closed": MessageLookupByLibrary.simpleMessage("مغلق"),
     "codeLabel": MessageLookupByLibrary.simpleMessage("الرمز"),
     "comboOffer": MessageLookupByLibrary.simpleMessage("عرض كومبو"),
     "commission": MessageLookupByLibrary.simpleMessage("عمولة"),
@@ -840,6 +848,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "dueInMinutes": m16,
     "durationLabel": MessageLookupByLibrary.simpleMessage("المدة"),
     "earnings": MessageLookupByLibrary.simpleMessage("الأرباح"),
+    "earningsAvailable": MessageLookupByLibrary.simpleMessage("متاح"),
+    "earningsPending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "editCleaner": MessageLookupByLibrary.simpleMessage("تعديل العامل"),
     "editItem": MessageLookupByLibrary.simpleMessage("تعديل العنصر"),
@@ -1094,6 +1104,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "lunchMenu": MessageLookupByLibrary.simpleMessage("قائمة الغداء"),
     "mAgo": MessageLookupByLibrary.simpleMessage("منذ"),
+    "markAsBusy": MessageLookupByLibrary.simpleMessage("وضع مشغول"),
+    "markAsBusyHelp": MessageLookupByLibrary.simpleMessage(
+      "يراك العملاء مشغولًا ولا يمكنهم الحجز الآن.",
+    ),
     "markAsReady": MessageLookupByLibrary.simpleMessage("تحديد كجاهز"),
     "markLeave": MessageLookupByLibrary.simpleMessage("تحديد إجازة"),
     "markLeaveButton": MessageLookupByLibrary.simpleMessage("تسجيل الإجازة"),
@@ -1102,6 +1116,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "maxAllowedQuantityLabel": MessageLookupByLibrary.simpleMessage(
       "الكمية المسموح بها كحد أقصى",
+    ),
+    "maxBookingsPerSlot": MessageLookupByLibrary.simpleMessage(
+      "أقصى عدد حجوزات لكل موعد",
     ),
     "maxKm": MessageLookupByLibrary.simpleMessage("إلى"),
     "maximumAllowedQuantity": MessageLookupByLibrary.simpleMessage(
@@ -1185,6 +1202,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDescriptionAvailable": MessageLookupByLibrary.simpleMessage(
       "لا يوجد وصف متاح",
     ),
+    "noEarningsYet": MessageLookupByLibrary.simpleMessage("لا توجد أرباح بعد."),
     "noGroceriesFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على مواد غذائية",
     ),
@@ -1351,6 +1369,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تفاصيل الدفع",
     ),
     "paymentType": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
+    "payoutReceived": MessageLookupByLibrary.simpleMessage(
+      "المدفوعات المستلمة",
+    ),
     "payouts": MessageLookupByLibrary.simpleMessage("الدفعات"),
     "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "pendingOrderBalance": MessageLookupByLibrary.simpleMessage(
@@ -1680,6 +1701,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "shortDescription": MessageLookupByLibrary.simpleMessage("وصف قصير"),
     "showProductNow": MessageLookupByLibrary.simpleMessage("إظهار الآن"),
+    "slotAvailable": MessageLookupByLibrary.simpleMessage("متاح"),
+    "slotUnavailable": MessageLookupByLibrary.simpleMessage("غير متاح"),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
         MessageLookupByLibrary.simpleMessage(
           "عذراً، التطبيق متوقف للصيانة. سنعود للعمل قريباً",

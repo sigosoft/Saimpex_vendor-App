@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/home_cleaning/view/service_account_screens.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/my_cleaners_view.dart';
 import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
@@ -19,12 +20,9 @@ import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
-import 'package:saimpex_vendor/water/view/account/business_settings_view.dart';
 import 'package:saimpex_vendor/water/view/account/coupons_view.dart';
-import 'package:saimpex_vendor/water/view/account/earnings_view.dart';
 import 'package:saimpex_vendor/water/view/account/received_payouts_view.dart';
 import 'package:saimpex_vendor/water/view/account/store_profile_view.dart';
-import 'package:saimpex_vendor/water/view/account/working_hours_view.dart';
 
 class HomeCleaningAccountView extends StatefulWidget {
   const HomeCleaningAccountView({super.key, required this.controller});
@@ -709,17 +707,17 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             _buildSettingRow(
               icon: Icons.access_time_rounded,
               title: S.of(context).cleaningWorkingHoursBookingSlots,
-              onTap: () => WorkingHoursView.open(context),
+              onTap: () => ServiceWorkingHoursView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.store_mall_directory_outlined,
               title: S.of(context).cleaningBusinessSettings,
-              onTap: () => BusinessSettingsView.open(context),
+              onTap: () => ServiceBusinessSettingsView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.payments_outlined,
               title: S.of(context).earnings,
-              onTap: () => EarningsView.open(context),
+              onTap: () => ServiceEarningsView.open(context),
             ),
             _buildSettingRow(
               icon: Icons.account_balance_wallet_outlined,

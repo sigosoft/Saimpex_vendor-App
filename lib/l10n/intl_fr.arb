@@ -2586,5 +2586,18 @@
   "cleanerReviewOf": "Avis sur l'agent : {name}",
   "@cleanerReviewOf": {
     "placeholders": {"name": {"type": "String"}}
-  }
+  },
+  "closed": "Fermé",
+  "bookingSlots": "Créneaux de réservation",
+  "slotAvailable": "Disponible",
+  "slotUnavailable": "Indisponible",
+  "maxBookingsPerSlot": "Réservations max par créneau",
+  "acceptingBookings": "Ouvert · accepte les réservations",
+  "acceptingBookingsHelp": "Désactivez pour arrêter les nouvelles réservations.",
+  "markAsBusy": "Marquer comme occupé",
+  "markAsBusyHelp": "Les clients vous voient occupé et ne peuvent pas réserver pour l'instant.",
+  "earningsAvailable": "Disponible",
+  "earningsPending": "En attente",
+  "payoutReceived": "Paiements reçus",
+  "noEarningsYet": "Aucun gain pour l'instant."
 }

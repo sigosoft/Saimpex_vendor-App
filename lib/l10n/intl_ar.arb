@@ -2585,5 +2585,18 @@
   "cleanerReviewOf": "تقييم العامل: {name}",
   "@cleanerReviewOf": {
     "placeholders": {"name": {"type": "String"}}
-  }
+  },
+  "closed": "مغلق",
+  "bookingSlots": "مواعيد الحجز",
+  "slotAvailable": "متاح",
+  "slotUnavailable": "غير متاح",
+  "maxBookingsPerSlot": "أقصى عدد حجوزات لكل موعد",
+  "acceptingBookings": "مفتوح · يقبل الحجوزات",
+  "acceptingBookingsHelp": "أوقفه لإيقاف الحجوزات الجديدة.",
+  "markAsBusy": "وضع مشغول",
+  "markAsBusyHelp": "يراك العملاء مشغولًا ولا يمكنهم الحجز الآن.",
+  "earningsAvailable": "متاح",
+  "earningsPending": "قيد الانتظار",
+  "payoutReceived": "المدفوعات المستلمة",
+  "noEarningsYet": "لا توجد أرباح بعد."
 }
