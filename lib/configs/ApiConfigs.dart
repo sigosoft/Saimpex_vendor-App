@@ -215,6 +215,11 @@ class ApiEndPoints {
   // Hide / unhide a product; read-only order rules (API doc §6.21, §6.22).
   static String updateProductVisibility = "updateProductVisibility";
   static String orderRules = "orderRules";
+  // New category requests for Admin approval (task V8).
+  static String pharmacyCategoryRequests = "pharmacyCategoryRequests";
+  static String requestPharmacyCategory = "requestPharmacyCategory";
+  static String waterCategoryRequests = "waterCategoryRequests";
+  static String requestWaterCategory = "requestWaterCategory";
   static String updatePharmacyItemAvailabilityStatus =
       "updatePharmacyItemAvailabilityStatus";
   static String updatePharmacyMenuItem = "updatePharmacyMenuItem";

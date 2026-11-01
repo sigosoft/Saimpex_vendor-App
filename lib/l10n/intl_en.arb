@@ -2376,5 +2376,21 @@
   "deliveryModelBoth": "Your drivers and SAIMPEX drivers",
   "deliveryModelOwn": "Your drivers only",
   "deliveryModelSaimpex": "SAIMPEX drivers only",
-  "orderRulesSetBySaimpex": "SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support."
+  "orderRulesSetBySaimpex": "SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support.",
+  "categoryRequests": "Category requests",
+  "categoryRequestsHelp": "Need a category that isn't in the list? Ask SAIMPEX to add it. You can use it once it is approved.",
+  "noCategoryRequests": "No requests yet.",
+  "requestNewCategory": "Request a new category",
+  "categoryName": "Category name",
+  "requestReasonHint": "Why do you need it?",
+  "sendForApproval": "Send for approval",
+  "requestSentForReview": "Sent. SAIMPEX will review it.",
+  "requestPending": "Pending",
+  "requestApproved": "Approved",
+  "requestRejected": "Rejected",
+  "adminNote": "SAIMPEX: {note}",
+  "@adminNote": {
+    "placeholders": {"note": {"type": "String"}}
+  },
+  "requestNameAndReason": "Enter a name and a reason."
 }

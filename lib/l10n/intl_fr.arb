@@ -2439,5 +2439,21 @@
   "deliveryModelBoth": "Vos livreurs et ceux de SAIMPEX",
   "deliveryModelOwn": "Vos livreurs uniquement",
   "deliveryModelSaimpex": "Livreurs SAIMPEX uniquement",
-  "orderRulesSetBySaimpex": "SAIMPEX fixe ces règles. Pour les changer, écrivez à SAIMPEX depuis Messages du support ou Aide et support."
+  "orderRulesSetBySaimpex": "SAIMPEX fixe ces règles. Pour les changer, écrivez à SAIMPEX depuis Messages du support ou Aide et support.",
+  "categoryRequests": "Demandes de catégorie",
+  "categoryRequestsHelp": "Une catégorie manque ? Demandez à SAIMPEX de l'ajouter. Vous pourrez l'utiliser une fois approuvée.",
+  "noCategoryRequests": "Aucune demande pour l'instant.",
+  "requestNewCategory": "Demander une catégorie",
+  "categoryName": "Nom de la catégorie",
+  "requestReasonHint": "Pourquoi en avez-vous besoin ?",
+  "sendForApproval": "Envoyer pour approbation",
+  "requestSentForReview": "Envoyé. SAIMPEX va l'examiner.",
+  "requestPending": "En attente",
+  "requestApproved": "Approuvée",
+  "requestRejected": "Refusée",
+  "adminNote": "SAIMPEX : {note}",
+  "@adminNote": {
+    "placeholders": {"note": {"type": "String"}}
+  },
+  "requestNameAndReason": "Saisissez un nom et une raison."
 }

@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/view/settings/category_requests_screen.dart';
 import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
@@ -485,6 +487,14 @@ class _AccountViewState extends State<AccountView> {
                 const SizedBox(height: 10),
                 _SettingsCard(
                   children: [
+                    // Water only: the API has no gas category requests.
+                    if (!WaterApi.isGas)
+                      _SettingsTile(
+                        edgeDivider: true,
+                        icon: Icons.playlist_add_outlined,
+                        title: S.of(context).categoryRequests,
+                        onTap: () => CategoryRequestsScreen.open(CategoryRequestKind.water),
+                      ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.rule_outlined,

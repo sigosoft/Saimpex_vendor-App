@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/settings/category_requests_screen.dart';
 import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
@@ -965,6 +966,11 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     _MenuCard(
                       divided: true,
                       children: [
+                        _MenuTile(
+                          icon: Icons.playlist_add_outlined,
+                          label: S.of(context).categoryRequests,
+                          onTap: () => CategoryRequestsScreen.open(CategoryRequestKind.pharmacy),
+                        ),
                         _MenuTile(
                           icon: Icons.rule_outlined,
                           label: S.of(context).orderRules,

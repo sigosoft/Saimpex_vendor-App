@@ -2438,5 +2438,21 @@
   "deliveryModelBoth": "سائقوك وسائقو SAIMPEX",
   "deliveryModelOwn": "سائقوك فقط",
   "deliveryModelSaimpex": "سائقو SAIMPEX فقط",
-  "orderRulesSetBySaimpex": "تحدد SAIMPEX هذه القواعد. لتغييرها، راسل SAIMPEX من رسائل الدعم أو المساعدة والدعم."
+  "orderRulesSetBySaimpex": "تحدد SAIMPEX هذه القواعد. لتغييرها، راسل SAIMPEX من رسائل الدعم أو المساعدة والدعم.",
+  "categoryRequests": "طلبات الفئات",
+  "categoryRequestsHelp": "هل تحتاج فئة غير موجودة في القائمة؟ اطلب من SAIMPEX إضافتها. يمكنك استخدامها بعد الموافقة.",
+  "noCategoryRequests": "لا توجد طلبات بعد.",
+  "requestNewCategory": "طلب فئة جديدة",
+  "categoryName": "اسم الفئة",
+  "requestReasonHint": "لماذا تحتاجها؟",
+  "sendForApproval": "إرسال للموافقة",
+  "requestSentForReview": "تم الإرسال. ستراجعه SAIMPEX.",
+  "requestPending": "قيد الانتظار",
+  "requestApproved": "تمت الموافقة",
+  "requestRejected": "مرفوض",
+  "adminNote": "SAIMPEX: {note}",
+  "@adminNote": {
+    "placeholders": {"note": {"type": "String"}}
+  },
+  "requestNameAndReason": "أدخل الاسم والسبب."
 }

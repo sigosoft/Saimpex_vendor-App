@@ -1,3 +1,6 @@
+import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -1025,11 +1028,28 @@ class _AddServiceViewState extends State<AddServiceView> {
                     child: SizedBox(
                       height: 44,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // TODO(V8): send POST requestServiceType
-                          // {name_en, reason}. A requested type stays pending
-                          // until approved, so it is not added to the list.
-                          Navigator.pop(ctx);
+                        onPressed: () async {
+                          // V8: POST requestServiceType {name_en, reason}.
+                          // A requested type stays pending until Admin
+                          // approves it, so it is not added to the list yet.
+                          final name = typeCtrl.text.trim();
+                          final reason = reasonCtrl.text.trim();
+                          if (name.isEmpty || reason.isEmpty) {
+                            Fluttertoast.showToast(msg: S.of(context).requestNameAndReason);
+                            return;
+                          }
+                          try {
+                            final res = await DioClient().post(
+                              ApiEndPoints.requestServiceType,
+                              body: {'name_en': name, 'reason': reason},
+                            );
+                            if (res.data is Map && res.data['status'] == true) {
+                              Fluttertoast.showToast(msg: S.current.requestSentForReview);
+                              if (ctx.mounted) Navigator.pop(ctx);
+                            }
+                          } catch (e) {
+                            Fluttertoast.showToast(msg: e.toString());
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           elevation: 0,

@@ -9805,6 +9805,131 @@ class S {
       args: [],
     );
   }
+
+  /// `Category requests`
+  String get categoryRequests {
+    return Intl.message(
+      'Category requests',
+      name: 'categoryRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Need a category that isn't in the list? Ask SAIMPEX to add it. You can use it once it is approved.`
+  String get categoryRequestsHelp {
+    return Intl.message(
+      'Need a category that isn\'t in the list? Ask SAIMPEX to add it. You can use it once it is approved.',
+      name: 'categoryRequestsHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No requests yet.`
+  String get noCategoryRequests {
+    return Intl.message(
+      'No requests yet.',
+      name: 'noCategoryRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request a new category`
+  String get requestNewCategory {
+    return Intl.message(
+      'Request a new category',
+      name: 'requestNewCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category name`
+  String get categoryName {
+    return Intl.message(
+      'Category name',
+      name: 'categoryName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Why do you need it?`
+  String get requestReasonHint {
+    return Intl.message(
+      'Why do you need it?',
+      name: 'requestReasonHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send for approval`
+  String get sendForApproval {
+    return Intl.message(
+      'Send for approval',
+      name: 'sendForApproval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sent. SAIMPEX will review it.`
+  String get requestSentForReview {
+    return Intl.message(
+      'Sent. SAIMPEX will review it.',
+      name: 'requestSentForReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending`
+  String get requestPending {
+    return Intl.message('Pending', name: 'requestPending', desc: '', args: []);
+  }
+
+  /// `Approved`
+  String get requestApproved {
+    return Intl.message(
+      'Approved',
+      name: 'requestApproved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected`
+  String get requestRejected {
+    return Intl.message(
+      'Rejected',
+      name: 'requestRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX: {note}`
+  String adminNote(String note) {
+    return Intl.message(
+      'SAIMPEX: $note',
+      name: 'adminNote',
+      desc: '',
+      args: [note],
+    );
+  }
+
+  /// `Enter a name and a reason.`
+  String get requestNameAndReason {
+    return Intl.message(
+      'Enter a name and a reason.',
+      name: 'requestNameAndReason',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
