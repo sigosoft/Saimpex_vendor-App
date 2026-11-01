@@ -73,7 +73,7 @@ From `V2_DECISIONS_AND_PLAN.md` (sections 3, 5, 7, 9, 11):
 |---|---|---|
 | **Local Store = any local shop** (bakery, fish, meat, stationery...) | Local store vendors get a working catalogue and orders. Backend has dedicated `localStore*` endpoints. | Not wired. App sends local store vendors to the grocery screens and grocery endpoints. |
 | **Restaurant menu editing: easy and advanced, with menu images** | Simple add/edit for quick changes; advanced mode for variants, option groups (min/max), extras, images per menu/variant/option. | Add item sends variants/options/images (commit `bdb7b23`). Edit item does **not** send them yet. |
-| **Pharmacy stock and price come from the APIs** | Inventory screens read and write stock/price through the API only; no local or hard-coded values. | Inventory list/detail/stock use the API. A "stock/price sync" API (backend phase 2) is not defined yet. |
+| **Pharmacy stock and price come from the APIs** | Inventory screens read and write stock/price through the API only; no local or hard-coded values. | ✅ Inventory list/detail/stock use the API, and since V11 the quotation screen reads stock and price from `pharmacyMenuItems` (the mock medicine list is gone). |
 | **Vendors manage their own drivers** | Keep Delivery Boys screens (list, add, edit, delete). Note: the FRD says the opposite; the decisions file wins. | Done for grocery/restaurant and pharmacy. Water: list and add screen exist; flows unverified. |
 | **Pre-order reminder 30 min before** scheduled time; driver requested when Ready or 15 min before | Show scheduled orders, show the scheduled time on cards, handle the reminder push. | Not started. Contract pending from backend (phase 2). |
 | **Grocery substitution, auto-accepted after 10 min** | Vendor proposes a replacement item per order line; show pending/accepted/auto-accepted state. | ✅ Done (V2, `feature/v2-substitution`). |
@@ -339,7 +339,7 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Feature | Status | Main files | Notes |
 |---|---|---|---|
 | Orders + prescriptions | Done | `lib/pharmacy/view/pharmacy_home.dart`, `lib/pharmacy/controller/pharmacy_home_controller.dart`, `lib/pharmacy/view/order_details_screen.dart`, `lib/pharmacy/view/otc_order_details_screen.dart`, `lib/pharmacy/controller/pharmacy_order_details_controller.dart` | accept / cancel / prepare / ready; review, mark reviewed, reject prescription. |
-| Quotation (per item) | Done (unverified against V2 per-item quote) | `lib/pharmacy/view/create_quotation_screen.dart`, `lib/pharmacy/controller/create_quotation_controller.dart` | `submitPharmacyPrescriptionQuote`. Backend phase 1 plans a "pharmacy per-item quote"; recheck the contract. |
+| Quotation (per item) | Done (V11, `feature/v11-pharmacy-quotes`; not yet run on a device) | `lib/pharmacy/view/create_quotation_screen.dart`, `lib/pharmacy/controller/create_quotation_controller.dart`, `_AwaitingPaymentItems` in `order_details_screen.dart` | §6.15. Medicine search reads the pharmacy's inventory (`pharmacyMenuItems`: stock, selling/offer price). Availability follows stock: enough → `available`; some → `partial` (offers what is in stock, sends `requested_quantity`); none, or a typed name not in the inventory → `unavailable` (shown to the customer, not charged), optionally with one in-stock alternative sent with `alternative_for`. The server computes `quote_amount`; the hard-coded tax of 10 was removed (the quote has no tax). After sending, the prescription details show the real `quote_items` (the mock Paracetamol lines are gone) with each alternative's customer answer (waiting / accepted / rejected), the server total, and how many alternatives still wait (the customer cannot pay until then). Quote screen strings in EN/FR/AR; the rest of the pharmacy order details is still partly English. |
 | Inventory, stock, availability | Done | `lib/pharmacy/view/pharmacy_inventory_screen.dart`, `lib/pharmacy/view/pharmacy_inventory_details_screen.dart` | Stock and price from API. |
 | Add / edit product | Done | `lib/pharmacy/view/pharmacy_add_product_screen.dart` | Has barcode scanner (`mobile_scanner`). |
 | Category request | Not started | - | Backend has `requestPharmacyCategory`. Scope: categories are admin-managed; vendor may request one. |
@@ -444,7 +444,7 @@ Do not build against guessed contracts. Ask the backend owner for the request/re
 | Pharmacy stock/price sync | 2 | bulk stock/price update | contract pending from backend |
 | Local store categories | 2 | category list/request for type 11 | contract pending from backend |
 | Drivers (V2 rules) | 2 | any change to `deliveryBoys` contract | contract pending from backend |
-| Pharmacy per-item quote (V2) | 1 | per-item availability/substitute in quote | contract pending from backend |
+| Pharmacy per-item quote (V2) | 1 | per-item availability/substitute in quote | ✅ wired (§6.15, V11) |
 
 ---
 

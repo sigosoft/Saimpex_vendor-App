@@ -273,25 +273,68 @@ class PharmacyPrescriptionQuoteItem {
   final String? price;
   final String? instruction;
 
+  // Per-item quote (API doc §6.15).
+  final String? nameEn;
+  final String? nameFr;
+  final String? nameAr;
+  final String? totalPrice;
+
+  /// available | partial | unavailable
+  final String availability;
+  final int? requestedQuantity;
+
+  /// Name of the requested medicine this line replaces (an alternative).
+  final String? alternativeFor;
+
+  /// accepted | rejected | null (alternatives only).
+  final String? customerDecision;
+
   PharmacyPrescriptionQuoteItem({
     this.id,
     this.name,
     this.quantity,
     this.price,
     this.instruction,
+    this.nameEn,
+    this.nameFr,
+    this.nameAr,
+    this.totalPrice,
+    this.availability = 'available',
+    this.requestedQuantity,
+    this.alternativeFor,
+    this.customerDecision,
   });
 
+  bool get isAlternative => (alternativeFor ?? '').trim().isNotEmpty;
+
   factory PharmacyPrescriptionQuoteItem.fromJson(Map<String, dynamic> json) {
+    String? str(dynamic v) {
+      final t = v?.toString().trim();
+      return t == null || t.isEmpty || t == 'null' ? null : t;
+    }
+
     return PharmacyPrescriptionQuoteItem(
       id: json['id'] is int
           ? json['id'] as int
           : int.tryParse(json['id']?.toString() ?? ''),
-      name: json['name']?.toString() ?? json['item_name']?.toString(),
+      name: str(json['name']) ?? str(json['item_name']) ?? str(json['name_en']),
       quantity: json['quantity']?.toString(),
       price: json['price']?.toString() ?? json['unit_price']?.toString(),
       instruction: json['instruction']?.toString(),
+      nameEn: str(json['name_en']),
+      nameFr: str(json['name_fr']),
+      nameAr: str(json['name_ar']),
+      totalPrice: str(json['total_price']),
+      availability: str(json['availability']) ?? 'available',
+      requestedQuantity: int.tryParse(json['requested_quantity']?.toString() ?? ''),
+      alternativeFor: str(json['alternative_for']),
+      customerDecision: str(json['customer_decision']),
     );
   }
+
+  /// Name in [lang] ('en' | 'fr' | 'ar'), falling back to English.
+  String localName(String lang) =>
+      (lang == 'ar' ? nameAr : lang == 'fr' ? nameFr : null) ?? nameEn ?? name ?? '';
 
   Map<String, dynamic> toJson() {
     return {
@@ -300,6 +343,14 @@ class PharmacyPrescriptionQuoteItem {
       'quantity': quantity,
       'price': price,
       'instruction': instruction,
+      'name_en': nameEn,
+      'name_fr': nameFr,
+      'name_ar': nameAr,
+      'total_price': totalPrice,
+      'availability': availability,
+      'requested_quantity': requestedQuantity,
+      'alternative_for': alternativeFor,
+      'customer_decision': customerDecision,
     };
   }
 }

@@ -79,96 +79,112 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m28(qty) => "الكمية: ${qty}";
 
-  static String m29(reason) => "السبب: ${reason}";
+  static String m29(available, prescribed) =>
+      "${available} من ${prescribed} متوفر";
 
-  static String m30(time) => "مجدول في ${time}";
+  static String m30(name) => "هل تريد بالتأكيد إزالة ${name} من عرض السعر؟";
 
-  static String m31(count) => "${count} متوفر";
+  static String m31(count) => "عناصر الطلب (${count})";
 
-  static String m32(minutes) =>
+  static String m32(count) =>
+      "${count} بديل بانتظار رد العميل. لا يمكنه الدفع قبل الرد.";
+
+  static String m33(qty, price) => "${qty} × ${price} أوقية";
+
+  static String m34(count) => "${count} في المخزون";
+
+  static String m35(count) => "${count} أيام";
+
+  static String m36(reason) => "السبب: ${reason}";
+
+  static String m37(time) => "مجدول في ${time}";
+
+  static String m38(count) => "${count} متوفر";
+
+  static String m39(minutes) =>
       "يُرسل كل تغيير إلى العميل للموافقة. إذا لم يرد خلال ${minutes} دقيقة يُقبل تلقائياً، باستثناء البديل الأغلى سعراً فيُزال. يُعاد احتساب الإجماليات تلقائياً.";
 
-  static String m33(qty, amount) => "المطلوب: ${qty} · ${amount}";
+  static String m40(qty, amount) => "المطلوب: ${qty} · ${amount}";
 
-  static String m34(max) => "أدخل كمية من 1 إلى ${max}.";
+  static String m41(max) => "أدخل كمية من 1 إلى ${max}.";
 
-  static String m35(name) => "سيتم إبلاغ العميل بأن ${name} غير متوفر.";
+  static String m42(name) => "سيتم إبلاغ العميل بأن ${name} غير متوفر.";
 
-  static String m36(qty, amount) => "المحدَّث: ${qty} · ${amount}";
+  static String m43(qty, amount) => "المحدَّث: ${qty} · ${amount}";
 
-  static String m37(time) => "بانتظار العميل · ${time}";
+  static String m44(time) => "بانتظار العميل · ${time}";
 
-  static String m38(code) => "الطلب #${code}";
+  static String m45(code) => "الطلب #${code}";
 
-  static String m39(count) => "الطلبات المسبقة القادمة (${count})";
+  static String m46(count) => "الطلبات المسبقة القادمة (${count})";
 
-  static String m40(count) => "${count} قارورة";
+  static String m47(count) => "${count} قارورة";
 
-  static String m41(count) => "متبقي ${count} قارورة";
+  static String m48(count) => "متبقي ${count} قارورة";
 
-  static String m42(name) => "هل أنت متأكد من أنك تريد حذف \"${name}\"؟";
+  static String m49(name) => "هل أنت متأكد من أنك تريد حذف \"${name}\"؟";
 
-  static String m43(min, max) => "من ${min} إلى ${max} كم";
+  static String m50(min, max) => "من ${min} إلى ${max} كم";
 
-  static String m44(error) => "خطأ أثناء قبول الطلب: ${error}";
+  static String m51(error) => "خطأ أثناء قبول الطلب: ${error}";
 
-  static String m45(error) => "خطأ أثناء قبول الاشتراك: ${error}";
+  static String m52(error) => "خطأ أثناء قبول الاشتراك: ${error}";
 
-  static String m46(error) => "خطأ في إضافة المنتج: ${error}";
+  static String m53(error) => "خطأ في إضافة المنتج: ${error}";
 
-  static String m47(error) => "خطأ أثناء إلغاء الطلب: ${error}";
+  static String m54(error) => "خطأ أثناء إلغاء الطلب: ${error}";
 
-  static String m48(error) => "خطأ في حذف المنتج: ${error}";
+  static String m55(error) => "خطأ في حذف المنتج: ${error}";
 
-  static String m49(error) => "خطأ أثناء تحديد الطلب كجاهز: ${error}";
+  static String m56(error) => "خطأ أثناء تحديد الطلب كجاهز: ${error}";
 
-  static String m50(error) => "خطأ أثناء إيقاف الاشتراك مؤقتًا: ${error}";
+  static String m57(error) => "خطأ أثناء إيقاف الاشتراك مؤقتًا: ${error}";
 
-  static String m51(error) => "خطأ أثناء تحضير الطلب: ${error}";
+  static String m58(error) => "خطأ أثناء تحضير الطلب: ${error}";
 
-  static String m52(error) => "خطأ أثناء رفض الاشتراك: ${error}";
+  static String m59(error) => "خطأ أثناء رفض الاشتراك: ${error}";
 
-  static String m53(error) => "خطأ أثناء استئناف الاشتراك: ${error}";
+  static String m60(error) => "خطأ أثناء استئناف الاشتراك: ${error}";
 
-  static String m54(error) => "خطأ في تحديث حالة المنتج: ${error}";
+  static String m61(error) => "خطأ في تحديث حالة المنتج: ${error}";
 
-  static String m55(error) => "خطأ في تحديث السعر: ${error}";
+  static String m62(error) => "خطأ في تحديث السعر: ${error}";
 
-  static String m56(error) => "خطأ في تحديث المخزون: ${error}";
+  static String m63(error) => "خطأ في تحديث المخزون: ${error}";
 
-  static String m57(days) => "كل ${days} أيام";
+  static String m64(days) => "كل ${days} أيام";
 
-  static String m58(count) => "الكل ${count}";
+  static String m65(count) => "الكل ${count}";
 
-  static String m59(count) => "متوفر ${count}";
+  static String m66(count) => "متوفر ${count}";
 
-  static String m60(count) => "مخزون منخفض ${count}";
+  static String m67(count) => "مخزون منخفض ${count}";
 
-  static String m61(id) => "الرقم: ${id}";
+  static String m68(id) => "الرقم: ${id}";
 
-  static String m62(count) => "تم اختيار ${count} صور";
+  static String m69(count) => "تم اختيار ${count} صور";
 
-  static String m63(date) => "آخر بيع: ${date}";
+  static String m70(date) => "آخر بيع: ${date}";
 
-  static String m64(count) => "+${count} منتجات أخرى";
+  static String m71(count) => "+${count} منتجات أخرى";
 
-  static String m65(count) => "عناصر الطلب (${count})";
+  static String m72(count) => "عناصر الطلب (${count})";
 
-  static String m66(date) => "أُوقف في: ${date}";
+  static String m73(date) => "أُوقف في: ${date}";
 
-  static String m67(start) => "البداية ${start}";
+  static String m74(start) => "البداية ${start}";
 
-  static String m68(start, end) => "البداية ${start} - النهاية ${end}";
+  static String m75(start, end) => "البداية ${start} - النهاية ${end}";
 
-  static String m69(count) => "(${count} تقييم)";
+  static String m76(count) => "(${count} تقييم)";
 
-  static String m70(count) => "${count} توصيلات مجدولة";
+  static String m77(count) => "${count} توصيلات مجدولة";
 
-  static String m71(id) => "رقم المخزون: ${id}";
+  static String m78(id) => "رقم المخزون: ${id}";
 
-  static String m72(open, close) => "اليوم: ${open} - ${close}";
+  static String m79(open, close) => "اليوم: ${open} - ${close}";
 
-  static String m73(name) => "مرحبًا بك في ${name}!";
+  static String m80(name) => "مرحبًا بك في ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1554,6 +1570,96 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "qtyLabel": m28,
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
+    "quoteAddMedicine": MessageLookupByLibrary.simpleMessage("إضافة دواء"),
+    "quoteAddOneMedicine": MessageLookupByLibrary.simpleMessage(
+      "يرجى إضافة دواء واحد على الأقل",
+    ),
+    "quoteAlternativesIfAccepted": MessageLookupByLibrary.simpleMessage(
+      "البدائل (إذا وافق العميل)",
+    ),
+    "quoteAvailabilityTitle": MessageLookupByLibrary.simpleMessage(
+      "التوفر في الصيدلية",
+    ),
+    "quoteAvailable": MessageLookupByLibrary.simpleMessage("متوفر"),
+    "quoteAvailableInStock": MessageLookupByLibrary.simpleMessage(
+      "متوفر (في المخزون)",
+    ),
+    "quoteAvailableOf": m29,
+    "quoteAvailableQty": MessageLookupByLibrary.simpleMessage(
+      "الكمية المتوفرة",
+    ),
+    "quoteCreateTitle": MessageLookupByLibrary.simpleMessage("إنشاء عرض سعر"),
+    "quoteCustomer": MessageLookupByLibrary.simpleMessage("العميل"),
+    "quoteDecisionAccepted": MessageLookupByLibrary.simpleMessage(
+      "وافق العميل",
+    ),
+    "quoteDecisionRejected": MessageLookupByLibrary.simpleMessage("رفض العميل"),
+    "quoteDecisionWaiting": MessageLookupByLibrary.simpleMessage(
+      "بانتظار العميل",
+    ),
+    "quoteDelete": MessageLookupByLibrary.simpleMessage("حذف"),
+    "quoteDeleteBody": m30,
+    "quoteDeleteTitle": MessageLookupByLibrary.simpleMessage("حذف الدواء؟"),
+    "quoteInStock": MessageLookupByLibrary.simpleMessage("متوفر"),
+    "quoteItemTotal": MessageLookupByLibrary.simpleMessage("إجمالي المنتجات"),
+    "quoteItemsTitle": MessageLookupByLibrary.simpleMessage("عناصر عرض السعر"),
+    "quoteLimited": MessageLookupByLibrary.simpleMessage("محدود"),
+    "quoteNoItems": MessageLookupByLibrary.simpleMessage(
+      "لا توجد عناصر في عرض السعر هذا.",
+    ),
+    "quoteNotAvailable": MessageLookupByLibrary.simpleMessage("غير متوفر"),
+    "quoteNotAvailableOut": MessageLookupByLibrary.simpleMessage(
+      "غير متوفر (نفد من المخزون)",
+    ),
+    "quoteNotCarried": MessageLookupByLibrary.simpleMessage(
+      "غير موجود في مخزونك",
+    ),
+    "quoteNotCharged": MessageLookupByLibrary.simpleMessage("غير محتسب"),
+    "quoteOrderItems": m31,
+    "quotePartialLimited": MessageLookupByLibrary.simpleMessage(
+      "متوفر جزئياً (محدود)",
+    ),
+    "quotePartiallyAvailable": MessageLookupByLibrary.simpleMessage(
+      "متوفر جزئياً",
+    ),
+    "quotePendingAlternatives": m32,
+    "quotePrescribedQty": MessageLookupByLibrary.simpleMessage(
+      "الكمية الموصوفة",
+    ),
+    "quotePrescriptionMissing": MessageLookupByLibrary.simpleMessage(
+      "رقم الوصفة مطلوب",
+    ),
+    "quoteQtyTimesPrice": m33,
+    "quoteSaveAndNext": MessageLookupByLibrary.simpleMessage(
+      "حفظ وإضافة الدواء التالي",
+    ),
+    "quoteSend": MessageLookupByLibrary.simpleMessage("إرسال عرض السعر"),
+    "quoteSentBody": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال عرض السعر إلى العميل\nللمراجعة والموافقة",
+    ),
+    "quoteSentLabel": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال عرض السعر",
+    ),
+    "quoteServerTotalNote": MessageLookupByLibrary.simpleMessage(
+      "يدفع العميل ثمن المنتجات المتوفرة والبدائل التي يقبلها. يُحتسب المبلغ النهائي على الخادم.",
+    ),
+    "quoteStockLeft": m34,
+    "quoteSuggestAlternative": MessageLookupByLibrary.simpleMessage(
+      "اقتراح دواء بديل",
+    ),
+    "quoteSuggestedAlternative": MessageLookupByLibrary.simpleMessage(
+      "البديل المقترح",
+    ),
+    "quoteSummary": MessageLookupByLibrary.simpleMessage("ملخص عرض السعر"),
+    "quoteTotal": MessageLookupByLibrary.simpleMessage("الإجمالي"),
+    "quoteTotalAmount": MessageLookupByLibrary.simpleMessage("المبلغ الإجمالي"),
+    "quoteTypeMedicine": MessageLookupByLibrary.simpleMessage(
+      "اكتب اسم الدواء...",
+    ),
+    "quoteUnit": MessageLookupByLibrary.simpleMessage("الوحدة"),
+    "quoteValidLabel": MessageLookupByLibrary.simpleMessage("صلاحية العرض"),
+    "quoteValidityDays": m35,
+    "quoteValidityOneDay": MessageLookupByLibrary.simpleMessage("يوم واحد"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("قيّم الطلب"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
       "قيّم العناصر المطلوبة",
@@ -1575,7 +1681,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم الوصول إلى المطعم",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
-    "reasonColonLabel": m29,
+    "reasonColonLabel": m36,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("سبب الإجازة"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("السبب"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("الدفعات المستلمة"),
@@ -1665,7 +1771,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveCleaner": MessageLookupByLibrary.simpleMessage("حفظ العامل"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("مسح الرمز الشريطي"),
     "scheduled": MessageLookupByLibrary.simpleMessage("مجدول"),
-    "scheduledForTime": m30,
+    "scheduledForTime": m37,
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "ابحث عن المبلغ أو رقم المعاملة",
@@ -1781,21 +1887,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "substitutionEditItems": MessageLookupByLibrary.simpleMessage(
       "تعديل المنتجات",
     ),
-    "substitutionInStock": m31,
-    "substitutionInfo": m32,
+    "substitutionInStock": m38,
+    "substitutionInfo": m39,
     "substitutionItemRemoved": MessageLookupByLibrary.simpleMessage(
       "تمت إزالة المنتج",
     ),
-    "substitutionOrdered": m33,
+    "substitutionOrdered": m40,
     "substitutionOrderedQuantity": MessageLookupByLibrary.simpleMessage(
       "الكمية المطلوبة",
     ),
     "substitutionQuantityChanged": MessageLookupByLibrary.simpleMessage(
       "تم تغيير الكمية",
     ),
-    "substitutionQuantityHint": m34,
+    "substitutionQuantityHint": m41,
     "substitutionRejected": MessageLookupByLibrary.simpleMessage("رفضه العميل"),
-    "substitutionRemoveBody": m35,
+    "substitutionRemoveBody": m42,
     "substitutionRemoveItem": MessageLookupByLibrary.simpleMessage(
       "إزالة المنتج",
     ),
@@ -1821,19 +1927,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "substitutionUpdateQuantity": MessageLookupByLibrary.simpleMessage(
       "تحديث الكمية",
     ),
-    "substitutionUpdated": m36,
+    "substitutionUpdated": m43,
     "substitutionUpdatedTotal": MessageLookupByLibrary.simpleMessage(
       "إجمالي المنتج المحدَّث:",
     ),
     "substitutionWaiting": MessageLookupByLibrary.simpleMessage(
       "بانتظار العميل",
     ),
-    "substitutionWaitingFor": m37,
+    "substitutionWaitingFor": m44,
     "substitutionWithdrawn": MessageLookupByLibrary.simpleMessage("تم السحب"),
     "subtotal": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
     "sunday": MessageLookupByLibrary.simpleMessage("الأحد"),
     "supportMessages": MessageLookupByLibrary.simpleMessage("رسائل الدعم"),
-    "supportOrderCode": m38,
+    "supportOrderCode": m45,
     "sushiPlatter": MessageLookupByLibrary.simpleMessage("طبق سوشي"),
     "swiftCode": MessageLookupByLibrary.simpleMessage("رمز SWIFT"),
     "tags": MessageLookupByLibrary.simpleMessage("الوسوم"),
@@ -1903,7 +2009,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("سائق غير معروف"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("بائع غير معروف"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("الإجازات القادمة"),
-    "upcomingPreordersCount": m39,
+    "upcomingPreordersCount": m46,
     "update": MessageLookupByLibrary.simpleMessage("تحديث"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("تحديث القسيمة"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -1979,8 +2085,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterBottleSize": MessageLookupByLibrary.simpleMessage("حجم القارورة"),
     "waterBottles": MessageLookupByLibrary.simpleMessage("قوارير"),
-    "waterBottlesCount": m40,
-    "waterBottlesLeft": m41,
+    "waterBottlesCount": m47,
+    "waterBottlesLeft": m48,
     "waterBrand": MessageLookupByLibrary.simpleMessage("العلامة التجارية"),
     "waterBrandName": MessageLookupByLibrary.simpleMessage(
       "اسم العلامة التجارية",
@@ -2016,7 +2122,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد حذف هذا المنتج؟",
     ),
-    "waterConfirmDeleteNamedItem": m42,
+    "waterConfirmDeleteNamedItem": m49,
     "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد تحديد هذا المنتج كمتوفر؟",
     ),
@@ -2061,7 +2167,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "نوع التوصيل",
     ),
     "waterDescription": MessageLookupByLibrary.simpleMessage("الوصف"),
-    "waterDistanceRangeKm": m43,
+    "waterDistanceRangeKm": m50,
     "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
       "تعديل نطاق المسافة",
     ),
@@ -2080,25 +2186,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterEnterPrice": MessageLookupByLibrary.simpleMessage("أدخل السعر"),
     "waterEnterQuantity": MessageLookupByLibrary.simpleMessage("أدخل الكمية"),
     "waterEnterReason": MessageLookupByLibrary.simpleMessage("أدخل السبب"),
-    "waterErrorAcceptingOrder": m44,
-    "waterErrorAcceptingSubscription": m45,
-    "waterErrorAddingProduct": m46,
-    "waterErrorCancellingOrder": m47,
-    "waterErrorDeletingProduct": m48,
-    "waterErrorMarkingOrderAsReady": m49,
-    "waterErrorPausingSubscription": m50,
-    "waterErrorPreparingOrder": m51,
-    "waterErrorRejectingSubscription": m52,
-    "waterErrorResumingSubscription": m53,
-    "waterErrorUpdatingItemStatus": m54,
-    "waterErrorUpdatingPrice": m55,
-    "waterErrorUpdatingStock": m56,
+    "waterErrorAcceptingOrder": m51,
+    "waterErrorAcceptingSubscription": m52,
+    "waterErrorAddingProduct": m53,
+    "waterErrorCancellingOrder": m54,
+    "waterErrorDeletingProduct": m55,
+    "waterErrorMarkingOrderAsReady": m56,
+    "waterErrorPausingSubscription": m57,
+    "waterErrorPreparingOrder": m58,
+    "waterErrorRejectingSubscription": m59,
+    "waterErrorResumingSubscription": m60,
+    "waterErrorUpdatingItemStatus": m61,
+    "waterErrorUpdatingPrice": m62,
+    "waterErrorUpdatingStock": m63,
     "waterEstValue": MessageLookupByLibrary.simpleMessage("القيمة التقديرية"),
     "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
       "رسوم التوصيل التقديرية",
     ),
     "waterEvening": MessageLookupByLibrary.simpleMessage("المساء"),
-    "waterEveryNDays": m57,
+    "waterEveryNDays": m64,
     "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
       "التوصيل السريع",
     ),
@@ -2162,20 +2268,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
       "يرجى ملء جميع الحقول",
     ),
-    "waterFilterAllCount": m58,
+    "waterFilterAllCount": m65,
     "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
       "تصفية حسب الفئة",
     ),
-    "waterFilterInStockCount": m59,
-    "waterFilterLowStockCount": m60,
+    "waterFilterInStockCount": m66,
+    "waterFilterLowStockCount": m67,
     "waterFlat": MessageLookupByLibrary.simpleMessage("مبلغ ثابت"),
     "waterFrequency": MessageLookupByLibrary.simpleMessage("التكرار"),
-    "waterIdLabel": m61,
+    "waterIdLabel": m68,
     "waterImage": MessageLookupByLibrary.simpleMessage("صورة"),
     "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
       "PNG أو JPG حتى 5 ميغابايت",
     ),
-    "waterImagesSelected": m62,
+    "waterImagesSelected": m69,
     "waterInProgress": MessageLookupByLibrary.simpleMessage("قيد التنفيذ"),
     "waterInStock": MessageLookupByLibrary.simpleMessage("متوفر"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("المخزون"),
@@ -2189,7 +2295,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
       "تم تحديد المنتج كغير متوفر بنجاح",
     ),
-    "waterLastSold": m63,
+    "waterLastSold": m70,
     "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم إلغاء الإجازة بنجاح",
     ),
@@ -2231,7 +2337,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterMonth": MessageLookupByLibrary.simpleMessage("الشهر"),
     "waterMonthly": MessageLookupByLibrary.simpleMessage("شهري"),
     "waterMore": MessageLookupByLibrary.simpleMessage("المزيد"),
-    "waterMoreProducts": m64,
+    "waterMoreProducts": m71,
     "waterMorning": MessageLookupByLibrary.simpleMessage("الصباح"),
     "waterNewBadge": MessageLookupByLibrary.simpleMessage("جديد"),
     "waterNewOrders": MessageLookupByLibrary.simpleMessage("طلبات جديدة"),
@@ -2293,7 +2399,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
       "تم توصيل الطلب",
     ),
-    "waterOrderItemsCount": m65,
+    "waterOrderItemsCount": m72,
     "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
       "تم تحديد الطلب كجاهز بنجاح",
     ),
@@ -2320,7 +2426,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterPaused": MessageLookupByLibrary.simpleMessage("متوقف مؤقتًا"),
     "waterPausedByLabel": MessageLookupByLibrary.simpleMessage("أوقفه:"),
-    "waterPausedOn": m66,
+    "waterPausedOn": m73,
     "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage(
       "تاريخ الإيقاف:",
     ),
@@ -2343,8 +2449,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "استلمها المندوب",
     ),
     "waterPlan": MessageLookupByLibrary.simpleMessage("الخطة"),
-    "waterPlanRangeStart": m67,
-    "waterPlanRangeStartEnd": m68,
+    "waterPlanRangeStart": m74,
+    "waterPlanRangeStartEnd": m75,
     "waterPlanSummary": MessageLookupByLibrary.simpleMessage("ملخص الخطة"),
     "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال المخزون المتاح",
@@ -2438,7 +2544,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
       "ملخص الإيرادات",
     ),
-    "waterReviewsCount": m69,
+    "waterReviewsCount": m76,
     "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
       "أداء المبيعات",
     ),
@@ -2446,7 +2552,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
       "امسح الباركود أو أدخله",
     ),
-    "waterScheduledDeliveries": m70,
+    "waterScheduledDeliveries": m77,
     "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
       "ابحث برقم الاشتراك أو الاسم",
     ),
@@ -2481,7 +2587,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت إضافة المخزون",
     ),
     "waterStockHistory": MessageLookupByLibrary.simpleMessage("سجل المخزون"),
-    "waterStockIdLabel": m71,
+    "waterStockIdLabel": m78,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("تم سحب المخزون"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تحديث المخزون بنجاح",
@@ -2536,7 +2642,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
     ),
-    "waterTodayTimings": m72,
+    "waterTodayTimings": m79,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("غدًا"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المدفوع"),
@@ -2565,7 +2671,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "الجدول الأسبوعي",
     ),
-    "waterWelcomeToShop": m73,
+    "waterWelcomeToShop": m80,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "تم تحديث ساعات العمل بنجاح",
     ),
