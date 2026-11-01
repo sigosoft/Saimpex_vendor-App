@@ -60,8 +60,8 @@ One app serves all vendor types. After login the app opens a section based on th
 | 4 | Water | Water | `lib/water/` |
 | 10 | Gas | Water design on the `water*` endpoints (backend #84, on dev). One-time orders + refills: subscription tabs, stock controls and the returnable toggle are hidden for gas; orders show "N empty cylinders to collect" (`feature/gas-on-water`) | `lib/water/` (`WaterApi.isGas`) |
 | 9 | Home cleaning | Home Cleaning (UI only, mock data) | `lib/home_cleaning/` |
-| 7 | Laundry | **To build (V14)**: app section per *Saimpex Laundry Vendor UI 08-09-2026*; also on the web panel | `service*` |
-| 8 | Car wash | **To build (V14)**: app section per *Saimpex Car Wash Vendor UI 03-09-2026*; also on the web panel | `service*` |
+| 7 | Laundry | **To build (V14)**: app section per Figma "Vendor Apps" → Laundry Vendor App (every vendor type has this app and the web panel, final) | `service*` |
+| 8 | Car wash | **To build (V14)**: app section per Figma "Vendor Apps" → Car Wash Vendor App (every vendor type has this app and the web panel, final) | `service*` |
 
 Mapping code: `lib/utils/vendor_app_type.dart` (`VendorAppTypeX.fromVendorType`). Navigation: `lib/utils/vendor_app_router.dart`.
 
@@ -207,7 +207,7 @@ GetX (`get: ^4.7.2`). Controllers extend `GetxController` and call `update()`; v
 ### 3.4 Login and vendor-type routing
 
 1. `lib/view/login/login.dart` → `LoginController.Login` (`lib/controller/login_controller.dart`) posts `vendorapp/login` with username, password and FCM token.
-2. The login screen still shows an "app type" dropdown (`lib/view/login/widgets/login_form_card.dart`), but since commit `fb08465` the app **ignores the pick** and uses the server `vendor_type` (`VendorAppTypeX.fromVendorType`). Unsupported types (7, 8 and any unknown type) get a toast telling them to use the web panel.
+2. The login screen still shows an "app type" dropdown (`lib/view/login/widgets/login_form_card.dart`), but since commit `fb08465` the app **ignores the pick** and uses the server `vendor_type` (`VendorAppTypeX.fromVendorType`). Unsupported types (7, 8 and any unknown type) still get a toast telling them to use the web panel (`lib/controller/login_controller.dart`). **This is temporary:** every vendor type has both this app and the web panel (final, 1 Nov); V14 removes the block when the laundry and car wash sections land.
 3. The section is saved as `selectedAppType` and opened with `VendorAppRouter.goToSelectedApp`. On next start `lib/view/splash/splash.dart` routes the same way.
 4. Inside Grocery/Restaurant, screens branch on the saved `vendorType`: `"1"` means restaurant, anything else is treated as grocery (for example `lib/view/home/vendor_home_screen.dart`, `lib/view/home/vendor_order_details.dart`, `lib/controller/item_controller.dart`).
 5. Pharmacy and Water screens read `vendorType` (fallback: `selectedAppType`) and send it as the `vendor_type` query parameter.
@@ -248,8 +248,8 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
-| Laundry (7) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
-| Car wash (8) | **Not started** in app (V14, decided 31 Oct) | Still blocked at login; to build per the Drive design on `service*`. Vendors also keep the web panel. |
+| Laundry (7) | **Not started** in app (V14) | Still blocked at login; build per Figma on `service*`, then remove the block. Every vendor type has this app and the web panel (final). |
+| Car wash (8) | **Not started** in app (V14) | Still blocked at login; build per Figma on `service*`, then remove the block. Every vendor type has this app and the web panel (final). |
 | Home cleaning (9) | **Partial (UI only)** | Screens from Figma with hard-coded bookings (`lib/home_cleaning/view/home_cleaning_home.dart`). Only profile, logout and delete account call the API (`lib/home_cleaning/view/home_cleaning_account_view.dart`). Backend `service*` endpoints exist but are not used. |
 
 ### 4.2 By feature, Grocery / Restaurant / Local store section
@@ -437,8 +437,7 @@ AC: no hard-coded sample data remains in `lib/water/view/`.
 **P10. Home Cleaning on `service*` endpoints.** ✅ V6 for bookings, services and chat; account hours/earnings still on the Water screens (follow-up). 18 backend gaps in `docs/V6_BACKEND_ISSUES.md`.
 AC: bookings, booking detail/status changes, services CRUD and hours use the backend; no hard-coded bookings.
 
-**P11. Laundry and car wash sections.** ✅ **Confirmed by Praveen (31 Oct): build them (task V14).** Designs: Drive "Vendor App" folder, *Saimpex Laundry Vendor UI 08-09-2026* and *Saimpex Car Wash Vendor UI 03-09-2026*. Vendors use both the app and the web panel.
-Today these vendors use the web panel. Only build when Praveen confirms; then use `service*` endpoints and Figma.
+**P11. Laundry and car wash sections.** ✅ **Confirmed by Praveen (31 Oct): build them (task V14).** Designs: Drive "Vendor App" folder, *Saimpex Laundry Vendor UI 08-09-2026* and *Saimpex Car Wash Vendor UI 03-09-2026*. **Final (1 Nov): every vendor type has both logins, this app and the web panel.** Build on the `service*` endpoints per Figma, then remove the login block.
 AC: login no longer blocks types 7 and 8; bookings flow works.
 
 **P12. Printing beyond Android restaurant/grocery.** ✅ **Code done (`feature/bluetooth-printing`, V7); needs a real 58 mm and 80 mm printer to verify.**
@@ -489,7 +488,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 - API: the **vendor web API** `https://<host>/api/vendor` (`routes/vendor.php` in the backend), not `vendorapp`. Config in `.env` (`VITE_VENDOR_API_BASE_URL`, `VITE_STORAGE_BASE_URL`, `VITE_PUSHER_APP_KEY`, `VITE_PUSHER_APP_CLUSTER`; see `.env.example`). `.env.production` points at the DEV server.
 - Run: `npm install` (or `pnpm install`), `npm run dev`, `npm run build`.
 - Coverage: pages for restaurant, grocery, local store, pharmacy, water, laundry, car wash, services (bookings, types), courier, express, baskets, coupons, delivery boys, earnings, reports, chat, notifications, settings, staff. Integration notes in its `docs/` folder (`CARWASH_INTEGRATION.md`, `LAUNDRY_INTEGRATION.md`, `PHARMACY_INTEGRATION.md`, `WATER_INTEGRATION.md`).
-- Relation to this app: same vendors, same database, different API prefix. It covers the vendor types this app blocks (laundry, car wash) and is where the login toast sends them. When you add a feature to the app, check whether the web panel already has it; the matching `routes/vendor.php` controller often shows the business rules. Keep behaviour the same in both.
+- Relation to this app: same vendors, same database, different API prefix. Every vendor type logs in to both the web panel and this app (final, 1 Nov); the app's login toast for laundry and car wash is temporary until V14. When you add a feature to the app, check whether the web panel already has it; the matching `routes/vendor.php` controller often shows the business rules. Keep behaviour the same in both.
 
 ---
 
@@ -520,3 +519,4 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | **Vendor app decisions (Praveen):** laundry (7) and car wash (8) get app sections (V14) and keep the web panel; grocery and local store use the restaurant design; gas uses the water design with one-time orders + refills only (no subscriptions; backend #84); home cleaning matches its design (V15); Android + iOS, Android first. | Backend `V2_DECISIONS_AND_PLAN.md` §14 |
 | 31 Oct 2026 | **Gas on the water endpoints (#84, on dev):** water order and product endpoints serve gas vendors (type 10); `app_section` = `water`; rows carry `empty_cylinders_to_collect`, detail lines `is_returnable`; gas has no stock (`updateWaterItemStock` → 422). | ✅ `feature/gas-on-water`: gas hides subscriptions / stock / returnable toggle and shows empty cylinders to collect. |
 | 31 Oct 2026 | **Gas (10) → Water section (#84):** login `app_section` for gas is now `water`. The water order and product endpoints return the gas vendor's bookings (with `empty_cylinders_to_collect`; lines say "Cylinder") and gas items (no stock; `updateWaterItemStock` → 422). | Send gas vendors to the water section; hide stock controls for gas (§6.23). |
+| 1 Nov 2026 | **Final (Praveen): every vendor type has both logins, this app and the web panel**, including laundry and car wash. The app gets a section for every type (laundry + car wash: V14, which removes the login block). | Backend `V2_DECISIONS_AND_PLAN.md` §18 |
