@@ -244,6 +244,11 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 - **Cleaner review** under each review on the Vendor Profile (`vendorapp/profile` `reviews[].cleaner_review`).
 - The design's "126 jobs" shows the cleaner's review count: the API has no jobs count.
 
+### 3.5d Water design gaps (V18a ✅ `feature/v18-design-gaps`, API §6.41)
+
+- **Subscription calendar** (`lib/water/view/subscription_calendar/subscription_calendar_view.dart`, Figma 8360:37494; was a "not available" placeholder): totals (total, morning, afternoon, paused), weekly planner with per-day counts and week arrows, search, All / Morning / Afternoon / Evening / Paused, the day's deliveries grouped by slot (customer, delivery or self pickup, plan, product × bottles, Chat with customer). `GET waterDeliveryCalendar`.
+- **Subscription details** (Figma 8360:40537): **Delivery history** (latest 5, "See all" → `DeliveryHistoryView`, `GET waterSubscriptionDeliveries`, paginated) and the payment summary's savings, delivery fee and tax (`subscription.payment_summary`).
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

@@ -148,11 +148,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m62(count) => "(${count} reviews)";
 
-  static String m63(id) => "STOCK ID: ${id}";
+  static String m63(count) => "${count} scheduled deliveries";
 
-  static String m64(open, close) => "Today: ${open} - ${close}";
+  static String m64(id) => "STOCK ID: ${id}";
 
-  static String m65(name) => "Welcome to ${name}!";
+  static String m65(open, close) => "Today: ${open} - ${close}";
+
+  static String m66(name) => "Welcome to ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1673,6 +1675,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchNameOrMobileNumber": MessageLookupByLibrary.simpleMessage(
       "Search name or mobile number",
     ),
+    "seeAll": MessageLookupByLibrary.simpleMessage("See all"),
     "select": MessageLookupByLibrary.simpleMessage("Select"),
     "selectAttributeHint": MessageLookupByLibrary.simpleMessage(
       "Select attribute",
@@ -1881,6 +1884,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Account deleted successfully",
     ),
+    "waterActive": MessageLookupByLibrary.simpleMessage("Active"),
     "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "Add Delivery Boy",
     ),
@@ -1922,12 +1926,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
       "Business settings updated successfully",
     ),
+    "waterCalendarAfternoon": MessageLookupByLibrary.simpleMessage("Afternoon"),
+    "waterCalendarAll": MessageLookupByLibrary.simpleMessage("All"),
+    "waterCalendarEvening": MessageLookupByLibrary.simpleMessage("Evening"),
+    "waterCalendarMorning": MessageLookupByLibrary.simpleMessage("Morning"),
     "waterCalendarNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Delivery calendar not available yet",
     ),
     "waterCalendarNotAvailableHint": MessageLookupByLibrary.simpleMessage(
       "Scheduled subscription deliveries will appear here once this feature is ready. You can see each subscription\'s next delivery in its details.",
     ),
+    "waterCalendarPaused": MessageLookupByLibrary.simpleMessage("Paused"),
+    "waterCalendarTotal": MessageLookupByLibrary.simpleMessage("Total"),
     "waterCallNow": MessageLookupByLibrary.simpleMessage("Call Now"),
     "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to cancel this leave?",
@@ -1970,9 +1980,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterDaily": MessageLookupByLibrary.simpleMessage("Daily"),
     "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("dd-mm-yyyy"),
+    "waterDelivered": MessageLookupByLibrary.simpleMessage("Delivered"),
+    "waterDelivery": MessageLookupByLibrary.simpleMessage("Delivery"),
     "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
       "Delivery Address",
     ),
+    "waterDeliveryFee": MessageLookupByLibrary.simpleMessage("Delivery fee"),
     "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage(
       "DELIVERY HISTORY",
     ),
@@ -2103,6 +2116,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "PNG, JPG up to 5MB",
     ),
     "waterImagesSelected": m55,
+    "waterInProgress": MessageLookupByLibrary.simpleMessage("In progress"),
     "waterInStock": MessageLookupByLibrary.simpleMessage("In Stock"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("Inventory"),
     "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
@@ -2168,6 +2182,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterNextDelivery": MessageLookupByLibrary.simpleMessage("Next Delivery"),
     "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
       "No contact details available",
+    ),
+    "waterNoDeliveriesThisDay": MessageLookupByLibrary.simpleMessage(
+      "No deliveries on this day.",
+    ),
+    "waterNoDeliveriesYet": MessageLookupByLibrary.simpleMessage(
+      "No deliveries yet.",
     ),
     "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
       "No Leaves Found",
@@ -2366,6 +2386,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
       "Scan or enter barcode",
     ),
+    "waterScheduledDeliveries": m63,
     "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
       "Search by subscription ID, name",
     ),
@@ -2378,12 +2399,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
       "Search products, ID",
     ),
+    "waterSearchSubscription": MessageLookupByLibrary.simpleMessage(
+      "Search by subscription ID or name",
+    ),
     "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
       "Select from and to dates",
     ),
     "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
       "Select Image Source",
     ),
+    "waterSelfPickup": MessageLookupByLibrary.simpleMessage("Self pickup"),
     "waterSellingPrice": MessageLookupByLibrary.simpleMessage("Selling Price"),
     "waterSendMail": MessageLookupByLibrary.simpleMessage("Send Mail"),
     "waterSize": MessageLookupByLibrary.simpleMessage("Size"),
@@ -2394,7 +2419,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterStartTime": MessageLookupByLibrary.simpleMessage("Start Time"),
     "waterStockAdded": MessageLookupByLibrary.simpleMessage("Stock Added"),
     "waterStockHistory": MessageLookupByLibrary.simpleMessage("Stock History"),
-    "waterStockIdLabel": m63,
+    "waterStockIdLabel": m64,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("Stock Removed"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Stock updated successfully",
@@ -2453,7 +2478,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "To date must be after from date",
     ),
-    "waterTodayTimings": m64,
+    "waterTodayTimings": m65,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("Tomorrow"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("TOTAL"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("Total paid"),
@@ -2482,7 +2507,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "Weekly Schedule",
     ),
-    "waterWelcomeToShop": m65,
+    "waterWelcomeToShop": m66,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "Working hours updated successfully",
     ),

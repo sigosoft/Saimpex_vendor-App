@@ -11000,6 +11000,156 @@ class S {
       args: [],
     );
   }
+
+  /// `Delivered`
+  String get waterDelivered {
+    return Intl.message(
+      'Delivered',
+      name: 'waterDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In progress`
+  String get waterInProgress {
+    return Intl.message(
+      'In progress',
+      name: 'waterInProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No deliveries yet.`
+  String get waterNoDeliveriesYet {
+    return Intl.message(
+      'No deliveries yet.',
+      name: 'waterNoDeliveriesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See all`
+  String get seeAll {
+    return Intl.message('See all', name: 'seeAll', desc: '', args: []);
+  }
+
+  /// `Delivery fee`
+  String get waterDeliveryFee {
+    return Intl.message(
+      'Delivery fee',
+      name: 'waterDeliveryFee',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get waterCalendarTotal {
+    return Intl.message(
+      'Total',
+      name: 'waterCalendarTotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Morning`
+  String get waterCalendarMorning {
+    return Intl.message(
+      'Morning',
+      name: 'waterCalendarMorning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Afternoon`
+  String get waterCalendarAfternoon {
+    return Intl.message(
+      'Afternoon',
+      name: 'waterCalendarAfternoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Evening`
+  String get waterCalendarEvening {
+    return Intl.message(
+      'Evening',
+      name: 'waterCalendarEvening',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paused`
+  String get waterCalendarPaused {
+    return Intl.message(
+      'Paused',
+      name: 'waterCalendarPaused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get waterCalendarAll {
+    return Intl.message('All', name: 'waterCalendarAll', desc: '', args: []);
+  }
+
+  /// `Search by subscription ID or name`
+  String get waterSearchSubscription {
+    return Intl.message(
+      'Search by subscription ID or name',
+      name: 'waterSearchSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} scheduled deliveries`
+  String waterScheduledDeliveries(String count) {
+    return Intl.message(
+      '$count scheduled deliveries',
+      name: 'waterScheduledDeliveries',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No deliveries on this day.`
+  String get waterNoDeliveriesThisDay {
+    return Intl.message(
+      'No deliveries on this day.',
+      name: 'waterNoDeliveriesThisDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Self pickup`
+  String get waterSelfPickup {
+    return Intl.message(
+      'Self pickup',
+      name: 'waterSelfPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery`
+  String get waterDelivery {
+    return Intl.message('Delivery', name: 'waterDelivery', desc: '', args: []);
+  }
+
+  /// `Active`
+  String get waterActive {
+    return Intl.message('Active', name: 'waterActive', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

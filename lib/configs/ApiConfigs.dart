@@ -249,6 +249,9 @@ class ApiEndPoints {
   static String pauseWaterSubscription = "pauseWaterSubscription";
   static String resumeWaterSubscription = "resumeWaterSubscription";
   static String waterSubscriptionDetails = "waterSubscriptionDetails";
+  // Delivery calendar and a subscription's delivery history (API doc §6.41, V18).
+  static String waterDeliveryCalendar = "waterDeliveryCalendar";
+  static String waterSubscriptionDeliveries = "waterSubscriptionDeliveries";
 
   // Service verticals (home cleaning, laundry, car wash, gas): ServiceVerticalController
   static String serviceDashboard = "serviceDashboard";

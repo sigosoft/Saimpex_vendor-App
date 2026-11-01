@@ -137,6 +137,15 @@ class WaterApi {
 
   static String weekday(DateTime dt) => DateFormat('EEEE', _locale()).format(dt);
 
+  /// "Mon" in the app language (calendar strip).
+  static String shortWeekday(DateTime dt) => DateFormat('EEE', _locale()).format(dt);
+
+  /// "Aug 2026" in the app language.
+  static String monthYear(DateTime dt) => DateFormat('MMM yyyy', _locale()).format(dt);
+
+  /// "Wednesday, 14 Aug 2026" in the app language.
+  static String longDate(DateTime dt) => DateFormat('EEEE, d MMM yyyy', _locale()).format(dt);
+
   /// "1,234.00 MRU"
   static String money(dynamic value) {
     final n = double.tryParse(value?.toString() ?? '');

@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
+import 'package:saimpex_vendor/water/view/subscription_details/delivery_history_view.dart';
 import 'package:saimpex_vendor/water/view/home/pause_subscription_sheet.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -94,6 +95,17 @@ class _Details {
     return v == '—' ? null : v;
   }
 
+  /// `subscription.payment_summary` (§6.41): amount, savings, delivery fee, tax, total.
+  Map<String, dynamic> get summary =>
+      json['payment_summary'] is Map ? Map<String, dynamic>.from(json['payment_summary'] as Map) : const {};
+  double get savings => double.tryParse('${summary['savings'] ?? 0}') ?? 0;
+
+  /// Latest delivery orders of this subscription (§6.41).
+  List<Map<String, dynamic>> get deliveries => json['deliveries'] is List
+      ? (json['deliveries'] as List).whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
+      : const [];
+  int get deliveriesCount => int.tryParse('${json['deliveries_count'] ?? deliveries.length}') ?? deliveries.length;
+
   String get paymentType => _str('payment_type');
   bool get isPaid => _str('payment_status') == '2';
 
@@ -175,7 +187,10 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
       }
       if (!mounted) return;
       setState(() {
-        _details = _Details(Map<String, dynamic>.from(data['subscription'] as Map));
+        // deliveries (latest 5) and deliveries_count sit next to subscription (§6.41).
+        _details = _Details(Map<String, dynamic>.from(data['subscription'] as Map)
+          ..['deliveries'] = data['deliveries']
+          ..['deliveries_count'] = data['deliveries_count']);
       });
     } catch (e) {
       if (mounted) setState(() => _error = WaterApi.errorText(e));
@@ -313,9 +328,20 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
                           _UpcomingDeliveriesCard(items: details.upcoming),
                         ],
                       ],
-                      // Delivery history: the details endpoint returns no
-                      // delivered orders for a subscription yet, so the block
-                      // is hidden (issue draft in issues_water.md).
+                      // Delivery history: latest 5 + See all (§6.41, V18).
+                      if (details.deliveries.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        Row(children: [
+                          Expanded(child: _SectionTitle(title: S.of(context).waterDeliveryHistory)),
+                          if (details.deliveriesCount > details.deliveries.length)
+                            TextButton(
+                              onPressed: () => DeliveryHistoryView.open(context, widget.order.subscriptionId),
+                              child: Text(S.of(context).seeAll),
+                            ),
+                        ]),
+                        const SizedBox(height: 6),
+                        for (final d in details.deliveries) DeliveryHistoryTile(row: d),
+                      ],
                       const SizedBox(height: 18),
                       Text(
                         S.of(context).paymentSummary,
@@ -1228,6 +1254,17 @@ class _PaymentSummary extends StatelessWidget {
       child: Column(
         children: [
           _PayRow(label: S.of(context).waterSubscriptionAmount, value: details.amount),
+          // Savings, delivery fee and tax from payment_summary (§6.41, V18).
+          if (details.savings > 0) ...[
+            const SizedBox(height: 10),
+            _PayRow(label: S.of(context).waterSubscriptionSavings, value: '-${WaterApi.money(details.savings)}', valueColor: const Color(0xFFFF8A65)),
+          ],
+          if (details.summary.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _PayRow(label: S.of(context).waterDeliveryFee, value: WaterApi.money(details.summary['delivery_fee'] ?? 0)),
+            const SizedBox(height: 10),
+            _PayRow(label: S.of(context).tax, value: WaterApi.money(details.summary['tax'] ?? 0)),
+          ],
           const SizedBox(height: 10),
           _PayRow(label: S.of(context).paymentMethod, value: details.paymentMethod),
           if (details.isPaid && paidOn != null) ...[

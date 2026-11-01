@@ -160,11 +160,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m62(count) => "(${count} avis)";
 
-  static String m63(id) => "ID STOCK : ${id}";
+  static String m63(count) => "${count} livraisons prévues";
 
-  static String m64(open, close) => "Aujourd\'hui : ${open} - ${close}";
+  static String m64(id) => "ID STOCK : ${id}";
 
-  static String m65(name) => "Bienvenue chez ${name} !";
+  static String m65(open, close) => "Aujourd\'hui : ${open} - ${close}";
+
+  static String m66(name) => "Bienvenue chez ${name} !";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1864,6 +1866,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchNameOrMobileNumber": MessageLookupByLibrary.simpleMessage(
       "Rechercher un nom ou un numéro de portable",
     ),
+    "seeAll": MessageLookupByLibrary.simpleMessage("Tout voir"),
     "select": MessageLookupByLibrary.simpleMessage("Sélectionner"),
     "selectAttributeHint": MessageLookupByLibrary.simpleMessage(
       "Sélectionner un attribut",
@@ -2097,6 +2100,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Compte supprimé avec succès",
     ),
+    "waterActive": MessageLookupByLibrary.simpleMessage("Actif"),
     "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "Ajouter un livreur",
     ),
@@ -2146,12 +2150,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
       "Paramètres de l\'entreprise mis à jour",
     ),
+    "waterCalendarAfternoon": MessageLookupByLibrary.simpleMessage(
+      "Après-midi",
+    ),
+    "waterCalendarAll": MessageLookupByLibrary.simpleMessage("Tous"),
+    "waterCalendarEvening": MessageLookupByLibrary.simpleMessage("Soir"),
+    "waterCalendarMorning": MessageLookupByLibrary.simpleMessage("Matin"),
     "waterCalendarNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Calendrier des livraisons pas encore disponible",
     ),
     "waterCalendarNotAvailableHint": MessageLookupByLibrary.simpleMessage(
       "Les livraisons d\'abonnement prévues s\'afficheront ici dès que cette fonction sera prête. La prochaine livraison de chaque abonnement est visible dans ses détails.",
     ),
+    "waterCalendarPaused": MessageLookupByLibrary.simpleMessage("En pause"),
+    "waterCalendarTotal": MessageLookupByLibrary.simpleMessage("Total"),
     "waterCallNow": MessageLookupByLibrary.simpleMessage("Appeler"),
     "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
       "Voulez-vous vraiment annuler ce congé ?",
@@ -2192,8 +2204,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterDaily": MessageLookupByLibrary.simpleMessage("Quotidien"),
     "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("jj-mm-aaaa"),
+    "waterDelivered": MessageLookupByLibrary.simpleMessage("Livrée"),
+    "waterDelivery": MessageLookupByLibrary.simpleMessage("Livraison"),
     "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
       "Adresse de livraison",
+    ),
+    "waterDeliveryFee": MessageLookupByLibrary.simpleMessage(
+      "Frais de livraison",
     ),
     "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage(
       "HISTORIQUE DES LIVRAISONS",
@@ -2329,6 +2346,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "PNG, JPG jusqu\'à 5 Mo",
     ),
     "waterImagesSelected": m55,
+    "waterInProgress": MessageLookupByLibrary.simpleMessage("En cours"),
     "waterInStock": MessageLookupByLibrary.simpleMessage("En stock"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("Inventaire"),
     "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
@@ -2400,6 +2418,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
       "Aucune coordonnée disponible",
+    ),
+    "waterNoDeliveriesThisDay": MessageLookupByLibrary.simpleMessage(
+      "Aucune livraison ce jour-là.",
+    ),
+    "waterNoDeliveriesYet": MessageLookupByLibrary.simpleMessage(
+      "Aucune livraison pour l\'instant.",
     ),
     "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
       "Aucun congé trouvé",
@@ -2616,6 +2640,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
       "Scanner ou saisir le code-barres",
     ),
+    "waterScheduledDeliveries": m63,
     "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
       "Rechercher par ID d\'abonnement, nom",
     ),
@@ -2628,11 +2653,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
       "Rechercher produits, ID",
     ),
+    "waterSearchSubscription": MessageLookupByLibrary.simpleMessage(
+      "Rechercher par ID d\'abonnement ou nom",
+    ),
     "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
       "Sélectionnez les dates de début et de fin",
     ),
     "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
       "Choisir la source de l\'image",
+    ),
+    "waterSelfPickup": MessageLookupByLibrary.simpleMessage(
+      "Retrait sur place",
     ),
     "waterSellingPrice": MessageLookupByLibrary.simpleMessage("Prix de vente"),
     "waterSendMail": MessageLookupByLibrary.simpleMessage("Envoyer un e-mail"),
@@ -2646,7 +2677,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterStockHistory": MessageLookupByLibrary.simpleMessage(
       "Historique du stock",
     ),
-    "waterStockIdLabel": m63,
+    "waterStockIdLabel": m64,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("Stock retiré"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Stock mis à jour avec succès",
@@ -2705,7 +2736,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "La date de fin doit être postérieure à la date de début",
     ),
-    "waterTodayTimings": m64,
+    "waterTodayTimings": m65,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("Demain"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("TOTAL"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("Total payé"),
@@ -2736,7 +2767,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "Planning hebdomadaire",
     ),
-    "waterWelcomeToShop": m65,
+    "waterWelcomeToShop": m66,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "Horaires mis à jour avec succès",
     ),
