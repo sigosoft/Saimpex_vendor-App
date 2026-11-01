@@ -17,8 +17,8 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
-import '../../Utils/Utils.dart';
-import '../Home/Home.dart';
+import '../../utils/utils.dart';
+import '../home/home.dart';
 
 String? deviceToken;
 

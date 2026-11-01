@@ -9,7 +9,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/login_model.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../view/otp/otp.dart';
 
 class LoginController extends GetxController {

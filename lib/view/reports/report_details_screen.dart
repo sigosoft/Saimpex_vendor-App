@@ -7,7 +7,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 
 /// Data for the report/order details screen (summary + breakdown).
 class ReportDetailsParams {

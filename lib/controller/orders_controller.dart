@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 // import 'package:saimpex_vendor/model/grocery_orders_model.dart';
 // import 'package:saimpex_vendor/model/order_details_model.dart';
 import 'package:saimpex_vendor/model/restaurant_orders_model.dart';
-import 'package:saimpex_vendor/utils/Utils.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class OrdersController extends GetxController {
   final FlutterLocalization localization = FlutterLocalization.instance;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_button.dart';
+import '../../utils/widgets/custom_button.dart';
 
 class ServerDown extends StatelessWidget {
   ServerDown({super.key});

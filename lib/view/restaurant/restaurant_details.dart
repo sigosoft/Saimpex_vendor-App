@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:saimpex_vendor/utils/Utils.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/view/login/widgets/login_to_continue_alert_dialogue.dart';
 import 'package:saimpex_vendor/view/restaurant/restaurant_details_with_items.dart';

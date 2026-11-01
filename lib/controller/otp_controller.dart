@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../utils/vendor_app_router.dart';
 import '../utils/vendor_app_type.dart';
 

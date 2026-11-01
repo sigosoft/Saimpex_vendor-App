@@ -149,7 +149,9 @@ The app calls `Firebase.initializeApp()` at start (`lib/main.dart`) and uses Mes
 
 ### 2.6 Tests
 
-`test/esc_pos_receipt_builder_test.dart` tests the receipt builder. `test/widget_test.dart` is the Flutter template counter test and will fail (the app has no counter). There is no CI.
+`test/esc_pos_receipt_builder_test.dart` tests the receipt builder (updated to the async `buildReceipt` and the V7 ticket layout). The Flutter template counter test was removed (`fix/small-cleanups`). There is no CI.
+
+**Imports must match the file names' case.** Many imports used `Utils/Utils.dart`, `Home/Home.dart`, `Login/Login.dart`… while the files are `utils/utils.dart`, `home/home.dart`, … That works on macOS and Windows but not on Linux (or CI), where `flutter analyze` showed ~436 errors. All 68 were fixed (`fix/small-cleanups`); on Linux the analyzer now shows 0 errors. The splash screen no longer prints the login token.
 
 ---
 

@@ -10,7 +10,7 @@ import '../../controller/payout_controller.dart';
 import '../../generated/l10n.dart';
 import '../../model/received_payout_model.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import 'payoutitem.dart';
 

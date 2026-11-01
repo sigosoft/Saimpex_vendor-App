@@ -30,7 +30,7 @@ import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 
-import '../../Utils/Utils.dart';
+import '../../utils/utils.dart';
 import '../../configs/ApiConfigs.dart';
 import '../../configs/Dioclient.dart';
 import '../../model/settings_model.dart';

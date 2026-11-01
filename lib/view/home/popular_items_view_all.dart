@@ -7,7 +7,7 @@ import 'package:saimpex_vendor/controller/dashboard_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 
 class PopularItemsViewAll extends StatefulWidget {
   const PopularItemsViewAll({super.key});

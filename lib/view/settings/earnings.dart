@@ -7,9 +7,9 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/settings/payout_details.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
-import 'package:saimpex_vendor/Utils/Utils.dart';
-import 'package:saimpex_vendor/Utils/widgets/app_loader.dart';
-import 'package:saimpex_vendor/Utils/widgets/no_data_widget.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
+import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/utils/widgets/balance_adjustments_section.dart';
 import 'package:saimpex_vendor/view/settings/earnings_all_orders.dart';
 

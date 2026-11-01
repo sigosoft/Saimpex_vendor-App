@@ -6,7 +6,7 @@ import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 
-import '../Utils/utils.dart';
+import '../utils/utils.dart';
 import '../model/home_model.dart';
 // import 'grocery_controller.dart';
 // import 'cart_controller.dart';
