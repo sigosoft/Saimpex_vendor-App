@@ -2319,5 +2319,12 @@
     }
   },
   "pharmacyGenericName": "Generic name",
-  "pharmacyGenericNameHint": "e.g. Paracetamol"
+  "pharmacyGenericNameHint": "e.g. Paracetamol",
+  "pharmacyGenericEquivalent": "Generic equivalent",
+  "pharmacyGenericEquivalentHelp": "The generic version customers can choose instead. It can be another pharmacy's product.",
+  "pharmacyGenericSearchHint": "Search by name or generic name",
+  "pharmacyGenericRemoveLink": "Remove link",
+  "pharmacyGenericTypeTwo": "Type at least 2 letters",
+  "pharmacyGenericNoMatch": "No product found",
+  "pharmacyGenericNone": "None"
 }

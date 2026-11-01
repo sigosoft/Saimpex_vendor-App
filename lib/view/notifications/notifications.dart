@@ -9,7 +9,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../controller/notification_controller.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import '../shimmer_loading/shimmer_notification.dart';

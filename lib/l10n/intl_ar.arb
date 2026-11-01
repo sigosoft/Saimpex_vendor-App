@@ -2381,5 +2381,12 @@
     }
   },
   "pharmacyGenericName": "الاسم العلمي",
-  "pharmacyGenericNameHint": "مثال: باراسيتامول"
+  "pharmacyGenericNameHint": "مثال: باراسيتامول",
+  "pharmacyGenericEquivalent": "البديل الجنيس",
+  "pharmacyGenericEquivalentHelp": "النسخة الجنيسة التي يمكن للعملاء اختيارها بدلاً منه. قد تكون منتجًا من صيدلية أخرى.",
+  "pharmacyGenericSearchHint": "ابحث بالاسم أو الاسم العلمي",
+  "pharmacyGenericRemoveLink": "إزالة الربط",
+  "pharmacyGenericTypeTwo": "اكتب حرفين على الأقل",
+  "pharmacyGenericNoMatch": "لم يتم العثور على منتج",
+  "pharmacyGenericNone": "لا يوجد"
 }

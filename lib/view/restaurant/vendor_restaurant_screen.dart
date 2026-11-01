@@ -24,7 +24,7 @@ import '../../controller/menucontroller.dart' as menu_ctrl;
 import '../../controller/item_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../configs/ApiConfigs.dart';
-import '../../Utils/Utils.dart';
+import '../../utils/utils.dart';
 import '../../utils/widgets/app_loader.dart';
 import '../../utils/widgets/no_data_widget.dart';
 

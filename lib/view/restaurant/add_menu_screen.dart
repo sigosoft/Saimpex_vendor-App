@@ -6,7 +6,7 @@ import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/menucontroller.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
-import 'package:saimpex_vendor/Utils/Utils.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/add_menu_widgets.dart';
 
 class AddMenuScreen extends StatefulWidget {

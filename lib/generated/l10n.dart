@@ -9450,6 +9450,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Generic equivalent`
+  String get pharmacyGenericEquivalent {
+    return Intl.message(
+      'Generic equivalent',
+      name: 'pharmacyGenericEquivalent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The generic version customers can choose instead. It can be another pharmacy's product.`
+  String get pharmacyGenericEquivalentHelp {
+    return Intl.message(
+      'The generic version customers can choose instead. It can be another pharmacy\'s product.',
+      name: 'pharmacyGenericEquivalentHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search by name or generic name`
+  String get pharmacyGenericSearchHint {
+    return Intl.message(
+      'Search by name or generic name',
+      name: 'pharmacyGenericSearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove link`
+  String get pharmacyGenericRemoveLink {
+    return Intl.message(
+      'Remove link',
+      name: 'pharmacyGenericRemoveLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type at least 2 letters`
+  String get pharmacyGenericTypeTwo {
+    return Intl.message(
+      'Type at least 2 letters',
+      name: 'pharmacyGenericTypeTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No product found`
+  String get pharmacyGenericNoMatch {
+    return Intl.message(
+      'No product found',
+      name: 'pharmacyGenericNoMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get pharmacyGenericNone {
+    return Intl.message(
+      'None',
+      name: 'pharmacyGenericNone',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

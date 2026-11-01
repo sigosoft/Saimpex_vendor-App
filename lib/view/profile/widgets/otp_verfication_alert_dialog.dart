@@ -4,7 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:pinput/pinput.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
-import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
+import 'package:saimpex_vendor/utils/widgets/custom_button.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
 class OtpVerficationAlertDialog extends StatelessWidget {

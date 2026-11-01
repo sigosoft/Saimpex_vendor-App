@@ -8,8 +8,8 @@ import 'package:pinput/pinput.dart';
 import '../../controller/otp_controller.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
-import '../../utils/Widgets/custom_button.dart';
+import '../../utils/widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_button.dart';
 
 class Otp extends StatefulWidget {
   const Otp({super.key, required this.country_code, required this.mobile});

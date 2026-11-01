@@ -4,7 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
-import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
+import 'package:saimpex_vendor/utils/widgets/custom_button.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
 import '../../../generated/l10n.dart';

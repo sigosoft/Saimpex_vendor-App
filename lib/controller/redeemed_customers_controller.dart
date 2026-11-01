@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/model/basket_customers_model.dart';
 import 'package:saimpex_vendor/model/basket_details_model.dart';
 
-import '../Utils/Utils.dart';
+import '../utils/utils.dart';
 import '../configs/ApiConfigs.dart';
 import '../configs/Dioclient.dart';
 import '../generated/l10n.dart';
-import '../view/Login/Login.dart';
+import '../view/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 

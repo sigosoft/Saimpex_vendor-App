@@ -1280,11 +1280,30 @@ class MessageLookup extends MessageLookupByLibrary {
       "Solde des commandes en attente",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("Pourcentage"),
+    "pharmacyGenericEquivalent": MessageLookupByLibrary.simpleMessage(
+      "Équivalent générique",
+    ),
+    "pharmacyGenericEquivalentHelp": MessageLookupByLibrary.simpleMessage(
+      "La version générique que les clients peuvent choisir à la place. Elle peut venir d\'une autre pharmacie.",
+    ),
     "pharmacyGenericName": MessageLookupByLibrary.simpleMessage(
       "Nom générique",
     ),
     "pharmacyGenericNameHint": MessageLookupByLibrary.simpleMessage(
       "ex. Paracétamol",
+    ),
+    "pharmacyGenericNoMatch": MessageLookupByLibrary.simpleMessage(
+      "Aucun produit trouvé",
+    ),
+    "pharmacyGenericNone": MessageLookupByLibrary.simpleMessage("Aucun"),
+    "pharmacyGenericRemoveLink": MessageLookupByLibrary.simpleMessage(
+      "Retirer le lien",
+    ),
+    "pharmacyGenericSearchHint": MessageLookupByLibrary.simpleMessage(
+      "Rechercher par nom ou nom générique",
+    ),
+    "pharmacyGenericTypeTwo": MessageLookupByLibrary.simpleMessage(
+      "Tapez au moins 2 lettres",
     ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("Numéro de téléphone"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(

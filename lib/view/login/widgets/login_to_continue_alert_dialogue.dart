@@ -2,7 +2,7 @@ import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
-import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
+import 'package:saimpex_vendor/utils/widgets/custom_button.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
 import '../../../generated/l10n.dart';

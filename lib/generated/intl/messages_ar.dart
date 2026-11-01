@@ -1138,9 +1138,28 @@ class MessageLookup extends MessageLookupByLibrary {
       "رصيد الطلبات المعلقة",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("نسبة مئوية"),
+    "pharmacyGenericEquivalent": MessageLookupByLibrary.simpleMessage(
+      "البديل الجنيس",
+    ),
+    "pharmacyGenericEquivalentHelp": MessageLookupByLibrary.simpleMessage(
+      "النسخة الجنيسة التي يمكن للعملاء اختيارها بدلاً منه. قد تكون منتجًا من صيدلية أخرى.",
+    ),
     "pharmacyGenericName": MessageLookupByLibrary.simpleMessage("الاسم العلمي"),
     "pharmacyGenericNameHint": MessageLookupByLibrary.simpleMessage(
       "مثال: باراسيتامول",
+    ),
+    "pharmacyGenericNoMatch": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على منتج",
+    ),
+    "pharmacyGenericNone": MessageLookupByLibrary.simpleMessage("لا يوجد"),
+    "pharmacyGenericRemoveLink": MessageLookupByLibrary.simpleMessage(
+      "إزالة الربط",
+    ),
+    "pharmacyGenericSearchHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث بالاسم أو الاسم العلمي",
+    ),
+    "pharmacyGenericTypeTwo": MessageLookupByLibrary.simpleMessage(
+      "اكتب حرفين على الأقل",
     ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(

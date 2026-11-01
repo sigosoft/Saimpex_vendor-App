@@ -21,7 +21,7 @@ import '../../controller/order_details_controller.dart';
 import '../../generated/l10n.dart';
 // ignore: unused_import
 import '../../model/OrderDetailsModel.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/order_fulfillment.dart';
 import '../../utils/utils.dart';
 import '../../utils/widgets/no_data_widget.dart';

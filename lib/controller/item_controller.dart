@@ -17,7 +17,7 @@ import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
 import 'package:saimpex_vendor/model/restaurant_items_detail_model.dart';
 import 'package:saimpex_vendor/model/tag_model.dart';
 import 'package:saimpex_vendor/model/success_model.dart';
-import 'package:saimpex_vendor/Utils/Utils.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/restaurant_menu_item_stock_logs_model.dart';
 
 class CatalogExtraItem {

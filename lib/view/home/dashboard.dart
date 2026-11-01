@@ -10,7 +10,7 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_stat_card.dart';
 import 'package:saimpex_vendor/view/home/popular_items_view_all.dart';
 
 import 'package:saimpex_vendor/view/home/widgets/vendor_membership_card.dart';
-import '../../utils/Widgets/custom_app_bar.dart';
+import '../../utils/widgets/custom_app_bar.dart';
 import '../../generated/l10n.dart';
 
 class Dashboard extends StatefulWidget {

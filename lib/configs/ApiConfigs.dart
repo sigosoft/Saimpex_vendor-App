@@ -210,6 +210,8 @@ class ApiEndPoints {
   // Product: generic name etc. (API §6.36).
   static String pharmacyMenuDetails = "pharmacyMenuDetails";
   static String pharmacyProductFields = "pharmacyProductFields";
+  // Generic equivalent search across pharmacies (API doc §6.55, #130).
+  static String pharmacyGenericSearch = "pharmacyGenericSearch";
   static String updatePharmacyItemAvailabilityStatus =
       "updatePharmacyItemAvailabilityStatus";
   static String updatePharmacyMenuItem = "updatePharmacyMenuItem";

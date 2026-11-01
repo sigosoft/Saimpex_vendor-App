@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
-import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
+import 'package:saimpex_vendor/utils/widgets/custom_button.dart';
 
 import '../../../generated/l10n.dart';
 

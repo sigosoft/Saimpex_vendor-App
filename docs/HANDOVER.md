@@ -149,7 +149,9 @@ The app calls `Firebase.initializeApp()` at start (`lib/main.dart`) and uses Mes
 
 ### 2.6 Tests
 
-`test/esc_pos_receipt_builder_test.dart` tests the receipt builder. `test/widget_test.dart` is the Flutter template counter test and will fail (the app has no counter). There is no CI.
+`test/esc_pos_receipt_builder_test.dart` tests the receipt builder (updated to the async `buildReceipt` and the V7 ticket layout). The Flutter template counter test was removed (`fix/small-cleanups`). There is no CI.
+
+**Imports must match the file names' case.** Many imports used `Utils/Utils.dart`, `Home/Home.dart`, `Login/Login.dart`… while the files are `utils/utils.dart`, `home/home.dart`, … That works on macOS and Windows but not on Linux (or CI), where `flutter analyze` showed ~436 errors. All 68 were fixed (`fix/small-cleanups`); on Linux the analyzer now shows 0 errors. The splash screen no longer prints the login token.
 
 ---
 
@@ -227,7 +229,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).
 - Chat realtime: Pusher in `lib/controller/chat_controller.dart`, config in `lib/configs/PusherConfig.dart`.
-- **Support messages from SAIMPEX (V17, ✅ `feature/support-messages`):** API §6.37. `lib/controller/support_messages_controller.dart`, `lib/view/support/support_messages.dart` (order threads with unread badge) and `support_chat.dart` (one order's messages, reply). Menu tile "Support messages" in all four account menus (restaurant/grocery profile, water, pharmacy, home cleaning). The `admin_message` push opens that order's chat and **no longer triggers the new-order alert** (it carries an `order_id`). "Open order" shows only in the grocery/restaurant section. Built without a vendor Figma screen, in the delivery app's Support Messages layout (Figma `10885:12518`). Pharmacy part (§6.36, ✅ `feature/pharmacy-generic-dosage`): **Generic name** field on Add/Edit Product (`pharmacy_add_product_screen.dart`), loaded from `pharmacyMenuDetails` and saved with `POST pharmacyProductFields` (after an add, the new `menu_id` comes from `pharmacyMenuItemDetail`). Dosage per variant was already on the form. **Generic equivalent** picker waits on backend #130 (linked product's name + a cross-pharmacy product search, or a decision that only Admin sets it).
+- **Support messages from SAIMPEX (V17, ✅ `feature/support-messages`):** API §6.37. `lib/controller/support_messages_controller.dart`, `lib/view/support/support_messages.dart` (order threads with unread badge) and `support_chat.dart` (one order's messages, reply). Menu tile "Support messages" in all four account menus (restaurant/grocery profile, water, pharmacy, home cleaning). The `admin_message` push opens that order's chat and **no longer triggers the new-order alert** (it carries an `order_id`). "Open order" shows only in the grocery/restaurant section. Built without a vendor Figma screen, in the delivery app's Support Messages layout (Figma `10885:12518`). Pharmacy part (§6.36, ✅ `feature/pharmacy-generic-dosage`): **Generic name** field on Add/Edit Product (`pharmacy_add_product_screen.dart`), loaded from `pharmacyMenuDetails` and saved with `POST pharmacyProductFields` (after an add, the new `menu_id` comes from `pharmacyMenuItemDetail`). Dosage per variant was already on the form. **Generic equivalent** (✅ `feature/generic-picker`, API §6.55, backend #130): field under Generic name showing the linked product (`pharmacyMenuDetails` → `generic_equivalent`); tapping opens a search sheet over every pharmacy (`pharmacyGenericSearch`, 2+ letters, the edited product excluded) with "Remove link"; saved as `generic_menu_id` with `pharmacyProductFields`, only when changed. Built without a Figma screen.
 
 ### 3.7 Printing
 
