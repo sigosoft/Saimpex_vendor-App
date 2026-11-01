@@ -9365,6 +9365,16 @@ class S {
       args: [],
     );
   }
+
+  /// `{count} empty cylinders to collect`
+  String gasEmptyCylindersToCollect(String count) {
+    return Intl.message(
+      '$count empty cylinders to collect',
+      name: 'gasEmptyCylindersToCollect',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

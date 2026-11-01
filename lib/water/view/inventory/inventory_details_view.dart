@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -773,6 +774,8 @@ class _ActionButtons extends StatelessWidget {
             ),
           ),
         ),
+        // Gas has no stock (updateWaterItemStock → 422).
+        if (!WaterApi.isGas) ...[
         const SizedBox(width: 12),
         Expanded(
           child: SizedBox(
@@ -794,6 +797,7 @@ class _ActionButtons extends StatelessWidget {
             ),
           ),
         ),
+        ],
       ],
     );
   }

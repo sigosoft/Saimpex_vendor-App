@@ -2362,5 +2362,11 @@
   "sendingToPrinter": "جارٍ الإرسال إلى الطابعة…",
   "@sendingToPrinter": {},
   "ticketSentToPrinter": "تم إرسال التذكرة إلى الطابعة",
-  "@ticketSentToPrinter": {}
+  "@ticketSentToPrinter": {},
+  "gasEmptyCylindersToCollect": "{count} أسطوانات فارغة للاستلام",
+  "@gasEmptyCylindersToCollect": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  }
 }
