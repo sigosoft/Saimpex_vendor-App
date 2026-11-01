@@ -11150,6 +11150,41 @@ class S {
   String get waterActive {
     return Intl.message('Active', name: 'waterActive', desc: '', args: []);
   }
+
+  /// `Flat price`
+  String get addonUnitFlat {
+    return Intl.message(
+      'Flat price',
+      name: 'addonUnitFlat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Per unit`
+  String get addonUnitUnit {
+    return Intl.message('Per unit', name: 'addonUnitUnit', desc: '', args: []);
+  }
+
+  /// `Per hour`
+  String get addonUnitHour {
+    return Intl.message('Per hour', name: 'addonUnitHour', desc: '', args: []);
+  }
+
+  /// `Per room`
+  String get addonUnitRoom {
+    return Intl.message('Per room', name: 'addonUnitRoom', desc: '', args: []);
+  }
+
+  /// `Per piece`
+  String get addonUnitPiece {
+    return Intl.message(
+      'Per piece',
+      name: 'addonUnitPiece',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

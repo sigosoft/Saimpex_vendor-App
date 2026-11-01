@@ -2619,5 +2619,10 @@
   "waterNoDeliveriesThisDay": "Aucune livraison ce jour-là.",
   "waterSelfPickup": "Retrait sur place",
   "waterDelivery": "Livraison",
-  "waterActive": "Actif"
+  "waterActive": "Actif",
+  "addonUnitFlat": "Prix fixe",
+  "addonUnitUnit": "Par unité",
+  "addonUnitHour": "Par heure",
+  "addonUnitRoom": "Par pièce (salle)",
+  "addonUnitPiece": "Par article"
 }

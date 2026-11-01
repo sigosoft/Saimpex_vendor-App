@@ -74,10 +74,14 @@ class SpacePricingItem {
 
 /// Add-ons have a name and a price only: the backend stores no unit for them.
 class AddonPricingItem {
-  AddonPricingItem({required this.name, required this.rate});
+  AddonPricingItem({required this.name, required this.rate, this.unit});
 
   String name;
   String rate;
+
+  /// Add-on price unit (API doc §6.40): unit | hour | room | piece, or null
+  /// for a flat price.
+  String? unit;
 }
 
 class AddServiceView extends StatefulWidget {
@@ -103,6 +107,9 @@ class _AddServiceViewState extends State<AddServiceView> {
 
   List<CleaningServiceType> _serviceTypes = [];
   int? _selectedTypeId;
+
+  CleaningServiceType? get _selectedType =>
+      _serviceTypes.where((t) => t.id == _selectedTypeId).firstOrNull;
   bool _typesLoading = true;
   String? _typesError;
   bool _saving = false;
@@ -159,6 +166,7 @@ class _AddServiceViewState extends State<AddServiceView> {
             (a) => AddonPricingItem(
               name: a.name,
               rate: formatServicePrice(a.price),
+              unit: a.unit,
             ),
           )
           .toList();
@@ -295,6 +303,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               (a) => CleaningServiceAddon(
                 name: a.name,
                 price: double.tryParse(a.rate) ?? 0,
+                unit: a.unit,
               ),
             )
             .toList(),
@@ -617,6 +626,7 @@ class _AddServiceViewState extends State<AddServiceView> {
   void _showAddAddonDialog({AddonPricingItem? editingItem, int? index}) {
     final nameCtrl = TextEditingController(text: editingItem?.name ?? '');
     final priceCtrl = TextEditingController(text: editingItem?.rate ?? '');
+    String? unit = editingItem?.unit;
 
     showModalBottomSheet<void>(
       context: context,
@@ -773,6 +783,27 @@ class _AddServiceViewState extends State<AddServiceView> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // Price unit (§6.40): flat, or per unit / hour / room / piece.
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: [
+                      for (final (value, label) in [
+                        (null, S.of(context).addonUnitFlat),
+                        ('unit', S.of(context).addonUnitUnit),
+                        ('hour', S.of(context).addonUnitHour),
+                        ('room', S.of(context).addonUnitRoom),
+                        ('piece', S.of(context).addonUnitPiece),
+                      ])
+                        ChoiceChip(
+                          label: Text(label, style: appFont('Inter', fontSize: 12)),
+                          selected: unit == value,
+                          selectedColor: const Color(0xFFFFE4D6),
+                          onSelected: (_) => setModalState(() => unit = value),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 18),
                   Row(
                     children: [
@@ -820,10 +851,11 @@ class _AddServiceViewState extends State<AddServiceView> {
                                     _addons[index] = AddonPricingItem(
                                       name: name,
                                       rate: price,
+                                      unit: unit,
                                     );
                                   } else {
                                     _addons.add(
-                                      AddonPricingItem(name: name, rate: price),
+                                      AddonPricingItem(name: name, rate: price, unit: unit),
                                     );
                                   }
                                 });
@@ -1284,16 +1316,24 @@ class _AddServiceViewState extends State<AddServiceView> {
                         _buildPropertyTypesCard(),
                         const SizedBox(height: 14),
                         _buildBasicInfoCard(),
-                        // service_types carry no "kind" flag, so every optional
-                        // section is offered for every type.
-                        const SizedBox(height: 14),
-                        _buildCleaningProductsCard(),
+                        // The type's flags decide the optional sections
+                        // (§6.40: has_product_supply, has_addons, has_issues,
+                        // kind cleaning | pest_control). Older types without
+                        // flags show every section, as before.
+                        if (_selectedType?.hasProductSupply ?? true) ...[
+                          const SizedBox(height: 14),
+                          _buildCleaningProductsCard(),
+                        ],
                         const SizedBox(height: 14),
                         _buildSpacePricingCard(),
-                        const SizedBox(height: 14),
-                        _buildAddonsCard(),
-                        const SizedBox(height: 14),
-                        _buildIssuesCoveredCard(),
+                        if (_selectedType?.hasAddons ?? true) ...[
+                          const SizedBox(height: 14),
+                          _buildAddonsCard(),
+                        ],
+                        if (_selectedType?.hasIssues ?? (_selectedType?.kind == null || _selectedType?.kind == 'pest_control')) ...[
+                          const SizedBox(height: 14),
+                          _buildIssuesCoveredCard(),
+                        ],
                       ],
                     ),
                   ),

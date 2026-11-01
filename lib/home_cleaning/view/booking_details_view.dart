@@ -221,6 +221,11 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 16),
         _ProductsCard(fee: b.supplyLine!.lineTotal, isCompleted: b.isCompleted),
       ],
+      // The customer brings the products (`product_supply`, §6.40).
+      if (ServiceKinds.isCleaning && b.supplyLine == null && b.raw['product_supply'] == 'customer') ...[
+        const SizedBox(height: 16),
+        _noteBox(S.of(context).cleaningCustomerProvidesProductsDesc),
+      ],
       if (notes != null && notes.isNotEmpty) ...[
         const SizedBox(height: 16),
         _sectionLabel(S.of(context).cleaningSpecialNotesHeader),
@@ -236,6 +241,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
       if (b.address != null) ...[
         const SizedBox(height: 12),
         _LocationCard(
+          label: b.raw['address_label']?.toString(),
           address: b.address!,
           latitude: b.latitude,
           longitude: b.longitude,
@@ -693,19 +699,26 @@ class _ServiceCard extends StatelessWidget {
     return _WhiteCard(
       child: Row(
         children: [
-          // The booking payload carries no service image; neutral tile.
+          // Service image (`service_image`, §6.40), or a neutral tile.
           Container(
             width: 64,
             height: 64,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: const Color(0xFFFFF1EB),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.cleaning_services_outlined,
-              color: BookingDetailsView._orange,
-              size: 30,
-            ),
+            child: (booking.raw['service_image']?.toString() ?? '').startsWith('http')
+                ? Image.network(
+                    booking.raw['service_image'].toString(),
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const Icon(Icons.cleaning_services_outlined, color: BookingDetailsView._orange, size: 30),
+                  )
+                : const Icon(
+                    Icons.cleaning_services_outlined,
+                    color: BookingDetailsView._orange,
+                    size: 30,
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -857,7 +870,10 @@ class _ProductsCard extends StatelessWidget {
 }
 
 class _LocationCard extends StatelessWidget {
-  const _LocationCard({required this.address, this.latitude, this.longitude});
+  const _LocationCard({required this.address, this.label, this.latitude, this.longitude});
+
+  /// Saved address title, e.g. "Sahara View Home" (`address_label`, §6.40).
+  final String? label;
 
   final String address;
   final double? latitude;
@@ -902,13 +918,21 @@ class _LocationCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    address,
-                    style: appFont('Inter', 
-                      color: const Color(0xFF1D1B20),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if ((label ?? '').trim().isNotEmpty && label != 'null')
+                        Text(
+                          label!.trim(),
+                          style: appFont('Inter', color: const Color(0xFF1D1B20), fontWeight: FontWeight.w700, fontSize: 15),
+                        ),
+                      Text(
+                        address,
+                        style: (label ?? '').trim().isNotEmpty && label != 'null'
+                            ? appFont('Inter', color: const Color(0xFF6B7280), fontWeight: FontWeight.w500, fontSize: 13)
+                            : appFont('Inter', color: const Color(0xFF1D1B20), fontWeight: FontWeight.w600, fontSize: 15),
+                      ),
+                    ],
                   ),
                 ),
               ],

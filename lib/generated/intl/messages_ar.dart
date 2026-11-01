@@ -206,6 +206,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "addPhoto": MessageLookupByLibrary.simpleMessage("إضافة صورة"),
     "addService": MessageLookupByLibrary.simpleMessage("إضافة الخدمة"),
     "addVehicleType": MessageLookupByLibrary.simpleMessage("إضافة نوع مركبة"),
+    "addonUnitFlat": MessageLookupByLibrary.simpleMessage("سعر ثابت"),
+    "addonUnitHour": MessageLookupByLibrary.simpleMessage("لكل ساعة"),
+    "addonUnitPiece": MessageLookupByLibrary.simpleMessage("لكل قطعة"),
+    "addonUnitRoom": MessageLookupByLibrary.simpleMessage("لكل غرفة"),
+    "addonUnitUnit": MessageLookupByLibrary.simpleMessage("لكل وحدة"),
     "address": MessageLookupByLibrary.simpleMessage("العنوان"),
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "العنوان غير متوفر",

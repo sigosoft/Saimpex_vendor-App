@@ -65,7 +65,18 @@ class CleaningServiceType {
     this.nameEn,
     this.nameFr,
     this.nameAr,
+    this.kind,
+    this.hasAddons,
+    this.hasProductSupply,
+    this.hasIssues,
   });
+
+  /// cleaning | pest_control (home cleaning, §6.40), and which form
+  /// sections the type uses; null on older types.
+  final String? kind;
+  final bool? hasAddons;
+  final bool? hasProductSupply;
+  final bool? hasIssues;
 
   final int id;
   final String? nameEn;
@@ -78,11 +89,16 @@ class CleaningServiceType {
     if (json is! Map) return null;
     final id = _toInt(json['id']);
     if (id == null) return null;
+    bool? flag(String key) => json[key] == null ? null : (json[key] == true || json[key].toString() == '1');
     return CleaningServiceType(
       id: id,
       nameEn: _toText(json['name_en']) ?? _toText(json['name']),
       nameFr: _toText(json['name_fr']),
       nameAr: _toText(json['name_ar']),
+      kind: _toText(json['kind']),
+      hasAddons: flag('has_addons'),
+      hasProductSupply: flag('has_product_supply'),
+      hasIssues: flag('has_issues'),
     );
   }
 }
@@ -111,10 +127,13 @@ class CleaningServiceSpace {
 }
 
 class CleaningServiceAddon {
-  CleaningServiceAddon({required this.name, required this.price});
+  CleaningServiceAddon({required this.name, required this.price, this.unit});
 
   String name;
   double price;
+
+  /// unit | hour | room | piece, or null for a flat price (§6.40).
+  String? unit;
 
   static CleaningServiceAddon? fromJson(dynamic json) {
     if (json is! Map) return null;
@@ -123,10 +142,11 @@ class CleaningServiceAddon {
     return CleaningServiceAddon(
       name: name,
       price: _toDouble(json['price']) ?? 0,
+      unit: _toText(json['unit']),
     );
   }
 
-  Map<String, dynamic> toJson() => {'name': name, 'price': price};
+  Map<String, dynamic> toJson() => {'name': name, 'price': price, 'unit': unit};
 }
 
 class CleaningServiceItem {

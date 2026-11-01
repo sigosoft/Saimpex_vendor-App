@@ -2618,5 +2618,10 @@
   "waterNoDeliveriesThisDay": "لا توجد توصيلات في هذا اليوم.",
   "waterSelfPickup": "استلام ذاتي",
   "waterDelivery": "توصيل",
-  "waterActive": "نشط"
+  "waterActive": "نشط",
+  "addonUnitFlat": "سعر ثابت",
+  "addonUnitUnit": "لكل وحدة",
+  "addonUnitHour": "لكل ساعة",
+  "addonUnitRoom": "لكل غرفة",
+  "addonUnitPiece": "لكل قطعة"
 }
