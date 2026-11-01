@@ -249,6 +249,14 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 - **Subscription calendar** (`lib/water/view/subscription_calendar/subscription_calendar_view.dart`, Figma 8360:37494; was a "not available" placeholder): totals (total, morning, afternoon, paused), weekly planner with per-day counts and week arrows, search, All / Morning / Afternoon / Evening / Paused, the day's deliveries grouped by slot (customer, delivery or self pickup, plan, product × bottles, Chat with customer). `GET waterDeliveryCalendar`.
 - **Subscription details** (Figma 8360:40537): **Delivery history** (latest 5, "See all" → `DeliveryHistoryView`, `GET waterSubscriptionDeliveries`, paginated) and the payment summary's savings, delivery fee and tax (`subscription.payment_summary`).
 
+### 3.5e Home cleaning extras (V18b ✅ `feature/v18b-cleaning-extras`, API §6.40)
+
+- Add / Edit Service shows only the sections the service type uses (`kind`, `has_product_supply`, `has_addons`, `has_issues`; older types without flags show all, as before).
+- Add-ons have a price unit: flat, per unit / hour / room / piece (`addons[].unit`).
+- Booking details: the service image (`service_image`), the saved address title above the address (`address_label`), and "Customer brings their own products" when `product_supply` is `customer`.
+- The home membership badge comes from `serviceDashboard.membership` (falls back to `GET home` on older servers).
+- Reject reasons already use the backend's values per kind (V14).
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

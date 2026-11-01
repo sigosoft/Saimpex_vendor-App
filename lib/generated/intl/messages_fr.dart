@@ -233,6 +233,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "addVehicleType": MessageLookupByLibrary.simpleMessage(
       "Ajouter un type de véhicule",
     ),
+    "addonUnitFlat": MessageLookupByLibrary.simpleMessage("Prix fixe"),
+    "addonUnitHour": MessageLookupByLibrary.simpleMessage("Par heure"),
+    "addonUnitPiece": MessageLookupByLibrary.simpleMessage("Par article"),
+    "addonUnitRoom": MessageLookupByLibrary.simpleMessage("Par pièce (salle)"),
+    "addonUnitUnit": MessageLookupByLibrary.simpleMessage("Par unité"),
     "address": MessageLookupByLibrary.simpleMessage("Adresse"),
     "addressNotAvailable": MessageLookupByLibrary.simpleMessage(
       "Adresse non disponible",

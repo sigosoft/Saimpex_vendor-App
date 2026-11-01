@@ -2556,5 +2556,10 @@
   "waterNoDeliveriesThisDay": "No deliveries on this day.",
   "waterSelfPickup": "Self pickup",
   "waterDelivery": "Delivery",
-  "waterActive": "Active"
+  "waterActive": "Active",
+  "addonUnitFlat": "Flat price",
+  "addonUnitUnit": "Per unit",
+  "addonUnitHour": "Per hour",
+  "addonUnitRoom": "Per room",
+  "addonUnitPiece": "Per piece"
 }

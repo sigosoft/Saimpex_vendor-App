@@ -72,7 +72,7 @@ class HomeCleaningController extends GetxController {
   }
 
   Future<void> refreshAll() async {
-    await Future.wait([loadDashboard(), loadMembership(), loadBookings()]);
+    await Future.wait([loadDashboard().then((_) => loadMembership()), loadBookings()]);
   }
 
   Future<void> loadDashboard() async {
@@ -82,6 +82,10 @@ class HomeCleaningController extends GetxController {
     final res = await CleaningApi.get(ApiEndPoints.serviceDashboard);
     if (res.ok) {
       dashboard = CleaningDashboard.fromJson(res.map);
+      // serviceDashboard carries the membership since §6.40.
+      if (res.map.containsKey('membership')) {
+        membership = CleaningMembership.fromJson(res.map['membership']);
+      }
       acceptingBookings = dashboard!.acceptingBookings ?? acceptingBookings;
       storeOpen = dashboard!.isOpen;
     } else {
@@ -91,10 +95,10 @@ class HomeCleaningController extends GetxController {
     update();
   }
 
-  /// The membership card has no service-vertical source; GET home returns it
-  /// (`membership` is null when the vendor has no subscription). `limit` is
-  /// required by that endpoint, 1 keeps the order payload small.
+  /// Fallback for servers before §6.40, whose serviceDashboard has no
+  /// `membership`: GET home returns it (null without a subscription).
   Future<void> loadMembership() async {
+    if (dashboard != null && membership != null) return;
     final res = await CleaningApi.get(ApiEndPoints.home, query: {'limit': 1});
     membership = res.ok ? CleaningMembership.fromJson(res.map['membership']) : null;
     update();
