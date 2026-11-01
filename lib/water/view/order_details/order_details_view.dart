@@ -219,6 +219,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     return null;
   }
 
+  /// Gas refills: empty cylinders to collect, from the order or the detail root.
+  int get _emptyCylinders => int.tryParse(
+        '${_orderMap['empty_cylinders_to_collect'] ?? _orderDetail?['empty_cylinders_to_collect'] ?? ''}',
+      ) ?? 0;
+
   Map<String, dynamic> get _orderMap {
     if (_orderDetail == null) return {};
     if (_orderDetail!['order'] is Map) {
@@ -615,6 +620,26 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     _OrderItemCard(item: item),
                     const SizedBox(height: 8),
                   ],
+                ],
+                // Gas refills: empty cylinders the driver collects (#84).
+                if (_emptyCylinders > 0) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.recycling_outlined, size: 18, color: OrderDetailsView._orange),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          S.of(context).gasEmptyCylindersToCollect('$_emptyCylinders'),
+                          style: const TextStyle(
+                            color: OrderDetailsView._title,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
                 const SizedBox(height: 16),
                 Text(

@@ -26,6 +26,10 @@ class HomeOrder {
   final String? scheduleDate;
   final String? scheduleTime;
   final String? deliveryPartnerName;
+
+  /// Gas refills: empty cylinders the driver collects (backend #84); 0 for water.
+  int get emptyCylindersToCollect =>
+      int.tryParse('${orderData?.rawJson?['empty_cylinders_to_collect'] ?? ''}') ?? 0;
   final HomeOrderStatus status;
   final dynamic rawId;
   final OrderData? orderData;

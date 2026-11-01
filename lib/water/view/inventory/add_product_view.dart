@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -592,6 +593,8 @@ class _AddProductViewState extends State<AddProductView> {
                           ],
                         ),
                       ),
+                      // Gas: no stock and no returnable toggle (cylinders are always exchanged; #84).
+                      if (!WaterApi.isGas) ...[
                       const SizedBox(height: 14),
                       _SectionCard(
                         child: Column(
@@ -713,6 +716,7 @@ class _AddProductViewState extends State<AddProductView> {
                           ],
                         ),
                       ),
+                      ],
                     ],
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -176,7 +177,7 @@ class _InventoryViewState extends State<InventoryView> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
               children: [
                 _StatsGrid(summary: controller.summary),
-                if (controller.lowStockProducts.isNotEmpty) ...[
+                if (!WaterApi.isGas && controller.lowStockProducts.isNotEmpty) ...[
                   const SizedBox(height: 14),
                   _LowStockAlertCard(
                     lowStockProducts: controller.lowStockProducts,
@@ -1407,6 +1408,8 @@ class _ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Gas has no stock (updateWaterItemStock → 422).
+                    if (!WaterApi.isGas) ...[
                     const SizedBox(width: 10),
                     Expanded(
                       child: SizedBox(
@@ -1432,6 +1435,7 @@ class _ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    ],
                   ],
                 ),
               ],

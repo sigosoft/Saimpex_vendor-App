@@ -29,6 +29,18 @@ class WaterApi {
     return saved;
   }
 
+  /// Gas vendors (type 10) use the Water screens (decided 31 Oct, backend #84):
+  /// one-time orders and refills only, no stock, no subscriptions.
+  static const String gasVendorType = '10';
+
+  /// Cached by [loadIsGas]; false until it has run.
+  static bool isGas = false;
+
+  static Future<bool> loadIsGas() async {
+    isGas = (await getSavedObject('vendorType'))?.toString().trim() == gasVendorType;
+    return isGas;
+  }
+
   static bool isOk(dynamic body) {
     if (body is! Map) return false;
     final status = body['status'];

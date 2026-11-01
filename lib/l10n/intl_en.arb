@@ -2300,5 +2300,11 @@
   "sendingToPrinter": "Sending to the printer…",
   "@sendingToPrinter": {},
   "ticketSentToPrinter": "Ticket sent to the printer",
-  "@ticketSentToPrinter": {}
+  "@ticketSentToPrinter": {},
+  "gasEmptyCylindersToCollect": "{count} empty cylinders to collect",
+  "@gasEmptyCylindersToCollect": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  }
 }

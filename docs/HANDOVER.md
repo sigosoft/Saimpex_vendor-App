@@ -58,7 +58,7 @@ One app serves all vendor types. After login the app opens a section based on th
 | 11 | Local store | Grocery/Restaurant screens on the `localStore*` endpoints (`feature/vendor-routing`) | same |
 | 3 | Pharmacy | Pharmacy | `lib/pharmacy/` |
 | 4 | Water | Water | `lib/water/` |
-| 10 | Gas | Water design (decided 31 Oct): one-time orders + refills, no subscriptions. Gas bookings are service bookings, so it **waits for backend #84** to show them on the water endpoints | `lib/water/` |
+| 10 | Gas | Water design on the `water*` endpoints (backend #84, on dev). One-time orders + refills: subscription tabs, stock controls and the returnable toggle are hidden for gas; orders show "N empty cylinders to collect" (`feature/gas-on-water`) | `lib/water/` (`WaterApi.isGas`) |
 | 9 | Home cleaning | Home Cleaning (UI only, mock data) | `lib/home_cleaning/` |
 | 7 | Laundry | **To build (V14)**: app section per *Saimpex Laundry Vendor UI 08-09-2026*; also on the web panel | `service*` |
 | 8 | Car wash | **To build (V14)**: app section per *Saimpex Car Wash Vendor UI 03-09-2026*; also on the web panel | `service*` |
@@ -518,4 +518,5 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | `GET vendorapp/orderRules` also returns `delivery_fee_type`, `delivery_fee_value`, `delivery_fee_paid_by`, `delivery_model` (Admin-set). If the vendor pays delivery, the fee is deducted from its earnings. | Show them read-only on the store settings screen (§6.22). |
 | 31 Oct 2026 | `GET vendorapp/commissionRules`: the store's commission rules (read-only) and `fallback_percent`. | Optional: show on earnings/settings (§6.24). |
 | 31 Oct 2026 | **Vendor app decisions (Praveen):** laundry (7) and car wash (8) get app sections (V14) and keep the web panel; grocery and local store use the restaurant design; gas uses the water design with one-time orders + refills only (no subscriptions; backend #84); home cleaning matches its design (V15); Android + iOS, Android first. | Backend `V2_DECISIONS_AND_PLAN.md` §14 |
+| 31 Oct 2026 | **Gas on the water endpoints (#84, on dev):** water order and product endpoints serve gas vendors (type 10); `app_section` = `water`; rows carry `empty_cylinders_to_collect`, detail lines `is_returnable`; gas has no stock (`updateWaterItemStock` → 422). | ✅ `feature/gas-on-water`: gas hides subscriptions / stock / returnable toggle and shows empty cylinders to collect. |
 | 31 Oct 2026 | **Gas (10) → Water section (#84):** login `app_section` for gas is now `water`. The water order and product endpoints return the gas vendor's bookings (with `empty_cylinders_to_collect`; lines say "Cylinder") and gas items (no stock; `updateWaterItemStock` → 422). | Send gas vendors to the water section; hide stock controls for gas (§6.23). |

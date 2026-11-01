@@ -2363,5 +2363,11 @@
   "sendingToPrinter": "Envoi à l'imprimante…",
   "@sendingToPrinter": {},
   "ticketSentToPrinter": "Ticket envoyé à l'imprimante",
-  "@ticketSentToPrinter": {}
+  "@ticketSentToPrinter": {},
+  "gasEmptyCylindersToCollect": "{count} bouteilles vides à récupérer",
+  "@gasEmptyCylindersToCollect": {
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,6 +49,8 @@ class WaterHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Gas vendors share these screens; hide stock and subscriptions for them.
+    WaterApi.loadIsGas().then((_) => update());
     searchController.addListener(_onSearchChanged);
     fetchHome();
     fetchUnreadChatCount();
@@ -1562,6 +1565,7 @@ class WaterHomeController extends GetxController {
   }
 
   void selectOrderType(int index) {
+    if (WaterApi.isGas) index = 0; // gas has no subscriptions
     selectedTabIndex = index;
     selectedFilterIndex = 0;
     if (index == 0) {
