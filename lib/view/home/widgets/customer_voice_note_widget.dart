@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomerVoiceNoteWidget extends StatefulWidget {
   final String audioUrl;
@@ -178,7 +178,7 @@ class _CustomerVoiceNoteWidgetState extends State<CustomerVoiceNoteWidget> {
             const SizedBox(width: 12),
             Text(
               _durationLabel,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF6B7280),

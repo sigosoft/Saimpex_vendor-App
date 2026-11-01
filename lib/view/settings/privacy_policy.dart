@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../generated/l10n.dart';
 import '../../utils/localization_service.dart';
 
@@ -33,7 +33,7 @@ class PrivacyPolicy extends StatelessWidget {
           ),
           title: Text(
             S.of(context).privacyPolicy,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),
@@ -73,7 +73,7 @@ class PrivacyPolicy extends StatelessWidget {
                         ),
                         "p": Style(
                           fontSize: FontSize(14),
-                          fontFamily: GoogleFonts.rubik().fontFamily,
+                          fontFamily: appFontFamily('Rubik'),
                           lineHeight: LineHeight(1.6),
                           color: const Color(0xFF64748B),
                           fontWeight: FontWeight.w400,

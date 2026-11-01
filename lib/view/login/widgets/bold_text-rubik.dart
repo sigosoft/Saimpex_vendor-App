@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class BoldTextRubik extends StatelessWidget {
   const BoldTextRubik({
@@ -22,7 +22,7 @@ class BoldTextRubik extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         decoration: decoration,
         textStyle: Theme.of(context).textTheme.displayLarge,
         fontSize: fontSize,

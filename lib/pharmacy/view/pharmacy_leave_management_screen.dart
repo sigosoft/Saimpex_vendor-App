@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -411,7 +411,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 const SizedBox(height: 16),
                 Text(
                   'Cancel Leave',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyLeaveManagementScreen.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -421,7 +421,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 Text(
                   'Are you sure you want to cancel this leave?',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -445,7 +445,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                           ),
                           child: Text(
                             'No',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -468,7 +468,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                           ),
                           child: Text(
                             'Yes',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -606,7 +606,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                     children: [
                       Text(
                         'Mark Leave',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyLeaveManagementScreen.ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -656,14 +656,14 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                               onChanged: (_) {
                                 if (_error != null) setState(() => _error = null);
                               },
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF3F4555),
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'e.g. Annual vacation, renovation...',
-                                hintStyle: GoogleFonts.inter(
+                                hintStyle: appFont('Inter', 
                                   color: const Color(0xFFB7C2D0),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
@@ -680,7 +680,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                               const SizedBox(height: 8),
                               Text(
                                 _error!,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFFBA1B1B),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -707,7 +707,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                                   ),
                                   child: Text(
                                     'Mark Leave',
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                    style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                                   ),
                                 ),
                               ),
@@ -760,7 +760,7 @@ const _reasonBorder = OutlineInputBorder(
 Widget _fieldLabel(String text) {
   return Text(
     text,
-    style: GoogleFonts.inter(
+    style: appFont('Inter', 
       color: const Color(0xFF8A97A8),
       fontWeight: FontWeight.w500,
       fontSize: 12,
@@ -784,7 +784,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Leave Management',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyLeaveManagementScreen.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -847,7 +847,7 @@ class _DateBox extends StatelessWidget {
               Expanded(
                 child: Text(
                   text,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: value == null ? const Color.fromARGB(255, 53, 58, 62) : const Color.fromARGB(255, 41, 50, 76),
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
@@ -877,7 +877,7 @@ class _HistoryHeader extends StatelessWidget {
       children: [
         Text(
           'LEAVES HISTORY',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF3F4454),
             fontWeight: FontWeight.w700,
             fontSize: 13,
@@ -898,7 +898,7 @@ class _SeeAll extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'See All',
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: PharmacyLeaveManagementScreen.orange,
         fontWeight: FontWeight.w600,
         fontSize: 13,
@@ -917,7 +917,7 @@ class _GroupTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: color,
         fontWeight: FontWeight.w600,
         fontSize: 14,
@@ -961,7 +961,7 @@ class _LeaveCard extends StatelessWidget {
                               leave.from.day == leave.to.day
                           ? '${_date(leave.from)}, ${leave.from.year}'
                           : '${_date(leave.from)} - ${_date(leave.to)}, ${leave.to.year}',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF3F4555),
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -970,7 +970,7 @@ class _LeaveCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       leave.reason,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF8B97A8),
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -987,7 +987,7 @@ class _LeaveCard extends StatelessWidget {
                 ),
                 child: Text(
                   scheduled ? 'SCHEDULED' : 'COMPLETED',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: scheduled ? const Color(0xFF3B82F6) : const Color(0xFF16A34A),
                     fontWeight: FontWeight.w700,
                     fontSize: 10,
@@ -1011,7 +1011,7 @@ class _LeaveCard extends StatelessWidget {
                 ),
                 child: Text(
                   'Cancel Leave',
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),
             ),

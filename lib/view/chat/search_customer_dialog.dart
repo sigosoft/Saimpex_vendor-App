@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
@@ -30,7 +30,7 @@ class SearchCustomerDialog extends StatelessWidget {
                   children: [
                     Text(
                       S.of(context).search,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -72,7 +72,7 @@ class SearchCustomerDialog extends StatelessWidget {
                                 S
                                     .of(context)
                                     .currentlyNoContactsFoundPleaseTryLater,
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: Colors.grey,
                                   fontSize: 13,
                                 ),
@@ -127,7 +127,7 @@ class SearchCustomerDialog extends StatelessWidget {
                               ),
                               title: Text(
                                 customer.name ?? S.of(context).unknown,
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                   color: Colors.black,
@@ -135,7 +135,7 @@ class SearchCustomerDialog extends StatelessWidget {
                               ),
                               subtitle: Text(
                                 customer.mobile ?? "",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 12,
                                   color: Colors.grey,
                                 ),
@@ -155,7 +155,7 @@ class SearchCustomerDialog extends StatelessWidget {
   Widget _buildInitials(String? name) {
     return Text(
       name?.isNotEmpty == true ? name!.substring(0, 1).toUpperCase() : "U",
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: colorPrimary,

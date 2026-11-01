@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -153,7 +153,7 @@ class _HelpSupportViewState extends State<HelpSupportView> {
             child: Center(
               child: Text(
                 S.of(context).waterNoContactDetails,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF626466),
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
@@ -213,7 +213,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).helpSupport,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -288,7 +288,7 @@ class _SupportCard extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF626466),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -297,7 +297,7 @@ class _SupportCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: HelpSupportView.ink,
               fontWeight: FontWeight.w700,
               fontSize: 15,
@@ -320,7 +320,7 @@ class _SupportCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     action,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,

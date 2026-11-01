@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
@@ -108,11 +108,11 @@ class _HomeState extends State<Home> {
                         showSelectedLabels: true,
                         type: BottomNavigationBarType.fixed,
                         currentIndex: controller.selectedcurrentIndex,
-                        selectedLabelStyle: GoogleFonts.rubik(
+                        selectedLabelStyle: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
-                        unselectedLabelStyle: GoogleFonts.rubik(
+                        unselectedLabelStyle: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),

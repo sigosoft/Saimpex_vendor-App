@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class VendorStatCard extends StatelessWidget {
   final String title;
@@ -49,7 +49,7 @@ class VendorStatCard extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF1F1F1F),
@@ -62,7 +62,7 @@ class VendorStatCard extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 9,
               fontWeight: FontWeight.w400,
               color: Colors.grey[700],

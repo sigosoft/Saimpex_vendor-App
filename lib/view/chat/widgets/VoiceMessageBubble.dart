@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 class VoiceMessageBubble extends StatefulWidget {
@@ -153,7 +153,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                       children: [
                         Text(
                           _formatDuration(_position),
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 9,
                             color: themeColor.withOpacity(0.8),
                             fontWeight: FontWeight.w500,
@@ -169,7 +169,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
                             const SizedBox(width: 2),
                             Text(
                               _formatDuration(_duration),
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 9,
                                 color: themeColor.withOpacity(0.8),
                                 fontWeight: FontWeight.w500,

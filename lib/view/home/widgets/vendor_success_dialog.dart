@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../generated/l10n.dart';
 
@@ -34,7 +34,7 @@ class VendorSuccessDialog extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               S.of(context).orderAcceptedSuccessfully,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF1F2937),

@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   CustomAppBar({super.key, required this.title, this.onTap, this.showBack=true});
@@ -42,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ):Container(),
             title: Text(
               title,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,

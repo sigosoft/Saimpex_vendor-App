@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
 import '../../controller/food_search_controller.dart';
 
@@ -38,7 +38,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                 Center(
                   child: Text(
                     S.of(context).filtersSorting,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -100,7 +100,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                                           child: Center(
                                             child: Text(
                                               filter,
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w400,
                                                 color: isSelected
@@ -124,7 +124,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                         Center(
                           child: Text(
                             S.of(context).sortBy,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
                             ),
@@ -182,7 +182,7 @@ class _SearchFilterBottomSheetState extends State<SearchFilterBottomSheet> {
                                   child: Center(
                                     child: Text(
                                       option,
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontWeight: FontWeight.w400,
                                         color: isSelected
                                             ? Colors.white

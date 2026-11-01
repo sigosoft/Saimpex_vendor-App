@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -384,7 +384,7 @@ class _PharmacyPayoutDetailsScreenState
                                       children: [
                                         Text(
                                           displayTrxId,
-                                          style: GoogleFonts.inter(
+                                          style: appFont('Inter', 
                                             color: PharmacyPayoutDetailsScreen.orange,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 15,
@@ -399,7 +399,7 @@ class _PharmacyPayoutDetailsScreenState
                                               Flexible(
                                                 child: Text(
                                                   dateStr,
-                                                  style: GoogleFonts.inter(
+                                                  style: appFont('Inter', 
                                                     color: PharmacyPayoutDetailsScreen.muted,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 12,
@@ -417,7 +417,7 @@ class _PharmacyPayoutDetailsScreenState
                                     children: [
                                       Text(
                                         statusStr.toUpperCase(),
-                                        style: GoogleFonts.inter(
+                                        style: appFont('Inter', 
                                           color: _statusColor(statusStr),
                                           fontWeight: FontWeight.w700,
                                           fontSize: 11,
@@ -427,7 +427,7 @@ class _PharmacyPayoutDetailsScreenState
                                       const SizedBox(height: 6),
                                       Text(
                                         amountStr,
-                                        style: GoogleFonts.inter(
+                                        style: appFont('Inter', 
                                           color: Colors.black,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
@@ -443,7 +443,7 @@ class _PharmacyPayoutDetailsScreenState
                                   Expanded(
                                     child: Text(
                                       'Payment ID: ${paymentId.isNotEmpty ? paymentId : 'N/A'}',
-                                      style: GoogleFonts.inter(
+                                      style: appFont('Inter', 
                                         color: const Color(0xFF6B7280),
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
@@ -452,7 +452,7 @@ class _PharmacyPayoutDetailsScreenState
                                   ),
                                   Text(
                                     'View Payment Proof',
-                                    style: GoogleFonts.inter(
+                                    style: appFont('Inter', 
                                       color: PharmacyPayoutDetailsScreen.orange,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
@@ -466,7 +466,7 @@ class _PharmacyPayoutDetailsScreenState
                               _ExpandableLine(
                                 title: 'Notes',
                                 text: 'Notes: ${notes.isNotEmpty ? notes : 'N/A'}',
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFF9AA3B2),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -554,7 +554,7 @@ class _DetailOrderCard extends StatelessWidget {
               children: [
                 Text(
                   id,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyPayoutDetailsScreen.orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -568,7 +568,7 @@ class _DetailOrderCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         when,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyPayoutDetailsScreen.muted,
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
@@ -584,7 +584,7 @@ class _DetailOrderCard extends StatelessWidget {
                     text: 'Reason: $reason',
                     fill: const Color(0xFFFDECEC),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFFE24B4B),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -598,7 +598,7 @@ class _DetailOrderCard extends StatelessWidget {
           if (amount != null)
             Text(
               amount!,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyPayoutDetailsScreen.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
@@ -624,7 +624,7 @@ class _DetailOrderCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF9AA3B2),
             fontWeight: FontWeight.w500,
             fontSize: 11,
@@ -633,7 +633,7 @@ class _DetailOrderCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyPayoutDetailsScreen.ink,
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -678,7 +678,7 @@ class _ExpandableLine extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF111111),
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -699,7 +699,7 @@ class _ExpandableLine extends StatelessWidget {
                     ),
                     child: Text(
                       'Close',
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                      style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                     ),
                   ),
                 ),

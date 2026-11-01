@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../controller/basket_controller.dart';
@@ -125,7 +125,7 @@ class _BasketListingState extends State<BasketListing> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text(s.all, style: GoogleFonts.rubik()),
+                title: Text(s.all, style: appFont('Rubik')),
                 onTap: () {
                   setState(() => _statusFilter = BasketStatusFilter.all);
                   _basketController.keyword = _searchController.text.trim();
@@ -135,7 +135,7 @@ class _BasketListingState extends State<BasketListing> {
                 },
               ),
               ListTile(
-                title: Text(s.activeLabel, style: GoogleFonts.rubik()),
+                title: Text(s.activeLabel, style: appFont('Rubik')),
                 onTap: () {
                   setState(() => _statusFilter = BasketStatusFilter.active);
                   _basketController.keyword = _searchController.text.trim();
@@ -148,7 +148,7 @@ class _BasketListingState extends State<BasketListing> {
                 // API filter is `blocked`; UI uses the existing "inactive" label.
                 title: Text(
                   'Blocked',
-                  style: GoogleFonts.rubik(),
+                  style: appFont('Rubik'),
                 ),
                 onTap: () {
                   setState(() => _statusFilter = BasketStatusFilter.blocked);
@@ -274,13 +274,13 @@ class _BasketListingState extends State<BasketListing> {
             // ),
             child: TextField(
               controller: _searchController,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 color: _titleColor,
               ),
               decoration: InputDecoration(
                 hintText: S.of(context).searchName,
-                hintStyle: GoogleFonts.rubik(
+                hintStyle: appFont('Rubik', 
                   fontSize: 14,
                   color: _subtitleColor,
                 ),
@@ -417,7 +417,7 @@ class _BasketCard extends StatelessWidget {
                 ),
                 child: Text(
                   initials,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: colorPrimary,
@@ -435,7 +435,7 @@ class _BasketCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: _titleColor,
@@ -454,7 +454,7 @@ class _BasketCard extends StatelessWidget {
                           ),
                           child: Text(
                             statusText,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: statusFg,
@@ -467,7 +467,7 @@ class _BasketCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       subtitle,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         color: _subtitleColor,
                       ),
@@ -512,7 +512,7 @@ class _BasketCard extends StatelessWidget {
               ),
               child: Text(
                 s.viewDetails,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: colorPrimary,
@@ -553,7 +553,7 @@ class _StatBox extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: _subtitleColor,
@@ -563,7 +563,7 @@ class _StatBox extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: _titleColor,

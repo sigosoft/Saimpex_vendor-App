@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -27,7 +27,7 @@ class AppSettings extends StatelessWidget {
         ),
         title: Text(
           S.of(context).settings,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF333E63),
@@ -93,7 +93,7 @@ class AppSettings extends StatelessWidget {
       child: ListTile(
         title: Text(
           title,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 16,
             fontWeight: FontWeight.w500,
             color: titleColor ?? const Color(0xFF475569),

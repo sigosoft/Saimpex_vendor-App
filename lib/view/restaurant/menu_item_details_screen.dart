@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -52,7 +52,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         ),
         title: Text(
           S.of(context).basketDetailsTitle,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -104,7 +104,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     Expanded(
                       child: Text(
                         name.isNotEmpty ? name : '#${widget.itemId}',
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF1F1F1F),
@@ -165,7 +165,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     _menuDescription(menu, lang),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       color: const Color(0xFF64748B),
                       height: 1.5,
@@ -189,7 +189,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                     _sectionHeader(context, S.of(context).itemOrdersHeader),
                     Text(
                       S.of(context).viewAll,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFFFF5216),
@@ -241,7 +241,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
             ),
             child: Text(
               S.of(context).updateDetailsButton,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -308,7 +308,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           const SizedBox(width: 4),
           Text(
             text,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF22C55E),
@@ -332,7 +332,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF64748B),
               fontWeight: FontWeight.w400,
@@ -340,7 +340,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           ),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: isPrice
@@ -356,7 +356,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
   Widget _sectionHeader(BuildContext context, String title) {
     return Text(
       title,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 14,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1F1F1F),
@@ -434,7 +434,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         child: Center(
           child: Text(
             S.of(context).noOrders,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF94A3B8),
             ),
@@ -489,7 +489,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
             children: [
               Text(
                 S.of(context).orderIdLabel(orderId),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFFFF5216),
@@ -501,7 +501,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           const SizedBox(height: 8),
           Text(
             customerName,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1F1F1F),
@@ -518,7 +518,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                 children: [
                   Text(
                     S.of(context).itemsTotalLabel,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF94A3B8),
                       fontWeight: FontWeight.w400,
@@ -527,7 +527,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   const SizedBox(height: 4),
                   Text(
                     '$itemsTotal ${S.of(context).items}',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFFFF5216),
@@ -540,7 +540,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                 children: [
                   Text(
                     S.of(context).dateTimeLabel,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF94A3B8),
                       fontWeight: FontWeight.w400,
@@ -549,7 +549,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   const SizedBox(height: 4),
                   Text(
                     dateTime,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF94A3B8),
                       fontWeight: FontWeight.w400,
@@ -574,7 +574,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 10,
           fontWeight: FontWeight.bold,
           color: Colors.white,
@@ -595,7 +595,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 10,
               color: const Color(0xFF94A3B8),
               fontWeight: FontWeight.w400,
@@ -604,7 +604,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1F1F1F),
@@ -629,7 +629,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF64748B),
               fontWeight: FontWeight.w400,
@@ -641,7 +641,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
               const SizedBox(width: 4),
               Text(
                 value,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF1F1F1F),
@@ -662,7 +662,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF64748B),
               fontWeight: FontWeight.w400,
@@ -670,7 +670,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
           ),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1F1F1F),

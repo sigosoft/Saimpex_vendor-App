@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 
 class PharmacyDeliveryBoysScreen extends StatefulWidget {
@@ -96,14 +96,14 @@ class _PharmacyDeliveryBoysScreenState extends State<PharmacyDeliveryBoysScreen>
                     TextField(
                       controller: _search,
                       onChanged: (_) => setState(() {}),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyDeliveryBoysScreen.ink,
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Search Coupon',
-                        hintStyle: GoogleFonts.inter(
+                        hintStyle: appFont('Inter', 
                           color: const Color(0xFFA9AEB6),
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
@@ -155,7 +155,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               LocalizationService.tr('Delivery Boys'),
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -217,7 +217,7 @@ class _BoyCard extends StatelessWidget {
                   boy.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyDeliveryBoysScreen.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -300,7 +300,7 @@ class _ActivePill extends StatelessWidget {
       ),
       child: Text(
         LocalizationService.tr('Active').toUpperCase(),
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: const Color(0xFF16A34A),
           fontWeight: FontWeight.w700,
           fontSize: 11,
@@ -328,7 +328,7 @@ class _MetaRow extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF64748B),
               fontWeight: FontWeight.w500,
               fontSize: 12,

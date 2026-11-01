@@ -1417,7 +1417,7 @@ class _ProductCard extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: onUpdateStock,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5722),
+                            backgroundColor: const Color(0xFFFF5216),
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(

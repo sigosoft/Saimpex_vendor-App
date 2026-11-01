@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' hide FormData;
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -769,7 +769,7 @@ class _PharmacyOrderDetailsScreenState
                               children: [
                                 Text(
                                   'Order Details',
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     color: const Color(0xFF1A1A1A),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 18,
@@ -884,7 +884,7 @@ class _PharmacyOrderDetailsScreenState
                                 if (hasNote) ...[
                                   Text(
                                     'SPECIAL NOTES',
-                                    style: GoogleFonts.inter(
+                                    style: appFont('Inter', 
                                       color: const Color(0xFFA0A9B8),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 11,
@@ -925,7 +925,7 @@ class _PharmacyOrderDetailsScreenState
                                 ],
                                 Text(
                                   'ORDER TIMELINE',
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     color: const Color(0xFFA0A9B8),
                                     fontWeight: FontWeight.w600,
                                     fontSize: 11,
@@ -995,9 +995,9 @@ class _CustomerCard extends StatelessWidget {
   final bool awaitingPayment;
   final VoidCallback? onChatTap;
 
-  static const Color _accent = Color(0xFFFF5722);
+  static const Color _accent = Color(0xFFFF5216);
   static const Color _avatarLetter = Color(0xFFE64A19);
-  static const Color _chatOrange = Color(0xFFFF5722);
+  static const Color _chatOrange = Color(0xFFFF5216);
   static const Color _newBadge = Color(0xFFF9A825);
   static const Color _reviewingBadge = Color(0xFF7B61FF);
   static const Color _completedBadge = Color(0xFF22C55E);
@@ -1032,7 +1032,7 @@ class _CustomerCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 'CUSTOMER',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -1069,7 +1069,7 @@ class _CustomerCard extends StatelessWidget {
                         : reviewing
                         ? 'REVIEWING'
                         : 'NEW',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.white,
                       fontSize: reviewCompleted || awaitingPayment
                           ? 9
@@ -1114,7 +1114,7 @@ class _CustomerCard extends StatelessWidget {
                   ),
                   child: Text(
                     initial,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: _avatarLetter,
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
@@ -1128,7 +1128,7 @@ class _CustomerCard extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF212121),
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -1138,7 +1138,7 @@ class _CustomerCard extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         phone,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF757575),
                           fontWeight: FontWeight.w400,
                           fontSize: 13.5,
@@ -1191,7 +1191,7 @@ class _CustomerCard extends StatelessWidget {
               children: [
                 Text(
                   'REQUEST ID',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF9E9E9E),
                     fontWeight: FontWeight.w500,
                     fontSize: 10,
@@ -1205,7 +1205,7 @@ class _CustomerCard extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: requestId,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: _accent,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -1214,7 +1214,7 @@ class _CustomerCard extends StatelessWidget {
                       ),
                       TextSpan(
                         text: '  •  $requestMeta',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF616161),
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
@@ -1278,7 +1278,7 @@ class _UploadedPrescriptionCard extends StatelessWidget {
         children: [
           Text(
             'UPLOADED PRESCRIPTION',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
               fontSize: 14,
@@ -1424,7 +1424,7 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'View Full Prescription',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: _orange,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -1472,7 +1472,7 @@ class _ImageActionChip extends StatelessWidget {
               const SizedBox(width: 5),
               Text(
                 label,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: color,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
@@ -1514,7 +1514,7 @@ class _SpecialNotesTextCard extends StatelessWidget {
           Expanded(
             child: Text(
               note,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF6B5E52),
                 fontWeight: FontWeight.w500,
                 fontSize: 13.5,
@@ -1673,7 +1673,7 @@ class _SpecialNotesVoiceCardState extends State<_SpecialNotesVoiceCard>
           const SizedBox(width: 12),
           Text(
             _durationLabel,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -1753,7 +1753,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
   final bool delivered;
   final VoidCallback? onChatTap;
 
-  static const Color _accent = Color(0xFFFF5722);
+  static const Color _accent = Color(0xFFFF5216);
   static const Color _blue = Color(0xFF3B82F6);
   static const Color _ready = Color(0xFF22C55E);
   static const Color _panel = Color(0xFFF6F7F8);
@@ -1790,7 +1790,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 'CUSTOMER',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -1820,7 +1820,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                       : preparing
                       ? 'PREPARING'
                       : 'TO PREPARE',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: Colors.white,
                     fontSize: delivered ? 9 : 10,
                     fontWeight: FontWeight.w700,
@@ -1850,7 +1850,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                   ),
                   child: Text(
                     initial,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFFE24B3B),
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
@@ -1864,7 +1864,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF1A1A1A),
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -1874,7 +1874,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         phone,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: _meta,
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
@@ -1924,7 +1924,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     children: [
                       Text(
                         'REQUEST ID',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
                           fontSize: 10,
@@ -1938,7 +1938,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: requestId,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
@@ -1947,7 +1947,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                             ),
                             TextSpan(
                               text: '  •  $requestMeta',
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: _meta,
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
@@ -1975,7 +1975,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     children: [
                       Text(
                         'DELIVERY TYPE',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
                           fontSize: 10,
@@ -1996,7 +1996,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                           Flexible(
                             child: Text(
                               'Delivery',
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
@@ -2019,7 +2019,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 'DELIVERY ADDRESS',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -2060,7 +2060,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     children: [
                       Text(
                         'Sahara View Home',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF1A1A1A),
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -2070,7 +2070,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         'Near Marhaba Supermarket,Nouakchott',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: _meta,
                           fontWeight: FontWeight.w400,
                           fontSize: 12,
@@ -2104,7 +2104,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Online Payment',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _accent,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -2130,7 +2130,7 @@ class _AwaitingPaymentItems extends StatelessWidget {
       children: [
         Text(
           'ORDER ITEMS (2)',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFFB0B7C3),
             fontWeight: FontWeight.w600,
             fontSize: 13,
@@ -2209,7 +2209,7 @@ class _AwaitingItemCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             name,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF1E293B),
               fontWeight: FontWeight.w700,
               fontSize: 16.5,
@@ -2255,7 +2255,7 @@ class _OrderItemTotals extends StatelessWidget {
           children: [
             Text(
               'Unit',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color.fromARGB(255, 80, 80, 80),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -2264,7 +2264,7 @@ class _OrderItemTotals extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               detail,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3F2A24),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -2278,7 +2278,7 @@ class _OrderItemTotals extends StatelessWidget {
           children: [
             Text(
               'Total',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color.fromARGB(255, 85, 85, 85),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -2290,7 +2290,7 @@ class _OrderItemTotals extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: total.replaceAll(' MRU', ''),
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -2299,8 +2299,8 @@ class _OrderItemTotals extends StatelessWidget {
                   ),
                   TextSpan(
                     text: ' MRU',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFFFF5722),
+                    style: appFont('Inter', 
+                      color: const Color(0xFFFF5216),
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
                       height: 1,
@@ -2323,7 +2323,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
   final String? itemTotal;
   final String? tax;
 
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {
@@ -2347,7 +2347,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 'QUOTATION SUMMARY',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -2371,7 +2371,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
             children: [
               Text(
                 'Total Amount',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -2380,7 +2380,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               const Spacer(),
               Text(
                 totalAmount ?? '1510 MRU',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: _orange,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -2406,7 +2406,7 @@ class _AwaitingSummaryLine extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFFD0D0D0),
             fontWeight: FontWeight.w500,
             fontSize: 15,
@@ -2415,7 +2415,7 @@ class _AwaitingSummaryLine extends StatelessWidget {
         const Spacer(),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: 15,
@@ -2472,7 +2472,7 @@ class _AwaitingCustomerPaymentCard extends StatelessWidget {
               children: [
                 Text(
                   'Awaiting Customer Payment',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF1A1A1A),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -2482,7 +2482,7 @@ class _AwaitingCustomerPaymentCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   time ?? '23/04/2026 10:45 AM',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF9CA3AF),
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
@@ -2665,7 +2665,7 @@ class _TimelineRow extends StatelessWidget {
               children: [
                 Text(
                   step.title,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: step.completed
                         ? const Color(0xFF1A1A1A)
                         : inactiveText,
@@ -2680,7 +2680,7 @@ class _TimelineRow extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     step.subtitle!,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF9CA3AF),
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
@@ -2999,7 +2999,7 @@ class _BottomActions extends StatelessWidget {
                 ),
                 child: Text(
                   'Reject',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                     color: const Color(0xFF1A1A1A),
@@ -3039,7 +3039,7 @@ class _BottomActions extends StatelessWidget {
                     primaryLabel,
                     maxLines: 1,
                     softWrap: false,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       fontWeight: FontWeight.w700,
                       fontSize: 14.5,
                       color: Colors.white,
@@ -3068,7 +3068,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
   final String? phone;
   final String? image;
 
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {
@@ -3077,7 +3077,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
       children: [
         Text(
           'DELIVERY PARTNER',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF9AA6B2),
             fontWeight: FontWeight.w600,
             fontSize: 13,
@@ -3146,7 +3146,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                   children: [
                     Text(
                       name?.isNotEmpty == true ? name! : '',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF1A2332),
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -3157,7 +3157,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                     if (showPhone)
                       Text(
                         phone?.isNotEmpty == true ? phone! : '',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF6B7280),
                           fontWeight: FontWeight.w500,
                           fontSize: 13.5,
@@ -3175,7 +3175,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                           const SizedBox(width: 2),
                           Text(
                             '4.8',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF1A2332),
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -3185,7 +3185,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '(124 reviews)',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF9CA3AF),
                               fontWeight: FontWeight.w400,
                               fontSize: 13,
@@ -3231,7 +3231,7 @@ class _StartPreparingBar extends StatelessWidget {
 
   final String label;
 
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {
@@ -3258,7 +3258,7 @@ class _StartPreparingBar extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               fontWeight: FontWeight.w700,
               fontSize: 16,
               color: Colors.white,

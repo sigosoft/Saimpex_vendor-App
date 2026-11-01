@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_add_product_screen.dart';
@@ -28,7 +28,7 @@ class PharmacyInventoryDetailsScreen extends StatefulWidget {
   final String? categoryName;
   final String? formName;
 
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _green = Color(0xFF22C55E);
 
   @override
@@ -358,7 +358,7 @@ class _PharmacyInventoryDetailsScreenState
                         const SizedBox(height: 16),
                         Text(
                           displayName,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF111827),
                             fontWeight: FontWeight.w700,
                             fontSize: 20,
@@ -456,7 +456,7 @@ class _DetailsHeader extends StatelessWidget {
           children: [
             Text(
               'Details',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -545,7 +545,7 @@ class _SummaryGrid extends StatelessWidget {
                 label: 'Expiry',
                 child: Text(
                   expiry,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF111827),
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
@@ -571,7 +571,7 @@ class _SummaryGrid extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       inStock ? 'In Stock' : 'Out Of Stock',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: statusColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -616,7 +616,7 @@ class _MetricCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 12,
@@ -644,7 +644,7 @@ class _ValueUnit extends StatelessWidget {
         children: [
           TextSpan(
             text: value,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF111827),
               fontWeight: FontWeight.w700,
               fontSize: 20,
@@ -654,7 +654,7 @@ class _ValueUnit extends StatelessWidget {
           if (unit.isNotEmpty)
             TextSpan(
               text: ' $unit',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -693,7 +693,7 @@ class _BarcodeBlock extends StatelessWidget {
         children: [
           Text(
             'Barcode',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 12,
@@ -703,7 +703,7 @@ class _BarcodeBlock extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             code,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF111827),
               fontWeight: FontWeight.w700,
               fontSize: 16,
@@ -740,7 +740,7 @@ class _EditButton extends StatelessWidget {
         ),
         child: Text(
           'Edit',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
+          style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
     );
@@ -768,7 +768,7 @@ class _UpdateStockButton extends StatelessWidget {
         ),
         child: Text(
           'Update Stock',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+          style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
         ),
       ),
     );
@@ -826,7 +826,7 @@ class _SpecCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Product Specifications',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF111827),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -840,7 +840,7 @@ class _SpecCard extends StatelessWidget {
           if (description.isNotEmpty) ...[
             Text(
               'Description',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -858,7 +858,7 @@ class _SpecCard extends StatelessWidget {
               ),
               child: Text(
                 description,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w400,
                   fontSize: 13,
@@ -888,7 +888,7 @@ class _SpecRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -898,7 +898,7 @@ class _SpecRow extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF111827),
               fontWeight: FontWeight.w700,
               fontSize: 15,
@@ -943,7 +943,7 @@ class _SalesCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Sales Performance',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -953,7 +953,7 @@ class _SalesCard extends StatelessWidget {
               ),
               Text(
                 'Last Sold: Today - 2:15 PM',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: _muted,
                   fontWeight: FontWeight.w400,
                   fontSize: 11,
@@ -988,7 +988,7 @@ class _SalesCard extends StatelessWidget {
               children: [
                 Text(
                   'Total Sold (All Time)',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
@@ -997,7 +997,7 @@ class _SalesCard extends StatelessWidget {
                 const Spacer(),
                 Text(
                   '3,482',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyInventoryDetailsScreen._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -1009,7 +1009,7 @@ class _SalesCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Revenue Summary',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: _ink,
               fontWeight: FontWeight.w700,
               fontSize: 15,
@@ -1048,7 +1048,7 @@ class _SaleStat extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: _SalesCard._muted,
             fontWeight: FontWeight.w500,
             fontSize: 12,
@@ -1058,7 +1058,7 @@ class _SaleStat extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: _SalesCard._ink,
             fontWeight: FontWeight.w700,
             fontSize: 20,
@@ -1082,7 +1082,7 @@ class _RevenueStat extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: _SalesCard._muted,
             fontWeight: FontWeight.w500,
             fontSize: 12,
@@ -1092,7 +1092,7 @@ class _RevenueStat extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           amount,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: _SalesCard._revenue,
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -1115,7 +1115,7 @@ class _HistoryCard extends StatelessWidget {
           children: [
             Text(
               'Stock History',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF111827),
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
@@ -1125,7 +1125,7 @@ class _HistoryCard extends StatelessWidget {
             const Spacer(),
             Text(
               'See All',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyInventoryDetailsScreen._orange,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
@@ -1199,7 +1199,7 @@ class _StockHistoryTile extends StatelessWidget {
             children: [
               Text(
                 stockId,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w600,
                   fontSize: 11,
@@ -1210,7 +1210,7 @@ class _StockHistoryTile extends StatelessWidget {
               const Spacer(),
               Text(
                 date,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
@@ -1238,7 +1238,7 @@ class _StockHistoryTile extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF111827),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -1255,7 +1255,7 @@ class _StockHistoryTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   'QUANTITY',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w600,
                     fontSize: 11,
@@ -1265,7 +1265,7 @@ class _StockHistoryTile extends StatelessWidget {
               ),
               Text(
                 'REMAINING',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w600,
                   fontSize: 11,
@@ -1280,7 +1280,7 @@ class _StockHistoryTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   quantity,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: accent,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -1290,7 +1290,7 @@ class _StockHistoryTile extends StatelessWidget {
               ),
               Text(
                 remaining,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF111827),
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
@@ -1337,7 +1337,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
 
   @override
   Widget build(BuildContext context) {
-    const orange = Color(0xFFFF5722);
+    const orange = Color(0xFFFF5216);
     return Dialog(
       backgroundColor: Colors.white,
       elevation: 0,
@@ -1354,7 +1354,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                 Expanded(
                   child: Text(
                     'Update Stock',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -1385,7 +1385,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
             const SizedBox(height: 16),
             Text(
               'Enter Quantity',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -1395,7 +1395,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
             TextField(
               controller: _quantity,
               keyboardType: TextInputType.number,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF111827),
                 fontWeight: FontWeight.w500,
                 fontSize: 15,
@@ -1440,7 +1440,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                       ),
                       child: Text(
                         'Cancel',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),
@@ -1464,7 +1464,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                       ),
                       child: Text(
                         'Update',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),
@@ -1631,7 +1631,7 @@ class _ProductImageCarouselState extends State<_ProductImageCarousel> {
                     height: 6,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFFFF5722)
+                          ? const Color(0xFFFF5216)
                           : Colors.white.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(3),
                       boxShadow: [

@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -90,7 +90,7 @@ class _RedeemedCustomersScreenState extends State<RedeemedCustomersScreen> {
         ),
         title: Text(
           S.of(context).redeemedCustomers,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: const Color(0xFF1F1F1F),
@@ -166,7 +166,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                 backgroundColor: const Color(0xFFEEF2FF),
                 child: Text(
                   initials,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFFF5216),
@@ -180,7 +180,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                   children: [
                     Text(
                       customer.userName ?? '-',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1F1F1F),
@@ -188,7 +188,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                     ),
                     Text(
                       phone,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         color: const Color(0xFF94A3B8),
                       ),
@@ -207,7 +207,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                 ),
                 child: Text(
                   S.of(context).redeemedStatus,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF22C55E),
@@ -225,7 +225,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                   children: [
                     Text(
                       S.of(context).pointsLabel,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF94A3B8),
@@ -234,7 +234,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       points,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1F1F1F),
@@ -249,7 +249,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                   children: [
                     Text(
                       S.of(context).dateLabel,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF94A3B8),
@@ -258,7 +258,7 @@ class RedeemedCustomerTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       createdAtStr,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1F1F1F),

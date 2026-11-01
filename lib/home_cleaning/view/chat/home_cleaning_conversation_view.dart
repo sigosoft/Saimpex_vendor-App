@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -86,7 +86,7 @@ class HomeCleaningConversationView extends StatefulWidget {
   final int? customerId;
   final String? avatarUrl;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF9E9E9E);
   static const _bgCream = Color(0xFFFDF9F0);
@@ -460,7 +460,7 @@ class _HomeCleaningConversationViewState
               Text(
                 _error!,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF757575),
                   fontWeight: FontWeight.w500,
                   fontSize: 13.5,
@@ -479,7 +479,7 @@ class _HomeCleaningConversationViewState
                 ),
                 child: Text(
                   S.of(context).tryAgain,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: HomeCleaningConversationView._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 13.5,
@@ -506,7 +506,7 @@ class _HomeCleaningConversationViewState
                           ? S.of(context).noMessagesYet
                           : S.of(context).cleaningSvcChatUnavailable,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF9E9E9E),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -567,7 +567,7 @@ class _HomeCleaningConversationViewState
                   widget.customerName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: HomeCleaningConversationView._ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -577,7 +577,7 @@ class _HomeCleaningConversationViewState
                   const SizedBox(height: 2),
                   Text(
                     orderId,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF757575),
                       fontWeight: FontWeight.w400,
                       fontSize: 11,
@@ -602,7 +602,7 @@ class _HomeCleaningConversationViewState
         ),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF6B7280),
             fontWeight: FontWeight.w600,
             fontSize: 11.5,
@@ -653,7 +653,7 @@ class _HomeCleaningConversationViewState
       ),
       child: Text(
         message.text ?? '',
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: isMe ? Colors.white : HomeCleaningConversationView._ink,
           fontSize: 13,
           fontWeight: FontWeight.w400,
@@ -735,7 +735,7 @@ class _HomeCleaningConversationViewState
             const SizedBox(width: 12),
             Text(
               _formatDuration(message.durationSeconds),
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -755,7 +755,7 @@ class _HomeCleaningConversationViewState
           message.createdAt == null
               ? ''
               : DateFormat('hh:mm a').format(message.createdAt!),
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: HomeCleaningConversationView._muted,
             fontSize: 10.5,
           ),
@@ -823,7 +823,7 @@ class _HomeCleaningConversationViewState
                             const SizedBox(width: 6),
                             Text(
                               _formatDuration(chat.recordingDuration),
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: HomeCleaningConversationView._ink,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -846,13 +846,13 @@ class _HomeCleaningConversationViewState
                             Expanded(
                               child: TextField(
                                 controller: _messageController,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: HomeCleaningConversationView._ink,
                                   fontSize: 13,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: S.of(context).typeAMessage,
-                                  hintStyle: GoogleFonts.inter(
+                                  hintStyle: appFont('Inter', 
                                     color: const Color(0xFF9E9E9E),
                                     fontSize: 13,
                                   ),

@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart' hide MenuController;
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/menucontroller.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/edit_menu_screen_widgets.dart';
@@ -51,7 +51,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                         Expanded(
                           child: Text(
                             S.of(context).category,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF1F1F1F),
@@ -67,7 +67,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                           },
                           child: Text(
                             S.of(context).reset,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFFF5216),
@@ -98,7 +98,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                                   },
                             title: Text(
                               name.isNotEmpty ? name : '-',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF1F1F1F),
@@ -126,7 +126,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
                         ),
                         child: Text(
                           S.of(context).submit,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -177,7 +177,7 @@ class _EditMenuScreenState extends State<EditMenuScreen> {
         ),
         title: Text(
           S.of(context).editMenu,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),

@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:saimpex_vendor/generated/l10n.dart';
 
@@ -41,7 +41,7 @@ class PreorderBadge extends StatelessWidget {
           Text(
             '${S.of(context).preorderBadge} · ${formatPreorderTime(scheduledFor)}',
             textDirection: Directionality.of(context),
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: preorderColor,

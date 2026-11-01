@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -419,7 +419,7 @@ class _StoreProfileViewState extends State<StoreProfileView> {
                                       Text(
                                         S.of(context).noReviewsFound,
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.inter(
+                                        style: appFont('Inter', 
                                           fontSize: 15,
                                           fontWeight: FontWeight.w700,
                                           color: StoreProfileView._ink,
@@ -457,7 +457,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).waterStoreProfile,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: StoreProfileView._ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -500,7 +500,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF37383A),
         fontWeight: FontWeight.w700,
         fontSize: 15,
@@ -550,7 +550,7 @@ class _InfoCard extends StatelessWidget {
                     flex: 5,
                     child: Text(
                       rows[i].label,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: StoreProfileView._label,
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -567,7 +567,7 @@ class _InfoCard extends StatelessWidget {
                             ),
                             child: Text(
                               rows[i].value,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF16A34A),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
@@ -581,7 +581,7 @@ class _InfoCard extends StatelessWidget {
                       child: Text(
                         rows[i].value,
                         textAlign: TextAlign.end,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: rows[i].emphasize
                               ? StoreProfileView._ink
                               : StoreProfileView._value,
@@ -654,7 +654,7 @@ class _ReviewsHeader extends StatelessWidget {
       children: [
         Text(
           S.of(context).ratingReviews.toUpperCase(),
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF2E3032),
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -667,7 +667,7 @@ class _ReviewsHeader extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           child: Text(
             S.of(context).viewAll,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: StoreProfileView._orange,
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -771,7 +771,7 @@ class _ReviewCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Text(
                             initial,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF059669),
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
@@ -781,7 +781,7 @@ class _ReviewCard extends StatelessWidget {
                       )
                     : Text(
                         initial,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF059669),
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -798,7 +798,7 @@ class _ReviewCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             username,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF3F4555),
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -808,7 +808,7 @@ class _ReviewCard extends StatelessWidget {
                         if (dateStr.isNotEmpty)
                           Text(
                             dateStr,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF9AA8B8),
                               fontWeight: FontWeight.w500,
                               fontSize: 11,
@@ -832,7 +832,7 @@ class _ReviewCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           ratingDisplay,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -849,7 +849,7 @@ class _ReviewCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               comment,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3F4555),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -869,7 +869,7 @@ class _ReviewCard extends StatelessWidget {
               ),
               child: Text(
                 orderDisplay,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF94A3B8),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,

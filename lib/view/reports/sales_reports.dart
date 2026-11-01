@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../../Utils/Utils.dart';
 import '../../controller/sales_report_controller.dart';
@@ -156,7 +156,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 ),
                 child: Text(
                   datum.orderCode ?? '—',
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: colorPrimary,
@@ -172,7 +172,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 ),
                 child: Text(
                   statusStr,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -191,7 +191,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                   children: [
                     Text(
                       _customerName(datum),
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F1F1F),
@@ -208,7 +208,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                         const SizedBox(width: 6),
                         Text(
                           phone.isEmpty ? '—' : phone,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 11,
                             color: Colors.grey.shade600,
                           ),
@@ -229,7 +229,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                             dateTimeStr,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               color: Colors.grey.shade600,
                             ),
@@ -246,7 +246,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 children: [
                   Text(
                     S.of(context).totalAmount,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       color: Colors.grey.shade600,
                     ),
@@ -254,7 +254,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                   const SizedBox(height: 2),
                   Text(
                     '${datum.total ?? '0'} $_currency',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: amountColor,
@@ -303,7 +303,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
               ),
               child: Text(
                 S.of(context).viewDetails,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -321,7 +321,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
       children: [
         Text(
           S.of(context).salesReport,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -356,7 +356,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                 children: [
                   Text(
                     S.of(context).download,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -469,7 +469,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
               ),
               child: Text(
                 S.of(context).viewReports,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -491,7 +491,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 12,
             color: const Color(0xFF94A3B8),
             fontWeight: FontWeight.w500,
@@ -516,7 +516,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                     value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: value == 'dd-mm-yyyy'

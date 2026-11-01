@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
@@ -85,7 +85,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
         ),
         title: Text(
           S.of(context).leavesHistory,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -124,7 +124,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
             children: [
               Text(
                 S.of(context).upcomingLeaves,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: const Color.fromARGB(255, 95, 145, 245),
@@ -159,7 +159,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               const SizedBox(height: 24),
               Text(
                 S.of(context).completedLeaves,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: const Color.fromARGB(255, 35, 208, 102),
@@ -230,7 +230,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                 children: [
                   Text(
                     dateRange,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF1F1F1F),
@@ -238,7 +238,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                   ),
                   Text(
                     reason,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF9CA3AF),
                     ),
@@ -258,7 +258,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                 ),
                 child: Text(
                   status,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: isUpcoming
@@ -288,7 +288,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                 ),
                 child: Text(
                   S.of(context).cancelLeave,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFFFF5216),

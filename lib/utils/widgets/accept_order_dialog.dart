@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 void showAcceptOrderDialog({
@@ -23,7 +23,7 @@ void showAcceptOrderDialog({
             children: [
               Text(
                 "Accept Order",
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -46,7 +46,7 @@ void showAcceptOrderDialog({
                 ),
                 child: Text(
                   "Accept",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -69,7 +69,7 @@ void showAcceptOrderDialog({
                 ),
                 child: Text(
                   "Accept & Print",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -90,7 +90,7 @@ void showAcceptOrderDialog({
                 ),
                 child: Text(
                   "Cancel",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

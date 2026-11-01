@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -200,14 +200,14 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                       TextField(
                         controller: _search,
                         onChanged: (_) => setState(() {}),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: DeliveryBoysView.ink,
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
                         ),
                         decoration: InputDecoration(
                           hintText: S.of(context).waterSearchDeliveryBoy,
-                          hintStyle: GoogleFonts.inter(
+                          hintStyle: appFont('Inter', 
                             color: const Color(0xFFA9AEB6),
                             fontWeight: FontWeight.w500,
                             fontSize: 13,
@@ -251,7 +251,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                                 Text(
                                   S.of(context).noDeliveryBoysFound,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: DeliveryBoysView.ink,
@@ -261,7 +261,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                                 Text(
                                   S.of(context).waterAddedDeliveryBoysAppearHere,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
                                     color: const Color(0xFF64748B),
@@ -348,7 +348,7 @@ class _Header extends StatelessWidget {
                 S.of(context).deliveryBoys,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF1C1D1B),
                   fontWeight: FontWeight.w700,
                   fontSize: 18,
@@ -378,7 +378,7 @@ class _Header extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         S.of(context).waterAddDeliveryBoy,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: DeliveryBoysView.orange,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -429,7 +429,7 @@ class _BoyCard extends StatelessWidget {
                     boy.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: DeliveryBoysView.ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -509,7 +509,7 @@ class _ActivePill extends StatelessWidget {
       ),
       child: Text(
         isActive ? S.of(context).active : S.of(context).inactive,
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: isActive ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
           fontWeight: FontWeight.w700,
           fontSize: 11,
@@ -537,7 +537,7 @@ class _MetaRow extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF64748B),
               fontWeight: FontWeight.w500,
               fontSize: 12,

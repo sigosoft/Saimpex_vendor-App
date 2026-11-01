@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'dart:convert';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/settings_controller.dart';
@@ -495,7 +495,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         const SizedBox(width: 8),
                         Text(
                           _t('Delete Account'),
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF1C1D1B),
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -806,7 +806,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     const SizedBox(height: 10),
                     Text(
                       _t('Language'),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyAccountScreen.orange,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -821,7 +821,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     const SizedBox(height: 18),
                     Text(
                       _t('Business'),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyAccountScreen.orange,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -999,7 +999,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                             const SizedBox(width: 8),
                             Text(
                               _t('Logout'),
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: PharmacyAccountScreen.orange,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
@@ -1013,7 +1013,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     Text(
                       'V2.8.1',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF858585),
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -1023,7 +1023,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     Text(
                       _t('Check for update'),
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF5C5C5C),
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -1059,7 +1059,7 @@ class _AccountHeader extends StatelessWidget {
           children: [
             Text(
               _t('Account'),
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1159,7 +1159,7 @@ class _ProfileCard extends StatelessWidget {
                 const SizedBox(width: 2),
                 Text(
                   rating,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyAccountScreen.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
@@ -1191,7 +1191,7 @@ class _ProfileCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       isOpen ? _t('Open') : _t('Closed'),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: isOpen
                             ? const Color.fromARGB(255, 23, 155, 71)
                             : const Color(0xFFDC2626),
@@ -1209,7 +1209,7 @@ class _ProfileCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             name,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: PharmacyAccountScreen.ink,
               fontWeight: FontWeight.w700,
               fontSize: 18,
@@ -1240,7 +1240,7 @@ class _ProfileCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   isVerified ? _t('Verified') : _t('Unverified'),
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: isVerified
                         ? const Color.fromARGB(255, 23, 155, 71)
                         : const Color(0xFF9CA3AF),
@@ -1255,7 +1255,7 @@ class _ProfileCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               id.startsWith('ID:') ? id : 'ID: $id',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
@@ -1317,7 +1317,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF8B919E),
         fontWeight: FontWeight.w600,
         fontSize: 14,
@@ -1382,7 +1382,7 @@ class _LanguageBar extends StatelessWidget {
                             child: AnimatedDefaultTextStyle(
                               duration: const Duration(milliseconds: 220),
                               curve: Curves.easeOutCubic,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: isSelected
                                     ? Colors.white
                                     : const Color(0xFF3F3F4D),
@@ -1493,7 +1493,7 @@ class _MenuTile extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: labelColor,
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -1688,7 +1688,7 @@ class _DeleteAccountConfirmDialog extends StatelessWidget {
               Text(
                 _t('Are you sure you want to delete your\naccount?'),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF4A4A4A),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -1716,7 +1716,7 @@ class _DeleteAccountConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           _t('No'),
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -1739,7 +1739,7 @@ class _DeleteAccountConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           _t('Yes'),
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -1800,7 +1800,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
               Text(
                 _t('Are you sure you want to log out?'),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF4A4A4A),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -1828,7 +1828,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           _t('No'),
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -1851,7 +1851,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           _t('Yes'),
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),

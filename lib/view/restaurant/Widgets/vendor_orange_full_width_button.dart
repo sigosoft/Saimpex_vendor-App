@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Full-width primary CTA (orange) used at screen bottom in vendor flows.
 class VendorOrangeFullWidthButton extends StatelessWidget {
@@ -34,7 +34,7 @@ class VendorOrangeFullWidthButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: Colors.white,

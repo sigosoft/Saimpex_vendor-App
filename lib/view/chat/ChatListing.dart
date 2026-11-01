@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
@@ -72,7 +72,7 @@ class _ChatListingState extends State<ChatListing> {
                         const SizedBox(height: 12),
                         Text(
                           S.of(context).currentlyNoContactsFoundPleaseTryLater,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             color: Colors.grey,
                           ),
@@ -193,7 +193,7 @@ class _ChatListingState extends State<ChatListing> {
       ),
       title: Text(
         S.of(context).chat,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Colors.black,

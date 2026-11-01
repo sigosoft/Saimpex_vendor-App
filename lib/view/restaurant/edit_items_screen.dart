@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
@@ -341,7 +341,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                         Expanded(
                           child: Text(
                             'Tags',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF1F2937),
@@ -357,7 +357,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           },
                           child: Text(
                             'Reset',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFFF5216),
@@ -388,7 +388,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                   },
                             title: Text(
                               name.isNotEmpty ? name : '-',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF1F2937),
@@ -416,7 +416,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                         ),
                         child: Text(
                           'Done',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -479,7 +479,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                       children: [
                         Text(
                           isEditing ? 'Edit Option' : 'Add Option',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF1F2937),
@@ -506,7 +506,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                     const SizedBox(height: 14),
                     Text(
                       'Option Image',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFFA855F7),
@@ -590,7 +590,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                             ),
                             child: Text(
                               hasImage ? 'Change Image' : 'Upload image',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFFA855F7),
@@ -626,7 +626,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Available',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: const Color(0xFF1F2937),
@@ -651,7 +651,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                               ),
                               child: Text(
                                 'Cancel',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF475569),
@@ -707,7 +707,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                               ),
                               child: Text(
                                 'Save Option',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -744,7 +744,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
         ),
         title: Text(
           'Edit Item',
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1F2937),
@@ -901,7 +901,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                     const SizedBox(height: 10),
                                     Text(
                                       'Upload image here',
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: const Color(0xFF94A3B8),
@@ -942,7 +942,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Product Details',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF1F2937),
@@ -1091,7 +1091,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Variants',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF1F2937),
@@ -1138,7 +1138,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                             children: [
                               Text(
                                 'Variant Image',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: hasImg
@@ -1198,7 +1198,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                         ),
                                         child: Text(
                                           'Upload image',
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
                                             color: const Color(0xFFA855F7),
@@ -1348,7 +1348,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   'Add Variant',
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFA855F7),
@@ -1379,7 +1379,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Option Groups',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF1F2937),
@@ -1519,7 +1519,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                             children: [
                                               Text(
                                                 opt.name,
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w600,
                                                   color: const Color(
@@ -1530,7 +1530,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                               const SizedBox(height: 2),
                                               Text(
                                                 '${opt.price} MRU',
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500,
                                                   color: const Color(
@@ -1608,7 +1608,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                           const SizedBox(width: 4),
                                           Text(
                                             'Add Option',
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
                                               color: const Color(0xFFA855F7),
@@ -1651,7 +1651,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                             const SizedBox(width: 4),
                                             Text(
                                               'Delete Group',
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFFEF4444),
@@ -1702,7 +1702,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   'Add Option Group',
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFFF5216),
@@ -1733,7 +1733,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             'Add Extras',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF1F2937),
@@ -1856,7 +1856,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                         ),
                                         child: Text(
                                           'Upload image',
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
                                             color: const Color(0xFFA855F7),
@@ -1924,7 +1924,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                               extra.nameCtrl.text.isNotEmpty
                                                   ? extra.nameCtrl.text
                                                   : '',
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
                                                 color:
@@ -1936,7 +1936,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                               const SizedBox(height: 2),
                                               Text(
                                                 '+${extra.priceCtrl.text} MRU',
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500,
                                                   color:
@@ -2052,7 +2052,7 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
                                   extraItems.isEmpty
                                       ? 'Add Item'
                                       : 'Add Another Item',
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFFF5216),

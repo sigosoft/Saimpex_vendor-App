@@ -6,7 +6,7 @@ class AppColors {
   // —— Brand ——
   static const Color primaryOrange = Color(0xFFFF5E21);
   static const Color orangeSoft = Color(0xFFFF8A50);
-  static const Color orangeAccent = Color(0xFFFF5722);
+  static const Color orangeAccent = Color(0xFFFF5216);
   static const Color languageChip = Color(0xFFFFEDE6);
   static const Color orangeSoftBg = Color(0xFFFFF0E6);
   static const Color orangeChipBg = Color(0xFFFFF8F3);

@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -133,7 +133,7 @@ class _SettingsState extends State<Settings> {
                     // Restaurant Name
                     Text(
                       controller.profileData?.name ?? "",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF333E63),
@@ -210,7 +210,7 @@ class _SettingsState extends State<Settings> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           S.of(context).language,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF333E63),
@@ -379,7 +379,7 @@ class _SettingsState extends State<Settings> {
                               const SizedBox(width: 15),
                               Text(
                                 S.of(context).logout,
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: colorPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -394,7 +394,7 @@ class _SettingsState extends State<Settings> {
                     // Version
                     Text(
                       "${S.of(context).version} ${controller.version}",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         color: Colors.grey,
                       ),
@@ -403,7 +403,7 @@ class _SettingsState extends State<Settings> {
                       onTap: () => _openStore(context),
                       child: Text(
                         S.of(context).checkForUpdate,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           color: Colors.grey,
                           decoration: TextDecoration.underline,
@@ -500,7 +500,7 @@ class _SettingsState extends State<Settings> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             color: const Color(0xFF8E99AF),
             fontWeight: FontWeight.w400,
@@ -513,7 +513,7 @@ class _SettingsState extends State<Settings> {
             textAlign: TextAlign.end,
             maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               color: const Color(0xFF333E63),
               fontWeight: FontWeight.w600,
@@ -530,7 +530,7 @@ class _SettingsState extends State<Settings> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             color: const Color(0xFF8E99AF),
             fontWeight: FontWeight.w400,
@@ -544,7 +544,7 @@ class _SettingsState extends State<Settings> {
           ),
           child: Text(
             status,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 11,
               color: greenlight,
               fontWeight: FontWeight.bold,
@@ -572,7 +572,7 @@ class _SettingsState extends State<Settings> {
         child: Center(
           child: Text(
             title,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               color: isSelected ? Colors.white : Colors.grey[700],
@@ -598,7 +598,7 @@ class _SettingsState extends State<Settings> {
             : ImageIcon(image, color: Colors.grey[900], size: 24),
         title: Text(
           title,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: const Color(0xFF333E63),

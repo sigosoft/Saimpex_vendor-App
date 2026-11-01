@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -38,7 +38,7 @@ class CustomTextFormField extends StatelessWidget {
         validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             textStyle: Theme.of(context).textTheme.labelMedium,
             fontSize: 13,
             fontWeight: FontWeight.w400,

@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -423,7 +423,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                         children: [
                           Text(
                             'Current Status',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF8A7B76),
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
@@ -432,7 +432,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                           const SizedBox(height: 8),
                           Text.rich(
                             TextSpan(
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: PharmacyWorkingHoursScreen.ink,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
@@ -461,7 +461,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                               const SizedBox(width: 8),
                               Text(
                                 '24-Hour Open',
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: PharmacyWorkingHoursScreen.ink,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 15,
@@ -497,7 +497,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                     const SizedBox(height: 22),
                     Text(
                       'Weekly Schedule',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyWorkingHoursScreen.ink,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -550,7 +550,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Working Hours',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyWorkingHoursScreen.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -604,7 +604,7 @@ class _DayRow extends StatelessWidget {
               children: [
                 Text(
                   day.name,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyWorkingHoursScreen.day,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -613,7 +613,7 @@ class _DayRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: closed ? PharmacyWorkingHoursScreen.closed : PharmacyWorkingHoursScreen.muted,
                     fontWeight: closed ? FontWeight.w700 : FontWeight.w500,
                     fontSize: 13,
@@ -731,7 +731,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
             Center(
               child: Text(
                 'Edit Working Hour',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF111111),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -741,7 +741,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
             const SizedBox(height: 18),
             Text(
               widget.dayName,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF111111),
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
@@ -752,7 +752,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
               children: [
                 Text(
                   '24-Hour Open',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF1C1D1B),
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -798,7 +798,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
               const SizedBox(height: 8),
               Text(
                 _error!,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFFBA1B1B),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -820,7 +820,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
                       ),
                       child: Text(
                         'Cancel',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
+                        style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 15),
                       ),
                     ),
                   ),
@@ -845,7 +845,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
                         ),
                         child: Text(
                           'Save',
-                          style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                          style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                         ),
                       ),
                     ),
@@ -862,7 +862,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
   Widget _timeLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFFA3A3A3),
         fontWeight: FontWeight.w500,
         fontSize: 12,
@@ -882,7 +882,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
           child: Center(
             child: Text(
               value,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3E3E3E),
                 fontWeight: FontWeight.w600,
                 fontSize: 14,

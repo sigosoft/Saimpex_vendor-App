@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/Widgets/custom_button.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
@@ -76,7 +76,7 @@ class LogoutBottomSheet extends StatelessWidget {
               Text(
                 S.of(context).areYouSureYouWantToLogout,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w300,
                   color: Colors.black,

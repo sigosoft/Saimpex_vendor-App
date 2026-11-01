@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -18,7 +18,7 @@ class PharmacyNotificationsScreen extends StatefulWidget {
   const PharmacyNotificationsScreen({super.key});
 
   static const _orange = Color(0xFFFF5317);
-  static const _link = Color(0xFFFF5722);
+  static const _link = Color(0xFFFF5216);
   static const _name = Color(0xFF2D3444);
   static const _meta = Color(0xFF6B7280);
   static const _badge = Color(0xFFF59E0B);
@@ -511,7 +511,7 @@ class _NotificationItemCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title.isNotEmpty ? title : 'Notification',
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: PharmacyNotificationsScreen._name,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
@@ -523,7 +523,7 @@ class _NotificationItemCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           timeStr,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF9CA3AF),
                             fontWeight: FontWeight.w400,
                             fontSize: 12,
@@ -537,7 +537,7 @@ class _NotificationItemCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       content,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF6B7280),
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
@@ -571,7 +571,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Notifications',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
@@ -598,7 +598,7 @@ class _Header extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: Color(0xFFFF5722),
+                    color: Color(0xFFFF5216),
                     size: 26,
                   ),
                 ),
@@ -656,7 +656,7 @@ class _OrderNotificationCard extends StatelessWidget {
                       'Reject',
                       maxLines: 1,
                       softWrap: false,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyNotificationsScreen._name,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -700,7 +700,7 @@ class _OrderNotificationCard extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         softWrap: false,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
@@ -735,7 +735,7 @@ class _CustomerHeader extends StatelessWidget {
           ),
           child: Text(
             'A',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFFDC2626),
               fontWeight: FontWeight.w700,
               fontSize: 18,
@@ -753,7 +753,7 @@ class _CustomerHeader extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Ahmed',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyNotificationsScreen._name,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -772,7 +772,7 @@ class _CustomerHeader extends StatelessWidget {
                     ),
                     child: Text(
                       'NEW',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 10,
@@ -817,7 +817,7 @@ class _DeliveryMeta extends StatelessWidget {
             children: [
               TextSpan(
                 text: 'Delivery',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: PharmacyNotificationsScreen._link,
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
@@ -826,7 +826,7 @@ class _DeliveryMeta extends StatelessWidget {
               ),
               TextSpan(
                 text: '  • #22789007 • 2 min ago',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: PharmacyNotificationsScreen._meta,
                   fontWeight: FontWeight.w500,
                   fontSize: 12.5,
@@ -874,7 +874,7 @@ class _PrescriptionBox extends StatelessWidget {
                   'Prescription_Jun25.jpg',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyNotificationsScreen._name,
                     fontWeight: FontWeight.w600,
                     fontSize: 13.5,
@@ -889,7 +889,7 @@ class _PrescriptionBox extends StatelessWidget {
                     children: [
                       Text(
                         'View Full Prescription',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyNotificationsScreen._link,
                           fontWeight: FontWeight.w600,
                           fontSize: 12.5,
@@ -974,7 +974,7 @@ class _InfoPill extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF374151),
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -1023,7 +1023,7 @@ class _PaymentVerifiedCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'Payment Verified',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyNotificationsScreen._name,
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -1033,7 +1033,7 @@ class _PaymentVerifiedCard extends StatelessWidget {
                     ),
                     Text(
                       '1h ago',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF9CA3AF),
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
@@ -1045,7 +1045,7 @@ class _PaymentVerifiedCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF6B7280),
                       fontWeight: FontWeight.w400,
                       fontSize: 13,
@@ -1057,7 +1057,7 @@ class _PaymentVerifiedCard extends StatelessWidget {
                       ),
                       TextSpan(
                         text: '#ORD-8821',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF4B5563),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,

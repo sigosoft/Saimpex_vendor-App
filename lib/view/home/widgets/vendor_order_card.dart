@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/order_fulfillment.dart';
@@ -97,7 +97,7 @@ class VendorOrderCard extends StatelessWidget {
                         children: [
                           Text(
                             S.of(context).orderIdLabel(orderCode ?? orderId),
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: colorPrimary,
@@ -125,7 +125,7 @@ class VendorOrderCard extends StatelessWidget {
                           ),
                           child: Text(
                             "Basket order",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF37ADB5),
@@ -165,7 +165,7 @@ class VendorOrderCard extends StatelessWidget {
                   ),
                   child: Text(
                     status.toUpperCase(),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -181,7 +181,7 @@ class VendorOrderCard extends StatelessWidget {
             //       padding: const EdgeInsets.only(top: 4.0),
             //       child: Text(
             //         "00:05:00 min",
-            //         style: GoogleFonts.rubik(
+            //         style: appFont('Rubik', 
             //           fontSize: 10,
             //           color: const Color(0xFF64748B),
             //         ),
@@ -193,7 +193,7 @@ class VendorOrderCard extends StatelessWidget {
               customerName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1F1F1F),
@@ -209,7 +209,7 @@ class VendorOrderCard extends StatelessWidget {
                     children: [
                       Text(
                         S.of(context).items.toUpperCase(),
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey,
@@ -218,7 +218,7 @@ class VendorOrderCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       RichText(
                         text: TextSpan(
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 12,
                             color: Colors.grey[700],
                           ),
@@ -263,7 +263,7 @@ class VendorOrderCard extends StatelessWidget {
                     children: [
                       Text(
                         S.of(context).dateTime,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey,
@@ -273,7 +273,7 @@ class VendorOrderCard extends StatelessWidget {
                       Text(
                         dateTime,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 10,
                           color: Colors.grey[700],
                         ),
@@ -296,7 +296,7 @@ class VendorOrderCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 S.of(context).driver.toUpperCase(),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey,
@@ -305,7 +305,7 @@ class VendorOrderCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text.rich(
                 TextSpan(
-                  style: GoogleFonts.rubik(fontSize: 11),
+                  style: appFont('Rubik', fontSize: 11),
                   children: [
                     TextSpan(
                       text: "${S.of(context).assignedStatus} ",
@@ -344,7 +344,7 @@ class VendorOrderCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     S.of(context).cancelledOnLabel(dateTime),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFFEF4444),
@@ -356,7 +356,7 @@ class VendorOrderCard extends StatelessWidget {
               if (cancelReason != null && cancelReason!.trim().isNotEmpty) ...[
                 Text(
                   S.of(context).reasonColonLabel(cancelReason!),
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFFEF4444),
@@ -382,7 +382,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).reject,
-                        style: GoogleFonts.rubik(fontWeight: FontWeight.w500),
+                        style: appFont('Rubik', fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -401,7 +401,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).acceptOrder,
-                        style: GoogleFonts.rubik(fontWeight: FontWeight.w500),
+                        style: appFont('Rubik', fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -424,7 +424,7 @@ class VendorOrderCard extends StatelessWidget {
                           ),
                           child: Text(
                             S.of(context).viewDetails,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFFF5216),
                             ),
@@ -446,7 +446,7 @@ class VendorOrderCard extends StatelessWidget {
                           ),
                           child: Text(
                             S.of(context).markAsReady,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -469,7 +469,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         "Accept & Print",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
                         ),
@@ -499,7 +499,7 @@ class VendorOrderCard extends StatelessWidget {
                           ),
                           child: Text(
                             S.of(context).viewDetails,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFFF5216),
                             ),
@@ -522,7 +522,7 @@ class VendorOrderCard extends StatelessWidget {
                           child: Text(
                             S.of(context).markSelfPickupCompleted,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -545,7 +545,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         "Print Order",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
                         ),
@@ -569,7 +569,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).viewDetails,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
                         ),
@@ -591,7 +591,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         "Print Order",
-                        style: GoogleFonts.rubik(fontWeight: FontWeight.w600),
+                        style: appFont('Rubik', fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -613,7 +613,7 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).viewDetails,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
@@ -637,7 +637,7 @@ class VendorOrderCard extends StatelessWidget {
                             ),
                             child: Text(
                               "Accept & Print",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFFF5216),

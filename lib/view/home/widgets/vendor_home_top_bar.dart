@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/view/notifications/notifications.dart';
 
 import '../../../generated/l10n.dart';
@@ -28,7 +28,7 @@ class VendorHomeTopBar extends StatelessWidget {
                 Expanded(
                   child: userName.toString()=="null"?Container():Text(
                     S.of(context).welcomeTo+" "+userName.toString(),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1F1F1F),

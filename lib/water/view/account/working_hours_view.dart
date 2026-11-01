@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -430,7 +430,7 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
                       const SizedBox(height: 22),
                       Text(
                         S.of(context).waterWeeklySchedule,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: WorkingHoursView.ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -551,7 +551,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).workingHours,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: WorkingHoursView.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -618,7 +618,7 @@ class _CurrentStatusCard extends StatelessWidget {
         children: [
           Text(
             S.of(context).waterCurrentStatus,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF8A7B76),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -627,7 +627,7 @@ class _CurrentStatusCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text.rich(
             TextSpan(
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: WorkingHoursView.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
@@ -654,7 +654,7 @@ class _CurrentStatusCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 S.of(context).waterOpen24Hours,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: WorkingHoursView.ink,
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
@@ -709,7 +709,7 @@ class _DayRow extends StatelessWidget {
               children: [
                 Text(
                   dayLabel,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: WorkingHoursView.day,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -718,7 +718,7 @@ class _DayRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: closed ? WorkingHoursView.closed : WorkingHoursView.muted,
                     fontWeight: closed ? FontWeight.w700 : FontWeight.w500,
                     fontSize: 13,

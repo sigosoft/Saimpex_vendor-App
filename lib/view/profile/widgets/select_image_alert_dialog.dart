@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
@@ -100,7 +100,7 @@ class SelectImageAlertDialog extends StatelessWidget {
                                 SizedBox(height: media.size.height * 0.01),
                                 Text(
                                   S.of(context).gallery,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black,
@@ -139,7 +139,7 @@ class SelectImageAlertDialog extends StatelessWidget {
                                 SizedBox(height: media.size.height * 0.01),
                                 Text(
                                   S.of(context).camera,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black,

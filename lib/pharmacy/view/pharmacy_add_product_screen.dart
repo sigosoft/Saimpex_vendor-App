@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -20,7 +20,7 @@ class PharmacyAddProductScreen extends StatefulWidget {
   final bool isEdit;
   final Map<String, dynamic>? initialData;
 
-  static const Color orange = Color(0xFFFF5722);
+  static const Color orange = Color(0xFFFF5216);
   static const Color ink = Color(0xFF111827);
   static const Color grey = Color(0xFF9CA3AF);
   static const Color field = Color(0xFFF3F4F6);
@@ -215,7 +215,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
             children: [
               Text(
                 'Select Image Source',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -239,7 +239,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                 ),
                 title: Text(
                   'Camera',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: const Color(0xFF1F2937),
@@ -247,7 +247,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                 ),
                 subtitle: Text(
                   'Take a new photo',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontSize: 12,
                     color: const Color(0xFF6B7280),
                   ),
@@ -272,7 +272,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                 ),
                 title: Text(
                   'Gallery',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: const Color(0xFF1F2937),
@@ -280,7 +280,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                 ),
                 subtitle: Text(
                   'Pick one or more images from gallery',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontSize: 12,
                     color: const Color(0xFF6B7280),
                   ),
@@ -847,7 +847,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                             0)
                           Text(
                             '${_existingImages.length + _selectedImages.length} image${(_existingImages.length + _selectedImages.length) > 1 ? "s" : ""} selected',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: PharmacyAddProductScreen.orange,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -1162,7 +1162,7 @@ class _BottomActions extends StatelessWidget {
                 ),
                 child: Text(
                   isEdit ? 'Cancel' : 'Reset',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),
@@ -1187,7 +1187,7 @@ class _BottomActions extends StatelessWidget {
                 ),
                 child: Text(
                   isEdit ? 'Update' : 'Save Product',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                   ),
@@ -1218,7 +1218,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1277,7 +1277,7 @@ class _UploadBox extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   'Tap to upload image',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF394452),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -1286,7 +1286,7 @@ class _UploadBox extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'PNG, JPG up to 5MB',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF8A8B98),
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -1360,7 +1360,7 @@ class _ImagesPreviewList extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           'Add More',
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF394452),
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
@@ -1597,7 +1597,7 @@ class _SectionCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 title,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: titleColor,
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
@@ -1639,7 +1639,7 @@ class _PrescriptionCard extends StatelessWidget {
               children: [
                 Text(
                   'Prescription Requires',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF1C1D1B),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -1649,7 +1649,7 @@ class _PrescriptionCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   'Customer must provide a prescription',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF53524F),
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -1702,7 +1702,7 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: color,
         fontWeight: FontWeight.w500,
         fontSize: 13,
@@ -1742,7 +1742,7 @@ class _SelectCategoryField extends StatelessWidget {
             height: 40,
             child: Text(
               item,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1F2937),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -1772,7 +1772,7 @@ class _SelectCategoryField extends StatelessWidget {
             value ?? 'Select Category',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: value == null
                   ? const Color(0xFF7C828F)
                   : const Color(0xFF1F2937),
@@ -1801,13 +1801,13 @@ InputDecoration _fieldDecoration({
     filled: true,
     fillColor: const Color(0xFFF2F4F6),
     hintText: hint,
-    hintStyle: GoogleFonts.inter(
+    hintStyle: appFont('Inter', 
       color: const Color(0xFF7C828F),
       fontWeight: FontWeight.w500,
       fontSize: 14,
     ),
     suffixText: suffix,
-    suffixStyle: GoogleFonts.inter(
+    suffixStyle: appFont('Inter', 
       color: suffixColor ?? const Color(0xFF9CA3AF),
       fontWeight: FontWeight.w500,
       fontSize: 13,
@@ -1849,7 +1849,7 @@ class _DescriptionCard extends StatelessWidget {
         children: [
           Text(
             'Product Description',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF636973),
               fontWeight: FontWeight.w600,
               fontSize: 15,
@@ -1870,7 +1870,7 @@ class _DescriptionCard extends StatelessWidget {
               maxLines: null,
               expands: true,
               textAlignVertical: TextAlignVertical.top,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1F2937),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -1882,7 +1882,7 @@ class _DescriptionCard extends StatelessWidget {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 hintText: 'Enter Description',
-                hintStyle: GoogleFonts.inter(
+                hintStyle: appFont('Inter', 
                   color: const Color(0xFF7C828F),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -1919,7 +1919,7 @@ class _PriceField extends StatelessWidget {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3F4753),
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
@@ -1937,7 +1937,7 @@ class _PriceField extends StatelessWidget {
           ),
           Text(
             'MRU',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 14,
@@ -1972,7 +1972,7 @@ class _InputField extends StatelessWidget {
       controller: controller,
       maxLines: 1,
       keyboardType: keyboard,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF1F2937),
         fontWeight: FontWeight.w500,
         fontSize: 14,
@@ -2046,7 +2046,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
         elevation: 0,
         title: Text(
           'Scan barcode',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 16),
+          style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 16),
         ),
       ),
       body: Stack(
@@ -2061,7 +2061,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
                   child: Text(
                     'Camera permission is required to scan barcodes',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+                    style: appFont('Inter', color: Colors.white, fontSize: 15),
                   ),
                 ),
               );
@@ -2087,7 +2087,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
             child: Text(
               'Position the barcode within the frame',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 14),
+              style: appFont('Inter', color: Colors.white, fontSize: 14),
             ),
           ),
         ],

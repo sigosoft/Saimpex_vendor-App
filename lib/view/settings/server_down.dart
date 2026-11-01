@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import '../../resources/colors.dart';
 import '../../utils/Widgets/custom_button.dart';
@@ -35,7 +35,7 @@ class ServerDown extends StatelessWidget {
 
                   Text(
                     S.of(context).serverDown,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,

@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -46,7 +46,7 @@ class HomeCleaningMessagesView extends StatefulWidget {
 
   final HomeCleaningController controller;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF757575);
 
@@ -231,7 +231,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           children: [
             Text(
               S.of(context).cleaningMessages,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: HomeCleaningMessagesView._ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -278,13 +278,13 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
       child: TextField(
         controller: _searchController,
         onChanged: (_) => setState(() {}),
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           fontSize: 13,
           color: HomeCleaningMessagesView._ink,
         ),
         decoration: InputDecoration(
           hintText: S.of(context).cleaningSearchCustomerOrOrderId,
-          hintStyle: GoogleFonts.inter(
+          hintStyle: appFont('Inter', 
             color: const Color(0xFF94A3B8),
             fontSize: 12.5,
           ),
@@ -344,7 +344,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
                 children: [
                   Text(
                     name,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: HomeCleaningMessagesView._ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 14.5,
@@ -355,7 +355,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
                     _preview(thread),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: HomeCleaningMessagesView._muted,
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
@@ -382,7 +382,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
                     alignment: Alignment.center,
                     child: Text(
                       '$unread',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
@@ -404,7 +404,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
                     context,
                     thread.lastMessageAt ?? last?.createdAt,
                   ),
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF9E9E9E),
                     fontSize: 10.5,
                     fontWeight: FontWeight.w400,
@@ -435,7 +435,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           Text(
             _error ?? '',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF757575),
               fontWeight: FontWeight.w500,
               fontSize: 13.5,
@@ -456,7 +456,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
               ),
               child: Text(
                 S.of(context).tryAgain,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: HomeCleaningMessagesView._orange,
                   fontWeight: FontWeight.w700,
                   fontSize: 13.5,
@@ -482,7 +482,7 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
           const SizedBox(height: 12),
           Text(
             S.of(context).cleaningNoMessagesFound,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF9E9E9E),
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -512,8 +512,8 @@ class CleaningChatAvatar extends StatelessWidget {
     final initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
     final fallback = Text(
       initial,
-      style: GoogleFonts.inter(
-        color: const Color(0xFFFF5722),
+      style: appFont('Inter', 
+        color: const Color(0xFFFF5216),
         fontWeight: FontWeight.w700,
         fontSize: radius * 0.75,
       ),

@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
@@ -105,7 +105,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
           ),
           title: Text(
             isEdit ? S.of(context).updateCoupon : S.of(context).addCoupon,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1F2937),
@@ -187,7 +187,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                     ),
                     child: Text(
                       S.of(context).cancel,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: const Color(0xFF374151),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -276,7 +276,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                       isEdit
                           ? S.of(context).updateCoupon
                           : S.of(context).addCoupon,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -295,7 +295,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: const Color(0xFF1F2937),
@@ -311,10 +311,10 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: GoogleFonts.rubik(fontSize: 14, color: Colors.black),
+      style: appFont('Rubik', fontSize: 14, color: Colors.black),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.rubik(
+        hintStyle: appFont('Rubik', 
           fontSize: 13,
           color: const Color(0xFF9CA3AF),
           fontWeight: FontWeight.w400,
@@ -354,7 +354,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
           value: _selectedType,
           hint: Text(
             S.of(context).select,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w400,
@@ -369,7 +369,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                 type == 'Percentage'
                     ? S.of(context).percentage
                     : S.of(context).amount,
-                style: GoogleFonts.rubik(fontSize: 14, color: Colors.black),
+                style: appFont('Rubik', fontSize: 14, color: Colors.black),
               ),
             );
           }).toList(),
@@ -409,10 +409,10 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
           });
         }
       },
-      style: GoogleFonts.rubik(fontSize: 14, color: Colors.black),
+      style: appFont('Rubik', fontSize: 14, color: Colors.black),
       decoration: InputDecoration(
         hintText: 'dd-mm-yyyy',
-        hintStyle: GoogleFonts.rubik(
+        hintStyle: appFont('Rubik', 
           fontSize: 13,
           color: const Color(0xFF9CA3AF),
           fontWeight: FontWeight.w400,

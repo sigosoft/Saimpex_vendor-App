@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../controller/otp_controller.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
@@ -51,7 +51,7 @@ class _WhatsNameState extends State<WhatsName> {
                         Text(
                           S.of(context).whatsYourName,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             textStyle: Theme.of(context).textTheme.labelMedium,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,

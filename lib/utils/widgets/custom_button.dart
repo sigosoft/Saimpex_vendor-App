@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -42,7 +42,7 @@ class CustomButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: fontSize,
             fontWeight: fontWeight,
             color: textColor,

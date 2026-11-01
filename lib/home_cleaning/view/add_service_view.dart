@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
@@ -83,7 +83,7 @@ class AddServiceView extends StatefulWidget {
   /// The service being edited; null to add a new one. Pops `true` once saved.
   final CleaningServiceItem? initialService;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
 
   @override
@@ -344,7 +344,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         editingItem != null
                             ? S.of(context).cleaningEditSpace
                             : S.of(context).cleaningAddSpace,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: AddServiceView._ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -372,7 +372,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 14),
                   Text(
                     S.of(context).cleaningSpaceName,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -381,13 +381,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       fontSize: 13,
                       color: AddServiceView._ink,
                     ),
                     decoration: InputDecoration(
                       hintText: S.of(context).cleaningSpaceNameHint,
-                      hintStyle: GoogleFonts.inter(
+                      hintStyle: appFont('Inter', 
                         color: const Color(0xFFBDBDBD),
                         fontSize: 12.5,
                       ),
@@ -410,7 +410,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 12),
                   Text(
                     S.of(context).cleaningUnitLabel,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -433,7 +433,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           Icons.keyboard_arrow_down_rounded,
                           color: Color(0xFF757575),
                         ),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontSize: 13,
                           color: AddServiceView._ink,
                           fontWeight: FontWeight.w600,
@@ -457,7 +457,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 12),
                   Text(
                     S.of(context).price,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -481,13 +481,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: TextField(
                             controller: priceCtrl,
                             keyboardType: TextInputType.number,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontSize: 13,
                               color: AddServiceView._ink,
                             ),
                             decoration: InputDecoration(
                               hintText: S.of(context).cleaningEnterThePrice,
-                              hintStyle: GoogleFonts.inter(
+                              hintStyle: appFont('Inter', 
                                 color: const Color(0xFFBDBDBD),
                                 fontSize: 12.5,
                               ),
@@ -508,7 +508,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                           child: Text(
                             'MRU',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF1E6BE6),
                               fontWeight: FontWeight.w700,
                               fontSize: 11,
@@ -534,7 +534,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                             child: Text(
                               S.of(context).cancel,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF424242),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13.5,
@@ -592,7 +592,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                               editingItem != null
                                   ? S.of(context).cleaningSaveSpace
                                   : S.of(context).cleaningAddSpace,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
                               ),
@@ -643,7 +643,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         editingItem != null
                             ? S.of(context).cleaningEditAddon
                             : S.of(context).cleaningAddAddon,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: AddServiceView._ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -671,7 +671,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 14),
                   Text(
                     S.of(context).cleaningAddonName,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -680,13 +680,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 6),
                   TextField(
                     controller: nameCtrl,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       fontSize: 13,
                       color: AddServiceView._ink,
                     ),
                     decoration: InputDecoration(
                       hintText: S.of(context).cleaningAddonNameHint,
-                      hintStyle: GoogleFonts.inter(
+                      hintStyle: appFont('Inter', 
                         color: const Color(0xFFBDBDBD),
                         fontSize: 12.5,
                       ),
@@ -709,7 +709,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(height: 12),
                   Text(
                     S.of(context).price,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF616161),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -733,13 +733,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                           child: TextField(
                             controller: priceCtrl,
                             keyboardType: TextInputType.number,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontSize: 13,
                               color: AddServiceView._ink,
                             ),
                             decoration: InputDecoration(
                               hintText: S.of(context).cleaningEnterThePrice,
-                              hintStyle: GoogleFonts.inter(
+                              hintStyle: appFont('Inter', 
                                 color: const Color(0xFFBDBDBD),
                                 fontSize: 12.5,
                               ),
@@ -760,7 +760,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                           child: Text(
                             'MRU',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF1E6BE6),
                               fontWeight: FontWeight.w700,
                               fontSize: 11,
@@ -786,7 +786,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             ),
                             child: Text(
                               S.of(context).cancel,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF424242),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13.5,
@@ -839,7 +839,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                               editingItem != null
                                   ? S.of(context).cleaningSaveAddon
                                   : S.of(context).cleaningAddAddon,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
                               ),
@@ -892,7 +892,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   const SizedBox(width: 6),
                   Text(
                     S.of(context).cleaningRequestNewServiceType,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: AddServiceView._ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -920,7 +920,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(height: 14),
               Text(
                 S.of(context).cleaningServiceTypeName,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -929,13 +929,13 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(height: 6),
               TextField(
                 controller: typeCtrl,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   fontSize: 13,
                   color: AddServiceView._ink,
                 ),
                 decoration: InputDecoration(
                   hintText: S.of(context).cleaningEnterServiceType,
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: appFont('Inter', 
                     color: const Color(0xFFBDBDBD),
                     fontSize: 12.5,
                   ),
@@ -958,7 +958,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(height: 12),
               Text(
                 S.of(context).cleaningReasonDescription,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -969,13 +969,13 @@ class _AddServiceViewState extends State<AddServiceView> {
                 controller: reasonCtrl,
                 minLines: 3,
                 maxLines: 4,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   fontSize: 13,
                   color: AddServiceView._ink,
                 ),
                 decoration: InputDecoration(
                   hintText: S.of(context).cleaningServiceTypeReasonHint,
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: appFont('Inter', 
                     color: const Color(0xFFBDBDBD),
                     fontSize: 12.5,
                   ),
@@ -1011,7 +1011,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         ),
                         child: Text(
                           S.of(context).cancel,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w600,
                             fontSize: 13.5,
@@ -1041,7 +1041,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         ),
                         child: Text(
                           S.of(context).cleaningSubmitRequest,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w700,
                             fontSize: 13.5,
                           ),
@@ -1105,7 +1105,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             widget.initialService != null
                                 ? S.of(context).cleaningEditService
                                 : S.of(context).cleaningAddService,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: AddServiceView._ink,
                               fontWeight: FontWeight.w700,
                               fontSize: 18,
@@ -1147,7 +1147,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                       children: [
                         Text(
                           S.of(context).cleaningServiceImage,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w600,
                             fontSize: 12.5,
@@ -1207,7 +1207,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                             ),
                                             child: Text(
                                               S.of(context).cleaningChangeImage,
-                                              style: GoogleFonts.inter(
+                                              style: appFont('Inter', 
                                                 color: Colors.white,
                                                 fontSize: 11,
                                               ),
@@ -1238,7 +1238,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                           S
                                               .of(context)
                                               .cleaningTapToUploadImage,
-                                          style: GoogleFonts.inter(
+                                          style: appFont('Inter', 
                                             color: AddServiceView._ink,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 13,
@@ -1249,7 +1249,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                           S
                                               .of(context)
                                               .cleaningImageFormatsHint,
-                                          style: GoogleFonts.inter(
+                                          style: appFont('Inter', 
                                             color: const Color(0xFF9E9E9E),
                                             fontWeight: FontWeight.w400,
                                             fontSize: 11,
@@ -1307,7 +1307,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                               ),
                               child: Text(
                                 S.of(context).reset,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFF1E6BE6),
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -1346,7 +1346,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                       widget.initialService != null
                                           ? S.of(context).update
                                           : S.of(context).cleaningAddService,
-                                      style: GoogleFonts.inter(
+                                      style: appFont('Inter', 
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14,
@@ -1402,7 +1402,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningPropertyTypesHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
                   fontSize: 11.5,
@@ -1450,7 +1450,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         const SizedBox(width: 6),
                         Text(
                           S.of(context).cleaningApartment,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: _isApartmentSelected
                                 ? AddServiceView._orange
                                 : const Color(0xFF424242),
@@ -1500,7 +1500,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         const SizedBox(width: 6),
                         Text(
                           S.of(context).cleaningVilla,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: _isVillaSelected
                                 ? AddServiceView._orange
                                 : const Color(0xFF424242),
@@ -1537,7 +1537,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningBasicInformationHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
                   fontSize: 11.5,
@@ -1551,7 +1551,7 @@ class _AddServiceViewState extends State<AddServiceView> {
             children: [
               Text(
                 S.of(context).cleaningServiceType,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF616161),
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -1562,7 +1562,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 onTap: _showRequestServiceTypeSheet,
                 child: Text(
                   S.of(context).cleaningRequestNewServiceTypeLink,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 11.5,
@@ -1590,7 +1590,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             _typesError!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontSize: 12.5,
                               color: const Color(0xFF757575),
                             ),
@@ -1599,7 +1599,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         const SizedBox(width: 8),
                         Text(
                           S.of(context).tryAgain,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: AddServiceView._orange,
                             fontWeight: FontWeight.w700,
                             fontSize: 12,
@@ -1618,7 +1618,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         _typesLoading
                             ? S.of(context).loading
                             : S.of(context).cleaningSelectService,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontSize: 13,
                           color: const Color(0xFF757575),
                           fontWeight: FontWeight.w500,
@@ -1637,7 +1637,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                               Icons.keyboard_arrow_down_rounded,
                               color: Color(0xFF757575),
                             ),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontSize: 13,
                         color: AddServiceView._ink,
                         fontWeight: FontWeight.w500,
@@ -1663,7 +1663,7 @@ class _AddServiceViewState extends State<AddServiceView> {
           const SizedBox(height: 12),
           Text(
             S.of(context).cleaningShortDescription,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF616161),
               fontWeight: FontWeight.w500,
               fontSize: 12,
@@ -1674,10 +1674,10 @@ class _AddServiceViewState extends State<AddServiceView> {
             controller: _descriptionController,
             minLines: 3,
             maxLines: 4,
-            style: GoogleFonts.inter(fontSize: 13, color: AddServiceView._ink),
+            style: appFont('Inter', fontSize: 13, color: AddServiceView._ink),
             decoration: InputDecoration(
               hintText: S.of(context).cleaningEnterDescription,
-              hintStyle: GoogleFonts.inter(
+              hintStyle: appFont('Inter', 
                 color: const Color(0xFFBDBDBD),
                 fontSize: 12.5,
               ),
@@ -1717,7 +1717,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningCleaningProductsHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
                   fontSize: 11.5,
@@ -1754,7 +1754,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                       children: [
                         Text(
                           S.of(context).cleaningCustomerProvidesProducts,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: AddServiceView._ink,
                             fontWeight: FontWeight.w700,
                             fontSize: 12.5,
@@ -1763,7 +1763,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         const SizedBox(height: 2),
                         Text(
                           S.of(context).cleaningCustomerProvidesProductsDesc,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF757575),
                             fontWeight: FontWeight.w400,
                             fontSize: 11,
@@ -1803,7 +1803,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           children: [
                             Text(
                               S.of(context).cleaningIProvideProducts,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: AddServiceView._ink,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12.5,
@@ -1812,7 +1812,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             const SizedBox(height: 2),
                             Text(
                               S.of(context).cleaningIProvideProductsDesc,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF757575),
                                 fontWeight: FontWeight.w400,
                                 fontSize: 11,
@@ -1829,7 +1829,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                     children: [
                       Text(
                         S.of(context).cleaningProductSupplyFee,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF616161),
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
@@ -1852,7 +1852,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                                 controller: _supplyFeeController,
                                 keyboardType: TextInputType.number,
                                 textAlign: TextAlign.end,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: AddServiceView._ink,
@@ -1867,7 +1867,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                             const SizedBox(width: 4),
                             Text(
                               'MRU',
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF757575),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 11,
@@ -1902,7 +1902,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningSpacePricingHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
                   fontSize: 11.5,
@@ -1925,7 +1925,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   Expanded(
                     child: Text(
                       _spaces[i].name,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: AddServiceView._ink,
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
@@ -1947,7 +1947,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         children: [
                           TextSpan(
                             text: '${_spaces[i].rate} ',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: AddServiceView._ink,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -1955,7 +1955,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                           TextSpan(
                             text: 'MRU/${_unitLabel(context, _spaces[i].unit)}',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF757575),
                               fontWeight: FontWeight.w500,
                               fontSize: 11,
@@ -1996,7 +1996,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 alignment: Alignment.center,
                 child: Text(
                   S.of(context).cleaningAddSpaceButton,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
@@ -2025,7 +2025,7 @@ class _AddServiceViewState extends State<AddServiceView> {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningAddonServicesHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w700,
                   fontSize: 11.5,
@@ -2048,7 +2048,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                   Expanded(
                     child: Text(
                       _addons[i].name,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: AddServiceView._ink,
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
@@ -2070,7 +2070,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                         children: [
                           TextSpan(
                             text: '${_addons[i].rate} ',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: AddServiceView._ink,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -2078,7 +2078,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                           ),
                           TextSpan(
                             text: 'MRU',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF757575),
                               fontWeight: FontWeight.w500,
                               fontSize: 11,
@@ -2119,7 +2119,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 alignment: Alignment.center,
                 child: Text(
                   S.of(context).cleaningAddAddonButton,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: AddServiceView._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
@@ -2140,7 +2140,7 @@ class _AddServiceViewState extends State<AddServiceView> {
         children: [
           Text(
             S.of(context).cleaningIssuesCoveredHeader,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF424242),
               fontWeight: FontWeight.w700,
               fontSize: 11.5,
@@ -2304,7 +2304,7 @@ class _AddServiceViewState extends State<AddServiceView> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: isSelected
                       ? AddServiceView._orange
                       : const Color(0xFF2D3748),

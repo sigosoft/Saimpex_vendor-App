@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 import 'package:saimpex_vendor/resources/colors.dart';
@@ -102,7 +102,7 @@ class _PrinterPickerDialogState extends State<_PrinterPickerDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         S.of(context).printer,
-        style: GoogleFonts.rubik(fontWeight: FontWeight.w700),
+        style: appFont('Rubik', fontWeight: FontWeight.w700),
       ),
       content: SizedBox(
         width: 420,
@@ -142,7 +142,7 @@ class _PrinterPickerDialogState extends State<_PrinterPickerDialog> {
                           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                           child: Text(
                             _error ?? S.of(context).noPairedPrinters,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               color: mutedTextColor,
                             ),

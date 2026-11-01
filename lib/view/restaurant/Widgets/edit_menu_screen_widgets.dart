@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../generated/l10n.dart';
@@ -14,7 +14,7 @@ class EditMenuFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: const Color(0xFF64748B),
@@ -48,14 +48,14 @@ class EditMenuTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         textAlign: textAlign,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F1F1F),
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             fontSize: 13,
             color: const Color(0xFF94A3B8),
           ),
@@ -103,14 +103,14 @@ class EditMenuTextAreaField extends StatelessWidget {
         textAlign: textAlign,
         maxLines: null,
         expands: true,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: const Color(0xFF1F1F1F),
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             fontSize: 12,
             color: const Color(0xFF94A3B8),
           ),
@@ -165,7 +165,7 @@ class EditMenuDropdownField extends StatelessWidget {
           color: Color(0xFF94A3B8),
           size: 20,
         ),
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F1F1F),
@@ -253,7 +253,7 @@ class EditMenuMultiSelectField extends StatelessWidget {
               textToShow ?? (hint ?? ''),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 13,
                 fontWeight:
                     textToShow == null ? FontWeight.w400 : FontWeight.w500,
@@ -302,7 +302,7 @@ class EditMenuImageUploadArea extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               S.of(context).uploadImageHere,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color: const Color(0xFF94A3B8),
                 fontWeight: FontWeight.w400,
@@ -436,7 +436,7 @@ class EditMenuActionsRow extends StatelessWidget {
             ),
             child: Text(
               S.of(context).reset,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1F1F1F),
@@ -459,7 +459,7 @@ class EditMenuActionsRow extends StatelessWidget {
             ),
             child: Text(
               S.of(context).submit,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

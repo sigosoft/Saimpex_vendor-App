@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/view/chat/widgets/VoiceMessageBubble.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -81,7 +81,7 @@ class ChatMessageItem extends StatelessWidget {
               else if (message.isNotEmpty)
                 Text(
                   message,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: isSent ? Colors.white : Colors.black,
@@ -94,7 +94,7 @@ class ChatMessageItem extends StatelessWidget {
                 children: [
                   Text(
                     timestamp,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
                       color: isSent ? Colors.white70 : mutedTextColor,

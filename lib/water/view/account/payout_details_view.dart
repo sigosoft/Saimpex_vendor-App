@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -258,7 +258,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                   children: [
                     Text(
                       S.of(context).waterPaymentProof,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: PayoutDetailsView.ink,
@@ -403,7 +403,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                       children: [
                                         Text(
                                           transactionId,
-                                          style: GoogleFonts.inter(
+                                          style: appFont('Inter', 
                                             color: PayoutDetailsView.orange,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 15,
@@ -417,7 +417,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                             Flexible(
                                               child: Text(
                                                 timestamp,
-                                                style: GoogleFonts.inter(
+                                                style: appFont('Inter', 
                                                   color: PayoutDetailsView.muted,
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 12,
@@ -434,7 +434,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                     children: [
                                       Text(
                                         _statusLabel(context, statusStr),
-                                        style: GoogleFonts.inter(
+                                        style: appFont('Inter', 
                                           color: statusColor,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 11,
@@ -444,7 +444,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                       const SizedBox(height: 6),
                                       Text(
                                         amountStr,
-                                        style: GoogleFonts.inter(
+                                        style: appFont('Inter', 
                                           color: Colors.black,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
@@ -460,7 +460,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                   Expanded(
                                     child: Text(
                                       '${S.of(context).paymentId}: $paymentId',
-                                      style: GoogleFonts.inter(
+                                      style: appFont('Inter', 
                                         color: const Color(0xFF6B7280),
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
@@ -475,7 +475,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                     },
                                     child: Text(
                                       S.of(context).viewPaymentProof,
-                                      style: GoogleFonts.inter(
+                                      style: appFont('Inter', 
                                         color: PayoutDetailsView.orange,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 12,
@@ -490,7 +490,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                               _ExpandableLine(
                                 title: S.of(context).notes,
                                 text: '${S.of(context).notes}: $notes',
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFF9AA3B2),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -527,7 +527,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                 Text(
                                   S.of(context).noOrdersFound,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: PayoutDetailsView.ink,
@@ -537,7 +537,7 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                 Text(
                                   S.of(context).waterPayoutOrdersAppearHere,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
                                     color: PayoutDetailsView.muted,
@@ -619,7 +619,7 @@ class _DetailOrderCard extends StatelessWidget {
               children: [
                 Text(
                   id,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PayoutDetailsView.orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -633,7 +633,7 @@ class _DetailOrderCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         when,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PayoutDetailsView.muted,
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
@@ -649,7 +649,7 @@ class _DetailOrderCard extends StatelessWidget {
                     text: S.of(context).reasonColonLabel(reason!),
                     fill: const Color(0xFFFDECEC),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFFE24B4B),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -663,7 +663,7 @@ class _DetailOrderCard extends StatelessWidget {
           if (amount != null)
             Text(
               amount!,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PayoutDetailsView.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
@@ -689,7 +689,7 @@ class _DetailOrderCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF9AA3B2),
             fontWeight: FontWeight.w500,
             fontSize: 11,
@@ -698,7 +698,7 @@ class _DetailOrderCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PayoutDetailsView.ink,
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -743,7 +743,7 @@ class _ExpandableLine extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF111111),
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -764,7 +764,7 @@ class _ExpandableLine extends StatelessWidget {
                     ),
                     child: Text(
                       MaterialLocalizations.of(context).closeButtonLabel,
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                      style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                     ),
                   ),
                 ),

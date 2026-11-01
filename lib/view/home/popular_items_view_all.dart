@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/dashboard_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -60,7 +60,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
               return Center(
                 child: Text(
                   S.of(context).noPopularItemsFound,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: const Color(0xFF9CA3AF),
                     fontSize: 13,
                   ),
@@ -180,7 +180,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
                   name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1F1F1F),
@@ -191,7 +191,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     color: const Color(0xFF6B7280),
                   ),
@@ -209,7 +209,7 @@ class _PopularItemsViewAllState extends State<PopularItemsViewAll> {
               orders,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF4F46E1),

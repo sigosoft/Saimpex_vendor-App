@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'dart:convert';
@@ -9,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -680,7 +680,7 @@ class FCM {
                     Expanded(
                       child: Text(
                         "A new order!",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -692,13 +692,13 @@ class FCM {
                 const SizedBox(height: 16),
                 Text(
                   "New order received: $formattedOrderNumber",
-                  style: GoogleFonts.rubik(fontSize: 15, color: Colors.black87),
+                  style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
                     "Total Amount: $amount",
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
@@ -715,7 +715,7 @@ class FCM {
                       },
                       child: Text(
                         "Dismiss",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.grey,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -743,7 +743,7 @@ class FCM {
                       ),
                       child: Text(
                         "View Order",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

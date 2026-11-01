@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -573,7 +573,7 @@ class _BusinessSettingsViewState extends State<BusinessSettingsView> {
                               alignment: AlignmentDirectional.centerStart,
                               child: Text(
                                 S.of(context).waterPricing,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: BusinessSettingsView.ink,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -630,7 +630,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).waterBusinessSettings,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -673,7 +673,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: BusinessSettingsView.orange,
         fontWeight: FontWeight.w600,
         fontSize: 15,
@@ -736,7 +736,7 @@ class _SwitchRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: BusinessSettingsView.ink,
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -792,7 +792,7 @@ class _DistanceRange extends StatelessWidget {
         children: [
           Text(
             S.of(context).waterDistanceRangeKm('${range.min}', '${range.max}'),
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: BusinessSettingsView.ink,
               fontWeight: FontWeight.w500,
               fontSize: 14,
@@ -801,7 +801,7 @@ class _DistanceRange extends StatelessWidget {
           const Spacer(),
           Text(
             '${range.price}',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: BusinessSettingsView.ink,
               fontWeight: FontWeight.w700,
               fontSize: 14,
@@ -810,7 +810,7 @@ class _DistanceRange extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             'MRU',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -859,7 +859,7 @@ class _AddRangeButton extends StatelessWidget {
           ),
           child: Text(
             '+ ${S.of(context).waterAddDistanceRange}',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: BusinessSettingsView.orange,
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -996,7 +996,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                     widget.editing
                         ? S.of(context).waterEditDistanceRange
                         : S.of(context).waterAddDistanceRange,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -1046,7 +1046,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
               const SizedBox(height: 14),
               Text(
                 S.of(context).price,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
@@ -1069,7 +1069,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                     ),
                     child: Text(
                       'MRU',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color.fromARGB(255, 71, 73, 78),
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -1082,7 +1082,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                 const SizedBox(height: 10),
                 Text(
                   _error!,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFFDC2626),
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1107,7 +1107,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                         ),
                         child: Text(
                           S.of(context).cancel,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -1130,7 +1130,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                         ),
                         child: Text(
                           widget.editing ? S.of(context).update : S.of(context).add,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),
@@ -1161,14 +1161,14 @@ class _Field extends StatelessWidget {
     final box = TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF1F2937),
         fontWeight: FontWeight.w600,
         fontSize: 14,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(
+        hintStyle: appFont('Inter', 
           color: const Color(0xFF9CA3AF),
           fontWeight: FontWeight.w500,
           fontSize: 14,
@@ -1181,7 +1181,7 @@ class _Field extends StatelessWidget {
           vertical: 14,
         ),
         suffixText: suffix,
-        suffixStyle: GoogleFonts.inter(
+        suffixStyle: appFont('Inter', 
           color: const Color(0xFF9CA3AF),
           fontWeight: FontWeight.w500,
           fontSize: 14,
@@ -1206,7 +1206,7 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label!,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF6B7280),
             fontWeight: FontWeight.w500,
             fontSize: 13,

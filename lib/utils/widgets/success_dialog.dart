@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SuccessDialog extends StatelessWidget {
   final String message;
@@ -47,7 +47,7 @@ class SuccessDialog extends StatelessWidget {
                   Text(
                     message,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF1E293B),

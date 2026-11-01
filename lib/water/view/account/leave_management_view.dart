@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -338,7 +338,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).markLeaveButton,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: LeaveManagementView.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -348,7 +348,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 Text(
                   S.of(context).waterMarkLeaveConfirm,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -372,7 +372,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                           ),
                           child: Text(
                             S.of(context).no,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -395,7 +395,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                           ),
                           child: Text(
                             S.of(context).yes,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -446,7 +446,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).cancelLeave,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: LeaveManagementView.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -456,7 +456,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                 Text(
                   S.of(context).waterCancelLeaveConfirm,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -480,7 +480,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                           ),
                           child: Text(
                             S.of(context).no,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -503,7 +503,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                           ),
                           child: Text(
                             S.of(context).yes,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -763,7 +763,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                     children: [
                       Text(
                         S.of(context).markLeaveButton,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: LeaveManagementView.ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -820,14 +820,14 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                               onChanged: (_) {
                                 if (_error != null) setState(() => _error = null);
                               },
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF3F4555),
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
                                 hintText: S.of(context).egAnnualVacationRenovation,
-                                hintStyle: GoogleFonts.inter(
+                                hintStyle: appFont('Inter', 
                                   color: const Color(0xFFB7C2D0),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
@@ -844,7 +844,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                               const SizedBox(height: 8),
                               Text(
                                 _error!,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFFBA1B1B),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 12,
@@ -871,7 +871,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                   ),
                                   child: Text(
                                     S.of(context).markLeaveButton,
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                    style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                                   ),
                                 ),
                               ),
@@ -908,7 +908,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                 Text(
                                   S.of(context).waterNoLeavesFound,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: LeaveManagementView.ink,
@@ -918,7 +918,7 @@ class _LeaveManagementViewState extends State<LeaveManagementView> {
                                 Text(
                                   S.of(context).waterMarkedLeavesAppearHere,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
                                     color: const Color(0xFF8B97A8),
@@ -976,7 +976,7 @@ const _reasonBorder = OutlineInputBorder(
 Widget _fieldLabel(String text) {
   return Text(
     text,
-    style: GoogleFonts.inter(
+    style: appFont('Inter', 
       color: const Color(0xFF8A97A8),
       fontWeight: FontWeight.w500,
       fontSize: 12,
@@ -1000,7 +1000,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).waterLeaveManagement,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: LeaveManagementView.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1063,7 +1063,7 @@ class _DateBox extends StatelessWidget {
               Expanded(
                 child: Text(
                   text,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: value == null ? const Color(0xFF9AA8B8) : const Color(0xFF29324C),
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
@@ -1093,7 +1093,7 @@ class _HistoryHeader extends StatelessWidget {
       children: [
         Text(
           S.of(context).leavesHistory,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF3F4454),
             fontWeight: FontWeight.w700,
             fontSize: 13,
@@ -1114,7 +1114,7 @@ class _SeeAll extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       S.of(context).viewAll,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: LeaveManagementView.orange,
         fontWeight: FontWeight.w600,
         fontSize: 13,
@@ -1133,7 +1133,7 @@ class _GroupTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: color,
         fontWeight: FontWeight.w600,
         fontSize: 14,
@@ -1172,7 +1172,7 @@ class _LeaveCard extends StatelessWidget {
                   children: [
                     Text(
                       '${_date(context, leave.from)} - ${_date(context, leave.to)}, ${leave.to.year}',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF3F4555),
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -1181,7 +1181,7 @@ class _LeaveCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       leave.reason,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF8B97A8),
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -1198,7 +1198,7 @@ class _LeaveCard extends StatelessWidget {
                 ),
                 child: Text(
                   scheduled ? S.of(context).scheduled : S.of(context).completed,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: scheduled ? const Color(0xFF3B82F6) : const Color(0xFF16A34A),
                     fontWeight: FontWeight.w700,
                     fontSize: 10,
@@ -1222,7 +1222,7 @@ class _LeaveCard extends StatelessWidget {
                 ),
                 child: Text(
                   S.of(context).cancelLeave,
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),
             ),

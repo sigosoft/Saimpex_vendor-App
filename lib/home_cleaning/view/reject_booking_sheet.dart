@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// What the vendor picked; sent to POST updateServiceBookingStatus as
@@ -31,7 +31,7 @@ class RejectBookingSheet extends StatefulWidget {
 
 class _RejectBookingSheetState extends State<RejectBookingSheet> {
   static const _red = Color(0xFFE53935);
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _border = Color(0xFFE0E0E0);
   static const _text = Color(0xFF424242);
 
@@ -108,7 +108,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
               Expanded(
                 child: Text(
                   S.of(context).cleaningRejectBooking,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _red,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -134,7 +134,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
           const SizedBox(height: 10),
           Text(
             S.of(context).cleaningRejectSheetSubtitle,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF9E9E9E),
               fontWeight: FontWeight.w400,
               fontSize: 13,
@@ -160,7 +160,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                 Expanded(
                   child: Text(
                     S.of(context).cleaningOtherReason,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF212121),
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
@@ -169,7 +169,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                 ),
                 Text(
                   '${_otherController.text.length} / $_otherMax',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF9E9E9E),
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -187,7 +187,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
               inputFormatters: [
                 LengthLimitingTextInputFormatter(_otherMax),
               ],
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF212121),
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
@@ -229,7 +229,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                     ),
                     child: Text(
                       S.of(context).cancel,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -266,7 +266,7 @@ class _RejectBookingSheetState extends State<RejectBookingSheet> {
                       ),
                       child: Text(
                         S.of(context).cleaningConfirmReject,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
@@ -296,7 +296,7 @@ class _ReasonTile extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _border = Color(0xFFE0E0E0);
 
   @override
@@ -339,7 +339,7 @@ class _ReasonTile extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF424242),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,

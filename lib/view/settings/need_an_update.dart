@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,7 +40,7 @@ class NeedAnUpdate extends StatelessWidget {
 
               Text(
                 S.of(context).needsAnUpdate,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
@@ -54,7 +54,7 @@ class NeedAnUpdate extends StatelessWidget {
                 child: Text(
                   S.of(context).aNewUpdateIsAvailableForThisAppPleaseDownload,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     color: Colors.grey.shade600,
                   ),

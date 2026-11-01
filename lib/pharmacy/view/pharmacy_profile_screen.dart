@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
@@ -355,7 +355,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Pharmacy Profile',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyProfileScreen._ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -398,7 +398,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color.fromARGB(255, 55, 56, 58),
         fontWeight: FontWeight.w700,
         fontSize: 15,
@@ -450,7 +450,7 @@ class _InfoCard extends StatelessWidget {
                     flex: 5,
                     child: Text(
                       row.label,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyProfileScreen._label,
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -467,7 +467,7 @@ class _InfoCard extends StatelessWidget {
                             ),
                             child: Text(
                               row.value,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF16A34A),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
@@ -481,7 +481,7 @@ class _InfoCard extends StatelessWidget {
                       child: Text(
                         row.value,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: row.valueColor ??
                               (row.emphasize ? PharmacyProfileScreen._ink : PharmacyProfileScreen._value),
                           fontWeight: row.emphasize ? FontWeight.w700 : FontWeight.w600,
@@ -548,7 +548,7 @@ class _ReviewsHeader extends StatelessWidget {
       children: [
         Text(
           'RATING & REVIEWS',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color.fromARGB(255, 46, 48, 50),
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -558,7 +558,7 @@ class _ReviewsHeader extends StatelessWidget {
         const Spacer(),
         Text(
           'See All',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyProfileScreen._orange,
             fontWeight: FontWeight.w600,
             fontSize: 14,
@@ -604,7 +604,7 @@ class _ReviewCard extends StatelessWidget {
                 ),
                 child: Text(
                   'S',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF059669),
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -621,7 +621,7 @@ class _ReviewCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Aicha Mint Ahmed',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF3F4555),
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -630,7 +630,7 @@ class _ReviewCard extends StatelessWidget {
                         ),
                         Text(
                           'Jan 12 2026, 07:13 am',
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
                             fontSize: 11,
@@ -650,7 +650,7 @@ class _ReviewCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '3.0',
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -666,7 +666,7 @@ class _ReviewCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             'Fast prescription verification.',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF3F4555),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -684,7 +684,7 @@ class _ReviewCard extends StatelessWidget {
             ),
             child: Text(
               'Order: ORD-000091',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF94A3B8),
                 fontWeight: FontWeight.w500,
                 fontSize: 12,

@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import '../../generated/l10n.dart';
@@ -63,7 +63,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
         ),
         title: Text(
           S.of(context).ratingReviews,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -136,7 +136,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                       (review.username?.isNotEmpty == true)
                           ? review.username![0].toUpperCase()
                           : "S",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: const Color(0xFF166534),
                         fontWeight: FontWeight.bold,
                       ),
@@ -151,7 +151,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                   children: [
                     Text(
                       review.username ?? S.of(context).anonymous,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F1F1F),
@@ -173,7 +173,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                         const SizedBox(width: 4),
                         Text(
                           review.rating?.toString() ?? "0.0",
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 12,
                             color: const Color(0xFF9CA3AF),
                           ),
@@ -185,7 +185,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
               ),
               Text(
                 formatOrderPlacedAt(DateTime.parse(review.createdAt.toString())),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   color: const Color(0xFF9CA3AF),
                 ),
@@ -197,7 +197,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
             review.comment ?? S.of(context).noCommentProvided,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               color: const Color(0xFF4B5563),
             ),
@@ -214,7 +214,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
               children: [
                 Text(
                   S.of(context).orderColon,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     color: const Color(0xFF9CA3AF),
                   ),
@@ -222,7 +222,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                 const SizedBox(width: 4),
                 Text(
                   review.orderCode ?? "-",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF4B5563),

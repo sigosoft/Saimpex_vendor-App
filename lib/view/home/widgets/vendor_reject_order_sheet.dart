@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Shows the Vendor Reject Order bottom sheet for Restaurant / Grocery.
 /// Returns the selected reason string, or null if cancelled.
@@ -107,7 +107,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                   Expanded(
                     child: Text(
                       'Reject Order',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: _titleRed,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -141,7 +141,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
               const SizedBox(height: 12),
               Text(
                 'Please select a reason. The customer will be notified accordingly',
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   color: _descGray,
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -164,7 +164,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                     Expanded(
                       child: Text(
                         'Other Reason',
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: const Color(0xFF374151),
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -173,7 +173,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                     ),
                     Text(
                       '${otherController.text.length} / $_otherMaxLength',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: const Color(0xFF9CA3AF),
                         fontWeight: FontWeight.w400,
                         fontSize: 12.5,
@@ -191,7 +191,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(_otherMaxLength),
                   ],
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: const Color(0xFF1F2937),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -232,7 +232,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                         child: Text(
                           'Cancel',
                           softWrap: false,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -274,7 +274,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                             'Confirm Reject',
                             softWrap: false,
                             maxLines: 1,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),
@@ -355,7 +355,7 @@ class _ReasonTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: const Color(0xFF1A1A1A),
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                     fontSize: 14.5,

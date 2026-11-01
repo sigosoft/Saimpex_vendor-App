@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -63,7 +64,7 @@ class _XmlPreviewScreenState extends State<XmlPreviewScreen> {
         ),
         title: Text(
           S.of(context).templatePreview,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F2937),
@@ -89,7 +90,7 @@ class _XmlPreviewScreenState extends State<XmlPreviewScreen> {
                 child: Text(
                   _error!,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     color: const Color(0xFF1F2937),
                   ),

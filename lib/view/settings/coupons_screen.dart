@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/settings/add_coupon_screen.dart';
@@ -68,7 +68,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
         ),
         title: Text(
           S.of(context).coupons,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F2937),
@@ -96,7 +96,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                       const SizedBox(width: 4),
                       Text(
                         S.of(context).addCoupon,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: colorPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -169,7 +169,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                                 const SizedBox(height: 16),
                                 Text(
                                   S.of(context).noCouponsFound,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                     color: const Color(0xFF8E99AF),
@@ -270,7 +270,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
             children: [
               Text(
                 name,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF1F2937),
@@ -308,7 +308,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                   children: [
                     TextSpan(
                       text: '${S.of(context).codeLabel}:  ',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFF1F2937),
@@ -316,7 +316,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     ),
                     TextSpan(
                       text: code,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: const Color(0xFF1F2937),
@@ -381,7 +381,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               ),
               child: Text(
                 S.of(context).updateCouponStatus,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -403,7 +403,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
       ),
       child: Text(
         text,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 11,
           fontWeight: FontWeight.bold,
           color: textColor,
@@ -446,7 +446,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 10,
               fontWeight: FontWeight.w500,
               color: const Color(0xFF8E99AF),
@@ -455,7 +455,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: colorPrimary,
@@ -472,7 +472,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 11,
             fontWeight: FontWeight.w500,
             color: const Color(0xFF8E99AF),
@@ -480,7 +480,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
         ),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F2937),
@@ -512,7 +512,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               const SizedBox(width: 10),
               Text(
                 S.of(context).edit,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   color: const Color(0xFF1F2937),
                 ),
@@ -532,7 +532,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               const SizedBox(width: 10),
               Text(
                 S.of(context).delete,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   color: const Color(0xFF1F2937),
                 ),
@@ -590,7 +590,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 Text(
                   S.of(context).areYouSureYouWantToDeleteThisCoupon,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF1F2937),
@@ -611,7 +611,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         ),
                         child: Text(
                           S.of(context).no,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: colorPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
@@ -639,7 +639,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         ),
                         child: Text(
                           S.of(context).yes,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
@@ -701,7 +701,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                       ? S.of(context).areYouSureYouWantToBlockThisCoupon
                       : S.of(context).areYouSureYouWantToActivateThisCoupon,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF1F2937),
@@ -722,7 +722,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         ),
                         child: Text(
                           S.of(context).no,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: colorPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
@@ -755,7 +755,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         ),
                         child: Text(
                           S.of(context).yes,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,

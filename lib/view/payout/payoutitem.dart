@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
 
@@ -50,7 +50,7 @@ class PayoutItem extends StatelessWidget {
                       transactionId.startsWith('#')
                           ? transactionId
                           : '#$transactionId',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: colorPrimary,
@@ -68,7 +68,7 @@ class PayoutItem extends StatelessWidget {
                         Expanded(
                           child: Text(
                             dateTime,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               color: Colors.grey.shade600,
                             ),
@@ -84,7 +84,7 @@ class PayoutItem extends StatelessWidget {
                 children: [
                   Text(
                     S.of(context).amount,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey.shade600,
@@ -93,7 +93,7 @@ class PayoutItem extends StatelessWidget {
                   const SizedBox(height: 9),
                   Text(
                     '$amount $currency',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1F1F1F),
@@ -112,7 +112,7 @@ class PayoutItem extends StatelessWidget {
             children: [
               Text(
                 S.of(context).balanceAfterPayout,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w400,
                   color: Colors.grey.shade600,
@@ -120,7 +120,7 @@ class PayoutItem extends StatelessWidget {
               ),
               Text(
                 '$balanceAfterPayout $currency',
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF1F1F1F),

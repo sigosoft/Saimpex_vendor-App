@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/view/home/dashboard.dart';
 
 import '../../../generated/l10n.dart';
@@ -36,7 +36,7 @@ class VendorDashboardButton extends StatelessWidget {
           ),
           child: Text(
             S.of(context).goToDashboard,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: const Color(0xFFFF5216),

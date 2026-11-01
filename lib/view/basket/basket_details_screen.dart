@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/basket_controller.dart';
@@ -78,7 +78,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
           ),
           title: Text(
             S.of(context).basketDetailsTitle,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1F1F1F),
@@ -98,7 +98,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                   children: [
                     Text(
                       S.of(context).redeemedCustomersHeader,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1F1F1F),
@@ -127,7 +127,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                       ),
                       child: Text(
                         S.of(context).viewAll,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -168,7 +168,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                             child: Center(
                               child: Text(
                                 basketInitials,
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: const Color(0xFFFF5216),
@@ -189,7 +189,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                       vendorName.isNotEmpty
                                           ? vendorName
                                           : S.of(context).restaurantOne,
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                         color: const Color(0xFF1F1F1F),
@@ -208,7 +208,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                       ),
                                       child: Text(
                                         isActive ? S.of(context).active : S.of(context).blocked,
-                                        style: GoogleFonts.rubik(
+                                        style: appFont('Rubik', 
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                           color: isActive
@@ -222,7 +222,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   "${S.of(context).basketIdLabel(detail?.id?.toString() ?? '')} • ${S.of(context).createdLabel(createdAtStr)}",
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 10,
                                     color: const Color(0xFF94A3B8),
                                     fontWeight: FontWeight.w500,
@@ -310,7 +310,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                   children: [
                     Text(
                       "${S.of(context).basketItemsHeader} ",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF1F1F1F),
@@ -318,7 +318,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                     ),
                     Text(
                       '(${basketItems.length})',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF94A3B8),
@@ -423,7 +423,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
           children: [
             Text(
               label,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 9,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF94A3B8),
@@ -432,7 +432,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
             const SizedBox(height: 4),
             Text(
               value,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF1F1F1F),
@@ -497,7 +497,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
               children: [
                 Text(
                   "ID: #$id",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     color: const Color(0xFF94A3B8),
                     fontWeight: FontWeight.w500,
@@ -506,7 +506,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   name,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1F1F1F),
@@ -514,7 +514,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                 ),
                 Text(
                   desc,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     color: const Color(0xFF94A3B8),
                   ),
@@ -533,7 +533,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                   ),
                   child: Text(
                     qty,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1F1F1F),

@@ -1870,7 +1870,7 @@ class _StoreStatusCard extends StatelessWidget {
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: isOpen
-                    ? const Color(0xFFFF6B00)
+                    ? const Color(0xFFFF5216)
                     : const Color(0xFFBDBDBD),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -1917,7 +1917,7 @@ class _MetricsGrid extends StatelessWidget {
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFFFF8A3D), Color(0xFFFF5722)],
+                  colors: [Color(0xFFFF8A3D), Color(0xFFFF5216)],
                 ),
                 countColor: Colors.white,
               ),
@@ -2217,7 +2217,7 @@ class _OrderTypeTabs extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFFFF5722), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
+          colors: [Color(0xFFFF5216), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
         ),
       ),
       child: Row(
@@ -3062,7 +3062,7 @@ class _ToPrepareCard extends StatelessWidget {
   static const Color _avatarText = Color(0xFFE24B3B);
   static const Color _name = Color(0xFF1A1A1A);
   static const Color _blue = Color(0xFF3B82F6);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _muted = Color(0xFF6B7280);
 
   void _openDetails(BuildContext context) {
@@ -3414,7 +3414,7 @@ class _PreparingCard extends StatelessWidget {
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
   static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _meta = Color(0xFF6B7280);
 
   void _openDetails(BuildContext context) {
@@ -3736,7 +3736,7 @@ class _ReadyCard extends StatelessWidget {
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
   static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _meta = Color(0xFF6B7280);
   static const Color _ready = Color(0xFF22C55E);
   static const Color _partner = Color(0xFF7C3AED);
@@ -4106,7 +4106,7 @@ class _DeliveredCard extends StatelessWidget {
   static const Color _avatarBg = Color(0xFFFDEAEA);
   static const Color _avatarText = Color(0xFFE24B3B);
   static const Color _name = Color(0xFF1A1A1A);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _meta = Color(0xFF6B7280);
   static const Color _delivered = Color(0xFF22C55E);
 
@@ -4444,7 +4444,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
   static const Color _nameColor = Color(0xFF1A1A1A);
   static const Color _metaColor = Color(0xFF6B7280);
   static const Color _badge = Color(0xFFF5C400);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _label = Color(0xFFA3A3A3);
 
   @override
@@ -4824,7 +4824,7 @@ class _OtcNewOrderCard extends StatelessWidget {
   static const Color _avatarText = Color(0xFFC62828);
   static const Color _name = Color(0xFF111827);
   static const Color _meta = Color(0xFF6B7280);
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _newBadge = Color(0xFFF99D1C);
   static const Color _acceptedBadge = Color(0xFF22C55E);
   static const Color _rejectBorder = Color(0xFFE0E0E0);
@@ -5396,7 +5396,7 @@ class _OtcInfoPill extends StatelessWidget {
   final Widget icon;
   final String label;
 
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {

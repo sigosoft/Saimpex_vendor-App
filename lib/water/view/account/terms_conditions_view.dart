@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -150,7 +150,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
             child: Center(
               child: Text(
                 S.of(context).waterNoTermsAvailable,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF888888),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -174,7 +174,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
                 margin: Margins.zero,
                 padding: HtmlPaddings.zero,
                 fontSize: FontSize(13),
-                fontFamily: GoogleFonts.inter().fontFamily,
+                fontFamily: appFontFamily('Inter'),
                 lineHeight: const LineHeight(1.5),
                 color: const Color(0xFF333333),
                 fontWeight: FontWeight.w400,
@@ -183,7 +183,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
                 margin: Margins.only(bottom: 16),
                 padding: HtmlPaddings.zero,
                 fontSize: FontSize(13),
-                fontFamily: GoogleFonts.inter().fontFamily,
+                fontFamily: appFontFamily('Inter'),
                 lineHeight: const LineHeight(1.5),
                 color: const Color(0xFF333333),
                 fontWeight: FontWeight.w400,
@@ -211,7 +211,7 @@ class _TermsConditionsViewState extends State<TermsConditionsView> {
         for (var i = 0; i < paragraphs.length; i++) ...[
           Text(
             paragraphs[i],
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF333333),
               fontWeight: FontWeight.w400,
               fontSize: 13,
@@ -241,7 +241,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).termsConditions,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,

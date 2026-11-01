@@ -633,7 +633,7 @@ class _StoreStatusCard extends StatelessWidget {
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: isOpen
-                    ? const Color(0xFFFF6B00)
+                    ? const Color(0xFFFF5216)
                     : const Color(0xFFBDBDBD),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -683,7 +683,7 @@ class _MetricsGrid extends StatelessWidget {
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFFFF8A3D), Color(0xFFFF5722)],
+                  colors: [Color(0xFFFF8A3D), Color(0xFFFF5216)],
                 ),
                 countColor: Colors.white,
               ),
@@ -950,7 +950,7 @@ class _OrdersHeader extends StatelessWidget {
             child: Text(
               S.of(context).viewAll,
               style: const TextStyle(
-                color: Color(0xFFFF5722),
+                color: Color(0xFFFF5216),
                 fontWeight: FontWeight.w600,
                 fontSize: 13.5,
               ),
@@ -990,7 +990,7 @@ class _OrderTypeTabs extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFFFF5722), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
+          colors: [Color(0xFFFF5216), Color(0xFFFF8F3D), Color(0xFFFFC04D)],
         ),
         borderRadius: BorderRadius.circular(28),
       ),
@@ -1255,7 +1255,7 @@ class _StatusFilters extends StatelessWidget {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                             colors: [
-                              Color(0xFFFF5722),
+                              Color(0xFFFF5216),
                               Color(0xFFFF9800),
                               Color(0xFFFFB300),
                             ],
@@ -1270,7 +1270,7 @@ class _StatusFilters extends StatelessWidget {
                         ? [
                             BoxShadow(
                               color: const Color(
-                                0xFFFF5722,
+                                0xFFFF5216,
                               ).withValues(alpha: 0.22),
                               blurRadius: 8,
                               offset: const Offset(0, 3),

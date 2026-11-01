@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 class Maintenance extends StatelessWidget {
@@ -33,7 +33,7 @@ class Maintenance extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 S.of(context).wellBeBackSoon,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
@@ -52,7 +52,7 @@ class Maintenance extends StatelessWidget {
                     ),
                     "p": Style(
                       fontSize: FontSize(14),
-                      fontFamily: GoogleFonts.rubik().fontFamily,
+                      fontFamily: appFontFamily('Rubik'),
                       lineHeight: LineHeight(1.6),
                       color: const Color(0xFF64748B),
                       fontWeight: FontWeight.w400,

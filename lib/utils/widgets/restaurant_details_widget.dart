@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../resources/colors.dart';
 import '../../generated/l10n.dart';
@@ -45,7 +45,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     restaurantName,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
@@ -77,7 +77,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                       const SizedBox(width: 3),
                       Text(
                         double.tryParse(rating)!.toStringAsFixed(1),
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
@@ -102,7 +102,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                   time == "0" || time == "" || time.toString() == "null"
                       ? "0 " + S.of(context).mins
                       : time + " " + S.of(context).mins,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     color: Colors.grey.shade600,
                   ),
@@ -123,7 +123,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                   double.tryParse(distance)!.toStringAsFixed(2) +
                       " " +
                       S.of(context).km,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     color: Colors.grey.shade600,
                   ),
@@ -148,7 +148,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                             offerText +
                             "% " +
                             S.of(context).off,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 13,
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.w400,
@@ -185,7 +185,7 @@ class RestaurantDetailsWidget extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       S.of(context).chatNow,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
