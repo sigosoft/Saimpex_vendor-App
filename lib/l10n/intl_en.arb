@@ -2562,5 +2562,8 @@
   "addonUnitHour": "Per hour",
   "addonUnitRoom": "Per room",
   "addonUnitPiece": "Per piece",
-  "needsYourAttention": "Needs your attention"
+  "needsYourAttention": "Needs your attention",
+  "deleteConversationTitle": "Delete this chat?",
+  "deleteConversationBody": "It is removed from your list. It comes back if the customer writes again.",
+  "somethingWentWrong": "Something went wrong. Please try again."
 }

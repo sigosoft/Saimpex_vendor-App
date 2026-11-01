@@ -791,6 +791,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteAccount": MessageLookupByLibrary.simpleMessage("حذف الحساب"),
     "deleteCart": MessageLookupByLibrary.simpleMessage("حذف السلة"),
     "deleteChat": MessageLookupByLibrary.simpleMessage("حذف المحادثة"),
+    "deleteConversationBody": MessageLookupByLibrary.simpleMessage(
+      "تُزال من قائمتك، وتعود إذا كتب العميل مرة أخرى.",
+    ),
+    "deleteConversationTitle": MessageLookupByLibrary.simpleMessage(
+      "حذف هذه المحادثة؟",
+    ),
     "delivered": MessageLookupByLibrary.simpleMessage("تم التوصيل"),
     "delivering": MessageLookupByLibrary.simpleMessage("يتم التوصيل"),
     "delivery": MessageLookupByLibrary.simpleMessage("توصيل"),
@@ -1714,6 +1720,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "showProductNow": MessageLookupByLibrary.simpleMessage("إظهار الآن"),
     "slotAvailable": MessageLookupByLibrary.simpleMessage("متاح"),
     "slotUnavailable": MessageLookupByLibrary.simpleMessage("غير متاح"),
+    "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ. حاول مرة أخرى.",
+    ),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
         MessageLookupByLibrary.simpleMessage(
           "عذراً، التطبيق متوقف للصيانة. سنعود للعمل قريباً",

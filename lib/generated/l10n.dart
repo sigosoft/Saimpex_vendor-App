@@ -11195,6 +11195,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete this chat?`
+  String get deleteConversationTitle {
+    return Intl.message(
+      'Delete this chat?',
+      name: 'deleteConversationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `It is removed from your list. It comes back if the customer writes again.`
+  String get deleteConversationBody {
+    return Intl.message(
+      'It is removed from your list. It comes back if the customer writes again.',
+      name: 'deleteConversationBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something went wrong. Please try again.`
+  String get somethingWentWrong {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'somethingWentWrong',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

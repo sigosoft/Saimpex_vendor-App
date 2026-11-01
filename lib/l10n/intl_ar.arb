@@ -2624,5 +2624,8 @@
   "addonUnitHour": "لكل ساعة",
   "addonUnitRoom": "لكل غرفة",
   "addonUnitPiece": "لكل قطعة",
-  "needsYourAttention": "يحتاج إلى انتباهك"
+  "needsYourAttention": "يحتاج إلى انتباهك",
+  "deleteConversationTitle": "حذف هذه المحادثة؟",
+  "deleteConversationBody": "تُزال من قائمتك، وتعود إذا كتب العميل مرة أخرى.",
+  "somethingWentWrong": "حدث خطأ. حاول مرة أخرى."
 }

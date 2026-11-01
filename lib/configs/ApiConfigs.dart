@@ -69,6 +69,8 @@ class ApiEndPoints {
   static String customerSearch = "customers/search";
   static String totalUnreadMessagesCount = "chat/totalUnreadMessagesCount";
   static String markAsRead = "chat/markAsRead";
+  // Hide a conversation for the vendor (API doc §6.43, V18).
+  static String deleteConversation = "chat/deleteConversation";
   static String getRestaurantCategories = "getRestaurantCategories";
   static String menuCategories = "menuCategories";
   static String addMenuCategory = "addMenuCategory";

@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,8 +127,9 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
         } else {
           preview = conv.lastMessage?.message ?? '';
         }
-      } else if (conv.orderId != null) {
-        preview = 'Order #${conv.orderId}';
+      } else if (conv.orderId != null && (conv.orderCode ?? '').isEmpty) {
+        // With an order_code the preview reads "Booking #code" (§6.43).
+        preview = S.current.bookingHash('${conv.orderId}');
       }
 
       String avatar = '';
@@ -144,11 +147,11 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
       list.add(
         _MessageThread(
           name: displayName,
-          preview: preview,
+          preview: conversationPreview(context, conv, preview),
           time: _formatChatTime(timeStr),
           avatar: avatar,
           unreadCount: conv.unreadCount ?? 0,
-          isOnline: false,
+          isOnline: conv.customerIsOnline,
           showReadReceipt: conv.lastMessage?.isRead ?? false,
           conversationId: conv.id ?? 1,
           customerId: conv.customerId ?? conv.customer?.id ?? 1,
@@ -274,7 +277,10 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
                                 itemCount: threads.length,
                                 itemBuilder: (context, index) {
                                   final thread = threads[index];
-                                  return Column(
+                                  return DeletableConversation(
+                                    conversationId: thread.conversationId,
+                                    onDeleted: _fetchThreads,
+                                    child: Column(
                                     children: [
                                       _MessageTile(
                                         thread: thread,
@@ -317,7 +323,7 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
                                         color: Color(0xFFF0F0F0),
                                       ),
                                     ],
-                                  );
+                                  ));
                                 },
                               ),
                       ),

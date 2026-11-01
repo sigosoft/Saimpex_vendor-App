@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -101,7 +102,11 @@ class _ChatListingState extends State<ChatListing> {
                       final timeStr =
                           chat.lastMessageAt ?? chat.lastMessage?.createdAt;
 
-                      return ChatListingItem(
+                      // Swipe to delete for the vendor (§6.43, V18).
+                      return DeletableConversation(
+                        conversationId: chat.id,
+                        onDeleted: () => controller.getAllConversations(context),
+                        child: ChatListingItem(
                         initials:
                             chat.customer?.name
                                 ?.substring(0, 1)
@@ -112,11 +117,15 @@ class _ChatListingState extends State<ChatListing> {
                         avatarUrl: chat.customer?.image != null
                             ? "${ApiConfigs.IMAGE_URL}${chat.customer?.image}"
                             : null,
-                        lastMessage: chat.lastMessage?.messageType == 'image'
-                            ? "📷 Image"
-                            : chat.lastMessage?.messageType == 'voice'
-                                ? "🎤 Voice message"
-                                : chat.lastMessage?.message ?? "",
+                        lastMessage: conversationPreview(
+                          context,
+                          chat,
+                          chat.lastMessage?.messageType == 'image'
+                              ? "📷 Image"
+                              : chat.lastMessage?.messageType == 'voice'
+                                  ? "🎤 Voice message"
+                                  : chat.lastMessage?.message ?? "",
+                        ),
                         timestamp: formatChatTime(timeStr),
                         unreadCount: chat.unreadCount ?? 0,
                         onTap: () {
@@ -134,7 +143,7 @@ class _ChatListingState extends State<ChatListing> {
                             controller.getAllConversations(context);
                           });
                         },
-                      );
+                      ));
                     },
                   ),
           );

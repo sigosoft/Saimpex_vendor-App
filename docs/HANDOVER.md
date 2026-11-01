@@ -262,6 +262,13 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 - **Push on/off** is saved on the server (`GET` / `POST notification/preference`, `lib/utils/notification_preference.dart`): water and pharmacy switches used to be local only; home cleaning (and laundry / car wash) now has the switch back. A failed save puts the switch back.
 - **"Needs your attention"** (`lib/utils/widgets/activity_notifications_section.dart`, `GET activityNotifications`, marked read on open) above the notifications list in the restaurant / grocery, water and pharmacy screens: orders waiting for acceptance, water subscriptions to review, low stock. Restaurant rows open the order. Built without a Figma screen.
 
+### 3.5g Chat (V18c-2 ✅ `feature/v18c2-chat`, API §6.43)
+
+- All four message lists (restaurant / grocery, pharmacy, water, home cleaning): **swipe a chat left to delete it** for the vendor (`POST chat/deleteConversation`, asks first; it comes back when the customer writes again) — `lib/utils/widgets/deletable_conversation.dart`.
+- The preview reads "Booking #code · last message" when the chat is about a booking (`order_code`).
+- Water, pharmacy and home cleaning show the customer's **Online** dot (`customer_is_online`); the restaurant list item has no dot in its design.
+- `Conversation` model: `orderCode`, `customerIsOnline`, `customerLastSeenAt`. Sending with `order_id` from a booking was already in place (water `ChatView.open(orderId:)`).
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

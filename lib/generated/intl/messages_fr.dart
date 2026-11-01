@@ -888,6 +888,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteChat": MessageLookupByLibrary.simpleMessage(
       "Supprimer la discussion",
     ),
+    "deleteConversationBody": MessageLookupByLibrary.simpleMessage(
+      "Elle est retirée de votre liste. Elle revient si le client écrit à nouveau.",
+    ),
+    "deleteConversationTitle": MessageLookupByLibrary.simpleMessage(
+      "Supprimer cette discussion ?",
+    ),
     "delivered": MessageLookupByLibrary.simpleMessage("Livré"),
     "delivering": MessageLookupByLibrary.simpleMessage("LIVRAISON EN COURS"),
     "delivery": MessageLookupByLibrary.simpleMessage("Livraison"),
@@ -1939,6 +1945,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "showProductNow": MessageLookupByLibrary.simpleMessage("Afficher"),
     "slotAvailable": MessageLookupByLibrary.simpleMessage("Disponible"),
     "slotUnavailable": MessageLookupByLibrary.simpleMessage("Indisponible"),
+    "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "Une erreur s\'est produite. Réessayez.",
+    ),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
         MessageLookupByLibrary.simpleMessage(
           "Désolé, nous sommes en maintenance. Nous serons de retour très bientôt",

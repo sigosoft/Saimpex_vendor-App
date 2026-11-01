@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -121,10 +122,11 @@ class _MessagesListViewState extends State<MessagesListView> {
 
     return ChatThread(
       name: name,
-      preview: preview,
+      // "Booking #…" when the chat is about a booking (§6.43, V18).
+      preview: conversationPreview(context, conv, preview),
       time: time,
       unreadCount: unreadCount,
-      isOnline: false,
+      isOnline: conv.customerIsOnline,
       showReadReceipt: unreadCount == 0 && isRead,
       previewIsUnread: unreadCount > 0,
       conversationId: conv.id,
@@ -303,7 +305,11 @@ class _MessagesListViewState extends State<MessagesListView> {
                                 );
                               }
                               final thread = threads[index];
-                              return _ChatListTile(
+                              // Swipe to delete for the vendor (§6.43, V18).
+                              return DeletableConversation(
+                                conversationId: thread.conversationId,
+                                onDeleted: () => controller.getAllConversations(context),
+                                child: _ChatListTile(
                                 thread: thread,
                                 onTap: () async {
                                   if (thread.unreadCount > 0 &&
@@ -327,7 +333,7 @@ class _MessagesListViewState extends State<MessagesListView> {
                                         .fetchUnreadChatCount();
                                   }
                                 },
-                              );
+                              ));
                             },
                           ),
                         ),

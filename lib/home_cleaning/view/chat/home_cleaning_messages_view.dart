@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -127,7 +128,9 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
     return name == null || name.isEmpty ? S.of(context).waterCustomer : name;
   }
 
-  String _preview(Conversation c) {
+  String _preview(Conversation c) => conversationPreview(context, c, _lastText(c));
+
+  String _lastText(Conversation c) {
     final last = c.lastMessage;
     if (last == null) return '';
     switch (last.messageType?.toLowerCase()) {
@@ -210,8 +213,12 @@ class _HomeCleaningMessagesViewState extends State<HomeCleaningMessagesView> {
                           thickness: 0.8,
                           color: Color(0xFFF1F1F1),
                         ),
-                        itemBuilder: (context, index) =>
-                            _buildThreadItem(threads[index]),
+                        // Swipe to delete for the vendor (§6.43, V18).
+                        itemBuilder: (context, index) => DeletableConversation(
+                          conversationId: threads[index].id,
+                          onDeleted: _load,
+                          child: _buildThreadItem(threads[index]),
+                        ),
                       ),
               );
             },
