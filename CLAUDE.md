@@ -1,11 +1,11 @@
 # CLAUDE.md — SAIMPEX V2 Vendor app
 
-Owner: Stephy. Working branch: `fix/save-item-variants-options`. Launch: **1 December 2026**.
+Owner: Sharvin (from 31 Oct night; built by Stephy until then). Working branch: `main` (Stephy's finished work is on `main` or `fix/save-item-variants-options`). Launch: **1 December 2026**.
 
 ## Read before doing anything
 1. Complete scope (what to build, every rule): https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_COMPLETE_SCOPE.md
 2. This repo's handover: `docs/HANDOVER.md` (setup, architecture, status, pending work with acceptance criteria, "Backend updates" table at the end).
-3. Your task queue: https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md (section for Stephy).
+3. Your task queue: https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md (section "Sharvin — Vendor app").
 4. API changes, newest first: https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/API_CHANGELOG.md — check entries tagged `[vendor]` at the start of every session.
 5. API contracts: https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/SAIMPEX_V2_CUSTOMER_API.md
 
@@ -18,7 +18,7 @@ If you have the backend repo cloned next to this one (`../saimpex-backend-new`, 
 - English, French and Arabic for every user-facing string (Arabic right-to-left). No hard-coded English in screens.
 - No secrets in code, commits or logs (don't log tokens). Keystores and `.env` stay out of git.
 - Test against the **dev server running `integration/v2`**, never production.
-- One task = one branch (`feature/<short-name>`) = one pull request into `fix/save-item-variants-options`. Commit messages say what changed and why.
+- One task = one branch (`feature/<short-name>`) = one pull request into `main`. Commit messages say what changed and why.
 - After finishing a task: tick it in `docs/HANDOVER.md` (status table / pending list) in the same PR.
 - Done means: matches Figma and the scope; EN/FR/AR; wired to the real API (no mock data); `flutter analyze --no-pub` must show no new errors; run on a device or emulator against the dev server.
 

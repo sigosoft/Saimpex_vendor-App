@@ -1,7 +1,7 @@
 # SAIMPEX V2 Vendor App: Developer Handover
 
 > **Read first:** the complete V2 scope, [`praveensigo/saimpex-backend-new` → `docs/V2_COMPLETE_SCOPE.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/V2_COMPLETE_SCOPE.md). Then this handover, then the API change log.
-> **Owner:** **Stephy**. Week-by-week task list to the 1 Dec launch: [`docs/TEAM_ASSIGNMENTS.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md).
+> **Owner:** **Sharvin** from 31 Oct night (also owns the customer, delivery and kitchen apps). Built until then by Stephy. Week-by-week task list to the 1 Dec launch: [`docs/TEAM_ASSIGNMENTS.md`](https://github.com/praveensigo/saimpex-backend-new/blob/integration/v2/docs/TEAM_ASSIGNMENTS.md).
 
 Last updated: 31 Oct 2026. Branch at time of writing: `fix/save-item-variants-options` (HEAD `706c74e`).
 Repo: `sigosoft/Saimpex_vendor-App`. Flutter, for **Android and iOS**; **Android first** (decided 31 Oct). iOS builds but is not set up for release yet.
