@@ -147,11 +147,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m62(count) => "(${count} تقييم)";
 
-  static String m63(id) => "رقم المخزون: ${id}";
+  static String m63(count) => "${count} توصيلات مجدولة";
 
-  static String m64(open, close) => "اليوم: ${open} - ${close}";
+  static String m64(id) => "رقم المخزون: ${id}";
 
-  static String m65(name) => "مرحبًا بك في ${name}!";
+  static String m65(open, close) => "اليوم: ${open} - ${close}";
+
+  static String m66(name) => "مرحبًا بك في ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1653,6 +1655,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchNameOrMobileNumber": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الاسم أو رقم الهاتف المحمول",
     ),
+    "seeAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "select": MessageLookupByLibrary.simpleMessage("اختيار"),
     "selectAttributeHint": MessageLookupByLibrary.simpleMessage("اختر خاصية"),
     "selectCategory": MessageLookupByLibrary.simpleMessage("اختر الفئة"),
@@ -1840,6 +1843,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterAccountDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم حذف الحساب بنجاح",
     ),
+    "waterActive": MessageLookupByLibrary.simpleMessage("نشط"),
     "waterAddDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "إضافة عامل توصيل",
     ),
@@ -1885,12 +1889,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterBusinessSettingsUpdated": MessageLookupByLibrary.simpleMessage(
       "تم تحديث إعدادات النشاط بنجاح",
     ),
+    "waterCalendarAfternoon": MessageLookupByLibrary.simpleMessage("بعد الظهر"),
+    "waterCalendarAll": MessageLookupByLibrary.simpleMessage("الكل"),
+    "waterCalendarEvening": MessageLookupByLibrary.simpleMessage("مساءً"),
+    "waterCalendarMorning": MessageLookupByLibrary.simpleMessage("صباحًا"),
     "waterCalendarNotAvailable": MessageLookupByLibrary.simpleMessage(
       "تقويم التوصيل غير متاح بعد",
     ),
     "waterCalendarNotAvailableHint": MessageLookupByLibrary.simpleMessage(
       "ستظهر هنا عمليات توصيل الاشتراكات المجدولة عندما تصبح هذه الميزة جاهزة. يمكنك رؤية موعد التوصيل التالي لكل اشتراك في تفاصيله.",
     ),
+    "waterCalendarPaused": MessageLookupByLibrary.simpleMessage("متوقف"),
+    "waterCalendarTotal": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "waterCallNow": MessageLookupByLibrary.simpleMessage("اتصل الآن"),
     "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من إلغاء هذه الإجازة؟",
@@ -1931,9 +1941,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterDaily": MessageLookupByLibrary.simpleMessage("يومي"),
     "waterDatePlaceholder": MessageLookupByLibrary.simpleMessage("يوم-شهر-سنة"),
+    "waterDelivered": MessageLookupByLibrary.simpleMessage("تم التوصيل"),
+    "waterDelivery": MessageLookupByLibrary.simpleMessage("توصيل"),
     "waterDeliveryAddressTitle": MessageLookupByLibrary.simpleMessage(
       "عنوان التوصيل",
     ),
+    "waterDeliveryFee": MessageLookupByLibrary.simpleMessage("رسوم التوصيل"),
     "waterDeliveryHistory": MessageLookupByLibrary.simpleMessage("سجل التوصيل"),
     "waterDeliveryPartnerAssigned": MessageLookupByLibrary.simpleMessage(
       "تم تعيين مندوب التوصيل",
@@ -2060,6 +2073,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "PNG أو JPG حتى 5 ميغابايت",
     ),
     "waterImagesSelected": m55,
+    "waterInProgress": MessageLookupByLibrary.simpleMessage("قيد التنفيذ"),
     "waterInStock": MessageLookupByLibrary.simpleMessage("متوفر"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("المخزون"),
     "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
@@ -2121,6 +2135,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterNextDelivery": MessageLookupByLibrary.simpleMessage("التوصيل القادم"),
     "waterNoContactDetails": MessageLookupByLibrary.simpleMessage(
       "لا توجد بيانات اتصال",
+    ),
+    "waterNoDeliveriesThisDay": MessageLookupByLibrary.simpleMessage(
+      "لا توجد توصيلات في هذا اليوم.",
+    ),
+    "waterNoDeliveriesYet": MessageLookupByLibrary.simpleMessage(
+      "لا توجد توصيلات بعد.",
     ),
     "waterNoLeavesFound": MessageLookupByLibrary.simpleMessage(
       "لا توجد إجازات",
@@ -2323,6 +2343,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
       "امسح الباركود أو أدخله",
     ),
+    "waterScheduledDeliveries": m63,
     "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
       "ابحث برقم الاشتراك أو الاسم",
     ),
@@ -2335,12 +2356,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterSearchProductsHint": MessageLookupByLibrary.simpleMessage(
       "ابحث عن منتج أو رقم",
     ),
+    "waterSearchSubscription": MessageLookupByLibrary.simpleMessage(
+      "ابحث برقم الاشتراك أو الاسم",
+    ),
     "waterSelectFromAndToDates": MessageLookupByLibrary.simpleMessage(
       "اختر تاريخ البداية والنهاية",
     ),
     "waterSelectImageSource": MessageLookupByLibrary.simpleMessage(
       "اختر مصدر الصورة",
     ),
+    "waterSelfPickup": MessageLookupByLibrary.simpleMessage("استلام ذاتي"),
     "waterSellingPrice": MessageLookupByLibrary.simpleMessage("سعر البيع"),
     "waterSendMail": MessageLookupByLibrary.simpleMessage("إرسال بريد"),
     "waterSize": MessageLookupByLibrary.simpleMessage("الحجم"),
@@ -2353,7 +2378,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت إضافة المخزون",
     ),
     "waterStockHistory": MessageLookupByLibrary.simpleMessage("سجل المخزون"),
-    "waterStockIdLabel": m63,
+    "waterStockIdLabel": m64,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("تم سحب المخزون"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تحديث المخزون بنجاح",
@@ -2408,7 +2433,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
     ),
-    "waterTodayTimings": m64,
+    "waterTodayTimings": m65,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("غدًا"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المدفوع"),
@@ -2437,7 +2462,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "الجدول الأسبوعي",
     ),
-    "waterWelcomeToShop": m65,
+    "waterWelcomeToShop": m66,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "تم تحديث ساعات العمل بنجاح",
     ),

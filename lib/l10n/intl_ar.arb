@@ -2598,5 +2598,25 @@
   "earningsAvailable": "متاح",
   "earningsPending": "قيد الانتظار",
   "payoutReceived": "المدفوعات المستلمة",
-  "noEarningsYet": "لا توجد أرباح بعد."
+  "noEarningsYet": "لا توجد أرباح بعد.",
+  "waterDelivered": "تم التوصيل",
+  "waterInProgress": "قيد التنفيذ",
+  "waterNoDeliveriesYet": "لا توجد توصيلات بعد.",
+  "seeAll": "عرض الكل",
+  "waterDeliveryFee": "رسوم التوصيل",
+  "waterCalendarTotal": "الإجمالي",
+  "waterCalendarMorning": "صباحًا",
+  "waterCalendarAfternoon": "بعد الظهر",
+  "waterCalendarEvening": "مساءً",
+  "waterCalendarPaused": "متوقف",
+  "waterCalendarAll": "الكل",
+  "waterSearchSubscription": "ابحث برقم الاشتراك أو الاسم",
+  "waterScheduledDeliveries": "{count} توصيلات مجدولة",
+  "@waterScheduledDeliveries": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "waterNoDeliveriesThisDay": "لا توجد توصيلات في هذا اليوم.",
+  "waterSelfPickup": "استلام ذاتي",
+  "waterDelivery": "توصيل",
+  "waterActive": "نشط"
 }

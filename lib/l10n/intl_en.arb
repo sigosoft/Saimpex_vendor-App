@@ -2536,5 +2536,25 @@
   "earningsAvailable": "Available",
   "earningsPending": "Pending",
   "payoutReceived": "Payout received",
-  "noEarningsYet": "No earnings yet."
+  "noEarningsYet": "No earnings yet.",
+  "waterDelivered": "Delivered",
+  "waterInProgress": "In progress",
+  "waterNoDeliveriesYet": "No deliveries yet.",
+  "seeAll": "See all",
+  "waterDeliveryFee": "Delivery fee",
+  "waterCalendarTotal": "Total",
+  "waterCalendarMorning": "Morning",
+  "waterCalendarAfternoon": "Afternoon",
+  "waterCalendarEvening": "Evening",
+  "waterCalendarPaused": "Paused",
+  "waterCalendarAll": "All",
+  "waterSearchSubscription": "Search by subscription ID or name",
+  "waterScheduledDeliveries": "{count} scheduled deliveries",
+  "@waterScheduledDeliveries": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "waterNoDeliveriesThisDay": "No deliveries on this day.",
+  "waterSelfPickup": "Self pickup",
+  "waterDelivery": "Delivery",
+  "waterActive": "Active"
 }
