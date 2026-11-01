@@ -11535,6 +11535,456 @@ class S {
       args: [minutes],
     );
   }
+
+  /// `Prescription ID is required`
+  String get quotePrescriptionMissing {
+    return Intl.message(
+      'Prescription ID is required',
+      name: 'quotePrescriptionMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please add at least one medicine`
+  String get quoteAddOneMedicine {
+    return Intl.message(
+      'Please add at least one medicine',
+      name: 'quoteAddOneMedicine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quotation sent`
+  String get quoteSentLabel {
+    return Intl.message(
+      'Quotation sent',
+      name: 'quoteSentLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer`
+  String get quoteCustomer {
+    return Intl.message('Customer', name: 'quoteCustomer', desc: '', args: []);
+  }
+
+  /// `Create Quotation`
+  String get quoteCreateTitle {
+    return Intl.message(
+      'Create Quotation',
+      name: 'quoteCreateTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quotation Items`
+  String get quoteItemsTitle {
+    return Intl.message(
+      'Quotation Items',
+      name: 'quoteItemsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Quotation`
+  String get quoteSend {
+    return Intl.message(
+      'Send Quotation',
+      name: 'quoteSend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save & Add Next Medicine`
+  String get quoteSaveAndNext {
+    return Intl.message(
+      'Save & Add Next Medicine',
+      name: 'quoteSaveAndNext',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Medicine`
+  String get quoteAddMedicine {
+    return Intl.message(
+      'Add Medicine',
+      name: 'quoteAddMedicine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescribed Quantity`
+  String get quotePrescribedQty {
+    return Intl.message(
+      'Prescribed Quantity',
+      name: 'quotePrescribedQty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unit`
+  String get quoteUnit {
+    return Intl.message('Unit', name: 'quoteUnit', desc: '', args: []);
+  }
+
+  /// `Pharmacy Availability`
+  String get quoteAvailabilityTitle {
+    return Intl.message(
+      'Pharmacy Availability',
+      name: 'quoteAvailabilityTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Quantity`
+  String get quoteAvailableQty {
+    return Intl.message(
+      'Available Quantity',
+      name: 'quoteAvailableQty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggest Alternative Medicine`
+  String get quoteSuggestAlternative {
+    return Intl.message(
+      'Suggest Alternative Medicine',
+      name: 'quoteSuggestAlternative',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get quoteTotal {
+    return Intl.message('Total', name: 'quoteTotal', desc: '', args: []);
+  }
+
+  /// `Available (In Stock)`
+  String get quoteAvailableInStock {
+    return Intl.message(
+      'Available (In Stock)',
+      name: 'quoteAvailableInStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Partially Available (Limited)`
+  String get quotePartialLimited {
+    return Intl.message(
+      'Partially Available (Limited)',
+      name: 'quotePartialLimited',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not Available (Out of Stock)`
+  String get quoteNotAvailableOut {
+    return Intl.message(
+      'Not Available (Out of Stock)',
+      name: 'quoteNotAvailableOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available`
+  String get quoteAvailable {
+    return Intl.message(
+      'Available',
+      name: 'quoteAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Partially Available`
+  String get quotePartiallyAvailable {
+    return Intl.message(
+      'Partially Available',
+      name: 'quotePartiallyAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not Available`
+  String get quoteNotAvailable {
+    return Intl.message(
+      'Not Available',
+      name: 'quoteNotAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggested Alternative`
+  String get quoteSuggestedAlternative {
+    return Intl.message(
+      'Suggested Alternative',
+      name: 'quoteSuggestedAlternative',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item total`
+  String get quoteItemTotal {
+    return Intl.message(
+      'Item total',
+      name: 'quoteItemTotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type medicine name...`
+  String get quoteTypeMedicine {
+    return Intl.message(
+      'Type medicine name...',
+      name: 'quoteTypeMedicine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QUOTATION SUMMARY`
+  String get quoteSummary {
+    return Intl.message(
+      'QUOTATION SUMMARY',
+      name: 'quoteSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Amount`
+  String get quoteTotalAmount {
+    return Intl.message(
+      'Total Amount',
+      name: 'quoteTotalAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete medicine?`
+  String get quoteDeleteTitle {
+    return Intl.message(
+      'Delete medicine?',
+      name: 'quoteDeleteTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to remove {name} from the quotation?`
+  String quoteDeleteBody(String name) {
+    return Intl.message(
+      'Are you sure you want to remove $name from the quotation?',
+      name: 'quoteDeleteBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Delete`
+  String get quoteDelete {
+    return Intl.message('Delete', name: 'quoteDelete', desc: '', args: []);
+  }
+
+  /// `Quotation has been sent to the customer\nfor review and approval`
+  String get quoteSentBody {
+    return Intl.message(
+      'Quotation has been sent to the customer\nfor review and approval',
+      name: 'quoteSentBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In Stock`
+  String get quoteInStock {
+    return Intl.message('In Stock', name: 'quoteInStock', desc: '', args: []);
+  }
+
+  /// `Limited`
+  String get quoteLimited {
+    return Intl.message('Limited', name: 'quoteLimited', desc: '', args: []);
+  }
+
+  /// `Quote Valid`
+  String get quoteValidLabel {
+    return Intl.message(
+      'Quote Valid',
+      name: 'quoteValidLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{qty} × {price} MRU`
+  String quoteQtyTimesPrice(String qty, String price) {
+    return Intl.message(
+      '$qty × $price MRU',
+      name: 'quoteQtyTimesPrice',
+      desc: '',
+      args: [qty, price],
+    );
+  }
+
+  /// `1 Day`
+  String get quoteValidityOneDay {
+    return Intl.message(
+      '1 Day',
+      name: 'quoteValidityOneDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Days`
+  String quoteValidityDays(String count) {
+    return Intl.message(
+      '$count Days',
+      name: 'quoteValidityDays',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Alternatives (if the customer accepts)`
+  String get quoteAlternativesIfAccepted {
+    return Intl.message(
+      'Alternatives (if the customer accepts)',
+      name: 'quoteAlternativesIfAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not in your inventory`
+  String get quoteNotCarried {
+    return Intl.message(
+      'Not in your inventory',
+      name: 'quoteNotCarried',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} in stock`
+  String quoteStockLeft(String count) {
+    return Intl.message(
+      '$count in stock',
+      name: 'quoteStockLeft',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Not charged`
+  String get quoteNotCharged {
+    return Intl.message(
+      'Not charged',
+      name: 'quoteNotCharged',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The customer pays for available items and the alternatives they accept. The final amount is calculated by the server.`
+  String get quoteServerTotalNote {
+    return Intl.message(
+      'The customer pays for available items and the alternatives they accept. The final amount is calculated by the server.',
+      name: 'quoteServerTotalNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ORDER ITEMS ({count})`
+  String quoteOrderItems(String count) {
+    return Intl.message(
+      'ORDER ITEMS ($count)',
+      name: 'quoteOrderItems',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Customer accepted`
+  String get quoteDecisionAccepted {
+    return Intl.message(
+      'Customer accepted',
+      name: 'quoteDecisionAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer rejected`
+  String get quoteDecisionRejected {
+    return Intl.message(
+      'Customer rejected',
+      name: 'quoteDecisionRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for customer`
+  String get quoteDecisionWaiting {
+    return Intl.message(
+      'Waiting for customer',
+      name: 'quoteDecisionWaiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} alternative(s) waiting for the customer's answer. They cannot pay until they answer.`
+  String quotePendingAlternatives(String count) {
+    return Intl.message(
+      '$count alternative(s) waiting for the customer\'s answer. They cannot pay until they answer.',
+      name: 'quotePendingAlternatives',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No items in this quotation.`
+  String get quoteNoItems {
+    return Intl.message(
+      'No items in this quotation.',
+      name: 'quoteNoItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{available} of {prescribed} available`
+  String quoteAvailableOf(String available, String prescribed) {
+    return Intl.message(
+      '$available of $prescribed available',
+      name: 'quoteAvailableOf',
+      desc: '',
+      args: [available, prescribed],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

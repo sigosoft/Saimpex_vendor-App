@@ -31,23 +31,21 @@ class _PharmacyCreateQuotationScreenState
     extends State<PharmacyCreateQuotationScreen> {
   static const Color _orange = Color(0xFFFF5216);
   static const Color _disabled = Color(0xFFFFCDBA);
-  static const int _tax = 10;
   bool _isSending = false;
 
-  static const _validityOptions = <String>[
-    '1 Day',
-    '3 Days',
-    '7 Days',
-    '15 Days',
-    '30 Days',
-  ];
+  List<String> _validityOptions(BuildContext context) => [
+        S.of(context).quoteValidityOneDay,
+        for (final n in const [3, 7, 15, 30]) S.of(context).quoteValidityDays('$n'),
+      ];
 
   late final CreateQuotationController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = Get.put(CreateQuotationController());
+    controller = Get.isRegistered<CreateQuotationController>()
+        ? Get.find<CreateQuotationController>()
+        : Get.put(CreateQuotationController());
   }
 
   @override
@@ -102,7 +100,7 @@ class _PharmacyCreateQuotationScreenState
             : null);
 
     if (effectivePrescriptionId == null) {
-      Fluttertoast.showToast(msg: 'Prescription ID is required');
+      Fluttertoast.showToast(msg: S.of(context).quotePrescriptionMissing);
       return;
     }
 
@@ -112,7 +110,6 @@ class _PharmacyCreateQuotationScreenState
 
     final success = await controller.submitQuotation(
       prescriptionId: effectivePrescriptionId,
-      tax: _tax,
       context: context,
     );
 
@@ -125,7 +122,7 @@ class _PharmacyCreateQuotationScreenState
       showGeneralDialog<void>(
         context: context,
         barrierDismissible: false,
-        barrierLabel: 'Quotation sent',
+        barrierLabel: S.of(context).quoteSentLabel,
         barrierColor: Colors.transparent,
         pageBuilder: (context, _, __) => const _QuotationSentDialog(),
       );
@@ -152,7 +149,7 @@ class _PharmacyCreateQuotationScreenState
             ? rawCustName
             : (prescObj?.customerName?.trim().isNotEmpty == true
                 ? prescObj!.customerName!
-                : (rawCustName.isNotEmpty ? rawCustName : 'Customer'));
+                : (rawCustName.isNotEmpty ? rawCustName : S.of(context).quoteCustomer));
         final initial = effectiveCustomerName.isNotEmpty
             ? effectiveCustomerName.substring(0, 1).toUpperCase()
             : 'C';
@@ -212,7 +209,7 @@ class _PharmacyCreateQuotationScreenState
                           alignment: Alignment.center,
                           children: [
                             Text(
-                              'Create Quotation',
+                              S.of(context).quoteCreateTitle,
                               style: appFont('Inter', 
                                 color: const Color(0xFF1A1A1A),
                                 fontWeight: FontWeight.w700,
@@ -300,7 +297,7 @@ class _PharmacyCreateQuotationScreenState
                           Row(
                             children: [
                               Text(
-                                'Quotation Items',
+                                S.of(context).quoteItemsTitle,
                                 style: appFont('Inter', 
                                   color: const Color(0xFF3A3A3A),
                                   fontWeight: FontWeight.w600,
@@ -312,7 +309,7 @@ class _PharmacyCreateQuotationScreenState
                               if (!editing)
                                 _QuoteValidMenu(
                                   value: controller.quoteValid,
-                                  options: _validityOptions,
+                                  options: _validityOptions(context),
                                   onSelected: controller.setQuoteValid,
                                 ),
                             ],
@@ -331,6 +328,7 @@ class _PharmacyCreateQuotationScreenState
                               onPrescribed: controller.setPrescribed,
                               onAvailable: controller.setAvailable,
                               onAddAlternative: controller.addAlternative,
+                              onRemoveAlternative: controller.removeAlternative,
                             )
                           else
                             _SavedLinesCard(
@@ -353,7 +351,7 @@ class _PharmacyCreateQuotationScreenState
                             const SizedBox(height: 16),
                             _CreateQuoteSummary(
                               itemTotal: controller.subtotal,
-                              tax: _tax,
+                              alternativesTotal: controller.alternativesTotal,
                             ),
                           ],
                         ],
@@ -365,7 +363,7 @@ class _PharmacyCreateQuotationScreenState
             ),
             if (!editing || controller.canSaveDraft)
               _QuoteActionBar(
-                label: editing ? 'Save & Add Next Medicine' : 'Send Quotation',
+                label: editing ? S.of(context).quoteSaveAndNext : S.of(context).quoteSend,
                 enabled: editing
                     ? controller.canSaveDraft
                     : (controller.lines.isNotEmpty &&
@@ -385,28 +383,60 @@ class _PharmacyCreateQuotationScreenState
   }
 }
 
+/// "50 MRU" / "12.50 MRU" style amount without the currency.
+String _amount(num v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+
 class _QuotationMedicine {
   const _QuotationMedicine(
     this.name,
     this.priceMru, {
-    this.inStock = true,
-    this.id,
+    this.stock,
     this.productId,
     this.nameEn,
     this.nameAr,
     this.nameFr,
   });
 
+  /// A row of `pharmacyMenuItems` (id = pharmacy_menu_items.id).
+  factory _QuotationMedicine.fromInventory(Map<String, dynamic> m) {
+    String clean(dynamic v) => (v == null || '$v' == 'null') ? '' : '$v'.trim();
+    final lang = LocalizationService.currentLanguageCode;
+    final en = clean(m['menu_name_en']);
+    final local = clean(m['menu_name_$lang']);
+    final variant = [clean(m['attribute_value']), clean(m['attribute_name_en'])]
+        .where((e) => e.isNotEmpty)
+        .join(' ');
+    String withVariant(String n) => variant.isEmpty || n.contains(variant) ? n : '$n $variant';
+    final offer = num.tryParse(clean(m['offer_price']));
+    final price = offer != null && offer > 0
+        ? offer
+        : (num.tryParse(clean(m['selling_price'])) ?? num.tryParse(clean(m['price'])) ?? 0);
+    return _QuotationMedicine(
+      withVariant(local.isNotEmpty ? local : en),
+      price,
+      stock: int.tryParse(clean(m['stock'])) ?? 0,
+      productId: int.tryParse(clean(m['id'])),
+      nameEn: withVariant(en),
+      nameAr: clean(m['menu_name_ar']).isEmpty ? null : withVariant(clean(m['menu_name_ar'])),
+      nameFr: clean(m['menu_name_fr']).isEmpty ? null : withVariant(clean(m['menu_name_fr'])),
+    );
+  }
+
   final String name;
-  final int priceMru;
-  final bool inStock;
-  final int? id;
+  final num priceMru;
+
+  /// Units in stock; null when unknown (treated as available).
+  final int? stock;
   final int? productId;
   final String? nameEn;
   final String? nameAr;
   final String? nameFr;
 
-  int get effectiveProductId => productId ?? id ?? 4;
+  bool get inStock => stock == null || stock! > 0;
+
+  /// Typed by the vendor, not in the inventory (quoted as unavailable).
+  bool get notCarried => productId == null;
+
   String get effectiveNameEn =>
       (nameEn != null && nameEn!.isNotEmpty) ? nameEn! : name;
   String get effectiveNameAr => nameAr ?? '';
@@ -423,11 +453,30 @@ class _QuotationLine {
   final List<_QuotationMedicine> alternatives = [];
   int selectedAlternative = 0;
 
-  int get billedQty => availability == _Availability.limited
-      ? availableQty
-      : prescribedQty;
+  int get billedQty => switch (availability) {
+        _Availability.limited => availableQty,
+        _Availability.outOfStock => 0,
+        _ => prescribedQty,
+      };
 
-  int get lineTotal => medicine.priceMru * billedQty;
+  /// Charged now (unavailable lines cost nothing).
+  num get lineTotal => medicine.priceMru * billedQty;
+
+  _QuotationMedicine? get alternative =>
+      availability == _Availability.outOfStock && alternatives.isNotEmpty
+          ? alternatives[selectedAlternative.clamp(0, alternatives.length - 1)]
+          : null;
+
+  /// The alternative covers the prescribed quantity, within its stock.
+  int get alternativeQty {
+    final alt = alternative;
+    if (alt == null) return 0;
+    final stock = alt.stock;
+    return stock != null && stock < prescribedQty ? stock : prescribedQty;
+  }
+
+  /// Charged only if the customer accepts the alternative.
+  num get alternativeTotal => (alternative?.priceMru ?? 0) * alternativeQty;
 
   _QuotationLine copy() {
     final line = _QuotationLine(medicine)
@@ -489,7 +538,7 @@ class _SavedLinesCard extends StatelessWidget {
             onPressed: onAddMedicine,
             icon: const Icon(Icons.add, size: 18),
             label: Text(
-              'Add Medicine',
+              S.of(context).quoteAddMedicine,
               style: appFont('Inter', 
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
@@ -533,6 +582,7 @@ class _DraftMedicineCard extends StatelessWidget {
     required this.onPrescribed,
     required this.onAvailable,
     required this.onAddAlternative,
+    required this.onRemoveAlternative,
   });
 
   final _QuotationLine draft;
@@ -544,15 +594,16 @@ class _DraftMedicineCard extends StatelessWidget {
   final ValueChanged<int> onPrescribed;
   final ValueChanged<int> onAvailable;
   final ValueChanged<_QuotationMedicine> onAddAlternative;
+  final VoidCallback onRemoveAlternative;
 
   @override
   Widget build(BuildContext context) {
+    final alt = draft.alternative;
     final showTotal = draft.prescribedQty > 0 &&
         (draft.availability == _Availability.inStock ||
             (draft.availability == _Availability.limited &&
                 draft.availableQty > 0) ||
-            (draft.availability == _Availability.outOfStock &&
-                draft.alternatives.isNotEmpty));
+            alt != null);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -589,7 +640,7 @@ class _DraftMedicineCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
           Text(
-            'Prescribed Quantity',
+            S.of(context).quotePrescribedQty,
             style: appFont('Inter', 
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w500,
@@ -613,7 +664,7 @@ class _DraftMedicineCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  'Unit',
+                  S.of(context).quoteUnit,
                   style: appFont('Inter', 
                     color: const Color(0xFFB0B0B0),
                     fontWeight: FontWeight.w400,
@@ -630,7 +681,7 @@ class _DraftMedicineCard extends StatelessWidget {
         ),
         const SizedBox(height: 22),
         Text(
-          'Pharmacy Availability',
+          S.of(context).quoteAvailabilityTitle,
             style: appFont('Inter', 
               color: const Color(0xFF3A3A3A),
               fontWeight: FontWeight.w600,
@@ -655,7 +706,7 @@ class _DraftMedicineCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'Available Quantity',
+                        S.of(context).quoteAvailableQty,
                         style: appFont('Inter', 
                           color: const Color(0xFF78350F),
                           fontWeight: FontWeight.w600,
@@ -680,14 +731,25 @@ class _DraftMedicineCard extends StatelessWidget {
           ],
           if (draft.availability == _Availability.outOfStock) ...[
             const SizedBox(height: 18),
-            if (draft.alternatives.isNotEmpty)
+            if (draft.alternatives.isNotEmpty) ...[
               _SuggestedAlternativeBox(
                 original: draft.medicine,
                 medicines: draft.alternatives,
-              )
-            else ...[
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: onRemoveAlternative,
+                  icon: const Icon(Icons.close, size: 16, color: Color(0xFFE53935)),
+                  label: Text(
+                    S.of(context).quoteDelete,
+                    style: appFont('Inter', color: const Color(0xFFE53935), fontSize: 13),
+                  ),
+                ),
+              ),
+            ] else ...[
               Text(
-                'Suggest Alternative Medicine',
+                S.of(context).quoteSuggestAlternative,
                 style: appFont('Inter', 
                   color: const Color(0xFF9CA3AF),
                   fontWeight: FontWeight.w500,
@@ -712,9 +774,9 @@ class _DraftMedicineCard extends StatelessWidget {
             const _FullWidthDivider(),
             const SizedBox(height: 20),
             _ItemTotalRow(
-              quantity: draft.billedQty,
-              price: draft.medicine.priceMru,
-              total: draft.lineTotal,
+              quantity: alt != null ? draft.alternativeQty : draft.billedQty,
+              price: alt?.priceMru ?? draft.medicine.priceMru,
+              total: alt != null ? draft.alternativeTotal : draft.lineTotal,
             ),
           ],
       ],
@@ -830,7 +892,7 @@ class _SavedLineTile extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Unit',
+              S.of(context).quoteUnit,
               style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w500,
@@ -839,7 +901,7 @@ class _SavedLineTile extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'Total',
+              S.of(context).quoteTotal,
               style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w500,
@@ -853,7 +915,9 @@ class _SavedLineTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${line.billedQty} tablets × ${line.medicine.priceMru} MRU',
+              line.alternative != null
+                  ? S.of(context).quoteQtyTimesPrice('${line.alternativeQty}', _amount(line.alternative!.priceMru))
+                  : S.of(context).quoteQtyTimesPrice('${line.billedQty}', _amount(line.medicine.priceMru)),
               style: appFont('Inter', 
                 color: const Color(0xFF3F2A24),
                 fontWeight: FontWeight.w500,
@@ -865,7 +929,7 @@ class _SavedLineTile extends StatelessWidget {
               TextSpan(
                 children: [
                   TextSpan(
-                    text: '${line.lineTotal}',
+                    text: _amount(line.alternative != null ? line.alternativeTotal : line.lineTotal),
                     style: appFont('Inter', 
                       color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.w800,
@@ -900,22 +964,22 @@ class _AvailabilityStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = switch (availability) {
-      _Availability.inStock => const _StatusPillStyle(
-          label: 'Available (In Stock)',
+      _Availability.inStock => _StatusPillStyle(
+          label: S.of(context).quoteAvailableInStock,
           foreground: Color(0xFF16A34A),
           background: Color(0xFFE8F8EF),
           border: Color(0xFF86E0A8),
           dot: Color(0xFF22C55E),
         ),
-      _Availability.limited => const _StatusPillStyle(
-          label: 'Partially Available (Limited)',
+      _Availability.limited => _StatusPillStyle(
+          label: S.of(context).quotePartialLimited,
           foreground: Color(0xFFC4841A),
           background: Color(0xFFFFF6D8),
           border: Color(0xFFF0D090),
           dot: Color(0xFFF5B400),
         ),
-      _Availability.outOfStock => const _StatusPillStyle(
-          label: 'Not Available (Out of Stock)',
+      _Availability.outOfStock => _StatusPillStyle(
+          label: S.of(context).quoteNotAvailableOut,
           foreground: Color(0xFF1A1A1A),
           background: Color(0xFFFFF7F8),
           border: Color(0xFFFFB3C1),
@@ -988,21 +1052,21 @@ class _AvailabilityRow extends StatelessWidget {
           _AvailabilityChoice(
             selected: selected == _Availability.inStock,
             selectedFill: const Color(0xFFFFF1EC),
-            label: 'Available',
+            label: S.of(context).quoteAvailable,
             badge: const _InStockBadge(),
           ),
           const SizedBox(width: 8),
           _AvailabilityChoice(
             selected: selected == _Availability.limited,
             selectedFill: const Color(0xFFFFF6D9),
-            label: 'Partially Available',
+            label: S.of(context).quotePartiallyAvailable,
             badge: const _LimitedBadge(),
           ),
           const SizedBox(width: 8),
           _AvailabilityChoice(
             selected: selected == _Availability.outOfStock,
             selectedFill: const Color(0xFFFFF1EC),
-            label: 'Not Available',
+            label: S.of(context).quoteNotAvailable,
             badge: const _OutOfStockBadge(),
           ),
         ],
@@ -1077,7 +1141,7 @@ class _AvailableCountPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        '$available of $prescribed available',
+        S.of(context).quoteAvailableOf('$available', '$prescribed'),
         style: appFont('Inter', 
           color: const Color(0xFF78350F),
           fontWeight: FontWeight.w600,
@@ -1111,7 +1175,7 @@ class _SuggestedAlternativeBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Suggested Alternative',
+            S.of(context).quoteSuggestedAlternative,
             style: appFont('Inter', 
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w500,
@@ -1240,7 +1304,16 @@ class _CatalogTile extends StatelessWidget {
                 if (showBadge) ...[
                   const SizedBox(height: 6),
                   if (medicine.inStock)
-                    const _InStockBadge()
+                    Row(children: [
+                      const _InStockBadge(),
+                      if (medicine.stock != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          S.of(context).quoteStockLeft('${medicine.stock}'),
+                          style: appFont('Inter', color: const Color(0xFF6B7280), fontSize: 12),
+                        ),
+                      ],
+                    ])
                   else
                     const _OutOfStockBadge(),
                 ],
@@ -1248,7 +1321,7 @@ class _CatalogTile extends StatelessWidget {
             ),
           ),
           Text(
-            '${medicine.priceMru} MRU',
+            medicine.notCarried ? S.of(context).quoteNotCarried : '${_amount(medicine.priceMru)} MRU',
             style: appFont('Inter', 
               color: const Color(0xFFFF5216),
               fontWeight: FontWeight.w700,
@@ -1283,8 +1356,8 @@ class _ItemTotalRow extends StatelessWidget {
   });
 
   final int quantity;
-  final int price;
-  final int total;
+  final num price;
+  final num total;
 
   @override
   Widget build(BuildContext context) {
@@ -1292,7 +1365,7 @@ class _ItemTotalRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          'Item total',
+          S.of(context).quoteItemTotal,
           style: appFont('Inter', 
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w700,
@@ -1304,7 +1377,7 @@ class _ItemTotalRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '$quantity tablets × $price MRU',
+              S.of(context).quoteQtyTimesPrice('$quantity', _amount(price)),
               style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w400,
@@ -1313,7 +1386,7 @@ class _ItemTotalRow extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              '$total MRU',
+              '${_amount(total)} MRU',
               style: appFont('Inter', 
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w700,
@@ -1443,7 +1516,7 @@ class _QtyStepper extends StatelessWidget {
 class _PricePill extends StatelessWidget {
   const _PricePill({required this.price});
 
-  final int price;
+  final num price;
 
   @override
   Widget build(BuildContext context) {
@@ -1454,7 +1527,7 @@ class _PricePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Text(
-        '$price MRU',
+        '${_amount(price)} MRU',
         style: appFont('Inter', 
           color: const Color(0xFF1A1A1A),
           fontWeight: FontWeight.w700,
@@ -1489,7 +1562,7 @@ class _AltSearchField extends StatelessWidget {
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
-        hintText: 'Type medicine name...',
+        hintText: S.of(context).quoteTypeMedicine,
         hintStyle: appFont('Inter', 
           color: const Color(0xFFB0B0B0),
           fontSize: 15,
@@ -1538,7 +1611,7 @@ class _MedicineField extends StatelessWidget {
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
-        hintText: 'Type medicine name...',
+        hintText: S.of(context).quoteTypeMedicine,
         hintStyle: appFont('Inter', 
           color: const Color(0xFFB0A8A2),
           fontSize: 15,
@@ -1591,14 +1664,14 @@ class _QuoteCard extends StatelessWidget {
 }
 
 class _CreateQuoteSummary extends StatelessWidget {
-  const _CreateQuoteSummary({required this.itemTotal, required this.tax});
+  const _CreateQuoteSummary({required this.itemTotal, required this.alternativesTotal});
 
-  final int itemTotal;
-  final int tax;
+  final num itemTotal;
+  final num alternativesTotal;
 
   @override
   Widget build(BuildContext context) {
-    final total = itemTotal + tax;
+    final s = S.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
@@ -1607,6 +1680,7 @@ class _CreateQuoteSummary extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -1618,7 +1692,7 @@ class _CreateQuoteSummary extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'QUOTATION SUMMARY',
+                s.quoteSummary,
                 style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -1630,16 +1704,18 @@ class _CreateQuoteSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          _SummaryLine(label: 'Item total', value: '$itemTotal MRU'),
-          const SizedBox(height: 12),
-          _SummaryLine(label: 'Tax', value: '$tax'),
+          _SummaryLine(label: s.quoteItemTotal, value: '${_amount(itemTotal)} MRU'),
+          if (alternativesTotal > 0) ...[
+            const SizedBox(height: 12),
+            _SummaryLine(label: s.quoteAlternativesIfAccepted, value: '${_amount(alternativesTotal)} MRU'),
+          ],
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
           const SizedBox(height: 14),
           Row(
             children: [
               Text(
-                'Total Amount',
+                s.quoteTotalAmount,
                 style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -1648,7 +1724,7 @@ class _CreateQuoteSummary extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '$total MRU',
+                '${_amount(itemTotal)} MRU',
                 style: appFont('Inter', 
                   color: const Color(0xFFFF5216),
                   fontWeight: FontWeight.w700,
@@ -1656,6 +1732,11 @@ class _CreateQuoteSummary extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            s.quoteServerTotalNote,
+            style: appFont('Inter', color: const Color(0xFFD0D0D0), fontSize: 11.5, height: 1.3),
           ),
         ],
       ),
@@ -1804,7 +1885,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Delete medicine?',
+              S.of(context).quoteDeleteTitle,
               textAlign: TextAlign.center,
               style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
@@ -1814,7 +1895,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Are you sure you want to remove $name from the quotation?',
+              S.of(context).quoteDeleteBody(name),
               textAlign: TextAlign.center,
               style: appFont('Inter', 
                 color: const Color(0xFF4B5563),
@@ -1838,7 +1919,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      S.of(context).cancel,
                       style: appFont('Inter', 
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
@@ -1860,7 +1941,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Delete',
+                      S.of(context).quoteDelete,
                       style: appFont('Inter', 
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -2088,7 +2169,7 @@ class _QuotationSentDialog extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Quotation has been sent to the customer\nfor review and approval',
+                    S.of(context).quoteSentBody,
                     textAlign: TextAlign.center,
                     style: appFont('Inter', 
                       color: const Color(0xFF4B5563),
@@ -2162,7 +2243,7 @@ class _InStockBadge extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            'In Stock',
+            S.of(context).quoteInStock,
             style: appFont('Inter', 
               color: const Color(0xFF10B981),
               fontWeight: FontWeight.w600,
@@ -2200,7 +2281,7 @@ class _LimitedBadge extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            'Limited',
+            S.of(context).quoteLimited,
             style: appFont('Inter', 
               color: const Color(0xFFD97706),
               fontWeight: FontWeight.w600,
@@ -2239,7 +2320,7 @@ class _OutOfStockBadge extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            'Out of Stock',
+            S.of(context).outOfStock,
             style: appFont('Inter', 
               color: const Color(0xFFFF3250),
               fontWeight: FontWeight.w600,
@@ -2295,7 +2376,7 @@ class _QuoteValidMenu extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              value ?? 'Quote Valid',
+              value ?? S.of(context).quoteValidLabel,
               style: appFont('Inter', 
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w500,

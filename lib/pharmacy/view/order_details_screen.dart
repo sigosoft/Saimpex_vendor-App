@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -19,9 +20,11 @@ import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_order_details_controller.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order_detail_model.dart';
+import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescription_detail_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_chat_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/localization_service.dart';
 
 part 'create_quotation_screen.dart';
 part '../controller/create_quotation_controller.dart';
@@ -906,12 +909,13 @@ class _PharmacyOrderDetailsScreenState
                                     widget.isPreparing ||
                                     widget.isReady ||
                                     widget.isDelivered) ...[
-                                  const _AwaitingPaymentItems(),
+                                  _AwaitingPaymentItems(
+                                    items: controller.prescriptionQuoteItems,
+                                  ),
                                   const SizedBox(height: 16),
                                   _AwaitingPaymentSummary(
-                                    totalAmount: prescObj?.quoteAmount != null
-                                        ? '${prescObj!.quoteAmount} MRU'
-                                        : null,
+                                    totalAmount: prescObj?.quoteAmount,
+                                    items: controller.prescriptionQuoteItems,
                                   ),
                                   if (isEffectiveAwaitingPayment) ...[
                                     const SizedBox(height: 12),
@@ -2120,16 +2124,43 @@ class _ToPrepareInfoCard extends StatelessWidget {
   }
 }
 
+/// The quote as the server stored it (§6.15): each requested medicine with
+/// its availability, and under an unavailable one the alternative offered
+/// with the customer's answer.
 class _AwaitingPaymentItems extends StatelessWidget {
-  const _AwaitingPaymentItems();
+  const _AwaitingPaymentItems({required this.items});
+
+  final List<PharmacyPrescriptionQuoteItem> items;
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final lang = LocalizationService.currentLanguageCode;
+    final mains = items.where((i) => !i.isAlternative).toList();
+    final alts = items.where((i) => i.isAlternative).toList();
+    final used = <PharmacyPrescriptionQuoteItem>{};
+    List<PharmacyPrescriptionQuoteItem> altsFor(PharmacyPrescriptionQuoteItem m) {
+      final names = {m.nameEn, m.name}.whereType<String>().map((e) => e.toLowerCase()).toSet();
+      final found = alts.where((a) => names.contains(a.alternativeFor!.toLowerCase())).toList();
+      used.addAll(found);
+      return found;
+    }
+
+    final cards = <Widget>[];
+    var n = 0;
+    for (final m in mains) {
+      n++;
+      cards.add(_AwaitingItemCard(index: n, item: m, alternatives: altsFor(m), lang: lang));
+    }
+    for (final a in alts.where((a) => !used.contains(a))) {
+      n++;
+      cards.add(_AwaitingItemCard(index: n, item: a, alternatives: const [], lang: lang));
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'ORDER ITEMS (2)',
+          s.quoteOrderItems('${mains.length}'),
           style: appFont('Inter', 
             color: const Color(0xFFB0B7C3),
             fontWeight: FontWeight.w600,
@@ -2139,55 +2170,53 @@ class _AwaitingPaymentItems extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        const _AwaitingItemCard(
-          availability: _Availability.inStock,
-          name: '1. Paracetamol 500 mg',
-          unit: '10 tablets × 50 MRU',
-          total: '500 MRU',
-        ),
-        const SizedBox(height: 12),
-        const _AwaitingItemCard(
-          availability: _Availability.limited,
-          name: '1. Paracetamol 650 mg',
-          available: 6,
-          prescribed: 10,
-          unit: '6 tablets × 50 MRU',
-          total: '500 MRU',
-        ),
-        const SizedBox(height: 12),
-        const _AwaitingItemCard(
-          availability: _Availability.outOfStock,
-          name: '1. Paracetamol 500 mg',
-          showAlternative: true,
-          unit: '10 tablets × 50 MRU',
-          total: '500 MRU',
-        ),
+        if (cards.isEmpty)
+          Text(s.quoteNoItems, style: appFont('Inter', color: const Color(0xFF6B7280), fontSize: 13))
+        else
+          for (final c in cards) ...[c, const SizedBox(height: 12)],
       ],
     );
   }
 }
 
+num _qNum(String? v) => num.tryParse(v ?? '') ?? 0;
+
+String _qAmount(num v) => v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+
+/// What the customer pays for this line: available/partial lines, and
+/// alternatives they accepted.
+num quoteLineCharged(PharmacyPrescriptionQuoteItem i) {
+  if (i.availability == 'unavailable') return 0;
+  if (i.isAlternative && i.customerDecision != 'accepted') return 0;
+  final total = num.tryParse(i.totalPrice ?? '');
+  return total ?? _qNum(i.quantity) * _qNum(i.price);
+}
+
 class _AwaitingItemCard extends StatelessWidget {
   const _AwaitingItemCard({
-    required this.availability,
-    required this.name,
-    required this.unit,
-    required this.total,
-    this.available,
-    this.prescribed,
-    this.showAlternative = false,
+    required this.index,
+    required this.item,
+    required this.alternatives,
+    required this.lang,
   });
 
-  final _Availability availability;
-  final String name;
-  final String unit;
-  final String total;
-  final int? available;
-  final int? prescribed;
-  final bool showAlternative;
+  final int index;
+  final PharmacyPrescriptionQuoteItem item;
+  final List<PharmacyPrescriptionQuoteItem> alternatives;
+  final String lang;
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final availability = switch (item.availability) {
+      'partial' => _Availability.limited,
+      'unavailable' => _Availability.outOfStock,
+      _ => _Availability.inStock,
+    };
+    final qty = int.tryParse(item.quantity ?? '') ?? 0;
+    final alt = alternatives.isNotEmpty ? alternatives.first : null;
+    final shown = alt ?? item;
+    final charged = alt != null ? quoteLineCharged(alt) : quoteLineCharged(item);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -2205,10 +2234,16 @@ class _AwaitingItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _AvailabilityStatus(availability: availability),
+          Row(children: [
+            _AvailabilityStatus(availability: availability),
+            if (item.isAlternative) ...[
+              const SizedBox(width: 8),
+              _DecisionChip(decision: item.customerDecision),
+            ],
+          ]),
           const SizedBox(height: 12),
           Text(
-            name,
+            '$index. ${item.localName(lang)}',
             style: appFont('Inter', 
               color: const Color(0xFF1E293B),
               fontWeight: FontWeight.w700,
@@ -2216,25 +2251,52 @@ class _AwaitingItemCard extends StatelessWidget {
               height: 1.25,
             ),
           ),
-          if (available != null && prescribed != null) ...[
+          if (item.availability == 'partial' && item.requestedQuantity != null) ...[
             const SizedBox(height: 10),
-            _AvailableCountPill(available: available!, prescribed: prescribed!),
+            _AvailableCountPill(available: qty, prescribed: item.requestedQuantity!),
           ],
-          if (showAlternative) ...[
+          if (alt != null) ...[
             const SizedBox(height: 14),
-            const _SuggestedAlternativeBox(
-              original: _QuotationMedicine(
-                'Paracetamol 500 mg',
-                50,
-                inStock: false,
-              ),
-              medicines: [_QuotationMedicine('Paracetamol 650 mg', 50)],
+            _SuggestedAlternativeBox(
+              original: _QuotationMedicine(item.localName(lang), 0, stock: 0),
+              medicines: [_QuotationMedicine(alt.localName(lang), _qNum(alt.price))],
             ),
+            const SizedBox(height: 8),
+            _DecisionChip(decision: alt.customerDecision),
           ],
           const SizedBox(height: 16),
-          _OrderItemTotals(detail: unit, total: total),
+          _OrderItemTotals(
+            detail: s.quoteQtyTimesPrice(shown.quantity ?? '0', _qAmount(_qNum(shown.price))),
+            total: '${_qAmount(charged)} MRU',
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// The customer's answer to an alternative.
+class _DecisionChip extends StatelessWidget {
+  const _DecisionChip({required this.decision});
+
+  final String? decision;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final (String label, Color color) = switch (decision) {
+      'accepted' => (s.quoteDecisionAccepted, const Color(0xFF16A34A)),
+      'rejected' => (s.quoteDecisionRejected, const Color(0xFFE11D48)),
+      _ => (s.quoteDecisionWaiting, const Color(0xFFB45309)),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(label, style: appFont('Inter', fontSize: 12, fontWeight: FontWeight.w600, color: color)),
     );
   }
 }
@@ -2317,16 +2379,20 @@ class _OrderItemTotals extends StatelessWidget {
 }
 
 class _AwaitingPaymentSummary extends StatelessWidget {
-  const _AwaitingPaymentSummary({this.totalAmount, this.itemTotal, this.tax});
+  const _AwaitingPaymentSummary({this.totalAmount, required this.items});
 
+  /// The server's quote amount (`quote_amount`).
   final String? totalAmount;
-  final String? itemTotal;
-  final String? tax;
+  final List<PharmacyPrescriptionQuoteItem> items;
 
   static const Color _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final itemTotal = items.fold<num>(0, (sum, i) => sum + quoteLineCharged(i));
+    final pending = items.where((i) => i.isAlternative && i.customerDecision == null).length;
+    final total = num.tryParse(totalAmount ?? '') ?? itemTotal;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
@@ -2335,6 +2401,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -2346,7 +2413,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'QUOTATION SUMMARY',
+                s.quoteSummary,
                 style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -2358,19 +2425,14 @@ class _AwaitingPaymentSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 18),
-          _AwaitingSummaryLine(
-            label: 'Item total',
-            value: itemTotal ?? totalAmount ?? '1500 MRU',
-          ),
-          const SizedBox(height: 12),
-          _AwaitingSummaryLine(label: 'Tax', value: tax ?? '0'),
+          _AwaitingSummaryLine(label: s.quoteItemTotal, value: '${_qAmount(itemTotal)} MRU'),
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
           const SizedBox(height: 14),
           Row(
             children: [
               Text(
-                'Total Amount',
+                s.quoteTotalAmount,
                 style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -2379,7 +2441,7 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                totalAmount ?? '1510 MRU',
+                '${_qAmount(total)} MRU',
                 style: appFont('Inter', 
                   color: _orange,
                   fontWeight: FontWeight.w700,
@@ -2388,6 +2450,13 @@ class _AwaitingPaymentSummary extends StatelessWidget {
               ),
             ],
           ),
+          if (pending > 0) ...[
+            const SizedBox(height: 10),
+            Text(
+              s.quotePendingAlternatives('$pending'),
+              style: appFont('Inter', color: const Color(0xFFFFC9A8), fontSize: 12, height: 1.3),
+            ),
+          ],
         ],
       ),
     );
