@@ -9930,6 +9930,386 @@ class S {
       args: [],
     );
   }
+
+  /// `Laundry`
+  String get serviceKindLaundry {
+    return Intl.message(
+      'Laundry',
+      name: 'serviceKindLaundry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car wash`
+  String get serviceKindCarWash {
+    return Intl.message(
+      'Car wash',
+      name: 'serviceKindCarWash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home cleaning`
+  String get serviceKindHomeCleaning {
+    return Intl.message(
+      'Home cleaning',
+      name: 'serviceKindHomeCleaning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for Pickup`
+  String get laundryWaitingForPickup {
+    return Intl.message(
+      'Waiting for Pickup',
+      name: 'laundryWaitingForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Delivery`
+  String get laundryReadyForDelivery {
+    return Intl.message(
+      'Ready for Delivery',
+      name: 'laundryReadyForDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivered`
+  String get laundryDelivered {
+    return Intl.message(
+      'Delivered',
+      name: 'laundryDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for Vehicle`
+  String get carWashWaitingForVehicle {
+    return Intl.message(
+      'Waiting for Vehicle',
+      name: 'carWashWaitingForVehicle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Pickup`
+  String get carWashReadyForPickup {
+    return Intl.message(
+      'Ready for Pickup',
+      name: 'carWashReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Pickup`
+  String get laundryConfirmPickup {
+    return Intl.message(
+      'Confirm Pickup',
+      name: 'laundryConfirmPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Ready for Delivery`
+  String get laundryMarkReadyForDelivery {
+    return Intl.message(
+      'Mark Ready for Delivery',
+      name: 'laundryMarkReadyForDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Delivered`
+  String get laundryMarkAsDelivered {
+    return Intl.message(
+      'Mark as Delivered',
+      name: 'laundryMarkAsDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark Vehicles Received`
+  String get carWashMarkVehiclesReceived {
+    return Intl.message(
+      'Mark Vehicles Received',
+      name: 'carWashMarkVehiclesReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Ready for Pickup`
+  String get carWashMarkReadyForPickup {
+    return Intl.message(
+      'Mark as Ready for Pickup',
+      name: 'carWashMarkReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Slot is fully booked`
+  String get rejectReasonSlotFull {
+    return Intl.message(
+      'Slot is fully booked',
+      name: 'rejectReasonSlotFull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to accept at the selected time`
+  String get rejectReasonTimeUnavailable {
+    return Intl.message(
+      'Unable to accept at the selected time',
+      name: 'rejectReasonTimeUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temporary operational issue`
+  String get rejectReasonOperationalIssue {
+    return Intl.message(
+      'Temporary operational issue',
+      name: 'rejectReasonOperationalIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer estimate ({kg} kg)`
+  String laundryCustomerEstimate(String kg) {
+    return Intl.message(
+      'Customer estimate ($kg kg)',
+      name: 'laundryCustomerEstimate',
+      desc: '',
+      args: [kg],
+    );
+  }
+
+  /// `Actual weight ({kg} kg)`
+  String laundryActualWeight(String kg) {
+    return Intl.message(
+      'Actual weight ($kg kg)',
+      name: 'laundryActualWeight',
+      desc: '',
+      args: [kg],
+    );
+  }
+
+  /// `Pickup slot`
+  String get laundryPickupSlot {
+    return Intl.message(
+      'Pickup slot',
+      name: 'laundryPickupSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery turnaround`
+  String get laundryDeliveryTurnaround {
+    return Intl.message(
+      'Delivery turnaround',
+      name: 'laundryDeliveryTurnaround',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pickup & delivery`
+  String get laundryPickupAndDelivery {
+    return Intl.message(
+      'Pickup & delivery',
+      name: 'laundryPickupAndDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pickup`
+  String get laundryPickup {
+    return Intl.message('Pickup', name: 'laundryPickup', desc: '', args: []);
+  }
+
+  /// `Delivery`
+  String get laundryDelivery {
+    return Intl.message(
+      'Delivery',
+      name: 'laundryDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment status`
+  String get laundryPaymentStatus {
+    return Intl.message(
+      'Payment status',
+      name: 'laundryPaymentStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ADDITIONAL PAYMENT PENDING`
+  String get laundryAdditionalPaymentPending {
+    return Intl.message(
+      'ADDITIONAL PAYMENT PENDING',
+      name: 'laundryAdditionalPaymentPending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already paid`
+  String get laundryAlreadyPaid {
+    return Intl.message(
+      'Already paid',
+      name: 'laundryAlreadyPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Final amount`
+  String get laundryFinalAmount {
+    return Intl.message(
+      'Final amount',
+      name: 'laundryFinalAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Balance due`
+  String get laundryBalanceDue {
+    return Intl.message(
+      'Balance due',
+      name: 'laundryBalanceDue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify weight`
+  String get laundryVerifyWeight {
+    return Intl.message(
+      'Verify weight',
+      name: 'laundryVerifyWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actual weight`
+  String get laundryActualWeightLabel {
+    return Intl.message(
+      'Actual weight',
+      name: 'laundryActualWeightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price breakdown`
+  String get laundryPriceBreakdown {
+    return Intl.message(
+      'Price breakdown',
+      name: 'laundryPriceBreakdown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{rate} MRU / kg`
+  String laundryRatePerKg(String rate) {
+    return Intl.message(
+      '$rate MRU / kg',
+      name: 'laundryRatePerKg',
+      desc: '',
+      args: [rate],
+    );
+  }
+
+  /// `Invoice difference`
+  String get laundryInvoiceDifference {
+    return Intl.message(
+      'Invoice difference',
+      name: 'laundryInvoiceDifference',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Payment Request`
+  String get laundrySendPaymentRequest {
+    return Intl.message(
+      'Send Payment Request',
+      name: 'laundrySendPaymentRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicles`
+  String get carWashVehicles {
+    return Intl.message(
+      'Vehicles',
+      name: 'carWashVehicles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service location`
+  String get carWashServiceLocation {
+    return Intl.message(
+      'Service location',
+      name: 'carWashServiceLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add-ons`
+  String get carWashAddOns {
+    return Intl.message('Add-ons', name: 'carWashAddOns', desc: '', args: []);
+  }
+
+  /// `Add and edit these services on the SAIMPEX vendor web panel for now.`
+  String get serviceEditOnWebPanel {
+    return Intl.message(
+      'Add and edit these services on the SAIMPEX vendor web panel for now.',
+      name: 'serviceEditOnWebPanel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This vendor type isn't in the app yet. Please use the SAIMPEX vendor web panel.`
+  String get vendorTypeUseWebPanel {
+    return Intl.message(
+      'This vendor type isn\'t in the app yet. Please use the SAIMPEX vendor web panel.',
+      name: 'vendorTypeUseWebPanel',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

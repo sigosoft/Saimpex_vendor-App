@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_home.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -33,6 +34,10 @@ class VendorAppRouter {
 
     if (resolved == VendorAppType.water) {
       HomeBinding().dependencies();
+    }
+    // Laundry, car wash or home cleaning (V14): tabs, labels and blocks.
+    if (resolved == VendorAppType.homeCleaning) {
+      await ServiceKinds.load();
     }
 
     Get.offAll(() => screenFor(resolved));

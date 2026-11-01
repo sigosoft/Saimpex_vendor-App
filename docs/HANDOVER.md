@@ -225,6 +225,15 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 - Coverage: Grocery/Restaurant screens mostly use `S`. Water (`lib/water/`) and Home Cleaning (`lib/home_cleaning/`) use `S` since V5 (keys prefixed `water…` / `cleaning…`); mock sample data in those screens is still English until V6 replaces it. Pharmacy uses `S` in a few screens only. The forced `TextDirection.ltr` on the Water bottom nav and language picker was removed in V5; phone numbers, time ranges and +/- quantities are kept LTR on purpose.
 - FR and AR have a few fewer keys than EN: some strings fall back to English.
 
+### 3.5b Laundry and car wash (V14, part A ✅ `feature/v14-laundry-carwash`)
+
+- Laundry (7) and car wash (8) vendors can log in now (the login block is gone) and get the **service section** shared with home cleaning (same `service*` endpoints). `lib/home_cleaning/model/service_kind.dart` (`ServiceKinds.current`, loaded from the saved `vendorType` by the router) gives each kind its tabs, second home counter, status pill, action labels and reject reasons; the backend flow is `VendorScreenData` (`nextStep`, `labelsFor`).
+- **Laundry:** tabs New / Waiting for Pickup / In Progress / Ready for Delivery / Delivered / Cancelled; actions Accept → Confirm Pickup → Mark Ready for Delivery → Mark as Delivered. Details add the service speed, customer estimate vs actual kg (MRU), pickup slot, delivery turnaround, pickup & delivery addresses, and "Additional payment pending" (already paid / final / balance due). **Confirm Pickup on a per-kg service opens Verify Weight** (Figma 9714:86314): actual kg, price breakdown, invoice difference; heavier → **Send Payment Request** (`updateServiceBookingStatus` `payment_request=1`, `actual_weight`), otherwise or once requested → confirm pickup (`status=3`, `actual_weight`).
+- **Car wash:** tabs New / Waiting for Vehicle / In Progress / Ready for Pickup / Completed / Cancelled; actions Accept → Mark Vehicles Received → Mark as Ready for Pickup → Mark as Completed. Details add the vehicles (plate, type, wash, price, add-ons) and the service location.
+- Reject reasons per kind (laundry uses the car wash list, as the backend does).
+- **Part B (to do):** the laundry and car wash Add Service forms (per kg / per item garments, express distance ranges; price per vehicle type, main / extra, what's included). Until then "Add service" on those kinds says to use the web panel.
+- `lib/home_cleaning/view/service_kind_blocks.dart`, tests `test/service_kind_blocks_test.dart`.
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

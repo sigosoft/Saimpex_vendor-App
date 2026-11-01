@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,6 +79,15 @@ class _MyServicesViewState extends State<MyServicesView> {
 
   Future<void> _openEditor([CleaningServiceItem? item]) async {
     HapticFeedback.lightImpact();
+    // The editor is the home cleaning form. Laundry (per kg / per item) and
+    // car wash (price per vehicle type) forms come in V14 part B; until
+    // then those vendors add and edit services on the web panel.
+    if (!ServiceKinds.isCleaning) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).serviceEditOnWebPanel)),
+      );
+      return;
+    }
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
         builder: (_) => AddServiceView(initialService: item),

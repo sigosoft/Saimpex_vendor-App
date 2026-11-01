@@ -52,90 +52,96 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(count) => "${count} أسطوانات فارغة للاستلام";
 
-  static String m16(minutes) => "${minutes} د";
+  static String m16(kg) => "الوزن الفعلي (${kg} كغ)";
 
-  static String m17(id) => "طلب #${id}";
+  static String m17(kg) => "تقدير العميل (${kg} كغ)";
 
-  static String m18(code, time) =>
+  static String m18(rate) => "${rate} أوقية / كغ";
+
+  static String m19(minutes) => "${minutes} د";
+
+  static String m20(id) => "طلب #${id}";
+
+  static String m21(code, time) =>
       "الطلب المسبق ${code} موعده ${time}. يرجى تجهيزه.";
 
-  static String m19(time) => "مخفي حتى ${time}";
+  static String m22(time) => "مخفي حتى ${time}";
 
-  static String m20(qty) => "الكمية: ${qty}";
+  static String m23(qty) => "الكمية: ${qty}";
 
-  static String m21(reason) => "السبب: ${reason}";
+  static String m24(reason) => "السبب: ${reason}";
 
-  static String m22(time) => "مجدول في ${time}";
+  static String m25(time) => "مجدول في ${time}";
 
-  static String m23(code) => "الطلب #${code}";
+  static String m26(code) => "الطلب #${code}";
 
-  static String m24(count) => "الطلبات المسبقة القادمة (${count})";
+  static String m27(count) => "الطلبات المسبقة القادمة (${count})";
 
-  static String m25(count) => "${count} قارورة";
+  static String m28(count) => "${count} قارورة";
 
-  static String m26(count) => "متبقي ${count} قارورة";
+  static String m29(count) => "متبقي ${count} قارورة";
 
-  static String m27(name) => "هل أنت متأكد من أنك تريد حذف \"${name}\"؟";
+  static String m30(name) => "هل أنت متأكد من أنك تريد حذف \"${name}\"؟";
 
-  static String m28(min, max) => "من ${min} إلى ${max} كم";
+  static String m31(min, max) => "من ${min} إلى ${max} كم";
 
-  static String m29(error) => "خطأ أثناء قبول الطلب: ${error}";
+  static String m32(error) => "خطأ أثناء قبول الطلب: ${error}";
 
-  static String m30(error) => "خطأ أثناء قبول الاشتراك: ${error}";
+  static String m33(error) => "خطأ أثناء قبول الاشتراك: ${error}";
 
-  static String m31(error) => "خطأ في إضافة المنتج: ${error}";
+  static String m34(error) => "خطأ في إضافة المنتج: ${error}";
 
-  static String m32(error) => "خطأ أثناء إلغاء الطلب: ${error}";
+  static String m35(error) => "خطأ أثناء إلغاء الطلب: ${error}";
 
-  static String m33(error) => "خطأ في حذف المنتج: ${error}";
+  static String m36(error) => "خطأ في حذف المنتج: ${error}";
 
-  static String m34(error) => "خطأ أثناء تحديد الطلب كجاهز: ${error}";
+  static String m37(error) => "خطأ أثناء تحديد الطلب كجاهز: ${error}";
 
-  static String m35(error) => "خطأ أثناء إيقاف الاشتراك مؤقتًا: ${error}";
+  static String m38(error) => "خطأ أثناء إيقاف الاشتراك مؤقتًا: ${error}";
 
-  static String m36(error) => "خطأ أثناء تحضير الطلب: ${error}";
+  static String m39(error) => "خطأ أثناء تحضير الطلب: ${error}";
 
-  static String m37(error) => "خطأ أثناء رفض الاشتراك: ${error}";
+  static String m40(error) => "خطأ أثناء رفض الاشتراك: ${error}";
 
-  static String m38(error) => "خطأ أثناء استئناف الاشتراك: ${error}";
+  static String m41(error) => "خطأ أثناء استئناف الاشتراك: ${error}";
 
-  static String m39(error) => "خطأ في تحديث حالة المنتج: ${error}";
+  static String m42(error) => "خطأ في تحديث حالة المنتج: ${error}";
 
-  static String m40(error) => "خطأ في تحديث السعر: ${error}";
+  static String m43(error) => "خطأ في تحديث السعر: ${error}";
 
-  static String m41(error) => "خطأ في تحديث المخزون: ${error}";
+  static String m44(error) => "خطأ في تحديث المخزون: ${error}";
 
-  static String m42(days) => "كل ${days} أيام";
+  static String m45(days) => "كل ${days} أيام";
 
-  static String m43(count) => "الكل ${count}";
+  static String m46(count) => "الكل ${count}";
 
-  static String m44(count) => "متوفر ${count}";
+  static String m47(count) => "متوفر ${count}";
 
-  static String m45(count) => "مخزون منخفض ${count}";
+  static String m48(count) => "مخزون منخفض ${count}";
 
-  static String m46(id) => "الرقم: ${id}";
+  static String m49(id) => "الرقم: ${id}";
 
-  static String m47(count) => "تم اختيار ${count} صور";
+  static String m50(count) => "تم اختيار ${count} صور";
 
-  static String m48(date) => "آخر بيع: ${date}";
+  static String m51(date) => "آخر بيع: ${date}";
 
-  static String m49(count) => "+${count} منتجات أخرى";
+  static String m52(count) => "+${count} منتجات أخرى";
 
-  static String m50(count) => "عناصر الطلب (${count})";
+  static String m53(count) => "عناصر الطلب (${count})";
 
-  static String m51(date) => "أُوقف في: ${date}";
+  static String m54(date) => "أُوقف في: ${date}";
 
-  static String m52(start) => "البداية ${start}";
+  static String m55(start) => "البداية ${start}";
 
-  static String m53(start, end) => "البداية ${start} - النهاية ${end}";
+  static String m56(start, end) => "البداية ${start} - النهاية ${end}";
 
-  static String m54(count) => "(${count} تقييم)";
+  static String m57(count) => "(${count} تقييم)";
 
-  static String m55(id) => "رقم المخزون: ${id}";
+  static String m58(id) => "رقم المخزون: ${id}";
 
-  static String m56(open, close) => "اليوم: ${open} - ${close}";
+  static String m59(open, close) => "اليوم: ${open} - ${close}";
 
-  static String m57(name) => "مرحبًا بك في ${name}!";
+  static String m60(name) => "مرحبًا بك في ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -314,6 +320,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelOrder": MessageLookupByLibrary.simpleMessage("إلغاء الطلب"),
     "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
     "cancelledOnLabel": m2,
+    "carWashAddOns": MessageLookupByLibrary.simpleMessage("الإضافات"),
+    "carWashMarkReadyForPickup": MessageLookupByLibrary.simpleMessage(
+      "جاهزة للاستلام",
+    ),
+    "carWashMarkVehiclesReceived": MessageLookupByLibrary.simpleMessage(
+      "تم استلام المركبات",
+    ),
+    "carWashReadyForPickup": MessageLookupByLibrary.simpleMessage(
+      "جاهزة للاستلام",
+    ),
+    "carWashServiceLocation": MessageLookupByLibrary.simpleMessage(
+      "مكان الخدمة",
+    ),
+    "carWashVehicles": MessageLookupByLibrary.simpleMessage("المركبات"),
+    "carWashWaitingForVehicle": MessageLookupByLibrary.simpleMessage(
+      "بانتظار المركبة",
+    ),
     "cart": MessageLookupByLibrary.simpleMessage("سلة التسوق"),
     "cash": MessageLookupByLibrary.simpleMessage("نقداً"),
     "cashOnDelivery": MessageLookupByLibrary.simpleMessage(
@@ -940,6 +963,58 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "lastPurchase": MessageLookupByLibrary.simpleMessage("آخر عملية شراء"),
     "lastPurchaseLabel": MessageLookupByLibrary.simpleMessage("آخر عملية شراء"),
+    "laundryActualWeight": m16,
+    "laundryActualWeightLabel": MessageLookupByLibrary.simpleMessage(
+      "الوزن الفعلي",
+    ),
+    "laundryAdditionalPaymentPending": MessageLookupByLibrary.simpleMessage(
+      "دفعة إضافية معلقة",
+    ),
+    "laundryAlreadyPaid": MessageLookupByLibrary.simpleMessage("المدفوع"),
+    "laundryBalanceDue": MessageLookupByLibrary.simpleMessage("المتبقي"),
+    "laundryConfirmPickup": MessageLookupByLibrary.simpleMessage(
+      "تأكيد الاستلام",
+    ),
+    "laundryCustomerEstimate": m17,
+    "laundryDelivered": MessageLookupByLibrary.simpleMessage("تم التوصيل"),
+    "laundryDelivery": MessageLookupByLibrary.simpleMessage("التوصيل"),
+    "laundryDeliveryTurnaround": MessageLookupByLibrary.simpleMessage(
+      "موعد التوصيل",
+    ),
+    "laundryFinalAmount": MessageLookupByLibrary.simpleMessage(
+      "المبلغ النهائي",
+    ),
+    "laundryInvoiceDifference": MessageLookupByLibrary.simpleMessage(
+      "فرق الفاتورة",
+    ),
+    "laundryMarkAsDelivered": MessageLookupByLibrary.simpleMessage(
+      "تم التوصيل",
+    ),
+    "laundryMarkReadyForDelivery": MessageLookupByLibrary.simpleMessage(
+      "جاهز للتوصيل",
+    ),
+    "laundryPaymentStatus": MessageLookupByLibrary.simpleMessage("حالة الدفع"),
+    "laundryPickup": MessageLookupByLibrary.simpleMessage("الاستلام"),
+    "laundryPickupAndDelivery": MessageLookupByLibrary.simpleMessage(
+      "الاستلام والتوصيل",
+    ),
+    "laundryPickupSlot": MessageLookupByLibrary.simpleMessage("موعد الاستلام"),
+    "laundryPriceBreakdown": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل السعر",
+    ),
+    "laundryRatePerKg": m18,
+    "laundryReadyForDelivery": MessageLookupByLibrary.simpleMessage(
+      "جاهز للتوصيل",
+    ),
+    "laundrySendPaymentRequest": MessageLookupByLibrary.simpleMessage(
+      "إرسال طلب الدفع",
+    ),
+    "laundryVerifyWeight": MessageLookupByLibrary.simpleMessage(
+      "التحقق من الوزن",
+    ),
+    "laundryWaitingForPickup": MessageLookupByLibrary.simpleMessage(
+      "بانتظار الاستلام",
+    ),
     "leave": MessageLookupByLibrary.simpleMessage("إجازة"),
     "leaves": MessageLookupByLibrary.simpleMessage("الإجازات"),
     "leavesHistory": MessageLookupByLibrary.simpleMessage("سجل الإجازات"),
@@ -978,7 +1053,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الحد الأدنى للطلب",
     ),
     "mins": MessageLookupByLibrary.simpleMessage("دقيقة"),
-    "minutesShort": m16,
+    "minutesShort": m19,
     "missedSomething": MessageLookupByLibrary.simpleMessage("هل نسيت شيئًا؟"),
     "monday": MessageLookupByLibrary.simpleMessage("الاثنين"),
     "morePoints": MessageLookupByLibrary.simpleMessage("المزيد من النقاط"),
@@ -1152,7 +1227,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "تفصيل مدة الطلب",
     ),
-    "orderIdLabel": m17,
+    "orderIdLabel": m20,
     "orderItems": MessageLookupByLibrary.simpleMessage("عناصر الطلب"),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("تم الاستلام"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("تم تقديم الطلب"),
@@ -1307,7 +1382,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "preOrders": MessageLookupByLibrary.simpleMessage("الطلبات المسبقة"),
     "preorderBadge": MessageLookupByLibrary.simpleMessage("طلب مسبق"),
     "preorderDueNow": MessageLookupByLibrary.simpleMessage("موعده الآن"),
-    "preorderReminderBody": m18,
+    "preorderReminderBody": m21,
     "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
       "طلب مسبق قريب الموعد",
     ),
@@ -1339,14 +1414,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "productHiddenForever": MessageLookupByLibrary.simpleMessage(
       "مخفي حتى تظهره",
     ),
-    "productHiddenUntil": m19,
+    "productHiddenUntil": m22,
     "productOutOfStock": MessageLookupByLibrary.simpleMessage(
       "المنتج غير متوفر",
     ),
     "productVisible": MessageLookupByLibrary.simpleMessage("ظاهر للعملاء"),
     "products": MessageLookupByLibrary.simpleMessage("المنتجات"),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
-    "qtyLabel": m20,
+    "qtyLabel": m23,
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("قيّم الطلب"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -1369,7 +1444,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم الوصول إلى المطعم",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
-    "reasonColonLabel": m21,
+    "reasonColonLabel": m24,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("سبب الإجازة"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("السبب"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("الدفعات المستلمة"),
@@ -1394,6 +1469,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "تفاصيل التسجيل",
     ),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
+    "rejectReasonOperationalIssue": MessageLookupByLibrary.simpleMessage(
+      "مشكلة تشغيلية مؤقتة",
+    ),
+    "rejectReasonSlotFull": MessageLookupByLibrary.simpleMessage(
+      "الموعد محجوز بالكامل",
+    ),
+    "rejectReasonTimeUnavailable": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن القبول في الوقت المحدد",
+    ),
     "remove": MessageLookupByLibrary.simpleMessage("إزالة"),
     "replace": MessageLookupByLibrary.simpleMessage("استبدال"),
     "replaceCartItem": MessageLookupByLibrary.simpleMessage(
@@ -1445,7 +1529,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("مسح الرمز الشريطي"),
     "scheduled": MessageLookupByLibrary.simpleMessage("مجدول"),
-    "scheduledForTime": m22,
+    "scheduledForTime": m25,
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "ابحث عن المبلغ أو رقم المعاملة",
@@ -1485,6 +1569,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceDeliveryCharge": MessageLookupByLibrary.simpleMessage(
       "رسوم خدمة التوصيل",
     ),
+    "serviceEditOnWebPanel": MessageLookupByLibrary.simpleMessage(
+      "أضف هذه الخدمات وعدّلها من بوابة البائع على الويب حاليًا.",
+    ),
+    "serviceKindCarWash": MessageLookupByLibrary.simpleMessage("غسيل السيارات"),
+    "serviceKindHomeCleaning": MessageLookupByLibrary.simpleMessage(
+      "تنظيف المنازل",
+    ),
+    "serviceKindLaundry": MessageLookupByLibrary.simpleMessage("مغسلة"),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "showProductNow": MessageLookupByLibrary.simpleMessage("إظهار الآن"),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
@@ -1511,7 +1603,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "subtotal": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
     "sunday": MessageLookupByLibrary.simpleMessage("الأحد"),
     "supportMessages": MessageLookupByLibrary.simpleMessage("رسائل الدعم"),
-    "supportOrderCode": m23,
+    "supportOrderCode": m26,
     "sushiPlatter": MessageLookupByLibrary.simpleMessage("طبق سوشي"),
     "swiftCode": MessageLookupByLibrary.simpleMessage("رمز SWIFT"),
     "tags": MessageLookupByLibrary.simpleMessage("الوسوم"),
@@ -1577,7 +1669,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("سائق غير معروف"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("بائع غير معروف"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("الإجازات القادمة"),
-    "upcomingPreordersCount": m24,
+    "upcomingPreordersCount": m27,
     "update": MessageLookupByLibrary.simpleMessage("تحديث"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("تحديث القسيمة"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -1600,6 +1692,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "vegBurger": MessageLookupByLibrary.simpleMessage("برجر نباتي"),
     "vendor": MessageLookupByLibrary.simpleMessage("بائع"),
     "vendorType": MessageLookupByLibrary.simpleMessage("نوع البائع"),
+    "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
+      "هذا النوع من البائعين غير متاح في التطبيق بعد. يرجى استخدام بوابة البائع على الويب.",
+    ),
     "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewAllCoupons": MessageLookupByLibrary.simpleMessage("عرض جميع القسائم"),
@@ -1646,8 +1741,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterBottleSize": MessageLookupByLibrary.simpleMessage("حجم القارورة"),
     "waterBottles": MessageLookupByLibrary.simpleMessage("قوارير"),
-    "waterBottlesCount": m25,
-    "waterBottlesLeft": m26,
+    "waterBottlesCount": m28,
+    "waterBottlesLeft": m29,
     "waterBrand": MessageLookupByLibrary.simpleMessage("العلامة التجارية"),
     "waterBrandName": MessageLookupByLibrary.simpleMessage(
       "اسم العلامة التجارية",
@@ -1677,7 +1772,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد حذف هذا المنتج؟",
     ),
-    "waterConfirmDeleteNamedItem": m27,
+    "waterConfirmDeleteNamedItem": m30,
     "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد تحديد هذا المنتج كمتوفر؟",
     ),
@@ -1719,7 +1814,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "نوع التوصيل",
     ),
     "waterDescription": MessageLookupByLibrary.simpleMessage("الوصف"),
-    "waterDistanceRangeKm": m28,
+    "waterDistanceRangeKm": m31,
     "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
       "تعديل نطاق المسافة",
     ),
@@ -1738,25 +1833,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterEnterPrice": MessageLookupByLibrary.simpleMessage("أدخل السعر"),
     "waterEnterQuantity": MessageLookupByLibrary.simpleMessage("أدخل الكمية"),
     "waterEnterReason": MessageLookupByLibrary.simpleMessage("أدخل السبب"),
-    "waterErrorAcceptingOrder": m29,
-    "waterErrorAcceptingSubscription": m30,
-    "waterErrorAddingProduct": m31,
-    "waterErrorCancellingOrder": m32,
-    "waterErrorDeletingProduct": m33,
-    "waterErrorMarkingOrderAsReady": m34,
-    "waterErrorPausingSubscription": m35,
-    "waterErrorPreparingOrder": m36,
-    "waterErrorRejectingSubscription": m37,
-    "waterErrorResumingSubscription": m38,
-    "waterErrorUpdatingItemStatus": m39,
-    "waterErrorUpdatingPrice": m40,
-    "waterErrorUpdatingStock": m41,
+    "waterErrorAcceptingOrder": m32,
+    "waterErrorAcceptingSubscription": m33,
+    "waterErrorAddingProduct": m34,
+    "waterErrorCancellingOrder": m35,
+    "waterErrorDeletingProduct": m36,
+    "waterErrorMarkingOrderAsReady": m37,
+    "waterErrorPausingSubscription": m38,
+    "waterErrorPreparingOrder": m39,
+    "waterErrorRejectingSubscription": m40,
+    "waterErrorResumingSubscription": m41,
+    "waterErrorUpdatingItemStatus": m42,
+    "waterErrorUpdatingPrice": m43,
+    "waterErrorUpdatingStock": m44,
     "waterEstValue": MessageLookupByLibrary.simpleMessage("القيمة التقديرية"),
     "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
       "رسوم التوصيل التقديرية",
     ),
     "waterEvening": MessageLookupByLibrary.simpleMessage("المساء"),
-    "waterEveryNDays": m42,
+    "waterEveryNDays": m45,
     "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
       "التوصيل السريع",
     ),
@@ -1820,20 +1915,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
       "يرجى ملء جميع الحقول",
     ),
-    "waterFilterAllCount": m43,
+    "waterFilterAllCount": m46,
     "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
       "تصفية حسب الفئة",
     ),
-    "waterFilterInStockCount": m44,
-    "waterFilterLowStockCount": m45,
+    "waterFilterInStockCount": m47,
+    "waterFilterLowStockCount": m48,
     "waterFlat": MessageLookupByLibrary.simpleMessage("مبلغ ثابت"),
     "waterFrequency": MessageLookupByLibrary.simpleMessage("التكرار"),
-    "waterIdLabel": m46,
+    "waterIdLabel": m49,
     "waterImage": MessageLookupByLibrary.simpleMessage("صورة"),
     "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
       "PNG أو JPG حتى 5 ميغابايت",
     ),
-    "waterImagesSelected": m47,
+    "waterImagesSelected": m50,
     "waterInStock": MessageLookupByLibrary.simpleMessage("متوفر"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("المخزون"),
     "waterInventoryControl": MessageLookupByLibrary.simpleMessage(
@@ -1846,7 +1941,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
       "تم تحديد المنتج كغير متوفر بنجاح",
     ),
-    "waterLastSold": m48,
+    "waterLastSold": m51,
     "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم إلغاء الإجازة بنجاح",
     ),
@@ -1888,7 +1983,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterMonth": MessageLookupByLibrary.simpleMessage("الشهر"),
     "waterMonthly": MessageLookupByLibrary.simpleMessage("شهري"),
     "waterMore": MessageLookupByLibrary.simpleMessage("المزيد"),
-    "waterMoreProducts": m49,
+    "waterMoreProducts": m52,
     "waterMorning": MessageLookupByLibrary.simpleMessage("الصباح"),
     "waterNewBadge": MessageLookupByLibrary.simpleMessage("جديد"),
     "waterNewOrders": MessageLookupByLibrary.simpleMessage("طلبات جديدة"),
@@ -1944,7 +2039,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
       "تم توصيل الطلب",
     ),
-    "waterOrderItemsCount": m50,
+    "waterOrderItemsCount": m53,
     "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
       "تم تحديد الطلب كجاهز بنجاح",
     ),
@@ -1971,7 +2066,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterPaused": MessageLookupByLibrary.simpleMessage("متوقف مؤقتًا"),
     "waterPausedByLabel": MessageLookupByLibrary.simpleMessage("أوقفه:"),
-    "waterPausedOn": m51,
+    "waterPausedOn": m54,
     "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage(
       "تاريخ الإيقاف:",
     ),
@@ -1994,8 +2089,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "استلمها المندوب",
     ),
     "waterPlan": MessageLookupByLibrary.simpleMessage("الخطة"),
-    "waterPlanRangeStart": m52,
-    "waterPlanRangeStartEnd": m53,
+    "waterPlanRangeStart": m55,
+    "waterPlanRangeStartEnd": m56,
     "waterPlanSummary": MessageLookupByLibrary.simpleMessage("ملخص الخطة"),
     "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال المخزون المتاح",
@@ -2089,7 +2184,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
       "ملخص الإيرادات",
     ),
-    "waterReviewsCount": m54,
+    "waterReviewsCount": m57,
     "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
       "أداء المبيعات",
     ),
@@ -2127,7 +2222,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت إضافة المخزون",
     ),
     "waterStockHistory": MessageLookupByLibrary.simpleMessage("سجل المخزون"),
-    "waterStockIdLabel": m55,
+    "waterStockIdLabel": m58,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("تم سحب المخزون"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تحديث المخزون بنجاح",
@@ -2182,7 +2277,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
     ),
-    "waterTodayTimings": m56,
+    "waterTodayTimings": m59,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("غدًا"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المدفوع"),
@@ -2211,7 +2306,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "الجدول الأسبوعي",
     ),
-    "waterWelcomeToShop": m57,
+    "waterWelcomeToShop": m60,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "تم تحديث ساعات العمل بنجاح",
     ),

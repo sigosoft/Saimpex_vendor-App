@@ -217,9 +217,10 @@ class HomeCleaningController extends GetxController {
   /// success.
   Future<CleaningApiResult> updateBookingStatus(
     CleaningBooking booking,
-    int status, {
+    int? status, {
     String? reason,
     String? note,
+    Map<String, dynamic>? extra,
   }) async {
     busyIds.add(booking.id);
     update();
@@ -228,6 +229,7 @@ class HomeCleaningController extends GetxController {
       status,
       reason: reason,
       note: note,
+      extra: extra,
     );
     busyIds.remove(booking.id);
     update();
@@ -245,13 +247,16 @@ class CleaningBookingActions {
   /// Allowed transitions for home cleaning (server enforces them):
   /// 1 -> 2 | 10, 2 -> 8 | 3 | 10, 8 -> 3 | 10, 3 -> 9 | 10.
   /// `reason` is required for 10 (max 255), `note` optional (max 100).
+  /// [status] may be null for a laundry payment request (V14), which sends
+  /// `payment_request: 1` and `actual_weight` in [extra] instead.
   static Future<CleaningApiResult> updateStatus(
     int orderId,
-    int status, {
+    int? status, {
     String? reason,
     String? note,
+    Map<String, dynamic>? extra,
   }) {
-    final body = <String, dynamic>{'order_id': orderId, 'status': status};
+    final body = <String, dynamic>{'order_id': orderId, if (status != null) 'status': status, ...?extra};
     if (reason != null && reason.trim().isNotEmpty) body['reason'] = reason.trim();
     if (note != null && note.trim().isNotEmpty) body['note'] = note.trim();
     return CleaningApi.post(ApiEndPoints.updateServiceBookingStatus, body);

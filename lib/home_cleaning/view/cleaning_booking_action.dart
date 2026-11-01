@@ -6,6 +6,8 @@ import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/home_cleaning_controller.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
+import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
 
 /// Runs the next step for [booking] (accept / start cleaning / mark completed,
 /// using the server's `next_status`) or, with [reject], asks for a reason and
@@ -22,14 +24,27 @@ Future<CleaningBooking?> runCleaningBookingAction(
 
   int? status;
   RejectBookingResult? rejection;
-  if (reject) {
+  Map<String, dynamic>? extra;
+  // Laundry, Confirm Pickup on a per-kg service: weigh first (V14). The
+  // sheet either asks the customer for the difference (payment request,
+  // status stays) or confirms the pickup with the actual weight.
+  if (!reject && ServiceKinds.isLaundry && booking.status == 2 && booking.raw['requires_weight'] == true) {
+    final weighed = await showVerifyWeightSheet(context, booking);
+    if (weighed == null) return null;
+    extra = {'actual_weight': weighed.kg};
+    if (weighed.paymentRequest) {
+      extra['payment_request'] = 1;
+    } else {
+      status = 3;
+    }
+  } else if (reject) {
     rejection = await showRejectBookingSheet(context);
     if (rejection == null) return null;
     status = CleaningStatus.cancelled;
   } else {
     status = booking.resolvedNextStatus;
   }
-  if (status == null) return null;
+  if (status == null && extra == null) return null;
 
   final CleaningApiResult res;
   if (Get.isRegistered<HomeCleaningController>()) {
@@ -38,6 +53,7 @@ Future<CleaningBooking?> runCleaningBookingAction(
       status,
       reason: rejection?.reason,
       note: rejection?.note,
+      extra: extra,
     );
   } else {
     res = await CleaningBookingActions.updateStatus(
@@ -45,6 +61,7 @@ Future<CleaningBooking?> runCleaningBookingAction(
       status,
       reason: rejection?.reason,
       note: rejection?.note,
+      extra: extra,
     );
   }
 

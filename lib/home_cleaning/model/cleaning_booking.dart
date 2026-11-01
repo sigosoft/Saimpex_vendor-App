@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 
 /// Home cleaning order statuses (vendor_type 9) as used by
 /// ServiceVerticalController / VendorScreenData on the backend:
@@ -24,18 +25,17 @@ class CleaningStatus {
       };
 }
 
-/// The five filter chips on the bookings list.
-enum CleaningBookingTab {
-  newBookings([CleaningStatus.newBooking]),
-  accepted([CleaningStatus.accepted, CleaningStatus.onTheWay]),
-  inProgress([CleaningStatus.inProgress]),
-  completed([CleaningStatus.completed]),
-  cancelled([CleaningStatus.cancelled]);
-
+/// A filter chip on the bookings list. The chips depend on the service
+/// kind (V14): home cleaning has five, laundry and car wash six (with
+/// Ready, status 4). See [ServiceKinds.tabStatuses].
+class CleaningBookingTab {
   const CleaningBookingTab(this.statuses);
 
   /// Server `status` values shown under this chip.
   final List<int> statuses;
+
+  static List<CleaningBookingTab> get values =>
+      ServiceKinds.tabStatuses.map(CleaningBookingTab.new).toList();
 }
 
 class CleaningBookingLine {
@@ -103,6 +103,7 @@ class CleaningBooking {
     this.canReject = false,
     this.rejectReason,
     this.rejectNote,
+    this.raw = const {},
   });
 
   final int id;
@@ -140,6 +141,14 @@ class CleaningBooking {
   final bool canReject;
   final String? rejectReason;
   final String? rejectNote;
+
+  /// The whole row, for the laundry and car wash blocks (V14): `vehicles`,
+  /// `pickup_slot`, `delivery_turnaround`, `estimate_kg`, `rate_per_kg`,
+  /// `actual_kg`, `balance_due`…
+  final Map<String, dynamic> raw;
+
+  /// Laundry / car wash: Ready for Delivery / Ready for Pickup.
+  bool get isReady => status == 4;
 
   bool get isNew => status == CleaningStatus.newBooking;
   bool get isAccepted =>
@@ -232,6 +241,7 @@ class CleaningBooking {
       canReject: json['can_reject'] == true || json['can_reject'].toString() == '1',
       rejectReason: _str(json['reject_reason']),
       rejectNote: _str(json['reject_note']),
+      raw: json,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/home_cleaning_controller.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/chat/home_cleaning_messages_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_action.dart';
@@ -594,8 +595,11 @@ class _MetricsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: _count(dashboard?.upcoming),
-                label: S.of(context).cleaningUpcoming,
+                // Laundry / car wash: bookings waiting for pickup / vehicle (status 2).
+                count: _count(ServiceKinds.isCleaning
+                    ? dashboard?.upcoming
+                    : dashboard?.countFor(CleaningBookingTab.values[1])),
+                label: ServiceKinds.secondCounterLabel(context),
                 circle: Color(0xFFC8E6C9),
                 countColor: Color(0xFF2E7D32),
               ),
@@ -911,13 +915,8 @@ class _Filters extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final int? Function(CleaningBookingTab tab) countFor;
 
-  static List<String> _labelsOf(BuildContext context) => [
-        S.of(context).cleaningNewBookings,
-        S.of(context).accepted,
-        S.of(context).cleaningInProgress,
-        S.of(context).cleaningCompleted,
-        S.of(context).cancelled,
-      ];
+  // Per service kind (V14): laundry and car wash add a Ready chip.
+  static List<String> _labelsOf(BuildContext context) => ServiceKinds.tabLabels(context);
 
   @override
   Widget build(BuildContext context) {
@@ -933,7 +932,7 @@ class _Filters extends StatelessWidget {
           final selected = index == selectedIndex;
           // Badge: bookings in this chip's statuses (serviceDashboard
           // status_mix); not shown on Cancelled, as in the design.
-          final count = index < 4 ? countFor(CleaningBookingTab.values[index]) : null;
+          final count = index < labels.length - 1 ? countFor(CleaningBookingTab.values[index]) : null;
           return GestureDetector(
             onTap: () => onSelect(index),
             child: Stack(
@@ -999,6 +998,7 @@ class _Filters extends StatelessWidget {
 
 /// Status pill text + colour shared by the list card.
 ({String label, Color color}) _statusPill(BuildContext context, CleaningBooking b) {
+  if (!ServiceKinds.isCleaning) return ServiceKinds.statusPill(context, b.status);
   if (b.isInProgress) {
     return (label: S.of(context).cleaningStatusInProgress, color: const Color(0xFF1E6BE6));
   }
@@ -1301,7 +1301,7 @@ class _BookingCard extends StatelessWidget {
             const SizedBox.shrink()
           else ...[
             const SizedBox(height: 14),
-            if (booking.isInProgress || booking.isAccepted)
+            if (booking.isInProgress || booking.isAccepted || booking.isReady)
               SizedBox(
                 width: double.infinity,
                 height: 44,
@@ -1317,9 +1317,7 @@ class _BookingCard extends StatelessWidget {
                   child: busy
                       ? const _ButtonSpinner()
                       : Text(
-                          booking.isInProgress
-                              ? S.of(context).cleaningMarkAsCompleted
-                              : S.of(context).cleaningStartCleaning,
+                          ServiceKinds.actionLabel(context, booking.status),
                           style: appFont('Inter', 
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

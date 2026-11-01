@@ -2392,5 +2392,53 @@
   "@adminNote": {
     "placeholders": {"note": {"type": "String"}}
   },
-  "requestNameAndReason": "Enter a name and a reason."
+  "requestNameAndReason": "Enter a name and a reason.",
+  "serviceKindLaundry": "Laundry",
+  "serviceKindCarWash": "Car wash",
+  "serviceKindHomeCleaning": "Home cleaning",
+  "laundryWaitingForPickup": "Waiting for Pickup",
+  "laundryReadyForDelivery": "Ready for Delivery",
+  "laundryDelivered": "Delivered",
+  "carWashWaitingForVehicle": "Waiting for Vehicle",
+  "carWashReadyForPickup": "Ready for Pickup",
+  "laundryConfirmPickup": "Confirm Pickup",
+  "laundryMarkReadyForDelivery": "Mark Ready for Delivery",
+  "laundryMarkAsDelivered": "Mark as Delivered",
+  "carWashMarkVehiclesReceived": "Mark Vehicles Received",
+  "carWashMarkReadyForPickup": "Mark as Ready for Pickup",
+  "rejectReasonSlotFull": "Slot is fully booked",
+  "rejectReasonTimeUnavailable": "Unable to accept at the selected time",
+  "rejectReasonOperationalIssue": "Temporary operational issue",
+  "laundryCustomerEstimate": "Customer estimate ({kg} kg)",
+  "@laundryCustomerEstimate": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryActualWeight": "Actual weight ({kg} kg)",
+  "@laundryActualWeight": {
+    "placeholders": {"kg": {"type": "String"}}
+  },
+  "laundryPickupSlot": "Pickup slot",
+  "laundryDeliveryTurnaround": "Delivery turnaround",
+  "laundryPickupAndDelivery": "Pickup & delivery",
+  "laundryPickup": "Pickup",
+  "laundryDelivery": "Delivery",
+  "laundryPaymentStatus": "Payment status",
+  "laundryAdditionalPaymentPending": "ADDITIONAL PAYMENT PENDING",
+  "laundryAlreadyPaid": "Already paid",
+  "laundryFinalAmount": "Final amount",
+  "laundryBalanceDue": "Balance due",
+  "laundryVerifyWeight": "Verify weight",
+  "laundryActualWeightLabel": "Actual weight",
+  "laundryPriceBreakdown": "Price breakdown",
+  "laundryRatePerKg": "{rate} MRU / kg",
+  "@laundryRatePerKg": {
+    "placeholders": {"rate": {"type": "String"}}
+  },
+  "laundryInvoiceDifference": "Invoice difference",
+  "laundrySendPaymentRequest": "Send Payment Request",
+  "carWashVehicles": "Vehicles",
+  "carWashServiceLocation": "Service location",
+  "carWashAddOns": "Add-ons",
+  "serviceEditOnWebPanel": "Add and edit these services on the SAIMPEX vendor web panel for now.",
+  "vendorTypeUseWebPanel": "This vendor type isn't in the app yet. Please use the SAIMPEX vendor web panel."
 }

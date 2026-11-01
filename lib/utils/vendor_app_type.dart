@@ -57,7 +57,9 @@ extension VendorAppTypeX on VendorAppType {
   }
 
   /// The app section for the vendor_type the login API returns, or null when
-  /// the app has no section for it (laundry 7, car wash 8, courier, express).
+  /// the app has no section for it (courier, express). Laundry (7) and car
+  /// wash (8) share the service section with home cleaning (task V14); the
+  /// section reads the exact kind from the saved vendorType (ServiceKinds).
   static VendorAppType? fromVendorType(int? vendorType) {
     switch (vendorType) {
       case 1: // food
@@ -69,7 +71,9 @@ extension VendorAppTypeX on VendorAppType {
       case 4: // water
       case 10: // gas
         return VendorAppType.water;
-      case 9:
+      case 7: // laundry
+      case 8: // car wash
+      case 9: // home cleaning
         return VendorAppType.homeCleaning;
       default:
         return null;
