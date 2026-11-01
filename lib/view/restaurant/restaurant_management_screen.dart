@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image_picker/image_picker.dart';
@@ -617,11 +617,11 @@ class _RestaurantManagementScreenState
         ),
         title: Text(
           "Select Image",
-          style: GoogleFonts.rubik(fontWeight: FontWeight.bold),
+          style: appFont('Rubik', fontWeight: FontWeight.bold),
         ),
         content: Text(
           "Choose image from gallery or camera",
-          style: GoogleFonts.rubik(),
+          style: appFont('Rubik'),
         ),
         actions: [
           TextButton(
@@ -635,7 +635,7 @@ class _RestaurantManagementScreenState
             },
             child: Text(
               "Gallery",
-              style: GoogleFonts.rubik(color: colorPrimary, fontWeight: FontWeight.bold),
+              style: appFont('Rubik', color: colorPrimary, fontWeight: FontWeight.bold),
             ),
           ),
           TextButton(
@@ -649,7 +649,7 @@ class _RestaurantManagementScreenState
             },
             child: Text(
               "Camera",
-              style: GoogleFonts.rubik(color: colorPrimary, fontWeight: FontWeight.bold),
+              style: appFont('Rubik', color: colorPrimary, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -685,7 +685,7 @@ class _RestaurantManagementScreenState
                         children: [
                           Text(
                             item == null ? "Add Category" : "Edit Category",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               color: Colors.black,
@@ -711,7 +711,7 @@ class _RestaurantManagementScreenState
                       const SizedBox(height: 20),
                       Text(
                         S.of(context).name,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.grey[600],
                           fontSize: 14,
                         ),
@@ -721,7 +721,7 @@ class _RestaurantManagementScreenState
                         controller: nameCtrl,
                         decoration: InputDecoration(
                           hintText: S.of(context).enterCategoryNameHint,
-                          hintStyle: GoogleFonts.rubik(
+                          hintStyle: appFont('Rubik', 
                             color: Colors.grey[400],
                             fontSize: 13,
                           ),
@@ -750,7 +750,7 @@ class _RestaurantManagementScreenState
                       const SizedBox(height: 20),
                       Text(
                         "Image",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.grey[600],
                           fontSize: 14,
                         ),
@@ -829,7 +829,7 @@ class _RestaurantManagementScreenState
                               ),
                               child: Text(
                                 "Cancel",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: colorPrimary,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -861,7 +861,7 @@ class _RestaurantManagementScreenState
                               ),
                               child: Text(
                                 "Save",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -905,7 +905,7 @@ class _RestaurantManagementScreenState
                     children: [
                       Text(
                         item == null ? "Add Tag" : "Edit Tag",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Colors.black,
@@ -931,7 +931,7 @@ class _RestaurantManagementScreenState
                   const SizedBox(height: 20),
                   Text(
                     S.of(context).name,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       color: Colors.grey[600],
                       fontSize: 14,
                     ),
@@ -941,7 +941,7 @@ class _RestaurantManagementScreenState
                     controller: nameCtrl,
                     decoration: InputDecoration(
                       hintText: S.of(context).enterTagNameHint,
-                      hintStyle: GoogleFonts.rubik(
+                      hintStyle: appFont('Rubik', 
                         color: Colors.grey[400],
                         fontSize: 13,
                       ),
@@ -982,7 +982,7 @@ class _RestaurantManagementScreenState
                           ),
                           child: Text(
                             "Cancel",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               color: colorPrimary,
                               fontWeight: FontWeight.w500,
                             ),
@@ -1008,7 +1008,7 @@ class _RestaurantManagementScreenState
                           ),
                           child: Text(
                             "Save",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
@@ -1037,7 +1037,7 @@ class _RestaurantManagementScreenState
           ),
           title: Text(
             "Delete Category",
-            style: GoogleFonts.rubik(fontWeight: FontWeight.bold),
+            style: appFont('Rubik', fontWeight: FontWeight.bold),
           ),
           content: Text(
             "Are you sure you want to delete category \"${item.name}\"?",
@@ -1047,7 +1047,7 @@ class _RestaurantManagementScreenState
               onPressed: () => Navigator.pop(context),
               child: Text(
                 "Cancel",
-                style: GoogleFonts.rubik(color: Colors.grey[600]),
+                style: appFont('Rubik', color: Colors.grey[600]),
               ),
             ),
             ElevatedButton(
@@ -1063,7 +1063,7 @@ class _RestaurantManagementScreenState
               ),
               child: Text(
                 "Delete",
-                style: GoogleFonts.rubik(color: Colors.white),
+                style: appFont('Rubik', color: Colors.white),
               ),
             ),
           ],
@@ -1083,7 +1083,7 @@ class _RestaurantManagementScreenState
           ),
           title: Text(
             "Delete Tag",
-            style: GoogleFonts.rubik(fontWeight: FontWeight.bold),
+            style: appFont('Rubik', fontWeight: FontWeight.bold),
           ),
           content: Text(
             "Are you sure you want to delete tag \"${item.name}\"?",
@@ -1093,7 +1093,7 @@ class _RestaurantManagementScreenState
               onPressed: () => Navigator.pop(context),
               child: Text(
                 "Cancel",
-                style: GoogleFonts.rubik(color: Colors.grey[600]),
+                style: appFont('Rubik', color: Colors.grey[600]),
               ),
             ),
             ElevatedButton(
@@ -1109,7 +1109,7 @@ class _RestaurantManagementScreenState
               ),
               child: Text(
                 "Delete",
-                style: GoogleFonts.rubik(color: Colors.white),
+                style: appFont('Rubik', color: Colors.white),
               ),
             ),
           ],
@@ -1131,7 +1131,7 @@ class _RestaurantManagementScreenState
         ),
         title: Text(
           "Restaurant Managment",
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             color: const Color(0xFF333E63),
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -1198,7 +1198,7 @@ class _RestaurantManagementScreenState
                             child: Center(
                               child: Text(
                                 "Categories",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: _selectedTabIndex == 0
                                       ? Colors.white
                                       : Colors.grey[700],
@@ -1233,7 +1233,7 @@ class _RestaurantManagementScreenState
                             child: Center(
                               child: Text(
                                 "Tags",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   color: _selectedTabIndex == 1
                                       ? Colors.white
                                       : Colors.grey[700],
@@ -1260,7 +1260,7 @@ class _RestaurantManagementScreenState
                   children: [
                     Text(
                       _selectedTabIndex == 0 ? "Categories" : "Tags",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: const Color(0xFF333E63),
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -1281,7 +1281,7 @@ class _RestaurantManagementScreenState
                       ),
                       label: Text(
                         _selectedTabIndex == 0 ? "Add Category" : "Add Tag",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: colorPrimary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -1331,7 +1331,7 @@ class _RestaurantManagementScreenState
                       hintText: _selectedTabIndex == 0
                           ? "Search Category"
                           : "Search Tag Name",
-                      hintStyle: GoogleFonts.rubik(
+                      hintStyle: appFont('Rubik', 
                         color: Colors.grey[400],
                         fontSize: 13,
                       ),
@@ -1390,7 +1390,7 @@ class _RestaurantManagementScreenState
       return Center(
         child: Text(
           "No categories found",
-          style: GoogleFonts.rubik(color: Colors.grey[500], fontSize: 14),
+          style: appFont('Rubik', color: Colors.grey[500], fontSize: 14),
         ),
       );
     }
@@ -1447,7 +1447,7 @@ class _RestaurantManagementScreenState
                   children: [
                     Text(
                       item.name,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF333E63),
@@ -1459,7 +1459,7 @@ class _RestaurantManagementScreenState
                         Expanded(
                           child: Text(
                             item.date,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               color: Colors.grey[500],
                             ),
@@ -1482,7 +1482,7 @@ class _RestaurantManagementScreenState
                           ),
                           child: Text(
                             item.status,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               color: item.status == "ACTIVE"
                                   ? const Color(0xFF008318)
                                   : const Color(0xffEF4444),
@@ -1524,7 +1524,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Edit",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1554,7 +1554,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Delete",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1588,7 +1588,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Update Status",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1624,7 +1624,7 @@ class _RestaurantManagementScreenState
       return Center(
         child: Text(
           "No tags found",
-          style: GoogleFonts.rubik(color: Colors.grey[500], fontSize: 14),
+          style: appFont('Rubik', color: Colors.grey[500], fontSize: 14),
         ),
       );
     }
@@ -1656,7 +1656,7 @@ class _RestaurantManagementScreenState
                   children: [
                     Text(
                       item.name,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF333E63),
@@ -1668,7 +1668,7 @@ class _RestaurantManagementScreenState
                         Expanded(
                           child: Text(
                             item.date,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               color: Colors.grey[500],
                             ),
@@ -1691,7 +1691,7 @@ class _RestaurantManagementScreenState
                           ),
                           child: Text(
                             item.status,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               color: item.status == "ACTIVE"
                                   ? const Color(0xFF008318)
                                   : const Color(0xffEF4444),
@@ -1733,7 +1733,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Edit",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1763,7 +1763,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Delete",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1797,7 +1797,7 @@ class _RestaurantManagementScreenState
                                   Expanded(
                                     child: Text(
                                       "Update Status",
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
@@ -1836,7 +1836,7 @@ class _RestaurantManagementScreenState
         const SizedBox(height: 8),
         Text(
           "Add Image",
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             color: Colors.blueGrey.withOpacity(0.6),
             fontSize: 12,
           ),

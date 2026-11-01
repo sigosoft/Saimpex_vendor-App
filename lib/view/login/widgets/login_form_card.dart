@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 
 import '../../../controller/login_controller.dart';
@@ -49,7 +49,7 @@ class LoginFormCard extends StatelessWidget {
                 children: [
                   Text(
                     S.of(context).welcomeToSaimpexVendor,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -59,7 +59,7 @@ class LoginFormCard extends StatelessWidget {
                   Text(
                     S.of(context).pleaseSigninToYourAccountAndStartTheAdventure,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       color: Colors.grey[600],
                     ),
@@ -70,7 +70,7 @@ class LoginFormCard extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               'Select type',
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -97,7 +97,7 @@ class LoginFormCard extends StatelessWidget {
                 ),
               ),
               icon: const Icon(Icons.keyboard_arrow_down),
-              style: GoogleFonts.rubik(fontSize: 14, color: Colors.black87),
+              style: appFont('Rubik', fontSize: 14, color: Colors.black87),
               items: VendorAppType.values
                   .map(
                     (type) => DropdownMenuItem<VendorAppType>(
@@ -111,7 +111,7 @@ class LoginFormCard extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               S.of(context).username,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -122,7 +122,7 @@ class LoginFormCard extends StatelessWidget {
               controller: loginController.userNameController,
               decoration: InputDecoration(
                 hintText: S.of(context).enterYourUsername,
-                hintStyle: GoogleFonts.rubik(fontSize: 14, color: Colors.grey),
+                hintStyle: appFont('Rubik', fontSize: 14, color: Colors.grey),
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(
@@ -142,7 +142,7 @@ class LoginFormCard extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               S.of(context).password,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -154,7 +154,7 @@ class LoginFormCard extends StatelessWidget {
               obscureText: !loginController.isPasswordVisible,
               decoration: InputDecoration(
                 hintText: S.of(context).enterYourPassword,
-                hintStyle: GoogleFonts.rubik(fontSize: 14, color: Colors.grey),
+                hintStyle: appFont('Rubik', fontSize: 14, color: Colors.grey),
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(
@@ -187,14 +187,14 @@ class LoginFormCard extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onLogin,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF5722),
+                  backgroundColor: const Color(0xFFFF5216),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: Text(
                   S.of(context).login,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

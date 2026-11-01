@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/settings/payout_details.dart';
@@ -328,7 +328,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
           ),
           title: Text(
             S.of(context).earnings,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),
@@ -393,7 +393,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                         },
                         child: Text(
                           S.of(context).viewAll,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: colorPrimary,
@@ -527,7 +527,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: screenWidth * 0.035,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               color: isSelected ? Colors.white : Colors.grey[700],
@@ -641,7 +641,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: screenWidth * 0.033,
             fontWeight: FontWeight.w500,
             color: Colors.white,
@@ -649,7 +649,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
         ),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: screenWidth * 0.033,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -689,7 +689,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
               ),
               child: Text(
                 _getLocalizedFilter(filter),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: screenWidth * 0.031,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? Colors.white : Colors.grey[700],
@@ -769,7 +769,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
               children: [
                 Text(
                   order['id'] as String,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: screenWidth * 0.036,
                     fontWeight: FontWeight.w600,
                     color: colorPrimary,
@@ -787,7 +787,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                     Expanded(
                       child: Text(
                         order['date'] as String,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: screenWidth * 0.028,
                           color: Colors.grey,
                           fontWeight: FontWeight.w400,
@@ -806,7 +806,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
             children: [
               Text(
                 _getLocalizedStatus(status),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: screenWidth * 0.026,
                   fontWeight: FontWeight.w700,
                   color: statusColor,
@@ -816,7 +816,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
               SizedBox(height: screenHeight * 0.005),
               Text(
                 order['amount'] as String,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: screenWidth * 0.038,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF333E63),
@@ -869,7 +869,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                   children: [
                     Text(
                       payout['id'] as String,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: screenWidth * 0.038,
                         fontWeight: FontWeight.w600,
                         color: colorPrimary,
@@ -887,7 +887,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                         Expanded(
                           child: Text(
                             payout['date'] as String,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: screenWidth * 0.028,
                               color: Colors.grey,
                               fontWeight: FontWeight.w400,
@@ -906,7 +906,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                 children: [
                   Text(
                     _getLocalizedStatus(status),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: screenWidth * 0.026,
                       fontWeight: FontWeight.w700,
                       color: statusColor,
@@ -916,7 +916,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                   SizedBox(height: screenHeight * 0.005),
                   Text(
                     payout['amount'] as String,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: screenWidth * 0.04,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF333E63),
@@ -944,7 +944,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
               ),
               child: Text(
                 S.of(context).viewDetails,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: screenWidth * 0.035,
                   fontWeight: FontWeight.w500,
                   color: colorPrimary,

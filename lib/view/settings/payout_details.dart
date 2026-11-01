@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
@@ -145,7 +145,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
           ),
           title: Text(
             S.of(context).earnings,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),
@@ -185,7 +185,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                       children: [
                         Text(
                           widget.payout['id'] as String? ?? '',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w700,
                             color: colorPrimary,
@@ -193,7 +193,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                         ),
                         Text(
                           _getLocalizedStatus(status, context),
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: screenWidth * 0.028,
                             fontWeight: FontWeight.w700,
                             color: statusColor,
@@ -217,7 +217,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                             SizedBox(width: screenWidth * 0.01),
                             Text(
                               widget.payout['date'] as String? ?? '',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: screenWidth * 0.028,
                                 color: Colors.grey,
                                 fontWeight: FontWeight.w400,
@@ -227,7 +227,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                         ),
                         Text(
                           widget.payout['amount'] as String? ?? '',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF333E63),
@@ -242,7 +242,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                       children: [
                         Text(
                           '${S.of(context).paymentId}: ${_payoutDetails?['transaction_ref'] ?? _payoutDetails?['payment_id'] ?? 'N/A'}',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: screenWidth * 0.03,
                             color: const Color(0xFF333E63),
                             fontWeight: FontWeight.w400,
@@ -252,7 +252,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                           onTap: () {},
                           child: Text(
                             S.of(context).viewPaymentProof,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: screenWidth * 0.03,
                               color: colorPrimary,
                               fontWeight: FontWeight.w500,
@@ -271,7 +271,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                             .isNotEmpty) ...[
                       Text(
                         '${S.of(context).notes}: ${_payoutDetails!['payment_note']}',
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: screenWidth * 0.028,
                           color: const Color(0xFF333E63),
                           fontWeight: FontWeight.w400,
@@ -282,7 +282,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                     ] else ...[
                       Text(
                         '${S.of(context).notes}: N/A',
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: screenWidth * 0.028,
                           color: Colors.grey,
                           fontWeight: FontWeight.w400,
@@ -309,7 +309,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                   child: Center(
                     child: Text(
                       S.of(context).noOrdersFound,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: Colors.grey,
                         fontSize: 16,
                       ),
@@ -379,7 +379,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
               children: [
                 Text(
                   order['id'] as String,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: screenWidth * 0.036,
                     fontWeight: FontWeight.w600,
                     color: colorPrimary,
@@ -397,7 +397,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                     Expanded(
                       child: Text(
                         order['date'] as String,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: screenWidth * 0.028,
                           color: Colors.grey,
                           fontWeight: FontWeight.w400,
@@ -413,7 +413,7 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
           // Right: amount only
           Text(
             order['amount'] as String,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: screenWidth * 0.038,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),

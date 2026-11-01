@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/home_cleaning_controller.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
@@ -101,7 +101,7 @@ class _HomeTab extends StatelessWidget {
     return Container(
       decoration: _pageGradient,
       child: RefreshIndicator(
-        color: const Color(0xFFFF5722),
+        color: const Color(0xFFFF5216),
         onRefresh: controller.refreshAll,
         child: NotificationListener<ScrollNotification>(
           onNotification: (n) => _onScrollLoadMore(n, controller),
@@ -178,7 +178,7 @@ class _BookingsTab extends StatelessWidget {
     return Container(
       decoration: _pageGradient,
       child: RefreshIndicator(
-        color: const Color(0xFFFF5722),
+        color: const Color(0xFFFF5216),
         onRefresh: () async {
           await Future.wait([controller.loadBookings(), controller.loadDashboard()]);
         },
@@ -193,7 +193,7 @@ class _BookingsTab extends StatelessWidget {
                 child: Center(
                   child: Text(
                     S.of(context).cleaningBookings,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
@@ -228,7 +228,7 @@ List<Widget> _bookingListChildren(BuildContext context, HomeCleaningController c
           child: SizedBox(
             width: 28,
             height: 28,
-            child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFFFF5722)),
+            child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFFFF5216)),
           ),
         ),
       ),
@@ -249,7 +249,7 @@ List<Widget> _bookingListChildren(BuildContext context, HomeCleaningController c
         child: Text(
           S.of(context).cleaningNoBookingsHere,
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF9E9E9E),
             fontWeight: FontWeight.w500,
             fontSize: 14,
@@ -274,7 +274,7 @@ List<Widget> _bookingListChildren(BuildContext context, HomeCleaningController c
           child: SizedBox(
             width: 22,
             height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFFF5722)),
+            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFFF5216)),
           ),
         ),
       ),
@@ -304,7 +304,7 @@ class _ErrorState extends StatelessWidget {
           Text(
             text,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF757575),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -315,8 +315,8 @@ class _ErrorState extends StatelessWidget {
             onPressed: onRetry,
             child: Text(
               S.of(context).tryAgain,
-              style: GoogleFonts.inter(
-                color: const Color(0xFFFF5722),
+              style: appFont('Inter', 
+                color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
@@ -342,7 +342,7 @@ class _WelcomeHeader extends StatelessWidget {
           fit: BoxFit.contain,
           errorBuilder: (_, _, _) => const Icon(
             Icons.storefront,
-            color: Color(0xFFFF5722),
+            color: Color(0xFFFF5216),
             size: 28,
           ),
         ),
@@ -350,7 +350,7 @@ class _WelcomeHeader extends StatelessWidget {
         Expanded(
           child: Text(
             S.of(context).welcomeToSaimpexVendor,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
               fontSize: 16,
@@ -420,7 +420,7 @@ class _MemberCard extends StatelessWidget {
               name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF333333),
                 fontWeight: FontWeight.w700,
                 fontSize: 15,
@@ -436,7 +436,7 @@ class _MemberCard extends StatelessWidget {
               ),
               child: Text(
                 S.of(context).expiresInDays(expiresInDays.toString()),
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.deepOrange,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
@@ -503,7 +503,7 @@ class _StatusCard extends StatelessWidget {
                         text: open
                             ? S.of(context).cleaningOpenStatus
                             : S.of(context).cleaningClosedStatus,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: open ? green  : const Color(0xFF1A1A1A),
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -511,7 +511,7 @@ class _StatusCard extends StatelessWidget {
                       ),
                       TextSpan(
                         text: ' • ${accepting ? S.of(context).cleaningAcceptingBookings : S.of(context).cleaningNotAccepting}',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: accepting ? green : const Color(0xFFBA1B1B),
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -524,7 +524,7 @@ class _StatusCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     S.of(context).cleaningTodayHours(todayHours!),
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF757575),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -545,7 +545,7 @@ class _StatusCard extends StatelessWidget {
                 height: 30,
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: accepting ? const Color(0xFFFF6B00) : const Color(0xFFBDBDBD),
+                  color: accepting ? const Color(0xFFFF5216) : const Color(0xFFBDBDBD),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 alignment: accepting
@@ -676,7 +676,7 @@ class _MetricCard extends StatelessWidget {
             ),
             child: Text(
               count,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: countColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -687,7 +687,7 @@ class _MetricCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
               fontSize: 14,
@@ -778,7 +778,7 @@ class _TotalItem extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: _TotalsRow._label,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -797,7 +797,7 @@ class _TotalItem extends StatelessWidget {
           children: [
             Text(
               value,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: _TotalsRow._value,
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
@@ -810,7 +810,7 @@ class _TotalItem extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Text(
                   suffix!,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _TotalsRow._label,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -838,7 +838,7 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           S.of(context).cleaningBookingsHeader,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -850,8 +850,8 @@ class _SectionHeader extends StatelessWidget {
           onTap: onSeeAll,
           child: Text(
             S.of(context).viewAll,
-            style: GoogleFonts.inter(
-              color: const Color(0xFFFF5722),
+            style: appFont('Inter', 
+              color: const Color(0xFFFF5216),
               fontWeight: FontWeight.w600,
               fontSize: 13,
             ),
@@ -874,10 +874,10 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         controller: controller,
         textInputAction: TextInputAction.search,
-        style: GoogleFonts.inter(color: const Color(0xFF1A1A1A), fontSize: 14),
+        style: appFont('Inter', color: const Color(0xFF1A1A1A), fontSize: 14),
         decoration: InputDecoration(
           hintText: S.of(context).searchByIdName,
-          hintStyle: GoogleFonts.inter(
+          hintStyle: appFont('Inter', 
             color: const Color(0xFFBDBDBD),
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -957,7 +957,7 @@ class _Filters extends StatelessWidget {
                   ),
                   child: Text(
                     labels[index],
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: selected ? Colors.white : const Color(0xFF424242),
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                       fontSize: 13,
@@ -979,7 +979,7 @@ class _Filters extends StatelessWidget {
                       ),
                       child: Text(
                         count.toString().padLeft(2, '0'),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFFFF6D00),
                           fontWeight: FontWeight.w700,
                           fontSize: 10,
@@ -1025,7 +1025,7 @@ class _BookingCard extends StatelessWidget {
   final bool busy;
   final void Function(bool reject) onAction;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
 
   bool get _isDetailedStatus => !booking.isNew;
 
@@ -1070,7 +1070,7 @@ class _BookingCard extends StatelessWidget {
                 backgroundColor: const Color(0xFFFDECEC),
                 child: Text(
                   booking.initial,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -1090,7 +1090,7 @@ class _BookingCard extends StatelessWidget {
                                   booking.displayName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     color: const Color(0xFF1A1A1A),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 15,
@@ -1106,7 +1106,7 @@ class _BookingCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   pill.label,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 10,
@@ -1124,7 +1124,7 @@ class _BookingCard extends StatelessWidget {
                                 if (service.isNotEmpty)
                                   TextSpan(
                                     text: '$service - ',
-                                    style: GoogleFonts.inter(
+                                    style: appFont('Inter', 
                                       color: _orange,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12.5,
@@ -1132,7 +1132,7 @@ class _BookingCard extends StatelessWidget {
                                   ),
                                 TextSpan(
                                   text: meta.join(' - '),
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     color: const Color(0xFF757575),
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12,
@@ -1150,7 +1150,7 @@ class _BookingCard extends StatelessWidget {
                             booking.displayName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF1A1A1A),
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
@@ -1161,7 +1161,7 @@ class _BookingCard extends StatelessWidget {
                             const SizedBox(height: 3),
                             Text(
                               service,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: _orange,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
@@ -1171,7 +1171,7 @@ class _BookingCard extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             meta.join(' • '),
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color.fromARGB(255, 95, 95, 95),
                               fontWeight: FontWeight.w500,
                               fontSize: 12,
@@ -1190,7 +1190,7 @@ class _BookingCard extends StatelessWidget {
                   ),
                   child: Text(
                     S.of(context).cleaningStatusNew,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 10,
@@ -1225,7 +1225,7 @@ class _BookingCard extends StatelessWidget {
                       ),
                       child: Text(
                         CleaningBookingFormat.chip(line),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF424242),
                           fontWeight: FontWeight.w600,
                           fontSize: 12.5,
@@ -1262,7 +1262,7 @@ class _BookingCard extends StatelessWidget {
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF616161),
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -1285,7 +1285,7 @@ class _BookingCard extends StatelessWidget {
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF616161),
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -1320,7 +1320,7 @@ class _BookingCard extends StatelessWidget {
                           booking.isInProgress
                               ? S.of(context).cleaningMarkAsCompleted
                               : S.of(context).cleaningStartCleaning,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
@@ -1344,7 +1344,7 @@ class _BookingCard extends StatelessWidget {
                         ),
                         child: Text(
                           S.of(context).reject,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF424242),
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
@@ -1370,7 +1370,7 @@ class _BookingCard extends StatelessWidget {
                             ? const _ButtonSpinner()
                             : Text(
                                 S.of(context).cleaningAcceptBooking,
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -1461,7 +1461,7 @@ class _BottomNav extends StatelessWidget {
                       height: 40,
                       child: const DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Color(0xFFFF5722),
+                          color: Color(0xFFFF5216),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -1506,11 +1506,11 @@ class _BottomNav extends StatelessWidget {
                                 const SizedBox(height: 2),
                                 AnimatedDefaultTextStyle(
                                   duration: const Duration(milliseconds: 280),
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 10,
                                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                                     color: selected
-                                        ? const Color(0xFFFF5722)
+                                        ? const Color(0xFFFF5216)
                                         : const Color(0xFF8D7B74),
                                   ),
                                   child: Text(

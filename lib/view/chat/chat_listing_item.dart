@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 
 /// A single chat entry in the chat listing: avatar, name, phone,
@@ -57,7 +57,7 @@ class ChatListingItem extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -68,7 +68,7 @@ class ChatListingItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       phone,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: grey500Opacity,
@@ -79,7 +79,7 @@ class ChatListingItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       lastMessage,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: Colors.black,
@@ -97,7 +97,7 @@ class ChatListingItem extends StatelessWidget {
                 children: [
                   Text(
                     timestamp,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
                       color: mutedTextColor,
@@ -113,7 +113,7 @@ class ChatListingItem extends StatelessWidget {
                       ),
                       child: Text(
                         unreadCount.toString(),
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -156,7 +156,7 @@ class ChatListingItem extends StatelessWidget {
   Widget _buildInitials() {
     return Text(
       initials,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: colorPrimary,

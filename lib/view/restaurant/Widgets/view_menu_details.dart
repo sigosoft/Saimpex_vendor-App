@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -53,7 +53,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
         ),
         title: Text(
           S.of(context).details,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -87,7 +87,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
             ),
             child: Text(
               S.of(context).editMenu,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -147,7 +147,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
 
                 Text(
                   S.of(context).menuInformation,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF4B5563),
@@ -193,7 +193,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                       const SizedBox(height: 14),
                       Text(
                         S.of(context).description,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF64748B),
@@ -204,7 +204,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
                         description.isNotEmpty
                             ? description
                             : S.of(context).noDescriptionAvailable,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF94A3B8),
@@ -219,7 +219,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
 
                 Text(
                   S.of(context).statistics,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF4B5563),
@@ -318,7 +318,7 @@ Widget _labelValue({required String label, required String value}) {
     children: [
       Text(
         label,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 11,
           fontWeight: FontWeight.w400,
           color: const Color(0xFF94A3B8),
@@ -327,7 +327,7 @@ Widget _labelValue({required String label, required String value}) {
       const SizedBox(height: 6),
       Text(
         value,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w600,
           color: const Color(0xFF1F2937),
@@ -343,7 +343,7 @@ Widget _labelIsVeg({required bool isVeg, required String value}) {
     children: [
       Text(
         'IS VEG',
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 11,
           fontWeight: FontWeight.w400,
           color: const Color(0xFF94A3B8),
@@ -367,7 +367,7 @@ Widget _labelIsVeg({required bool isVeg, required String value}) {
             const SizedBox(width: 6),
             Text(
               value,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1F2937),
@@ -433,7 +433,7 @@ Widget _statBox({
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 12,
             fontWeight: FontWeight.w400,
             color: const Color(0xFF64748B),
@@ -442,7 +442,7 @@ Widget _statBox({
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1F2937),

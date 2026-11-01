@@ -29,7 +29,7 @@ class PharmacyCreateQuotationScreen extends StatefulWidget {
 
 class _PharmacyCreateQuotationScreenState
     extends State<PharmacyCreateQuotationScreen> {
-  static const Color _orange = Color(0xFFFF5722);
+  static const Color _orange = Color(0xFFFF5216);
   static const Color _disabled = Color(0xFFFFCDBA);
   static const int _tax = 10;
   bool _isSending = false;
@@ -213,7 +213,7 @@ class _PharmacyCreateQuotationScreenState
                           children: [
                             Text(
                               'Create Quotation',
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFF1A1A1A),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 18,
@@ -301,7 +301,7 @@ class _PharmacyCreateQuotationScreenState
                             children: [
                               Text(
                                 'Quotation Items',
-                                style: GoogleFonts.inter(
+                                style: appFont('Inter', 
                                   color: const Color(0xFF3A3A3A),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 17,
@@ -490,13 +490,13 @@ class _SavedLinesCard extends StatelessWidget {
             icon: const Icon(Icons.add, size: 18),
             label: Text(
               'Add Medicine',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
               ),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFFF5722),
+              foregroundColor: const Color(0xFFFF5216),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -565,7 +565,7 @@ class _DraftMedicineCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       draft.medicine.name,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF1A1A1A),
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -590,7 +590,7 @@ class _DraftMedicineCard extends StatelessWidget {
               const SizedBox(height: 16),
           Text(
             'Prescribed Quantity',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -614,7 +614,7 @@ class _DraftMedicineCard extends StatelessWidget {
                 const Spacer(),
                 Text(
                   'Unit',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFFB0B0B0),
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
@@ -631,7 +631,7 @@ class _DraftMedicineCard extends StatelessWidget {
         const SizedBox(height: 22),
         Text(
           'Pharmacy Availability',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF3A3A3A),
               fontWeight: FontWeight.w600,
               fontSize: 15,
@@ -656,7 +656,7 @@ class _DraftMedicineCard extends StatelessWidget {
                     children: [
                       Text(
                         'Available Quantity',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF78350F),
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
@@ -688,7 +688,7 @@ class _DraftMedicineCard extends StatelessWidget {
             else ...[
               Text(
                 'Suggest Alternative Medicine',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF9CA3AF),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -805,7 +805,7 @@ class _SavedLineTile extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           '${index + 1}. ${line.medicine.name}',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF1E293B),
             fontWeight: FontWeight.w700,
             fontSize: 16.5,
@@ -831,7 +831,7 @@ class _SavedLineTile extends StatelessWidget {
           children: [
             Text(
               'Unit',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w500,
                 fontSize: 12.5,
@@ -840,7 +840,7 @@ class _SavedLineTile extends StatelessWidget {
             const Spacer(),
             Text(
               'Total',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w500,
                 fontSize: 12.5,
@@ -854,7 +854,7 @@ class _SavedLineTile extends StatelessWidget {
           children: [
             Text(
               '${line.billedQty} tablets × ${line.medicine.priceMru} MRU',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3F2A24),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -866,7 +866,7 @@ class _SavedLineTile extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '${line.lineTotal}',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
@@ -875,8 +875,8 @@ class _SavedLineTile extends StatelessWidget {
                   ),
                   TextSpan(
                     text: ' MRU',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFFFF5722),
+                    style: appFont('Inter', 
+                      color: const Color(0xFFFF5216),
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       height: 1,
@@ -945,7 +945,7 @@ class _AvailabilityStatus extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             style.label,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: style.foreground,
               fontWeight: FontWeight.w600,
               fontSize: 12.5,
@@ -1033,7 +1033,7 @@ class _AvailabilityChoice extends StatelessWidget {
           color: selected ? selectedFill : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: selected ? const Color(0xFFFF5722) : const Color(0xFFE2E8F0),
+            color: selected ? const Color(0xFFFF5216) : const Color(0xFFE2E8F0),
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -1046,7 +1046,7 @@ class _AvailabilityChoice extends StatelessWidget {
               label,
               maxLines: 1,
               softWrap: false,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1E293B),
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
@@ -1078,7 +1078,7 @@ class _AvailableCountPill extends StatelessWidget {
       ),
       child: Text(
         '$available of $prescribed available',
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: const Color(0xFF78350F),
           fontWeight: FontWeight.w600,
           fontSize: 12,
@@ -1112,7 +1112,7 @@ class _SuggestedAlternativeBox extends StatelessWidget {
         children: [
           Text(
             'Suggested Alternative',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF9CA3AF),
               fontWeight: FontWeight.w500,
               fontSize: 13,
@@ -1146,7 +1146,7 @@ class _SuggestedAlternativeBox extends StatelessWidget {
                         child: Icon(
                           Icons.arrow_downward_rounded,
                           size: 16,
-                          color: Color(0xFFFF5722),
+                          color: Color(0xFFFF5216),
                         ),
                       ),
                     ),
@@ -1193,7 +1193,7 @@ class _SuggestedAlternativeRow extends StatelessWidget {
         Expanded(
           child: Text(
             name,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF1E293B),
               fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
               fontSize: 15,
@@ -1230,7 +1230,7 @@ class _CatalogTile extends StatelessWidget {
               children: [
                 Text(
                   medicine.name,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF3A3A3A),
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
@@ -1249,8 +1249,8 @@ class _CatalogTile extends StatelessWidget {
           ),
           Text(
             '${medicine.priceMru} MRU',
-            style: GoogleFonts.inter(
-              color: const Color(0xFFFF5722),
+            style: appFont('Inter', 
+              color: const Color(0xFFFF5216),
               fontWeight: FontWeight.w700,
               fontSize: 15,
               height: 1,
@@ -1263,7 +1263,7 @@ class _CatalogTile extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: const BoxDecoration(
-                color: Color(0xFFFF5722),
+                color: Color(0xFFFF5216),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 18),
@@ -1293,7 +1293,7 @@ class _ItemTotalRow extends StatelessWidget {
       children: [
         Text(
           'Item total',
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w700,
             fontSize: 15,
@@ -1305,7 +1305,7 @@ class _ItemTotalRow extends StatelessWidget {
           children: [
             Text(
               '$quantity tablets × $price MRU',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF9CA3AF),
                 fontWeight: FontWeight.w400,
                 fontSize: 11.5,
@@ -1314,8 +1314,8 @@ class _ItemTotalRow extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               '$total MRU',
-              style: GoogleFonts.inter(
-                color: const Color(0xFFFF5722),
+              style: appFont('Inter', 
+                color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
                 height: 1.1,
@@ -1354,7 +1354,7 @@ class _OutlinedQtyStepper extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               '$value',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -1386,7 +1386,7 @@ class _OutlinedQtyHit extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF1A1A1A),
             fontWeight: FontWeight.w500,
             fontSize: 18,
@@ -1422,7 +1422,7 @@ class _QtyStepper extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Text(
             '$value',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF2C2C2C),
               fontWeight: FontWeight.w600,
               fontSize: 16,
@@ -1431,7 +1431,7 @@ class _QtyStepper extends StatelessWidget {
         ),
         _QtyButton(
           icon: Icons.add,
-          background: const Color(0xFFFF5722),
+          background: const Color(0xFFFF5216),
           iconColor: Colors.white,
           onTap: () => onChanged(value + 1),
         ),
@@ -1455,7 +1455,7 @@ class _PricePill extends StatelessWidget {
       ),
       child: Text(
         '$price MRU',
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: const Color(0xFF1A1A1A),
           fontWeight: FontWeight.w700,
           fontSize: 14,
@@ -1483,14 +1483,14 @@ class _AltSearchField extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       onChanged: onChanged,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF3A3A3A),
         fontSize: 15,
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
         hintText: 'Type medicine name...',
-        hintStyle: GoogleFonts.inter(
+        hintStyle: appFont('Inter', 
           color: const Color(0xFFB0B0B0),
           fontSize: 15,
           fontWeight: FontWeight.w400,
@@ -1532,14 +1532,14 @@ class _MedicineField extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       onChanged: onChanged,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF4A4A4A),
         fontSize: 15,
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
         hintText: 'Type medicine name...',
-        hintStyle: GoogleFonts.inter(
+        hintStyle: appFont('Inter', 
           color: const Color(0xFFB0A8A2),
           fontSize: 15,
           fontWeight: FontWeight.w400,
@@ -1619,7 +1619,7 @@ class _CreateQuoteSummary extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 'QUOTATION SUMMARY',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -1640,7 +1640,7 @@ class _CreateQuoteSummary extends StatelessWidget {
             children: [
               Text(
                 'Total Amount',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -1649,8 +1649,8 @@ class _CreateQuoteSummary extends StatelessWidget {
               const Spacer(),
               Text(
                 '$total MRU',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFFF5722),
+                style: appFont('Inter', 
+                  color: const Color(0xFFFF5216),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
                 ),
@@ -1675,7 +1675,7 @@ class _SummaryLine extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFFD0D0D0),
             fontWeight: FontWeight.w500,
             fontSize: 15,
@@ -1684,7 +1684,7 @@ class _SummaryLine extends StatelessWidget {
         const Spacer(),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: 15,
@@ -1763,7 +1763,7 @@ class _QuoteActionBar extends StatelessWidget {
                   )
                 : Text(
                     label,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                       color: Colors.white,
@@ -1806,7 +1806,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
             Text(
               'Delete medicine?',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1816,7 +1816,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
             Text(
               'Are you sure you want to remove $name from the quotation?',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF4B5563),
                 fontWeight: FontWeight.w500,
                 fontSize: 14.5,
@@ -1839,7 +1839,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
                     ),
                     child: Text(
                       'Cancel',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -1861,7 +1861,7 @@ class _DeleteMedicineDialog extends StatelessWidget {
                     ),
                     child: Text(
                       'Delete',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -2090,7 +2090,7 @@ class _QuotationSentDialog extends StatelessWidget {
                   Text(
                     'Quotation has been sent to the customer\nfor review and approval',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF4B5563),
                       fontWeight: FontWeight.w500,
                       fontSize: 14.5,
@@ -2163,7 +2163,7 @@ class _InStockBadge extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             'In Stock',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF10B981),
               fontWeight: FontWeight.w600,
               fontSize: 11,
@@ -2201,7 +2201,7 @@ class _LimitedBadge extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             'Limited',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFFD97706),
               fontWeight: FontWeight.w600,
               fontSize: 11,
@@ -2240,7 +2240,7 @@ class _OutOfStockBadge extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             'Out of Stock',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFFFF3250),
               fontWeight: FontWeight.w600,
               fontSize: 11,
@@ -2276,7 +2276,7 @@ class _QuoteValidMenu extends StatelessWidget {
             value: option,
             child: Text(
               option,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF1A1A1A),
@@ -2296,8 +2296,8 @@ class _QuoteValidMenu extends StatelessWidget {
           children: [
             Text(
               value ?? 'Quote Valid',
-              style: GoogleFonts.inter(
-                color: const Color(0xFFFF5722),
+              style: appFont('Inter', 
+                color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
                 height: 1,
@@ -2307,7 +2307,7 @@ class _QuoteValidMenu extends StatelessWidget {
             const Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 18,
-              color: Color(0xFFFF5722),
+              color: Color(0xFFFF5216),
             ),
           ],
         ),

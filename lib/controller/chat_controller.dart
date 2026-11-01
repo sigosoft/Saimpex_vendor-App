@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -12,7 +13,6 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/PusherConfig.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/water/controller/home_controller.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/model/get_conversation_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -1199,7 +1199,7 @@ class _NotificationPillState extends State<_NotificationPill>
                   Flexible(
                     child: Text(
                       "${widget.senderName} ${widget.message}",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         color: Colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../generated/l10n.dart';
 
@@ -49,7 +49,7 @@ class VendorMembershipCard extends StatelessWidget {
                 membershipName.toLowerCase().contains("member")
                     ? membershipName
                     : "$membershipName"+" "+S.of(context).member,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF1F1F1F),
@@ -66,7 +66,7 @@ class VendorMembershipCard extends StatelessWidget {
               ),
               child: Text(
                 expiryText,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: isWarning ? Colors.red : Colors.green,

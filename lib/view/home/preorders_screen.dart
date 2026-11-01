@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/preorders_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
@@ -67,7 +67,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
         ),
         title: Text(
           S.of(context).preOrders,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF333E63),
@@ -125,7 +125,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
                 Expanded(
                   child: Text(
                     S.of(context).orderIdLabel(p.orderCode),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: colorPrimary,
@@ -134,7 +134,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
                 ),
                 Text(
                   _statusLabel(p.status).toUpperCase(),
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF64748B),
@@ -150,7 +150,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
                 Text(
                   formatPreorderTime(p.scheduledFor),
                   textDirection: TextDirection.ltr,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF1F1F1F),
@@ -160,7 +160,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
                 Expanded(
                   child: Text(
                     preorderDueText(p.scheduledFor),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: preorderColor,
@@ -170,7 +170,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
                 Text(
                   '${p.total.toStringAsFixed(2)} MRU',
                   textDirection: TextDirection.ltr,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF333E63),
@@ -204,7 +204,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 10,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF475569),

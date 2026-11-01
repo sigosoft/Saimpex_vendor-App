@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AddMenuFieldLabel extends StatelessWidget {
   final String label;
@@ -10,7 +10,7 @@ class AddMenuFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: const Color(0xFF64748B),
@@ -41,14 +41,14 @@ class AddMenuTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F1F1F),
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             fontSize: 13,
             color: const Color(0xFF94A3B8),
           ),
@@ -95,14 +95,14 @@ class AddMenuTextAreaField extends StatelessWidget {
         controller: controller,
         maxLines: null,
         expands: true,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: const Color(0xFF1F1F1F),
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             fontSize: 12,
             color: const Color(0xFF94A3B8),
           ),
@@ -158,7 +158,7 @@ class AddMenuDropdownField extends StatelessWidget {
         hint: hint != null
             ? Text(
                 hint!,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   color: const Color(0xFF94A3B8),
                 ),
@@ -169,7 +169,7 @@ class AddMenuDropdownField extends StatelessWidget {
           color: Color(0xFF94A3B8),
           size: 20,
         ),
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F1F1F),
@@ -264,7 +264,7 @@ class AddMenuMultiSelectField extends StatelessWidget {
                 textToShow ?? (hint ?? ''),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight:
                       textToShow == null ? FontWeight.w400 : FontWeight.w500,

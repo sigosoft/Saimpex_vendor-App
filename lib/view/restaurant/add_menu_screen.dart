@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart' hide MenuController;
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import 'package:get/get.dart';
@@ -73,7 +73,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                         Expanded(
                           child: Text(
                             S.of(context).categoryLabel,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF1F1F1F),
@@ -87,7 +87,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                           },
                           child: Text(
                             S.of(context).resetButton,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFFF5216),
@@ -197,7 +197,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                                     },
                               title: Text(
                                 name.isNotEmpty ? name : 'Category ${index + 1}',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: const Color(0xFF1F1F1F),
@@ -228,7 +228,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                         ),
                         child: Text(
                           S.of(context).submitButton,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -277,7 +277,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                         Expanded(
                           child: Text(
                             S.of(context).tagsLabel,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF1F1F1F),
@@ -291,7 +291,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                           },
                           child: Text(
                             S.of(context).resetButton,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFFFF5216),
@@ -401,7 +401,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                                     },
                               title: Text(
                                 name.isNotEmpty ? name : 'Tag ${index + 1}',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: const Color(0xFF1F1F1F),
@@ -432,7 +432,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                         ),
                         child: Text(
                           S.of(context).submitButton,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -468,7 +468,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
         ),
         title: Text(
           S.of(context).addMenuTitle,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F1F1F),
@@ -681,7 +681,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       SizedBox(height: screenHeight * 0.005),
                       Text(
                         S.of(context).uploadImageHint,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           color: const Color(0xFF94A3B8),
                           fontWeight: FontWeight.w400,
@@ -771,7 +771,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       ),
                       child: Text(
                         S.of(context).resetButton,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF1F1F1F),
@@ -801,7 +801,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       ),
                       child: Text(
                         S.of(context).submitButton,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

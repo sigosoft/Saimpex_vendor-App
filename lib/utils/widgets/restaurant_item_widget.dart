@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 // import 'package:saimpex_vendor/view/grocery/grocery_store_detail_page.dart';
 // import '../../config/api_configs.dart';
@@ -134,7 +134,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     name,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -172,7 +172,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                                     rating,
                                                   )?.toStringAsFixed(1) ??
                                                   "0.00",
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                                 color: Colors.white,
@@ -205,7 +205,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                           preparationTime.toString() == ""
                                     ? Text(
                                         "0 " + S.of(context).mins,
-                                        style: GoogleFonts.rubik(
+                                        style: appFont('Rubik', 
                                           fontSize: 13,
                                           color: Colors.grey.shade600,
                                         ),
@@ -214,7 +214,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                         preparationTime! +
                                             " " +
                                             S.of(context).mins,
-                                        style: GoogleFonts.rubik(
+                                        style: appFont('Rubik', 
                                           fontSize: 13,
                                           color: Colors.grey.shade600,
                                         ),
@@ -244,7 +244,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                       )!.toStringAsFixed(2) +
                                       " " +
                                       S.of(context).km,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     color: Colors.grey.shade600,
                                   ),
@@ -271,7 +271,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                             offer! +
                                             "% " +
                                             S.of(context).off,
-                                        style: GoogleFonts.rubik(
+                                        style: appFont('Rubik', 
                                           fontSize: 13,
                                           color: Colors.grey.shade600,
                                           fontWeight: FontWeight.w400,
@@ -304,7 +304,7 @@ class RestaurantItemWidget extends StatelessWidget {
                                 : S.of(context).currentlyClosedOpens +
                                       " " +
                                       convertToAmPm(openingTime),
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,

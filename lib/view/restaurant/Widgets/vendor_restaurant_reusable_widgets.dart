@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -47,7 +47,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       dayLabel,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFF1F1F1F),
@@ -94,7 +94,7 @@ class VendorWorkingHoursList extends StatelessWidget {
           ),
           child: Text(
             '-',
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF6B7280),
@@ -114,7 +114,7 @@ class VendorWorkingHoursList extends StatelessWidget {
           ),
           child: Text(
             '-',
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF6B7280),
@@ -358,7 +358,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     value,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF111827),
@@ -434,7 +434,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                     children: [
                       Text(
                         "Edit Working Hour",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF111827),
@@ -445,7 +445,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           dayLabel,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF111827),
@@ -491,7 +491,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                           ),
                           Text(
                             "Open 24 Hr",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF111827),
@@ -509,7 +509,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Start Time",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 12,
                                       color: const Color(0xFF6B7280),
                                       fontWeight: FontWeight.w500,
@@ -531,7 +531,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 children: [
                                   Text(
                                     "End Time",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 12,
                                       color: const Color(0xFF6B7280),
                                       fontWeight: FontWeight.w500,
@@ -591,7 +591,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                             ),
                             label: Text(
                               "Add Time Slot",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFFF5216),
@@ -636,7 +636,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 ),
                                 label: Text(
                                   "+ Add Time Slot",
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFFF5216),
@@ -662,7 +662,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                             children: [
                                               Text(
                                                 "Start Time",
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 12,
                                                   color: const Color(
                                                     0xFF6B7280,
@@ -692,7 +692,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                             children: [
                                               Text(
                                                 "End Time",
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 12,
                                                   color: const Color(
                                                     0xFF6B7280,
@@ -775,7 +775,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                   ),
                                   label: Text(
                                     "+ Add Time Slot",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: const Color(0xFFFF5216),
@@ -803,7 +803,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 ),
                                 child: Text(
                                   "Cancel",
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF4B5563),
@@ -905,7 +905,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 ),
                                 child: Text(
                                   "Save",
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -957,7 +957,7 @@ class VendorWorkingHoursList extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: pillTextColor,
@@ -1151,7 +1151,7 @@ class VendorSectionHeader extends StatelessWidget {
 
     return Text(
       localizedTitle,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 12,
         fontWeight: FontWeight.bold,
         color: const Color(0xFF1F1F1F),
@@ -1253,7 +1253,7 @@ class VendorDetailRow extends StatelessWidget {
             flex: 1,
             child: Text(
               localizedLabel,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 color: const Color(0xFF6B7280),
               ),
@@ -1270,7 +1270,7 @@ class VendorDetailRow extends StatelessWidget {
               ),
               child: Text(
                 value,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF166534),
@@ -1285,7 +1285,7 @@ class VendorDetailRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
                 textAlign: TextAlign.end,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: isBoldValue ? FontWeight.bold : FontWeight.w500,
                   color: const Color(0xFF1F1F1F),
@@ -1390,7 +1390,7 @@ class VendorReviewItem extends StatelessWidget {
                 backgroundColor: const Color(0xFFDCFCE7),
                 child: Text(
                   name.isNotEmpty ? name[0] : "",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     color: const Color(0xFF166534),
                     fontWeight: FontWeight.bold,
                   ),
@@ -1403,7 +1403,7 @@ class VendorReviewItem extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F1F1F),
@@ -1423,7 +1423,7 @@ class VendorReviewItem extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           rating.toStringAsFixed(1),
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 12,
                             color: const Color(0xFF9CA3AF),
                           ),
@@ -1435,7 +1435,7 @@ class VendorReviewItem extends StatelessWidget {
               ),
               Text(
                 formatOrderPlacedAt(DateTime.parse(date.toString())),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   color: const Color(0xFF9CA3AF),
                 ),
@@ -1445,7 +1445,7 @@ class VendorReviewItem extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             review,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               color: const Color(0xFF4B5563),
             ),
@@ -1462,7 +1462,7 @@ class VendorReviewItem extends StatelessWidget {
               children: [
                 Text(
                   S.of(context).orderColon,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     color: const Color(0xFF9CA3AF),
                   ),
@@ -1472,7 +1472,7 @@ class VendorReviewItem extends StatelessWidget {
                   child: Text(
                     orderId,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF4B5563),
@@ -1528,7 +1528,7 @@ class VendorLeaveTile extends StatelessWidget {
                       dateRange,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F1F1F),
@@ -1538,7 +1538,7 @@ class VendorLeaveTile extends StatelessWidget {
                       reason,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 10,
                         color: const Color(0xFF9CA3AF),
                       ),
@@ -1560,7 +1560,7 @@ class VendorLeaveTile extends StatelessWidget {
                 ),
                 child: Text(
                   status,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: isUpcoming
@@ -1586,7 +1586,7 @@ class VendorLeaveTile extends StatelessWidget {
                 ),
                 child: Text(
                   S.of(context).cancelLeave,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFFFF5216),
@@ -1680,7 +1680,7 @@ class VendorCategoryAddRow extends StatelessWidget {
                   S.of(context).allCategories,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     color: const Color(0xFF1F2937),
                   ),
@@ -1697,7 +1697,7 @@ class VendorCategoryAddRow extends StatelessWidget {
                       S.of(context).allCategories,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         color: const Color(0xFF1F2937),
                       ),
@@ -1710,7 +1710,7 @@ class VendorCategoryAddRow extends StatelessWidget {
                         c.name ?? '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           color: const Color(0xFF1F2937),
                         ),
@@ -1733,7 +1733,7 @@ class VendorCategoryAddRow extends StatelessWidget {
               S.of(context).addMenuTitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w600,
@@ -1781,7 +1781,7 @@ class _AvailabilityChip extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 11,
             color: color,
             fontWeight: FontWeight.w500,
@@ -1902,7 +1902,7 @@ class VendorRichCard extends StatelessWidget {
                         children: [
                           Text(
                             "ID: # $id",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 10,
                               color: const Color(0xFF94A3B8),
                               fontWeight: FontWeight.w500,
@@ -1913,7 +1913,7 @@ class VendorRichCard extends StatelessWidget {
                             name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF1F1F1F),
@@ -1933,7 +1933,7 @@ class VendorRichCard extends StatelessWidget {
                               _displayCategoryLabel,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 10,
                                 color: const Color(0xFFFF5216),
                                 fontWeight: FontWeight.bold,
@@ -1949,7 +1949,7 @@ class VendorRichCard extends StatelessWidget {
                                     price,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: const Color(0xFF1F1F1F),
@@ -1963,7 +1963,7 @@ class VendorRichCard extends StatelessWidget {
                                       originalPrice!,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontSize: 11,
                                         color: const Color(0xFF94A3B8),
                                         decoration: TextDecoration.lineThrough,
@@ -2001,7 +2001,7 @@ class VendorRichCard extends StatelessWidget {
                             ),
                             child: Text(
                               S.of(context).viewDetails,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 color: const Color(0xFFFF5216),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
@@ -2025,7 +2025,7 @@ class VendorRichCard extends StatelessWidget {
                             ),
                             child: Text(
                               'Add Item',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
@@ -2081,7 +2081,7 @@ class VendorRichCard extends StatelessWidget {
                                             Expanded(
                                               child: Text(
                                                 'Update Stock',
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w700,
                                                   color: const Color(
@@ -2119,7 +2119,7 @@ class VendorRichCard extends StatelessWidget {
                                         const SizedBox(height: 16),
                                         Text(
                                           'Type',
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                             color: const Color(0xFF6B7280),
@@ -2169,7 +2169,7 @@ class VendorRichCard extends StatelessWidget {
                                         const SizedBox(height: 14),
                                         Text(
                                           'Item Quantity',
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                             color: const Color(0xFF6B7280),
@@ -2237,7 +2237,7 @@ class VendorRichCard extends StatelessWidget {
                                                   ),
                                                   child: Text(
                                                     'Cancel',
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -2320,7 +2320,7 @@ class VendorRichCard extends StatelessWidget {
                                                   ),
                                                   child: Text(
                                                     'Update',
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -2387,7 +2387,7 @@ class VendorRichCard extends StatelessWidget {
                                           child: Text(
                                             message,
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
                                               color: const Color(0xFF111827),
@@ -2419,7 +2419,7 @@ class VendorRichCard extends StatelessWidget {
                                                   ),
                                                   child: Text(
                                                     'No',
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -2558,7 +2558,7 @@ class VendorRichCard extends StatelessWidget {
                                                                             Text(
                                                                               successMessage,
                                                                               textAlign: TextAlign.center,
-                                                                              style: GoogleFonts.rubik(
+                                                                              style: appFont('Rubik', 
                                                                                 fontSize: 13,
                                                                                 fontWeight: FontWeight.w500,
                                                                                 color: const Color(
@@ -2590,7 +2590,7 @@ class VendorRichCard extends StatelessWidget {
                                                                                 ),
                                                                                 child: Text(
                                                                                   'Ok',
-                                                                                  style: GoogleFonts.rubik(
+                                                                                  style: appFont('Rubik', 
                                                                                     fontSize: 14,
                                                                                     fontWeight: FontWeight.w700,
                                                                                     color: Colors.white,
@@ -2657,7 +2657,7 @@ class VendorRichCard extends StatelessWidget {
                                                   ),
                                                   child: Text(
                                                     'Yes',
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -2729,7 +2729,7 @@ class VendorRichCard extends StatelessWidget {
                                       : 'Mark Available',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
@@ -2755,7 +2755,7 @@ class VendorRichCard extends StatelessWidget {
                                   'Update Stock',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
@@ -2791,7 +2791,7 @@ class VendorRichCard extends StatelessWidget {
                       leading: const Icon(Icons.edit_outlined, size: 20),
                       title: Text(
                         S.of(context).edit,
-                        style: GoogleFonts.rubik(fontSize: 14),
+                        style: appFont('Rubik', fontSize: 14),
                       ),
                       trailing: const Icon(Icons.chevron_right, size: 20),
                       contentPadding: EdgeInsets.zero,
@@ -2807,7 +2807,7 @@ class VendorRichCard extends StatelessWidget {
                       ),
                       title: Text(
                         S.of(context).delete,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           color: const Color(0xFFEF4444),
                         ),
@@ -2864,7 +2864,7 @@ class VendorAddNewItemButton extends StatelessWidget {
         ),
         child: Text(
           S.of(context).addNewItem,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -2904,7 +2904,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
               children: [
                 Text(
                   S.of(context).instructions,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF6B7280),
@@ -2979,7 +2979,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
                     Expanded(
                       child: Text(
                         S.of(context).availableAttributes,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF111827),
@@ -3001,7 +3001,7 @@ class VendorBulkImportInstructions extends StatelessWidget {
                       ),
                       child: Text(
                         "3 " + "ATTRIBUTES",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFFFF5216),
@@ -3028,7 +3028,7 @@ Widget _instructionBlock({
 }) {
   return RichText(
     text: TextSpan(
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 13,
         height: 1.6,
         color: const Color(0xFF6B7280),
@@ -3036,7 +3036,7 @@ Widget _instructionBlock({
       children: [
         TextSpan(
           text: '$index. ',
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             fontWeight: FontWeight.w800,
             color: const Color(0xFF111827),
@@ -3044,7 +3044,7 @@ Widget _instructionBlock({
         ),
         TextSpan(
           text: title,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1F2937),
@@ -3058,12 +3058,12 @@ Widget _instructionBlock({
 }
 
 Widget _attributesTable() {
-  TextStyle headerStyle = GoogleFonts.rubik(
+  TextStyle headerStyle = appFont('Rubik', 
     fontSize: 12,
     fontWeight: FontWeight.w700,
     color: const Color(0xFF111827),
   );
-  TextStyle valueStyle = GoogleFonts.rubik(
+  TextStyle valueStyle = appFont('Rubik', 
     fontSize: 13,
     fontWeight: FontWeight.w600,
     color: const Color(0xFF374151),
@@ -3135,7 +3135,7 @@ class VendorImportStep extends StatelessWidget {
           child: Center(
             child: Text(
               number.toString(),
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -3148,7 +3148,7 @@ class VendorImportStep extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1F1F1F),
@@ -3156,7 +3156,7 @@ class VendorImportStep extends StatelessWidget {
             ),
             Text(
               subtitle,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color: const Color(0xFF6B7280),
               ),
@@ -3193,7 +3193,7 @@ class VendorBasketItem extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF1F1F1F),
@@ -3201,7 +3201,7 @@ class VendorBasketItem extends StatelessWidget {
               ),
               Text(
                 count,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   color: const Color(0xFF6B7280),
                 ),
@@ -3218,7 +3218,7 @@ class VendorBasketItem extends StatelessWidget {
             ),
             child: Text(
               status,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color:
                     (status == "Active" || status == S.of(context).activeLabel)
@@ -3259,7 +3259,7 @@ class VendorPayoutItem extends StatelessWidget {
             children: [
               Text(
                 id,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF1F1F1F),
@@ -3267,7 +3267,7 @@ class VendorPayoutItem extends StatelessWidget {
               ),
               Text(
                 date,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 12,
                   color: const Color(0xFF6B7280),
                 ),
@@ -3276,7 +3276,7 @@ class VendorPayoutItem extends StatelessWidget {
           ),
           Text(
             amount,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF166534),
@@ -3344,7 +3344,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                                     name.isNotEmpty
                                         ? name[0].toUpperCase()
                                         : "R1",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       color: const Color(0xFFFF5216),
@@ -3362,7 +3362,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                                     name.isNotEmpty
                                         ? name[0].toUpperCase()
                                         : "R1",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       color: const Color(0xFFFF5216),
@@ -3373,7 +3373,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                         : Center(
                             child: Text(
                               name.isNotEmpty ? name[0].toUpperCase() : "R1",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFFFF5216),
@@ -3386,7 +3386,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
                         name.isNotEmpty ? name[0].toUpperCase() : "R1",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFFFF5216),
@@ -3397,7 +3397,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
           ),
           Text(
             name,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1F1F1F),
@@ -3417,7 +3417,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   rating,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -3483,7 +3483,7 @@ class VendorMenuButton extends StatelessWidget {
         child: Center(
           child: Text(
             _getLocalizedMenuTitle(context),
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: isSelected ? Colors.white : const Color(0xFF64748B),
@@ -3529,7 +3529,7 @@ class VendorLeaveForm extends StatelessWidget {
                   children: [
                     Text(
                       S.of(context).fromDate,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         color: const Color(0xFF94A3B8),
                         fontWeight: FontWeight.w500,
@@ -3550,7 +3550,7 @@ class VendorLeaveForm extends StatelessWidget {
                           children: [
                             Text(
                               formatDate(fromDate),
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 13,
                                 color: const Color(0xFF1F1F1F),
                               ),
@@ -3574,7 +3574,7 @@ class VendorLeaveForm extends StatelessWidget {
                   children: [
                     Text(
                       S.of(context).toDate,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         color: const Color(0xFF94A3B8),
                       ),
@@ -3594,7 +3594,7 @@ class VendorLeaveForm extends StatelessWidget {
                           children: [
                             Text(
                               formatDate(toDate),
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 13,
                                 color: const Color(0xFF1F1F1F),
                               ),
@@ -3616,7 +3616,7 @@ class VendorLeaveForm extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             S.of(context).reasonForLeave,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               color: const Color(0xFF94A3B8),
               fontWeight: FontWeight.w500,
@@ -3636,7 +3636,7 @@ class VendorLeaveForm extends StatelessWidget {
               maxLines: null,
               decoration: InputDecoration(
                 hintText: S.of(context).egAnnualVacationRenovation,
-                hintStyle: GoogleFonts.rubik(
+                hintStyle: appFont('Rubik', 
                   fontSize: 12,
                   color: const Color(0xFF94A3B8).withOpacity(0.6),
                 ),
@@ -3648,7 +3648,7 @@ class VendorLeaveForm extends StatelessWidget {
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color: const Color(0xFF1F1F1F),
               ),
@@ -3669,7 +3669,7 @@ class VendorLeaveForm extends StatelessWidget {
               ),
               child: Text(
                 S.of(context).markLeave,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,

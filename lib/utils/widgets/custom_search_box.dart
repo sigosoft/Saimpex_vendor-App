@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomSearchBox extends StatelessWidget {
   final String hintText;
@@ -45,14 +45,14 @@ class CustomSearchBox extends StatelessWidget {
           obscureText: obscureText,
           validator: validator,
           onChanged: onChanged,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 12,
             color: Colors.black,
             fontWeight: FontWeight.w400,
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: GoogleFonts.rubik(
+            hintStyle: appFont('Rubik', 
               color: const Color(0xFF94A3B8),
               fontSize: 12,
               fontWeight: FontWeight.w400,

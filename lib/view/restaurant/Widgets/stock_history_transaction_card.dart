@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 /// Transaction card for stock history.
@@ -61,7 +61,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                       'STOCK ID: #$stockId',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF94A3B8),
@@ -93,7 +93,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                             isStockAdded ? 'Stock Added' : 'Stock Removed',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF1F2937),
@@ -116,7 +116,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                         _dateFmt.format(dateTime!),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF64748B),
@@ -129,7 +129,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.end,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF1F2937),
@@ -152,7 +152,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                 children: [
                   Text(
                     'QUANTITY',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF94A3B8),
@@ -162,7 +162,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     qtyText,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: accentColor,
@@ -175,7 +175,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                 children: [
                   Text(
                     'REMAINING',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF94A3B8),
@@ -185,7 +185,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$remaining',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1F2937),

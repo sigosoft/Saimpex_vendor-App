@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 // import 'package:saimpex_vendor/utils/widgets/delete_cart_dialog.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
@@ -438,7 +438,7 @@ Widget _buildContent(
 
                                     Text(
                                       controller.filterCategories[index],
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -477,7 +477,7 @@ Widget _buildContent(
                     const SizedBox(height: 10),
                     Text(
                       S.of(context).allItemsFromThisRestaurant,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -628,7 +628,7 @@ Widget _buildCartBottomBar(
           flex: 3,
           child: Text(
             controller.vendorName.isNotEmpty ? controller.vendorName : name,
-            style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w600),
+            style: appFont('Rubik', fontSize: 14, fontWeight: FontWeight.w600),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -661,14 +661,14 @@ Widget _buildCartBottomBar(
                     children: [
                       Text(
                         "${controller.currentCartItemsCount} ${S.of(context).item} | ${controller.currentCartTotal} MRU",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 11,
                           color: Colors.white,
                         ),
                       ),
                       Text(
                         S.of(context).checkout,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

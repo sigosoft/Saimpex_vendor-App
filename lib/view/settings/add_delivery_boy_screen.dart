@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -317,7 +317,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                 leading: const Icon(Icons.camera_alt, color: colorPrimary),
                 title: Text(
                   'Take Photo',
-                  style: GoogleFonts.rubik(fontWeight: FontWeight.w500),
+                  style: appFont('Rubik', fontWeight: FontWeight.w500),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
@@ -325,7 +325,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                 leading: const Icon(Icons.photo_library, color: colorPrimary),
                 title: Text(
                   'Choose from Gallery',
-                  style: GoogleFonts.rubik(fontWeight: FontWeight.w500),
+                  style: appFont('Rubik', fontWeight: FontWeight.w500),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
@@ -482,7 +482,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         backgroundColor: Colors.white,
         title: Text(
           'Delete Delivery Boy',
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontWeight: FontWeight.w700,
             fontSize: 18,
             color: const Color(0xFF1F2937),
@@ -492,7 +492,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           _nameController.text.trim().isNotEmpty
               ? 'Are you sure you want to delete "${_nameController.text.trim()}"?'
               : 'Are you sure you want to delete this delivery boy?',
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 14,
             color: const Color(0xFF6B7280),
           ),
@@ -502,7 +502,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               'Cancel',
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w600,
               ),
@@ -512,7 +512,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
               'Delete',
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 color: const Color(0xFFEF4444),
                 fontWeight: FontWeight.w600,
               ),
@@ -922,7 +922,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           children: [
             Text(
               _isEditing ? 'Update Delivery Boy' : 'Add Delivery Boy',
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF333E63),
@@ -931,7 +931,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
             if (_isEditing && _addedOnTime != null && _addedOnTime!.isNotEmpty)
               Text(
                 'Added on: $_addedOnTime',
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
                   color: const Color(0xFF94A3B8),
@@ -966,7 +966,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'Delete',
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: const Color(0xFFEF4444),
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -1175,7 +1175,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   ),
                   child: Text(
                     'Cancel',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       color: const Color(0xFF374151),
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -1210,7 +1210,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                         )
                       : Text(
                           _isEditing ? 'Update' : 'Add Delivery Boy',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -1228,7 +1228,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 15,
         fontWeight: FontWeight.w700,
         color: const Color(0xFF1F2937),
@@ -1239,7 +1239,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 13,
         fontWeight: FontWeight.w500,
         color: const Color(0xFF333E63),
@@ -1259,10 +1259,10 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       maxLines: maxLines,
-      style: GoogleFonts.rubik(fontSize: 14, color: Colors.black),
+      style: appFont('Rubik', fontSize: 14, color: Colors.black),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.rubik(
+        hintStyle: appFont('Rubik', 
           fontSize: 13,
           color: const Color(0xFF9CA3AF),
           fontWeight: FontWeight.w400,
@@ -1302,7 +1302,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           value: _selectedGender,
           hint: Text(
             'Select Gender',
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF9CA3AF),
             ),
@@ -1314,7 +1314,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   value: item,
                   child: Text(
                     item,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       color: const Color(0xFF1F2937),
                     ),
@@ -1373,7 +1373,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       child: Text(
                         'Change',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -1409,7 +1409,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       child: Text(
                         'Change',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -1439,7 +1439,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF4B5563),
@@ -1448,7 +1448,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   const SizedBox(height: 2),
                   Text(
                     'PNG, JPG up to 4MB',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF9CA3AF),
                     ),

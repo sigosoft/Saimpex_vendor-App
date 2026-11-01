@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -9,7 +9,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 /// (`GET earnings/balanceAdjustments`), shown under the payouts list.
 /// No Figma screen: built in the style of the earnings payout cards.
 class BalanceAdjustmentsSection extends StatefulWidget {
-  const BalanceAdjustmentsSection({super.key, this.accent = const Color(0xFFF97316)});
+  const BalanceAdjustmentsSection({super.key, this.accent = const Color(0xFFFF5216)});
 
   final Color accent;
 
@@ -77,7 +77,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
         const SizedBox(height: 8),
         Text(
           S.of(context).balanceAdjustments,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: _ink,
@@ -96,7 +96,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(
               S.of(context).noBalanceAdjustmentsYet,
-              style: GoogleFonts.rubik(fontSize: 13, color: Colors.grey),
+              style: appFont('Rubik', fontSize: 13, color: Colors.grey),
             ),
           )
         else
@@ -132,7 +132,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
               children: [
                 Text(
                   note.isEmpty ? S.of(context).adminAdjustment : note,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: _ink,
@@ -145,7 +145,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
                     const SizedBox(width: 4),
                     Text(
                       _date(row['date']),
-                      style: GoogleFonts.rubik(fontSize: 11, color: Colors.grey),
+                      style: appFont('Rubik', fontSize: 11, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -159,7 +159,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
               Text(
                 '${deduct ? '-' : '+'} ${_money(row['amount'])}',
                 textDirection: TextDirection.ltr,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: deduct ? _deducted : _added,
@@ -168,7 +168,7 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
               const SizedBox(height: 6),
               Text(
                 '${S.of(context).balanceAfter}: ${_money(row['balance_after'])}',
-                style: GoogleFonts.rubik(fontSize: 11, color: Colors.grey[700]),
+                style: appFont('Rubik', fontSize: 11, color: Colors.grey[700]),
               ),
             ],
           ),

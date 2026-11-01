@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -86,7 +86,7 @@ class _AccountViewState extends State<AccountView> {
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).deleteAccount,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: AppColors.textDark,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -96,7 +96,7 @@ class _AccountViewState extends State<AccountView> {
                 Text(
                   S.of(context).areYouSureYouWantToDeleteYourAccount,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -120,7 +120,7 @@ class _AccountViewState extends State<AccountView> {
                           ),
                           child: Text(
                             S.of(context).no,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -143,7 +143,7 @@ class _AccountViewState extends State<AccountView> {
                           ),
                           child: Text(
                             S.of(context).yes,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -1107,7 +1107,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
               Text(
                 S.of(context).areYouSureYouWantToLogout,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF4A4A4A),
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -1135,7 +1135,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           S.of(context).no,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -1158,7 +1158,7 @@ class _LogoutConfirmDialog extends StatelessWidget {
                         ),
                         child: Text(
                           S.of(context).yes,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),

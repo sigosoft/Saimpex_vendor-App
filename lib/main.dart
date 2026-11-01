@@ -122,7 +122,15 @@ class _MyAppState extends State<MyApp> {
               textDirection: currentLocale.languageCode == 'ar'
                   ? TextDirection.rtl
                   : TextDirection.ltr,
-              child: child ?? const SizedBox(),
+              // Arabic text in Cairo (Baloo 2 has no Arabic letters).
+              child: currentLocale.languageCode == 'ar'
+                  ? Theme(
+                      data: Theme.of(context).copyWith(
+                        textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
+                      ),
+                      child: child ?? const SizedBox(),
+                    )
+                  : child ?? const SizedBox(),
             );
           },
           theme: ThemeData(

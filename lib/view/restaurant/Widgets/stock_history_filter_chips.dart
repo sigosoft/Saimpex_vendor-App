@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Filter options for stock history lists.
 enum StockHistoryFilterKind { all, added, removed }
@@ -78,7 +78,7 @@ class _Chip extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isSelected ? Colors.white : const Color(0xFF4B5563),

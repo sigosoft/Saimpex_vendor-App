@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/dashboard_controller.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
@@ -87,7 +87,7 @@ class _DashboardState extends State<Dashboard> {
                       // Revenue Report Section
                       Text(
                         S.of(context).revenueReport,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF1F1F1F),
@@ -102,7 +102,7 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           Text(
                             S.of(context).popularItems,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFF1F1F1F),
@@ -120,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                             },
                             child: Text(
                               S.of(context).viewAll,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFFF5216),
@@ -187,7 +187,7 @@ class _DashboardState extends State<Dashboard> {
                 children: [
                   Text(
                     S.of(context).totalRevenue,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF9CA3AF),
@@ -196,7 +196,7 @@ class _DashboardState extends State<Dashboard> {
                   const SizedBox(height: 8),
                   Text(
                     "$revenueTotal MRU",
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1F1F1F),
@@ -211,7 +211,7 @@ class _DashboardState extends State<Dashboard> {
                     .map(
                       (y) => PopupMenuItem<String>(
                         value: y,
-                        child: Text(y, style: GoogleFonts.rubik(fontSize: 13)),
+                        child: Text(y, style: appFont('Rubik', fontSize: 13)),
                       ),
                     )
                     .toList(),
@@ -231,7 +231,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       Text(
                         controller.selectedYear,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF1F1F1F),
@@ -276,7 +276,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     child: Text(
                       "$revenueTotal MRU",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -293,7 +293,7 @@ class _DashboardState extends State<Dashboard> {
                 .map(
                   (e) => Text(
                     e,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF9CA3AF),
                     ),
@@ -330,7 +330,7 @@ class _DashboardState extends State<Dashboard> {
           child: Center(
             child: Text(
               S.of(context).noPopularItemsFound,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 color: const Color(0xFF9CA3AF),
                 fontSize: 13,
               ),
@@ -434,7 +434,7 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 Text(
                   name,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF1F1F1F),
@@ -443,7 +443,7 @@ class _DashboardState extends State<Dashboard> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     color: const Color(0xFF9CA3AF),
                   ),
@@ -453,7 +453,7 @@ class _DashboardState extends State<Dashboard> {
           ),
           Text(
             orders,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: const Color(0xFF6B7280),

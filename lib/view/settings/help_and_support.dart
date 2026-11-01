@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/controller/settings_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
@@ -31,7 +31,7 @@ class HelpAndSupport extends StatelessWidget {
           ),
           title: Text(
             S.of(context).helpSupport,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),
@@ -68,7 +68,7 @@ class HelpAndSupport extends StatelessWidget {
                       children: [
                         Text(
                           S.of(context).callUs,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: const Color(0xFF64748B),
@@ -89,7 +89,7 @@ class HelpAndSupport extends StatelessWidget {
                             controller.contactMobile.isNotEmpty
                                 ? controller.contactMobile
                                 : "N/A",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF333E63),
@@ -99,7 +99,7 @@ class HelpAndSupport extends StatelessWidget {
                         const SizedBox(height: 25),
                         Text(
                           S.of(context).emailUs,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: const Color(0xFF64748B),
@@ -118,7 +118,7 @@ class HelpAndSupport extends StatelessWidget {
                             controller.contactEmail.isNotEmpty
                                 ? controller.contactEmail
                                 : "N/A",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF333E63),

@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/Utils.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/view/login/widgets/login_to_continue_alert_dialogue.dart';
@@ -186,7 +186,7 @@ Widget _buildContent(
                 Center(
                   child: Text(
                     S.of(context).pickYourFavouritesAndStartYourFeast,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -301,7 +301,7 @@ Widget _buildContent(
                                         : item.nameFr ?? item.nameEn.toString(),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.black,

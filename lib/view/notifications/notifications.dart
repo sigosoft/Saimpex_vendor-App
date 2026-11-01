@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../../controller/notification_controller.dart';
 import '../../generated/l10n.dart';
@@ -220,7 +220,7 @@ class _NotificationsState extends State<Notifications> {
               children: [
                 Text(
                   message!,
-                  style: GoogleFonts.rubik(fontSize: 13, color: Colors.black),
+                  style: appFont('Rubik', fontSize: 13, color: Colors.black),
                 ),
                 const SizedBox(height: 10),
                 Container(
@@ -229,7 +229,7 @@ class _NotificationsState extends State<Notifications> {
                     time,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 13,
                       color: Colors.grey.shade600,
                     ),

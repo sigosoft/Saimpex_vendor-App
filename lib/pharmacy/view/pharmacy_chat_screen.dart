@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
@@ -239,11 +239,11 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
                         _threads.isEmpty
                     ? const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFFFF5722),
+                          color: Color(0xFFFF5216),
                         ),
                       )
                     : RefreshIndicator(
-                        color: const Color(0xFFFF5722),
+                        color: const Color(0xFFFF5216),
                         onRefresh: _fetchThreads,
                         child: threads.isEmpty
                             ? Center(
@@ -346,7 +346,7 @@ class _MessagesHeader extends StatelessWidget {
           children: [
             Text(
               'Messages',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 17,
@@ -374,7 +374,7 @@ class _MessagesHeader extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.chevron_left_rounded,
-                    color: Color(0xFFFF5722),
+                    color: Color(0xFFFF5216),
                     size: 26,
                   ),
                 ),
@@ -414,7 +414,7 @@ class _MessagesSearchField extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w400,
                 fontSize: 13.5,
@@ -429,7 +429,7 @@ class _MessagesSearchField extends StatelessWidget {
                 errorBorder: InputBorder.none,
                 focusedErrorBorder: InputBorder.none,
                 hintText: 'Search customer name or order ID...',
-                hintStyle: GoogleFonts.inter(
+                hintStyle: appFont('Inter', 
                   color: const Color(0xFFB0B0B0),
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -458,7 +458,7 @@ class _MessageTile extends StatelessWidget {
   static const _name = Color(0xFF1A1A1A);
   static const _previewRead = Color(0xFF9CA3AF);
   static const _time = Color(0xFF9CA3AF);
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
 
   @override
   Widget build(BuildContext context) {
@@ -487,7 +487,7 @@ class _MessageTile extends StatelessWidget {
                           thread.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: _name,
                             fontWeight: FontWeight.w700,
                             fontSize: 15.5,
@@ -517,7 +517,7 @@ class _MessageTile extends StatelessWidget {
                           thread.preview,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: unread ? _name : _previewRead,
                             fontWeight: unread
                                 ? FontWeight.w500
@@ -539,7 +539,7 @@ class _MessageTile extends StatelessWidget {
                           ),
                           child: Text(
                             '${thread.unreadCount}',
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 10,
@@ -562,7 +562,7 @@ class _MessageTile extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       thread.time,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: _time,
                         fontWeight: FontWeight.w400,
                         fontSize: 11.5,
@@ -608,8 +608,8 @@ class _ThreadAvatar extends StatelessWidget {
       ),
       child: Text(
         initial,
-        style: GoogleFonts.inter(
-          color: const Color(0xFFFF5722),
+        style: appFont('Inter', 
+          color: const Color(0xFFFF5216),
           fontWeight: FontWeight.w700,
           fontSize: 18,
         ),
@@ -746,7 +746,7 @@ class PharmacyChatScreen extends StatefulWidget {
   static const _name = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF9A9A9A);
   static const _time = Color(0xFFA3A3A8);
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _bubble = Color(0xFF1A1A1A);
   static const _input = Color(0xFFF3EEE6);
   static const _avatar = '';
@@ -1186,7 +1186,7 @@ class _Header extends StatelessWidget {
       ),
       child: Text(
         initial,
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: PharmacyChatScreen._orange,
           fontWeight: FontWeight.w700,
           fontSize: 16,
@@ -1268,7 +1268,7 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyChatScreen._name,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -1278,7 +1278,7 @@ class _Header extends StatelessWidget {
                 const SizedBox(height: 1),
                 Text(
                   'Online',
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyChatScreen._muted,
                     fontWeight: FontWeight.w400,
                     fontSize: 12.5,
@@ -1309,7 +1309,7 @@ class _DatePill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: PharmacyChatScreen._muted,
           fontWeight: FontWeight.w500,
           fontSize: 12,
@@ -1349,7 +1349,7 @@ class _IncomingBubble extends StatelessWidget {
           ),
           child: Text(
             text,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF3A3A3A),
               fontWeight: FontWeight.w400,
               fontSize: 14.5,
@@ -1360,7 +1360,7 @@ class _IncomingBubble extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           time,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyChatScreen._time,
             fontWeight: FontWeight.w400,
             fontSize: 11.5,
@@ -1415,7 +1415,7 @@ class _OutgoingBubble extends StatelessWidget {
           ),
           child: Text(
             text,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: Colors.white,
               fontWeight: FontWeight.w400,
               fontSize: 14.5,
@@ -1429,7 +1429,7 @@ class _OutgoingBubble extends StatelessWidget {
           children: [
             Text(
               time,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyChatScreen._time,
                 fontWeight: FontWeight.w400,
                 fontSize: 11.5,
@@ -1557,7 +1557,7 @@ class _AudioBubble extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 duration,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
@@ -1573,7 +1573,7 @@ class _AudioBubble extends StatelessWidget {
           children: [
             Text(
               time,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyChatScreen._time,
                 fontWeight: FontWeight.w400,
                 fontSize: 11.5,
@@ -1623,7 +1623,7 @@ class _InputBar extends StatelessWidget {
                       controller: controller,
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => onSend(),
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF1A1A1A),
                         fontWeight: FontWeight.w400,
                         fontSize: 15,
@@ -1637,7 +1637,7 @@ class _InputBar extends StatelessWidget {
                         errorBorder: InputBorder.none,
                         focusedErrorBorder: InputBorder.none,
                         hintText: 'Type a message...',
-                        hintStyle: GoogleFonts.inter(
+                        hintStyle: appFont('Inter', 
                           color: const Color(0xFFC5C5C5),
                           fontWeight: FontWeight.w400,
                           fontSize: 15,
@@ -1735,7 +1735,7 @@ class _DeleteChatDialog extends StatelessWidget {
             Text(
               'Delete chat?',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1745,7 +1745,7 @@ class _DeleteChatDialog extends StatelessWidget {
             Text(
               'Are you sure you want to delete the chat with $name?',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF4B5563),
                 fontWeight: FontWeight.w500,
                 fontSize: 14.5,
@@ -1768,7 +1768,7 @@ class _DeleteChatDialog extends StatelessWidget {
                     ),
                     child: Text(
                       'Cancel',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -1790,7 +1790,7 @@ class _DeleteChatDialog extends StatelessWidget {
                     ),
                     child: Text(
                       'Delete',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),

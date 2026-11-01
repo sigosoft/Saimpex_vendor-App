@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Custom painter for dashed rounded border.
 class DashedBorderPainter extends CustomPainter {
@@ -73,7 +73,7 @@ class AddItemsFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: GoogleFonts.rubik(
+      style: appFont('Rubik', 
         fontSize: 13,
         fontWeight: FontWeight.w500,
         color: color ?? const Color(0xFF475569),
@@ -143,14 +143,14 @@ class AddItemsTextField extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F2937),
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.rubik(
+          hintStyle: appFont('Rubik', 
             fontSize: 13,
             fontWeight: FontWeight.w400,
             color: const Color(0xFF94A3B8),
@@ -164,7 +164,7 @@ class AddItemsTextField extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       suffixText!,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF64748B),
@@ -229,7 +229,7 @@ class AddItemsDropdownField extends StatelessWidget {
                 hint!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: const Color(0xFF94A3B8),
@@ -241,7 +241,7 @@ class AddItemsDropdownField extends StatelessWidget {
           color: Color(0xFF64748B),
           size: 20,
         ),
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF1F2937),
@@ -343,7 +343,7 @@ class AddItemsMultiSelectField extends StatelessWidget {
               textToShow ?? (hint ?? ''),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 13,
                 fontWeight:
                     textToShow == null ? FontWeight.w400 : FontWeight.w500,
@@ -404,7 +404,7 @@ class AddItemsBottomBar extends StatelessWidget {
                     ),
                     child: Text(
                       'Reset',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F2937),
@@ -429,7 +429,7 @@ class AddItemsBottomBar extends StatelessWidget {
                     ),
                     child: Text(
                       'Submit',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,

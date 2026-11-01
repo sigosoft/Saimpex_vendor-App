@@ -219,6 +219,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 - Strings: `lib/l10n/intl_en.arb` (~711 keys), `intl_fr.arb` (~706), `intl_ar.arb` (~703). Accessed with `S.of(context).key` / `S.current.key`.
 - Language switch: `lib/utils/localization_service.dart` (`localeNotifier`) plus `flutter_localization`. Saved under `selected_locale`.
 - RTL: `lib/main.dart` wraps the whole app in `Directionality` (RTL when language is `ar`).
+- Font: Arabic text uses **Cairo** (Rubik, Inter and Baloo 2 have no Arabic letters). Use `appFont('Rubik', ...)` / `appFont('Inter', ...)` from `lib/resources/fonts.dart` instead of `GoogleFonts.rubik/inter(...)`; the `builder` in `main.dart` swaps the Baloo 2 theme to Cairo in Arabic. Brand orange is **#FF5216** only (`colorPrimary`); `git grep -i -E "FF5E00|FF5722|FF6B00|F97316" lib` must stay empty (V19).
 - Coverage: Grocery/Restaurant screens mostly use `S`. Water (`lib/water/`) and Home Cleaning (`lib/home_cleaning/`) use `S` since V5 (keys prefixed `water…` / `cleaning…`); mock sample data in those screens is still English until V6 replaces it. Pharmacy uses `S` in a few screens only. The forced `TextDirection.ltr` on the Water bottom nav and language picker was removed in V5; phone numbers, time ranges and +/- quantities are kept LTR on purpose.
 - FR and AR have a few fewer keys than EN: some strings fall back to English.
 

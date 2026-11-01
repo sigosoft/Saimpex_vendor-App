@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/delivery_boys_controller.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -48,7 +48,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
           ),
           title: Text(
             S.of(context).deliveryBoys,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF333E63),
@@ -89,7 +89,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
                         const SizedBox(width: 4),
                         Text(
                           'Add Delivery Boy',
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: colorPrimary,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -243,7 +243,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
                     children: [
                       Text(
                         data.name ?? "",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF333E63),
@@ -264,7 +264,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
                           data.status == 1
                               ? S.of(context).active
                               : S.of(context).inactive,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             color: data.status == 1
@@ -286,7 +286,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
                       const SizedBox(width: 4),
                       Text(
                         data.mobile ?? "",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           color: const Color(0xFF94A3B8),
                           fontWeight: FontWeight.w400,
@@ -306,7 +306,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
                       Expanded(
                         child: Text(
                           data.address ?? "",
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 12,
                             color: const Color(0xFF94A3B8),
                             fontWeight: FontWeight.w400,

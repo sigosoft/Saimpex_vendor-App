@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/Utils/Utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -147,7 +147,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           ),
           title: Text(
             S.of(context).details,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1F2937),
@@ -186,7 +186,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               child: Text(
                 'View Stock History',
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -203,7 +203,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ? Center(
                 child: Text(
                   _error!,
-                  style: GoogleFonts.rubik(color: Colors.red),
+                  style: appFont('Rubik', color: Colors.red),
                 ),
               )
             : _buildContent(lang),
@@ -326,7 +326,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         menuName.isNotEmpty
                             ? menuName
                             : "#${details.id ?? widget.itemId}",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF1F2937),
@@ -361,7 +361,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           const SizedBox(width: 4),
                           Text(
                             isAvailable ? "Available" : "Out of Stock",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: isAvailable
@@ -387,7 +387,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           children: [
                             TextSpan(
                               text: "Category: ",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF64748B),
                                 fontWeight: FontWeight.w400,
@@ -397,7 +397,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                               text: categoryName.isNotEmpty
                                   ? categoryName
                                   : "-",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF1F2937),
                                 fontWeight: FontWeight.w600,
@@ -413,7 +413,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         children: [
                           TextSpan(
                             text: "Serial No: ",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
                               fontWeight: FontWeight.w400,
@@ -421,7 +421,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           ),
                           TextSpan(
                             text: serialStr,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF1F2937),
                               fontWeight: FontWeight.w700,
@@ -449,7 +449,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           Flexible(
                             child: Text(
                               boldPrice,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFFFF5216),
@@ -460,7 +460,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           const SizedBox(width: 4),
                           Text(
                             "MRU",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFFF5216),
@@ -472,7 +472,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                             Flexible(
                               child: Text(
                                 "$strikePrice MRU",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 12,
                                   color: const Color(0xFF94A3B8),
                                   decoration: TextDecoration.lineThrough,
@@ -490,7 +490,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         children: [
                           TextSpan(
                             text: "Preparation Time: ",
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
                               fontWeight: FontWeight.w400,
@@ -498,7 +498,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           ),
                           TextSpan(
                             text: prepTimeStr,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF1F2937),
                               fontWeight: FontWeight.w700,
@@ -507,7 +507,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           if (prepTimeStr != "-")
                             TextSpan(
                               text: " min",
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF64748B),
                                 fontWeight: FontWeight.w400,
@@ -536,7 +536,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                             ),
                             child: Text(
                               t.nameEn ?? '',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF2563EB),
@@ -552,7 +552,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 // Description
                 Text(
                   "DESCRIPTION",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF94A3B8),
@@ -564,7 +564,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   description.isNotEmpty
                       ? description
                       : S.of(context).noDescriptionAvailable,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFF475569),
@@ -599,7 +599,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               child: Text(
                 "Edit Item",
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -612,7 +612,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           const SizedBox(height: 22),
           Text(
             "SALES & PERFORMANCE",
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF4B5563),
@@ -645,7 +645,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         Expanded(
           child: Text(
             title,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF1F2937),
@@ -660,7 +660,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           ),
           child: Text(
             badgeText,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: badgeTextColor,
@@ -712,7 +712,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           Expanded(
             child: Text(
               title,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF1F2937),
@@ -721,7 +721,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           ),
           Text(
             price,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: const Color(0xFFFF5216),
@@ -744,7 +744,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               const SizedBox(width: 4),
               Text(
                 isAvailable ? "Available" : "Out of Stock",
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: isAvailable
@@ -788,7 +788,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             width: 110,
             child: Text(
               day,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF6B7280),
@@ -798,7 +798,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           const Spacer(),
           Text(
             percent,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF2563EB),
@@ -966,7 +966,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: const Color(0xFF64748B),
@@ -975,7 +975,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: valueColor ?? const Color(0xFF1F2937),
@@ -1045,7 +1045,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               Expanded(
                 child: Text(
                   S.of(context).averageRating,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFF94A3B8),
@@ -1059,7 +1059,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   const SizedBox(width: 6),
                   Text(
                     avgRating.toStringAsFixed(1),
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1F2937),
@@ -1087,7 +1087,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         Expanded(
           child: Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 11,
               fontWeight: FontWeight.w400,
               color: const Color(0xFF94A3B8),
@@ -1096,7 +1096,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         ),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF1F2937),
@@ -1136,7 +1136,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   children: [
                     Text(
                       "ORDER #ORD-${orderId}",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFFF5216),
@@ -1145,7 +1145,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                     const SizedBox(height: 4),
                     Text(
                       merchantName.isNotEmpty ? merchantName : "—",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1F2937),
@@ -1165,7 +1165,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
                 child: Text(
                   isDelivered ? "DELIVERED" : "PENDING",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -1181,7 +1181,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               Expanded(
                 child: Text(
                   "ITEMS TOTAL",
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF94A3B8),
@@ -1191,7 +1191,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               Text(
                 "DATE & TIME",
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF94A3B8),
@@ -1208,7 +1208,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   children: [
                     Text(
                       "${itemsCount} Items - ",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFF64748B),
@@ -1216,7 +1216,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                     ),
                     Text(
                       itemsPriceText,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFFFF5216),
@@ -1227,7 +1227,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               Text(
                 dateTimeText,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w400,
                   color: const Color(0xFF64748B),
@@ -1246,7 +1246,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 11,
             fontWeight: FontWeight.w400,
             color: const Color(0xFF94A3B8),
@@ -1255,7 +1255,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1F2937),
@@ -1275,7 +1275,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 11,
             fontWeight: FontWeight.w400,
             color: const Color(0xFF94A3B8),
@@ -1284,7 +1284,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: valueColor ?? const Color(0xFF1F2937),
@@ -1312,7 +1312,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           const SizedBox(width: 6),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1F2937),

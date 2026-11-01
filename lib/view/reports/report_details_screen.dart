@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
 import '../../generated/l10n.dart';
 import '../../resources/colors.dart';
@@ -116,7 +116,7 @@ class ReportDetailsScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   params.customerName,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: _textPrimary,
@@ -126,7 +126,7 @@ class ReportDetailsScreen extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 S.of(context).totalAmount.toUpperCase(),
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: _textMuted,
@@ -144,7 +144,7 @@ class ReportDetailsScreen extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       params.phone,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         color: _textMuted,
                       ),
@@ -154,7 +154,7 @@ class ReportDetailsScreen extends StatelessWidget {
               ),
               Text(
                 '${params.totalAmount} ${params.currency}',
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: _textPrimary,
@@ -170,7 +170,7 @@ class ReportDetailsScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   params.dateTime,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 11,
                     color: _textMuted,
                   ),
@@ -192,7 +192,7 @@ class ReportDetailsScreen extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: textColor,
@@ -237,14 +237,14 @@ class ReportDetailsScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               color: _textMuted,
             ),
           ),
           Text(
             value,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: valueColor ?? _textPrimary,

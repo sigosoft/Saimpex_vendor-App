@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
@@ -68,7 +68,7 @@ class _EditablePhoneFieldState extends State<EditablePhoneField> {
                   controller: widget.controller,
                   focusNode: _focusNode,
                   readOnly: !widget.isEditable,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: widget.isEditable ? Colors.black : Colors.grey,

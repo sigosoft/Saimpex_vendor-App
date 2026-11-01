@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
@@ -7,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -126,7 +126,7 @@ void showToast(BuildContext context, String message) {
               Expanded(
                 child: Text(
                   message,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     textStyle: Theme.of(context).textTheme.displayLarge,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -450,7 +450,7 @@ void showConfirmationBottomSheet({
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF333E63),
@@ -485,7 +485,7 @@ void showConfirmationBottomSheet({
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
                 color: const Color(0xFF1F2937),
@@ -511,7 +511,7 @@ void showConfirmationBottomSheet({
                         ),
                         child: Text(
                           leftButtonText,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: const Color(0xFFFF5216),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -538,7 +538,7 @@ void showConfirmationBottomSheet({
                         ),
                         child: Text(
                           rightButtonText,
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

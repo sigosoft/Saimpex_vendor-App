@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 class VendorStatusTabs extends StatelessWidget {
@@ -79,7 +79,7 @@ class VendorStatusTabs extends StatelessWidget {
                   child: Center(
                     child: Text(
                       _tabLabel(context, tab),
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: isSelected
@@ -112,7 +112,7 @@ class VendorStatusTabs extends StatelessWidget {
                       ),
                       child: Text(
                         _tabCount(tab),
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           color: tabColor,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,

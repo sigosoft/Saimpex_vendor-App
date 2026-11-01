@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -568,14 +568,14 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                           child: TextField(
                             controller: _search,
                             onChanged: (_) => setState(() {}),
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: PharmacyCouponsScreen.ink,
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Search Coupon',
-                              hintStyle: GoogleFonts.inter(
+                              hintStyle: appFont('Inter', 
                                 color: const Color(0xFFA9AEB6),
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
@@ -645,7 +645,7 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   LocalizationService.tr('Add Coupon'),
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
                                   ),
@@ -746,7 +746,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               LocalizationService.tr('Coupons'),
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -818,7 +818,7 @@ class _CouponCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   coupon.name,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyCouponsScreen.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -866,7 +866,7 @@ class _CouponCard extends StatelessWidget {
             children: [
               Text(
                 'CODE: ',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF4C5260),
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -874,7 +874,7 @@ class _CouponCard extends StatelessWidget {
               ),
               Text(
                 coupon.code,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF0F172A),
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
@@ -927,7 +927,7 @@ class _CouponCard extends StatelessWidget {
               ),
               child: Text(
                 'Update Coupon Status',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -961,7 +961,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: foreground,
           fontWeight: FontWeight.w700,
           fontSize: 11,
@@ -985,7 +985,7 @@ class _Stat extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF8D8A95),
             fontWeight: FontWeight.w600,
             fontSize: 11,
@@ -996,7 +996,7 @@ class _Stat extends StatelessWidget {
         Text(
           value,
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyCouponsScreen.orange,
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -1119,7 +1119,7 @@ class _CouponConfirmDialog extends StatelessWidget {
             Text(
               LocalizationService.tr(message),
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF4A4A4A),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -1147,7 +1147,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                       ),
                       child: Text(
                         LocalizationService.tr('No'),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -1170,7 +1170,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                       ),
                       child: Text(
                         LocalizationService.tr('Yes'),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -1256,7 +1256,7 @@ class _CouponMenuRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF10182B),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -1485,7 +1485,7 @@ class _MetaRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyCouponsScreen.muted,
             fontWeight: FontWeight.w500,
             fontSize: 12,
@@ -1494,7 +1494,7 @@ class _MetaRow extends StatelessWidget {
         const Spacer(),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: PharmacyCouponsScreen.slate,
             fontWeight: FontWeight.w600,
             fontSize: 12,

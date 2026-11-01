@@ -1,10 +1,10 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../../controller/payout_controller.dart';
 import '../../generated/l10n.dart';
@@ -186,7 +186,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
         children: [
           Text(
             S.of(context).totalPayoutBalance,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: Colors.white.withOpacity(0.95),
@@ -199,7 +199,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
             children: [
               Text(
                 balance,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -208,7 +208,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
               const SizedBox(width: 8),
               Text(
                 _currency,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.white.withOpacity(0.95),
@@ -231,7 +231,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
       focusNode: _searchFocusNode,
       decoration: InputDecoration(
         hintText: S.of(context).searchAmountOrTransactionId,
-        hintStyle: GoogleFonts.rubik(fontSize: 14, color: Colors.grey.shade500),
+        hintStyle: appFont('Rubik', fontSize: 14, color: Colors.grey.shade500),
         prefixIcon: Icon(
           Icons.search_rounded,
           size: 22,
@@ -256,7 +256,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
           vertical: 14,
         ),
       ),
-      style: GoogleFonts.rubik(fontSize: 14),
+      style: appFont('Rubik', fontSize: 14),
       onSubmitted: (value) => controller.searchPayouts(context, value),
       onChanged: (value) => controller.searchPayouts(context, value),
     );

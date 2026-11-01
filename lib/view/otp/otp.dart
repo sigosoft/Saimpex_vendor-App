@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../controller/otp_controller.dart';
@@ -58,7 +58,7 @@ class _OtpState extends State<Otp> {
                                 .of(context)
                                 .weveSentAVerificationCodeToYourWhatsapp,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               textStyle: Theme.of(
                                 context,
                               ).textTheme.labelMedium,
@@ -163,7 +163,7 @@ class _OtpState extends State<Otp> {
                                   ? S.of(context).resendOtp
                                   : "Resend code in ${controller.remainingSeconds.value} sec",
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 textStyle: Theme.of(
                                   context,
                                 ).textTheme.labelMedium,
@@ -194,7 +194,7 @@ class _OtpState extends State<Otp> {
                                 children: [
                                   Text(
                                     S.of(context).didntGetTheOtp,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.black,
@@ -202,7 +202,7 @@ class _OtpState extends State<Otp> {
                                   ),
                                   Text(
                                     " " + S.of(context).resendOtp,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       color: controller.canResend.value

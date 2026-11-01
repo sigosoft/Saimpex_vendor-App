@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 Widget NoDataWidget(
   BuildContext context,
@@ -26,7 +26,7 @@ Widget NoDataWidget(
         const SizedBox(height: 10),
         Text(
           title,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: fontSize ?? 15,
             fontWeight: FontWeight.w600,
             color: Colors.black,
@@ -35,7 +35,7 @@ Widget NoDataWidget(
         // const SizedBox(height: 8),
         // Text(
         //   content,
-        //   style: GoogleFonts.rubik(
+        //   style: appFont('Rubik', 
         //     fontSize: 14,
         //     fontWeight: FontWeight.w400,
         //     color: Colors.grey[600],

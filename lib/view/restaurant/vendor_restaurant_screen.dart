@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
@@ -269,7 +269,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             children: [
                               Text(
                                 S.of(context).busy,
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFFEF4444),
@@ -460,7 +460,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           },
                           child: Text(
                             S.of(context).viewAll,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFFF5216),
@@ -523,7 +523,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           },
                           child: Text(
                             S.of(context).viewAll,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFFF5216),
@@ -535,7 +535,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 12),
                     Text(
                       S.of(context).upcomingLeaves,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: const Color.fromARGB(255, 95, 145, 245),
@@ -573,7 +573,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 12),
                     Text(
                       S.of(context).completedLeaves,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: const Color.fromARGB(255, 35, 208, 102),
@@ -622,7 +622,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 16),
                     Text(
                       "Select a category and import menu items in bulk",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: const Color(0xFF6B7280),
@@ -952,7 +952,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             const SizedBox(width: 6),
             Text(
               S.of(context).addItem,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 13,
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w600,
@@ -998,7 +998,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   'Download',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 12,
                     color: const Color(0xFFFF5216),
                     fontWeight: FontWeight.w600,
@@ -1044,7 +1044,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     'Upload Menu',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       color: const Color(0xFF3B82F6),
                       fontWeight: FontWeight.w600,
@@ -1078,7 +1078,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               'Add Menu',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -1119,7 +1119,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 S.of(context).allCategories,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   color: const Color(0xFF1F2937),
                 ),
@@ -1136,7 +1136,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     S.of(context).allCategories,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       color: const Color(0xFF1F2937),
                     ),
@@ -1149,7 +1149,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       c.name ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         color: const Color(0xFF1F2937),
                       ),
@@ -1527,7 +1527,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   children: [
                     Text(
                       "Download Template",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F2937),
@@ -1565,7 +1565,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   children: [
                     Text(
                       "Upload Images",
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1F2937),
@@ -1727,7 +1727,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1F2937),
@@ -1748,7 +1748,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ),
               child: Text(
                 "Import",
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,

@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PharmacyTermsScreen extends StatelessWidget {
   const PharmacyTermsScreen({super.key});
@@ -28,7 +28,7 @@ class PharmacyTermsScreen extends StatelessWidget {
                   for (var i = 0; i < 6; i++) ...[
                     Text(
                       _paragraph,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF333333),
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
@@ -63,7 +63,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Terms & Conditions',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF000000),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,

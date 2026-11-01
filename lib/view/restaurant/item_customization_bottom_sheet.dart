@@ -1,9 +1,9 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:saimpex_vendor/controller/restaurant_details_controller.dart';
 import '../../generated/l10n.dart';
@@ -81,7 +81,7 @@ class ItemCustomizationBottomSheet extends StatelessWidget {
                           const SizedBox(width: 12),
                           Text(
                             productName.toString(),
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -102,7 +102,7 @@ class ItemCustomizationBottomSheet extends StatelessWidget {
                           children: [
                             Text(
                               S.of(context).quantity,
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -233,7 +233,7 @@ class ItemCustomizationBottomSheet extends StatelessWidget {
                                   ),
                                   Text(
                                     controller.qty.toString(),
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: colorPrimary,
@@ -277,7 +277,7 @@ class ItemCustomizationBottomSheet extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     "${S.of(context).addItem} | ${controller.totalPrice} MRU",
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -324,13 +324,13 @@ class ItemCustomizationBottomSheet extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w400),
+            style: appFont('Rubik', fontSize: 14, fontWeight: FontWeight.w400),
           ),
           Row(
             children: [
               Text(
                 price,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),

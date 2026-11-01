@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/chat/chat_message_item.dart';
@@ -88,7 +88,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                     S
                                         .of(context)
                                         .currentlyNoContactsFoundPleaseTryLater,
-                                    style: GoogleFonts.rubik(
+                                    style: appFont('Rubik', 
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -167,7 +167,7 @@ class _ChatDetailsState extends State<ChatDetails> {
       ),
       title: Text(
         widget.contactName.isEmpty ? S.of(context).unknown : widget.contactName,
-        style: GoogleFonts.rubik(
+        style: appFont('Rubik', 
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Colors.black,
@@ -201,7 +201,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                         padding: const EdgeInsets.only(left: 12),
                         child: Text(
                           "${(controller.recordingDuration ~/ 60).toString().padLeft(1, '0')}:${(controller.recordingDuration % 60).toString().padLeft(2, '0')}",
-                          style: GoogleFonts.rubik(
+                          style: appFont('Rubik', 
                             fontSize: 22,
                             color: Colors.black87,
                             fontWeight: FontWeight.w400,
@@ -310,7 +310,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 ),
                                 title: Text(
                                   S.of(context).uploadImage,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -356,10 +356,10 @@ class _ChatDetailsState extends State<ChatDetails> {
                         controller.update();
                       },
                       cursorColor: Colors.black,
-                      style: GoogleFonts.rubik(fontSize: 14),
+                      style: appFont('Rubik', fontSize: 14),
                       decoration: InputDecoration(
                         hintText: S.of(context).typeAMessage,
-                        hintStyle: GoogleFonts.rubik(
+                        hintStyle: appFont('Rubik', 
                           fontSize: 13,
                           color: Colors.grey.shade600,
                         ),

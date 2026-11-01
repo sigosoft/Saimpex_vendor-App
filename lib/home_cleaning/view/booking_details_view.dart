@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -19,7 +19,7 @@ class BookingDetailsView extends StatefulWidget {
   /// Row from the bookings list (shown until the detail call returns).
   final CleaningBooking booking;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF9E9E9E);
 
@@ -92,7 +92,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
   Widget _sectionLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFF9AA3B2),
         fontWeight: FontWeight.w600,
         fontSize: 12,
@@ -114,14 +114,14 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         children: [
           const Icon(
             Icons.sticky_note_2_outlined,
-            color: Color(0xFFFF5722),
+            color: Color(0xFFFF5216),
             size: 22,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF7A4E32),
                 fontWeight: FontWeight.w500,
                 fontSize: 13.5,
@@ -157,7 +157,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
               )
             : Text(
                 label,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -256,7 +256,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                     ),
                     child: Text(
                       S.of(context).reject,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF424242),
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -320,7 +320,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       children: [
                         Text(
                           S.of(context).cleaningBookingDetails,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: BookingDetailsView._ink,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
@@ -407,7 +407,7 @@ class _LoadErrorBanner extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF757575),
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
@@ -418,7 +418,7 @@ class _LoadErrorBanner extends StatelessWidget {
             onPressed: onRetry,
             child: Text(
               S.of(context).tryAgain,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: BookingDetailsView._orange,
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
@@ -494,7 +494,7 @@ class _CustomerCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 S.of(context).cleaningCustomerHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: BookingDetailsView._orange,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
@@ -513,7 +513,7 @@ class _CustomerCard extends StatelessWidget {
                 ),
                 child: Text(
                   pill.label,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
@@ -537,7 +537,7 @@ class _CustomerCard extends StatelessWidget {
                   backgroundColor: const Color(0xFFFDECEC),
                   child: Text(
                     b.initial,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: BookingDetailsView._orange,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -553,7 +553,7 @@ class _CustomerCard extends StatelessWidget {
                         b.displayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: BookingDetailsView._ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -564,7 +564,7 @@ class _CustomerCard extends StatelessWidget {
                         Text(
                           phone,
                           textDirection: TextDirection.ltr,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: BookingDetailsView._muted,
                             fontWeight: FontWeight.w400,
                             fontSize: 13,
@@ -621,7 +621,7 @@ class _CustomerCard extends StatelessWidget {
               children: [
                 Text(
                   S.of(context).cleaningRequestIdHeader,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: BookingDetailsView._muted,
                     fontWeight: FontWeight.w500,
                     fontSize: 11,
@@ -634,7 +634,7 @@ class _CustomerCard extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: b.displayCode,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: BookingDetailsView._orange,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -643,7 +643,7 @@ class _CustomerCard extends StatelessWidget {
                       if (created != null)
                         TextSpan(
                           text: ' • ${CleaningBookingFormat.dateTime(created)}',
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: BookingDetailsView._muted,
                             fontWeight: FontWeight.w400,
                             fontSize: 13,
@@ -695,7 +695,7 @@ class _ServiceCard extends StatelessWidget {
                 if (name != null)
                   Text(
                     name,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: BookingDetailsView._ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -717,7 +717,7 @@ class _ServiceCard extends StatelessWidget {
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF616161),
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -779,7 +779,7 @@ class _ProductsCard extends StatelessWidget {
               isCompleted
                   ? S.of(context).cleaningCleaningProducts
                   : S.of(context).cleaningCleaningProductsHeader,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: isCompleted
                     ? const Color(0xFF1A1A1A)
                     : const Color(0xFF9AA3B2),
@@ -791,8 +791,8 @@ class _ProductsCard extends StatelessWidget {
             const Spacer(),
             Text(
               '+${CleaningBookingFormat.money(fee)}',
-              style: GoogleFonts.inter(
-                color: const Color(0xFFFF5722),
+              style: appFont('Inter', 
+                color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
@@ -812,7 +812,7 @@ class _ProductsCard extends StatelessWidget {
             children: [
               Text(
                 S.of(context).cleaningProviderWillProvideProducts,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -821,7 +821,7 @@ class _ProductsCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 S.of(context).cleaningProductsProvidedByProvider,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF5C534E),
                   fontWeight: FontWeight.w400,
                   fontSize: 13,
@@ -884,7 +884,7 @@ class _LocationCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     address,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF1D1B20),
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
@@ -949,8 +949,8 @@ class _PaymentCard extends StatelessWidget {
         children: [
           Text(
             S.of(context).paymentDetails,
-            style: GoogleFonts.inter(
-              color: const Color(0xFFFF5722),
+            style: appFont('Inter', 
+              color: const Color(0xFFFF5216),
               fontWeight: FontWeight.w700,
               fontSize: 12,
               letterSpacing: 0.8,
@@ -963,7 +963,7 @@ class _PaymentCard extends StatelessWidget {
             _PayRow(
               S.of(context).paymentType,
               type,
-              valueColor: const Color(0xFFFF5722),
+              valueColor: const Color(0xFFFF5216),
             ),
           ],
           if (paidOn != null) ...[
@@ -1013,7 +1013,7 @@ class _SpaceTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF1A1A1A),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -1023,7 +1023,7 @@ class _SpaceTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   detail,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF8A8A8A),
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
@@ -1034,8 +1034,8 @@ class _SpaceTile extends StatelessWidget {
           ),
           Text(
             total,
-            style: GoogleFonts.inter(
-              color: const Color(0xFFFF5722),
+            style: appFont('Inter', 
+              color: const Color(0xFFFF5216),
               fontWeight: FontWeight.w700,
               fontSize: 14,
             ),
@@ -1061,12 +1061,12 @@ class _PayRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = GoogleFonts.inter(
+    final labelStyle = appFont('Inter', 
       color: emphasize ? Colors.white : const Color(0xFFE4E4E4),
       fontWeight: emphasize ? FontWeight.w700 : FontWeight.w400,
       fontSize: emphasize ? 15 : 13.5,
     );
-    final valueStyle = GoogleFonts.inter(
+    final valueStyle = appFont('Inter', 
       color: valueColor,
       fontWeight: emphasize || valueColor != Colors.white
           ? FontWeight.w700

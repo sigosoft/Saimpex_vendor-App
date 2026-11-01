@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/controller/preorders_controller.dart';
@@ -5,7 +6,6 @@ import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/widgets/common_background.dart';
@@ -73,7 +73,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
           Text(
             '${S.of(context).scheduledForTime(formatPreorderTime(time))} · '
             '${preorderDueText(time)}',
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: preorderColor,
@@ -201,7 +201,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                               .orderCode
                                                               .toString(),
                                                         ),
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -257,7 +257,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                   ),
                                                   child: Text(
                                                     "Basket order",
-                                                    style: GoogleFonts.rubik(
+                                                    style: appFont('Rubik', 
                                                       fontSize: 10,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -354,7 +354,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                       '10'
                                                 ? S.of(context).cancelled
                                                 : S.of(context).delivered,
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -374,7 +374,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 "",
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 18,
                                               fontWeight: FontWeight.w600,
                                               color: const Color(0xFF1F2937),
@@ -386,7 +386,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         //     '3')
                                         //   Text(
                                         //     formatDurationToMinutes(controller.orderData!.orderDurations?.preparationDuration?.toString()),
-                                        //     style: GoogleFonts.rubik(
+                                        //     style: appFont('Rubik', 
                                         //       fontSize: 10,
                                         //       color: const Color(0xFF64748B),
                                         //     ),
@@ -464,7 +464,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                     const SizedBox(height: 14), // Gap 14px
                                     Text(
                                       S.of(context).deliveryAddress,
-                                      style: GoogleFonts.rubik(
+                                      style: appFont('Rubik', 
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF9CA3AF),
@@ -477,7 +477,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           child: Text(
                                             controller.orderData!.location
                                                 .toString(),
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 11,
                                               color: const Color(0xFF4B5563),
                                             ),
@@ -585,7 +585,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                   0))
                                         .toString() +
                                     ")",
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF9CA3AF),
@@ -695,7 +695,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       const SizedBox(height: 30),
                                       Text(
                                         S.of(context).customerNotes,
-                                        style: GoogleFonts.rubik(
+                                        style: appFont('Rubik', 
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600,
                                           color: const Color(0xFF9CA3AF),
@@ -767,7 +767,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       true) ...[
                                 Text(
                                   S.of(context).paymentSummary,
-                                  style: GoogleFonts.rubik(
+                                  style: appFont('Rubik', 
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF9CA3AF),
@@ -883,7 +883,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           child: Center(
                                             child: Text(
                                               S.of(context).orderTimeline,
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color:
@@ -922,7 +922,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               S
                                                   .of(context)
                                                   .orderDurationBreakdown,
-                                              style: GoogleFonts.rubik(
+                                              style: appFont('Rubik', 
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color:
@@ -1157,7 +1157,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               ),
                                               child: Text(
                                                 S.of(context).reject,
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -1227,7 +1227,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               ),
                                               child: Text(
                                                 S.of(context).acceptOrder,
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -1272,7 +1272,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         ),
                                         child: Text(
                                           "Accept & Print",
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -1310,7 +1310,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           ),
                                           child: Text(
                                             "Print Order",
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               color: const Color(0xFFFF5216),
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -1353,7 +1353,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           ),
                                           child: Text(
                                             S.of(context).prepareOrder,
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -1395,7 +1395,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               ),
                                               child: Text(
                                                 "Print Order",
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   color: const Color(
                                                     0xFFFF5216,
                                                   ),
@@ -1442,7 +1442,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                               ),
                                               child: Text(
                                                 S.of(context).markAsReady,
-                                                style: GoogleFonts.rubik(
+                                                style: appFont('Rubik', 
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -1479,7 +1479,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         ),
                                         child: Text(
                                           "Accept & Print",
-                                          style: GoogleFonts.rubik(
+                                          style: appFont('Rubik', 
                                             color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -1524,7 +1524,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           ),
                                           child: Text(
                                             "Print Order",
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               color: const Color(0xFFFF5216),
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -1559,7 +1559,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 .of(context)
                                                 .markSelfPickupCompleted,
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.rubik(
+                                            style: appFont('Rubik', 
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -1620,7 +1620,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: 10,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF9CA3AF),
@@ -1629,7 +1629,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         const SizedBox(height: 4),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 11,
               color: const Color(0xFF4B5563),
             ),
@@ -1690,7 +1690,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                   name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF1F2937),
@@ -1700,7 +1700,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                   const SizedBox(height: 4),
                   Text(
                     "${price.toStringAsFixed(2)} MRU",
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: colorPrimary,
@@ -1718,7 +1718,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
             ),
             child: Text(
               S.of(context).qty + ": " + "$qty",
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF4B5563),
@@ -1742,7 +1742,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
       children: [
         Text(
           label,
-          style: GoogleFonts.rubik(
+          style: appFont('Rubik', 
             fontSize: isTotal ? 14 : 13,
             fontWeight: isTotal ? FontWeight.w600 : FontWeight.w400,
             color: const Color(0xFF4B5563),
@@ -1752,7 +1752,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: isTotal ? 14 : (isSmall ? 11 : 13),
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
               color: isGreen
@@ -1834,7 +1834,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isCompleted
@@ -1847,7 +1847,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                           child: Text(
                             time,
                             textAlign: TextAlign.end,
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 10,
                               color: const Color(0xFF94A3B8),
                             ),
@@ -1858,7 +1858,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 11,
                       color: const Color(0xFF94A3B8),
                     ),
@@ -1909,7 +1909,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                 Expanded(
                   child: Text(
                     item.label,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: const Color(0xFF4B5563),
@@ -1918,7 +1918,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                 ),
                 Text(
                   item.value,
-                  style: GoogleFonts.rubik(
+                  style: appFont('Rubik', 
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF1F2937),
@@ -1967,7 +1967,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
               const SizedBox(width: 8),
               Text(
                 S.of(context).driverDetails,
-                style: GoogleFonts.rubik(
+                style: appFont('Rubik', 
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF1F1F1F),
@@ -2001,7 +2001,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                   children: [
                     Text(
                       name!,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF1E293B),
@@ -2010,7 +2010,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                     const SizedBox(height: 2),
                     Text(
                       S.of(context).assignedDeliveryPartner,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 11,
                         color: const Color(0xFF64748B),
                       ),
@@ -2034,7 +2034,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                   const SizedBox(width: 8),
                   Text(
                     countryCode! + " " + phone!,
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF1E293B),

@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -536,7 +536,7 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
                       const SizedBox(height: 10),
                       Text(
                         _error!,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFFBA1B1B),
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
@@ -564,7 +564,7 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
                           ),
                           child: Text(
                             'Cancel',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15),
+                            style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 15),
                           ),
                         ),
                       ),
@@ -591,7 +591,7 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
                                 )
                                : Text(
                                   _isEditing ? 'Update Coupon' : 'Add Coupon',
-                                  style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                                  style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                                 ),
                         ),
                       ),
@@ -611,7 +611,7 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
   }
 }
 
-TextStyle get _valueStyle => GoogleFonts.inter(
+TextStyle get _valueStyle => appFont('Inter', 
       color: const Color(0xFF3F4555),
       fontWeight: FontWeight.w500,
       fontSize: 13,
@@ -620,7 +620,7 @@ TextStyle get _valueStyle => GoogleFonts.inter(
 Widget _label(String text) {
   return Text(
     text,
-    style: GoogleFonts.inter(
+    style: appFont('Inter', 
       color: const Color(0xFF404250),
       fontWeight: FontWeight.w500,
       fontSize: 14,
@@ -665,7 +665,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyAddCouponScreen.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -804,7 +804,7 @@ class _SelectBox extends StatelessWidget {
   }
 }
 
-final _hintStyle = GoogleFonts.inter(
+final _hintStyle = appFont('Inter', 
   color: const Color(0xFF9BA9BD),
   fontWeight: FontWeight.w500,
   fontSize: 13,

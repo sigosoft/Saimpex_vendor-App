@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/Utils/utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
@@ -119,7 +119,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                         Expanded(
                           child: Text(
                             'Update Stock',
-                            style: GoogleFonts.rubik(
+                            style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF111827),
@@ -150,7 +150,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'Type',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF6B7280),
@@ -196,7 +196,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     const SizedBox(height: 14),
                     Text(
                       'Item Quantity',
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF6B7280),
@@ -254,7 +254,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                               ),
                               child: Text(
                                 'Cancel',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFFFF5216),
@@ -321,7 +321,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                               ),
                               child: Text(
                                 'Update',
-                                style: GoogleFonts.rubik(
+                                style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -364,7 +364,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
           ),
           title: Text(
             'Stock History',
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF1F2937),
@@ -401,7 +401,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                   ),
                   child: Text(
                     'Update Stock',
-                    style: GoogleFonts.rubik(
+                    style: appFont('Rubik', 
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -447,7 +447,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     const SizedBox(height: 8),
                     Text(
                       displayName,
-                      style: GoogleFonts.rubik(
+                      style: appFont('Rubik', 
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1F2937),
@@ -502,7 +502,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 32),
                             child: Text(
                               'No stock history found',
-                              style: GoogleFonts.rubik(
+                              style: appFont('Rubik', 
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF64748B),

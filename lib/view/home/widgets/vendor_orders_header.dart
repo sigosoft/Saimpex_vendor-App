@@ -1,5 +1,5 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 class VendorOrdersHeader extends StatelessWidget {
@@ -20,7 +20,7 @@ class VendorOrdersHeader extends StatelessWidget {
         children: [
           Text(
             S.of(context).ordersHeader,
-            style: GoogleFonts.rubik(
+            style: appFont('Rubik', 
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF1F1F1F),
@@ -30,7 +30,7 @@ class VendorOrdersHeader extends StatelessWidget {
             onPressed: onViewAllPressed,
             child: Text(
               S.of(context).viewAll,
-              style: GoogleFonts.rubik(
+              style: appFont('Rubik', 
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFFFF5216),

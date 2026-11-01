@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
 
@@ -34,7 +34,7 @@ class CountryCodeMobileNumber extends StatelessWidget {
               countryListTheme: CountryListThemeData(
                 flagSize: 25,
                 backgroundColor: Colors.white,
-                textStyle: GoogleFonts.rubik(
+                textStyle: appFont('Rubik', 
                   textStyle: Theme.of(context).textTheme.displayLarge,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -134,7 +134,7 @@ class CountryCodeMobileNumber extends StatelessWidget {
                     decoration: InputDecoration(
                       counterText: "",
                       hintText: S.of(context).enterYourWhatsappNumber,
-                      hintStyle: GoogleFonts.rubik(
+                      hintStyle: appFont('Rubik', 
                         textStyle: Theme.of(context).textTheme.displayLarge,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,

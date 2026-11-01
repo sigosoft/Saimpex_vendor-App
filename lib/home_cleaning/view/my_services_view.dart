@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
@@ -14,7 +14,7 @@ class MyServicesView extends StatefulWidget {
 
   final HomeCleaningController controller;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
   static const _muted = Color(0xFF757575);
 
@@ -93,7 +93,7 @@ class _MyServicesViewState extends State<MyServicesView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Text(
           S.of(context).waterConfirmDeleteNamedItem(item.localizedName(_lang)),
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             fontSize: 13.5,
             color: const Color(0xFF424242),
           ),
@@ -103,7 +103,7 @@ class _MyServicesViewState extends State<MyServicesView> {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               S.of(context).cancel,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF757575),
                 fontWeight: FontWeight.w600,
               ),
@@ -120,7 +120,7 @@ class _MyServicesViewState extends State<MyServicesView> {
             ),
             child: Text(
               S.of(context).delete,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
@@ -164,7 +164,7 @@ class _MyServicesViewState extends State<MyServicesView> {
             Text(
               _error!,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF757575),
                 fontWeight: FontWeight.w500,
                 fontSize: 13.5,
@@ -182,7 +182,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                 ),
                 child: Text(
                   S.of(context).tryAgain,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: MyServicesView._orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 13.5,
@@ -205,7 +205,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                 Center(
                   child: Text(
                     S.of(context).cleaningNoServicesFound,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF9E9E9E),
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -255,7 +255,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                 children: [
                   Text(
                     S.of(context).cleaningMyServices,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: MyServicesView._ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
@@ -297,13 +297,13 @@ class _MyServicesViewState extends State<MyServicesView> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (val) => setState(() {}),
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: MyServicesView._ink,
                   fontSize: 14,
                 ),
                 decoration: InputDecoration(
                   hintText: S.of(context).cleaningSearchServices,
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: appFont('Inter', 
                     color: const Color(0xFFBDBDBD),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -335,7 +335,7 @@ class _MyServicesViewState extends State<MyServicesView> {
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 S.of(context).cleaningYourServicesHeader,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF9AA3B2),
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -364,7 +364,7 @@ class _MyServicesViewState extends State<MyServicesView> {
                 ),
                 child: Text(
                   S.of(context).cleaningAddServiceButton,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -447,7 +447,7 @@ class _ServiceCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         service.localizedName(lang),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: MyServicesView._ink,
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
@@ -466,7 +466,7 @@ class _ServiceCard extends StatelessWidget {
                         ),
                         child: Text(
                           S.of(context).inactiveLabel,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: const Color(0xFF757575),
                             fontWeight: FontWeight.w600,
                             fontSize: 10.5,
@@ -480,7 +480,7 @@ class _ServiceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: MyServicesView._muted,
                       fontWeight: FontWeight.w400,
                       fontSize: 12.5,
@@ -504,7 +504,7 @@ class _ServiceCard extends StatelessWidget {
                     children: [
                       Text(
                         S.of(context).cleaningStartingRateHeader,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: MyServicesView._orange,
                           fontWeight: FontWeight.w700,
                           fontSize: 10.5,
@@ -517,7 +517,7 @@ class _ServiceCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: '$rate ',
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: MyServicesView._orange,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
@@ -525,7 +525,7 @@ class _ServiceCard extends StatelessWidget {
                             ),
                             TextSpan(
                               text: rateUnit,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: const Color(0xFFFF8A65),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -588,7 +588,7 @@ class _BadgeSection extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF424242),
             fontWeight: FontWeight.w700,
             fontSize: 10.5,
@@ -625,7 +625,7 @@ class _ServiceBadgeChip extends StatelessWidget {
       child: badge.price == null
           ? Text(
               badge.label,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF424242),
                 fontWeight: FontWeight.w600,
                 fontSize: 11.5,
@@ -636,7 +636,7 @@ class _ServiceBadgeChip extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '${badge.label} ',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFF424242),
                       fontWeight: FontWeight.w600,
                       fontSize: 11.5,
@@ -644,7 +644,7 @@ class _ServiceBadgeChip extends StatelessWidget {
                   ),
                   TextSpan(
                     text: badge.price!,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: MyServicesView._orange,
                       fontWeight: FontWeight.w700,
                       fontSize: 11.5,
@@ -705,7 +705,7 @@ class _ServicePopupMenu extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   S.of(context).edit,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF212121),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -736,7 +736,7 @@ class _ServicePopupMenu extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   S.of(context).delete,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF212121),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

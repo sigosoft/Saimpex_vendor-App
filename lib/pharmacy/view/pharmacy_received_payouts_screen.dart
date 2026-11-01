@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -346,7 +346,7 @@ class _PharmacyReceivedPayoutsScreenState extends State<PharmacyReceivedPayoutsS
                       const SizedBox(height: 18),
                       Text(
                         'History',
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: const Color(0xFF3F4251),
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -356,14 +356,14 @@ class _PharmacyReceivedPayoutsScreenState extends State<PharmacyReceivedPayoutsS
                       TextField(
                         controller: _search,
                         onChanged: (_) => setState(() {}),
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyReceivedPayoutsScreen.ink,
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search amount or Transaction ID',
-                          hintStyle: GoogleFonts.inter(
+                          hintStyle: appFont('Inter', 
                             color: const Color(0xFFA9AEB6),
                             fontWeight: FontWeight.w500,
                             fontSize: 13,
@@ -436,7 +436,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Received Payouts',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -490,7 +490,7 @@ class _BalanceCard extends StatelessWidget {
             children: [
               Text(
                 'Total Payout Balance',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
@@ -502,7 +502,7 @@ class _BalanceCard extends StatelessWidget {
                 children: [
                   Text(
                     balance,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 28,
@@ -514,7 +514,7 @@ class _BalanceCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 3),
                     child: Text(
                       'MRU',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -574,7 +574,7 @@ class _PayoutCard extends StatelessWidget {
                     children: [
                       Text(
                         payout.id,
-                        style: GoogleFonts.inter(
+                        style: appFont('Inter', 
                           color: PharmacyReceivedPayoutsScreen.orange,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -592,7 +592,7 @@ class _PayoutCard extends StatelessWidget {
                           Flexible(
                             child: Text(
                               payout.when,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: PharmacyReceivedPayoutsScreen.muted,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 12,
@@ -609,7 +609,7 @@ class _PayoutCard extends StatelessWidget {
                   children: [
                     Text(
                       'AMOUNT',
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyReceivedPayoutsScreen.label,
                         fontWeight: FontWeight.w600,
                         fontSize: 10,
@@ -619,7 +619,7 @@ class _PayoutCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       payout.amount,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyReceivedPayoutsScreen.ink,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -639,7 +639,7 @@ class _PayoutCard extends StatelessWidget {
                 children: [
                   Text(
                     'BALANCE AFTER PAYOUT',
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: PharmacyReceivedPayoutsScreen.label,
                       fontWeight: FontWeight.w600,
                       fontSize: 10,
@@ -649,7 +649,7 @@ class _PayoutCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     payout.balance,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: PharmacyReceivedPayoutsScreen.ink,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,

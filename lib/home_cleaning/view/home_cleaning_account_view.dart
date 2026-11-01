@@ -1,8 +1,8 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -27,7 +27,7 @@ class HomeCleaningAccountView extends StatefulWidget {
 
   final HomeCleaningController controller;
 
-  static const _orange = Color(0xFFFF5722);
+  static const _orange = Color(0xFFFF5216);
   static const _ink = Color(0xFF1A1A1A);
 
   @override
@@ -144,11 +144,11 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           S.of(context).logout,
-          style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16),
+          style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 16),
         ),
         content: Text(
           S.of(context).areYouSureYouWantToLogout,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             fontSize: 13.5,
             color: const Color(0xFF424242),
           ),
@@ -158,7 +158,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               S.of(context).cancel,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF757575),
                 fontWeight: FontWeight.w600,
               ),
@@ -175,7 +175,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             ),
             child: Text(
               S.of(context).logout,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
@@ -227,7 +227,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).deleteAccount,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: HomeCleaningAccountView._ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
@@ -237,7 +237,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 Text(
                   S.of(context).cleaningDeleteAccountConfirm,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
@@ -260,7 +260,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                           ),
                           child: Text(
                             S.of(context).cancel,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: const Color(0xFF424242),
                               fontWeight: FontWeight.w600,
                               fontSize: 13.5,
@@ -285,7 +285,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                           ),
                           child: Text(
                             S.of(context).delete,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 13.5,
                             ),
@@ -382,7 +382,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           children: [
             Text(
               S.of(context).account,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: HomeCleaningAccountView._ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -450,7 +450,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                           const SizedBox(width: 8),
                           Text(
                             S.of(context).deleteAccount,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: HomeCleaningAccountView._orange,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -562,7 +562,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           const SizedBox(height: 12),
           Text(
             storeName,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: HomeCleaningAccountView._ink,
               fontWeight: FontWeight.w700,
               fontSize: 17,
@@ -581,7 +581,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 const SizedBox(width: 4),
                 Text(
                   rating.toStringAsFixed(1),
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFFFF9800),
                     fontWeight: FontWeight.w700,
                     fontSize: 12.5,
@@ -605,7 +605,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                   _storeOpen!
                       ? S.of(context).cleaningOpenStatus
                       : S.of(context).cleaningClosedStatus,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: _storeOpen!
                         ? const Color(0xFF22C55E)
                         : const Color(0xFF9E9E9E),
@@ -627,7 +627,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       children: [
         Text(
           S.of(context).language,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
             fontSize: 13.5,
@@ -669,7 +669,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           ),
           child: Text(
             title,
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: isSelected ? Colors.white : const Color(0xFF424242),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
               fontSize: 12.5,
@@ -686,7 +686,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       children: [
         Text(
           S.of(context).cleaningBusinessSection,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
             fontSize: 13.5,
@@ -740,7 +740,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
       children: [
         Text(
           S.of(context).cleaningSupportLegal,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: HomeCleaningAccountView._orange,
             fontWeight: FontWeight.w700,
             fontSize: 13.5,
@@ -847,7 +847,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
                 Expanded(
                   child: Text(
                     title,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: HomeCleaningAccountView._ink,
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600,
@@ -894,7 +894,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               const SizedBox(width: 8),
               Text(
                 S.of(context).logout,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: HomeCleaningAccountView._orange,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -913,7 +913,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         if (_appVersion != null)
           Text(
             'V$_appVersion',
-            style: GoogleFonts.inter(
+            style: appFont('Inter', 
               color: const Color(0xFF9E9E9E),
               fontWeight: FontWeight.w500,
               fontSize: 11,
@@ -922,7 +922,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 3),
         Text(
           S.of(context).checkForUpdate,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF757575),
             fontWeight: FontWeight.w400,
             fontSize: 11,

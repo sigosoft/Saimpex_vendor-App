@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -305,14 +305,14 @@ class _CouponsViewState extends State<CouponsView> {
                             child: TextField(
                               controller: _search,
                               onChanged: (_) => setState(() {}),
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: CouponsView.ink,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
                                 hintText: S.of(context).searchCoupon,
-                                hintStyle: GoogleFonts.inter(
+                                hintStyle: appFont('Inter', 
                                   color: const Color(0xFFA9AEB6),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
@@ -346,7 +346,7 @@ class _CouponsViewState extends State<CouponsView> {
                                   const SizedBox(width: 6),
                                   Text(
                                     S.of(context).addCoupon,
-                                    style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
+                                    style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 13),
                                   ),
                                 ],
                               ),
@@ -383,7 +383,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 Text(
                                   S.of(context).noCouponsFound,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: CouponsView.ink,
@@ -393,7 +393,7 @@ class _CouponsViewState extends State<CouponsView> {
                                 Text(
                                   S.of(context).waterCreatedCouponsAppearHere,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
+                                  style: appFont('Inter', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
                                     color: CouponsView.muted,
@@ -464,7 +464,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               S.of(context).coupons,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -532,7 +532,7 @@ class _CouponCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   coupon.name,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: CouponsView.ink,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -568,7 +568,7 @@ class _CouponCard extends StatelessWidget {
             children: [
               Text(
                 '${S.of(context).codeLabel}: ',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF4C5260),
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -576,7 +576,7 @@ class _CouponCard extends StatelessWidget {
               ),
               Text(
                 coupon.code,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF0F172A),
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
@@ -621,7 +621,7 @@ class _CouponCard extends StatelessWidget {
               ),
               child: Text(
                 S.of(context).updateCouponStatus,
-                style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+                style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
           ),
@@ -656,7 +656,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.inter(
+        style: appFont('Inter', 
           color: foreground,
           fontWeight: FontWeight.w700,
           fontSize: 11,
@@ -680,7 +680,7 @@ class _Stat extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: const Color(0xFF8D8A95),
             fontWeight: FontWeight.w600,
             fontSize: 11,
@@ -691,7 +691,7 @@ class _Stat extends StatelessWidget {
         Text(
           value,
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: CouponsView.orange,
             fontWeight: FontWeight.w700,
             fontSize: 14,
@@ -809,7 +809,7 @@ class _CouponConfirmDialog extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF4A4A4A),
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
@@ -832,7 +832,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).no,
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
+                        style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
                   ),
@@ -850,7 +850,7 @@ class _CouponConfirmDialog extends StatelessWidget {
                       ),
                       child: Text(
                         S.of(context).yes,
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
+                        style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                     ),
                   ),
@@ -916,7 +916,7 @@ class _CouponMenuRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF10182B),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -1118,7 +1118,7 @@ class _MetaRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: CouponsView.muted,
             fontWeight: FontWeight.w500,
             fontSize: 12,
@@ -1127,7 +1127,7 @@ class _MetaRow extends StatelessWidget {
         const Spacer(),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: CouponsView.slate,
             fontWeight: FontWeight.w600,
             fontSize: 12,

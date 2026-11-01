@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// A reusable app-wide loading indicator widget.
 /// Uses the same Lottie dotted circular animation shown during login.
@@ -159,7 +159,7 @@ class _PixelRevealLoaderState extends State<PixelRevealLoader> with SingleTicker
                       const SizedBox(height: 18),
                       Text(
                         "ENHANCING IMAGE",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFFFF5216),
@@ -169,7 +169,7 @@ class _PixelRevealLoaderState extends State<PixelRevealLoader> with SingleTicker
                       const SizedBox(height: 4),
                       Text(
                         "Optimizing resolution & details...",
-                        style: GoogleFonts.rubik(
+                        style: appFont('Rubik', 
                           fontSize: 10,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF64748B),

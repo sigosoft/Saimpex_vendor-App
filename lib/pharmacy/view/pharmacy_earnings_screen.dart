@@ -1,7 +1,7 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -930,7 +930,7 @@ class _Header extends StatelessWidget {
           children: [
             Text(
               'Earnings',
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: PharmacyEarningsScreen.ink,
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
@@ -1018,7 +1018,7 @@ class _TabSwitch extends StatelessWidget {
                           child: AnimatedDefaultTextStyle(
                             duration: const Duration(milliseconds: 220),
                             curve: Curves.easeOutCubic,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               color: isSelected ? Colors.white : const Color(0xFF585D6B),
                               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                               fontSize: 14,
@@ -1062,7 +1062,7 @@ class _SummaryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     rows[i].$1,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
@@ -1071,7 +1071,7 @@ class _SummaryCard extends StatelessWidget {
                 ),
                 Text(
                   rows[i].$2,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -1165,7 +1165,7 @@ class _Chip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: appFont('Inter', 
             color: selected ? Colors.white : const Color(0xFF6B7280),
             fontWeight: FontWeight.w600,
             fontSize: 13,
@@ -1207,7 +1207,7 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Text(
                   order.id,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: PharmacyEarningsScreen.orange,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
@@ -1226,7 +1226,7 @@ class _OrderCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           order.when,
-                          style: GoogleFonts.inter(
+                          style: appFont('Inter', 
                             color: PharmacyEarningsScreen.muted,
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -1245,7 +1245,7 @@ class _OrderCard extends StatelessWidget {
             children: [
               Text(
                 statusText,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: status.$2,
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
@@ -1255,7 +1255,7 @@ class _OrderCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 order.amount,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: PharmacyEarningsScreen.ink,
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
@@ -1310,7 +1310,7 @@ class _PayoutCard extends StatelessWidget {
                   children: [
                     Text(
                       payout.id,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: PharmacyEarningsScreen.orange,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -1329,7 +1329,7 @@ class _PayoutCard extends StatelessWidget {
                           Flexible(
                             child: Text(
                               payout.when,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 color: PharmacyEarningsScreen.muted,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 12,
@@ -1348,7 +1348,7 @@ class _PayoutCard extends StatelessWidget {
                 children: [
                   Text(
                     payout.status.toUpperCase(),
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: _statusColor(payout.status),
                       fontWeight: FontWeight.w700,
                       fontSize: 11,
@@ -1358,7 +1358,7 @@ class _PayoutCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     payout.amount,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: Colors.black,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
@@ -1386,7 +1386,7 @@ class _PayoutCard extends StatelessWidget {
               ),
               child: Text(
                 'View Details',
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),

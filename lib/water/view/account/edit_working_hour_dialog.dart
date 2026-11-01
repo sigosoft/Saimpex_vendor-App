@@ -1,6 +1,6 @@
+import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 
 class EditWorkingHourResult {
@@ -143,7 +143,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
             child: Center(
               child: Text(
                 S.of(context).waterEditWorkingHour,
-                style: GoogleFonts.inter(
+                style: appFont('Inter', 
                   color: const Color(0xFF111111),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -159,7 +159,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
               children: [
                 Text(
                   widget.day,
-                  style: GoogleFonts.inter(
+                  style: appFont('Inter', 
                     color: const Color(0xFF111111),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -170,7 +170,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                   children: [
                     Text(
                       S.of(context).waterOpen24Hours,
-                      style: GoogleFonts.inter(
+                      style: appFont('Inter', 
                         color: const Color(0xFF1C1D1B),
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
@@ -232,7 +232,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                   const SizedBox(height: 8),
                   Text(
                     _error!,
-                    style: GoogleFonts.inter(
+                    style: appFont('Inter', 
                       color: const Color(0xFFBA1B1B),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -256,7 +256,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                           ),
                           child: Text(
                             S.of(context).cancel,
-                            style: GoogleFonts.inter(
+                            style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
                             ),
@@ -290,7 +290,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
                             ),
                             child: Text(
                               S.of(context).save,
-                              style: GoogleFonts.inter(
+                              style: appFont('Inter', 
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
                               ),
@@ -312,7 +312,7 @@ class _EditWorkingHourDialogState extends State<EditWorkingHourDialog> {
   Widget _timeLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: appFont('Inter', 
         color: const Color(0xFFA3A3A3),
         fontWeight: FontWeight.w500,
         fontSize: 12,
@@ -340,7 +340,7 @@ class _TimeBox extends StatelessWidget {
           child: Center(
             child: Text(
               value,
-              style: GoogleFonts.inter(
+              style: appFont('Inter', 
                 color: const Color(0xFF3E3E3E),
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
