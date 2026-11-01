@@ -11225,6 +11225,316 @@ class S {
       args: [],
     );
   }
+
+  /// `Edit Items`
+  String get substitutionEditItems {
+    return Intl.message(
+      'Edit Items',
+      name: 'substitutionEditItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove Item`
+  String get substitutionRemoveItem {
+    return Intl.message(
+      'Remove Item',
+      name: 'substitutionRemoveItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Qty`
+  String get substitutionChangeQty {
+    return Intl.message(
+      'Change Qty',
+      name: 'substitutionChangeQty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggest Substitute`
+  String get substitutionSuggest {
+    return Intl.message(
+      'Suggest Substitute',
+      name: 'substitutionSuggest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggest Substitute`
+  String get substitutionSuggestTitle {
+    return Intl.message(
+      'Suggest Substitute',
+      name: 'substitutionSuggestTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Quantity`
+  String get substitutionChangeQuantity {
+    return Intl.message(
+      'Change Quantity',
+      name: 'substitutionChangeQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ordered Quantity`
+  String get substitutionOrderedQuantity {
+    return Intl.message(
+      'Ordered Quantity',
+      name: 'substitutionOrderedQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Available Quantity`
+  String get substitutionAvailableQuantity {
+    return Intl.message(
+      'Enter Available Quantity',
+      name: 'substitutionAvailableQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a quantity from 1 to {max}.`
+  String substitutionQuantityHint(String max) {
+    return Intl.message(
+      'Enter a quantity from 1 to $max.',
+      name: 'substitutionQuantityHint',
+      desc: '',
+      args: [max],
+    );
+  }
+
+  /// `Add Notes`
+  String get substitutionAddNotes {
+    return Intl.message(
+      'Add Notes',
+      name: 'substitutionAddNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Updated Item Total:`
+  String get substitutionUpdatedTotal {
+    return Intl.message(
+      'Updated Item Total:',
+      name: 'substitutionUpdatedTotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Quantity`
+  String get substitutionUpdateQuantity {
+    return Intl.message(
+      'Update Quantity',
+      name: 'substitutionUpdateQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Selection`
+  String get substitutionConfirmSelection {
+    return Intl.message(
+      'Confirm Selection',
+      name: 'substitutionConfirmSelection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search store products...`
+  String get substitutionSearchProducts {
+    return Intl.message(
+      'Search store products...',
+      name: 'substitutionSearchProducts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} in stock`
+  String substitutionInStock(String count) {
+    return Intl.message(
+      '$count in stock',
+      name: 'substitutionInStock',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Quantity Changed`
+  String get substitutionQuantityChanged {
+    return Intl.message(
+      'Quantity Changed',
+      name: 'substitutionQuantityChanged',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Removed`
+  String get substitutionItemRemoved {
+    return Intl.message(
+      'Item Removed',
+      name: 'substitutionItemRemoved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Substitute Suggested`
+  String get substitutionSuggested {
+    return Intl.message(
+      'Substitute Suggested',
+      name: 'substitutionSuggested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accepted by customer`
+  String get substitutionAccepted {
+    return Intl.message(
+      'Accepted by customer',
+      name: 'substitutionAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accepted automatically`
+  String get substitutionAutoAccepted {
+    return Intl.message(
+      'Accepted automatically',
+      name: 'substitutionAutoAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected by customer`
+  String get substitutionRejected {
+    return Intl.message(
+      'Rejected by customer',
+      name: 'substitutionRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Withdrawn`
+  String get substitutionWithdrawn {
+    return Intl.message(
+      'Withdrawn',
+      name: 'substitutionWithdrawn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for customer`
+  String get substitutionWaiting {
+    return Intl.message(
+      'Waiting for customer',
+      name: 'substitutionWaiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for customer · {time}`
+  String substitutionWaitingFor(String time) {
+    return Intl.message(
+      'Waiting for customer · $time',
+      name: 'substitutionWaitingFor',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Ordered: {qty} · {amount}`
+  String substitutionOrdered(String qty, String amount) {
+    return Intl.message(
+      'Ordered: $qty · $amount',
+      name: 'substitutionOrdered',
+      desc: '',
+      args: [qty, amount],
+    );
+  }
+
+  /// `Updated: {qty} · {amount}`
+  String substitutionUpdated(String qty, String amount) {
+    return Intl.message(
+      'Updated: $qty · $amount',
+      name: 'substitutionUpdated',
+      desc: '',
+      args: [qty, amount],
+    );
+  }
+
+  /// `This item is removed from the order once the customer confirms.`
+  String get substitutionRemovedNote {
+    return Intl.message(
+      'This item is removed from the order once the customer confirms.',
+      name: 'substitutionRemovedNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove this item?`
+  String get substitutionRemoveTitle {
+    return Intl.message(
+      'Remove this item?',
+      name: 'substitutionRemoveTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The customer is told that {name} is unavailable.`
+  String substitutionRemoveBody(String name) {
+    return Intl.message(
+      'The customer is told that $name is unavailable.',
+      name: 'substitutionRemoveBody',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Sent to the customer for approval.`
+  String get substitutionSent {
+    return Intl.message(
+      'Sent to the customer for approval.',
+      name: 'substitutionSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each change is sent to the customer for approval. With no answer in {minutes} minutes it is accepted automatically, except a pricier substitute, which is removed. Totals are recalculated automatically.`
+  String substitutionInfo(String minutes) {
+    return Intl.message(
+      'Each change is sent to the customer for approval. With no answer in $minutes minutes it is accepted automatically, except a pricier substitute, which is removed. Totals are recalculated automatically.',
+      name: 'substitutionInfo',
+      desc: '',
+      args: [minutes],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

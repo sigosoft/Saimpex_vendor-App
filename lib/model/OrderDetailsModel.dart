@@ -339,6 +339,9 @@ class OrderDurations {
 }
 
 class OrderItem {
+  /// Line identity for substitutions (§6.11); grocery details only.
+  final int? orderItemId;
+  final int? productId;
   final OrderItemClass? orderItem;
   final String? unitPrice;
   final int? quantity;
@@ -346,6 +349,8 @@ class OrderItem {
   final dynamic image;
 
   OrderItem({
+    this.orderItemId,
+    this.productId,
     this.orderItem,
     this.unitPrice,
     this.quantity,
@@ -354,6 +359,8 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
+    orderItemId: int.tryParse(json["order_item_id"]?.toString() ?? ''),
+    productId: int.tryParse(json["product_id"]?.toString() ?? ''),
     orderItem: json["order_item"] == null
         ? null
         : OrderItemClass.fromJson(json["order_item"]),
@@ -366,6 +373,8 @@ class OrderItem {
   );
 
   Map<String, dynamic> toJson() => {
+    "order_item_id": orderItemId,
+    "product_id": productId,
     "order_item": orderItem?.toJson(),
     "unit_price": unitPrice,
     "quantity": quantity,
