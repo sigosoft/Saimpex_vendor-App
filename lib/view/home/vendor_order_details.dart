@@ -28,6 +28,7 @@ import '../../utils/widgets/no_data_widget.dart';
 import 'widgets/customer_voice_note_widget.dart';
 import 'widgets/order_fulfillment_badge.dart';
 import 'widgets/vendor_reject_order_sheet.dart';
+import 'substitution/order_substitutions.dart';
 
 class VendorOrderDetails extends StatefulWidget {
   final String orderId;
@@ -47,6 +48,19 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
       Get.isRegistered<PreordersController>()
           ? Get.find<PreordersController>()
           : Get.put(PreordersController());
+
+  // Grocery substitution per line (§6.11, task V2); latest proposal per line.
+  bool _isGrocery = false;
+  Map<int, Substitution> _subs = {};
+
+  Future<void> _loadSubstitutions() async {
+    try {
+      final r = await const SubstitutionApi().list(widget.orderId);
+      if (mounted) setState(() => _subs = latestByLine(r.items));
+    } catch (e) {
+      debugPrint('substitutions: $e');
+    }
+  }
 
   @override
   void initState() {
@@ -104,6 +118,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
               state.context,
               widget.orderId,
             );
+            _isGrocery = true;
+            _loadSubstitutions();
           }
         },
         builder: (controller) {
@@ -657,7 +673,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         .currentLocale!
                                         .languageCode
                                         .toString();
-                                    return _itemTile(
+                                    final tile = _itemTile(
                                       item.image.toString(),
                                       langCode == "ar"
                                           ? item.orderItem!.nameAr.toString()
@@ -668,10 +684,25 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       item.quantity!,
                                       context,
                                     );
+                                    final sub = _subs[item.orderItemId];
+                                    if (sub == null) return tile;
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        tile,
+                                        SubstitutionSummary(
+                                          key: ValueKey('sub-${sub.id}'),
+                                          sub: sub,
+                                        ),
+                                      ],
+                                    );
                                   }
                                 },
                               ),
 
+                              if (!isBasketOrder)
+                                _editItemsButton(controller),
                               Builder(
                                 builder: (context) {
                                   final audioUrl = controller
@@ -1648,6 +1679,61 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
           ),
         ),
       ],
+    );
+  }
+
+  /// "Edit Items" (Figma 9249:21918): grocery orders before Ready only;
+  /// the server rejects substitutions from Ready (status 4) on.
+  Widget _editItemsButton(OrderDetailsController controller) {
+    final status = controller.orderData?.status ?? 0;
+    final items = controller.orderData?.orderItems ?? const <OrderItem>[];
+    if (!_isGrocery ||
+        status < 1 ||
+        status > 3 ||
+        items.isEmpty ||
+        items.any((i) => i.orderItemId == null)) {
+      return const SizedBox.shrink();
+    }
+    final lang = localization.currentLocale?.languageCode ?? 'en';
+    final lines = [
+      for (final i in items)
+        SubstitutionLine(
+          orderItemId: i.orderItemId!,
+          productId: i.productId ?? 0,
+          name: (lang == 'ar'
+                  ? i.orderItem?.nameAr
+                  : lang == 'fr'
+                  ? i.orderItem?.nameFr
+                  : i.orderItem?.nameEn) ??
+              i.orderItem?.nameEn ??
+              '',
+          image: '${i.image ?? ''}',
+          unitPrice: double.tryParse('${i.unitPrice}') ?? 0,
+          quantity: i.quantity ?? 0,
+        ),
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colorPrimary,
+          side: const BorderSide(color: colorPrimary),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: const Icon(Icons.swap_horiz),
+        label: Text(S.of(context).substitutionEditItems),
+        onPressed: () async {
+          await Get.to(
+            () => EditItemsView(orderId: widget.orderId, lines: lines),
+          );
+          if (!mounted) return;
+          _loadSubstitutions();
+          controller.getGroceryOrderDetails(context, widget.orderId);
+        },
+      ),
     );
   }
 

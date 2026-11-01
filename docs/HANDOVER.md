@@ -76,7 +76,7 @@ From `V2_DECISIONS_AND_PLAN.md` (sections 3, 5, 7, 9, 11):
 | **Pharmacy stock and price come from the APIs** | Inventory screens read and write stock/price through the API only; no local or hard-coded values. | Inventory list/detail/stock use the API. A "stock/price sync" API (backend phase 2) is not defined yet. |
 | **Vendors manage their own drivers** | Keep Delivery Boys screens (list, add, edit, delete). Note: the FRD says the opposite; the decisions file wins. | Done for grocery/restaurant and pharmacy. Water: list and add screen exist; flows unverified. |
 | **Pre-order reminder 30 min before** scheduled time; driver requested when Ready or 15 min before | Show scheduled orders, show the scheduled time on cards, handle the reminder push. | Not started. Contract pending from backend (phase 2). |
-| **Grocery substitution, auto-accepted after 10 min** | Vendor proposes a replacement item per order line; show pending/accepted/auto-accepted state. | Not started. Contract pending from backend (phase 2). |
+| **Grocery substitution, auto-accepted after 10 min** | Vendor proposes a replacement item per order line; show pending/accepted/auto-accepted state. | ✅ Done (V2, `feature/v2-substitution`). |
 | **Balance adjustments visible in Earnings** | Show admin add/deduct entries with note, amount, balance after, date. | **Done (V4, branch `feature/earnings-adjustments`). Empty state checked on the emulator against dev in EN and AR (restaurant Majlis has no adjustments yet); a list with real entries not yet seen.** `lib/utils/widgets/balance_adjustments_section.dart` on the Payouts tab of all three earnings screens. Built without a Figma screen. |
 | **EN / FR / AR, Arabic right-to-left** | All strings translated; RTL layout correct. | Grocery/restaurant mostly translated. Water and Home Cleaning are English only. Pharmacy partly. |
 | **Printing: generic** (no specific device) | Receipt printing should work with common ESC/POS printers. | Android Bluetooth ESC/POS works for grocery/restaurant orders. No iOS. Not in pharmacy/water. |
@@ -294,7 +294,7 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Vendor type | Overall | Notes |
 |---|---|---|
 | Restaurant (1) | **Partial**, most complete | Orders, menu, items, catalogue, stock, coupons, drivers, earnings, reports, chat, printing all on API. Gaps: edit item drops variants/options; no pre-orders; no advanced/easy split. |
-| Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. No substitution. |
+| Grocery (2) | **Partial** | Same screens as restaurant with grocery endpoints, plus baskets. Substitution per line done (V2). |
 | Local store (11) | **Done (`feature/vendor-routing`), not yet tested on a device** | Same grocery screens, but every grocery call is switched to its `localStore*` twin (27 endpoints, `lib/configs/store_endpoints.dart`, applied in the `DioClient` interceptor when the saved `vendorType` is 11). Same parameters and response shape, checked against `integration/v2`. |
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
@@ -330,7 +330,7 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Notifications | Done | `lib/view/notifications/notifications.dart`, `lib/controller/notification_controller.dart`, `lib/view/notifications/notification.dart` | |
 | Printing | Done (Android), `feature/bluetooth-printing` | `lib/utils/printing/`, `lib/view/settings/widgets/printer_picker_dialog.dart` | Settings → **Printer**: paired Bluetooth devices + "Automatic" (USB first, then the first paired printer), saved as `printerAddress`, **Print test page**. Ticket text is Latin-1 safe (curly quotes / Arabic no longer fail the print). No Figma screen. No iOS. **Not yet tested on a real printer.** |
 | Pre-orders | Not started | - | Contract pending from backend. |
-| Grocery substitution | Not started | - | Contract pending from backend. |
+| Grocery substitution | Done (V2; not yet run on a device) | `lib/view/home/substitution/order_substitutions.dart`, `VendorOrderDetails._editItemsButton` | §6.11. Grocery order, status 1–3: **Edit Items** (Figma 9249:21918) → per line Remove Item (unavailable) / Change Qty (same product, fewer units, Figma 9249:21538) / Suggest Substitute (store product + quantity, Figma 9249:21725) → `POST vendorapp/orders/{id}/substitutions`. Each change goes to the customer at once (the API has one proposal per line, so Figma's single "Send to Customer" button is not used). Order details show per line the kind chip, the customer's answer (waiting with countdown / accepted / rejected / accepted automatically) and the note, from `GET` the same path. Without stock data per line, the actions are on every line (Figma shows them on out-of-stock lines). Picker stock chip waits for backend #137. |
 | Local store endpoints | Done (`feature/vendor-routing`) | `lib/configs/store_endpoints.dart` | Grocery endpoint → `localStore*` twin for vendor type 11. |
 | Kitchen board | Out of scope here | - | Separate app `sigosoft/Saimpex-Kitchen-App`. |
 
@@ -439,7 +439,7 @@ Do not build against guessed contracts. Ask the backend owner for the request/re
 | Feature | Backend phase | Expected need | Status |
 |---|---|---|---|
 | Pre-order list + reminder push 30 min before | 2 | `scheduled_at` on order list/detail; FCM type for reminder | contract pending from backend |
-| Grocery substitution proposal (10-min auto-accept) | 2 | propose replacement per line; status of proposal | contract pending from backend |
+| Grocery substitution proposal (10-min auto-accept) | 2 | propose replacement per line; status of proposal | ✅ wired (§6.11) |
 | Menu images / advanced editing | 2 | item update that accepts variants, option groups, images | contract pending from backend (check `updateRestaurantCatalogItem`) |
 | Pharmacy stock/price sync | 2 | bulk stock/price update | contract pending from backend |
 | Local store categories | 2 | category list/request for type 11 | contract pending from backend |
@@ -471,7 +471,7 @@ AC: a gas test account sees its orders and can process them end to end.
 **P5. Pre-orders.** ✅ Built in V3 (`feature/preorders`), not yet seen with a real pre-order (dev had none for the test restaurant). `PreordersController` loads `GET vendorapp/preorders`; home shows an "Upcoming pre-orders (N)" tile (hidden when none) opening `lib/view/home/preorders_screen.dart` (delivery time, time left, status, total, self pickup, driver requested/assigned); home order cards get a "Pre-order · DD/MM HH:mm" badge and order details a "Scheduled for …" line. The home list and order details don't return `is_preorder`/`scheduled_for`, so screens match order ids against the pre-orders list. Push `preorder_reminder` is no longer treated as a new order: no "A new order!" text or accept dialog; when the app is open it shows the reminder in the app language; tapping opens the order. Built without checking Figma (Figma MCP call limit reached); compare with Figma before release.
 AC: scheduled orders show the scheduled date/time and a badge; the vendor gets a push 30 minutes before; tapping it opens the order.
 
-**P6. Grocery substitution (after backend phase 2 contract).**
+**P6. Grocery substitution (after backend phase 2 contract).** ✅ Done in V2 (`feature/v2-substitution`); stock chip in the picker waits for backend #137.
 AC: vendor can pick a replacement for an order line; the order shows "waiting for customer" with a 10-minute countdown; after 10 minutes without reply it shows auto-accepted; totals update.
 
 **P7. Easy vs advanced menu editing (restaurant).**
@@ -571,3 +571,4 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 | 31 Oct 2026 | **Gas on the water endpoints (#84, on dev):** water order and product endpoints serve gas vendors (type 10); `app_section` = `water`; rows carry `empty_cylinders_to_collect`, detail lines `is_returnable`; gas has no stock (`updateWaterItemStock` → 422). | ✅ `feature/gas-on-water`: gas hides subscriptions / stock / returnable toggle and shows empty cylinders to collect. |
 | 31 Oct 2026 | **Gas (10) → Water section (#84):** login `app_section` for gas is now `water`. The water order and product endpoints return the gas vendor's bookings (with `empty_cylinders_to_collect`; lines say "Cylinder") and gas items (no stock; `updateWaterItemStock` → 422). | Send gas vendors to the water section; hide stock controls for gas (§6.23). |
 | 1 Nov 2026 | **Final (Praveen): every vendor type has both logins, this app and the web panel**, including laundry and car wash. The app gets a section for every type (laundry + car wash: V14, which removes the login block). | Backend `V2_DECISIONS_AND_PLAN.md` §18 |
+| 1 Nov 2026 | **Opened #137:** `groceryMenuItems` should return `stock` per item for the substitute picker. | Picker shows "N in stock" once the field arrives; nothing else to change. |
