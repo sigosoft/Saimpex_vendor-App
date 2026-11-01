@@ -11985,6 +11985,231 @@ class S {
       args: [available, prescribed],
     );
   }
+
+  /// `Export`
+  String get menuExport {
+    return Intl.message('Export', name: 'menuExport', desc: '', args: []);
+  }
+
+  /// `Could not export the menu. Please try again.`
+  String get menuExportFailed {
+    return Intl.message(
+      'Could not export the menu. Please try again.',
+      name: 'menuExportFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu exported: {file}`
+  String menuExportSaved(String file) {
+    return Intl.message(
+      'Menu exported: $file',
+      name: 'menuExportSaved',
+      desc: '',
+      args: [file],
+    );
+  }
+
+  /// `Please select a category before uploading.`
+  String get importSelectCategoryFirst {
+    return Intl.message(
+      'Please select a category before uploading.',
+      name: 'importSelectCategoryFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a category and import menu items in bulk`
+  String get importSelectCategoryHint {
+    return Intl.message(
+      'Select a category and import menu items in bulk',
+      name: 'importSelectCategoryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload Images`
+  String get uploadImagesLabel {
+    return Intl.message(
+      'Upload Images',
+      name: 'uploadImagesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import failed`
+  String get importFailedTitle {
+    return Intl.message(
+      'Import failed',
+      name: 'importFailedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No items were added. Fix these rows in the file and upload it again.`
+  String get importFailedBody {
+    return Intl.message(
+      'No items were added. Fix these rows in the file and upload it again.',
+      name: 'importFailedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick Edit`
+  String get quickEditTitle {
+    return Intl.message(
+      'Quick Edit',
+      name: 'quickEditTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Name (English)`
+  String get quickEditName {
+    return Intl.message(
+      'Item Name (English)',
+      name: 'quickEditName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price`
+  String get quickEditPrice {
+    return Intl.message('Price', name: 'quickEditPrice', desc: '', args: []);
+  }
+
+  /// `Discount Price`
+  String get quickEditOfferPrice {
+    return Intl.message(
+      'Discount Price',
+      name: 'quickEditOfferPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional`
+  String get quickEditOptional {
+    return Intl.message(
+      'Optional',
+      name: 'quickEditOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variant prices`
+  String get quickEditVariantPrices {
+    return Intl.message(
+      'Variant prices',
+      name: 'quickEditVariantPrices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available`
+  String get quickEditAvailable {
+    return Intl.message(
+      'Available',
+      name: 'quickEditAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customers can order this item`
+  String get quickEditAvailableOn {
+    return Intl.message(
+      'Customers can order this item',
+      name: 'quickEditAvailableOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shown as out of stock`
+  String get quickEditAvailableOff {
+    return Intl.message(
+      'Shown as out of stock',
+      name: 'quickEditAvailableOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change photo`
+  String get quickEditChangePhoto {
+    return Intl.message(
+      'Change photo',
+      name: 'quickEditChangePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New photo selected`
+  String get quickEditNewPhotoChosen {
+    return Intl.message(
+      'New photo selected',
+      name: 'quickEditNewPhotoChosen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced edit (variants, options, extras)`
+  String get quickEditAdvanced {
+    return Intl.message(
+      'Advanced edit (variants, options, extras)',
+      name: 'quickEditAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get quickEditSave {
+    return Intl.message('Save', name: 'quickEditSave', desc: '', args: []);
+  }
+
+  /// `Enter the item name.`
+  String get quickEditNameRequired {
+    return Intl.message(
+      'Enter the item name.',
+      name: 'quickEditNameRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid price (0 or more).`
+  String get quickEditPriceInvalid {
+    return Intl.message(
+      'Enter a valid price (0 or more).',
+      name: 'quickEditPriceInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The discount price must not be higher than the price.`
+  String get quickEditOfferAbovePrice {
+    return Intl.message(
+      'The discount price must not be higher than the price.',
+      name: 'quickEditOfferAbovePrice',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

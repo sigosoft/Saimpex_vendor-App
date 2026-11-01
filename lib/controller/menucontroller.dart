@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuController;
@@ -1530,6 +1531,7 @@ class MenuController extends GetxController {
     }
   }
 
+  /// Exports the store's current items as Excel (`exportMenuItems`, task V9).
   void downloadItemTemplate(BuildContext context) async {
     debugPrint("downloadItemTemplate:start");
     try {
@@ -1558,7 +1560,7 @@ class MenuController extends GetxController {
 
       final bytes = response.data;
       if (bytes == null || bytes.isEmpty) {
-        if (context.mounted) showToast(context, 'Empty template response');
+        if (context.mounted) showToast(context, S.current.menuExportFailed);
         return;
       }
       final contentType =
@@ -1579,12 +1581,12 @@ class MenuController extends GetxController {
               final msg =
                   map['message']?.toString() ??
                   map['error']?.toString() ??
-                  'Could not download template';
+                  S.current.menuExportFailed;
               if (context.mounted) showToast(context, msg);
             }
           } catch (_) {
             if (context.mounted) {
-              showToast(context, 'Unexpected response (not Excel file)');
+              showToast(context, S.current.menuExportFailed);
             }
           }
           return;
@@ -1597,13 +1599,13 @@ class MenuController extends GetxController {
               : '';
           showToast(
             context,
-            msg.isNotEmpty ? msg : 'Download failed (${response.statusCode})',
+            msg.isNotEmpty ? msg : S.current.menuExportFailed,
           );
         }
         return;
       }
       final fileName =
-          'menu_items_bulk_template_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+          'menu_items_export_${DateTime.now().millisecondsSinceEpoch}.xlsx';
       Directory? targetDir;
       if (Platform.isAndroid) {
         final downloads = Directory('/storage/emulated/0/Download');
@@ -1632,12 +1634,12 @@ class MenuController extends GetxController {
         final internalExists = await internalFile.exists();
         final internalSize = internalExists ? await internalFile.length() : 0;
         if (!internalExists || internalSize == 0) {
-          if (context.mounted) showToast(context, 'Downloaded file is empty.');
+          if (context.mounted) showToast(context, S.current.menuExportFailed);
           return;
         }
       }
       if (context.mounted) {
-        showToast(context, 'Saved: ${internalFile.path}');
+        showToast(context, S.current.menuExportSaved(fileName));
       }
       try {
         final result = await OpenFilex.open(internalFile.path);

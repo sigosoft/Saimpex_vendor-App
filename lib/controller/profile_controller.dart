@@ -22,6 +22,7 @@ import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
 
 import '../utils/utils.dart';
+import '../utils/widgets/import_errors_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -1440,6 +1441,9 @@ class ProfileController extends GetxController {
     return downloadRestaurantCatalogTemplate(context);
   }
 
+  /// Rows the last catalog import rejected (shown after the loader closes).
+  List<String> pendingImportErrors = const [];
+
   Future<bool> importRestaurantCatalogItems(
     BuildContext context,
     String filePath,
@@ -1468,9 +1472,14 @@ class ProfileController extends GetxController {
       for (final e in formData.files) {
         debugPrint("  file ${e.key}: ${e.value.filename}");
       }
-      final response = await DioClient().post(
+      // Read 422 bodies too: they list the rows to fix (`data.errors`).
+      final response = await DioClient().dio.post(
         ApiEndPoints.importRestaurantCatalogItems,
-        body: formData,
+        data: formData,
+        options: dio.Options(
+          contentType: dio.Headers.multipartFormDataContentType,
+          validateStatus: (code) => code != null && code < 500,
+        ),
       );
       final raw = response.data;
       if (raw is! Map) {
@@ -1508,10 +1517,18 @@ class ProfileController extends GetxController {
           }
           success = true;
         } else if (context.mounted) {
-          showToast(
-            context,
-            _extractErrorMessage(map['message']),
-          );
+          final data = map['data'];
+          final rowErrors = data is Map && data['errors'] is List
+              ? (data['errors'] as List).map((e) => e.toString()).toList()
+              : const <String>[];
+          if (rowErrors.isNotEmpty) {
+            pendingImportErrors = rowErrors;
+          } else {
+            showToast(
+              context,
+              _extractErrorMessage(map['message']),
+            );
+          }
         }
       }
     } catch (error) {
@@ -1526,6 +1543,11 @@ class ProfileController extends GetxController {
       }
       isRestaurantMenuDetailsLoading = false;
       WidgetsBinding.instance.addPostFrameCallback((_) => update());
+    }
+    if (pendingImportErrors.isNotEmpty && context.mounted) {
+      final rows = pendingImportErrors;
+      pendingImportErrors = const [];
+      await showImportErrorsDialog(context, rows);
     }
     return success;
   }
