@@ -25,7 +25,8 @@ void main() async {
     await Permission.notification.request();
   }
 
-  String? langCode = await getSavedObject("selected_locale") ?? "en";
+  // Arabic is the main language (V2_DECISIONS §17); vendors can switch in Settings.
+  String? langCode = await getSavedObject("selected_locale") ?? "ar";
   Locale locale = Locale(langCode!);
   LocalizationService.init(langCode);
   try {
