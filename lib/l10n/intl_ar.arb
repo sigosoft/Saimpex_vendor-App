@@ -2379,5 +2379,7 @@
     "placeholders": {
       "code": {"type": "String"}
     }
-  }
+  },
+  "pharmacyGenericName": "الاسم العلمي",
+  "pharmacyGenericNameHint": "مثال: باراسيتامول"
 }

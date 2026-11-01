@@ -1136,6 +1136,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pending Order Balance",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("Percentage"),
+    "pharmacyGenericName": MessageLookupByLibrary.simpleMessage("Generic name"),
+    "pharmacyGenericNameHint": MessageLookupByLibrary.simpleMessage(
+      "e.g. Paracetamol",
+    ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone Number"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(
       "Pick what you want and fill your basket!",

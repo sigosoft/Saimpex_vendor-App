@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyAddProductScreen extends StatefulWidget {
@@ -39,6 +40,11 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
   final _offer = TextEditingController();
   final _stock = TextEditingController();
   final _lowStock = TextEditingController();
+  /// Active ingredient (API §6.36), saved on the product with
+  /// `pharmacyProductFields`; loaded from `pharmacyMenuDetails` when editing.
+  final _genericName = TextEditingController();
+  String _initialGenericName = '';
+  int? _menuId;
 
   String? _category;
   String? _form;
@@ -56,6 +62,57 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
   String? _initialForm;
   String? _initialUnit;
   bool _isSubmitting = false;
+
+  /// Edit: read the product's generic name (`pharmacyMenuDetails`, §6.36).
+  Future<void> _loadGenericName() async {
+    final menuId = _menuId;
+    if (menuId == null) return;
+    try {
+      final res = await DioClient().get(
+        ApiEndPoints.pharmacyMenuDetails,
+        query: {'pharmacy_menu_id': menuId},
+      );
+      final data = res.data is Map ? res.data['data'] : null;
+      final menu = data is Map ? data['pharmacy_menu'] : null;
+      final name = menu is Map ? (menu['generic_name'] ?? '').toString() : '';
+      if (!mounted) return;
+      _initialGenericName = name;
+      if (_genericName.text.isEmpty) _genericName.text = name;
+    } catch (e) {
+      debugPrint('pharmacyMenuDetails: $e');
+    }
+  }
+
+  /// After add: the new variant's product id (`pharmacyMenuItemDetail`).
+  Future<int?> _menuIdOfItem(dynamic itemId) async {
+    try {
+      final res = await DioClient().get(
+        ApiEndPoints.pharmacyMenuItemDetail,
+        query: {'item_id': itemId},
+      );
+      final data = res.data is Map ? res.data['data'] : null;
+      final item = data is Map ? (data['item'] ?? data['pharmacy_menu_item'] ?? data) : null;
+      return item is Map ? int.tryParse(item['menu_id']?.toString() ?? '') : null;
+    } catch (e) {
+      debugPrint('pharmacyMenuItemDetail: $e');
+      return null;
+    }
+  }
+
+  /// Saves the generic name on the product when it changed
+  /// (`POST pharmacyProductFields`, §6.36). Empty clears it.
+  Future<void> _saveGenericName(int? menuId) async {
+    final name = _genericName.text.trim();
+    if (menuId == null || name == _initialGenericName.trim()) return;
+    try {
+      await DioClient().post(
+        ApiEndPoints.pharmacyProductFields,
+        body: {'menu_id': menuId, 'generic_name': name},
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
 
   @override
   void initState() {
@@ -78,6 +135,8 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
       _categoryId = int.tryParse(rawCat?.toString() ?? '');
 
       _formId = int.tryParse(d['form_id']?.toString() ?? '');
+      _menuId = int.tryParse(d['menu_id']?.toString() ?? '');
+      _loadGenericName();
       _unitId = int.tryParse(d['unit_id']?.toString() ?? '');
 
       _name.text =
@@ -183,6 +242,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
     _expiry.dispose();
     _barcode.dispose();
     _description.dispose();
+    _genericName.dispose();
     _selling.dispose();
     _offer.dispose();
     _stock.dispose();
@@ -327,6 +387,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
       _expiry.clear();
       _barcode.clear();
       _description.clear();
+      _genericName.clear();
       _selling.clear();
       _offer.clear();
       _stock.clear();
@@ -636,6 +697,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         final msg = rawMsg is String && rawMsg.isNotEmpty
             ? rawMsg
             : 'Pharmacy menu item updated';
+        await _saveGenericName(_menuId);
         Fluttertoast.showToast(msg: msg);
         if (mounted) {
           Navigator.of(context).pop(true);
@@ -783,6 +845,11 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         final msg = rawMsg is String && rawMsg.isNotEmpty
             ? rawMsg
             : 'Pharmacy menu item added';
+        final data = response.data['data'];
+        final newItemId = data is Map ? data['pharmacy_menu_item_id'] : null;
+        if (_genericName.text.trim().isNotEmpty && newItemId != null) {
+          await _saveGenericName(await _menuIdOfItem(newItemId));
+        }
         Fluttertoast.showToast(msg: msg);
         if (mounted) {
           Navigator.of(context).pop(true);
@@ -939,6 +1006,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                             child: _InputField(
                               controller: _name,
                               hint: 'e.g. Paracetamol 500mg',
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _Labeled(
+                            label: S.of(context).pharmacyGenericName,
+                            child: _InputField(
+                              controller: _genericName,
+                              hint: S.of(context).pharmacyGenericNameHint,
                             ),
                           ),
                           const SizedBox(height: 12),

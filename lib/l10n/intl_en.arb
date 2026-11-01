@@ -2317,5 +2317,7 @@
     "placeholders": {
       "code": {"type": "String"}
     }
-  }
+  },
+  "pharmacyGenericName": "Generic name",
+  "pharmacyGenericNameHint": "e.g. Paracetamol"
 }
