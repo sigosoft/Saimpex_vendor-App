@@ -1314,6 +1314,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage(
       "Nécessite une mise à jour",
     ),
+    "needsYourAttention": MessageLookupByLibrary.simpleMessage("À traiter"),
     "no": MessageLookupByLibrary.simpleMessage("Non"),
     "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
       "Aucun ajustement du solde pour le moment",

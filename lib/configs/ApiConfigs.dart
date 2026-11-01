@@ -215,6 +215,10 @@ class ApiEndPoints {
   // Hide / unhide a product; read-only order rules (API doc §6.21, §6.22).
   static String updateProductVisibility = "updateProductVisibility";
   static String orderRules = "orderRules";
+  // Push on/off; activity feed (API doc §6.42, §6.44, V18).
+  static String notificationPreference = "notification/preference";
+  static String activityNotifications = "activityNotifications";
+  static String readActivityNotifications = "readActivityNotifications";
   // New category requests for Admin approval (task V8).
   static String pharmacyCategoryRequests = "pharmacyCategoryRequests";
   static String requestPharmacyCategory = "requestPharmacyCategory";

@@ -1,3 +1,5 @@
+import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
+import 'package:saimpex_vendor/utils/widgets/activity_notifications_section.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -50,7 +52,17 @@ class _NotificationsState extends State<Notifications> {
       child: CommonBackground(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(title: S.of(context).notifications,onTap: (){Get.back();},),
-        child: GetBuilder<NotificationController>(
+        child: Column(children: [
+          // Orders waiting for acceptance (§6.44, V18).
+          ActivityNotificationsSection(
+            onTap: (r) {
+              final id = r['order_id']?.toString();
+              if (r['kind'] == 'new_order' && id != null && id != 'null') {
+                Get.to(() => VendorOrderDetails(orderId: id));
+              }
+            },
+          ),
+          Expanded(child: GetBuilder<NotificationController>(
           builder: (controller) {
             if (controller.isLoading) {
               return const ShimmerNotification();
@@ -111,7 +123,8 @@ class _NotificationsState extends State<Notifications> {
               },
             );
           },
-        ),
+        )),
+        ]),
       ),
     );
   }

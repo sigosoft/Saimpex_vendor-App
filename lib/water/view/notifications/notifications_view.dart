@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/activity_notifications_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
@@ -207,7 +208,11 @@ class _NotificationsViewState extends State<NotificationsView> {
                   child: RefreshIndicator(
                     color: AppColors.primaryOrange,
                     onRefresh: _load,
-                    child: _body(),
+                    // Orders, subscriptions to review, low stock (§6.44, V18).
+                    child: Column(children: [
+                      const ActivityNotificationsSection(),
+                      Expanded(child: _body()),
+                    ]),
                   ),
                 ),
               ],

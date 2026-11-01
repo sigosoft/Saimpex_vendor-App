@@ -1196,6 +1196,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Need it fresh? Add it to your cart!",
     ),
     "needsAnUpdate": MessageLookupByLibrary.simpleMessage("Needs An Update"),
+    "needsYourAttention": MessageLookupByLibrary.simpleMessage(
+      "Needs your attention",
+    ),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noBalanceAdjustmentsYet": MessageLookupByLibrary.simpleMessage(
       "No balance adjustments yet",

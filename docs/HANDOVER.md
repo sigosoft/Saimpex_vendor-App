@@ -257,6 +257,11 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 - The home membership badge comes from `serviceDashboard.membership` (falls back to `GET home` on older servers).
 - Reject reasons already use the backend's values per kind (V14).
 
+### 3.5f Notifications (V18c ✅ `feature/v18c-notifications-chat`, API §6.42, §6.44)
+
+- **Push on/off** is saved on the server (`GET` / `POST notification/preference`, `lib/utils/notification_preference.dart`): water and pharmacy switches used to be local only; home cleaning (and laundry / car wash) now has the switch back. A failed save puts the switch back.
+- **"Needs your attention"** (`lib/utils/widgets/activity_notifications_section.dart`, `GET activityNotifications`, marked read on open) above the notifications list in the restaurant / grocery, water and pharmacy screens: orders waiting for acceptance, water subscriptions to review, low stock. Restaurant rows open the order. Built without a Figma screen.
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

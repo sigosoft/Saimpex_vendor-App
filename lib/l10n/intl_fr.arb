@@ -2624,5 +2624,6 @@
   "addonUnitUnit": "Par unité",
   "addonUnitHour": "Par heure",
   "addonUnitRoom": "Par pièce (salle)",
-  "addonUnitPiece": "Par article"
+  "addonUnitPiece": "Par article",
+  "needsYourAttention": "À traiter"
 }

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/notification_preference.dart';
 import 'package:saimpex_vendor/view/settings/category_requests_screen.dart';
 import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
@@ -63,6 +64,10 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
     super.initState();
     _initSelectedLanguage();
     _fetchPharmacyProfile();
+    // Push on/off from the server (§6.42, V18); it used to be local only.
+    NotificationPreference.load().then((v) {
+      if (v != null && mounted) setState(() => _notifications = v);
+    });
     final settingsController = Get.isRegistered<SettingsController>()
         ? Get.find<SettingsController>()
         : Get.put(SettingsController());
@@ -845,6 +850,9 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                             onChanged: (value) {
                               HapticFeedback.selectionClick();
                               setState(() => _notifications = value);
+                              NotificationPreference.save(value).then((ok) {
+                                if (!ok && mounted) setState(() => _notifications = !value);
+                              });
                             },
                             thumbColor: const WidgetStatePropertyAll(
                               Colors.white,

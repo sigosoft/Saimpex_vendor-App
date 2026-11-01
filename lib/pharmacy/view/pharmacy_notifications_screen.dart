@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/activity_notifications_section.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -315,6 +316,8 @@ class _PharmacyNotificationsScreenState
                 const SizedBox(height: 8),
                 _Header(onBack: () => Navigator.of(context).maybePop()),
                 const SizedBox(height: 16),
+                // New orders waiting for acceptance (§6.44, V18).
+                const ActivityNotificationsSection(),
                 Expanded(
                   child: RefreshIndicator(
                     color: PharmacyNotificationsScreen._orange,
