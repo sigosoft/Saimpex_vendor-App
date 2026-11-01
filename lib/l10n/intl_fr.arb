@@ -2547,5 +2547,44 @@
   "addOnDescriptionHint": "Description courte",
   "minKm": "Min",
   "maxKm": "Max",
-  "laundryService": "Service"
+  "laundryService": "Service",
+  "change": "Changer",
+  "fullName": "Nom complet",
+  "addPhoto": "Ajouter une photo",
+  "bookingHash": "Réservation n° {code}",
+  "@bookingHash": {
+    "placeholders": {"code": {"type": "String"}}
+  },
+  "cleaningMarkOnTheWay": "Marquer en route",
+  "myCleaners": "Mes agents",
+  "addCleaner": "Ajouter un agent",
+  "editCleaner": "Modifier l'agent",
+  "saveCleaner": "Enregistrer l'agent",
+  "cleanerNameHint": "ex. Fatou Ba",
+  "cleanerActive": "Actif",
+  "cleanerActiveHelp": "Seuls les agents actifs peuvent être affectés",
+  "cleanerFilterAll": "Tous",
+  "cleanerAvailable": "Disponible",
+  "cleanerBusy": "Occupé",
+  "cleanerInactive": "Inactifs",
+  "cleanerDeactivated": "Désactivé",
+  "cleanerDeactivate": "Désactiver",
+  "cleanerActivate": "Activer",
+  "cleanerNew": "Nouveau",
+  "cleanerReviewsCount": "{count} avis",
+  "@cleanerReviewsCount": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "noCleanersYet": "Aucun agent pour l'instant.",
+  "assignCleaner": "Affecter un agent",
+  "assignCleanerNamed": "Affecter {name}",
+  "@assignCleanerNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "searchCleaner": "Rechercher un agent",
+  "assignedCleaner": "Agent affecté",
+  "cleanerReviewOf": "Avis sur l'agent : {name}",
+  "@cleanerReviewOf": {
+    "placeholders": {"name": {"type": "String"}}
+  }
 }

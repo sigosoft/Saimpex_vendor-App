@@ -2484,5 +2484,44 @@
   "addOnDescriptionHint": "Short description",
   "minKm": "Min",
   "maxKm": "Max",
-  "laundryService": "Service"
+  "laundryService": "Service",
+  "change": "Change",
+  "fullName": "Full name",
+  "addPhoto": "Add photo",
+  "bookingHash": "Booking #{code}",
+  "@bookingHash": {
+    "placeholders": {"code": {"type": "String"}}
+  },
+  "cleaningMarkOnTheWay": "Mark On the Way",
+  "myCleaners": "My Cleaners",
+  "addCleaner": "Add Cleaner",
+  "editCleaner": "Edit Cleaner",
+  "saveCleaner": "Save cleaner",
+  "cleanerNameHint": "e.g. Fatou Ba",
+  "cleanerActive": "Active",
+  "cleanerActiveHelp": "Only active cleaners can be assigned",
+  "cleanerFilterAll": "All",
+  "cleanerAvailable": "Available",
+  "cleanerBusy": "Busy",
+  "cleanerInactive": "Inactive",
+  "cleanerDeactivated": "Deactivated",
+  "cleanerDeactivate": "Deactivate",
+  "cleanerActivate": "Activate",
+  "cleanerNew": "New",
+  "cleanerReviewsCount": "{count} reviews",
+  "@cleanerReviewsCount": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "noCleanersYet": "No cleaners yet.",
+  "assignCleaner": "Assign Cleaner",
+  "assignCleanerNamed": "Assign {name}",
+  "@assignCleanerNamed": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "searchCleaner": "Search cleaner",
+  "assignedCleaner": "Assigned cleaner",
+  "cleanerReviewOf": "Cleaner review: {name}",
+  "@cleanerReviewOf": {
+    "placeholders": {"name": {"type": "String"}}
+  }
 }

@@ -38,6 +38,11 @@ class CleaningApi {
     return _run(() => DioClient().post(path, body: body));
   }
 
+  /// Same as [post] for a FormData (multipart) or map body.
+  static Future<CleaningApiResult> postBody(String path, dynamic body) {
+    return _run(() => DioClient().post(path, body: body));
+  }
+
   static Future<CleaningApiResult> _run(Future<dynamic> Function() call) async {
     try {
       final response = await call();

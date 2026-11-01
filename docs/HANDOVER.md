@@ -234,6 +234,16 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 - **Part B ✅ (`feature/v14b-service-forms`):** `lib/home_cleaning/view/service_form_view.dart`, opened from My Services for laundry and car wash (home cleaning keeps its own form). **Laundry** (Figma 9714:86553 / 86733 / 86867): image, service type (+ Request new service type), processing time (Standard (24h) / Express), pricing unit (per kg → price per kg; per item → Item pricing list with an Add Item sheet: image, name, unit piece / kg / metre, price). **Car wash** (Figma 9714:82201): image, service type, description, vehicle types (image, type, price; at least one), add-on services (image, name, description, price), home / workplace pricing (distance ranges min–max km, price). Saved with `addServiceItem` / `updateServiceItem`: rows as JSON (`garments`, `vehicles`, `addons`, `distances`), row images as `<rows>[i][image]`. The "Main / Extra" switch and "What's included" tasks from the September PDF are not in the latest Figma, so they are not built. Tests `test/service_form_view_test.dart`.
 - `lib/home_cleaning/view/service_kind_blocks.dart`, tests `test/service_kind_blocks_test.dart`.
 
+### 3.5c Home cleaning cleaners (V16 ✅ `feature/v16-cleaners`, API §6.39)
+
+Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, Assign Cleaner 10868:11841, Booking with Cleaner 10868:12059. `lib/home_cleaning/model/cleaner.dart`, `lib/home_cleaning/view/cleaners/`.
+- **My Cleaners** (Account → My Cleaners, home cleaning only): All / Available / Busy / Inactive with counts, rating and reviews, Available / Busy · time / Deactivated, Edit, Deactivate / Activate (`updateServiceCleaner` status 1/2; 422 while busy is shown), Add Cleaner.
+- **Add / edit cleaner:** photo, full name, phone (+222), Active.
+- **Assign Cleaner:** opened by the booking's button when `needs_cleaner` (next step after Accept), or by **Change** on the assigned cleaner card in Booking Details. Lists cleaners with availability **for that booking** (`serviceCleaners?order_id=`); busy ones can't be picked. `assignServiceCleaner`.
+- Action labels now follow the backend: Accepted → **Assign Cleaner** → **Mark On the Way** → Start Cleaning → Mark as Completed (the Accepted button used to say Start Cleaning).
+- **Cleaner review** under each review on the Vendor Profile (`vendorapp/profile` `reviews[].cleaner_review`).
+- The design's "126 jobs" shows the cleaner's review count: the API has no jobs count.
+
 ### 3.6 Realtime and push
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).

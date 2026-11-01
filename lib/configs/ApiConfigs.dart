@@ -254,6 +254,11 @@ class ApiEndPoints {
   static String serviceDashboard = "serviceDashboard";
   static String serviceTypes = "serviceTypes";
   static String requestServiceType = "requestServiceType";
+  // Home cleaning cleaners (API doc §6.39, task V16).
+  static String serviceCleaners = "serviceCleaners";
+  static String addServiceCleaner = "addServiceCleaner";
+  static String updateServiceCleaner = "updateServiceCleaner";
+  static String assignServiceCleaner = "assignServiceCleaner";
   static String serviceItems = "serviceItems";
   static String addServiceItem = "addServiceItem";
   static String updateServiceItem = "updateServiceItem";

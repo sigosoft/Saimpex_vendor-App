@@ -10665,6 +10665,231 @@ class S {
   String get laundryService {
     return Intl.message('Service', name: 'laundryService', desc: '', args: []);
   }
+
+  /// `Change`
+  String get change {
+    return Intl.message('Change', name: 'change', desc: '', args: []);
+  }
+
+  /// `Full name`
+  String get fullName {
+    return Intl.message('Full name', name: 'fullName', desc: '', args: []);
+  }
+
+  /// `Add photo`
+  String get addPhoto {
+    return Intl.message('Add photo', name: 'addPhoto', desc: '', args: []);
+  }
+
+  /// `Booking #{code}`
+  String bookingHash(String code) {
+    return Intl.message(
+      'Booking #$code',
+      name: 'bookingHash',
+      desc: '',
+      args: [code],
+    );
+  }
+
+  /// `Mark On the Way`
+  String get cleaningMarkOnTheWay {
+    return Intl.message(
+      'Mark On the Way',
+      name: 'cleaningMarkOnTheWay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Cleaners`
+  String get myCleaners {
+    return Intl.message('My Cleaners', name: 'myCleaners', desc: '', args: []);
+  }
+
+  /// `Add Cleaner`
+  String get addCleaner {
+    return Intl.message('Add Cleaner', name: 'addCleaner', desc: '', args: []);
+  }
+
+  /// `Edit Cleaner`
+  String get editCleaner {
+    return Intl.message(
+      'Edit Cleaner',
+      name: 'editCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save cleaner`
+  String get saveCleaner {
+    return Intl.message(
+      'Save cleaner',
+      name: 'saveCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Fatou Ba`
+  String get cleanerNameHint {
+    return Intl.message(
+      'e.g. Fatou Ba',
+      name: 'cleanerNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active`
+  String get cleanerActive {
+    return Intl.message('Active', name: 'cleanerActive', desc: '', args: []);
+  }
+
+  /// `Only active cleaners can be assigned`
+  String get cleanerActiveHelp {
+    return Intl.message(
+      'Only active cleaners can be assigned',
+      name: 'cleanerActiveHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get cleanerFilterAll {
+    return Intl.message('All', name: 'cleanerFilterAll', desc: '', args: []);
+  }
+
+  /// `Available`
+  String get cleanerAvailable {
+    return Intl.message(
+      'Available',
+      name: 'cleanerAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Busy`
+  String get cleanerBusy {
+    return Intl.message('Busy', name: 'cleanerBusy', desc: '', args: []);
+  }
+
+  /// `Inactive`
+  String get cleanerInactive {
+    return Intl.message(
+      'Inactive',
+      name: 'cleanerInactive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deactivated`
+  String get cleanerDeactivated {
+    return Intl.message(
+      'Deactivated',
+      name: 'cleanerDeactivated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deactivate`
+  String get cleanerDeactivate {
+    return Intl.message(
+      'Deactivate',
+      name: 'cleanerDeactivate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activate`
+  String get cleanerActivate {
+    return Intl.message(
+      'Activate',
+      name: 'cleanerActivate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New`
+  String get cleanerNew {
+    return Intl.message('New', name: 'cleanerNew', desc: '', args: []);
+  }
+
+  /// `{count} reviews`
+  String cleanerReviewsCount(String count) {
+    return Intl.message(
+      '$count reviews',
+      name: 'cleanerReviewsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No cleaners yet.`
+  String get noCleanersYet {
+    return Intl.message(
+      'No cleaners yet.',
+      name: 'noCleanersYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assign Cleaner`
+  String get assignCleaner {
+    return Intl.message(
+      'Assign Cleaner',
+      name: 'assignCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assign {name}`
+  String assignCleanerNamed(String name) {
+    return Intl.message(
+      'Assign $name',
+      name: 'assignCleanerNamed',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Search cleaner`
+  String get searchCleaner {
+    return Intl.message(
+      'Search cleaner',
+      name: 'searchCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assigned cleaner`
+  String get assignedCleaner {
+    return Intl.message(
+      'Assigned cleaner',
+      name: 'assignedCleaner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cleaner review: {name}`
+  String cleanerReviewOf(String name) {
+    return Intl.message(
+      'Cleaner review: $name',
+      name: 'cleanerReviewOf',
+      desc: '',
+      args: [name],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/view/reject_booking_sheet.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
+import 'package:saimpex_vendor/home_cleaning/view/cleaners/assign_cleaner_view.dart';
 
 /// Runs the next step for [booking] (accept / start cleaning / mark completed,
 /// using the server's `next_status`) or, with [reject], asks for a reason and
@@ -25,6 +26,16 @@ Future<CleaningBooking?> runCleaningBookingAction(
   int? status;
   RejectBookingResult? rejection;
   Map<String, dynamic>? extra;
+  // Home cleaning, accepted without a cleaner: the next step is Assign
+  // Cleaner (V16; the server sends next_action_key assign_cleaner and no
+  // next_status). Reloaded by the caller afterwards.
+  if (!reject && ServiceKinds.isCleaning && booking.needsCleaner) {
+    final assigned = await AssignCleanerView.open(context, booking);
+    if (assigned == true && Get.isRegistered<HomeCleaningController>()) {
+      Get.find<HomeCleaningController>().loadBookings();
+    }
+    return assigned == true ? booking : null;
+  }
   // Laundry, Confirm Pickup on a per-kg service: weigh first (V14). The
   // sheet either asks the customer for the difference (payment request,
   // status stays) or confirms the pickup with the actual weight.
