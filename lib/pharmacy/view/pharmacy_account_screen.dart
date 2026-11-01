@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -964,6 +965,11 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     _MenuCard(
                       divided: true,
                       children: [
+                        _MenuTile(
+                          icon: Icons.rule_outlined,
+                          label: S.of(context).orderRules,
+                          onTap: OrderRulesScreen.open,
+                        ),
                         _MenuTile(
                           icon: Icons.support_agent_outlined,
                           label: S.of(context).supportMessages,

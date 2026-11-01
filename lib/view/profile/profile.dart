@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -192,6 +193,14 @@ class _ProfileState extends State<Profile> {
                           ),
                           child: Column(
                             children: [
+                              MenuItem(
+                                media: media,
+                                icon:
+                                    "lib/assets/images/help_and_support_icon.png",
+                                title: S.of(context).orderRules,
+                                onTap: OrderRulesScreen.open,
+                              ),
+                              SizedBox(height: media.size.height * 0.01),
                               MenuItem(
                                 media: media,
                                 icon:

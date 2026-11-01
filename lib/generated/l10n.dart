@@ -9520,6 +9520,291 @@ class S {
       args: [],
     );
   }
+
+  /// `Visible to customers`
+  String get productVisible {
+    return Intl.message(
+      'Visible to customers',
+      name: 'productVisible',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hidden until you show it`
+  String get productHiddenForever {
+    return Intl.message(
+      'Hidden until you show it',
+      name: 'productHiddenForever',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hidden until {time}`
+  String productHiddenUntil(String time) {
+    return Intl.message(
+      'Hidden until $time',
+      name: 'productHiddenUntil',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Hide`
+  String get hideProduct {
+    return Intl.message('Hide', name: 'hideProduct', desc: '', args: []);
+  }
+
+  /// `Show now`
+  String get showProductNow {
+    return Intl.message('Show now', name: 'showProductNow', desc: '', args: []);
+  }
+
+  /// `Hide this product`
+  String get hideProductTitle {
+    return Intl.message(
+      'Hide this product',
+      name: 'hideProductTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customers can't see or order it while it is hidden.`
+  String get hideProductHelp {
+    return Intl.message(
+      'Customers can\'t see or order it while it is hidden.',
+      name: 'hideProductHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For 1 hour`
+  String get hideFor1Hour {
+    return Intl.message('For 1 hour', name: 'hideFor1Hour', desc: '', args: []);
+  }
+
+  /// `For 4 hours`
+  String get hideFor4Hours {
+    return Intl.message(
+      'For 4 hours',
+      name: 'hideFor4Hours',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until the end of today`
+  String get hideUntilEndOfToday {
+    return Intl.message(
+      'Until the end of today',
+      name: 'hideUntilEndOfToday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until I show it again`
+  String get hideUntilShown {
+    return Intl.message(
+      'Until I show it again',
+      name: 'hideUntilShown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order rules`
+  String get orderRules {
+    return Intl.message('Order rules', name: 'orderRules', desc: '', args: []);
+  }
+
+  /// `Couldn't load the order rules.`
+  String get orderRulesUnavailable {
+    return Intl.message(
+      'Couldn\'t load the order rules.',
+      name: 'orderRulesUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum order value`
+  String get minimumOrderValue {
+    return Intl.message(
+      'Minimum order value',
+      name: 'minimumOrderValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `None`
+  String get noMinimum {
+    return Intl.message('None', name: 'noMinimum', desc: '', args: []);
+  }
+
+  /// `Preparation time`
+  String get defaultPreparationTime {
+    return Intl.message(
+      'Preparation time',
+      name: 'defaultPreparationTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{minutes} min`
+  String minutesShort(String minutes) {
+    return Intl.message(
+      '$minutes min',
+      name: 'minutesShort',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Delivery fee`
+  String get deliveryFeeLabel {
+    return Intl.message(
+      'Delivery fee',
+      name: 'deliveryFeeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{value} MRU per km`
+  String deliveryFeePerKm(String value) {
+    return Intl.message(
+      '$value MRU per km',
+      name: 'deliveryFeePerKm',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `{value} MRU`
+  String deliveryFeeFixed(String value) {
+    return Intl.message(
+      '$value MRU',
+      name: 'deliveryFeeFixed',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `{value}% of the order`
+  String deliveryFeePercent(String value) {
+    return Intl.message(
+      '$value% of the order',
+      name: 'deliveryFeePercent',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `Free`
+  String get deliveryFeeFree {
+    return Intl.message('Free', name: 'deliveryFeeFree', desc: '', args: []);
+  }
+
+  /// `Delivery fee paid by`
+  String get deliveryFeePaidBy {
+    return Intl.message(
+      'Delivery fee paid by',
+      name: 'deliveryFeePaidBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer`
+  String get feePaidByCustomer {
+    return Intl.message(
+      'Customer',
+      name: 'feePaidByCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your store`
+  String get feePaidByStore {
+    return Intl.message(
+      'Your store',
+      name: 'feePaidByStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX`
+  String get feePaidBySaimpex {
+    return Intl.message(
+      'SAIMPEX',
+      name: 'feePaidBySaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Split: your store {percent}%, the customer the rest`
+  String feePaidSplit(String percent) {
+    return Intl.message(
+      'Split: your store $percent%, the customer the rest',
+      name: 'feePaidSplit',
+      desc: '',
+      args: [percent],
+    );
+  }
+
+  /// `Drivers`
+  String get deliveryModel {
+    return Intl.message('Drivers', name: 'deliveryModel', desc: '', args: []);
+  }
+
+  /// `Your drivers and SAIMPEX drivers`
+  String get deliveryModelBoth {
+    return Intl.message(
+      'Your drivers and SAIMPEX drivers',
+      name: 'deliveryModelBoth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your drivers only`
+  String get deliveryModelOwn {
+    return Intl.message(
+      'Your drivers only',
+      name: 'deliveryModelOwn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX drivers only`
+  String get deliveryModelSaimpex {
+    return Intl.message(
+      'SAIMPEX drivers only',
+      name: 'deliveryModelSaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support.`
+  String get orderRulesSetBySaimpex {
+    return Intl.message(
+      'SAIMPEX sets these rules. To change them, write to SAIMPEX from Support messages or Help & Support.',
+      name: 'orderRulesSetBySaimpex',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

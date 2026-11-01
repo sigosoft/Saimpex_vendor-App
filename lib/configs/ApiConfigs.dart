@@ -212,6 +212,9 @@ class ApiEndPoints {
   static String pharmacyProductFields = "pharmacyProductFields";
   // Generic equivalent search across pharmacies (API doc §6.55, #130).
   static String pharmacyGenericSearch = "pharmacyGenericSearch";
+  // Hide / unhide a product; read-only order rules (API doc §6.21, §6.22).
+  static String updateProductVisibility = "updateProductVisibility";
+  static String orderRules = "orderRules";
   static String updatePharmacyItemAvailabilityStatus =
       "updatePharmacyItemAvailabilityStatus";
   static String updatePharmacyMenuItem = "updatePharmacyMenuItem";

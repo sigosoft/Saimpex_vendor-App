@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -264,6 +265,16 @@ class _InventoryViewState extends State<InventoryView> {
                       onViewDetails: () =>
                           _onViewDetails(controller.products[i]),
                     ),
+                    // Hide / unhide (§6.21): water item rows carry menu_id.
+                    // Gas has no hide vertical in the API, so not for gas.
+                    if (!WaterApi.isGas &&
+                        int.tryParse(controller.products[i].menuId?.toString() ?? '') != null)
+                      ProductVisibilityBar(
+                        key: ValueKey('vis-${controller.products[i].menuId}'),
+                        vertical: 'water',
+                        menuId: int.parse(controller.products[i].menuId.toString()),
+                        initial: ProductVisibilityState.fromJson(controller.products[i].rawJson),
+                      ),
                     const SizedBox(height: 12),
                   ],
               ],

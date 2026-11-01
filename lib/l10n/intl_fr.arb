@@ -2389,5 +2389,55 @@
   "pharmacyGenericRemoveLink": "Retirer le lien",
   "pharmacyGenericTypeTwo": "Tapez au moins 2 lettres",
   "pharmacyGenericNoMatch": "Aucun produit trouvé",
-  "pharmacyGenericNone": "Aucun"
+  "pharmacyGenericNone": "Aucun",
+  "productVisible": "Visible par les clients",
+  "productHiddenForever": "Masqué jusqu'à ce que vous l'affichiez",
+  "productHiddenUntil": "Masqué jusqu'à {time}",
+  "@productHiddenUntil": {
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "hideProduct": "Masquer",
+  "showProductNow": "Afficher",
+  "hideProductTitle": "Masquer ce produit",
+  "hideProductHelp": "Les clients ne peuvent ni le voir ni le commander tant qu'il est masqué.",
+  "hideFor1Hour": "Pendant 1 heure",
+  "hideFor4Hours": "Pendant 4 heures",
+  "hideUntilEndOfToday": "Jusqu'à la fin de la journée",
+  "hideUntilShown": "Jusqu'à ce que je l'affiche",
+  "orderRules": "Règles de commande",
+  "orderRulesUnavailable": "Impossible de charger les règles de commande.",
+  "minimumOrderValue": "Commande minimum",
+  "noMinimum": "Aucune",
+  "defaultPreparationTime": "Temps de préparation",
+  "minutesShort": "{minutes} min",
+  "@minutesShort": {
+    "placeholders": {"minutes": {"type": "String"}}
+  },
+  "deliveryFeeLabel": "Frais de livraison",
+  "deliveryFeePerKm": "{value} MRU par km",
+  "@deliveryFeePerKm": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFixed": "{value} MRU",
+  "@deliveryFeeFixed": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeePercent": "{value} % de la commande",
+  "@deliveryFeePercent": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFree": "Gratuit",
+  "deliveryFeePaidBy": "Frais payés par",
+  "feePaidByCustomer": "Le client",
+  "feePaidByStore": "Votre magasin",
+  "feePaidBySaimpex": "SAIMPEX",
+  "feePaidSplit": "Partagés : votre magasin {percent} %, le client le reste",
+  "@feePaidSplit": {
+    "placeholders": {"percent": {"type": "String"}}
+  },
+  "deliveryModel": "Livreurs",
+  "deliveryModelBoth": "Vos livreurs et ceux de SAIMPEX",
+  "deliveryModelOwn": "Vos livreurs uniquement",
+  "deliveryModelSaimpex": "Livreurs SAIMPEX uniquement",
+  "orderRulesSetBySaimpex": "SAIMPEX fixe ces règles. Pour les changer, écrivez à SAIMPEX depuis Messages du support ou Aide et support."
 }

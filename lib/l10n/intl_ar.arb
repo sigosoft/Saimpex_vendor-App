@@ -2388,5 +2388,55 @@
   "pharmacyGenericRemoveLink": "إزالة الربط",
   "pharmacyGenericTypeTwo": "اكتب حرفين على الأقل",
   "pharmacyGenericNoMatch": "لم يتم العثور على منتج",
-  "pharmacyGenericNone": "لا يوجد"
+  "pharmacyGenericNone": "لا يوجد",
+  "productVisible": "ظاهر للعملاء",
+  "productHiddenForever": "مخفي حتى تظهره",
+  "productHiddenUntil": "مخفي حتى {time}",
+  "@productHiddenUntil": {
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "hideProduct": "إخفاء",
+  "showProductNow": "إظهار الآن",
+  "hideProductTitle": "إخفاء هذا المنتج",
+  "hideProductHelp": "لا يستطيع العملاء رؤيته أو طلبه ما دام مخفيًا.",
+  "hideFor1Hour": "لمدة ساعة",
+  "hideFor4Hours": "لمدة 4 ساعات",
+  "hideUntilEndOfToday": "حتى نهاية اليوم",
+  "hideUntilShown": "حتى أظهره مرة أخرى",
+  "orderRules": "قواعد الطلب",
+  "orderRulesUnavailable": "تعذر تحميل قواعد الطلب.",
+  "minimumOrderValue": "الحد الأدنى للطلب",
+  "noMinimum": "لا يوجد",
+  "defaultPreparationTime": "وقت التحضير",
+  "minutesShort": "{minutes} د",
+  "@minutesShort": {
+    "placeholders": {"minutes": {"type": "String"}}
+  },
+  "deliveryFeeLabel": "رسوم التوصيل",
+  "deliveryFeePerKm": "{value} أوقية لكل كم",
+  "@deliveryFeePerKm": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFixed": "{value} أوقية",
+  "@deliveryFeeFixed": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeePercent": "{value}% من الطلب",
+  "@deliveryFeePercent": {
+    "placeholders": {"value": {"type": "String"}}
+  },
+  "deliveryFeeFree": "مجاني",
+  "deliveryFeePaidBy": "يدفع رسوم التوصيل",
+  "feePaidByCustomer": "العميل",
+  "feePaidByStore": "متجرك",
+  "feePaidBySaimpex": "SAIMPEX",
+  "feePaidSplit": "مقسومة: متجرك {percent}%، والعميل الباقي",
+  "@feePaidSplit": {
+    "placeholders": {"percent": {"type": "String"}}
+  },
+  "deliveryModel": "السائقون",
+  "deliveryModelBoth": "سائقوك وسائقو SAIMPEX",
+  "deliveryModelOwn": "سائقوك فقط",
+  "deliveryModelSaimpex": "سائقو SAIMPEX فقط",
+  "orderRulesSetBySaimpex": "تحدد SAIMPEX هذه القواعد. لتغييرها، راسل SAIMPEX من رسائل الدعم أو المساعدة والدعم."
 }
