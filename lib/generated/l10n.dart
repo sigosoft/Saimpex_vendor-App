@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -4724,8 +4725,7 @@ class S {
   get imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg {
     return Intl.message(
       'Image file names must start with restaurant/menus/{filename.extension} (e.g., restaurant/menus/pizza.jpg).',
-      name:
-          'imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg',
+      name: 'imageFileNamesMustStartWithRestaurantmenusfilenameextensionEgRestaurantmenuspizzajpg',
       desc: '',
       args: [],
     );
@@ -9373,6 +9373,61 @@ class S {
       name: 'gasEmptyCylindersToCollect',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `SAIMPEX Support`
+  String get saimpexSupport {
+    return Intl.message(
+      'SAIMPEX Support',
+      name: 'saimpexSupport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open order`
+  String get openOrder {
+    return Intl.message('Open order', name: 'openOrder', desc: '', args: []);
+  }
+
+  /// `Reply to SAIMPEX…`
+  String get replyToSaimpex {
+    return Intl.message(
+      'Reply to SAIMPEX…',
+      name: 'replyToSaimpex',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support messages`
+  String get supportMessages {
+    return Intl.message(
+      'Support messages',
+      name: 'supportMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No messages from SAIMPEX yet.`
+  String get noSupportMessages {
+    return Intl.message(
+      'No messages from SAIMPEX yet.',
+      name: 'noSupportMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order #{code}`
+  String supportOrderCode(String code) {
+    return Intl.message(
+      'Order #$code',
+      name: 'supportOrderCode',
+      desc: '',
+      args: [code],
     );
   }
 }

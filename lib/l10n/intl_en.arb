@@ -2306,5 +2306,16 @@
     "placeholders": {
       "count": {"type": "String"}
     }
+  },
+  "saimpexSupport": "SAIMPEX Support",
+  "openOrder": "Open order",
+  "replyToSaimpex": "Reply to SAIMPEX…",
+  "supportMessages": "Support messages",
+  "noSupportMessages": "No messages from SAIMPEX yet.",
+  "supportOrderCode": "Order #{code}",
+  "@supportOrderCode": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
   }
 }

@@ -227,6 +227,7 @@ Dead code: the OTP login path (`LoginController.sendOtp` → `lib/view/otp/otp.d
 
 - Push: Firebase Messaging handlers and local notifications in `lib/view/notifications/notification.dart` (foreground, background, opened-from-tap).
 - Chat realtime: Pusher in `lib/controller/chat_controller.dart`, config in `lib/configs/PusherConfig.dart`.
+- **Support messages from SAIMPEX (V17, ✅ `feature/support-messages`):** API §6.37. `lib/controller/support_messages_controller.dart`, `lib/view/support/support_messages.dart` (order threads with unread badge) and `support_chat.dart` (one order's messages, reply). Menu tile "Support messages" in all four account menus (restaurant/grocery profile, water, pharmacy, home cleaning). The `admin_message` push opens that order's chat and **no longer triggers the new-order alert** (it carries an `order_id`). "Open order" shows only in the grocery/restaurant section. Built without a vendor Figma screen, in the delivery app's Support Messages layout (Figma `10885:12518`). Still to do from V17: pharmacy generic name / equivalent / dosage on the product form (§6.36).
 
 ### 3.7 Printing
 

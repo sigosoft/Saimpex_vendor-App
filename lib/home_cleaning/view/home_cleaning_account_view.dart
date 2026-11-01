@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -749,6 +750,11 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
+            _buildSettingRow(
+              icon: Icons.support_agent_outlined,
+              title: S.of(context).supportMessages,
+              onTap: () => Get.to(() => const SupportMessages()),
+            ),
             _buildSettingRow(
               icon: Icons.help_outline_rounded,
               title: S.of(context).helpSupport,

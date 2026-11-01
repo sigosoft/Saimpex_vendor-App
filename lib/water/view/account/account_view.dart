@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
 import 'package:flutter/material.dart';
@@ -483,6 +484,12 @@ class _AccountViewState extends State<AccountView> {
                 const SizedBox(height: 10),
                 _SettingsCard(
                   children: [
+                    _SettingsTile(
+                      edgeDivider: true,
+                      icon: Icons.support_agent_outlined,
+                      title: S.of(context).supportMessages,
+                      onTap: () => Get.to(() => const SupportMessages()),
+                    ),
                     _SettingsTile(
                       edgeDivider: true,
                       icon: Icons.help_outline_rounded,

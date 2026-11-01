@@ -2368,5 +2368,16 @@
     "placeholders": {
       "count": {"type": "String"}
     }
+  },
+  "saimpexSupport": "دعم SAIMPEX",
+  "openOrder": "فتح الطلب",
+  "replyToSaimpex": "رد على SAIMPEX…",
+  "supportMessages": "رسائل الدعم",
+  "noSupportMessages": "لا توجد رسائل من SAIMPEX بعد.",
+  "supportOrderCode": "الطلب #{code}",
+  "@supportOrderCode": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
   }
 }
