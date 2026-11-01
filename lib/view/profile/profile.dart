@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -191,6 +192,16 @@ class _ProfileState extends State<Profile> {
                           ),
                           child: Column(
                             children: [
+                              MenuItem(
+                                media: media,
+                                icon:
+                                    "lib/assets/images/help_and_support_icon.png",
+                                title: S.of(context).supportMessages,
+                                onTap: () {
+                                  Get.to(() => const SupportMessages());
+                                },
+                              ),
+                              SizedBox(height: media.size.height * 0.01),
                               MenuItem(
                                 media: media,
                                 icon:

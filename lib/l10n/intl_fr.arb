@@ -2369,5 +2369,16 @@
     "placeholders": {
       "count": {"type": "String"}
     }
+  },
+  "saimpexSupport": "Support SAIMPEX",
+  "openOrder": "Ouvrir la commande",
+  "replyToSaimpex": "Répondre à SAIMPEX…",
+  "supportMessages": "Messages du support",
+  "noSupportMessages": "Aucun message de SAIMPEX pour l'instant.",
+  "supportOrderCode": "Commande n° {code}",
+  "@supportOrderCode": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
   }
 }

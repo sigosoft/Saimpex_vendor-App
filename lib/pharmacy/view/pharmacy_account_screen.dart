@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/support/support_messages.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart';
@@ -963,6 +964,11 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                     _MenuCard(
                       divided: true,
                       children: [
+                        _MenuTile(
+                          icon: Icons.support_agent_outlined,
+                          label: S.of(context).supportMessages,
+                          onTap: () => Get.to(() => const SupportMessages()),
+                        ),
                         _MenuTile(
                           icon: Icons.headset_mic_outlined,
                           label: _t('Help & Support'),

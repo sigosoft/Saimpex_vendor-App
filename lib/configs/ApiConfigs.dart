@@ -60,6 +60,9 @@ class ApiEndPoints {
   static String getPrivacyPolicy = "getPrivacyPolicy";
   static String getContact = "getContact";
   static String getAbout = "getAbout";
+  // Messages from SAIMPEX about an order (API doc §6.37, task V17).
+  static String supportMessages = "supportMessages";
+  static String replySupportMessage = "replySupportMessage";
   static String allConversations = "chat/allConversations";
   static String getConversation = "chat/getConversation";
   static String sendMessage = "chat/sendMessage";

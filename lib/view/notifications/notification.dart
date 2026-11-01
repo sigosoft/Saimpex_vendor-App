@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/view/support/support_chat.dart';
 import 'dart:async';
 import 'package:saimpex_vendor/configs/secure_credentials.dart';
 import 'dart:convert';
@@ -57,6 +58,10 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 
 /// Push `type` for the vendor's pre-order reminder (API §6.10).
 const String preorderReminderType = 'preorder_reminder';
+
+/// Message from SAIMPEX (Admin) about an order (API doc §6.37, task V17).
+/// It carries an order_id but is not a new order: open the support chat.
+const String adminMessageType = 'admin_message';
 
 class FCM {
   final streamCtlr = StreamController<String>.broadcast();
@@ -176,6 +181,7 @@ class FCM {
       // A pre-order reminder carries an order_id but is not a new order.
       final bool isPreorderReminder = notificationType == preorderReminderType;
       final bool isOrderRequestType = !isPreorderReminder &&
+                                      notificationType != adminMessageType &&
                                       (notificationType == 'order_request' || 
                                        notificationType == 'new_order_request' || 
                                        notificationType == 'other_order_request' ||
@@ -424,6 +430,15 @@ class FCM {
 
     // Pre-order reminder: open that order's details.
     final effective = getEffectiveData(notificationData);
+    if (effective['type']?.toString() == adminMessageType) {
+      final orderId = effective['order_id']?.toString() ?? '';
+      if (orderId.isEmpty || !await isUserLoggedIn()) return;
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.context == null) return;
+        SupportChat.open(orderId);
+      });
+      return;
+    }
     if (effective['type']?.toString() == preorderReminderType) {
       final orderId = effective['order_id']?.toString() ?? '';
       if (orderId.isEmpty || !await isUserLoggedIn()) return;
@@ -774,7 +789,8 @@ class FCM {
             notificationType == 'order_request' ||
             notificationType == 'new_order_request' ||
             notificationType == 'other_order_request' ||
-            notificationType == preorderReminderType;
+            notificationType == preorderReminderType ||
+            notificationType == adminMessageType;
         if (isOrderRequestType) {
           await navigateToAcceptOrderIfLoggedIn(notificationData: storedData);
         } else {
@@ -812,6 +828,7 @@ class FCM {
 
     final bool isPreorderReminder = notificationType == preorderReminderType;
     final bool isOrderRequest = !isPreorderReminder &&
+        notificationType != adminMessageType &&
         (notificationType == 'new_order_request' ||
             notificationType == 'order_request' ||
             notificationType == 'other_order_request' ||
