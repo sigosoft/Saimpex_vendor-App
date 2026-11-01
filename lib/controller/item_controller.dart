@@ -1263,6 +1263,9 @@ class ItemController extends GetxController {
         "name_en": name,
         "category_ids": jsonEncode(catId != null ? [catId] : []),
         "has_variants": hasVariants ? '1' : '0',
+        // Kept as loaded: the server sets 1 (available) when it is missing.
+        if (catalogItemDetail?['available_status'] != null)
+          "available_status": catalogItemDetail!['available_status'].toString(),
         if (!hasVariants) "price": priceCtrl.text.trim(),
         if (!hasVariants) "discount_price": discountPriceCtrl.text.trim(),
         "description_en": (description ?? '').trim(),

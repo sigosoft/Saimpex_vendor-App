@@ -18,6 +18,7 @@ import 'add_menu_screen.dart';
 import 'add_items_screen.dart';
 import 'edit_menu_screen.dart';
 import 'edit_items_screen.dart';
+import 'quick_edit_item_sheet.dart';
 import 'leave_history_screen.dart';
 import 'Widgets/vendor_restaurant_reusable_widgets.dart';
 import '../../controller/profile_controller.dart';
@@ -127,7 +128,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     final categoryId = profileController.selectedRestaurantCategoryId;
     if (categoryId == null) {
       if (mounted) {
-        showToast(context, 'Please select a category before uploading.');
+        showToast(context, S.of(context).importSelectCategoryFirst);
       }
       return;
     }
@@ -622,7 +623,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     _sectionHeader(S.of(context).menuBulkImport),
                     const SizedBox(height: 16),
                     Text(
-                      "Select a category and import menu items in bulk",
+                      S.of(context).importSelectCategoryHint,
                       style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -996,7 +997,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Download',
+                  S.of(context).menuExport,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: appFont('Rubik', 
@@ -1291,14 +1292,31 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             ),
           );
         } else {
-          debugPrint("restaurantMenuItemId: $restaurantMenuItemId");
-          Navigator.push(
+          void openAdvanced() => Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) =>
                   EditItemsScreen(itemId: restaurantMenuItemId),
             ),
           );
+          final profileController = Get.find<ProfileController>();
+          if (profileController.vendorType != "1") {
+            openAdvanced();
+            return;
+          }
+          // Restaurant catalog: quick edit first, "Advanced edit" inside (V9).
+          showQuickEditItemSheet(
+            context,
+            itemId: restaurantMenuItemId,
+            onAdvanced: openAdvanced,
+          ).then((saved) {
+            if (saved == true) {
+              profileController.fetchGroceryMenuItems(
+                categoryId: profileController.selectedRestaurantCategoryId,
+                keyword: _searchKeyword.trim(),
+              );
+            }
+          });
         }
       },
       onDelete: isMenu
@@ -1543,7 +1561,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Download Template",
+                      S.of(context).downloadTemplate,
                       style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -1581,7 +1599,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Upload Images",
+                      S.of(context).uploadImagesLabel,
                       style: appFont('Rubik', 
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
