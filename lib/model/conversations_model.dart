@@ -62,6 +62,12 @@ class Conversation {
   List<LastMessage>? messages;
   String? image;
 
+  /// API doc §6.43 (V18): booking the chat is about ("Booking #…"), and
+  /// the customer's Online status (active in the last 2 minutes).
+  String? orderCode;
+  bool customerIsOnline = false;
+  String? customerLastSeenAt;
+
   Conversation(
       {this.id,
       this.customerId,
@@ -89,6 +95,9 @@ class Conversation {
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
     unreadCount = json['unread_count'];
+    orderCode = json['order_code']?.toString();
+    customerIsOnline = json['customer_is_online'] == true || json['customer_is_online']?.toString() == '1';
+    customerLastSeenAt = json['customer_last_seen_at']?.toString();
     image = json['image']?.toString() ??
         (json['customer'] is Map ? json['customer']['image']?.toString() : null);
     lastMessage = json['last_message'] != null

@@ -804,6 +804,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteAccount": MessageLookupByLibrary.simpleMessage("Delete Account"),
     "deleteCart": MessageLookupByLibrary.simpleMessage("Delete Cart"),
     "deleteChat": MessageLookupByLibrary.simpleMessage("Delete Chat"),
+    "deleteConversationBody": MessageLookupByLibrary.simpleMessage(
+      "It is removed from your list. It comes back if the customer writes again.",
+    ),
+    "deleteConversationTitle": MessageLookupByLibrary.simpleMessage(
+      "Delete this chat?",
+    ),
     "delivered": MessageLookupByLibrary.simpleMessage("Delivered"),
     "delivering": MessageLookupByLibrary.simpleMessage("DELIVERING"),
     "delivery": MessageLookupByLibrary.simpleMessage("Delivery"),
@@ -1746,6 +1752,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "showProductNow": MessageLookupByLibrary.simpleMessage("Show now"),
     "slotAvailable": MessageLookupByLibrary.simpleMessage("Available"),
     "slotUnavailable": MessageLookupByLibrary.simpleMessage("Unavailable"),
+    "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again.",
+    ),
     "sorryWereDownForMaintenanceWellBeBackUpShortly":
         MessageLookupByLibrary.simpleMessage(
           "Sorry, we\'re down for maintenance  We\'ll be back up shortly.",

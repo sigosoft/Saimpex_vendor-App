@@ -2625,5 +2625,8 @@
   "addonUnitHour": "Par heure",
   "addonUnitRoom": "Par pièce (salle)",
   "addonUnitPiece": "Par article",
-  "needsYourAttention": "À traiter"
+  "needsYourAttention": "À traiter",
+  "deleteConversationTitle": "Supprimer cette discussion ?",
+  "deleteConversationBody": "Elle est retirée de votre liste. Elle revient si le client écrit à nouveau.",
+  "somethingWentWrong": "Une erreur s'est produite. Réessayez."
 }
