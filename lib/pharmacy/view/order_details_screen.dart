@@ -628,6 +628,27 @@ class _PharmacyOrderDetailsScreenState
     );
   }
 
+  /// "Mark as Reviewed": same API calls as the Home card. An `uploaded`
+  /// prescription is moved to under review first, as the server expects.
+  Future<void> _markReviewed() async {
+    final id = _detailsController.prescriptionObj?.prescriptionId ??
+        widget.effectivePrescriptionId;
+    if (id == null) return;
+    final home = Get.isRegistered<PharmacyHomeController>()
+        ? Get.find<PharmacyHomeController>()
+        : Get.put(PharmacyHomeController());
+    final status =
+        _detailsController.prescriptionObj?.status?.trim().toLowerCase();
+    if (status == 'uploaded' &&
+        !await home.reviewPharmacyPrescription(id, context: context)) {
+      return;
+    }
+    final ok = await home.markPharmacyPrescriptionReviewed(id, context: context);
+    if (ok && mounted) {
+      await _detailsController.fetchPharmacyPrescriptionDetails(id);
+    }
+  }
+
   void _openFullPrescription() {
     final primaryImageUrl =
         _detailsController.prescriptionDetailData?.primaryImageUrl ??
@@ -960,6 +981,8 @@ class _PharmacyOrderDetailsScreenState
                     onReject: () => showPharmacyRejectOrderSheet(context),
                     onReview: isEffectiveReviewCompleted
                         ? _openCreateQuotation
+                        : isEffectiveReviewing
+                        ? _markReviewed
                         : _openFullPrescription,
                     primaryLabel: isEffectiveReviewCompleted
                         ? 'Create Quotation'
