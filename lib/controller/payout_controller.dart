@@ -155,7 +155,7 @@ class PayoutController extends GetxController {
       debugPrint("getReceivedPayouts Error: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(LoginScreen());
       }else{

@@ -116,7 +116,7 @@ class RetryInterceptor extends Interceptor {
   Future<void> _logoutAndRedirect() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
+      await clearPrefsKeepLanguage(prefs);
       await savename("@isFirstLaunch", "true");
       
       Fluttertoast.showToast(

@@ -215,7 +215,7 @@ class _AccountViewState extends State<AccountView> {
           showToast(context, toastMessage);
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         await savename('loginStatus', 'false');
         await savename('token', '');
@@ -319,7 +319,7 @@ class _AccountViewState extends State<AccountView> {
           showToast(context, toastMessage);
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         await savename('loginStatus', 'false');
         await savename('token', '');
@@ -919,7 +919,7 @@ class _LanguageSelector extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             fontSize: 13.5,
                           ),
-                          child: Text(languages[index]),
+                          child: Text(LocalizationService.nativeName(languages[index])),
                         ),
                       ),
                     ),

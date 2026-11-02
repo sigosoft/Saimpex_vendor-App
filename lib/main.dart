@@ -70,6 +70,13 @@ Future<void> _main() async {
     ],
     initLanguageCode: langCode,
   );
+  // One language for both stores: flutter_localization keeps its own saved
+  // locale, which could stay English while selected_locale was Arabic
+  // (test day V-B3). Persist the default so Settings shows it too.
+  if (FlutterLocalization.instance.currentLocale?.languageCode != langCode) {
+    FlutterLocalization.instance.translate(langCode);
+  }
+  await savename("selected_locale", langCode);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(MyApp(initialLocale: locale));

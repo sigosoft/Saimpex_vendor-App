@@ -608,7 +608,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
           showToast(context, toastMessage);
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         await savename('loginStatus', 'false');
         await savename('token', '');
@@ -722,7 +722,7 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
           showToast(context, toastMessage);
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         await savename('loginStatus', 'false');
         await savename('token', '');
@@ -1418,7 +1418,7 @@ class _LanguageBar extends StatelessWidget {
                                 fontSize: 14,
                                 height: 1.1,
                               ),
-                              child: Text(_labels[index]),
+                              child: Text(LocalizationService.nativeName(_labels[index])),
                             ),
                           ),
                         ),

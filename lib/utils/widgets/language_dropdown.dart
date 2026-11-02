@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -82,7 +83,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
                   items: widget.languages.map((lang) {
                     return DropdownMenuItem<String>(
                       value: lang,
-                      child: Text(lang, overflow: TextOverflow.ellipsis, style: appFont('Rubik', 
+                      child: Text(LocalizationService.nativeName(lang), overflow: TextOverflow.ellipsis, style: appFont('Rubik', 
                         textStyle: Theme.of(context).textTheme.labelMedium,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,

@@ -71,6 +71,23 @@ class LocalizationService {
     }
   }
 
+  /// A language's name in that language ("العربية", "Français", "English"),
+  /// as language pickers usually show it; accepts a name or a code. The
+  /// pickers showed "English / French / Arabic" in every language (test day
+  /// V-B4, V17).
+  static String nativeName(String language) {
+    switch (language) {
+      case 'ar':
+      case 'Arabic':
+        return 'العربية';
+      case 'fr':
+      case 'French':
+        return 'Français';
+      default:
+        return 'English';
+    }
+  }
+
   /// Returns the current locale's text direction (RTL for Arabic, LTR otherwise).
   TextDirection getTextDirection() {
     return currentLanguageCode == "ar"

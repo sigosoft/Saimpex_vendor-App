@@ -33,6 +33,19 @@ getSavedObject(String key) async {
   return data != null ? json.decode(data) : null;
 }
 
+/// Clears the session but keeps the chosen language. A plain clear() on
+/// logout dropped it, so the next login came back in English and Settings
+/// highlighted English while the app was Arabic (test day V-B3).
+Future<void> clearPrefsKeepLanguage(SharedPreferences prefs) async {
+  final lang = prefs.getString('selected_locale');
+  final translator = prefs.getString('translator_locale_key');
+  await prefs.clear();
+  if (lang != null) await prefs.setString('selected_locale', lang);
+  if (translator != null) {
+    await prefs.setString('translator_locale_key', translator);
+  }
+}
+
 bool get isInDebugMode {
   bool inDebugMode = false;
   assert(inDebugMode = true);

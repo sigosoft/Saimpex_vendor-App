@@ -85,7 +85,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("getOrderDetails Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -152,7 +152,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("getOrderDetails Error grocery: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -210,7 +210,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -265,7 +265,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error grocery: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -309,7 +309,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -350,7 +350,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -394,7 +394,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -438,7 +438,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("markSelfPickupCompleted Error: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -482,7 +482,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -526,7 +526,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(() => const LoginScreen());
       } else {
@@ -567,7 +567,7 @@ class OrderDetailsController extends GetxController {
       debugPrint("accept order Error restaurant: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(LoginScreen());
       } else {

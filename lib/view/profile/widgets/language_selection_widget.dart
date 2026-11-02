@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/view/login/widgets/bold_text-rubik.dart';
@@ -85,7 +86,7 @@ class _LanguageOption extends StatelessWidget {
         ),
         child: Center(
           child: BoldTextRubik(
-            text: text,
+            text: LocalizationService.nativeName(text),
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: isSelected ? Colors.white : Colors.black,

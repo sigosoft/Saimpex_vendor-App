@@ -2750,7 +2750,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "wednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("مرحباً بك في"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(
-      "مرحباً بك في سايمبكس فاندور",
+      "مرحباً بك في سايمبكس للتجار",
     ),
     "wellBeBackSoon": MessageLookupByLibrary.simpleMessage("سنعود قريباً"),
     "weveSentAVerificationCodeToYourWhatsapp":

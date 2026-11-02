@@ -582,7 +582,7 @@ class _SettingsState extends State<Settings> {
         ),
         child: Center(
           child: Text(
-            title,
+            LocalizationService.nativeName(title),
             style: appFont('Rubik', 
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
