@@ -328,25 +328,12 @@ class PharmacyOrderDetailsController extends GetxController {
       if (!candidates.contains(u)) candidates.add(u);
     }
 
-    // 1. Configured base URL
+    // Only the configured server. The dev, live (api.) and ourworks hosts were
+    // hard-coded as fallbacks, so a dev build could load images from the live
+    // server (test day V-B6). Full URLs keep only their path (above).
     final base = ApiConfigs.IMAGE_URL.trim();
     final cleanBase = base.endsWith('/') ? base : '$base/';
     addUrl('$cleanBase$p');
-
-    // 2. dev with storage
-    addUrl('https://dev.saimpexenterprise.com/storage/$p');
-    // 3. dev with public/storage
-    addUrl('https://dev.saimpexenterprise.com/public/storage/$p');
-    // 4. dev root
-    addUrl('https://dev.saimpexenterprise.com/$p');
-    // 5. dev storage/app/public
-    addUrl('https://dev.saimpexenterprise.com/storage/app/public/$p');
-    // 6. api.saimpexenterprise.com storage
-    addUrl('https://api.saimpexenterprise.com/storage/$p');
-    // 7. api.saimpexenterprise.com public/storage
-    addUrl('https://api.saimpexenterprise.com/public/storage/$p');
-    // 8. ourworks domain
-    addUrl('https://ourworks.co.in/saimpex-backend/public/storage/$p');
 
     return candidates;
   }
