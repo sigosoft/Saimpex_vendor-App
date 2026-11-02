@@ -57,6 +57,14 @@ void main() {
     expect(p.isAvailable, isFalse);
   });
 
+  test('picker price is what the customer pays (discount price when set)', () {
+    expect(StoreProduct({'price': '70', 'discount_price': '60'}).price, 60);
+    expect(StoreProduct({'price': '70', 'selling_price': '60'}).price, 60);
+    expect(StoreProduct({'price': '70', 'discount_price': '0'}).price, 70);
+    expect(StoreProduct({'price': '70'}).price, 70);
+    expect(StoreProduct({'price': '70', 'discount_price': '80'}).price, 70);
+  });
+
   testWidgets('pending line shows its status; other lines offer the three actions', (t) async {
     final api = _FakeApi([
       {

@@ -101,7 +101,14 @@ class StoreProduct {
   }
 
   String get image => '${raw['image'] ?? ''}';
-  double get price => _num(raw['price']);
+  /// What the customer pays: the discount (selling) price when the item has
+  /// one, else the retail price. The picker showed the retail price, so a
+  /// 70 MRU item was saved as a 60 MRU substitute (test day, ORD-001481).
+  double get price {
+    final retail = _num(raw['price']);
+    final selling = _num(raw['discount_price'] ?? raw['selling_price']);
+    return selling > 0 && (retail <= 0 || selling < retail) ? selling : retail;
+  }
 
   /// Shown only when the list sends it (backend issue for `stock`).
   int? get stock => raw['stock'] == null ? null : int.tryParse('${raw['stock']}');
