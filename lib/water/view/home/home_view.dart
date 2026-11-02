@@ -1585,12 +1585,13 @@ class _OrderCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                   ],
-                  _OrderChip(
-                    icon: order.isOnlinePayment
-                        ? Icons.payments_outlined
-                        : Icons.handshake_outlined,
-                    label: order.paymentLabel,
-                  ),
+                  if (order.paymentLabel.isNotEmpty)
+                    _OrderChip(
+                      icon: order.isOnlinePayment
+                          ? Icons.payments_outlined
+                          : Icons.handshake_outlined,
+                      label: order.paymentLabel,
+                    ),
                   // Gas refills: empty cylinders the driver collects (#84).
                   if (order.emptyCylindersToCollect > 0) ...[
                     const SizedBox(width: 8),

@@ -98,9 +98,13 @@ class HomeOrder {
             ?.toString()
             .toLowerCase() ??
         '';
+    // The order lists (waterOrders) don't send payment_type. An unknown type
+    // used to show "Online payment" on cash orders, so a driver could skip
+    // collecting; show no payment chip instead of guessing.
+    final paymentKnown = paymentTypeCode(paymentMethod) != null;
     final isCod = isCashPayment(paymentMethod);
-    final isOnlinePayment = !isCod;
-    final paymentLabel = paymentTypeLabel(paymentMethod, cashFallback: isCod);
+    final isOnlinePayment = paymentKnown && !isCod;
+    final paymentLabel = paymentKnown ? paymentTypeLabel(paymentMethod) : '';
 
     final total = order.total?.toString() ?? raw['total']?.toString() ?? '0';
     String itemLabel = '';
@@ -118,8 +122,13 @@ class HomeOrder {
       }
     }
     if (itemLabel.isEmpty) {
-      final count = order.totalItems ?? order.orderItemsCount ?? 1;
-      itemLabel = '$count ${count == 1 ? S.current.item : S.current.items} • $total MRU';
+      final count = order.totalItems ?? order.orderItemsCount;
+      if (count != null && count > 0) {
+        itemLabel = '$count ${count == 1 ? S.current.item : S.current.items} • $total MRU';
+      } else {
+        // The list sends no item count; "0 items" was shown for real orders.
+        itemLabel = '$total MRU';
+      }
     }
 
     final isScheduled =
