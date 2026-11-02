@@ -9,6 +9,7 @@ import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:get/get.dart';
+import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/view/chat/ChatDetails.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
@@ -43,6 +44,38 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
   void initState() {
     super.initState();
     _fetchOrderDetail();
+  }
+
+  // Order actions: the buttons here were empty stubs, so Accept on this
+  // screen did nothing. Use the same calls as the home cards, then reload.
+  WaterHomeController get _home => Get.isRegistered<WaterHomeController>()
+      ? Get.find<WaterHomeController>()
+      : Get.put(WaterHomeController());
+
+  Future<void> _accept() async {
+    if (_apiOrderId == null) return;
+    await _home.acceptWaterOrder(_apiOrderId, context: context);
+    if (mounted) await _fetchOrderDetail();
+  }
+
+  Future<void> _advance(HomeOrderStatus status) async {
+    if (_apiOrderId == null) return;
+    if (status == HomeOrderStatus.accepted) {
+      await _home.prepareWaterOrder(_apiOrderId, context: context);
+    } else if (status == HomeOrderStatus.preparing) {
+      await _home.markAsReadyWaterOrder(_apiOrderId, context: context);
+    } else {
+      return;
+    }
+    if (mounted) await _fetchOrderDetail();
+  }
+
+  Future<void> _reject() async {
+    if (_apiOrderId == null) return;
+    final reason = await showRejectOrderSheet(context);
+    if (reason == null || reason.isEmpty || !mounted) return;
+    await _home.cancelWaterOrder(_apiOrderId, reason: reason, context: context);
+    if (mounted) await _fetchOrderDetail();
   }
 
   Future<void> _fetchOrderDetail() async {
@@ -450,13 +483,21 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     final placedTime = _formatDateString(rawPlaced);
 
     // Delivery type
-    final isPickup = orderMap['is_self_pickup'] == 1 ||
-        orderMap['is_self_pickup'] == true ||
-        orderMap['is_self_pickup'] == '1' ||
-        orderMap['delivery_type'] == 2 ||
-        orderMap['delivery_type'] == '2' ||
-        orderMap['delivery_type']?.toString().toLowerCase().contains('pickup') == true ||
-        (!widget.order.isDelivery && orderMap['delivery_type'] == null);
+    // waterOrderDetail returns the whole order row, where `delivery_type` is
+    // not pickup-vs-delivery; reading `delivery_type == 2` as pickup showed
+    // delivery orders as self-pickup (and hid the delivery fee). Use
+    // `is_self_pickup` / the server's `fulfillment` when present.
+    final selfPickupFlag = orderMap['is_self_pickup'];
+    final fulfillment = orderMap['fulfillment']?.toString().toLowerCase();
+    final bool isPickup;
+    if (selfPickupFlag != null) {
+      isPickup = selfPickupFlag == 1 || selfPickupFlag == true || selfPickupFlag == '1';
+    } else if (fulfillment != null && fulfillment.isNotEmpty) {
+      isPickup = fulfillment.contains('pickup');
+    } else {
+      isPickup = orderMap['delivery_type']?.toString().toLowerCase().contains('pickup') == true ||
+          (!widget.order.isDelivery && orderMap['delivery_type'] == null);
+    }
     final isDelivery = !isPickup;
 
     // Status
@@ -688,9 +729,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
         _BottomActions(
           status: currentStatus,
           isDelivery: isDelivery,
-          onReject: () => showRejectOrderSheet(context),
-          onAccept: () {},
-          onPrepare: () {},
+          onReject: _reject,
+          onAccept: _accept,
+          onPrepare: () => _advance(currentStatus),
         ),
       ],
     );
