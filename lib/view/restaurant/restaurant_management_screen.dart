@@ -1130,7 +1130,7 @@ class _RestaurantManagementScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Restaurant Managment",
+          S.of(context).restaurantManagement,
           style: appFont('Rubik', 
             color: const Color(0xFF333E63),
             fontSize: 18,
