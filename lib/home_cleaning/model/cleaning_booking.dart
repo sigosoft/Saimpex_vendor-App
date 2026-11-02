@@ -169,6 +169,26 @@ class CleaningBooking {
 
   int? get resolvedNextStatus => nextStatus ?? CleaningStatus.fallbackNext(status);
 
+  /// Laundry weight top-up still owed by the customer.
+  double get additionalPayment =>
+      double.tryParse('${raw['additional_payment'] ?? raw['balance_due'] ?? 0}') ?? 0;
+
+  /// Amount after weighing. `total` is still the estimate before pickup
+  /// (status <= 2) and already the weighed amount after Confirm Pickup.
+  double get finalAmount {
+    final t = total ?? totalPaid ?? 0;
+    return status >= 3 ? t : t + additionalPayment;
+  }
+
+  /// What the customer actually paid. The API's `total_paid` is the whole
+  /// order total once paid, so after pickup it included the unpaid top-up
+  /// (Paid 600 for a 360 + 240 booking, test day 2 Nov, V7).
+  double? get paidAmount {
+    final reported = totalPaid;
+    if (reported == null || reported <= 0) return reported;
+    return (finalAmount - additionalPayment).clamp(0, finalAmount).toDouble();
+  }
+
   String get displayCode {
     final code = orderCode?.trim();
     if (code == null || code.isEmpty) return '#$id';

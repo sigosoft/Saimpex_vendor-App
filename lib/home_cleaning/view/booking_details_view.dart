@@ -1020,7 +1020,7 @@ class _PaymentCard extends StatelessWidget {
           ),
           _PayRow(
             S.of(context).cleaningTotalPaid,
-            CleaningBookingFormat.money(b.totalPaid),
+            CleaningBookingFormat.money(b.paidAmount),
             emphasize: true,
           ),
         ],

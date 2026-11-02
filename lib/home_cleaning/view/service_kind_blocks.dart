@@ -75,7 +75,10 @@ class LaundryBookingBlock extends StatelessWidget {
     final deliveryAddress = _str(r['delivery_address']);
     final pending = r['additional_payment_pending'] == true;
     final extra = _num(r['additional_payment']) ?? _num(r['balance_due']) ?? 0;
-    final paid = _num(r['total_paid']) ?? 0;
+    // See CleaningBooking.paidAmount / finalAmount (paid + extra double-counted
+    // the top-up after pickup).
+    final finalAmount = booking.finalAmount;
+    final paid = booking.paidAmount ?? 0;
     final summary = _str(r['summary']);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,7 +158,7 @@ class LaundryBookingBlock extends StatelessWidget {
                 Row(children: [
                   _amountBox(s.laundryAlreadyPaid, paid),
                   const SizedBox(width: 8),
-                  _amountBox(s.laundryFinalAmount, paid + extra),
+                  _amountBox(s.laundryFinalAmount, finalAmount),
                   const SizedBox(width: 8),
                   _amountBox(s.laundryBalanceDue, extra, highlight: true),
                 ]),
