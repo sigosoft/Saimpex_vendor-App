@@ -2080,7 +2080,7 @@ class VendorRichCard extends StatelessWidget {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                'Update Stock',
+                                                S.of(context).waterUpdateStock,
                                                 style: appFont('Rubik', 
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w700,
@@ -2147,14 +2147,14 @@ class VendorRichCard extends StatelessWidget {
                                                 Icons.keyboard_arrow_down,
                                                 color: Color(0xFF6B7280),
                                               ),
-                                              items: const [
+                                              items: [
                                                 DropdownMenuItem(
                                                   value: 'Add',
-                                                  child: Text('Add'),
+                                                  child: Text(S.of(context).add),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: 'Remove',
-                                                  child: Text('Remove'),
+                                                  child: Text(S.of(context).remove),
                                                 ),
                                               ],
                                               onChanged: (value) {
@@ -2168,7 +2168,7 @@ class VendorRichCard extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 14),
                                         Text(
-                                          'Item Quantity',
+                                          S.of(context).quantity,
                                           style: appFont('Rubik', 
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
@@ -2236,7 +2236,7 @@ class VendorRichCard extends StatelessWidget {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    'Cancel',
+                                                    S.of(context).cancel,
                                                     style: appFont('Rubik', 
                                                       fontSize: 14,
                                                       fontWeight:
@@ -2319,7 +2319,7 @@ class VendorRichCard extends StatelessWidget {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    'Update',
+                                                    S.of(context).update,
                                                     style: appFont('Rubik', 
                                                       fontSize: 14,
                                                       fontWeight:
@@ -2347,8 +2347,8 @@ class VendorRichCard extends StatelessWidget {
                           context: context,
                           builder: (dialogContext) {
                             final message = isCurrentlyAvailable
-                                ? 'Are you sure you want to mark this item as out of stock?'
-                                : 'Are you sure you want to mark this item as available?';
+                                ? S.of(context).waterConfirmMarkOutOfStock
+                                : S.of(context).waterConfirmMarkAvailable;
                             final actionColor = isCurrentlyAvailable
                                 ? const Color(0xFFEF4444)
                                 : const Color(0xFF16A34A);
@@ -2418,7 +2418,7 @@ class VendorRichCard extends StatelessWidget {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    'No',
+                                                    S.of(context).no,
                                                     style: appFont('Rubik', 
                                                       fontSize: 13,
                                                       fontWeight:
@@ -2497,11 +2497,11 @@ class VendorRichCard extends StatelessWidget {
                                                         final successMessage =
                                                             statusToSend == 2
                                                             ? (isRestaurant
-                                                                  ? "Restaurant menu item marked as out of stock successfully"
-                                                                  : "Grocery menu item marked as out of stock successfully")
+                                                                  ? S.current.waterItemMarkedOutOfStock
+                                                                  : S.current.waterItemMarkedOutOfStock)
                                                             : (isRestaurant
-                                                                  ? "Restaurant menu item marked as available successfully"
-                                                                  : "Grocery menu item marked as available successfully");
+                                                                  ? S.current.waterItemMarkedAvailable
+                                                                  : S.current.waterItemMarkedAvailable);
 
                                                         showDialog<void>(
                                                           context: context,
@@ -2656,7 +2656,7 @@ class VendorRichCard extends StatelessWidget {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    'Yes',
+                                                    S.of(context).yes,
                                                     style: appFont('Rubik', 
                                                       fontSize: 13,
                                                       fontWeight:
@@ -2725,8 +2725,8 @@ class VendorRichCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   (availabilityStatus ?? 2) == 1
-                                      ? 'Mark Out Of Stock'
-                                      : 'Mark Available',
+                                      ? S.of(context).waterMarkOutOfStock
+                                      : S.of(context).waterMarkAvailable,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: appFont('Rubik', 
@@ -2752,7 +2752,7 @@ class VendorRichCard extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  'Update Stock',
+                                  S.of(context).waterUpdateStock,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: appFont('Rubik', 

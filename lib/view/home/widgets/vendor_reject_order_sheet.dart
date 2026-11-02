@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Shows the Vendor Reject Order bottom sheet for Restaurant / Grocery.
 /// Returns the selected reason string, or null if cancelled.
@@ -44,13 +45,12 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
   @override
   void initState() {
     super.initState();
+    // Translated (were English in Arabic and French, test day 2 Nov, V17).
     reasons = [
-      'Out of Stock',
-      widget.isRestaurant
-          ? 'Restaurant Temporarily Closed'
-          : 'Shop Temporarily Closed',
-      'Technical Issue',
-      'Other',
+      S.current.outOfStock,
+      S.current.waterTemporaryStoreClosure,
+      S.current.rejectReasonOperationalIssue,
+      S.current.waterOther,
     ];
   }
 
@@ -106,7 +106,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Reject Order',
+                      S.of(context).waterRejectOrder,
                       style: appFont('Rubik', 
                         color: _titleRed,
                         fontWeight: FontWeight.w700,
@@ -140,7 +140,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Please select a reason. The customer will be notified accordingly',
+                S.of(context).waterRejectOrderHint,
                 style: appFont('Rubik', 
                   color: _descGray,
                   fontWeight: FontWeight.w400,
@@ -163,7 +163,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Other Reason',
+                        S.of(context).waterOtherReason,
                         style: appFont('Rubik', 
                           color: const Color(0xFF374151),
                           fontWeight: FontWeight.w600,
@@ -230,7 +230,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          S.of(context).cancel,
                           softWrap: false,
                           style: appFont('Rubik', 
                             fontWeight: FontWeight.w600,
@@ -271,7 +271,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
                             ),
                           ),
                           child: Text(
-                            'Confirm Reject',
+                            S.of(context).waterConfirmReject,
                             softWrap: false,
                             maxLines: 1,
                             style: appFont('Rubik', 
