@@ -39,6 +39,7 @@ class _PharmacyCreateQuotationScreenState
       ];
 
   late final CreateQuotationController controller;
+  bool _ownsDetailsController = false;
 
   @override
   void initState() {
@@ -46,16 +47,36 @@ class _PharmacyCreateQuotationScreenState
     controller = Get.isRegistered<CreateQuotationController>()
         ? Get.find<CreateQuotationController>()
         : Get.put(CreateQuotationController());
+    _loadPrescriptionIfNeeded();
+  }
+
+  /// Opened from the Home card, nothing has loaded this prescription (the
+  /// list has no image), so the card showed "No Prescription Image". Load the
+  /// details (and image) here unless Order Details already did.
+  void _loadPrescriptionIfNeeded() {
+    final id = widget.prescriptionId;
+    if (id == null) return;
+    final PharmacyOrderDetailsController details;
+    if (Get.isRegistered<PharmacyOrderDetailsController>()) {
+      details = Get.find<PharmacyOrderDetailsController>();
+    } else {
+      details = Get.put(PharmacyOrderDetailsController());
+      _ownsDetailsController = true;
+    }
+    if (details.prescriptionObj?.prescriptionId != id) {
+      details.fetchPharmacyPrescriptionDetails(id);
+    }
   }
 
   @override
   void dispose() {
     Get.delete<CreateQuotationController>();
+    if (_ownsDetailsController) Get.delete<PharmacyOrderDetailsController>();
     super.dispose();
   }
 
   void _openFullPrescription() {
-    final effectiveImageUrl = widget.imageUrl ??
+    final effectiveImageUrl = (widget.imageUrl?.trim().isNotEmpty == true ? widget.imageUrl : null) ??
         (Get.isRegistered<PharmacyOrderDetailsController>()
             ? Get.find<PharmacyOrderDetailsController>()
                 .prescriptionDetailData
@@ -273,25 +294,19 @@ class _PharmacyCreateQuotationScreenState
                             ),
                           ),
                           const SizedBox(height: 14),
-                          _UploadedPrescriptionCard(
-                            imageUrl: widget.imageUrl ??
-                                (Get.isRegistered<PharmacyOrderDetailsController>()
-                                    ? Get.find<PharmacyOrderDetailsController>()
-                                        .prescriptionDetailData
-                                        ?.primaryImageUrl
-                                    : null),
-                            imageBytes: widget.imageBytes ??
-                                (Get.isRegistered<PharmacyOrderDetailsController>()
-                                    ? Get.find<PharmacyOrderDetailsController>()
-                                        .prescriptionImageBytes
-                                    : null),
-                            isLoading: (Get.isRegistered<PharmacyOrderDetailsController>()
-                                ? Get.find<PharmacyOrderDetailsController>().isLoadingPrescriptionImage
-                                : false),
-                            rotationTurns: controller.rotationTurns,
-                            onZoom: _openFullPrescription,
-                            onRotate: controller.rotatePrescription,
-                            onViewFull: _openFullPrescription,
+                          GetBuilder<PharmacyOrderDetailsController>(
+                            builder: (details) => _UploadedPrescriptionCard(
+                              imageUrl: (widget.imageUrl?.trim().isNotEmpty == true)
+                                  ? widget.imageUrl
+                                  : details.prescriptionDetailData?.primaryImageUrl,
+                              imageBytes: widget.imageBytes ?? details.prescriptionImageBytes,
+                              isLoading: details.isLoadingPrescriptionImage ||
+                                  details.isLoadingPrescriptionDetail,
+                              rotationTurns: controller.rotationTurns,
+                              onZoom: _openFullPrescription,
+                              onRotate: controller.rotatePrescription,
+                              onViewFull: _openFullPrescription,
+                            ),
                           ),
                           const SizedBox(height: 22),
                           Row(
