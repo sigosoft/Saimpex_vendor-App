@@ -14,8 +14,8 @@ class LoginLanguageDropdown extends StatelessWidget {
 
   static const Map<String, String> _languageLabels = {
     'en': 'English',
-    'fr': 'French',
-    'ar': 'Arabic',
+    'fr': 'Français',
+    'ar': 'العربية',
   };
 
   @override

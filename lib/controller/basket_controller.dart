@@ -201,7 +201,7 @@ class BasketController extends GetxController {
       debugPrint("getbasketReport Error: $error");
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(LoginScreen());
       } else {
@@ -250,7 +250,7 @@ class BasketController extends GetxController {
       basketDetailsModel = null;
       if (error.toString() == "Unauthorized") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         showToast(context, S.of(context).youAreLoggedOutSuccessfully);
         Get.offAll(LoginScreen());
       } else {

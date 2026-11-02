@@ -623,7 +623,7 @@ class ProfileController extends GetxController {
           );
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         Get.offAll(const LoginScreen());
       } else {
@@ -1027,7 +1027,7 @@ class ProfileController extends GetxController {
           showToast(context, toastMessage ?? "Account deleted successfully");
         }
         final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearPrefsKeepLanguage(prefs);
         await savename("@isFirstLaunch", "true");
         Get.offAll(LoginScreen());
       } else {

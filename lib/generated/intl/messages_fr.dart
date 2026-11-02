@@ -3078,7 +3078,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "wednesday": MessageLookupByLibrary.simpleMessage("Mercredi"),
     "welcomeTo": MessageLookupByLibrary.simpleMessage("Bienvenue chez"),
     "welcomeToSaimpexVendor": MessageLookupByLibrary.simpleMessage(
-      "Bienvenue sur Saimpex Vendor !",
+      "Bienvenue sur Saimpex Vendeur !",
     ),
     "wellBeBackSoon": MessageLookupByLibrary.simpleMessage(
       "Nous serons de retour bientôt",
