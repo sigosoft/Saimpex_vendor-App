@@ -3263,7 +3263,9 @@ class _ToPrepareCard extends StatelessWidget {
                     ],
                   ],
                 )
-              else
+              // Order lists don't send payment_type: no chip rather than a
+              // guessed "Online payment" on cash orders.
+              else if (paymentTypeCode(paymentType) != null)
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
                   decoration: BoxDecoration(
@@ -3645,6 +3647,7 @@ class _PreparingCard extends StatelessWidget {
                   ],
                 ),
               ),
+              if (paymentTypeCode(paymentType) != null) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
@@ -3678,6 +3681,7 @@ class _PreparingCard extends StatelessWidget {
                   ],
                 ),
               ),
+              ],
               const SizedBox(height: 14),
               SizedBox(
                 width: double.infinity,
@@ -4034,6 +4038,7 @@ class _ReadyCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (paymentTypeCode(paymentType) != null) ...[
                 const SizedBox(width: 8),
                 DecoratedBox(
                   decoration: const BoxDecoration(
@@ -4069,6 +4074,7 @@ class _ReadyCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                ],
               ],
             ),
           ],
