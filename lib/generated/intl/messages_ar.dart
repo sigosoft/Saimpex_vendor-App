@@ -1595,6 +1595,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "qtyLabel": m29,
     "quantity": MessageLookupByLibrary.simpleMessage("الكمية"),
+    "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
     "quickEditAdvanced": MessageLookupByLibrary.simpleMessage(
       "تعديل متقدم (الخيارات والإضافات)",
     ),

@@ -351,6 +351,7 @@
   "productOutOfStock": "Produit en rupture de stock",
   "@productOutOfStock": {},
   "quantity": "Quantité",
+  "qty": "Qté",
   "@quantity": {},
   "rateOrder": "Évaluer la commande",
   "@rateOrder": {},
@@ -612,7 +613,7 @@
   "@ready": {},
   "delivered": "Livré",
   "@delivered": {},
-  "cancelled": "Annulé",
+  "cancelled": "Annulée",
   "@cancelled": {},
   "noOrdersFound": "Aucune commande trouvée",
   "@noOrdersFound": {},
@@ -646,7 +647,7 @@
   "@saturday": {},
   "sunday": "Dimanche",
   "@sunday": {},
-  "hr24": "24 Hr",
+  "hr24": "24 h",
   "@hr24": {},
   "todaysOrders": "Commandes du Jour",
   "@todaysOrders": {},
@@ -810,7 +811,7 @@
   },
   "assignedStatus": "Assigné",
   "@assignedStatus": {},
-  "cancelledOnLabel": "Annulé le {date}",
+  "cancelledOnLabel": "Annulée le {date}",
   "@cancelledOnLabel": {
     "placeholders": {
       "date": {

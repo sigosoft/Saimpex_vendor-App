@@ -597,8 +597,9 @@ class _RowSheetState extends State<_RowSheet> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    // "Edit Item" when editing a garment row; it said "Add item" (test day V18).
     final title = switch (widget.kind) {
-      _RowKind.garment => s.addItem,
+      _RowKind.garment => widget.initial != null ? s.editItem : s.addItem,
       _RowKind.vehicle => s.addVehicleType,
       _RowKind.addon => s.addAddOn,
       _RowKind.distance => s.addDistanceRange,
