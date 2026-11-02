@@ -122,16 +122,16 @@ class Data {
     deliveryType:
         json["delivery_type"] ?? json["deliveryType"] ?? json["fulfillment_type"],
     isSelfPickup: json["is_self_pickup"] ?? json["isSelfPickup"],
-    subtotal: json["subtotal"],
-    tax: json["tax"],
-    deliveryFee: json["delivery_fee"],
-    total: json["total"],
+    subtotal: json["subtotal"]?.toString(),
+    tax: json["tax"]?.toString(),
+    deliveryFee: json["delivery_fee"]?.toString(),
+    total: json["total"]?.toString(),
     userId: (json["user_id"] is int)
         ? json["user_id"]
         : int.tryParse(json["user_id"]?.toString() ?? ''),
     location: json["location"],
-    latitude: json["latitude"],
-    longitude: json["longitude"],
+    latitude: json["latitude"]?.toString(),
+    longitude: json["longitude"]?.toString(),
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]),
@@ -364,11 +364,11 @@ class OrderItem {
     orderItem: json["order_item"] == null
         ? null
         : OrderItemClass.fromJson(json["order_item"]),
-    unitPrice: json["unit_price"],
+    unitPrice: json["unit_price"]?.toString(),
     quantity: (json["quantity"] is int)
         ? json["quantity"]
         : int.tryParse(json["quantity"]?.toString() ?? ''),
-    price: json["price"],
+    price: json["price"]?.toString(),
     image: json["image"],
   );
 
@@ -502,8 +502,8 @@ class BasketOrder {
         : int.tryParse(json["order_id"]?.toString() ?? ''),
     purchaseDate: json["purchase_date"],
     location: json["location"],
-    latitude: json["latitude"],
-    longitude: json["longitude"],
+    latitude: json["latitude"]?.toString(),
+    longitude: json["longitude"]?.toString(),
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]),
@@ -594,7 +594,7 @@ class BasketDetail {
     redeemPoints: (json["redeem_points"] is int)
         ? json["redeem_points"]
         : int.tryParse(json["redeem_points"]?.toString() ?? ''),
-    price: json["price"],
+    price: json["price"]?.toString(),
     basketItems: json["basket_items"] == null
         ? []
         : List<BasketItem>.from(
