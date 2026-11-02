@@ -12290,6 +12290,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Preparing Order`
+  String get preparingOrder {
+    return Intl.message(
+      'Preparing Order',
+      name: 'preparingOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Management`
+  String get storeManagement {
+    return Intl.message(
+      'Store Management',
+      name: 'storeManagement',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

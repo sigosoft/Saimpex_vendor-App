@@ -1005,7 +1005,10 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       : false,
                                 ),
                                 _timelineItem(
-                                  S.of(context).preparingFood,
+                                  // Grocery said "Preparing Food" (V18).
+                                  _isGrocery
+                                      ? S.of(context).preparingOrder
+                                      : S.of(context).preparingFood,
                                   S.of(context).orderPreparationStarted,
                                   controller.orderData!.status! >= 3
                                       ? _logTime(controller.orderData!, 3, 2)
