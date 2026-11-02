@@ -89,7 +89,11 @@ class VendorStatusTabs extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isSelected && tab != "Delivered" && tab != "Cancelled")
+                // No badge at 0: it read "00" (test day V-B2).
+                if (isSelected &&
+                    tab != "Delivered" &&
+                    tab != "Cancelled" &&
+                    (tabCounts[tab] ?? 0) > 0)
                   Positioned(
                     top: 1,
                     right: 0,

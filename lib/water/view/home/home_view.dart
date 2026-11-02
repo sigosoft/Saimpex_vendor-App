@@ -1237,7 +1237,9 @@ class _StatusFilters extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final selected = selectedIndex == index;
-          final showBadge = selected && index == 0;
+          // No badge at 0: it read "00" (test day V-B2).
+          final showBadge =
+              selected && index == 0 && int.tryParse(badgeLabel) != 0;
 
           return GestureDetector(
             onTap: () => onSelect(index),
