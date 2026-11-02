@@ -2740,5 +2740,9 @@
   "vendorTypePharmacy": "Pharmacie",
   "vendorTypeHomeCleaning": "Nettoyage à domicile",
   "orderPreparationStartedSuccessfully": "Préparation de la commande démarrée",
-  "orderMarkedReadySuccessfully": "Commande marquée comme prête"
+  "orderMarkedReadySuccessfully": "Commande marquée comme prête",
+  "preparingOrder": "Préparation de la commande",
+  "@preparingOrder": {},
+  "storeManagement": "Gestion du magasin",
+  "@storeManagement": {}
 }

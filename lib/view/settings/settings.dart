@@ -32,11 +32,17 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final FlutterLocalization localization = FlutterLocalization.instance;
   String selectedLanguage = 'English';
+  // Grocery and local store share these settings; "Restaurant Management"
+  // was shown to them too (test day V18).
+  bool _isRestaurant = true;
 
   @override
   void initState() {
     super.initState();
     _loadSelectedLanguage();
+    getSavedObject("vendorType").then((type) {
+      if (mounted) setState(() => _isRestaurant = '$type' == '1');
+    });
   }
 
   Future<void> _loadSelectedLanguage() async {
@@ -269,7 +275,9 @@ class _SettingsState extends State<Settings> {
                           children: [
                             _buildMenuItem(
                               context,
-                              S.of(context).restaurantManagement,
+                              _isRestaurant
+                                  ? S.of(context).restaurantManagement
+                                  : S.of(context).storeManagement,
                               null,
                               () {
                                 Get.to(

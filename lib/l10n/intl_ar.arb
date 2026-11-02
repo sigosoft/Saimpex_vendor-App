@@ -2739,5 +2739,9 @@
   "vendorTypePharmacy": "صيدلية",
   "vendorTypeHomeCleaning": "تنظيف منزلي",
   "orderPreparationStartedSuccessfully": "بدأ تحضير الطلب",
-  "orderMarkedReadySuccessfully": "تم تحديد الطلب كجاهز"
+  "orderMarkedReadySuccessfully": "تم تحديد الطلب كجاهز",
+  "preparingOrder": "تحضير الطلب",
+  "@preparingOrder": {},
+  "storeManagement": "إدارة المتجر",
+  "@storeManagement": {}
 }

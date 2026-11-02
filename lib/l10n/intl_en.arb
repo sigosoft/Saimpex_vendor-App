@@ -2692,5 +2692,9 @@
   "vendorTypePharmacy": "Pharmacy",
   "vendorTypeHomeCleaning": "Home Cleaning",
   "orderPreparationStartedSuccessfully": "Order preparation started",
-  "orderMarkedReadySuccessfully": "Order marked as ready"
+  "orderMarkedReadySuccessfully": "Order marked as ready",
+  "preparingOrder": "Preparing Order",
+  "@preparingOrder": {},
+  "storeManagement": "Store Management",
+  "@storeManagement": {}
 }

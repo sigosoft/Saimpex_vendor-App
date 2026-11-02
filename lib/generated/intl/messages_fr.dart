@@ -1741,6 +1741,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "preparingFood": MessageLookupByLibrary.simpleMessage(
       "Préparation des repas",
     ),
+    "preparingOrder": MessageLookupByLibrary.simpleMessage(
+      "Préparation de la commande",
+    ),
     "price": MessageLookupByLibrary.simpleMessage("Prix"),
     "priceLabel": MessageLookupByLibrary.simpleMessage("PRIX"),
     "pricingPerItem": MessageLookupByLibrary.simpleMessage("À l\'article"),
@@ -2164,6 +2167,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "status": MessageLookupByLibrary.simpleMessage("Statut"),
     "storeDetails": MessageLookupByLibrary.simpleMessage("DÉTAILS DU MAGASIN"),
     "storeId": MessageLookupByLibrary.simpleMessage("ID du magasin"),
+    "storeManagement": MessageLookupByLibrary.simpleMessage(
+      "Gestion du magasin",
+    ),
     "storeReports": MessageLookupByLibrary.simpleMessage("Rapports du magasin"),
     "submit": MessageLookupByLibrary.simpleMessage("Soumettre"),
     "submitButton": MessageLookupByLibrary.simpleMessage("Soumettre"),
