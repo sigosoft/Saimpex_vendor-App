@@ -78,6 +78,12 @@ class FCM {
     while (cleaned.startsWith('#')) {
       cleaned = cleaned.substring(1).trim();
     }
+    // A bare database id is shown the way the order lists show it
+    // ("ORD-001474", not "#1474"; test day V-B8).
+    if (RegExp(r'^\d+$').hasMatch(cleaned)) {
+      return 'ORD-${cleaned.padLeft(6, '0')}';
+    }
+    if (cleaned.startsWith('ORD-')) return cleaned;
     return '#$cleaned';
   }
 
@@ -683,6 +689,12 @@ class FCM {
     return words[key]?[code] ?? words[key]?['en'] ?? key;
   }
 
+  /// Orders shown in the open new-order popup, newest last. One popup at a
+  /// time: each order used to open its own dialog, so they stacked and
+  /// "Later" closed only the top one (test day V-B7).
+  static final ValueNotifier<List<({String number, String amount, Map<String, dynamic> data})>>
+      _alertOrders = ValueNotifier(const []);
+
   static void showInAppNewOrderAlert(Map<String, dynamic> notificationData, {String? notificationBody}) {
     if (Get.context == null) return;
     _startAlarm();
@@ -692,10 +704,36 @@ class FCM {
     final formattedOrderNumber = orderNumber.isNotEmpty ? cleanOrderNumber(orderNumber) : 'New';
     final amount = orderData['amount'] ?? '';
 
+    final alreadyOpen = _alertOrders.value.isNotEmpty;
+    _alertOrders.value = [
+      ..._alertOrders.value.where((o) => o.number != formattedOrderNumber),
+      (number: formattedOrderNumber, amount: amount, data: notificationData),
+    ];
+    if (alreadyOpen) return;
+
     showDialog(
       context: Get.context!,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        return ValueListenableBuilder(
+          valueListenable: _alertOrders,
+          builder: (context, orders, _) {
+            if (orders.isEmpty) return const SizedBox.shrink();
+            return _newOrderDialog(context, orders);
+          },
+        );
+      },
+    ).whenComplete(() => _alertOrders.value = const []);
+  }
+
+  static Widget _newOrderDialog(
+    BuildContext context,
+    List<({String number, String amount, Map<String, dynamic> data})> orders,
+  ) {
+    final latest = orders.last;
+    final formattedOrderNumber = orders.map((o) => o.number).join(', ');
+    final amount = orders.length == 1 ? latest.amount : '';
+    final notificationData = latest.data;
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -795,8 +833,6 @@ class FCM {
             ),
           ),
         );
-      },
-    );
   }
 
   /// Check for pending notification and navigate if needed
