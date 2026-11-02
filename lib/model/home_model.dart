@@ -1,4 +1,5 @@
 import 'OrderDetailsModel.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 
 class HomeModel {
@@ -159,6 +160,13 @@ class Orders {
 }
 
 class OrderData {
+  /// Card time from placed_at in the phone's time; placed_at_formatted is
+  /// formatted on the server in UTC (test day V-B9).
+  String get displayPlacedAt {
+    final t = DateTime.tryParse(placedAt ?? '');
+    return t != null ? formatOrderPlacedAt(t) : (placedAtFormatted ?? '');
+  }
+
   final String? orderCode;
   final int? status;
   final String? placedAt;

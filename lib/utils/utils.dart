@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'widgets/app_loader.dart';
+import '../generated/l10n.dart';
 
 String getCurrencySymbol() {
   return "MRU ";
@@ -305,15 +306,36 @@ String formatDurationToMinutes(String? value) {
 /// Returns "Feb 07, 2026 10:45 AM" or "Today, 10:45 AM" when same day.
 String formatOrderPlacedAt(DateTime? dateTime) {
   if (dateTime == null) return '';
+  dateTime = serverTimeToLocal(dateTime);
   final now = DateTime.now();
   final isToday =
       dateTime.year == now.year &&
       dateTime.month == now.month &&
       dateTime.day == now.day;
   if (isToday) {
-    return 'Today, ${DateFormat('hh:mm a').format(dateTime)}';
+    return '${S.current.today}, ${DateFormat('hh:mm a').format(dateTime)}';
   }
   return DateFormat('MMM dd, yyyy hh:mm a').format(dateTime);
+}
+
+/// Server times are UTC but usually come without an offset, so
+/// DateTime.parse reads them as phone-local: a phone not on UTC showed
+/// 07:14 for an order placed at 12:44, and "5 hours ago" on bookings (test
+/// day V-B9). Reads an offset-less time as UTC and returns it in local time;
+/// times that carry an offset are only converted. No change on UTC+0
+/// (Mauritania).
+DateTime serverTimeToLocal(DateTime t) {
+  if (t.isUtc) return t.toLocal();
+  return DateTime.utc(
+    t.year,
+    t.month,
+    t.day,
+    t.hour,
+    t.minute,
+    t.second,
+    t.millisecond,
+    t.microsecond,
+  ).toLocal();
 }
 
 String formatRatingCount(int? value) {
