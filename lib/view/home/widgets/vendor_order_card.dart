@@ -468,7 +468,7 @@ class VendorOrderCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
-                        "Accept & Print",
+                        S.of(context).printOrder,
                         style: appFont('Rubik', 
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
@@ -544,7 +544,7 @@ class VendorOrderCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "Print Order",
+                        S.of(context).printOrder,
                         style: appFont('Rubik', 
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFFF5216),
@@ -590,7 +590,7 @@ class VendorOrderCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                       ),
                       child: Text(
-                        "Print Order",
+                        S.of(context).printOrder,
                         style: appFont('Rubik', fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -636,7 +636,7 @@ class VendorOrderCard extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              "Accept & Print",
+                              S.of(context).printOrder,
                               style: appFont('Rubik', 
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

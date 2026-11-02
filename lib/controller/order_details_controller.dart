@@ -195,7 +195,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showSuccessDialog(orderStatusModel.message.toString());
+        showSuccessDialog(S.current.orderAcceptedSuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(
@@ -250,7 +250,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showSuccessDialog(orderStatusModel.message.toString());
+        showSuccessDialog(S.current.orderAcceptedSuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(
@@ -379,7 +379,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showSuccessDialog(orderStatusModel.message.toString());
+        showSuccessDialog(S.current.orderMarkedReadySuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(
@@ -467,7 +467,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showSuccessDialog(orderStatusModel.message.toString());
+        showSuccessDialog(S.current.orderMarkedReadySuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(
@@ -511,7 +511,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showToast(context, orderStatusModel.message.toString());
+        showToast(context, S.current.orderPreparationStartedSuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(
@@ -552,7 +552,7 @@ class OrderDetailsController extends GetxController {
         if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
           Get.until((route) => route.isFirst);
         }
-        showToast(context, orderStatusModel.message.toString());
+        showToast(context, S.current.orderPreparationStartedSuccessfully);
         try {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.homeData?.data?.orders?.data?.removeWhere(

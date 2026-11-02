@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -16,7 +18,19 @@ import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'generated/l10n.dart';
 
 // localization.translate('ar');
-void main() async {
+void main() {
+  // Release builds must not write API responses or tokens to the device log.
+  runZoned(
+    _main,
+    zoneSpecification: ZoneSpecification(
+      print: (self, parent, zone, line) {
+        if (!kReleaseMode) parent.print(zone, line);
+      },
+    ),
+  );
+}
+
+Future<void> _main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FlutterLocalization.instance.ensureInitialized();

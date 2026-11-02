@@ -218,6 +218,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "À PROPOS DU MAGASIN",
     ),
     "aboutUs": MessageLookupByLibrary.simpleMessage("À propos de nous"),
+    "accept": MessageLookupByLibrary.simpleMessage("Accepter"),
+    "acceptAndPrint": MessageLookupByLibrary.simpleMessage(
+      "Accepter et imprimer",
+    ),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("Accepter la commande"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepté"),
     "acceptingBookings": MessageLookupByLibrary.simpleMessage(
@@ -1540,6 +1544,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderItems": MessageLookupByLibrary.simpleMessage(
       "Articles de la commande",
     ),
+    "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Commande marquée comme prête",
+    ),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("Commande récupérée"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("Commande passée"),
     "orderPlacedSuccessfully": MessageLookupByLibrary.simpleMessage(
@@ -1547,6 +1554,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderPreparationStarted": MessageLookupByLibrary.simpleMessage(
       "Préparation de la commande commencée",
+    ),
+    "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Préparation de la commande démarrée",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("Commande prête"),
     "orderRules": MessageLookupByLibrary.simpleMessage("Règles de commande"),
@@ -2089,6 +2099,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectTypeHint": MessageLookupByLibrary.simpleMessage(
       "Sélectionner le type",
     ),
+    "selectVendorType": MessageLookupByLibrary.simpleMessage("Choisir le type"),
     "selectYourLocation": MessageLookupByLibrary.simpleMessage(
       "Sélectionnez votre emplacement",
     ),
@@ -2361,9 +2372,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("Vendeur"),
     "vendorType": MessageLookupByLibrary.simpleMessage("Type de vendeur"),
+    "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
+      "Épicerie / Restaurant",
+    ),
+    "vendorTypeHomeCleaning": MessageLookupByLibrary.simpleMessage(
+      "Nettoyage à domicile",
+    ),
+    "vendorTypePharmacy": MessageLookupByLibrary.simpleMessage("Pharmacie"),
     "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
       "Ce type de vendeur n\'est pas encore dans l\'application. Utilisez le portail web vendeur SAIMPEX.",
     ),
+    "vendorTypeWater": MessageLookupByLibrary.simpleMessage("Eau"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "viewAll": MessageLookupByLibrary.simpleMessage("Voir tout"),
     "viewAllCoupons": MessageLookupByLibrary.simpleMessage(
@@ -3107,10 +3126,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Votre commande a été reçue",
     ),
     "yourOrders": MessageLookupByLibrary.simpleMessage("Vos commandes"),
-    "yourTrustedFoodGroceryDeliveryPartner":
-        MessageLookupByLibrary.simpleMessage(
-          "Votre partenaire de confiance pour la livraison de nourriture et d’épicerie",
-        ),
+    "yourTrustedFoodGroceryDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "Votre partenaire de confiance pour la livraison de nourriture et d’épicerie",
+    ),
     "zestyChickenBurger": MessageLookupByLibrary.simpleMessage(
       "Zesty Chicken Burger",
     ),

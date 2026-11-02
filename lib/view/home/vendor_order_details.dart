@@ -1302,7 +1302,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           ),
                                         ),
                                         child: Text(
-                                          "Accept & Print",
+                                          S.of(context).acceptAndPrint,
                                           style: appFont('Rubik', 
                                             color: const Color(0xFFFF5216),
                                             fontWeight: FontWeight.w500,
@@ -1340,7 +1340,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                             ),
                                           ),
                                           child: Text(
-                                            "Print Order",
+                                            S.of(context).printOrder,
                                             style: appFont('Rubik', 
                                               color: const Color(0xFFFF5216),
                                               fontWeight: FontWeight.w500,
@@ -1425,7 +1425,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 ),
                                               ),
                                               child: Text(
-                                                "Print Order",
+                                                S.of(context).printOrder,
                                                 style: appFont('Rubik', 
                                                   color: const Color(
                                                     0xFFFF5216,
@@ -1482,41 +1482,6 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 12),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 40,
-                                      child: OutlinedButton(
-                                        onPressed: () async {
-                                          try {
-                                            await OrderPrintService()
-                                                .printOrder(
-                                                  orderId: widget.orderId,
-                                                  orderType: widget.orderType,
-                                                );
-                                          } catch (e) {
-                                            debugPrint("Print error: $e");
-                                          }
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                            color: Color(0xFFFF5216),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          "Accept & Print",
-                                          style: appFont('Rubik', 
-                                            color: const Color(0xFFFF5216),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                   ],
                                 )
                               : controller.orderData!.status.toString() ==
@@ -1554,7 +1519,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                             ),
                                           ),
                                           child: Text(
-                                            "Print Order",
+                                            S.of(context).printOrder,
                                             style: appFont('Rubik', 
                                               color: const Color(0xFFFF5216),
                                               fontWeight: FontWeight.w500,

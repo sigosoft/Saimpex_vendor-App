@@ -205,6 +205,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "aboutTheStore": MessageLookupByLibrary.simpleMessage("ABOUT THE STORE"),
     "aboutUs": MessageLookupByLibrary.simpleMessage("About Us"),
+    "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "acceptAndPrint": MessageLookupByLibrary.simpleMessage("Accept & Print"),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("Accept Order"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
     "acceptingBookings": MessageLookupByLibrary.simpleMessage(
@@ -1395,6 +1397,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderIdLabel": m26,
     "orderItems": MessageLookupByLibrary.simpleMessage("ORDER ITEMS"),
+    "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Order marked as ready",
+    ),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("Order Picked Up"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("Order Placed"),
     "orderPlacedSuccessfully": MessageLookupByLibrary.simpleMessage(
@@ -1402,6 +1407,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderPreparationStarted": MessageLookupByLibrary.simpleMessage(
       "Order Preparation Started",
+    ),
+    "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Order preparation started",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("Order Ready"),
     "orderRules": MessageLookupByLibrary.simpleMessage("Order rules"),
@@ -1885,6 +1893,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selectTagHint": MessageLookupByLibrary.simpleMessage("Select tag"),
     "selectTypeHint": MessageLookupByLibrary.simpleMessage("Select type"),
+    "selectVendorType": MessageLookupByLibrary.simpleMessage("Select type"),
     "selectYourLocation": MessageLookupByLibrary.simpleMessage(
       "Select Your Location",
     ),
@@ -2136,9 +2145,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("Vendor"),
     "vendorType": MessageLookupByLibrary.simpleMessage("Vendor Type"),
+    "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
+      "Grocery / Restaurant",
+    ),
+    "vendorTypeHomeCleaning": MessageLookupByLibrary.simpleMessage(
+      "Home Cleaning",
+    ),
+    "vendorTypePharmacy": MessageLookupByLibrary.simpleMessage("Pharmacy"),
     "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
       "This vendor type isn\'t in the app yet. Please use the SAIMPEX vendor web panel.",
     ),
+    "vendorTypeWater": MessageLookupByLibrary.simpleMessage("Water"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewAllCoupons": MessageLookupByLibrary.simpleMessage("View all coupons"),

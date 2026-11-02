@@ -2731,5 +2731,14 @@
   "quickEditSave": "Enregistrer",
   "quickEditNameRequired": "Saisissez le nom de l'article.",
   "quickEditPriceInvalid": "Saisissez un prix valide (0 ou plus).",
-  "quickEditOfferAbovePrice": "Le prix remisé ne doit pas dépasser le prix."
+  "quickEditOfferAbovePrice": "Le prix remisé ne doit pas dépasser le prix.",
+  "accept": "Accepter",
+  "acceptAndPrint": "Accepter et imprimer",
+  "selectVendorType": "Choisir le type",
+  "vendorTypeGroceryRestaurant": "Épicerie / Restaurant",
+  "vendorTypeWater": "Eau",
+  "vendorTypePharmacy": "Pharmacie",
+  "vendorTypeHomeCleaning": "Nettoyage à domicile",
+  "orderPreparationStartedSuccessfully": "Préparation de la commande démarrée",
+  "orderMarkedReadySuccessfully": "Commande marquée comme prête"
 }

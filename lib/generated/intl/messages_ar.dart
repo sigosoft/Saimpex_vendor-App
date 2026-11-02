@@ -200,6 +200,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "aboutTheRestaurant": MessageLookupByLibrary.simpleMessage("عن المطعم"),
     "aboutTheStore": MessageLookupByLibrary.simpleMessage("حول المتجر"),
     "aboutUs": MessageLookupByLibrary.simpleMessage("من نحن"),
+    "accept": MessageLookupByLibrary.simpleMessage("قبول"),
+    "acceptAndPrint": MessageLookupByLibrary.simpleMessage("قبول وطباعة"),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("قبول الطلب"),
     "accepted": MessageLookupByLibrary.simpleMessage("تم القبول"),
     "acceptingBookings": MessageLookupByLibrary.simpleMessage(
@@ -1382,12 +1384,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderIdLabel": m26,
     "orderItems": MessageLookupByLibrary.simpleMessage("عناصر الطلب"),
+    "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد الطلب كجاهز",
+    ),
     "orderPickedUp": MessageLookupByLibrary.simpleMessage("تم الاستلام"),
     "orderPlaced": MessageLookupByLibrary.simpleMessage("تم تقديم الطلب"),
     "orderPlacedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تقديم الطلب بنجاح!",
     ),
     "orderPreparationStarted": MessageLookupByLibrary.simpleMessage(
+      "بدأ تحضير الطلب",
+    ),
+    "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "بدأ تحضير الطلب",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("الطلب جاهز"),
@@ -1853,6 +1861,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selectTagHint": MessageLookupByLibrary.simpleMessage("اختر الوسم"),
     "selectTypeHint": MessageLookupByLibrary.simpleMessage("اختر النوع"),
+    "selectVendorType": MessageLookupByLibrary.simpleMessage("اختر النوع"),
     "selectYourLocation": MessageLookupByLibrary.simpleMessage("اختر موقعك"),
     "selfPickup": MessageLookupByLibrary.simpleMessage("استلام من المتجر"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
@@ -2089,9 +2098,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("بائع"),
     "vendorType": MessageLookupByLibrary.simpleMessage("نوع البائع"),
+    "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
+      "بقالة / مطعم",
+    ),
+    "vendorTypeHomeCleaning": MessageLookupByLibrary.simpleMessage(
+      "تنظيف منزلي",
+    ),
+    "vendorTypePharmacy": MessageLookupByLibrary.simpleMessage("صيدلية"),
     "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
       "هذا النوع من البائعين غير متاح في التطبيق بعد. يرجى استخدام بوابة البائع على الويب.",
     ),
+    "vendorTypeWater": MessageLookupByLibrary.simpleMessage("مياه"),
     "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewAllCoupons": MessageLookupByLibrary.simpleMessage("عرض جميع القسائم"),
