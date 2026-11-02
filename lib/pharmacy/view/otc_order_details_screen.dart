@@ -1215,7 +1215,7 @@ class _OtcItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Qty: $quantity',
+              S.of(context).qtyLabel('$quantity'),
               style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w600,

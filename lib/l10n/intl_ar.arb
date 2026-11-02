@@ -351,6 +351,7 @@
   "productOutOfStock": "المنتج غير متوفر",
   "@productOutOfStock": {},
   "quantity": "الكمية",
+  "qty": "الكمية",
   "@quantity": {},
   "rateOrder": "قيّم الطلب",
   "@rateOrder": {},

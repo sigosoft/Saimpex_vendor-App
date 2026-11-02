@@ -48,7 +48,11 @@ class VendorMembershipCard extends StatelessWidget {
               child: Text(
                 membershipName.toLowerCase().contains("member")
                     ? membershipName
-                    : "$membershipName"+" "+S.of(context).member,
+                    // "Member" goes first in Arabic and French: it read
+                    // "الأساسي عضو" / "Basique Membre" (test day V18).
+                    : Localizations.localeOf(context).languageCode == 'en'
+                    ? "$membershipName ${S.of(context).member}"
+                    : "${S.of(context).member} $membershipName",
                 style: appFont('Rubik', 
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

@@ -28,7 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(code) => "Réservation n° ${code}";
 
-  static String m4(date) => "Annulé le ${date}";
+  static String m4(date) => "Annulée le ${date}";
 
   static String m5(name) => "Avis sur l\'agent : ${name}";
 
@@ -447,7 +447,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Annuler"),
     "cancelLeave": MessageLookupByLibrary.simpleMessage("Annuler le congé"),
     "cancelOrder": MessageLookupByLibrary.simpleMessage("Annuler la commande"),
-    "cancelled": MessageLookupByLibrary.simpleMessage("Annulé"),
+    "cancelled": MessageLookupByLibrary.simpleMessage("Annulée"),
     "cancelledOnLabel": m4,
     "carWashAddOns": MessageLookupByLibrary.simpleMessage("Options"),
     "carWashMarkReadyForPickup": MessageLookupByLibrary.simpleMessage(
@@ -1146,7 +1146,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "homeWorkplacePricingHelp": MessageLookupByLibrary.simpleMessage(
       "Supplément quand vous vous déplacez chez le client, selon la distance.",
     ),
-    "hr24": MessageLookupByLibrary.simpleMessage("24 Hr"),
+    "hr24": MessageLookupByLibrary.simpleMessage("24 h"),
     "ibanNumber": MessageLookupByLibrary.simpleMessage("Numéro IBAN"),
     "idNumber": MessageLookupByLibrary.simpleMessage("Identifiant"),
     "identityProofDocument": MessageLookupByLibrary.simpleMessage(
@@ -1783,6 +1783,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profile": MessageLookupByLibrary.simpleMessage("Profil"),
     "qtyLabel": m29,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantité"),
+    "qty": MessageLookupByLibrary.simpleMessage("Qté"),
     "quickEditAdvanced": MessageLookupByLibrary.simpleMessage(
       "Modification avancée (variantes, options, suppléments)",
     ),
