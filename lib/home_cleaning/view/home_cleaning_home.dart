@@ -963,7 +963,7 @@ class _Filters extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (selected && count != null)
+                if (selected && count != null && count > 0)
                   PositionedDirectional(
                     end: -2,
                     top: -8,
