@@ -676,7 +676,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                                             S.of(context).unknown,
                                         itemsCount: order.orderItemsCount ?? 0,
                                         price: price,
-                                        dateTime: order.placedAtFormatted ?? "",
+                                        dateTime: order.displayPlacedAt,
                                         status: _statusLabel(order.status),
                                         deliveryBoyName: order.deliveryBoyName,
                                         cancelReason: order.cancelReason,
