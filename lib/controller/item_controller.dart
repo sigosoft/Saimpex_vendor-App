@@ -1610,7 +1610,12 @@ class ItemController extends GetxController {
 
       dynamic response;
       try {
-        response = await DioClient().get(endpoint, query: queryParams);
+        // vendorapp/updateRestaurantCatalogItemStatus is a POST route. A GET
+        // got 405, which DioClient doesn't throw for (validateStatus < 500),
+        // so Mark Out Of Stock silently did nothing (test day 2 Nov, V10).
+        response = isRestaurant
+            ? await DioClient().post(endpoint, body: queryParams)
+            : await DioClient().get(endpoint, query: queryParams);
       } on dio.DioException catch (dioErr) {
         if (isRestaurant && dioErr.response?.statusCode == 404) {
           debugPrint(

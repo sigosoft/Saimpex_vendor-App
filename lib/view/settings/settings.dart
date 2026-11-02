@@ -21,6 +21,7 @@ import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import '../../generated/l10n.dart';
 import 'package:saimpex_vendor/view/restaurant/restaurant_management_screen.dart';
+import 'package:saimpex_vendor/view/settings/order_rules_screen.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -305,6 +306,16 @@ class _SettingsState extends State<Settings> {
                               null,
                               () => showPrinterPicker(context),
                               leadingIcon: Icons.print_outlined,
+                            ),
+                            // Minimum order, preparation time, delivery fee
+                            // (V10). Its only entry was the unused Profile
+                            // screen, so restaurant/grocery couldn't reach it.
+                            _buildMenuItem(
+                              context,
+                              S.of(context).orderRules,
+                              null,
+                              OrderRulesScreen.open,
+                              leadingIcon: Icons.rule_outlined,
                             ),
                             _buildMenuItem(
                               context,
