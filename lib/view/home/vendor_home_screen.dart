@@ -360,28 +360,35 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
   }
 
   void _handleAcceptOrder(String orderId) {
+    // Accept & Print didn't pass printAfter, so nothing printed; the tab
+    // count now drops as soon as the server accepts (test day V-B5).
+    Future<void> accept({required bool print}) async {
+      final vendorType =
+          homeController.homeData?.data?.vendor?.vendorType?.toString() ??
+          "0";
+      final ok = vendorType == "1"
+          ? await detailsController.acceptRestaurantOrder(
+              context,
+              orderId,
+              printAfter: print,
+            )
+          : await detailsController.acceptGroceryOrder(
+              context,
+              orderId,
+              printAfter: print,
+            );
+      if (ok && mounted) {
+        setState(() {
+          final n = (_tabCounts[selectedTab] ?? 0) - 1;
+          _tabCounts[selectedTab] = n < 0 ? 0 : n;
+        });
+      }
+    }
+
     showAcceptOrderDialog(
       context: context,
-      onAccept: () {
-        final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
-            "0";
-        if (vendorType == "1") {
-          detailsController.acceptRestaurantOrder(context, orderId);
-        } else {
-          detailsController.acceptGroceryOrder(context, orderId);
-        }
-      },
-      onAcceptAndPrint: () {
-        final vendorType =
-            homeController.homeData?.data?.vendor?.vendorType?.toString() ??
-            "0";
-        if (vendorType == "1") {
-          detailsController.acceptRestaurantOrder(context, orderId);
-        } else {
-          detailsController.acceptGroceryOrder(context, orderId);
-        }
-      },
+      onAccept: () => accept(print: false),
+      onAcceptAndPrint: () => accept(print: true),
     );
   }
 

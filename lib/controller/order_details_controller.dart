@@ -164,7 +164,32 @@ class OrderDetailsController extends GetxController {
     }
   }
 
-  Future<void> acceptRestaurantOrder(
+  /// After a successful accept: close the loader, take the card off the list,
+  /// show the dialog, then print in the background. Printing used to run
+  /// first with the loader still up, and the card stayed under Pending until
+  /// it and the dialog finished (test day V-B5).
+  void _onAccepted(String orderid, String orderType, bool printAfter) {
+    Get.back();
+    try {
+      final homeCtrl = Get.find<HomeController>();
+      homeCtrl.homeData?.data?.orders?.data?.removeWhere(
+        (element) => element.id.toString() == orderid,
+      );
+      homeCtrl.update();
+    } catch (_) {}
+    if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
+      Get.until((route) => route.isFirst);
+    }
+    showSuccessDialog(S.current.orderAcceptedSuccessfully);
+    if (printAfter) {
+      OrderPrintService()
+          .printOrder(orderId: orderid, orderType: orderType)
+          .catchError((e) => debugPrint("Print error: $e"));
+    }
+  }
+
+  /// Returns true when the server accepted the order.
+  Future<bool> acceptRestaurantOrder(
     BuildContext context,
     String orderid, {
     bool printAfter = false,
@@ -181,29 +206,10 @@ class OrderDetailsController extends GetxController {
         response.data,
       );
       if (orderStatusModel.status.toString() == "true") {
-        if (printAfter) {
-          try {
-            await OrderPrintService().printOrder(
-              orderId: orderid,
-              orderType: "restaurant",
-            );
-          } catch (e) {
-            debugPrint("Print error: $e");
-          }
-        }
-        Get.back();
-        if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
-          Get.until((route) => route.isFirst);
-        }
-        showSuccessDialog(S.current.orderAcceptedSuccessfully);
-        try {
-          final homeCtrl = Get.find<HomeController>();
-          homeCtrl.homeData?.data?.orders?.data?.removeWhere(
-            (element) => element.id.toString() == orderid,
-          );
-          homeCtrl.update();
-        } catch (_) {}
+        _onAccepted(orderid, "restaurant", printAfter);
+        return true;
       }
+      Get.back(); // loader stayed up when the server said no
     } catch (error, stackTrace) {
       Get.back();
       debugPrint("stackTrace: $stackTrace");
@@ -217,9 +223,11 @@ class OrderDetailsController extends GetxController {
         showToast(context, error.toString());
       }
     }
+    return false;
   }
 
-  Future<void> acceptGroceryOrder(
+  /// Returns true when the server accepted the order.
+  Future<bool> acceptGroceryOrder(
     BuildContext context,
     String orderid, {
     bool printAfter = false,
@@ -236,29 +244,10 @@ class OrderDetailsController extends GetxController {
         response.data,
       );
       if (orderStatusModel.status.toString() == "true") {
-        if (printAfter) {
-          try {
-            await OrderPrintService().printOrder(
-              orderId: orderid,
-              orderType: "grocery",
-            );
-          } catch (e) {
-            debugPrint("Print error: $e");
-          }
-        }
-        Get.back();
-        if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
-          Get.until((route) => route.isFirst);
-        }
-        showSuccessDialog(S.current.orderAcceptedSuccessfully);
-        try {
-          final homeCtrl = Get.find<HomeController>();
-          homeCtrl.homeData?.data?.orders?.data?.removeWhere(
-            (element) => element.id.toString() == orderid,
-          );
-          homeCtrl.update();
-        } catch (_) {}
+        _onAccepted(orderid, "grocery", printAfter);
+        return true;
       }
+      Get.back(); // loader stayed up when the server said no
     } catch (error, stackTrace) {
       Get.back();
       debugPrint("stackTrace: $stackTrace");
@@ -272,6 +261,7 @@ class OrderDetailsController extends GetxController {
         showToast(context, error.toString());
       }
     }
+    return false;
   }
 
   Future<void> cancelRestaurantOrder(
