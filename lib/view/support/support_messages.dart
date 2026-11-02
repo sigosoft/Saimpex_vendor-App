@@ -32,7 +32,12 @@ class SupportMessages extends StatelessWidget {
         backgroundColor: _pageBg,
         body: SafeArea(
           child: GetBuilder<SupportMessagesController>(
-            init: Get.isRegistered<SupportMessagesController>() ? Get.find<SupportMessagesController>() : SupportMessagesController(),
+            // Register before initState runs: GetBuilder calls initState
+            // before it registers `init`, so a plain constructor here made
+            // Get.find throw (grey screen in release builds).
+            init: Get.isRegistered<SupportMessagesController>()
+                ? Get.find<SupportMessagesController>()
+                : Get.put(SupportMessagesController()),
             initState: (_) => Get.find<SupportMessagesController>().loadThreads(),
             builder: (c) => Column(
               children: [
