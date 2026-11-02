@@ -32,6 +32,7 @@ TextStyle _t(double size, FontWeight w, Color c) => appFont('Inter', fontSize: s
 
 double? _d(dynamic v) => v == null ? null : double.tryParse(v.toString());
 String _n(num? v) => v == null ? '' : (v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString());
+String? _blankToNull(String? v) => (v == null || v.trim().isEmpty) ? null : v;
 
 /// One editable row: a garment, a vehicle type, an add-on or a distance band.
 class _Row {
@@ -202,12 +203,19 @@ class _ServiceFormViewState extends State<ServiceFormView> {
     try {
       DioClient().updateToken((await getSavedObject('token'))?.toString() ?? '');
       final t = _type!;
+      // Editing without changing the type: keep the item's own translated
+      // names when the type has none. Sending only name_en made the server
+      // overwrite the Arabic and French names with English (test day 2 Nov,
+      // "Household Linen", V9).
+      final sameType = widget.initial != null && widget.initial!.serviceTypeId == t.id;
+      final nameFr = _blankToNull(t.nameFr) ?? (sameType ? _blankToNull(widget.initial!.nameFr) : null);
+      final nameAr = _blankToNull(t.nameAr) ?? (sameType ? _blankToNull(widget.initial!.nameAr) : null);
       final fields = <String, dynamic>{
         if (widget.initial != null) 'service_item_id': widget.initial!.id,
         'service_type_id': t.id,
         'name_en': t.nameEn ?? t.localizedName(_lang),
-        if (t.nameFr != null) 'name_fr': t.nameFr,
-        if (t.nameAr != null) 'name_ar': t.nameAr,
+        'name_fr': ?nameFr,
+        'name_ar': ?nameAr,
         'description_en': _description.text.trim(),
         'status': widget.initial?.status ?? 1,
       };

@@ -277,6 +277,7 @@ class _AddServiceViewState extends State<AddServiceView> {
     try {
       final message = await CleaningServicesApi.saveService(
         serviceItemId: widget.initialService?.id,
+        editing: widget.initialService,
         type: type,
         description: _descriptionController.text.trim(),
         status: widget.initialService?.status ?? 1,
