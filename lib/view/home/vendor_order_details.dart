@@ -673,15 +673,19 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         .currentLocale!
                                         .languageCode
                                         .toString();
+                                    final names = item.orderItem;
                                     final tile = _itemTile(
-                                      item.image.toString(),
+                                      item.image?.toString() ?? '',
                                       langCode == "ar"
-                                          ? item.orderItem!.nameAr.toString()
+                                          ? (names?.nameAr ?? names?.nameEn ?? '')
                                           : langCode == "fr"
-                                          ? item.orderItem!.nameFr.toString()
-                                          : item.orderItem!.nameEn.toString(),
-                                      double.parse(item.unitPrice.toString()),
-                                      item.quantity!,
+                                          ? (names?.nameFr ?? names?.nameEn ?? '')
+                                          : (names?.nameEn ?? ''),
+                                      double.tryParse(
+                                            item.unitPrice?.toString() ?? '',
+                                          ) ??
+                                          0,
+                                      item.quantity ?? 0,
                                       context,
                                     );
                                     final sub = _subs[item.orderItemId];
@@ -985,8 +989,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   S.of(context).orderSuccessfullyPlacedBy +
                                       " " +
                                       controller.orderData!.userName.toString(),
-                                  controller.orderData!.statusLogs![0].updatedAt
-                                      .toString(),
+                                  _logTime(controller.orderData!, 1, 0),
                                   isCompleted: true,
                                   isFirst: true,
                                 ),
@@ -994,11 +997,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   S.of(context).orderAccepted,
                                   S.of(context).orderAccepted,
                                   controller.orderData!.status! >= 2
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![1]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 2, 1)
                                       : "",
                                   isCompleted:
                                       controller.orderData!.status! >= 2
@@ -1009,11 +1008,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   S.of(context).preparingFood,
                                   S.of(context).orderPreparationStarted,
                                   controller.orderData!.status! >= 3
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![2]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 3, 2)
                                       : "",
                                   isCompleted:
                                       controller.orderData!.status! >= 3,
@@ -1023,11 +1018,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   S.of(context).ready,
                                   S.of(context).orderReady,
                                   controller.orderData!.status! >= 4
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![3]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 4, 3)
                                       : "",
                                   isCompleted:
                                       controller.orderData!.status! >= 4,
@@ -1042,11 +1033,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           .toLowerCase(),
                                   S.of(context).orderPickedUp,
                                   controller.orderData!.status! >= 7
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![4]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 7, 4)
                                       : "",
                                   isCompleted:
                                       controller.orderData!.status! >= 7,
@@ -1062,11 +1049,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           .toLowerCase(),
                                   S.of(context).deliveryStarted,
                                   controller.orderData!.status! >= 8
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![5]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 8, 5)
                                       : "",
                                   asset:
                                       "lib/assets/images/Order delivered.png",
@@ -1078,11 +1061,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                   S.of(context).delivered,
                                   S.of(context).deliveryCompleted,
                                   controller.orderData!.status! >= 9
-                                      ? controller
-                                            .orderData!
-                                            .statusLogs![6]
-                                            .updatedAt
-                                            .toString()
+                                      ? _logTime(controller.orderData!, 9, 6)
                                       : "",
                                   asset:
                                       "lib/assets/images/Order delivered.png",
@@ -1818,6 +1797,18 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         ),
       ],
     );
+  }
+
+  /// Time of the status log for [status]. Logs were read by position, which
+  /// threw (blank grey screen, test day V-B1) when an order had fewer logs
+  /// than its status implies; falls back to the position, then to "".
+  String _logTime(Data order, int status, int index) {
+    final logs = order.statusLogs ?? const <StatusLog>[];
+    for (final log in logs) {
+      if (log.status == status) return log.updatedAt ?? '';
+    }
+    if (index < logs.length) return logs[index].updatedAt ?? '';
+    return '';
   }
 
   Widget _timelineItem(
