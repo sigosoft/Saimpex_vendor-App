@@ -149,13 +149,18 @@ class CleaningServicesApi {
     required List<CleaningServiceAddon> addons,
     required List<String> issues,
     File? image,
+    CleaningServiceItem? editing,
   }) async {
+    // Keep the edited item's own translations when the type has none;
+    // sending only name_en overwrote the Arabic and French names (V9).
+    String? blank(String? v) => (v == null || v.trim().isEmpty) ? null : v;
+    final sameType = editing != null && editing.serviceTypeId == type.id;
     final fields = <String, dynamic>{
       'service_item_id': ?serviceItemId,
       'service_type_id': type.id,
       'name_en': type.nameEn ?? type.localizedName(_lang),
-      'name_fr': ?type.nameFr,
-      'name_ar': ?type.nameAr,
+      'name_fr': ?(blank(type.nameFr) ?? (sameType ? blank(editing.nameFr) : null)),
+      'name_ar': ?(blank(type.nameAr) ?? (sameType ? blank(editing.nameAr) : null)),
       'description_en': description,
       'price': spaces.isNotEmpty ? spaces.first.price : 0,
       'status': status,

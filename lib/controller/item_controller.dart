@@ -1261,6 +1261,13 @@ class ItemController extends GetxController {
       final formDataMap = <String, dynamic>{
         "item_id": itemId,
         "name_en": name,
+        // This form only edits English; keep the loaded translations, or the
+        // save cleared them (Garden Salad lost its Arabic/French names on test
+        // day 2 Nov, V9). Same as Quick Edit.
+        for (final k in const ['name_ar', 'name_fr', 'description_ar', 'description_fr'])
+          if ((catalogItemDetail?[k]?.toString().trim() ?? '').isNotEmpty &&
+              catalogItemDetail![k].toString() != 'null')
+            k: catalogItemDetail![k].toString(),
         "category_ids": jsonEncode(catId != null ? [catId] : []),
         "has_variants": hasVariants ? '1' : '0',
         // Kept as loaded: the server sets 1 (available) when it is missing.
