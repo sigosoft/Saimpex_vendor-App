@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -131,7 +132,7 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        product.name,
+                        keepNumberUnitsLtr(product.name),
                         style: const TextStyle(
                           color: AppColors.textDark,
                           fontWeight: FontWeight.w800,
@@ -991,7 +992,7 @@ class _ProductDetailsCard extends StatelessWidget {
                   children: [
                     _DetailPair(
                       label: S.of(context).waterSize,
-                      value: sizeVal,
+                      value: keepNumberUnitsLtr(sizeVal),
                     ),
                     const SizedBox(height: 12),
                     _DetailPair(

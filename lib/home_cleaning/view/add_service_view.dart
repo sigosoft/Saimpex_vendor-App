@@ -25,8 +25,30 @@ String cleaningUnitLabel(BuildContext context, String unit) {
       return S.of(context).cleaningUnitSqFt;
     case 'Piece':
       return S.of(context).cleaningUnitPiece;
+    // Laundry pricing units (V17).
+    case 'kg':
+      return S.of(context).unitKg;
+    case 'piece':
+      return S.of(context).unitPiece;
+    case 'metre':
+      return S.of(context).unitMetre;
+    case 'item':
+      return S.of(context).item;
     default:
       return unit;
+  }
+}
+
+/// Localised label for a property type stored as its English value
+/// (`Apartment`, `Villa`; API doc `serviceOptions`); others as stored.
+String cleaningPropertyLabel(BuildContext context, String value) {
+  switch (value.trim()) {
+    case CleaningServiceValues.propertyApartment:
+      return S.of(context).cleaningApartment;
+    case CleaningServiceValues.propertyVilla:
+      return S.of(context).cleaningVilla;
+    default:
+      return value;
   }
 }
 

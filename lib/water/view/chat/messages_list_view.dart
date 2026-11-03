@@ -123,8 +123,9 @@ class _MessagesListViewState extends State<MessagesListView> {
 
     return ChatThread(
       name: name,
-      // "Booking #…" when the chat is about a booking (§6.43, V18).
-      preview: conversationPreview(context, conv, preview),
+      // "Order #…" when the chat is about an order (§6.43, V18); water and
+      // gas sell orders, not bookings.
+      preview: conversationPreview(context, conv, preview, isOrder: true),
       time: time,
       unreadCount: unreadCount,
       isOnline: conv.customerIsOnline,
@@ -312,6 +313,17 @@ class _MessagesListViewState extends State<MessagesListView> {
                                 onDeleted: () => controller.getAllConversations(context),
                                 child: _ChatListTile(
                                 thread: thread,
+                                // The trash icon deletes too (it looked
+                                // tappable but only the swipe worked).
+                                onDelete: thread.conversationId == null
+                                    ? null
+                                    : () async {
+                                        final deleted = await DeletableConversation.confirmAndDelete(
+                                            context, thread.conversationId);
+                                        if (deleted && context.mounted) {
+                                          controller.getAllConversations(context);
+                                        }
+                                      },
                                 onTap: () async {
                                   if (thread.unreadCount > 0 &&
                                       thread.conversationId != null) {
@@ -498,10 +510,12 @@ class _ChatListTile extends StatelessWidget {
   const _ChatListTile({
     required this.thread,
     required this.onTap,
+    this.onDelete,
   });
 
   final ChatThread thread;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -568,11 +582,19 @@ class _ChatListTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Icon(
-                        Icons.delete_outline_rounded,
-                        color: AppColors.primaryOrange,
-                        size: 20,
-                      ),
+                      if (onDelete != null)
+                        InkResponse(
+                          onTap: onDelete,
+                          radius: 20,
+                          child: Tooltip(
+                            message: S.of(context).delete,
+                            child: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppColors.primaryOrange,
+                              size: 20,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                   const SizedBox(height: 6),

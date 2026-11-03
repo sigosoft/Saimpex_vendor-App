@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -1273,7 +1274,7 @@ class _ProductCard extends StatelessWidget {
                           ),
                           // const SizedBox(height: 2),
                           Text(
-                            product.name,
+                            keepNumberUnitsLtr(product.name),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

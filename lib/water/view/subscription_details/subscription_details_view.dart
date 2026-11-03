@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/water/controller/home_controller.dart';
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/water/core/water_state_view.dart';
@@ -308,7 +309,7 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _ProductCard(name: details.product, qty: details.qty),
+                      _ProductCard(name: keepNumberUnitsLtr(details.product), qty: details.qty),
                       const SizedBox(height: 12),
                       _PlanGrid(
                         frequency: details.frequency,

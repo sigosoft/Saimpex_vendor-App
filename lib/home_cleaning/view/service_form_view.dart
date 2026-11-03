@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
@@ -374,7 +375,7 @@ class _ServiceFormViewState extends State<ServiceFormView> {
               ]),
               _section(s.addOnServices, [
                 for (var i = 0; i < _addons.length; i++)
-                  _rowTile(_addons[i], '+${_n(_addons[i].price)} MRU',
+                  _rowTile(_addons[i], signedMru('+', _n(_addons[i].price)),
                       subtitle: _addons[i].detail,
                       onEdit: () => _editRow(_addons, index: i, kind: _RowKind.addon),
                       onDelete: () => setState(() => _addons.removeAt(i))),

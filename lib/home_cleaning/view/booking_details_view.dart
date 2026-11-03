@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
@@ -823,7 +824,7 @@ class _ProductsCard extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              '+${CleaningBookingFormat.money(fee)}',
+              signedMru('+', CleaningBookingFormat.number(fee)),
               style: appFont('Inter', 
                 color: const Color(0xFFFF5216),
                 fontWeight: FontWeight.w700,

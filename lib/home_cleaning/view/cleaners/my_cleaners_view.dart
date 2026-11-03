@@ -76,7 +76,38 @@ class _MyCleanersViewState extends State<MyCleanersView> {
     if (saved == true) _load();
   }
 
+  /// Deactivating asks first (V18); activating does not.
+  Future<bool> _confirmDeactivate(Cleaner c) async {
+    final s = S.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(s.cleanerDeactivateTitle, style: cleanerText(16, FontWeight.w700, cleanerInk)),
+        content: Text(s.cleanerDeactivateConfirm(c.name), style: cleanerText(13.5, FontWeight.w400, const Color(0xFF424242))),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(s.cancel, style: cleanerText(14, FontWeight.w600, cleanerMuted)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: cleanerOrange,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text(s.cleanerDeactivate, style: cleanerText(14, FontWeight.w700, Colors.white)),
+          ),
+        ],
+      ),
+    );
+    return ok == true;
+  }
+
   Future<void> _toggleActive(Cleaner c) async {
+    if (c.active && !await _confirmDeactivate(c)) return;
+    if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _busy.add(c.id));
     try {

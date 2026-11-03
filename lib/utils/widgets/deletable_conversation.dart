@@ -7,11 +7,13 @@ import 'package:saimpex_vendor/model/conversations_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 /// "Booking #code · last message" when the chat is about a booking
-/// (`order_code`, API doc §6.43).
-String conversationPreview(BuildContext context, Conversation conv, String preview) {
+/// (`order_code`, API doc §6.43). Sections that sell orders, not bookings,
+/// pass [isOrder] for "Order #code" (V18).
+String conversationPreview(BuildContext context, Conversation conv, String preview, {bool isOrder = false}) {
   final code = conv.orderCode?.trim() ?? '';
   if (code.isEmpty || code == 'null') return preview;
-  return preview.isEmpty ? S.of(context).bookingHash(code) : '${S.of(context).bookingHash(code)} · $preview';
+  final label = isOrder ? S.of(context).supportOrderCode(code) : S.of(context).bookingHash(code);
+  return preview.isEmpty ? label : '$label · $preview';
 }
 
 /// Swipe a conversation away to delete it for the vendor (API doc §6.43,
@@ -24,7 +26,12 @@ class DeletableConversation extends StatelessWidget {
   final VoidCallback onDeleted;
   final Widget child;
 
-  Future<bool> _confirmAndDelete(BuildContext context) async {
+  Future<bool> _confirmAndDelete(BuildContext context) => confirmAndDelete(context, conversationId);
+
+  /// Asks, then deletes [conversationId] for the vendor; true when deleted.
+  /// Also used by a row's delete icon (V18: the icon did nothing on tap).
+  static Future<bool> confirmAndDelete(BuildContext context, int? conversationId) async {
+    if (conversationId == null) return false;
     final s = S.of(context);
     final ok = await showDialog<bool>(
       context: context,

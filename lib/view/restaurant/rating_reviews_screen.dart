@@ -113,8 +113,9 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
   Widget _buildReviewTile(BuildContext context, ReviewItem review) {
     double ratingVal = double.tryParse(review.rating?.toString() ?? "0") ?? 0.0;
     return Container(
+      // Sized by its content: a fixed height cut long comments to two
+      // lines with no way to read the rest (V18).
       width: MediaQuery.of(context).size.width * 0.9,
-      height: MediaQuery.of(context).size.height * 0.2,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -194,15 +195,13 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            review.comment ?? S.of(context).noCommentProvided,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: appFont('Rubik', 
+            (review.comment?.trim().isNotEmpty ?? false) ? review.comment!.trim() : S.of(context).noCommentProvided,
+            style: appFont('Rubik',
               fontSize: 13,
               color: const Color(0xFF4B5563),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

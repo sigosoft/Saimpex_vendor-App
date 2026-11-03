@@ -3293,5 +3293,39 @@
   "noMenusFound": "No menus found.",
   "@noMenusFound": {},
   "stockMovementType": "Type",
-  "@stockMovementType": {}
+  "@stockMovementType": {},
+  "cleaningMinutesAgoCount": "{count} min ago",
+  "@cleaningMinutesAgoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cleaningHoursAgoCount": "{count} h ago",
+  "@cleaningHoursAgoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cleaningDaysAgoCount": "{count} d ago",
+  "@cleaningDaysAgoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cleanerDeactivateTitle": "Deactivate cleaner?",
+  "@cleanerDeactivateTitle": {},
+  "cleanerDeactivateConfirm": "{name} can't be assigned to new bookings until you activate them again.",
+  "@cleanerDeactivateConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

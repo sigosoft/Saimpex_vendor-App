@@ -110,7 +110,7 @@ class _HomeTab extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(16, MediaQuery.paddingOf(context).top + 10, 16, 20),
             children: [
-              const _WelcomeHeader(),
+              _WelcomeHeader(storeName: controller.storeName),
               if (controller.membership != null) ...[
                 const SizedBox(height: 14),
                 _MemberCard(
@@ -330,10 +330,15 @@ class _ErrorState extends StatelessWidget {
 }
 
 class _WelcomeHeader extends StatelessWidget {
-  const _WelcomeHeader();
+  const _WelcomeHeader({this.storeName});
+
+  /// "Welcome to `store`!" like the water home (V18); the generic line until
+  /// the profile has loaded.
+  final String? storeName;
 
   @override
   Widget build(BuildContext context) {
+    final name = storeName?.trim() ?? '';
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -350,7 +355,7 @@ class _WelcomeHeader extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            S.of(context).welcomeToSaimpexVendor,
+            name.isNotEmpty ? S.of(context).waterWelcomeToShop(name) : S.of(context).welcomeToSaimpexVendor,
             style: appFont('Inter', 
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
@@ -1224,7 +1229,7 @@ class _BookingCard extends StatelessWidget {
                         border: Border.all(color: const Color(0xFFE8E8E8)),
                       ),
                       child: Text(
-                        CleaningBookingFormat.chip(line),
+                        CleaningBookingFormat.chip(context, line),
                         style: appFont('Inter', 
                           color: const Color(0xFF424242),
                           fontWeight: FontWeight.w600,
@@ -1234,6 +1239,28 @@ class _BookingCard extends StatelessWidget {
                     ),
                 ],
               ),
+            ),
+          ],
+          // Home cleaning: the assigned cleaner (V16, V18).
+          if (booking.cleaner != null && booking.cleaner!.name.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Icon(Icons.person_outline_rounded, size: 16, color: _orange),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '${S.of(context).assignedCleaner}: ${booking.cleaner!.name.trim()}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appFont('Inter',
+                      color: const Color(0xFF424242),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.5,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
           if (_isDetailedStatus) ...[
