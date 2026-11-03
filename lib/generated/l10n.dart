@@ -12310,6 +12310,31 @@ class S {
       args: [],
     );
   }
+
+  /// `Expired`
+  String get quoteExpired {
+    return Intl.message('Expired', name: 'quoteExpired', desc: '', args: []);
+  }
+
+  /// `Expires in {hours} h {minutes} min`
+  String quoteExpiresInHours(String hours, String minutes) {
+    return Intl.message(
+      'Expires in $hours h $minutes min',
+      name: 'quoteExpiresInHours',
+      desc: '',
+      args: [hours, minutes],
+    );
+  }
+
+  /// `Expires in {minutes} min`
+  String quoteExpiresInMinutes(String minutes) {
+    return Intl.message(
+      'Expires in $minutes min',
+      name: 'quoteExpiresInMinutes',
+      desc: '',
+      args: [minutes],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

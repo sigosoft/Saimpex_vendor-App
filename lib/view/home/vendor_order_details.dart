@@ -1805,12 +1805,14 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
   /// Time of the status log for [status]. Logs were read by position, which
   /// threw (blank grey screen, test day V-B1) when an order had fewer logs
   /// than its status implies; falls back to the position, then to "".
+  // A raw server time (UTC, no offset) is shown in phone time and the app
+  // language; text the server already formatted is shown as it is.
   String _logTime(Data order, int status, int index) {
     final logs = order.statusLogs ?? const <StatusLog>[];
     for (final log in logs) {
-      if (log.status == status) return log.updatedAt ?? '';
+      if (log.status == status) return formatServerDateTime(log.updatedAt);
     }
-    if (index < logs.length) return logs[index].updatedAt ?? '';
+    if (index < logs.length) return formatServerDateTime(logs[index].updatedAt);
     return '';
   }
 

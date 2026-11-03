@@ -707,7 +707,7 @@ class _ReviewCard extends StatelessWidget {
     if (dt != null) {
       try {
         return DateFormat('MMM dd yyyy, hh:mm a', locale)
-            .format(dt)
+            .format(serverTimeToLocal(dt))
             .replaceAll('AM', 'am')
             .replaceAll('PM', 'pm');
       } catch (_) {

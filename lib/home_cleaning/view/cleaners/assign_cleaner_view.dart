@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/cleaner_widgets.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 
@@ -79,6 +80,9 @@ class _AssignCleanerViewState extends State<AssignCleanerView> {
     final b = widget.booking;
     final rtl = LocalizationService.currentLanguageCode == 'ar';
     final selected = _cleaners.where((c) => c.id == _selected).firstOrNull;
+    // Slot from scheduled_for in phone time and the app language; the
+    // server's slot_window text is English and UTC (fallback only).
+    final slot = CleaningBookingFormat.slot(b);
     return Directionality(
       textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
@@ -93,7 +97,7 @@ class _AssignCleanerViewState extends State<AssignCleanerView> {
               decoration: BoxDecoration(color: const Color(0xFFFFF1E6), borderRadius: BorderRadius.circular(14)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
-                  [s.bookingHash(b.orderCode ?? '${b.id}'), if ((b.slotWindow ?? '').isNotEmpty) b.slotWindow!].join(' • '),
+                  [s.bookingHash(b.orderCode ?? '${b.id}'), if ((slot ?? '').isNotEmpty) slot!].join(' • '),
                   style: cleanerText(14, FontWeight.w700, cleanerInk),
                 ),
                 if ((b.address ?? '').isNotEmpty || (b.serviceName ?? '').isNotEmpty)

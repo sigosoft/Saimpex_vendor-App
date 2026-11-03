@@ -932,9 +932,8 @@ class _LeaveCard extends StatelessWidget {
   final _Leave leave;
   final VoidCallback? onCancel;
 
-  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  String _date(DateTime date) => '${_months[date.month - 1]} ${date.day}';
+  // Month name in the app language (was English in French / Arabic).
+  String _date(DateTime date) => appDateFormat('MMM d').format(date);
 
   @override
   Widget build(BuildContext context) {

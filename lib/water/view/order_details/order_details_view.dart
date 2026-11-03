@@ -2,7 +2,6 @@ import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart' hide TextDirection;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -309,12 +308,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     if (rawDate == null) return '';
     final str = rawDate.toString().trim();
     if (str.isEmpty || str == 'null') return '';
-    try {
-      final dt = DateTime.parse(str);
-      return DateFormat('MMM dd, yyyy hh:mm a').format(dt);
-    } catch (_) {
-      return str;
-    }
+    // Raw server times are UTC without an offset; show them in phone time.
+    // Text that isn't a date (already formatted) is shown as it is.
+    final dt = parseServerTime(str);
+    if (dt == null) return str;
+    return appDateFormat('MMM dd, yyyy hh:mm a').format(dt);
   }
 
   static HomeOrderStatus _parseStatus(dynamic rawStatus, HomeOrderStatus fallback) {
@@ -477,9 +475,10 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             ? orderMap['order_id'].toString().trim()
             : widget.order.orderId);
 
-    final rawPlaced = orderMap['placed_at_formatted'] ??
-        orderMap['placed_at'] ??
-        orderMap['created_at'];
+    // Raw placed_at first: placed_at_formatted is formatted on the server in UTC.
+    final rawPlaced = orderMap['placed_at'] ??
+        orderMap['created_at'] ??
+        orderMap['placed_at_formatted'];
     final placedTime = _formatDateString(rawPlaced);
 
     // Delivery type
@@ -1716,8 +1715,8 @@ class _OrderTimeline extends StatelessWidget {
     for (final log in statusLogs) {
       final logStatus = int.tryParse(log['status']?.toString() ?? '');
       if (logStatus != null && statusIds.contains(logStatus)) {
-        final timeStr = log['created_at_formatted'] ??
-            log['created_at'] ??
+        final timeStr = log['created_at'] ??
+            log['created_at_formatted'] ??
             log['time'] ??
             log['date'];
         if (timeStr != null && timeStr.toString().isNotEmpty) {

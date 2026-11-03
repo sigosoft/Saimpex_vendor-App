@@ -1,6 +1,6 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyPendingOrdersModel {
   final bool? status;
@@ -400,23 +400,7 @@ class PharmacyPendingOrderItem {
     return '';
   }
 
-  static String _formatRelativeTime(String timeStr) {
-    try {
-      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
-      if (timeStr.contains('-') && !timeStr.contains('T')) {
-        try {
-          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
-        } catch (_) {}
-      }
-      dt = dt.toLocal();
-      final diff = DateTime.now().difference(dt);
-      if (diff.inMinutes < 1) return 'Just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
-      if (diff.inHours < 24) return '${diff.inHours}h ago';
-      if (diff.inDays < 7) return '${diff.inDays}d ago';
-      return DateFormat('dd MMM, yyyy').format(dt);
-    } catch (_) {
-      return timeStr;
-    }
-  }
+  // Server times are UTC without an offset; compared in phone time.
+  static String _formatRelativeTime(String timeStr) =>
+      formatServerTimeAgo(timeStr);
 }

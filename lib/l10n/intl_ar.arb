@@ -2744,5 +2744,26 @@
   "preparingOrder": "تحضير الطلب",
   "@preparingOrder": {},
   "storeManagement": "إدارة المتجر",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "quoteExpired": "منتهي الصلاحية",
+  "@quoteExpired": {},
+  "quoteExpiresInHours": "تنتهي خلال {hours} ساعة و{minutes} دقيقة",
+  "@quoteExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteExpiresInMinutes": "تنتهي خلال {minutes} دقيقة",
+  "@quoteExpiresInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  }
 }

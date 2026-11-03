@@ -2745,5 +2745,26 @@
   "preparingOrder": "Préparation de la commande",
   "@preparingOrder": {},
   "storeManagement": "Gestion du magasin",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "quoteExpired": "Expiré",
+  "@quoteExpired": {},
+  "quoteExpiresInHours": "Expire dans {hours} h {minutes} min",
+  "@quoteExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteExpiresInMinutes": "Expire dans {minutes} min",
+  "@quoteExpiresInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  }
 }

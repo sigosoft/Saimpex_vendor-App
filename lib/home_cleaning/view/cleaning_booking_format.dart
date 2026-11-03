@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
-import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 
@@ -51,7 +50,8 @@ class CleaningBookingFormat {
 
   static String timeAgo(BuildContext context, DateTime? created) {
     if (created == null) return '';
-    final diff = DateTime.now().difference(serverTimeToLocal(created));
+    // created is already in phone time (CleaningBooking reads server UTC).
+    final diff = DateTime.now().difference(created);
     if (diff.inMinutes < 1) return S.of(context).cleaningJustNow;
     if (diff.inHours < 1) {
       return S.of(context).cleaningBookingMinutesAgo(diff.inMinutes.toString());

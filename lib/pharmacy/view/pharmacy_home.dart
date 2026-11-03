@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -1477,9 +1478,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
       final customerName = order.userName?.isNotEmpty == true
           ? order.userName!
           : 'Customer';
-      final timeAgo = order.placedAtFormatted?.isNotEmpty == true
-          ? order.placedAtFormatted!
-          : (order.placedAt ?? '');
+      // Phone time from the raw placed_at; placed_at_formatted is UTC text.
+      final fromRaw = formatServerPlacedAt(order.placedAt);
+      final timeAgo = fromRaw.isNotEmpty
+          ? fromRaw
+          : (order.placedAtFormatted ?? order.placedAt ?? '');
       final isSelfPickup =
           order.isSelfPickup == 1 ||
           order.isSelfPickup == true ||

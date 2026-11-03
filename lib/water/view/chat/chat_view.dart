@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
@@ -472,8 +471,8 @@ class _ChatViewState extends State<ChatView> {
     String time = '';
     if (m.createdAt != null && m.createdAt!.isNotEmpty) {
       try {
-        final dt = DateTime.parse(m.createdAt!).toLocal();
-        time = DateFormat('hh:mm a').format(dt);
+        final dt = serverTimeToLocal(DateTime.parse(m.createdAt!));
+        time = appDateFormat('hh:mm a').format(dt);
       } catch (_) {
         time = m.createdAt!;
       }
@@ -505,7 +504,7 @@ class _ChatViewState extends State<ChatView> {
   String _getDateLabel(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return S.of(context).today;
     try {
-      final dt = DateTime.parse(dateStr).toLocal();
+      final dt = serverTimeToLocal(DateTime.parse(dateStr));
       final now = DateTime.now();
       if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
         return S.of(context).today;
@@ -516,7 +515,7 @@ class _ChatViewState extends State<ChatView> {
           dt.day == yesterday.day) {
         return S.of(context).yesterday;
       }
-      return DateFormat('MMM dd, yyyy').format(dt);
+      return appDateFormat('MMM dd, yyyy').format(dt);
     } catch (_) {
       return S.of(context).today;
     }

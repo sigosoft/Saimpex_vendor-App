@@ -100,22 +100,20 @@ class WaterApi {
     if (dt == null) return '';
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 1) return S.current.cleaningJustNow;
-    if (diff.inHours < 1) return '${diff.inMinutes}${S.current.mAgo}';
-    if (diff.inDays < 1) return '${diff.inHours}${S.current.hAgo}';
-    if (diff.inDays < 7) return '${diff.inDays}${S.current.dAgo}';
+    // Whole phrases: "5" + mAgo read "5il y a" / "5منذ" in French and Arabic.
+    if (diff.inHours < 1) return S.current.cleaningBookingMinutesAgo('${diff.inMinutes}');
+    if (diff.inDays < 1) return S.current.cleaningBookingHoursAgo('${diff.inHours}');
+    if (diff.inDays < 7) return S.current.cleaningBookingDaysAgo('${diff.inDays}');
     return DateFormat('dd/MM/yyyy').format(dt);
   }
 
   static String _locale() =>
       FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
 
-  /// Server timestamps are UTC ISO strings or "Y-m-d H:i:s"; null when unparseable.
+  /// Server timestamps are UTC ISO strings or "Y-m-d H:i:s" (no offset);
+  /// returned in phone time, null when unparseable. Date-only values stay as is.
   static DateTime? parseDate(dynamic value) {
-    final s = value?.toString().trim() ?? '';
-    if (s.isEmpty || s == 'null') return null;
-    final dt = DateTime.tryParse(s);
-    if (dt == null) return null;
-    return dt.isUtc ? dt.toLocal() : dt;
+    return parseServerTime(value);
   }
 
   /// DD/MM/YYYY, or '—' when missing.

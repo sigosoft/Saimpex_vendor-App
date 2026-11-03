@@ -603,7 +603,7 @@ class _PharmacyOrderDetailsScreenState
         ? '#${presc!.prescriptionId}'
         : (widget.requestId != '#22789007' ? widget.requestId : '');
     final requestMeta = presc?.createdAt?.trim().isNotEmpty == true
-        ? presc!.createdAt!
+        ? formatServerDateTime(presc!.createdAt)
         : (widget.requestMeta != 'Today • 10:45 AM' ? widget.requestMeta : '');
     final primaryImageUrl =
         _detailsController.prescriptionDetailData?.primaryImageUrl ??
@@ -725,7 +725,7 @@ class _PharmacyOrderDetailsScreenState
         final rawCreatedAt = prescObj?.createdAt?.trim();
         final effectiveRequestMeta =
             (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
-            ? rawCreatedAt
+            ? formatServerDateTime(rawCreatedAt)
             : (widget.requestMeta != 'Today • 10:45 AM'
                   ? widget.requestMeta
                   : (rawCreatedAt ?? ''));

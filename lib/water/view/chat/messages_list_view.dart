@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/model/conversations_model.dart';
@@ -143,10 +144,10 @@ class _MessagesListViewState extends State<MessagesListView> {
           dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
         } catch (_) {}
       }
-      dt = dt.toLocal();
+      dt = serverTimeToLocal(dt);
       final now = DateTime.now();
       if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
-        return DateFormat('hh:mm a').format(dt);
+        return appDateFormat('hh:mm a').format(dt);
       }
       final yesterday = now.subtract(const Duration(days: 1));
       if (dt.year == yesterday.year &&

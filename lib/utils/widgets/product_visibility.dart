@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 /// Hide / unhide a product (API doc §6.21, SPX-ADM-02 item 62, task V10).
 /// One bar under each product card on the grocery / local store, pharmacy
@@ -21,7 +22,8 @@ class ProductVisibilityState {
 
   factory ProductVisibilityState.fromJson(Map<String, dynamic>? json) => ProductVisibilityState(
         isHidden: _truthy(json?['is_hidden']),
-        hiddenUntil: DateTime.tryParse(json?['hidden_until']?.toString() ?? '')?.toLocal(),
+        // Server time is UTC without an offset: kept in phone time for the label.
+        hiddenUntil: parseServerTime(json?['hidden_until']),
         hiddenForever: _truthy(json?['hidden_forever']),
       );
 }

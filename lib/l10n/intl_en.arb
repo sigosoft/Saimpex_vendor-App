@@ -2696,5 +2696,26 @@
   "preparingOrder": "Preparing Order",
   "@preparingOrder": {},
   "storeManagement": "Store Management",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "quoteExpired": "Expired",
+  "@quoteExpired": {},
+  "quoteExpiresInHours": "Expires in {hours} h {minutes} min",
+  "@quoteExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteExpiresInMinutes": "Expires in {minutes} min",
+  "@quoteExpiresInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  }
 }
