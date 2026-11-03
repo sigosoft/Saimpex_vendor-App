@@ -2118,7 +2118,7 @@ class VendorRichCard extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
-                                          'Type',
+                                          S.of(context).stockMovementType,
                                           style: appFont('Rubik', 
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
@@ -2262,7 +2262,7 @@ class VendorRichCard extends StatelessWidget {
                                                         qty <= 0) {
                                                       showToast(
                                                         context,
-                                                        'Please enter valid quantity',
+                                                        S.of(context).stockEnterValidQuantity,
                                                       );
                                                       return;
                                                     }

@@ -1392,7 +1392,9 @@ class ItemController extends GetxController {
       final ok = response.data['status'] == 'true' || response.data['status'] == true;
       if (!context.mounted) return;
       if (ok) {
-        showToast(context, _serverMessage(response.data, S.current.itemUpdatedSuccessfully));
+        // App text: the server's "Restaurant catalog item updated
+        // successfully" is English only (test day V17).
+        showToast(context, S.current.itemUpdatedSuccessfully);
         if (Get.isRegistered<ProfileController>()) {
           await Get.find<ProfileController>().fetchGroceryMenuItems();
         }
@@ -1742,11 +1744,17 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
+      // Restaurant: menuItemId is the catalog menu id (restaurantCatalogItems
+      // rows); its stock history is per menu. Same response shape.
       final response = await DioClient().get(
         vendorType == "1"
-            ? ApiEndPoints.restaurantMenuItemStockLogs
+            ? ApiEndPoints.restaurantMenuStockLogs
             : ApiEndPoints.groceryMenuItemStockLogs,
-        query: {"menu_item_id": menuItemId, "page": page, "limit": limit},
+        query: {
+          vendorType == "1" ? "menu_id" : "menu_item_id": menuItemId,
+          "page": page,
+          "limit": limit,
+        },
       );
       debugPrint("getMenuItemStockLogs response: $response");
       final model = RestaurantItemStockLogModel.fromJson(
@@ -1781,36 +1789,33 @@ class ItemController extends GetxController {
       } else {
         DioClient().updateToken("");
       }
+      // Restaurant: the old updateRestaurantItemStock took a variant row id
+      // (restaurant_menu_items) but got the catalog menu id, so it changed
+      // another row's legacy stock and said "success" while the item's stock
+      // (restaurant_menus.stock, used by orders and customers) stayed the
+      // same (test day V11, item 244). updateRestaurantMenuStock takes the
+      // menu id.
       final response = await DioClient().post(
         vendorType == "1"
-            ? ApiEndPoints.updateRestaurantMenuItemStock
+            ? ApiEndPoints.updateRestaurantMenuStock
             : ApiEndPoints.updateGrocerytItemStock,
         body: {
-          "menu_item_id": menuItemId,
+          vendorType == "1" ? "menu_id" : "menu_item_id": menuItemId,
           "quantity": quantity,
           "movement_type": movementType,
         },
       );
       debugPrint("updateMenuItemStock response: $response");
-      final successModel = SuccessModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-      String? firstNonEmptyString(List<String>? values) {
-        if (values == null) return null;
-        final nonEmpty = values
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
-        return nonEmpty.isNotEmpty ? nonEmpty.first : null;
-      }
-
-      final toastMessage =
-          firstNonEmptyString(successModel.message?.messageEn) ??
-          firstNonEmptyString(successModel.message?.messageFr) ??
-          firstNonEmptyString(successModel.message?.messageAr) ??
-          (successModel.status == 'true'
-              ? 'Stock updated successfully'
-              : 'Failed to update stock');
+      // Read status directly: the menu-stock route returns `data` as an object
+      // ({stock}), which SuccessModel (data as List) can't parse.
+      final ok = response.data is Map &&
+          response.data['status']?.toString() == 'true';
+      // App text on success (the server's message_en showed in Arabic mode).
+      final toastMessage = ok
+          ? (movementType == '1'
+              ? S.current.stockAddedSuccessfully
+              : S.current.stockRemovedSuccessfully)
+          : _serverMessage(response.data, S.current.waterFailedToUpdateStock);
 
       final ctx = Get.overlayContext ?? Get.context;
       if (ctx != null) {
@@ -1828,10 +1833,22 @@ class ItemController extends GetxController {
           toastLength: Toast.LENGTH_SHORT,
         );
       }
+    } on dio.DioException catch (error) {
+      // e.g. 400 "Only 3 items are available to remove".
+      debugPrint("updateMenuItemStock Error: $error");
+      if (context.mounted) {
+        showToast(
+          context,
+          _serverMessage(
+            error.response?.data,
+            S.current.waterFailedToUpdateStock,
+          ),
+        );
+      }
     } catch (error, stackTrace) {
-      debugPrint("getMenuItemStockLogs Error: $error");
+      debugPrint("updateMenuItemStock Error: $error");
       debugPrintStack(stackTrace: stackTrace);
-      showToast(context, error.toString());
+      if (context.mounted) showToast(context, error.toString());
     } finally {
       isStockLogsLoading = false;
       update();

@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import '../../controller/profile_controller.dart';
@@ -49,21 +50,11 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
     if (dateStr == null || dateStr.isEmpty) return "";
     try {
       final dt = DateTime.parse(dateStr);
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return "${months[dt.month - 1]} ${dt.day.toString().padLeft(2, '0')}, ${dt.year}";
+      // Month name in the app language (test day V17).
+      return DateFormat(
+        'MMM dd, yyyy',
+        Localizations.localeOf(context).languageCode,
+      ).format(dt);
     } catch (_) {
       return dateStr;
     }
@@ -276,9 +267,7 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
               height: 32,
               child: OutlinedButton(
                 onPressed: () {
-                  controller.unmarkLeave(
-                    context,
-                    leave_id);
+                  controller.confirmUnmarkLeave(context, leave_id);
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFFFFCCBD)),

@@ -124,34 +124,20 @@ class _RestaurantManagementScreenState
     return status == true || status?.toString().toLowerCase() == 'true';
   }
 
-  String _responseMessage(
-    dynamic raw,
-    String fallback, {
-    int? statusCode,
-    bool showStatusCode = false,
-  }) {
+  /// Success toasts use the app's own text (the server's message_en showed in
+  /// English in Arabic mode, test day V17). Errors show the server's reason in
+  /// the app language when it sends one, else [fallback].
+  String _responseMessage(dynamic raw, String fallback) {
+    if (_isSuccess(raw)) return fallback;
     final message = _asMap(raw)['message'];
-    String resolved = fallback;
-    if (message is String && message.trim().isNotEmpty) {
-      resolved = message;
-    }
     if (message is Map) {
-      for (final key in ['message_en', 'message_fr', 'message_ar']) {
-        final value = message[key];
-        if (value is List && value.isNotEmpty) {
-          resolved = value.first.toString();
-          break;
-        }
-        if (value is String && value.trim().isNotEmpty) {
-          resolved = value;
-          break;
-        }
-      }
+      final lang =
+          FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+      final value = message['message_$lang'];
+      if (value is List && value.isNotEmpty) return value.first.toString();
+      if (value is String && value.trim().isNotEmpty) return value;
     }
-    if (showStatusCode && statusCode != null) {
-      return '$resolved (Status code: $statusCode)';
-    }
-    return resolved;
+    return fallback;
   }
 
   String _nameFromJson(Map<String, dynamic> map) {
@@ -391,11 +377,9 @@ class _RestaurantManagementScreenState
             response.data,
             success
                 ? (item == null
-                      ? 'Category added successfully'
-                      : 'Category updated successfully')
-                : 'Category action failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+                      ? S.current.mgmtCategoryAdded
+                      : S.current.mgmtCategoryUpdated)
+                : S.current.mgmtCategorySaveFailed,
           ),
         );
       }
@@ -429,11 +413,9 @@ class _RestaurantManagementScreenState
             response.data,
             success
                 ? (item == null
-                      ? 'Tag added successfully'
-                      : 'Tag updated successfully')
-                : 'Tag action failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+                      ? S.current.mgmtTagAdded
+                      : S.current.mgmtTagUpdated)
+                : S.current.mgmtTagSaveFailed,
           ),
         );
       }
@@ -462,10 +444,8 @@ class _RestaurantManagementScreenState
           _responseMessage(
             response.data,
             success
-                ? 'Category deleted successfully'
-                : 'Category delete failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+                ? S.current.mgmtCategoryDeleted
+                : S.current.mgmtCategoryDeleteFailed,
           ),
         );
       }
@@ -493,9 +473,9 @@ class _RestaurantManagementScreenState
           context,
           _responseMessage(
             response.data,
-            success ? 'Tag deleted successfully' : 'Tag delete failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+            success
+                ? S.current.mgmtTagDeleted
+                : S.current.mgmtTagDeleteFailed,
           ),
         );
       }
@@ -525,9 +505,9 @@ class _RestaurantManagementScreenState
           context,
           _responseMessage(
             response.data,
-            success ? 'Status updated successfully' : 'Status update failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+            success
+                ? S.current.mgmtStatusUpdated
+                : S.current.mgmtStatusUpdateFailed,
           ),
         );
       }
@@ -554,9 +534,9 @@ class _RestaurantManagementScreenState
           context,
           _responseMessage(
             response.data,
-            success ? 'Status updated successfully' : 'Status update failed',
-            statusCode: response.statusCode,
-            showStatusCode: false,
+            success
+                ? S.current.mgmtStatusUpdated
+                : S.current.mgmtStatusUpdateFailed,
           ),
         );
       }
@@ -583,14 +563,14 @@ class _RestaurantManagementScreenState
         sourcePath: pickedFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Image',
+            toolbarTitle: S.current.cropImage,
             toolbarColor: const Color(0xFFFF5216),
             toolbarWidgetColor: Colors.white,
             activeControlsWidgetColor: const Color(0xFFFF5216),
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+          IOSUiSettings(title: S.current.cropImage, minimumAspectRatio: 1.0),
         ],
       );
 
@@ -616,11 +596,11 @@ class _RestaurantManagementScreenState
           borderRadius: BorderRadius.circular(15),
         ),
         title: Text(
-          "Select Image",
+          S.of(context).mgmtSelectImage,
           style: appFont('Rubik', fontWeight: FontWeight.bold),
         ),
         content: Text(
-          "Choose image from gallery or camera",
+          S.of(context).mgmtChooseImageSource,
           style: appFont('Rubik'),
         ),
         actions: [
@@ -634,7 +614,7 @@ class _RestaurantManagementScreenState
               );
             },
             child: Text(
-              "Gallery",
+              S.of(context).gallery,
               style: appFont('Rubik', color: colorPrimary, fontWeight: FontWeight.bold),
             ),
           ),
@@ -648,7 +628,7 @@ class _RestaurantManagementScreenState
               );
             },
             child: Text(
-              "Camera",
+              S.of(context).camera,
               style: appFont('Rubik', color: colorPrimary, fontWeight: FontWeight.bold),
             ),
           ),
@@ -684,7 +664,9 @@ class _RestaurantManagementScreenState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            item == null ? "Add Category" : "Edit Category",
+                            item == null
+                                ? S.of(context).mgmtAddCategory
+                                : S.of(context).mgmtEditCategory,
                             style: appFont('Rubik', 
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -749,7 +731,7 @@ class _RestaurantManagementScreenState
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "Image",
+                        S.of(context).waterImage,
                         style: appFont('Rubik', 
                           color: Colors.grey[600],
                           fontSize: 14,
@@ -828,7 +810,7 @@ class _RestaurantManagementScreenState
                                 ),
                               ),
                               child: Text(
-                                "Cancel",
+                                S.of(context).cancel,
                                 style: appFont('Rubik', 
                                   color: colorPrimary,
                                   fontWeight: FontWeight.w500,
@@ -860,7 +842,7 @@ class _RestaurantManagementScreenState
                                 elevation: 0,
                               ),
                               child: Text(
-                                "Save",
+                                S.of(context).save,
                                 style: appFont('Rubik', 
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
@@ -904,7 +886,9 @@ class _RestaurantManagementScreenState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        item == null ? "Add Tag" : "Edit Tag",
+                        item == null
+                            ? S.of(context).mgmtAddTag
+                            : S.of(context).mgmtEditTag,
                         style: appFont('Rubik', 
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -981,7 +965,7 @@ class _RestaurantManagementScreenState
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: Text(
-                            "Cancel",
+                            S.of(context).cancel,
                             style: appFont('Rubik', 
                               color: colorPrimary,
                               fontWeight: FontWeight.w500,
@@ -1007,7 +991,7 @@ class _RestaurantManagementScreenState
                             elevation: 0,
                           ),
                           child: Text(
-                            "Save",
+                            S.of(context).save,
                             style: appFont('Rubik', 
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -1036,17 +1020,17 @@ class _RestaurantManagementScreenState
             borderRadius: BorderRadius.circular(15),
           ),
           title: Text(
-            "Delete Category",
+            S.of(context).mgmtDeleteCategory,
             style: appFont('Rubik', fontWeight: FontWeight.bold),
           ),
           content: Text(
-            "Are you sure you want to delete category \"${item.name}\"?",
+            S.of(context).mgmtDeleteCategoryConfirm(item.name),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                "Cancel",
+                S.of(context).cancel,
                 style: appFont('Rubik', color: Colors.grey[600]),
               ),
             ),
@@ -1062,7 +1046,7 @@ class _RestaurantManagementScreenState
                 ),
               ),
               child: Text(
-                "Delete",
+                S.of(context).delete,
                 style: appFont('Rubik', color: Colors.white),
               ),
             ),
@@ -1082,17 +1066,17 @@ class _RestaurantManagementScreenState
             borderRadius: BorderRadius.circular(15),
           ),
           title: Text(
-            "Delete Tag",
+            S.of(context).mgmtDeleteTag,
             style: appFont('Rubik', fontWeight: FontWeight.bold),
           ),
           content: Text(
-            "Are you sure you want to delete tag \"${item.name}\"?",
+            S.of(context).mgmtDeleteTagConfirm(item.name),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                "Cancel",
+                S.of(context).cancel,
                 style: appFont('Rubik', color: Colors.grey[600]),
               ),
             ),
@@ -1108,7 +1092,7 @@ class _RestaurantManagementScreenState
                 ),
               ),
               child: Text(
-                "Delete",
+                S.of(context).delete,
                 style: appFont('Rubik', color: Colors.white),
               ),
             ),
@@ -1197,7 +1181,7 @@ class _RestaurantManagementScreenState
                             ),
                             child: Center(
                               child: Text(
-                                "Categories",
+                                S.of(context).mgmtCategories,
                                 style: appFont('Rubik', 
                                   color: _selectedTabIndex == 0
                                       ? Colors.white
@@ -1232,7 +1216,7 @@ class _RestaurantManagementScreenState
                             ),
                             child: Center(
                               child: Text(
-                                "Tags",
+                                S.of(context).tagsLabel,
                                 style: appFont('Rubik', 
                                   color: _selectedTabIndex == 1
                                       ? Colors.white
@@ -1259,7 +1243,9 @@ class _RestaurantManagementScreenState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      _selectedTabIndex == 0 ? "Categories" : "Tags",
+                      _selectedTabIndex == 0
+                          ? S.of(context).mgmtCategories
+                          : S.of(context).tagsLabel,
                       style: appFont('Rubik', 
                         color: const Color(0xFF333E63),
                         fontSize: 15,
@@ -1280,7 +1266,9 @@ class _RestaurantManagementScreenState
                         color: colorPrimary,
                       ),
                       label: Text(
-                        _selectedTabIndex == 0 ? "Add Category" : "Add Tag",
+                        _selectedTabIndex == 0
+                            ? S.of(context).mgmtAddCategory
+                            : S.of(context).mgmtAddTag,
                         style: appFont('Rubik', 
                           color: colorPrimary,
                           fontSize: 12,
@@ -1329,8 +1317,8 @@ class _RestaurantManagementScreenState
                     },
                     decoration: InputDecoration(
                       hintText: _selectedTabIndex == 0
-                          ? "Search Category"
-                          : "Search Tag Name",
+                          ? S.of(context).mgmtSearchCategory
+                          : S.of(context).mgmtSearchTag,
                       hintStyle: appFont('Rubik', 
                         color: Colors.grey[400],
                         fontSize: 13,
@@ -1389,7 +1377,7 @@ class _RestaurantManagementScreenState
     if (list.isEmpty) {
       return Center(
         child: Text(
-          "No categories found",
+          S.of(context).noCategoriesFound,
           style: appFont('Rubik', color: Colors.grey[500], fontSize: 14),
         ),
       );
@@ -1481,7 +1469,9 @@ class _RestaurantManagementScreenState
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            item.status,
+                            item.status == "ACTIVE"
+                                ? S.of(context).active
+                                : S.of(context).blocked.toUpperCase(),
                             style: appFont('Rubik', 
                               color: item.status == "ACTIVE"
                                   ? const Color(0xFF008318)
@@ -1523,7 +1513,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Edit",
+                                      S.of(context).edit,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1553,7 +1543,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Delete",
+                                      S.of(context).delete,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1587,7 +1577,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Update Status",
+                                      S.of(context).mgmtUpdateStatus,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1623,7 +1613,7 @@ class _RestaurantManagementScreenState
     if (list.isEmpty) {
       return Center(
         child: Text(
-          "No tags found",
+          S.of(context).mgmtNoTagsFound,
           style: appFont('Rubik', color: Colors.grey[500], fontSize: 14),
         ),
       );
@@ -1690,7 +1680,9 @@ class _RestaurantManagementScreenState
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            item.status,
+                            item.status == "ACTIVE"
+                                ? S.of(context).active
+                                : S.of(context).blocked.toUpperCase(),
                             style: appFont('Rubik', 
                               color: item.status == "ACTIVE"
                                   ? const Color(0xFF008318)
@@ -1732,7 +1724,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Edit",
+                                      S.of(context).edit,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1762,7 +1754,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Delete",
+                                      S.of(context).delete,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1796,7 +1788,7 @@ class _RestaurantManagementScreenState
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "Update Status",
+                                      S.of(context).mgmtUpdateStatus,
                                       style: appFont('Rubik', 
                                         color: Colors.grey[800],
                                         fontSize: 13,
@@ -1835,7 +1827,7 @@ class _RestaurantManagementScreenState
         ),
         const SizedBox(height: 8),
         Text(
-          "Add Image",
+          S.of(context).mgmtAddImage,
           style: appFont('Rubik', 
             color: Colors.blueGrey.withOpacity(0.6),
             fontSize: 12,
