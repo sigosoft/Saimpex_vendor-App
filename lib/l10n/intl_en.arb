@@ -3339,5 +3339,45 @@
   "addItemAddedSuccessfully": "Item added successfully",
   "@addItemAddedSuccessfully": {},
   "addItemFailedToAdd": "Failed to add item",
-  "@addItemFailedToAdd": {}
+  "@addItemFailedToAdd": {},
+  "itemValidationEnterName": "Please enter item name",
+  "@itemValidationEnterName": {},
+  "itemValidationSelectCategory": "Please select a category",
+  "@itemValidationSelectCategory": {},
+  "itemValidationSelectItem": "Please select an item",
+  "@itemValidationSelectItem": {},
+  "itemValidationSelectAttribute": "Please select an attribute",
+  "@itemValidationSelectAttribute": {},
+  "itemValidationEnterPrice": "Please enter price",
+  "@itemValidationEnterPrice": {},
+  "itemValidationEnterDiscountPrice": "Please enter discount price",
+  "@itemValidationEnterDiscountPrice": {},
+  "itemValidationEnterPrepTime": "Please enter preparation time",
+  "@itemValidationEnterPrepTime": {},
+  "itemValidationEnterSerialNumber": "Please enter serial number",
+  "@itemValidationEnterSerialNumber": {},
+  "itemValidationSelectTag": "Please select at least one tag",
+  "@itemValidationSelectTag": {},
+  "itemValidationMinOverMax": "Minimum selections can't be more than maximum in {group}",
+  "@itemValidationMinOverMax": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "itemValidationTooFewOptions": "{group} allows {max} selections but has {count} options",
+  "@itemValidationTooFewOptions": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -14210,6 +14210,116 @@ class S {
       args: [],
     );
   }
+
+  /// `Please enter item name`
+  String get itemValidationEnterName {
+    return Intl.message(
+      'Please enter item name',
+      name: 'itemValidationEnterName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a category`
+  String get itemValidationSelectCategory {
+    return Intl.message(
+      'Please select a category',
+      name: 'itemValidationSelectCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select an item`
+  String get itemValidationSelectItem {
+    return Intl.message(
+      'Please select an item',
+      name: 'itemValidationSelectItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select an attribute`
+  String get itemValidationSelectAttribute {
+    return Intl.message(
+      'Please select an attribute',
+      name: 'itemValidationSelectAttribute',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter price`
+  String get itemValidationEnterPrice {
+    return Intl.message(
+      'Please enter price',
+      name: 'itemValidationEnterPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter discount price`
+  String get itemValidationEnterDiscountPrice {
+    return Intl.message(
+      'Please enter discount price',
+      name: 'itemValidationEnterDiscountPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter preparation time`
+  String get itemValidationEnterPrepTime {
+    return Intl.message(
+      'Please enter preparation time',
+      name: 'itemValidationEnterPrepTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter serial number`
+  String get itemValidationEnterSerialNumber {
+    return Intl.message(
+      'Please enter serial number',
+      name: 'itemValidationEnterSerialNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select at least one tag`
+  String get itemValidationSelectTag {
+    return Intl.message(
+      'Please select at least one tag',
+      name: 'itemValidationSelectTag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum selections can't be more than maximum in {group}`
+  String itemValidationMinOverMax(String group) {
+    return Intl.message(
+      'Minimum selections can\'t be more than maximum in $group',
+      name: 'itemValidationMinOverMax',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `{group} allows {max} selections but has {count} options`
+  String itemValidationTooFewOptions(String group, String max, String count) {
+    return Intl.message(
+      '$group allows $max selections but has $count options',
+      name: 'itemValidationTooFewOptions',
+      desc: '',
+      args: [group, max, count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
