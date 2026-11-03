@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 
 /// Pharmacy Reject Order bottom sheet. Returns selected reason, or null.
@@ -29,12 +30,21 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
   static const int _otherMaxLength = 100;
   static const int _otherIndex = 3;
 
+  /// Values returned to the caller (unchanged English); only the labels
+  /// below are translated.
   static const reasons = [
     'Out of Stock',
     'Temporary Store Closure',
     'Invalid or Unclear Prescription',
     'Other',
   ];
+
+  List<String> _reasonLabels(BuildContext context) => [
+        S.of(context).outOfStock,
+        S.of(context).pharmacyOtcTemporaryStoreClosure,
+        S.of(context).pharmacyOtcInvalidPrescription,
+        S.of(context).pharmacyOtcOther,
+      ];
 
   int? selectedIndex;
   final otherController = TextEditingController();
@@ -89,10 +99,10 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                     size: 26,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Reject Order',
-                      style: TextStyle(
+                      S.of(context).pharmacyOtcRejectOrder,
+                      style: const TextStyle(
                         color: _titleRed,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -116,9 +126,9 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                 ],
               ),
               const SizedBox(height: 12),
-              const Text(
-                'Please select a reason. The customer will be notified accordingly',
-                style: TextStyle(
+              Text(
+                S.of(context).pharmacyOtcRejectHint,
+                style: const TextStyle(
                   color: _descGray,
                   fontWeight: FontWeight.w400,
                   fontSize: 13.5,
@@ -126,9 +136,9 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
-                'Reason For Pausing',
-                style: TextStyle(
+              Text(
+                S.of(context).pharmacyOtcReasonTitle,
+                style: const TextStyle(
                   color: Color(0xFF1A1A1A),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
@@ -139,7 +149,7 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
               for (var i = 0; i < reasons.length; i++) ...[
                 if (i > 0) const SizedBox(height: 10),
                 _ReasonTile(
-                  label: reasons[i],
+                  label: _reasonLabels(context)[i],
                   selected: selectedIndex == i,
                   onTap: () => setState(() => selectedIndex = i),
                 ),
@@ -148,10 +158,10 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Other Reason',
-                        style: TextStyle(
+                        S.of(context).pharmacyOtcOtherReason,
+                        style: const TextStyle(
                           color: AppColors.textBody,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -216,9 +226,9 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).cancel,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -244,11 +254,11 @@ class _PharmacyRejectOrderSheetState extends State<PharmacyRejectOrderSheet> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Confirm Reject',
+                        child: Text(
+                          S.of(context).pharmacyOtcConfirmReject,
                           softWrap: false,
                           maxLines: 1,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),

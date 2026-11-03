@@ -12375,6 +12375,1126 @@ class S {
       args: [minutes],
     );
   }
+
+  /// `1 Item`
+  String get pharmacyHomeOneItem {
+    return Intl.message(
+      '1 Item',
+      name: 'pharmacyHomeOneItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Items`
+  String pharmacyHomeItemCount(String count) {
+    return Intl.message(
+      '$count Items',
+      name: 'pharmacyHomeItemCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `REVIEWING`
+  String get pharmacyHomeBadgeReviewing {
+    return Intl.message(
+      'REVIEWING',
+      name: 'pharmacyHomeBadgeReviewing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REVIEW COMPLETED`
+  String get pharmacyHomeBadgeReviewCompleted {
+    return Intl.message(
+      'REVIEW COMPLETED',
+      name: 'pharmacyHomeBadgeReviewCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NEW`
+  String get pharmacyHomeBadgeNew {
+    return Intl.message(
+      'NEW',
+      name: 'pharmacyHomeBadgeNew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Reviewed`
+  String get pharmacyHomeMarkAsReviewed {
+    return Intl.message(
+      'Mark as Reviewed',
+      name: 'pharmacyHomeMarkAsReviewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review Prescription`
+  String get pharmacyHomeReviewPrescription {
+    return Intl.message(
+      'Review Prescription',
+      name: 'pharmacyHomeReviewPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order {code}`
+  String pharmacyHomeOrderCode(String code) {
+    return Intl.message(
+      'Order $code',
+      name: 'pharmacyHomeOrderCode',
+      desc: '',
+      args: [code],
+    );
+  }
+
+  /// `Prescription {code}`
+  String pharmacyHomePrescriptionCode(String code) {
+    return Intl.message(
+      'Prescription $code',
+      name: 'pharmacyHomePrescriptionCode',
+      desc: '',
+      args: [code],
+    );
+  }
+
+  /// `Prescription`
+  String get pharmacyHomePrescription {
+    return Intl.message(
+      'Prescription',
+      name: 'pharmacyHomePrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Full Prescription`
+  String get pharmacyHomeViewFullPrescription {
+    return Intl.message(
+      'View Full Prescription',
+      name: 'pharmacyHomeViewFullPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TO PREPARE`
+  String get pharmacyHomeBadgeToPrepare {
+    return Intl.message(
+      'TO PREPARE',
+      name: 'pharmacyHomeBadgeToPrepare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Preparing`
+  String get pharmacyHomeStartPreparing {
+    return Intl.message(
+      'Start Preparing',
+      name: 'pharmacyHomeStartPreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not Assigned`
+  String get pharmacyHomeNotAssigned {
+    return Intl.message(
+      'Not Assigned',
+      name: 'pharmacyHomeNotAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AWAITING PAYMENT`
+  String get pharmacyHomeBadgeAwaitingPayment {
+    return Intl.message(
+      'AWAITING PAYMENT',
+      name: 'pharmacyHomeBadgeAwaitingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Awaiting Payment`
+  String get pharmacyHomeAwaitingPayment {
+    return Intl.message(
+      'Awaiting Payment',
+      name: 'pharmacyHomeAwaitingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QUOTATION`
+  String get pharmacyHomeQuotationLabel {
+    return Intl.message(
+      'QUOTATION',
+      name: 'pharmacyHomeQuotationLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SPECIAL NOTES`
+  String get pharmacyDetailSpecialNotes {
+    return Intl.message(
+      'SPECIAL NOTES',
+      name: 'pharmacyDetailSpecialNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ORDER TIMELINE`
+  String get pharmacyDetailOrderTimeline {
+    return Intl.message(
+      'ORDER TIMELINE',
+      name: 'pharmacyDetailOrderTimeline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Dispatch`
+  String get pharmacyDetailReadyForDispatch {
+    return Intl.message(
+      'Ready for Dispatch',
+      name: 'pharmacyDetailReadyForDispatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Preparing`
+  String get pharmacyDetailStartPreparing {
+    return Intl.message(
+      'Start Preparing',
+      name: 'pharmacyDetailStartPreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Reviewed`
+  String get pharmacyDetailMarkReviewed {
+    return Intl.message(
+      'Mark as Reviewed',
+      name: 'pharmacyDetailMarkReviewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review Prescription`
+  String get pharmacyDetailReviewPrescription {
+    return Intl.message(
+      'Review Prescription',
+      name: 'pharmacyDetailReviewPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AWAITING PAYMENT`
+  String get pharmacyDetailBadgeAwaitingPayment {
+    return Intl.message(
+      'AWAITING PAYMENT',
+      name: 'pharmacyDetailBadgeAwaitingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REVIEW COMPLETED`
+  String get pharmacyDetailBadgeReviewCompleted {
+    return Intl.message(
+      'REVIEW COMPLETED',
+      name: 'pharmacyDetailBadgeReviewCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REVIEWING`
+  String get pharmacyDetailBadgeReviewing {
+    return Intl.message(
+      'REVIEWING',
+      name: 'pharmacyDetailBadgeReviewing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NEW`
+  String get pharmacyDetailBadgeNew {
+    return Intl.message(
+      'NEW',
+      name: 'pharmacyDetailBadgeNew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERED`
+  String get pharmacyDetailBadgeDelivered {
+    return Intl.message(
+      'DELIVERED',
+      name: 'pharmacyDetailBadgeDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `READY`
+  String get pharmacyDetailBadgeReady {
+    return Intl.message(
+      'READY',
+      name: 'pharmacyDetailBadgeReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PREPARING`
+  String get pharmacyDetailBadgePreparing {
+    return Intl.message(
+      'PREPARING',
+      name: 'pharmacyDetailBadgePreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TO PREPARE`
+  String get pharmacyDetailBadgeToPrepare {
+    return Intl.message(
+      'TO PREPARE',
+      name: 'pharmacyDetailBadgeToPrepare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CUSTOMER`
+  String get pharmacyDetailCustomerHeader {
+    return Intl.message(
+      'CUSTOMER',
+      name: 'pharmacyDetailCustomerHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `REQUEST ID`
+  String get pharmacyDetailRequestId {
+    return Intl.message(
+      'REQUEST ID',
+      name: 'pharmacyDetailRequestId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UPLOADED PRESCRIPTION`
+  String get pharmacyDetailUploadedPrescription {
+    return Intl.message(
+      'UPLOADED PRESCRIPTION',
+      name: 'pharmacyDetailUploadedPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load prescription`
+  String get pharmacyDetailImageLoadFailed {
+    return Intl.message(
+      'Failed to load prescription',
+      name: 'pharmacyDetailImageLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Prescription Image`
+  String get pharmacyDetailNoPrescriptionImage {
+    return Intl.message(
+      'No Prescription Image',
+      name: 'pharmacyDetailNoPrescriptionImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Zoom`
+  String get pharmacyDetailZoom {
+    return Intl.message('Zoom', name: 'pharmacyDetailZoom', desc: '', args: []);
+  }
+
+  /// `Rotate`
+  String get pharmacyDetailRotate {
+    return Intl.message(
+      'Rotate',
+      name: 'pharmacyDetailRotate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Full Prescription`
+  String get pharmacyDetailViewFullPrescription {
+    return Intl.message(
+      'View Full Prescription',
+      name: 'pharmacyDetailViewFullPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY TYPE`
+  String get pharmacyDetailDeliveryType {
+    return Intl.message(
+      'DELIVERY TYPE',
+      name: 'pharmacyDetailDeliveryType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Awaiting Customer Payment`
+  String get pharmacyDetailAwaitingCustomerPayment {
+    return Intl.message(
+      'Awaiting Customer Payment',
+      name: 'pharmacyDetailAwaitingCustomerPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY PARTNER`
+  String get pharmacyDetailDeliveryPartner {
+    return Intl.message(
+      'DELIVERY PARTNER',
+      name: 'pharmacyDetailDeliveryPartner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription`
+  String get pharmacyDetailPrescription {
+    return Intl.message(
+      'Prescription',
+      name: 'pharmacyDetailPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription Received`
+  String get pharmacyDetailStepPrescriptionReceived {
+    return Intl.message(
+      'Prescription Received',
+      name: 'pharmacyDetailStepPrescriptionReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Under Review`
+  String get pharmacyDetailStepUnderReview {
+    return Intl.message(
+      'Under Review',
+      name: 'pharmacyDetailStepUnderReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review Completed`
+  String get pharmacyDetailStepReviewCompleted {
+    return Intl.message(
+      'Review Completed',
+      name: 'pharmacyDetailStepReviewCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quotation Sent`
+  String get pharmacyDetailStepQuotationSent {
+    return Intl.message(
+      'Quotation Sent',
+      name: 'pharmacyDetailStepQuotationSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid`
+  String get pharmacyDetailStepPaid {
+    return Intl.message(
+      'Paid',
+      name: 'pharmacyDetailStepPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparing Medicines`
+  String get pharmacyDetailStepPreparingMedicines {
+    return Intl.message(
+      'Preparing Medicines',
+      name: 'pharmacyDetailStepPreparingMedicines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Pickup`
+  String get pharmacyDetailStepReadyForPickup {
+    return Intl.message(
+      'Ready for Pickup',
+      name: 'pharmacyDetailStepReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partner Assigned`
+  String get pharmacyDetailStepPartnerAssigned {
+    return Intl.message(
+      'Delivery Partner Assigned',
+      name: 'pharmacyDetailStepPartnerAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Delivered`
+  String get pharmacyDetailStepOrderDelivered {
+    return Intl.message(
+      'Order Delivered',
+      name: 'pharmacyDetailStepOrderDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Received`
+  String get pharmacyDetailStepOrderReceived {
+    return Intl.message(
+      'Order Received',
+      name: 'pharmacyDetailStepOrderReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Accepted`
+  String get pharmacyDetailStepOrderAccepted {
+    return Intl.message(
+      'Order Accepted',
+      name: 'pharmacyDetailStepOrderAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Rider`
+  String get pharmacyDetailStepPickedUpByRider {
+    return Intl.message(
+      'Picked Up by Rider',
+      name: 'pharmacyDetailStepPickedUpByRider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Customer`
+  String get pharmacyDetailStepPickedUpByCustomer {
+    return Intl.message(
+      'Picked Up by Customer',
+      name: 'pharmacyDetailStepPickedUpByCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Received`
+  String get pharmacyOtcOrderReceived {
+    return Intl.message(
+      'Order Received',
+      name: 'pharmacyOtcOrderReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparing Medicines`
+  String get pharmacyOtcPreparingMedicines {
+    return Intl.message(
+      'Preparing Medicines',
+      name: 'pharmacyOtcPreparingMedicines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Dispatch`
+  String get pharmacyOtcReadyForDispatch {
+    return Intl.message(
+      'Ready for Dispatch',
+      name: 'pharmacyOtcReadyForDispatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partner Assigned`
+  String get pharmacyOtcPartnerAssigned {
+    return Intl.message(
+      'Delivery Partner Assigned',
+      name: 'pharmacyOtcPartnerAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Rider`
+  String get pharmacyOtcPickedUpByRider {
+    return Intl.message(
+      'Picked Up by Rider',
+      name: 'pharmacyOtcPickedUpByRider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Delivered`
+  String get pharmacyOtcOrderDelivered {
+    return Intl.message(
+      'Order Delivered',
+      name: 'pharmacyOtcOrderDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready for Pickup`
+  String get pharmacyOtcReadyForPickup {
+    return Intl.message(
+      'Ready for Pickup',
+      name: 'pharmacyOtcReadyForPickup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Picked Up by Customer`
+  String get pharmacyOtcPickedUpByCustomer {
+    return Intl.message(
+      'Picked Up by Customer',
+      name: 'pharmacyOtcPickedUpByCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CUSTOMER`
+  String get pharmacyOtcCustomerHeader {
+    return Intl.message(
+      'CUSTOMER',
+      name: 'pharmacyOtcCustomerHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CANCELLED`
+  String get pharmacyOtcBadgeCancelled {
+    return Intl.message(
+      'CANCELLED',
+      name: 'pharmacyOtcBadgeCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERED`
+  String get pharmacyOtcBadgeDelivered {
+    return Intl.message(
+      'DELIVERED',
+      name: 'pharmacyOtcBadgeDelivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `READY`
+  String get pharmacyOtcBadgeReady {
+    return Intl.message(
+      'READY',
+      name: 'pharmacyOtcBadgeReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PREPARING`
+  String get pharmacyOtcBadgePreparing {
+    return Intl.message(
+      'PREPARING',
+      name: 'pharmacyOtcBadgePreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ACCEPTED`
+  String get pharmacyOtcBadgeAccepted {
+    return Intl.message(
+      'ACCEPTED',
+      name: 'pharmacyOtcBadgeAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NEW`
+  String get pharmacyOtcBadgeNew {
+    return Intl.message('NEW', name: 'pharmacyOtcBadgeNew', desc: '', args: []);
+  }
+
+  /// `REQUEST ID`
+  String get pharmacyOtcRequestIdHeader {
+    return Intl.message(
+      'REQUEST ID',
+      name: 'pharmacyOtcRequestIdHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DELIVERY TYPE`
+  String get pharmacyOtcDeliveryTypeHeader {
+    return Intl.message(
+      'DELIVERY TYPE',
+      name: 'pharmacyOtcDeliveryTypeHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Address`
+  String get pharmacyOtcDeliveryAddressTitle {
+    return Intl.message(
+      'Delivery Address',
+      name: 'pharmacyOtcDeliveryAddressTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Near customer location`
+  String get pharmacyOtcNearCustomerLocation {
+    return Intl.message(
+      'Near customer location',
+      name: 'pharmacyOtcNearCustomerLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total paid`
+  String get pharmacyOtcTotalPaid {
+    return Intl.message(
+      'Total paid',
+      name: 'pharmacyOtcTotalPaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject Order`
+  String get pharmacyOtcRejectOrder {
+    return Intl.message(
+      'Reject Order',
+      name: 'pharmacyOtcRejectOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a reason. The customer will be notified accordingly`
+  String get pharmacyOtcRejectHint {
+    return Intl.message(
+      'Please select a reason. The customer will be notified accordingly',
+      name: 'pharmacyOtcRejectHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reason For Pausing`
+  String get pharmacyOtcReasonTitle {
+    return Intl.message(
+      'Reason For Pausing',
+      name: 'pharmacyOtcReasonTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temporary Store Closure`
+  String get pharmacyOtcTemporaryStoreClosure {
+    return Intl.message(
+      'Temporary Store Closure',
+      name: 'pharmacyOtcTemporaryStoreClosure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid or Unclear Prescription`
+  String get pharmacyOtcInvalidPrescription {
+    return Intl.message(
+      'Invalid or Unclear Prescription',
+      name: 'pharmacyOtcInvalidPrescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get pharmacyOtcOther {
+    return Intl.message('Other', name: 'pharmacyOtcOther', desc: '', args: []);
+  }
+
+  /// `Other Reason`
+  String get pharmacyOtcOtherReason {
+    return Intl.message(
+      'Other Reason',
+      name: 'pharmacyOtcOtherReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Reject`
+  String get pharmacyOtcConfirmReject {
+    return Intl.message(
+      'Confirm Reject',
+      name: 'pharmacyOtcConfirmReject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Product`
+  String get pharmacyInvDeleteProduct {
+    return Intl.message(
+      'Delete Product',
+      name: 'pharmacyInvDeleteProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No medicines found`
+  String get pharmacyInvNoMedicinesFound {
+    return Intl.message(
+      'No medicines found',
+      name: 'pharmacyInvNoMedicinesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{stock} Left`
+  String pharmacyInvStockLeft(String stock) {
+    return Intl.message(
+      '$stock Left',
+      name: 'pharmacyInvStockLeft',
+      desc: '',
+      args: [stock],
+    );
+  }
+
+  /// `Boxes`
+  String get pharmacyInvBoxes {
+    return Intl.message('Boxes', name: 'pharmacyInvBoxes', desc: '', args: []);
+  }
+
+  /// `Please enter quantity`
+  String get pharmacyInvEnterQuantity {
+    return Intl.message(
+      'Please enter quantity',
+      name: 'pharmacyInvEnterQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid quantity`
+  String get pharmacyInvEnterValidQuantity {
+    return Intl.message(
+      'Please enter a valid quantity',
+      name: 'pharmacyInvEnterValidQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Stock`
+  String get pharmacyInvCurrentStock {
+    return Intl.message(
+      'Current Stock',
+      name: 'pharmacyInvCurrentStock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expiry`
+  String get pharmacyInvExpiry {
+    return Intl.message(
+      'Expiry',
+      name: 'pharmacyInvExpiry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Form`
+  String get pharmacyInvForm {
+    return Intl.message('Form', name: 'pharmacyInvForm', desc: '', args: []);
+  }
+
+  /// `Dosage`
+  String get pharmacyInvDosage {
+    return Intl.message(
+      'Dosage',
+      name: 'pharmacyInvDosage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expiry Date`
+  String get pharmacyInvExpiryDate {
+    return Intl.message(
+      'Expiry Date',
+      name: 'pharmacyInvExpiryDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product Specifications`
+  String get pharmacyInvProductSpecifications {
+    return Intl.message(
+      'Product Specifications',
+      name: 'pharmacyInvProductSpecifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analgesics & Antipyretics`
+  String get pharmacyInvCategoryAnalgesics {
+    return Intl.message(
+      'Analgesics & Antipyretics',
+      name: 'pharmacyInvCategoryAnalgesics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Medical Devices`
+  String get pharmacyInvCategoryMedicalDevices {
+    return Intl.message(
+      'Medical Devices',
+      name: 'pharmacyInvCategoryMedicalDevices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vitamins`
+  String get pharmacyInvCategoryVitamins {
+    return Intl.message(
+      'Vitamins',
+      name: 'pharmacyInvCategoryVitamins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tablet`
+  String get pharmacyInvFormTablet {
+    return Intl.message(
+      'Tablet',
+      name: 'pharmacyInvFormTablet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capsule`
+  String get pharmacyInvFormCapsule {
+    return Intl.message(
+      'Capsule',
+      name: 'pharmacyInvFormCapsule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Syrup`
+  String get pharmacyInvFormSyrup {
+    return Intl.message(
+      'Syrup',
+      name: 'pharmacyInvFormSyrup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Device`
+  String get pharmacyInvFormDevice {
+    return Intl.message(
+      'Device',
+      name: 'pharmacyInvFormDevice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strip`
+  String get pharmacyInvUnitStrip {
+    return Intl.message(
+      'Strip',
+      name: 'pharmacyInvUnitStrip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Box`
+  String get pharmacyInvUnitBox {
+    return Intl.message('Box', name: 'pharmacyInvUnitBox', desc: '', args: []);
+  }
+
+  /// `Bottle`
+  String get pharmacyInvUnitBottle {
+    return Intl.message(
+      'Bottle',
+      name: 'pharmacyInvUnitBottle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Piece`
+  String get pharmacyInvUnitPiece {
+    return Intl.message(
+      'Piece',
+      name: 'pharmacyInvUnitPiece',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item ID is missing`
+  String get pharmacyInvItemIdMissing {
+    return Intl.message(
+      'Item ID is missing',
+      name: 'pharmacyInvItemIdMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Product`
+  String get pharmacyInvEditProduct {
+    return Intl.message(
+      'Edit Product',
+      name: 'pharmacyInvEditProduct',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Medicine Name`
+  String get pharmacyInvMedicineName {
+    return Intl.message(
+      'Medicine Name',
+      name: 'pharmacyInvMedicineName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Paracetamol 500mg`
+  String get pharmacyInvMedicineNameHint {
+    return Intl.message(
+      'e.g. Paracetamol 500mg',
+      name: 'pharmacyInvMedicineNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription Required`
+  String get pharmacyInvPrescriptionRequired {
+    return Intl.message(
+      'Prescription Required',
+      name: 'pharmacyInvPrescriptionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer must provide a prescription`
+  String get pharmacyInvPrescriptionRequiredHint {
+    return Intl.message(
+      'Customer must provide a prescription',
+      name: 'pharmacyInvPrescriptionRequiredHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Camera permission is required to scan barcodes`
+  String get pharmacyInvCameraPermissionBarcode {
+    return Intl.message(
+      'Camera permission is required to scan barcodes',
+      name: 'pharmacyInvCameraPermissionBarcode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Position the barcode within the frame`
+  String get pharmacyInvPositionBarcode {
+    return Intl.message(
+      'Position the barcode within the frame',
+      name: 'pharmacyInvPositionBarcode',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

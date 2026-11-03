@@ -1438,16 +1438,10 @@ class _OutlinedQtyStepper extends StatelessWidget {
             label: '−',
             onTap: () => onChanged(value - 1),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              '$value',
-              style: appFont('Inter', 
-                color: const Color(0xFF1A1A1A),
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
+          _QtyInput(
+            value: value,
+            onChanged: onChanged,
+            color: const Color(0xFF1A1A1A),
           ),
           _OutlinedQtyHit(
             label: '+',
@@ -1507,14 +1501,11 @@ class _QtyStepper extends StatelessWidget {
           onTap: () => onChanged(value - 1),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: Text(
-            '$value',
-            style: appFont('Inter', 
-              color: const Color(0xFF2C2C2C),
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: _QtyInput(
+            value: value,
+            onChanged: onChanged,
+            color: const Color(0xFF2C2C2C),
           ),
         ),
         _QtyButton(
@@ -1524,6 +1515,76 @@ class _QtyStepper extends StatelessWidget {
           onTap: () => onChanged(value + 1),
         ),
       ],
+    );
+  }
+}
+
+/// The quantity between "−" and "+": typeable (number pad, up to 3 digits)
+/// and a fixed width, so the "+" no longer moves at 100+ (test day V18).
+/// The controller clamps the value; the field shows the clamped number.
+class _QtyInput extends StatefulWidget {
+  const _QtyInput({
+    required this.value,
+    required this.onChanged,
+    required this.color,
+  });
+
+  final int value;
+  final ValueChanged<int> onChanged;
+  final Color color;
+
+  @override
+  State<_QtyInput> createState() => _QtyInputState();
+}
+
+class _QtyInputState extends State<_QtyInput> {
+  late final TextEditingController _text =
+      TextEditingController(text: '${widget.value}');
+
+  @override
+  void didUpdateWidget(covariant _QtyInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Keep an empty field while the vendor is retyping (value is then 0).
+    final typed = int.tryParse(_text.text) ?? 0;
+    if (typed != widget.value) {
+      _text.value = TextEditingValue(
+        text: '${widget.value}',
+        selection: TextSelection.collapsed(offset: '${widget.value}'.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      child: TextField(
+        controller: _text,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(3),
+        ],
+        onChanged: (v) => widget.onChanged(int.tryParse(v) ?? 0),
+        style: appFont('Inter',
+          color: widget.color,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+        decoration: const InputDecoration(
+          isDense: true,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(vertical: 6),
+        ),
+      ),
     );
   }
 }

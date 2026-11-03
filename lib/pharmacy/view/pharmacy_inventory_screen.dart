@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_add_product_screen.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_inventory_details_screen.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
@@ -390,11 +391,13 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
           (response.data['status'] == true ||
               response.data['status'].toString() == 'true')) {
         final rawMsg = response.data['message'];
-        String toastMsg = 'Stock updated successfully';
+        String toastMsg = S.current.waterStockUpdatedSuccessfully;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           toastMsg = rawMsg;
         } else if (rawMsg is Map) {
           toastMsg =
+              rawMsg['message_${LocalizationService.currentLanguageCode}']
+                  ?.toString() ??
               rawMsg['message_en']?.toString() ??
               rawMsg['en']?.toString() ??
               toastMsg;
@@ -414,11 +417,13 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
         }
       } else {
         final rawMsg = response.data is Map ? response.data['message'] : null;
-        String errorMsg = 'Failed to update stock';
+        String errorMsg = S.current.waterFailedToUpdateStock;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           errorMsg = rawMsg;
         } else if (rawMsg is Map) {
           errorMsg =
+              rawMsg['message_${LocalizationService.currentLanguageCode}']
+                  ?.toString() ??
               rawMsg['message_en']?.toString() ??
               rawMsg['en']?.toString() ??
               errorMsg;
@@ -427,7 +432,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
       }
     } catch (e) {
       debugPrint("Error updating pharmacy item stock: $e");
-      Fluttertoast.showToast(msg: 'Failed to update stock');
+      Fluttertoast.showToast(msg: S.current.waterFailedToUpdateStock);
     }
   }
 
@@ -471,12 +476,14 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
               response.data['status'].toString() == 'true')) {
         final rawMsg = response.data['message'];
         String toastMsg = targetStatus == 2
-            ? 'Item marked out of stock'
-            : 'Item marked available';
+            ? S.current.waterItemMarkedOutOfStock
+            : S.current.waterItemMarkedAvailable;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           toastMsg = rawMsg;
         } else if (rawMsg is Map) {
           toastMsg =
+              rawMsg['message_${LocalizationService.currentLanguageCode}']
+                  ?.toString() ??
               rawMsg['message_en']?.toString() ??
               rawMsg['en']?.toString() ??
               toastMsg;
@@ -497,11 +504,13 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
         }
       } else {
         final rawMsg = response.data is Map ? response.data['message'] : null;
-        String errorMsg = 'Failed to update availability status';
+        String errorMsg = S.current.waterFailedToUpdateItemStatus;
         if (rawMsg is String && rawMsg.isNotEmpty) {
           errorMsg = rawMsg;
         } else if (rawMsg is Map) {
           errorMsg =
+              rawMsg['message_${LocalizationService.currentLanguageCode}']
+                  ?.toString() ??
               rawMsg['message_en']?.toString() ??
               rawMsg['en']?.toString() ??
               errorMsg;
@@ -510,7 +519,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
       }
     } catch (e) {
       debugPrint("Error updating pharmacy item availability status: $e");
-      Fluttertoast.showToast(msg: 'Failed to update availability status');
+      Fluttertoast.showToast(msg: S.current.waterFailedToUpdateItemStatus);
     }
   }
 
@@ -554,7 +563,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         backgroundColor: Colors.white,
         title: Text(
-          'Delete Product',
+          S.of(context).pharmacyInvDeleteProduct,
           style: appFont('Inter', 
             fontWeight: FontWeight.w700,
             fontSize: 18,
@@ -562,7 +571,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
           ),
         ),
         content: Text(
-          'Are you sure you want to delete "${item.name}"?',
+          S.of(context).waterConfirmDeleteNamedItem(item.name),
           style: appFont('Inter', 
             fontSize: 14,
             color: const Color(0xFF6B7280),
@@ -572,7 +581,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              'Cancel',
+              S.of(context).cancel,
               style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w600,
@@ -582,7 +591,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
-              'Delete',
+              S.of(context).delete,
               style: appFont('Inter', 
                 color: const Color(0xFFEF4444),
                 fontWeight: FontWeight.w600,
@@ -627,7 +636,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
         Fluttertoast.showToast(
           msg: rawMsg is String && rawMsg.isNotEmpty
               ? rawMsg
-              : 'Product deleted successfully',
+              : S.current.waterProductDeletedSuccessfully,
         );
         _fetchInventory();
       } else {
@@ -635,14 +644,14 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
         Fluttertoast.showToast(
           msg: rawMsg is String && rawMsg.isNotEmpty
               ? rawMsg
-              : 'Failed to delete product',
+              : S.current.waterFailedToDeleteProduct,
         );
       }
     } catch (e) {
       debugPrint("Error deleting pharmacy menu item: $e");
       final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
       Fluttertoast.showToast(
-        msg: errorMsg.isNotEmpty ? errorMsg : 'Failed to delete product',
+        msg: errorMsg.isNotEmpty ? errorMsg : S.current.waterFailedToDeleteProduct,
       );
     }
   }
@@ -724,7 +733,7 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
                         child: Text(
-                          'No medicines found',
+                          S.of(context).pharmacyInvNoMedicinesFound,
                           style: appFont('Inter', 
                             color: const Color(0xFF9CA3AF),
                             fontWeight: FontWeight.w500,
@@ -1131,8 +1140,12 @@ class _LowStockAlertCard extends StatelessWidget {
               stockText:
                   displayItems[i].stockLabel != null &&
                       displayItems[i].stockLabel!.isNotEmpty
-                  ? '${displayItems[i].stockLabel} Left'
-                  : '${displayItems[i].boxes} ${displayItems[i].unitName ?? 'Boxes'} Left',
+                  ? S.of(context).pharmacyInvStockLeft(
+                      '${displayItems[i].stockLabel}',
+                    )
+                  : S.of(context).pharmacyInvStockLeft(
+                      '${displayItems[i].boxes} ${displayItems[i].unitName != null ? pharmacyOptionLabel(context, displayItems[i].unitName!) : S.of(context).pharmacyInvBoxes}',
+                    ),
               onUpdate: () => onUpdate?.call(displayItems[i]),
             ),
           ],
@@ -1144,7 +1157,7 @@ class _LowStockAlertCard extends StatelessWidget {
               children: [
                 if (remaining > 0)
                   Text(
-                    '+$remaining More Products',
+                    S.of(context).waterMoreProducts('$remaining'),
                     style: appFont('Inter', 
                       color: const Color(0xFF6B7280),
                       fontWeight: FontWeight.w500,
@@ -1157,7 +1170,7 @@ class _LowStockAlertCard extends StatelessWidget {
                 GestureDetector(
                   onTap: onSeeAll,
                   child: Text(
-                    'See All',
+                    S.of(context).seeAll,
                     style: appFont('Inter', 
                       color: _button,
                       fontWeight: FontWeight.w600,
@@ -1231,7 +1244,7 @@ class _LowStockRow extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              'Low Stock',
+              S.of(context).waterLowStock,
               style: appFont('Inter', 
                 color: _LowStockAlertCard._amber,
                 fontWeight: FontWeight.w600,
@@ -1256,7 +1269,7 @@ class _LowStockRow extends StatelessWidget {
               shape: const StadiumBorder(),
             ),
             child: Text(
-              'Update Stock',
+              S.of(context).waterUpdateStock,
               style: appFont('Inter', 
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -1280,8 +1293,8 @@ class _StockConfirmDialog extends StatelessWidget {
         ? const Color(0xFF22C55E)
         : const Color(0xFFFF4D4D);
     final message = markAvailable
-        ? 'Are you sure you want to mark this item as available?'
-        : 'Are you sure you want to mark this item as out of stock?';
+        ? S.of(context).waterConfirmMarkAvailable
+        : S.of(context).waterConfirmMarkOutOfStock;
     return Dialog(
       backgroundColor: Colors.white,
       elevation: 0,
@@ -1332,7 +1345,7 @@ class _StockConfirmDialog extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _ConfirmButton(
-                      label: 'No',
+                      label: S.of(context).no,
                       filled: false,
                       color: const Color(0xFFFF5216),
                       onTap: () => Navigator.of(context).pop(false),
@@ -1341,7 +1354,7 @@ class _StockConfirmDialog extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: _ConfirmButton(
-                      label: 'Yes',
+                      label: S.of(context).yes,
                       filled: true,
                       color: yesColor,
                       onTap: () => Navigator.of(context).pop(true),
@@ -1376,12 +1389,12 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
   void _submit() {
     final text = _quantity.text.trim();
     if (text.isEmpty) {
-      Fluttertoast.showToast(msg: 'Please enter quantity');
+      Fluttertoast.showToast(msg: S.of(context).pharmacyInvEnterQuantity);
       return;
     }
     final value = int.tryParse(text);
     if (value == null || value < 0) {
-      Fluttertoast.showToast(msg: 'Please enter a valid quantity');
+      Fluttertoast.showToast(msg: S.of(context).pharmacyInvEnterValidQuantity);
       return;
     }
     Navigator.of(context).pop(value);
@@ -1405,7 +1418,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
               children: [
                 Expanded(
                   child: Text(
-                    'Update Stock',
+                    S.of(context).waterUpdateStock,
                     style: appFont('Inter', 
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w700,
@@ -1436,7 +1449,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Enter Quantity',
+              S.of(context).waterEnterQuantity,
               style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
@@ -1491,7 +1504,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                         ),
                       ),
                       child: Text(
-                        'Cancel',
+                        S.of(context).cancel,
                         style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
@@ -1515,7 +1528,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                         ),
                       ),
                       child: Text(
-                        'Update',
+                        S.of(context).update,
                         style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
@@ -1724,7 +1737,7 @@ class _CategoryRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'All Categories',
+                S.of(context).allCategories,
                 style: appFont('Inter', 
                   color: const Color(0xFF374151),
                   fontWeight: FontWeight.w500,
@@ -1761,7 +1774,7 @@ class _CategoryRow extends StatelessWidget {
           ),
           icon: const Icon(Icons.add, size: 18),
           label: Text(
-            'Add Item',
+            S.of(context).addItem,
             style: appFont('Inter', 
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -1806,9 +1819,9 @@ class _ProductCard extends StatelessWidget {
         ? const Color(0xFFFFEBEB)
         : (isLow ? const Color(0xFFFFF7ED) : const Color(0xFFE9FAEF));
     final stockLabel = switch (item.status) {
-      _StockStatus.inStock => 'In Stock',
-      _StockStatus.lowStock => 'Low Stock',
-      _StockStatus.outOfStock => 'Out Of Stock',
+      _StockStatus.inStock => S.of(context).waterInStock,
+      _StockStatus.lowStock => S.of(context).waterLowStock,
+      _StockStatus.outOfStock => S.of(context).outOfStock,
     };
     final actionColor = _out
         ? const Color.fromARGB(255, 29, 172, 81)
@@ -1852,7 +1865,7 @@ class _ProductCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                'ID: # ${item.id}',
+                                S.of(context).waterIdLabel('# ${item.id}'),
                                 style: appFont('Inter', 
                                   color: const Color(0xFF9CA3AF),
                                   fontWeight: FontWeight.w500,
@@ -1932,7 +1945,7 @@ class _ProductCard extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Edit',
+                                            S.of(context).edit,
                                             style: appFont('Inter', 
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
@@ -1955,7 +1968,7 @@ class _ProductCard extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Delete',
+                                            S.of(context).delete,
                                             style: appFont('Inter', 
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
@@ -2003,7 +2016,7 @@ class _ProductCard extends StatelessWidget {
                                             ),
                                           ),
                                           child: Text(
-                                            item.subtitle,
+                                            pharmacyOptionLabel(context, item.subtitle),
                                             maxLines: 1,
                                             softWrap: false,
                                             style: appFont('Inter', 
@@ -2017,7 +2030,7 @@ class _ProductCard extends StatelessWidget {
                                       )
                                     else
                                       Text(
-                                        item.subtitle,
+                                        pharmacyOptionLabel(context, item.subtitle),
                                         style: appFont('Inter', 
                                           color: const Color(0xFF9CA3AF),
                                           fontWeight: FontWeight.w400,
@@ -2091,8 +2104,8 @@ class _ProductCard extends StatelessWidget {
                                     Text(
                                       item.unitName != null &&
                                               item.unitName!.isNotEmpty
-                                          ? item.unitName!
-                                          : 'Boxes',
+                                          ? pharmacyOptionLabel(context, item.unitName!)
+                                          : S.of(context).pharmacyInvBoxes,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: appFont('Inter', 
@@ -2140,7 +2153,9 @@ class _ProductCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           child: Text(
-                            _out ? 'Mark Available' : 'Mark Out Of Stock',
+                            _out
+                                ? S.of(context).waterMarkAvailable
+                                : S.of(context).waterMarkOutOfStock,
                             maxLines: 1,
                             softWrap: false,
                             style: appFont('Inter', 
@@ -2168,7 +2183,7 @@ class _ProductCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           child: Text(
-                            'Update Stock',
+                            S.of(context).waterUpdateStock,
                             style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -2218,7 +2233,7 @@ class _ProductCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(23, 8, 18, 8),
                   child: Text(
-                    'View Details',
+                    S.of(context).viewDetails,
                     style: appFont('Inter', 
                       color: const Color(0xFFFF5216),
                       fontWeight: FontWeight.w500,

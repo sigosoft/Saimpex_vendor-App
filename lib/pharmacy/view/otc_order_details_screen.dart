@@ -293,31 +293,31 @@ class _OtcOrderDetailsPage extends StatelessWidget {
     if (selfPickup) {
       return [
         _TimelineStep(
-          title: 'Order Received',
+          title: S.current.pharmacyOtcOrderReceived,
           subtitle: receivedSubtitle,
           icon: Icons.check_rounded,
           completed: true,
         ),
         _TimelineStep(
-          title: 'Order Accepted',
+          title: S.current.orderAccepted,
           subtitle: acceptedSubtitle,
           icon: Icons.check_rounded,
           completed: accepted || preparing || ready || delivered,
         ),
         _TimelineStep(
-          title: 'Preparing',
+          title: S.current.preparing,
           subtitle: preparingSubtitle,
           icon: Icons.assignment_outlined,
           completed: preparing || ready || delivered,
         ),
         _TimelineStep(
-          title: 'Ready for Pickup',
+          title: S.current.pharmacyOtcReadyForPickup,
           subtitle: readySubtitle,
           icon: Icons.check_rounded,
           completed: ready || delivered,
         ),
         _TimelineStep(
-          title: 'Picked Up by Customer',
+          title: S.current.pharmacyOtcPickedUpByCustomer,
           subtitle: deliveredSubtitle,
           icon: Icons.check_rounded,
           completed: delivered,
@@ -327,47 +327,47 @@ class _OtcOrderDetailsPage extends StatelessWidget {
 
     return [
       _TimelineStep(
-        title: 'Order Received',
+        title: S.current.pharmacyOtcOrderReceived,
         subtitle: receivedSubtitle,
         icon: Icons.check_rounded,
         completed: true,
       ),
       _TimelineStep(
-        title: 'Order Accepted',
+        title: S.current.orderAccepted,
         subtitle: acceptedSubtitle,
         icon: Icons.check_rounded,
         completed:
             accepted || preparing || ready || partnerAssigned || delivered,
       ),
       _TimelineStep(
-        title: 'Preparing Medicines',
+        title: S.current.pharmacyOtcPreparingMedicines,
         subtitle: preparingSubtitle,
         icon: Icons.medication_outlined,
         customIcon: _TimelineCustomIcon.capsule,
         completed: preparing || ready || partnerAssigned || delivered,
       ),
       _TimelineStep(
-        title: 'Ready for Dispatch',
+        title: S.current.pharmacyOtcReadyForDispatch,
         subtitle: readySubtitle,
         icon: Icons.inventory_2_outlined,
         customIcon: _TimelineCustomIcon.openBox,
         completed: ready || partnerAssigned || delivered,
       ),
       _TimelineStep(
-        title: 'Delivery Partner Assigned',
+        title: S.current.pharmacyOtcPartnerAssigned,
         subtitle: readySubtitle,
         icon: Icons.delivery_dining,
         customIcon: _TimelineCustomIcon.scooter,
         completed: partnerAssigned || delivered,
       ),
       _TimelineStep(
-        title: 'Picked Up by Rider',
+        title: S.current.pharmacyOtcPickedUpByRider,
         subtitle: readySubtitle,
         icon: Icons.check_rounded,
         completed: delivered,
       ),
       _TimelineStep(
-        title: 'Order Delivered',
+        title: S.current.pharmacyOtcOrderDelivered,
         subtitle: deliveredSubtitle,
         icon: Icons.home_outlined,
         completed: delivered,
@@ -437,7 +437,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                     context,
                                     customerName: (order?.customerName?.trim().isNotEmpty == true)
                                         ? order!.customerName!.trim()
-                                        : (name.isNotEmpty ? name : 'Customer'),
+                                        : (name.isNotEmpty ? name : S.of(context).quoteCustomer),
                                     customerId: order?.userId,
                                   ),
                                 ),
@@ -447,7 +447,9 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                 ],
                                 const SizedBox(height: 18),
                                 Text(
-                                  'ORDER ITEMS (${items.isNotEmpty ? items.length : (orderDetailData != null ? 0 : 2)})',
+                                  S.of(context).quoteOrderItems(
+                                    '${items.isNotEmpty ? items.length : (orderDetailData != null ? 0 : 2)}',
+                                  ),
                                   style: appFont('Inter', 
                                     color: _section,
                                     fontWeight: FontWeight.w600,
@@ -486,7 +488,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      'No items found',
+                                      S.of(context).noItemsFound,
                                       style: appFont('Inter', 
                                         color: const Color(0xFF8E8E8E),
                                         fontSize: 13,
@@ -510,7 +512,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                 ],
                                 const SizedBox(height: 18),
                                 Text(
-                                  'PAYMENT SUMMARY',
+                                  S.of(context).paymentSummary.toUpperCase(),
                                   style: appFont('Inter', 
                                     color: _section,
                                     fontWeight: FontWeight.w600,
@@ -536,8 +538,8 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                           ready ||
                                           delivered ||
                                           cancelled
-                                      ? 'Order Timeline'
-                                      : 'ORDER TIMELINE',
+                                      ? S.of(context).orderTimeline
+                                      : S.of(context).orderTimeline.toUpperCase(),
                                   style: appFont('Inter', 
                                     color:
                                         selfPickup ||
@@ -603,7 +605,7 @@ class _OtcDetailsHeader extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Order Details',
+              S.of(context).orderDetails,
               style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
@@ -749,7 +751,7 @@ class _OtcCustomerCard extends StatelessWidget {
               const Icon(Icons.person_search_rounded, color: _accent, size: 18),
               const SizedBox(width: 6),
               Text(
-                'CUSTOMER',
+                S.of(context).pharmacyOtcCustomerHeader,
                 style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
@@ -779,16 +781,16 @@ class _OtcCustomerCard extends StatelessWidget {
                 ),
                 child: Text(
                   cancelled
-                      ? 'CANCELLED'
+                      ? S.of(context).pharmacyOtcBadgeCancelled
                       : (delivered
-                            ? 'DELIVERED'
+                            ? S.of(context).pharmacyOtcBadgeDelivered
                             : ready
-                            ? 'READY'
+                            ? S.of(context).pharmacyOtcBadgeReady
                             : preparing
-                            ? 'PREPARING'
+                            ? S.of(context).pharmacyOtcBadgePreparing
                             : accepted
-                            ? 'ACCEPTED'
-                            : 'NEW'),
+                            ? S.of(context).pharmacyOtcBadgeAccepted
+                            : S.of(context).pharmacyOtcBadgeNew),
                   style: appFont('Inter', 
                     color: Colors.white,
                     fontSize:
@@ -895,7 +897,7 @@ class _OtcCustomerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'REQUEST ID',
+                        S.of(context).pharmacyOtcRequestIdHeader,
                         style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
@@ -945,7 +947,7 @@ class _OtcCustomerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'DELIVERY TYPE',
+                        S.of(context).pharmacyOtcDeliveryTypeHeader,
                         style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
@@ -979,7 +981,7 @@ class _OtcCustomerCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Self Pickup',
+                                S.of(context).selfPickup,
                                 style: appFont('Inter', 
                                   color: _blue,
                                   fontWeight: FontWeight.w600,
@@ -1012,7 +1014,7 @@ class _OtcCustomerCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
-                                'Delivery',
+                                S.of(context).delivery,
                                 style: appFont('Inter', 
                                   color: _accent,
                                   fontWeight: FontWeight.w700,
@@ -1036,7 +1038,7 @@ class _OtcCustomerCard extends StatelessWidget {
                 const Icon(Icons.location_on_rounded, color: _accent, size: 18),
                 const SizedBox(width: 6),
                 Text(
-                  'DELIVERY ADDRESS',
+                  S.of(context).deliveryAddress.toUpperCase(),
                   style: appFont('Inter', 
                     color: _accent,
                     fontWeight: FontWeight.w600,
@@ -1078,7 +1080,7 @@ class _OtcCustomerCard extends StatelessWidget {
                         Text(
                           address != null && address!.trim().isNotEmpty
                               ? address!
-                              : 'Delivery Address',
+                              : S.of(context).pharmacyOtcDeliveryAddressTitle,
                           style: appFont('Inter', 
                             color: const Color(0xFF1A1A1A),
                             fontWeight: FontWeight.w700,
@@ -1090,7 +1092,7 @@ class _OtcCustomerCard extends StatelessWidget {
                         Text(
                           address != null && address!.trim().isNotEmpty
                               ? ''
-                              : 'Near customer location',
+                              : S.of(context).pharmacyOtcNearCustomerLocation,
                           style: appFont('Inter', 
                             color: _meta,
                             fontWeight: FontWeight.w400,
@@ -1269,20 +1271,20 @@ class _OtcPaymentSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _OtcPayRow(label: 'Item total', value: _formatAmount(itemTotal)),
+          _OtcPayRow(label: S.of(context).quoteItemTotal, value: _formatAmount(itemTotal)),
           const SizedBox(height: 12),
-          _OtcPayRow(label: 'Delivery fee', value: _formatAmount(deliveryFee)),
+          _OtcPayRow(label: S.of(context).deliveryFeeLabel, value: _formatAmount(deliveryFee)),
           const SizedBox(height: 12),
-          _OtcPayRow(label: 'Tax', value: _formatAmount(tax)),
+          _OtcPayRow(label: S.of(context).tax, value: _formatAmount(tax)),
           const SizedBox(height: 12),
           _OtcPayRow(
-            label: 'Payment type',
+            label: S.of(context).paymentType,
             value: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
             valueColor: _orange,
           ),
           if (paymentOn != null && paymentOn!.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
-            _OtcPayRow(label: 'Payment on', value: paymentOn!, valueSize: 12),
+            _OtcPayRow(label: S.of(context).paymentOn, value: paymentOn!, valueSize: 12),
           ],
           const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1, color: Color(0xFF5C5C5C)),
@@ -1290,7 +1292,7 @@ class _OtcPaymentSummary extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Total paid',
+                S.of(context).pharmacyOtcTotalPaid,
                 style: appFont('Inter', 
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -1380,10 +1382,10 @@ class _OtcDetailsActions extends StatelessWidget {
         ),
         child: Text(
           preparing
-              ? 'Mark as Ready'
+              ? S.of(context).markAsReady
               : accepted
-              ? 'Prepare Order'
-              : 'Accept Order',
+              ? S.of(context).prepareOrder
+              : S.of(context).acceptOrder,
           style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
         ),
       ),
@@ -1416,7 +1418,7 @@ class _OtcDetailsActions extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Reject',
+                        S.of(context).reject,
                         style: appFont('Inter', 
                           fontWeight: FontWeight.w700,
                           fontSize: 15,

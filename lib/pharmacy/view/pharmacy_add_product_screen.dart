@@ -12,6 +12,40 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/generic_equivalent_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
+/// The label shown for one of the fixed Category / Form / Unit options (and
+/// the same names when the server sends them in English). The option values
+/// stay English because they're mapped to ids for the API; only the label is
+/// translated (test day V17). Anything else is shown as it came.
+String pharmacyOptionLabel(BuildContext context, String value) {
+  final s = S.of(context);
+  switch (value.trim().toLowerCase()) {
+    case 'analgesics & antipyretics':
+      return s.pharmacyInvCategoryAnalgesics;
+    case 'medical devices':
+      return s.pharmacyInvCategoryMedicalDevices;
+    case 'vitamins':
+      return s.pharmacyInvCategoryVitamins;
+    case 'tablet':
+      return s.pharmacyInvFormTablet;
+    case 'capsule':
+      return s.pharmacyInvFormCapsule;
+    case 'syrup':
+      return s.pharmacyInvFormSyrup;
+    case 'device':
+      return s.pharmacyInvFormDevice;
+    case 'strip':
+      return s.pharmacyInvUnitStrip;
+    case 'box':
+      return s.pharmacyInvUnitBox;
+    case 'bottle':
+      return s.pharmacyInvUnitBottle;
+    case 'piece':
+      return s.pharmacyInvUnitPiece;
+    default:
+      return value;
+  }
+}
+
 class PharmacyAddProductScreen extends StatefulWidget {
   const PharmacyAddProductScreen({
     super.key,
@@ -296,7 +330,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select Image Source',
+                S.of(context).waterSelectImageSource,
                 style: appFont('Inter', 
                   color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
@@ -320,7 +354,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                   ),
                 ),
                 title: Text(
-                  'Camera',
+                  S.of(context).camera,
                   style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -328,7 +362,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                   ),
                 ),
                 subtitle: Text(
-                  'Take a new photo',
+                  S.of(context).waterTakeAPhoto,
                   style: appFont('Inter', 
                     fontSize: 12,
                     color: const Color(0xFF6B7280),
@@ -353,7 +387,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                   ),
                 ),
                 title: Text(
-                  'Gallery',
+                  S.of(context).gallery,
                   style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -361,7 +395,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                   ),
                 ),
                 subtitle: Text(
-                  'Pick one or more images from gallery',
+                  S.of(context).waterPickImagesFromGallery,
                   style: appFont('Inter', 
                     fontSize: 12,
                     color: const Color(0xFF6B7280),
@@ -587,7 +621,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         widget.initialData?['id']?.toString() ??
         widget.initialData?['item_id']?.toString();
     if (itemId == null || itemId.isEmpty) {
-      Fluttertoast.showToast(msg: 'Item ID is missing');
+      Fluttertoast.showToast(msg: S.of(context).pharmacyInvItemIdMissing);
       return;
     }
 
@@ -718,7 +752,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         final rawMsg = response.data['message'];
         final msg = rawMsg is String && rawMsg.isNotEmpty
             ? rawMsg
-            : 'Pharmacy menu item updated';
+            : S.current.itemUpdatedSuccessfully;
         await _saveGenericName(_menuId);
         Fluttertoast.showToast(msg: msg);
         if (mounted) {
@@ -729,14 +763,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         Fluttertoast.showToast(
           msg: rawMsg is String && rawMsg.isNotEmpty
               ? rawMsg
-              : 'Failed to update item',
+              : S.current.failedToUpdateItem,
         );
       }
     } catch (e) {
       debugPrint("Error updating pharmacy menu item: $e");
       final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
       Fluttertoast.showToast(
-        msg: errorMsg.isNotEmpty ? errorMsg : 'Failed to update item',
+        msg: errorMsg.isNotEmpty ? errorMsg : S.current.failedToUpdateItem,
       );
     } finally {
       if (mounted) {
@@ -750,12 +784,12 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
 
     final name = _name.text.trim();
     if (name.isEmpty) {
-      Fluttertoast.showToast(msg: 'Please enter product name');
+      Fluttertoast.showToast(msg: S.of(context).waterPleaseEnterProductName);
       return;
     }
 
     if (_selectedImages.isEmpty) {
-      Fluttertoast.showToast(msg: 'Please select product image');
+      Fluttertoast.showToast(msg: S.of(context).waterPleaseSelectProductImage);
       return;
     }
 
@@ -866,7 +900,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         final rawMsg = response.data['message'];
         final msg = rawMsg is String && rawMsg.isNotEmpty
             ? rawMsg
-            : 'Pharmacy menu item added';
+            : S.current.waterProductAddedSuccessfully;
         final data = response.data['data'];
         final newItemId = data is Map ? data['pharmacy_menu_item_id'] : null;
         if (_hasGenericFields && newItemId != null) {
@@ -881,14 +915,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
         Fluttertoast.showToast(
           msg: rawMsg is String && rawMsg.isNotEmpty
               ? rawMsg
-              : 'Failed to add item',
+              : S.current.waterFailedToAddProduct,
         );
       }
     } catch (e) {
       debugPrint("Error adding pharmacy menu item: $e");
       final errorMsg = e.toString().replaceFirst('Exception: ', '').trim();
       Fluttertoast.showToast(
-        msg: errorMsg.isNotEmpty ? errorMsg : 'Failed to add item',
+        msg: errorMsg.isNotEmpty ? errorMsg : S.current.waterFailedToAddProduct,
       );
     } finally {
       if (mounted) {
@@ -918,7 +952,9 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
               _Header(
-                title: widget.isEdit ? 'Edit Product' : 'Add Product',
+                title: widget.isEdit
+                    ? S.of(context).pharmacyInvEditProduct
+                    : S.of(context).waterAddProduct,
                 onBack: () => Navigator.of(context).maybePop(),
               ),
               Expanded(
@@ -928,14 +964,18 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const _FieldLabel(
-                          'Product Image',
-                          color: Color(0xFF4B5563),
+                        _FieldLabel(
+                          S.of(context).waterProductImage,
+                          color: const Color(0xFF4B5563),
                         ),
                         if ((_existingImages.length + _selectedImages.length) >
                             0)
                           Text(
-                            '${_existingImages.length + _selectedImages.length} image${(_existingImages.length + _selectedImages.length) > 1 ? "s" : ""} selected',
+                            (_existingImages.length + _selectedImages.length) > 1
+                                ? S.of(context).waterImagesSelected(
+                                    '${_existingImages.length + _selectedImages.length}',
+                                  )
+                                : S.of(context).waterOneImageSelected,
                             style: appFont('Inter', 
                               color: PharmacyAddProductScreen.orange,
                               fontWeight: FontWeight.w600,
@@ -962,14 +1002,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                     const SizedBox(height: 14),
                     _SectionCard(
                       icon: Icons.info_outline,
-                      title: 'BASIC INFORMATION',
+                      title: S.of(context).waterBasicInformation,
                       child: Column(
                         children: [
                           Row(
                             children: [
                               Expanded(
                                 child: _Labeled(
-                                  label: 'Category',
+                                  label: S.of(context).category,
                                   child: _SelectCategoryField(
                                     value: _category,
                                     items: [
@@ -993,7 +1033,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: _Labeled(
-                                  label: 'Form',
+                                  label: S.of(context).pharmacyInvForm,
                                   child: _SelectCategoryField(
                                     value: _form,
                                     items: [
@@ -1023,11 +1063,11 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           const SizedBox(height: 12),
                           _Labeled(
                             label: widget.isEdit
-                                ? 'Medicine Name'
-                                : 'Product Name (English)',
+                                ? S.of(context).pharmacyInvMedicineName
+                                : S.of(context).waterProductNameEnglish,
                             child: _InputField(
                               controller: _name,
-                              hint: 'e.g. Paracetamol 500mg',
+                              hint: S.of(context).pharmacyInvMedicineNameHint,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -1078,7 +1118,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                             children: [
                               Expanded(
                                 child: _Labeled(
-                                  label: 'Dosage',
+                                  label: S.of(context).pharmacyInvDosage,
                                   child: _SelectCategoryField(
                                     value: _dosage,
                                     items: [
@@ -1102,7 +1142,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: _Labeled(
-                                  label: 'Unit',
+                                  label: S.of(context).quoteUnit,
                                   child: _SelectCategoryField(
                                     value: _unit,
                                     items: [
@@ -1131,7 +1171,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           ),
                           const SizedBox(height: 12),
                           _Labeled(
-                            label: 'Expiry Date',
+                            label: S.of(context).pharmacyInvExpiryDate,
                             child: _InputField(
                               controller: _expiry,
                               hint: 'mm/dd/yyyy',
@@ -1139,10 +1179,10 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           ),
                           const SizedBox(height: 12),
                           _Labeled(
-                            label: 'Barcode',
+                            label: S.of(context).waterBarcode,
                             child: _InputField(
                               controller: _barcode,
-                              hint: 'Scan or enter barcode',
+                              hint: S.of(context).waterScanOrEnterBarcode,
                               trailing: _BarcodeMark(onTap: _scanBarcode),
                             ),
                           ),
@@ -1162,12 +1202,14 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                     const SizedBox(height: 14),
                     _SectionCard(
                       image: 'lib/pharmacy/Assets/images/currency.png',
-                      title: 'PRICING (MRU)',
+                      title: S.of(context).waterPricingMru,
                       child: Row(
                         children: [
                           Expanded(
                             child: _Labeled(
-                              label: widget.isEdit ? 'Price' : 'Selling Price',
+                              label: widget.isEdit
+                                  ? S.of(context).price
+                                  : S.of(context).waterSellingPrice,
                               child: _PriceField(controller: _selling),
                             ),
                           ),
@@ -1175,8 +1217,8 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                           Expanded(
                             child: _Labeled(
                               label: widget.isEdit
-                                  ? 'Discount Price'
-                                  : 'Offer Price',
+                                  ? S.of(context).discountPrice
+                                  : S.of(context).waterOfferPrice,
                               child: _PriceField(controller: _offer),
                             ),
                           ),
@@ -1188,13 +1230,15 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                       leading: const _InventoryIcon(),
                       background: const Color(0xFFFFF8F6),
                       titleColor: const Color(0xFF3F4753),
-                      title: 'INVENTORY CONTROL',
+                      title: S.of(context).waterInventoryControl,
                       child: widget.isEdit
                           ? _Labeled(
-                              label: 'Available Stock',
+                              label: S.of(context).waterAvailableStock,
                               child: _InputField(
                                 controller: _stock,
-                                suffix: _unit,
+                                suffix: _unit == null
+                                    ? null
+                                    : pharmacyOptionLabel(context, _unit!),
                                 suffixColor: const Color(0xFF1F2937),
                                 keyboard: TextInputType.number,
                               ),
@@ -1203,10 +1247,12 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                               children: [
                                 Expanded(
                                   child: _Labeled(
-                                    label: 'Available Stock',
+                                    label: S.of(context).waterAvailableStock,
                                     child: _InputField(
                                       controller: _stock,
-                                      suffix: _unit,
+                                      suffix: _unit == null
+                                    ? null
+                                    : pharmacyOptionLabel(context, _unit!),
                                       suffixColor: const Color(0xFF1F2937),
                                       keyboard: TextInputType.number,
                                     ),
@@ -1215,7 +1261,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: _Labeled(
-                                    label: 'Low Stock Alert',
+                                    label: S.of(context).waterLowStockAlert,
                                     child: _InputField(
                                       controller: _lowStock,
                                       keyboard: TextInputType.number,
@@ -1293,7 +1339,7 @@ class _BottomActions extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  isEdit ? 'Cancel' : 'Reset',
+                  isEdit ? S.of(context).cancel : S.of(context).reset,
                   style: appFont('Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -1318,7 +1364,7 @@ class _BottomActions extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  isEdit ? 'Update' : 'Save Product',
+                  isEdit ? S.of(context).update : S.of(context).waterSaveProduct,
                   style: appFont('Inter', 
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -1408,7 +1454,7 @@ class _UploadBox extends StatelessWidget {
                 const _UploadIcon(),
                 const SizedBox(height: 12),
                 Text(
-                  'Tap to upload image',
+                  S.of(context).waterTapToUploadImage,
                   style: appFont('Inter', 
                     color: const Color(0xFF394452),
                     fontWeight: FontWeight.w700,
@@ -1417,7 +1463,7 @@ class _UploadBox extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'PNG, JPG up to 5MB',
+                  S.of(context).waterImageFormatHint,
                   style: appFont('Inter', 
                     color: const Color(0xFF8A8B98),
                     fontWeight: FontWeight.w400,
@@ -1491,7 +1537,7 @@ class _ImagesPreviewList extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Add More',
+                          S.of(context).waterAddMore,
                           style: appFont('Inter', 
                             color: const Color(0xFF394452),
                             fontWeight: FontWeight.w600,
@@ -1770,7 +1816,7 @@ class _PrescriptionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Prescription Requires',
+                  S.of(context).pharmacyInvPrescriptionRequired,
                   style: appFont('Inter', 
                     color: const Color(0xFF1C1D1B),
                     fontWeight: FontWeight.w700,
@@ -1780,7 +1826,7 @@ class _PrescriptionCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Customer must provide a prescription',
+                  S.of(context).pharmacyInvPrescriptionRequiredHint,
                   style: appFont('Inter', 
                     color: const Color(0xFF53524F),
                     fontWeight: FontWeight.w400,
@@ -1873,7 +1919,7 @@ class _SelectCategoryField extends StatelessWidget {
             value: item,
             height: 40,
             child: Text(
-              item,
+              pharmacyOptionLabel(context, item),
               style: appFont('Inter', 
                 color: const Color(0xFF1F2937),
                 fontWeight: FontWeight.w500,
@@ -1901,7 +1947,9 @@ class _SelectCategoryField extends StatelessWidget {
             focusedBorder: _border,
           ),
           child: Text(
-            value ?? 'Select Category',
+            value == null
+                ? S.of(context).selectCategory
+                : pharmacyOptionLabel(context, value!),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: appFont('Inter', 
@@ -1980,7 +2028,7 @@ class _DescriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Product Description',
+            S.of(context).waterProductDescription,
             style: appFont('Inter', 
               color: const Color(0xFF636973),
               fontWeight: FontWeight.w600,
@@ -2013,7 +2061,7 @@ class _DescriptionCard extends StatelessWidget {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                hintText: 'Enter Description',
+                hintText: S.of(context).cleaningEnterDescription,
                 hintStyle: appFont('Inter', 
                   color: const Color(0xFF7C828F),
                   fontWeight: FontWeight.w500,
@@ -2177,7 +2225,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
         foregroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'Scan barcode',
+          S.of(context).scanBarcode,
           style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 16),
         ),
       ),
@@ -2191,7 +2239,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    'Camera permission is required to scan barcodes',
+                    S.of(context).pharmacyInvCameraPermissionBarcode,
                     textAlign: TextAlign.center,
                     style: appFont('Inter', color: Colors.white, fontSize: 15),
                   ),
@@ -2217,7 +2265,7 @@ class _BarcodeScanPageState extends State<_BarcodeScanPage> {
             right: 24,
             bottom: 48,
             child: Text(
-              'Position the barcode within the frame',
+              S.of(context).pharmacyInvPositionBarcode,
               textAlign: TextAlign.center,
               style: appFont('Inter', color: Colors.white, fontSize: 14),
             ),
