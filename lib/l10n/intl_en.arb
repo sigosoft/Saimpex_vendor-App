@@ -2304,7 +2304,9 @@
   "gasEmptyCylindersToCollect": "{count} empty cylinders to collect",
   "@gasEmptyCylindersToCollect": {
     "placeholders": {
-      "count": {"type": "String"}
+      "count": {
+        "type": "String"
+      }
     }
   },
   "saimpexSupport": "SAIMPEX Support",
@@ -2315,7 +2317,9 @@
   "supportOrderCode": "Order #{code}",
   "@supportOrderCode": {
     "placeholders": {
-      "code": {"type": "String"}
+      "code": {
+        "type": "String"
+      }
     }
   },
   "pharmacyGenericName": "Generic name",
@@ -2331,7 +2335,11 @@
   "productHiddenForever": "Hidden until you show it",
   "productHiddenUntil": "Hidden until {time}",
   "@productHiddenUntil": {
-    "placeholders": {"time": {"type": "String"}}
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "hideProduct": "Hide",
   "showProductNow": "Show now",
@@ -2348,20 +2356,36 @@
   "defaultPreparationTime": "Preparation time",
   "minutesShort": "{minutes} min",
   "@minutesShort": {
-    "placeholders": {"minutes": {"type": "String"}}
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeLabel": "Delivery fee",
   "deliveryFeePerKm": "{value} MRU per km",
   "@deliveryFeePerKm": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFixed": "{value} MRU",
   "@deliveryFeeFixed": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeePercent": "{value}% of the order",
   "@deliveryFeePercent": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFree": "Free",
   "deliveryFeePaidBy": "Delivery fee paid by",
@@ -2370,7 +2394,11 @@
   "feePaidBySaimpex": "SAIMPEX",
   "feePaidSplit": "Split: your store {percent}%, the customer the rest",
   "@feePaidSplit": {
-    "placeholders": {"percent": {"type": "String"}}
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
   },
   "deliveryModel": "Drivers",
   "deliveryModelBoth": "Your drivers and SAIMPEX drivers",
@@ -2390,7 +2418,11 @@
   "requestRejected": "Rejected",
   "adminNote": "SAIMPEX: {note}",
   "@adminNote": {
-    "placeholders": {"note": {"type": "String"}}
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
   },
   "requestNameAndReason": "Enter a name and a reason.",
   "serviceKindLaundry": "Laundry",
@@ -2411,11 +2443,19 @@
   "rejectReasonOperationalIssue": "Temporary operational issue",
   "laundryCustomerEstimate": "Customer estimate ({kg} kg)",
   "@laundryCustomerEstimate": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryActualWeight": "Actual weight ({kg} kg)",
   "@laundryActualWeight": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryPickupSlot": "Pickup slot",
   "laundryDeliveryTurnaround": "Delivery turnaround",
@@ -2432,7 +2472,11 @@
   "laundryPriceBreakdown": "Price breakdown",
   "laundryRatePerKg": "{rate} MRU / kg",
   "@laundryRatePerKg": {
-    "placeholders": {"rate": {"type": "String"}}
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
   },
   "laundryInvoiceDifference": "Invoice difference",
   "laundrySendPaymentRequest": "Send Payment Request",
@@ -2465,7 +2509,11 @@
   "itemPricingHelp": "Set a price for each garment type. Customers choose quantities when they book.",
   "mruPerUnit": "MRU / {unit}",
   "@mruPerUnit": {
-    "placeholders": {"unit": {"type": "String"}}
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
   },
   "addVehicleType": "Add vehicle type",
   "addOnServices": "Add-on services",
@@ -2490,7 +2538,11 @@
   "addPhoto": "Add photo",
   "bookingHash": "Booking #{code}",
   "@bookingHash": {
-    "placeholders": {"code": {"type": "String"}}
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
   },
   "cleaningMarkOnTheWay": "Mark On the Way",
   "myCleaners": "My Cleaners",
@@ -2510,19 +2562,31 @@
   "cleanerNew": "New",
   "cleanerReviewsCount": "{count} reviews",
   "@cleanerReviewsCount": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "noCleanersYet": "No cleaners yet.",
   "assignCleaner": "Assign Cleaner",
   "assignCleanerNamed": "Assign {name}",
   "@assignCleanerNamed": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "searchCleaner": "Search cleaner",
   "assignedCleaner": "Assigned cleaner",
   "cleanerReviewOf": "Cleaner review: {name}",
   "@cleanerReviewOf": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "closed": "Closed",
   "bookingSlots": "Booking slots",
@@ -2551,7 +2615,11 @@
   "waterSearchSubscription": "Search by subscription ID or name",
   "waterScheduledDeliveries": "{count} scheduled deliveries",
   "@waterScheduledDeliveries": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "waterNoDeliveriesThisDay": "No deliveries on this day.",
   "waterSelfPickup": "Self pickup",
@@ -2575,14 +2643,26 @@
   "substitutionOrderedQuantity": "Ordered Quantity",
   "substitutionAvailableQuantity": "Enter Available Quantity",
   "substitutionQuantityHint": "Enter a quantity from 1 to {max}.",
-  "@substitutionQuantityHint": {"placeholders": {"max": {"type": "String"}}},
+  "@substitutionQuantityHint": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionAddNotes": "Add Notes",
   "substitutionUpdatedTotal": "Updated Item Total:",
   "substitutionUpdateQuantity": "Update Quantity",
   "substitutionConfirmSelection": "Confirm Selection",
   "substitutionSearchProducts": "Search store products...",
   "substitutionInStock": "{count} in stock",
-  "@substitutionInStock": {"placeholders": {"count": {"type": "String"}}},
+  "@substitutionInStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionQuantityChanged": "Quantity Changed",
   "substitutionItemRemoved": "Item Removed",
   "substitutionSuggested": "Substitute Suggested",
@@ -2592,18 +2672,54 @@
   "substitutionWithdrawn": "Withdrawn",
   "substitutionWaiting": "Waiting for customer",
   "substitutionWaitingFor": "Waiting for customer · {time}",
-  "@substitutionWaitingFor": {"placeholders": {"time": {"type": "String"}}},
+  "@substitutionWaitingFor": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionOrdered": "Ordered: {qty} · {amount}",
-  "@substitutionOrdered": {"placeholders": {"qty": {"type": "String"}, "amount": {"type": "String"}}},
+  "@substitutionOrdered": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionUpdated": "Updated: {qty} · {amount}",
-  "@substitutionUpdated": {"placeholders": {"qty": {"type": "String"}, "amount": {"type": "String"}}},
+  "@substitutionUpdated": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionRemovedNote": "This item is removed from the order once the customer confirms.",
   "substitutionRemoveTitle": "Remove this item?",
   "substitutionRemoveBody": "The customer is told that {name} is unavailable.",
-  "@substitutionRemoveBody": {"placeholders": {"name": {"type": "String"}}},
+  "@substitutionRemoveBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "substitutionSent": "Sent to the customer for approval.",
   "substitutionInfo": "Each change is sent to the customer for approval. With no answer in {minutes} minutes it is accepted automatically, except a pricier substitute, which is removed. Totals are recalculated automatically.",
-  "@substitutionInfo": {"placeholders": {"minutes": {"type": "String"}}},
+  "@substitutionInfo": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
   "quotePrescriptionMissing": "Prescription ID is required",
   "quoteAddOneMedicine": "Please add at least one medicine",
   "quoteSentLabel": "Quotation sent",
@@ -2632,37 +2748,91 @@
   "quoteTotalAmount": "Total Amount",
   "quoteDeleteTitle": "Delete medicine?",
   "quoteDeleteBody": "Are you sure you want to remove {name} from the quotation?",
-  "@quoteDeleteBody": {"placeholders": {"name": {"type": "String"}}},
+  "@quoteDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "quoteDelete": "Delete",
   "quoteSentBody": "Quotation has been sent to the customer\nfor review and approval",
   "quoteInStock": "In Stock",
   "quoteLimited": "Limited",
   "quoteValidLabel": "Quote Valid",
   "quoteQtyTimesPrice": "{qty} × {price} MRU",
-  "@quoteQtyTimesPrice": {"placeholders": {"qty": {"type": "String"}, "price": {"type": "String"}}},
+  "@quoteQtyTimesPrice": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "quoteValidityOneDay": "1 Day",
   "quoteValidityDays": "{count} Days",
-  "@quoteValidityDays": {"placeholders": {"count": {"type": "String"}}},
+  "@quoteValidityDays": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "quoteAlternativesIfAccepted": "Alternatives (if the customer accepts)",
   "quoteNotCarried": "Not in your inventory",
   "quoteStockLeft": "{count} in stock",
-  "@quoteStockLeft": {"placeholders": {"count": {"type": "String"}}},
+  "@quoteStockLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "quoteNotCharged": "Not charged",
   "quoteServerTotalNote": "The customer pays for available items and the alternatives they accept. The final amount is calculated by the server.",
   "quoteOrderItems": "ORDER ITEMS ({count})",
-  "@quoteOrderItems": {"placeholders": {"count": {"type": "String"}}},
+  "@quoteOrderItems": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "quoteDecisionAccepted": "Customer accepted",
   "quoteDecisionRejected": "Customer rejected",
   "quoteDecisionWaiting": "Waiting for customer",
   "quotePendingAlternatives": "{count} alternative(s) waiting for the customer's answer. They cannot pay until they answer.",
-  "@quotePendingAlternatives": {"placeholders": {"count": {"type": "String"}}},
+  "@quotePendingAlternatives": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "quoteNoItems": "No items in this quotation.",
   "quoteAvailableOf": "{available} of {prescribed} available",
-  "@quoteAvailableOf": {"placeholders": {"available": {"type": "String"}, "prescribed": {"type": "String"}}},
+  "@quoteAvailableOf": {
+    "placeholders": {
+      "available": {
+        "type": "String"
+      },
+      "prescribed": {
+        "type": "String"
+      }
+    }
+  },
   "menuExport": "Export",
   "menuExportFailed": "Could not export the menu. Please try again.",
   "menuExportSaved": "Menu exported: {file}",
-  "@menuExportSaved": {"placeholders": {"file": {"type": "String"}}},
+  "@menuExportSaved": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
   "importSelectCategoryFirst": "Please select a category before uploading.",
   "importSelectCategoryHint": "Select a category and import menu items in bulk",
   "uploadImagesLabel": "Upload Images",
@@ -2729,7 +2899,13 @@
   "pharmacyHomeOneItem": "1 Item",
   "@pharmacyHomeOneItem": {},
   "pharmacyHomeItemCount": "{count} Items",
-  "@pharmacyHomeItemCount": {"placeholders": {"count": {"type": "String"}}},
+  "@pharmacyHomeItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomeBadgeReviewing": "REVIEWING",
   "@pharmacyHomeBadgeReviewing": {},
   "pharmacyHomeBadgeReviewCompleted": "REVIEW COMPLETED",
@@ -2741,9 +2917,21 @@
   "pharmacyHomeReviewPrescription": "Review Prescription",
   "@pharmacyHomeReviewPrescription": {},
   "pharmacyHomeOrderCode": "Order {code}",
-  "@pharmacyHomeOrderCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomeOrderCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescriptionCode": "Prescription {code}",
-  "@pharmacyHomePrescriptionCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomePrescriptionCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescription": "Prescription",
   "@pharmacyHomePrescription": {},
   "pharmacyHomeViewFullPrescription": "View Full Prescription",
@@ -2899,7 +3087,13 @@
   "pharmacyInvNoMedicinesFound": "No medicines found",
   "@pharmacyInvNoMedicinesFound": {},
   "pharmacyInvStockLeft": "{stock} Left",
-  "@pharmacyInvStockLeft": {"placeholders": {"stock": {"type": "String"}}},
+  "@pharmacyInvStockLeft": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyInvBoxes": "Boxes",
   "@pharmacyInvBoxes": {},
   "pharmacyInvEnterQuantity": "Please enter quantity",
@@ -2955,5 +3149,149 @@
   "pharmacyInvCameraPermissionBarcode": "Camera permission is required to scan barcodes",
   "@pharmacyInvCameraPermissionBarcode": {},
   "pharmacyInvPositionBarcode": "Position the barcode within the frame",
-  "@pharmacyInvPositionBarcode": {}
+  "@pharmacyInvPositionBarcode": {},
+  "mgmtCategories": "Categories",
+  "@mgmtCategories": {},
+  "mgmtAddCategory": "Add Category",
+  "@mgmtAddCategory": {},
+  "mgmtEditCategory": "Edit Category",
+  "@mgmtEditCategory": {},
+  "mgmtDeleteCategory": "Delete Category",
+  "@mgmtDeleteCategory": {},
+  "mgmtDeleteCategoryConfirm": "Are you sure you want to delete category \"{name}\"?",
+  "@mgmtDeleteCategoryConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchCategory": "Search Category",
+  "@mgmtSearchCategory": {},
+  "mgmtAddTag": "Add Tag",
+  "@mgmtAddTag": {},
+  "mgmtEditTag": "Edit Tag",
+  "@mgmtEditTag": {},
+  "mgmtDeleteTag": "Delete Tag",
+  "@mgmtDeleteTag": {},
+  "mgmtDeleteTagConfirm": "Are you sure you want to delete tag \"{name}\"?",
+  "@mgmtDeleteTagConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchTag": "Search Tag Name",
+  "@mgmtSearchTag": {},
+  "mgmtNoTagsFound": "No tags found",
+  "@mgmtNoTagsFound": {},
+  "mgmtSelectImage": "Select Image",
+  "@mgmtSelectImage": {},
+  "mgmtChooseImageSource": "Choose image from gallery or camera",
+  "@mgmtChooseImageSource": {},
+  "mgmtAddImage": "Add Image",
+  "@mgmtAddImage": {},
+  "mgmtUpdateStatus": "Update Status",
+  "@mgmtUpdateStatus": {},
+  "mgmtCategoryAdded": "Category added successfully",
+  "@mgmtCategoryAdded": {},
+  "mgmtCategoryUpdated": "Category updated successfully",
+  "@mgmtCategoryUpdated": {},
+  "mgmtCategorySaveFailed": "Could not save the category",
+  "@mgmtCategorySaveFailed": {},
+  "mgmtCategoryDeleted": "Category deleted successfully",
+  "@mgmtCategoryDeleted": {},
+  "mgmtCategoryDeleteFailed": "Could not delete the category",
+  "@mgmtCategoryDeleteFailed": {},
+  "mgmtTagAdded": "Tag added successfully",
+  "@mgmtTagAdded": {},
+  "mgmtTagUpdated": "Tag updated successfully",
+  "@mgmtTagUpdated": {},
+  "mgmtTagSaveFailed": "Could not save the tag",
+  "@mgmtTagSaveFailed": {},
+  "mgmtTagDeleted": "Tag deleted successfully",
+  "@mgmtTagDeleted": {},
+  "mgmtTagDeleteFailed": "Could not delete the tag",
+  "@mgmtTagDeleteFailed": {},
+  "mgmtStatusUpdated": "Status updated successfully",
+  "@mgmtStatusUpdated": {},
+  "mgmtStatusUpdateFailed": "Could not update the status",
+  "@mgmtStatusUpdateFailed": {},
+  "itemFormAddOption": "Add Option",
+  "@itemFormAddOption": {},
+  "itemFormEditOption": "Edit Option",
+  "@itemFormEditOption": {},
+  "itemFormOptionName": "Option name",
+  "@itemFormOptionName": {},
+  "itemFormOptionNameHint": "Enter option name",
+  "@itemFormOptionNameHint": {},
+  "itemFormOptionImage": "Option Image",
+  "@itemFormOptionImage": {},
+  "itemFormAdditionalPrice": "Additional price",
+  "@itemFormAdditionalPrice": {},
+  "itemFormSaveOption": "Save Option",
+  "@itemFormSaveOption": {},
+  "itemFormItemImages": "Item Images",
+  "@itemFormItemImages": {},
+  "itemFormSelectTags": "Select tags",
+  "@itemFormSelectTags": {},
+  "itemFormVariants": "Variants",
+  "@itemFormVariants": {},
+  "itemFormVariantGroupName": "Variant Group Name",
+  "@itemFormVariantGroupName": {},
+  "itemFormVariantGroupHint": "e.g. Choose Your Portion",
+  "@itemFormVariantGroupHint": {},
+  "itemFormVariantImage": "Variant Image",
+  "@itemFormVariantImage": {},
+  "itemFormVariantName": "Variant Name",
+  "@itemFormVariantName": {},
+  "itemFormAddVariant": "Add Variant",
+  "@itemFormAddVariant": {},
+  "itemFormVariantRequired": "Add at least one variant with a name and price",
+  "@itemFormVariantRequired": {},
+  "itemFormOptionGroups": "Option Groups",
+  "@itemFormOptionGroups": {},
+  "itemFormGroupName": "Group Name",
+  "@itemFormGroupName": {},
+  "itemFormGroupNameHint": "e.g. Choose Your Side, Add Extra...",
+  "@itemFormGroupNameHint": {},
+  "itemFormMinSelections": "Minimum selections",
+  "@itemFormMinSelections": {},
+  "itemFormMaxSelections": "Maximum selections",
+  "@itemFormMaxSelections": {},
+  "itemFormSelectionRequirement": "Selection requirement",
+  "@itemFormSelectionRequirement": {},
+  "itemFormRequired": "Required",
+  "@itemFormRequired": {},
+  "itemFormDeleteGroup": "Delete Group",
+  "@itemFormDeleteGroup": {},
+  "itemFormAddOptionGroup": "Add Option Group",
+  "@itemFormAddOptionGroup": {},
+  "itemFormAddExtras": "Add Extras",
+  "@itemFormAddExtras": {},
+  "itemFormItemName": "Item Name",
+  "@itemFormItemName": {},
+  "itemFormItemNameHint": "e.g. Burger",
+  "@itemFormItemNameHint": {},
+  "itemFormAddAnotherItem": "Add Another Item",
+  "@itemFormAddAnotherItem": {},
+  "itemFormCurrency": "MRU",
+  "@itemFormCurrency": {},
+  "stockEnterValidQuantity": "Enter a valid quantity",
+  "@stockEnterValidQuantity": {},
+  "stockAddedSuccessfully": "Stock added successfully",
+  "@stockAddedSuccessfully": {},
+  "stockRemovedSuccessfully": "Stock removed successfully",
+  "@stockRemovedSuccessfully": {},
+  "busyModeOn": "Store marked as busy",
+  "@busyModeOn": {},
+  "busyModeOff": "Store is taking orders again",
+  "@busyModeOff": {},
+  "busyModeUpdateFailed": "Could not update busy mode",
+  "@busyModeUpdateFailed": {},
+  "noMenusFound": "No menus found.",
+  "@noMenusFound": {},
+  "stockMovementType": "Type",
+  "@stockMovementType": {}
 }

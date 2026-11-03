@@ -2368,7 +2368,9 @@
   "gasEmptyCylindersToCollect": "{count} bouteilles vides à récupérer",
   "@gasEmptyCylindersToCollect": {
     "placeholders": {
-      "count": {"type": "String"}
+      "count": {
+        "type": "String"
+      }
     }
   },
   "saimpexSupport": "Support SAIMPEX",
@@ -2379,7 +2381,9 @@
   "supportOrderCode": "Commande n° {code}",
   "@supportOrderCode": {
     "placeholders": {
-      "code": {"type": "String"}
+      "code": {
+        "type": "String"
+      }
     }
   },
   "pharmacyGenericName": "Nom générique",
@@ -2395,7 +2399,11 @@
   "productHiddenForever": "Masqué jusqu'à ce que vous l'affichiez",
   "productHiddenUntil": "Masqué jusqu'à {time}",
   "@productHiddenUntil": {
-    "placeholders": {"time": {"type": "String"}}
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "hideProduct": "Masquer",
   "showProductNow": "Afficher",
@@ -2412,20 +2420,36 @@
   "defaultPreparationTime": "Temps de préparation",
   "minutesShort": "{minutes} min",
   "@minutesShort": {
-    "placeholders": {"minutes": {"type": "String"}}
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeLabel": "Frais de livraison",
   "deliveryFeePerKm": "{value} MRU par km",
   "@deliveryFeePerKm": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFixed": "{value} MRU",
   "@deliveryFeeFixed": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeePercent": "{value} % de la commande",
   "@deliveryFeePercent": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFree": "Gratuit",
   "deliveryFeePaidBy": "Frais payés par",
@@ -2434,7 +2458,11 @@
   "feePaidBySaimpex": "SAIMPEX",
   "feePaidSplit": "Partagés : votre magasin {percent} %, le client le reste",
   "@feePaidSplit": {
-    "placeholders": {"percent": {"type": "String"}}
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
   },
   "deliveryModel": "Livreurs",
   "deliveryModelBoth": "Vos livreurs et ceux de SAIMPEX",
@@ -2454,7 +2482,11 @@
   "requestRejected": "Refusée",
   "adminNote": "SAIMPEX : {note}",
   "@adminNote": {
-    "placeholders": {"note": {"type": "String"}}
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
   },
   "requestNameAndReason": "Saisissez un nom et une raison.",
   "serviceKindLaundry": "Blanchisserie",
@@ -2475,11 +2507,19 @@
   "rejectReasonOperationalIssue": "Problème opérationnel temporaire",
   "laundryCustomerEstimate": "Estimation du client ({kg} kg)",
   "@laundryCustomerEstimate": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryActualWeight": "Poids réel ({kg} kg)",
   "@laundryActualWeight": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryPickupSlot": "Créneau de retrait",
   "laundryDeliveryTurnaround": "Délai de livraison",
@@ -2496,7 +2536,11 @@
   "laundryPriceBreakdown": "Détail du prix",
   "laundryRatePerKg": "{rate} MRU / kg",
   "@laundryRatePerKg": {
-    "placeholders": {"rate": {"type": "String"}}
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
   },
   "laundryInvoiceDifference": "Différence de facture",
   "laundrySendPaymentRequest": "Envoyer la demande de paiement",
@@ -2529,7 +2573,11 @@
   "itemPricingHelp": "Fixez un prix pour chaque type de vêtement. Les clients choisissent les quantités en réservant.",
   "mruPerUnit": "MRU / {unit}",
   "@mruPerUnit": {
-    "placeholders": {"unit": {"type": "String"}}
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
   },
   "addVehicleType": "Ajouter un type de véhicule",
   "addOnServices": "Services en option",
@@ -2554,7 +2602,11 @@
   "addPhoto": "Ajouter une photo",
   "bookingHash": "Réservation n° {code}",
   "@bookingHash": {
-    "placeholders": {"code": {"type": "String"}}
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
   },
   "cleaningMarkOnTheWay": "Marquer en route",
   "myCleaners": "Mes agents",
@@ -2574,19 +2626,31 @@
   "cleanerNew": "Nouveau",
   "cleanerReviewsCount": "{count} avis",
   "@cleanerReviewsCount": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "noCleanersYet": "Aucun agent pour l'instant.",
   "assignCleaner": "Affecter un agent",
   "assignCleanerNamed": "Affecter {name}",
   "@assignCleanerNamed": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "searchCleaner": "Rechercher un agent",
   "assignedCleaner": "Agent affecté",
   "cleanerReviewOf": "Avis sur l'agent : {name}",
   "@cleanerReviewOf": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "closed": "Fermé",
   "bookingSlots": "Créneaux de réservation",
@@ -2615,7 +2679,11 @@
   "waterSearchSubscription": "Rechercher par ID d'abonnement ou nom",
   "waterScheduledDeliveries": "{count} livraisons prévues",
   "@waterScheduledDeliveries": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "waterNoDeliveriesThisDay": "Aucune livraison ce jour-là.",
   "waterSelfPickup": "Retrait sur place",
@@ -2778,7 +2846,13 @@
   "pharmacyHomeOneItem": "1 article",
   "@pharmacyHomeOneItem": {},
   "pharmacyHomeItemCount": "{count} articles",
-  "@pharmacyHomeItemCount": {"placeholders": {"count": {"type": "String"}}},
+  "@pharmacyHomeItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomeBadgeReviewing": "EN EXAMEN",
   "@pharmacyHomeBadgeReviewing": {},
   "pharmacyHomeBadgeReviewCompleted": "EXAMEN TERMINÉ",
@@ -2790,9 +2864,21 @@
   "pharmacyHomeReviewPrescription": "Examiner l'ordonnance",
   "@pharmacyHomeReviewPrescription": {},
   "pharmacyHomeOrderCode": "Commande {code}",
-  "@pharmacyHomeOrderCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomeOrderCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescriptionCode": "Ordonnance {code}",
-  "@pharmacyHomePrescriptionCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomePrescriptionCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescription": "Ordonnance",
   "@pharmacyHomePrescription": {},
   "pharmacyHomeViewFullPrescription": "Voir l'ordonnance complète",
@@ -2948,7 +3034,13 @@
   "pharmacyInvNoMedicinesFound": "Aucun médicament trouvé",
   "@pharmacyInvNoMedicinesFound": {},
   "pharmacyInvStockLeft": "{stock} restant(s)",
-  "@pharmacyInvStockLeft": {"placeholders": {"stock": {"type": "String"}}},
+  "@pharmacyInvStockLeft": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyInvBoxes": "Boîtes",
   "@pharmacyInvBoxes": {},
   "pharmacyInvEnterQuantity": "Veuillez saisir la quantité",
@@ -3004,5 +3096,149 @@
   "pharmacyInvCameraPermissionBarcode": "L'autorisation de la caméra est nécessaire pour scanner les codes-barres",
   "@pharmacyInvCameraPermissionBarcode": {},
   "pharmacyInvPositionBarcode": "Placez le code-barres dans le cadre",
-  "@pharmacyInvPositionBarcode": {}
+  "@pharmacyInvPositionBarcode": {},
+  "mgmtCategories": "Catégories",
+  "@mgmtCategories": {},
+  "mgmtAddCategory": "Ajouter une catégorie",
+  "@mgmtAddCategory": {},
+  "mgmtEditCategory": "Modifier la catégorie",
+  "@mgmtEditCategory": {},
+  "mgmtDeleteCategory": "Supprimer la catégorie",
+  "@mgmtDeleteCategory": {},
+  "mgmtDeleteCategoryConfirm": "Voulez-vous vraiment supprimer la catégorie « {name} » ?",
+  "@mgmtDeleteCategoryConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchCategory": "Rechercher une catégorie",
+  "@mgmtSearchCategory": {},
+  "mgmtAddTag": "Ajouter une étiquette",
+  "@mgmtAddTag": {},
+  "mgmtEditTag": "Modifier l'étiquette",
+  "@mgmtEditTag": {},
+  "mgmtDeleteTag": "Supprimer l'étiquette",
+  "@mgmtDeleteTag": {},
+  "mgmtDeleteTagConfirm": "Voulez-vous vraiment supprimer l'étiquette « {name} » ?",
+  "@mgmtDeleteTagConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchTag": "Rechercher une étiquette",
+  "@mgmtSearchTag": {},
+  "mgmtNoTagsFound": "Aucune étiquette trouvée",
+  "@mgmtNoTagsFound": {},
+  "mgmtSelectImage": "Choisir une image",
+  "@mgmtSelectImage": {},
+  "mgmtChooseImageSource": "Choisissez une image dans la galerie ou prenez une photo",
+  "@mgmtChooseImageSource": {},
+  "mgmtAddImage": "Ajouter une image",
+  "@mgmtAddImage": {},
+  "mgmtUpdateStatus": "Modifier le statut",
+  "@mgmtUpdateStatus": {},
+  "mgmtCategoryAdded": "Catégorie ajoutée avec succès",
+  "@mgmtCategoryAdded": {},
+  "mgmtCategoryUpdated": "Catégorie mise à jour avec succès",
+  "@mgmtCategoryUpdated": {},
+  "mgmtCategorySaveFailed": "Impossible d'enregistrer la catégorie",
+  "@mgmtCategorySaveFailed": {},
+  "mgmtCategoryDeleted": "Catégorie supprimée avec succès",
+  "@mgmtCategoryDeleted": {},
+  "mgmtCategoryDeleteFailed": "Impossible de supprimer la catégorie",
+  "@mgmtCategoryDeleteFailed": {},
+  "mgmtTagAdded": "Étiquette ajoutée avec succès",
+  "@mgmtTagAdded": {},
+  "mgmtTagUpdated": "Étiquette mise à jour avec succès",
+  "@mgmtTagUpdated": {},
+  "mgmtTagSaveFailed": "Impossible d'enregistrer l'étiquette",
+  "@mgmtTagSaveFailed": {},
+  "mgmtTagDeleted": "Étiquette supprimée avec succès",
+  "@mgmtTagDeleted": {},
+  "mgmtTagDeleteFailed": "Impossible de supprimer l'étiquette",
+  "@mgmtTagDeleteFailed": {},
+  "mgmtStatusUpdated": "Statut mis à jour avec succès",
+  "@mgmtStatusUpdated": {},
+  "mgmtStatusUpdateFailed": "Impossible de mettre à jour le statut",
+  "@mgmtStatusUpdateFailed": {},
+  "itemFormAddOption": "Ajouter une option",
+  "@itemFormAddOption": {},
+  "itemFormEditOption": "Modifier l'option",
+  "@itemFormEditOption": {},
+  "itemFormOptionName": "Nom de l'option",
+  "@itemFormOptionName": {},
+  "itemFormOptionNameHint": "Saisir le nom de l'option",
+  "@itemFormOptionNameHint": {},
+  "itemFormOptionImage": "Image de l'option",
+  "@itemFormOptionImage": {},
+  "itemFormAdditionalPrice": "Prix supplémentaire",
+  "@itemFormAdditionalPrice": {},
+  "itemFormSaveOption": "Enregistrer l'option",
+  "@itemFormSaveOption": {},
+  "itemFormItemImages": "Images de l'article",
+  "@itemFormItemImages": {},
+  "itemFormSelectTags": "Sélectionner des étiquettes",
+  "@itemFormSelectTags": {},
+  "itemFormVariants": "Variantes",
+  "@itemFormVariants": {},
+  "itemFormVariantGroupName": "Nom du groupe de variantes",
+  "@itemFormVariantGroupName": {},
+  "itemFormVariantGroupHint": "ex. Choisissez votre portion",
+  "@itemFormVariantGroupHint": {},
+  "itemFormVariantImage": "Image de la variante",
+  "@itemFormVariantImage": {},
+  "itemFormVariantName": "Nom de la variante",
+  "@itemFormVariantName": {},
+  "itemFormAddVariant": "Ajouter une variante",
+  "@itemFormAddVariant": {},
+  "itemFormVariantRequired": "Ajoutez au moins une variante avec un nom et un prix",
+  "@itemFormVariantRequired": {},
+  "itemFormOptionGroups": "Groupes d'options",
+  "@itemFormOptionGroups": {},
+  "itemFormGroupName": "Nom du groupe",
+  "@itemFormGroupName": {},
+  "itemFormGroupNameHint": "ex. Choisissez votre accompagnement, Ajoutez un supplément...",
+  "@itemFormGroupNameHint": {},
+  "itemFormMinSelections": "Sélections minimum",
+  "@itemFormMinSelections": {},
+  "itemFormMaxSelections": "Sélections maximum",
+  "@itemFormMaxSelections": {},
+  "itemFormSelectionRequirement": "Type de sélection",
+  "@itemFormSelectionRequirement": {},
+  "itemFormRequired": "Obligatoire",
+  "@itemFormRequired": {},
+  "itemFormDeleteGroup": "Supprimer le groupe",
+  "@itemFormDeleteGroup": {},
+  "itemFormAddOptionGroup": "Ajouter un groupe d'options",
+  "@itemFormAddOptionGroup": {},
+  "itemFormAddExtras": "Ajouter des suppléments",
+  "@itemFormAddExtras": {},
+  "itemFormItemName": "Nom de l'article",
+  "@itemFormItemName": {},
+  "itemFormItemNameHint": "ex. Burger",
+  "@itemFormItemNameHint": {},
+  "itemFormAddAnotherItem": "Ajouter un autre article",
+  "@itemFormAddAnotherItem": {},
+  "itemFormCurrency": "MRU",
+  "@itemFormCurrency": {},
+  "stockEnterValidQuantity": "Saisissez une quantité valide",
+  "@stockEnterValidQuantity": {},
+  "stockAddedSuccessfully": "Stock ajouté avec succès",
+  "@stockAddedSuccessfully": {},
+  "stockRemovedSuccessfully": "Stock retiré avec succès",
+  "@stockRemovedSuccessfully": {},
+  "busyModeOn": "Magasin marqué comme occupé",
+  "@busyModeOn": {},
+  "busyModeOff": "Le magasin accepte à nouveau les commandes",
+  "@busyModeOff": {},
+  "busyModeUpdateFailed": "Impossible de modifier le mode occupé",
+  "@busyModeUpdateFailed": {},
+  "noMenusFound": "Aucun menu trouvé.",
+  "@noMenusFound": {},
+  "stockMovementType": "Type",
+  "@stockMovementType": {}
 }

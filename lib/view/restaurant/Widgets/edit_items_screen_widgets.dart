@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Custom painter for dashed rounded border.
 class DashedBorderPainter extends CustomPainter {
@@ -206,6 +207,10 @@ class EditItemsDropdownField extends StatelessWidget {
   final String? hint;
   final bool fullWidth;
 
+  /// Text shown for an item; the item itself stays the value (e.g. 'Yes'
+  /// shown as "نعم"). Defaults to the item.
+  final String Function(String item)? itemLabel;
+
   const EditItemsDropdownField({
     super.key,
     required this.items,
@@ -213,6 +218,7 @@ class EditItemsDropdownField extends StatelessWidget {
     this.value,
     this.hint,
     this.fullWidth = true,
+    this.itemLabel,
   });
 
   @override
@@ -273,7 +279,7 @@ class EditItemsDropdownField extends StatelessWidget {
               (e) => DropdownMenuItem(
                 value: e,
                 child: Text(
-                  e,
+                  itemLabel?.call(e) ?? e,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -403,7 +409,7 @@ class EditItemsBottomBar extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Reset',
+                      S.of(context).reset,
                       style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -428,7 +434,7 @@ class EditItemsBottomBar extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Submit',
+                      S.of(context).submit,
                       style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w700,

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
 import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
@@ -315,11 +316,16 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           ),
                           _detailRow(
                             S.of(context).email,
-                            profile?.email ?? "rest1@saimpex.com",
+                            profile?.email ?? "-",
                           ),
                           _detailRow(
                             S.of(context).status,
-                            profile?.status ?? "ACTIVE",
+                            // profile_model maps status 1/0 to ACTIVE/INACTIVE.
+                            switch (profile?.status ?? "ACTIVE") {
+                              "ACTIVE" => S.of(context).active,
+                              "INACTIVE" => S.of(context).inactive,
+                              final other => other,
+                            },
                             isStatus: true,
                           ),
                           _detailRow(
@@ -540,12 +546,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                               child: _buildLeaveTile(
                                 dateRange: _formatLeaveDate(leave.date),
                                 reason: leave.reason ?? S.of(context).leave,
-                                status: "SCHEDULED",
+                                status: S.of(context).scheduled,
                                 isUpcoming: true,
                                 onCancelLeave: leave.id == null
                                     ? null
                                     : () => Get.find<ProfileController>()
-                                          .unmarkLeave(
+                                          .confirmUnmarkLeave(
                                             context,
                                             leave.id.toString(),
                                           ),
@@ -578,7 +584,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                               child: _buildLeaveTile(
                                 dateRange: _formatLeaveDate(leave.date),
                                 reason: leave.reason ?? S.of(context).leave,
-                                status: "COMPLETED",
+                                status: S.of(context).completed,
                                 isUpcoming: false,
                               ),
                             ),
@@ -827,7 +833,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     if (filteredGroceryMenus.isEmpty && filteredRestaurantMenus.isEmpty) {
       return NoDataWidget(
         context,
-        "No menus found.",
+        S.of(context).noMenusFound,
         "",
         "lib/assets/images/nodata.png",
       );

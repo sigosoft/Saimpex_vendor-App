@@ -20,6 +20,7 @@ import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart'
 import 'package:saimpex_vendor/model/restaurant_menus_model.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_items_model.dart';
 import 'package:saimpex_vendor/view/login/login.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 import '../utils/utils.dart';
 import '../utils/widgets/import_errors_dialog.dart';
@@ -673,24 +674,17 @@ class ProfileController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Busy status updated successfully";
-          final msg = response.data['message'];
-          if (msg is String && msg.trim().isNotEmpty) {
-            successMessage = msg.trim();
-          } else if (msg is Map &&
-              msg.containsKey('message_en') &&
-              msg['message_en'] is List &&
-              (msg['message_en'] as List).isNotEmpty) {
-            successMessage = (msg['message_en'] as List).first.toString();
-          }
-          showToast(context, successMessage);
+          // App text, not the server's English message_en.
+          showToast(context, S.current.waterLeaveMarkedSuccessfully);
         }
       } else {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ??
-                "Failed to update busy status",
+            _messageInAppLanguage(
+              response.data,
+              S.current.waterFailedToMarkLeave,
+            ),
           );
         }
       }
@@ -700,6 +694,32 @@ class ProfileController extends GetxController {
         showToast(context, error.toString());
       }
     }
+  }
+
+  /// The server's message in the app language ({message: {message_fr: [..]}}),
+  /// else [fallback]; never another language.
+  String _messageInAppLanguage(dynamic body, String fallback) {
+    final message = body is Map ? body['message'] : null;
+    if (message is Map) {
+      final lang = localization.currentLocale?.languageCode ?? 'en';
+      final value = message['message_$lang'];
+      if (value is List && value.isNotEmpty) return value.first.toString();
+      if (value is String && value.trim().isNotEmpty) return value;
+    }
+    return fallback;
+  }
+
+  /// Asks before cancelling a leave (holiday); cancelling had no confirmation
+  /// (test day V18). Same confirmation sheet as logout.
+  void confirmUnmarkLeave(BuildContext context, String leaveId) {
+    showConfirmationBottomSheet(
+      context: context,
+      title: S.of(context).cancelLeave,
+      message: S.of(context).waterCancelLeaveConfirm,
+      leftButtonText: S.of(context).no,
+      rightButtonText: S.of(context).yes,
+      onConfirm: () => unmarkLeave(context, leaveId),
+    );
   }
 
   Future<void> unmarkLeave(BuildContext context, String leave_id) async {
@@ -723,25 +743,13 @@ class ProfileController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Leave unmarked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // App text, not the server's English message_en.
+          showToast(context, S.current.waterLeaveCancelledSuccessfully);
           getProfile(context);
         }
       } else {
         if (context.mounted) {
-          showToast(
-            context,
-            response.data['message']?.toString() ?? "Failed to unmark leave",
-          );
+          showToast(context, S.current.waterFailedToCancelLeave);
         }
       }
     } catch (error) {
@@ -1824,24 +1832,16 @@ class ProfileController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Busy status updated successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // App text: the server's "Busy mode updated successfully" is
+          // English only (test day V17). status 1 = busy, 2 = open.
+          showToast(
+            context,
+            status == 1 ? S.current.busyModeOn : S.current.busyModeOff,
+          );
         }
       } else {
         if (context.mounted) {
-          showToast(
-            context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
-          );
+          showToast(context, S.current.busyModeUpdateFailed);
         }
       }
     } catch (error) {

@@ -105,6 +105,11 @@ class ApiEndPoints {
   static String uploadMenuItems = "importRestaurantMenuItems";
   static String restaurantMenuItemStockLogs = "restaurantMenuItemStockLogs";
   static String updateRestaurantMenuItemStock = "updateRestaurantItemStock";
+  // Catalog restaurants keep one stock per menu (restaurant_menus.stock),
+  // which orders and customers use. Body/query: menu_id (backend
+  // RestaurantCatalogItemController::updateStock / stockLogs).
+  static String updateRestaurantMenuStock = "updateRestaurantMenuStock";
+  static String restaurantMenuStockLogs = "restaurantMenuStockLogs";
   static String restaurantCatalogItems = "restaurantCatalogItems";
   static String addRestaurantCatalogItem = "addRestaurantCatalogItem";
   static String restaurantCatalogItemDetail =

@@ -13495,6 +13495,641 @@ class S {
       args: [],
     );
   }
+
+  /// `Categories`
+  String get mgmtCategories {
+    return Intl.message(
+      'Categories',
+      name: 'mgmtCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Category`
+  String get mgmtAddCategory {
+    return Intl.message(
+      'Add Category',
+      name: 'mgmtAddCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Category`
+  String get mgmtEditCategory {
+    return Intl.message(
+      'Edit Category',
+      name: 'mgmtEditCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Category`
+  String get mgmtDeleteCategory {
+    return Intl.message(
+      'Delete Category',
+      name: 'mgmtDeleteCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete category "{name}"?`
+  String mgmtDeleteCategoryConfirm(String name) {
+    return Intl.message(
+      'Are you sure you want to delete category "$name"?',
+      name: 'mgmtDeleteCategoryConfirm',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Search Category`
+  String get mgmtSearchCategory {
+    return Intl.message(
+      'Search Category',
+      name: 'mgmtSearchCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Tag`
+  String get mgmtAddTag {
+    return Intl.message('Add Tag', name: 'mgmtAddTag', desc: '', args: []);
+  }
+
+  /// `Edit Tag`
+  String get mgmtEditTag {
+    return Intl.message('Edit Tag', name: 'mgmtEditTag', desc: '', args: []);
+  }
+
+  /// `Delete Tag`
+  String get mgmtDeleteTag {
+    return Intl.message(
+      'Delete Tag',
+      name: 'mgmtDeleteTag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete tag "{name}"?`
+  String mgmtDeleteTagConfirm(String name) {
+    return Intl.message(
+      'Are you sure you want to delete tag "$name"?',
+      name: 'mgmtDeleteTagConfirm',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Search Tag Name`
+  String get mgmtSearchTag {
+    return Intl.message(
+      'Search Tag Name',
+      name: 'mgmtSearchTag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No tags found`
+  String get mgmtNoTagsFound {
+    return Intl.message(
+      'No tags found',
+      name: 'mgmtNoTagsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Image`
+  String get mgmtSelectImage {
+    return Intl.message(
+      'Select Image',
+      name: 'mgmtSelectImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose image from gallery or camera`
+  String get mgmtChooseImageSource {
+    return Intl.message(
+      'Choose image from gallery or camera',
+      name: 'mgmtChooseImageSource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Image`
+  String get mgmtAddImage {
+    return Intl.message('Add Image', name: 'mgmtAddImage', desc: '', args: []);
+  }
+
+  /// `Update Status`
+  String get mgmtUpdateStatus {
+    return Intl.message(
+      'Update Status',
+      name: 'mgmtUpdateStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category added successfully`
+  String get mgmtCategoryAdded {
+    return Intl.message(
+      'Category added successfully',
+      name: 'mgmtCategoryAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category updated successfully`
+  String get mgmtCategoryUpdated {
+    return Intl.message(
+      'Category updated successfully',
+      name: 'mgmtCategoryUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not save the category`
+  String get mgmtCategorySaveFailed {
+    return Intl.message(
+      'Could not save the category',
+      name: 'mgmtCategorySaveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category deleted successfully`
+  String get mgmtCategoryDeleted {
+    return Intl.message(
+      'Category deleted successfully',
+      name: 'mgmtCategoryDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not delete the category`
+  String get mgmtCategoryDeleteFailed {
+    return Intl.message(
+      'Could not delete the category',
+      name: 'mgmtCategoryDeleteFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tag added successfully`
+  String get mgmtTagAdded {
+    return Intl.message(
+      'Tag added successfully',
+      name: 'mgmtTagAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tag updated successfully`
+  String get mgmtTagUpdated {
+    return Intl.message(
+      'Tag updated successfully',
+      name: 'mgmtTagUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not save the tag`
+  String get mgmtTagSaveFailed {
+    return Intl.message(
+      'Could not save the tag',
+      name: 'mgmtTagSaveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tag deleted successfully`
+  String get mgmtTagDeleted {
+    return Intl.message(
+      'Tag deleted successfully',
+      name: 'mgmtTagDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not delete the tag`
+  String get mgmtTagDeleteFailed {
+    return Intl.message(
+      'Could not delete the tag',
+      name: 'mgmtTagDeleteFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status updated successfully`
+  String get mgmtStatusUpdated {
+    return Intl.message(
+      'Status updated successfully',
+      name: 'mgmtStatusUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not update the status`
+  String get mgmtStatusUpdateFailed {
+    return Intl.message(
+      'Could not update the status',
+      name: 'mgmtStatusUpdateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Option`
+  String get itemFormAddOption {
+    return Intl.message(
+      'Add Option',
+      name: 'itemFormAddOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Option`
+  String get itemFormEditOption {
+    return Intl.message(
+      'Edit Option',
+      name: 'itemFormEditOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Option name`
+  String get itemFormOptionName {
+    return Intl.message(
+      'Option name',
+      name: 'itemFormOptionName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter option name`
+  String get itemFormOptionNameHint {
+    return Intl.message(
+      'Enter option name',
+      name: 'itemFormOptionNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Option Image`
+  String get itemFormOptionImage {
+    return Intl.message(
+      'Option Image',
+      name: 'itemFormOptionImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additional price`
+  String get itemFormAdditionalPrice {
+    return Intl.message(
+      'Additional price',
+      name: 'itemFormAdditionalPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Option`
+  String get itemFormSaveOption {
+    return Intl.message(
+      'Save Option',
+      name: 'itemFormSaveOption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Images`
+  String get itemFormItemImages {
+    return Intl.message(
+      'Item Images',
+      name: 'itemFormItemImages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select tags`
+  String get itemFormSelectTags {
+    return Intl.message(
+      'Select tags',
+      name: 'itemFormSelectTags',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variants`
+  String get itemFormVariants {
+    return Intl.message(
+      'Variants',
+      name: 'itemFormVariants',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variant Group Name`
+  String get itemFormVariantGroupName {
+    return Intl.message(
+      'Variant Group Name',
+      name: 'itemFormVariantGroupName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Choose Your Portion`
+  String get itemFormVariantGroupHint {
+    return Intl.message(
+      'e.g. Choose Your Portion',
+      name: 'itemFormVariantGroupHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variant Image`
+  String get itemFormVariantImage {
+    return Intl.message(
+      'Variant Image',
+      name: 'itemFormVariantImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variant Name`
+  String get itemFormVariantName {
+    return Intl.message(
+      'Variant Name',
+      name: 'itemFormVariantName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Variant`
+  String get itemFormAddVariant {
+    return Intl.message(
+      'Add Variant',
+      name: 'itemFormAddVariant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add at least one variant with a name and price`
+  String get itemFormVariantRequired {
+    return Intl.message(
+      'Add at least one variant with a name and price',
+      name: 'itemFormVariantRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Option Groups`
+  String get itemFormOptionGroups {
+    return Intl.message(
+      'Option Groups',
+      name: 'itemFormOptionGroups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group Name`
+  String get itemFormGroupName {
+    return Intl.message(
+      'Group Name',
+      name: 'itemFormGroupName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Choose Your Side, Add Extra...`
+  String get itemFormGroupNameHint {
+    return Intl.message(
+      'e.g. Choose Your Side, Add Extra...',
+      name: 'itemFormGroupNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum selections`
+  String get itemFormMinSelections {
+    return Intl.message(
+      'Minimum selections',
+      name: 'itemFormMinSelections',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum selections`
+  String get itemFormMaxSelections {
+    return Intl.message(
+      'Maximum selections',
+      name: 'itemFormMaxSelections',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selection requirement`
+  String get itemFormSelectionRequirement {
+    return Intl.message(
+      'Selection requirement',
+      name: 'itemFormSelectionRequirement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Required`
+  String get itemFormRequired {
+    return Intl.message(
+      'Required',
+      name: 'itemFormRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Group`
+  String get itemFormDeleteGroup {
+    return Intl.message(
+      'Delete Group',
+      name: 'itemFormDeleteGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Option Group`
+  String get itemFormAddOptionGroup {
+    return Intl.message(
+      'Add Option Group',
+      name: 'itemFormAddOptionGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Extras`
+  String get itemFormAddExtras {
+    return Intl.message(
+      'Add Extras',
+      name: 'itemFormAddExtras',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Name`
+  String get itemFormItemName {
+    return Intl.message(
+      'Item Name',
+      name: 'itemFormItemName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Burger`
+  String get itemFormItemNameHint {
+    return Intl.message(
+      'e.g. Burger',
+      name: 'itemFormItemNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Another Item`
+  String get itemFormAddAnotherItem {
+    return Intl.message(
+      'Add Another Item',
+      name: 'itemFormAddAnotherItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MRU`
+  String get itemFormCurrency {
+    return Intl.message('MRU', name: 'itemFormCurrency', desc: '', args: []);
+  }
+
+  /// `Enter a valid quantity`
+  String get stockEnterValidQuantity {
+    return Intl.message(
+      'Enter a valid quantity',
+      name: 'stockEnterValidQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stock added successfully`
+  String get stockAddedSuccessfully {
+    return Intl.message(
+      'Stock added successfully',
+      name: 'stockAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stock removed successfully`
+  String get stockRemovedSuccessfully {
+    return Intl.message(
+      'Stock removed successfully',
+      name: 'stockRemovedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store marked as busy`
+  String get busyModeOn {
+    return Intl.message(
+      'Store marked as busy',
+      name: 'busyModeOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store is taking orders again`
+  String get busyModeOff {
+    return Intl.message(
+      'Store is taking orders again',
+      name: 'busyModeOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not update busy mode`
+  String get busyModeUpdateFailed {
+    return Intl.message(
+      'Could not update busy mode',
+      name: 'busyModeUpdateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No menus found.`
+  String get noMenusFound {
+    return Intl.message(
+      'No menus found.',
+      name: 'noMenusFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type`
+  String get stockMovementType {
+    return Intl.message('Type', name: 'stockMovementType', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

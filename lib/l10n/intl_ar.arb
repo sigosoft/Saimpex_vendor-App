@@ -2367,7 +2367,9 @@
   "gasEmptyCylindersToCollect": "{count} أسطوانات فارغة للاستلام",
   "@gasEmptyCylindersToCollect": {
     "placeholders": {
-      "count": {"type": "String"}
+      "count": {
+        "type": "String"
+      }
     }
   },
   "saimpexSupport": "دعم SAIMPEX",
@@ -2378,7 +2380,9 @@
   "supportOrderCode": "الطلب #{code}",
   "@supportOrderCode": {
     "placeholders": {
-      "code": {"type": "String"}
+      "code": {
+        "type": "String"
+      }
     }
   },
   "pharmacyGenericName": "الاسم العلمي",
@@ -2394,7 +2398,11 @@
   "productHiddenForever": "مخفي حتى تظهره",
   "productHiddenUntil": "مخفي حتى {time}",
   "@productHiddenUntil": {
-    "placeholders": {"time": {"type": "String"}}
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "hideProduct": "إخفاء",
   "showProductNow": "إظهار الآن",
@@ -2411,20 +2419,36 @@
   "defaultPreparationTime": "وقت التحضير",
   "minutesShort": "{minutes} د",
   "@minutesShort": {
-    "placeholders": {"minutes": {"type": "String"}}
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeLabel": "رسوم التوصيل",
   "deliveryFeePerKm": "{value} أوقية لكل كم",
   "@deliveryFeePerKm": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFixed": "{value} أوقية",
   "@deliveryFeeFixed": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeePercent": "{value}% من الطلب",
   "@deliveryFeePercent": {
-    "placeholders": {"value": {"type": "String"}}
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   },
   "deliveryFeeFree": "مجاني",
   "deliveryFeePaidBy": "يدفع رسوم التوصيل",
@@ -2433,7 +2457,11 @@
   "feePaidBySaimpex": "SAIMPEX",
   "feePaidSplit": "مقسومة: متجرك {percent}%، والعميل الباقي",
   "@feePaidSplit": {
-    "placeholders": {"percent": {"type": "String"}}
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
   },
   "deliveryModel": "السائقون",
   "deliveryModelBoth": "سائقوك وسائقو SAIMPEX",
@@ -2453,7 +2481,11 @@
   "requestRejected": "مرفوض",
   "adminNote": "SAIMPEX: {note}",
   "@adminNote": {
-    "placeholders": {"note": {"type": "String"}}
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
   },
   "requestNameAndReason": "أدخل الاسم والسبب.",
   "serviceKindLaundry": "مغسلة",
@@ -2474,11 +2506,19 @@
   "rejectReasonOperationalIssue": "مشكلة تشغيلية مؤقتة",
   "laundryCustomerEstimate": "تقدير العميل ({kg} كغ)",
   "@laundryCustomerEstimate": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryActualWeight": "الوزن الفعلي ({kg} كغ)",
   "@laundryActualWeight": {
-    "placeholders": {"kg": {"type": "String"}}
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
   },
   "laundryPickupSlot": "موعد الاستلام",
   "laundryDeliveryTurnaround": "موعد التوصيل",
@@ -2495,7 +2535,11 @@
   "laundryPriceBreakdown": "تفاصيل السعر",
   "laundryRatePerKg": "{rate} أوقية / كغ",
   "@laundryRatePerKg": {
-    "placeholders": {"rate": {"type": "String"}}
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
   },
   "laundryInvoiceDifference": "فرق الفاتورة",
   "laundrySendPaymentRequest": "إرسال طلب الدفع",
@@ -2528,7 +2572,11 @@
   "itemPricingHelp": "حدد سعرًا لكل نوع من الملابس. يختار العملاء الكميات عند الحجز.",
   "mruPerUnit": "أوقية / {unit}",
   "@mruPerUnit": {
-    "placeholders": {"unit": {"type": "String"}}
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
   },
   "addVehicleType": "إضافة نوع مركبة",
   "addOnServices": "خدمات إضافية",
@@ -2553,7 +2601,11 @@
   "addPhoto": "إضافة صورة",
   "bookingHash": "الحجز #{code}",
   "@bookingHash": {
-    "placeholders": {"code": {"type": "String"}}
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
   },
   "cleaningMarkOnTheWay": "في الطريق",
   "myCleaners": "عمال النظافة",
@@ -2573,19 +2625,31 @@
   "cleanerNew": "جديد",
   "cleanerReviewsCount": "{count} تقييم",
   "@cleanerReviewsCount": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "noCleanersYet": "لا يوجد عمال بعد.",
   "assignCleaner": "تعيين عامل",
   "assignCleanerNamed": "تعيين {name}",
   "@assignCleanerNamed": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "searchCleaner": "ابحث عن عامل",
   "assignedCleaner": "العامل المعيّن",
   "cleanerReviewOf": "تقييم العامل: {name}",
   "@cleanerReviewOf": {
-    "placeholders": {"name": {"type": "String"}}
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "closed": "مغلق",
   "bookingSlots": "مواعيد الحجز",
@@ -2614,7 +2678,11 @@
   "waterSearchSubscription": "ابحث برقم الاشتراك أو الاسم",
   "waterScheduledDeliveries": "{count} توصيلات مجدولة",
   "@waterScheduledDeliveries": {
-    "placeholders": {"count": {"type": "String"}}
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   },
   "waterNoDeliveriesThisDay": "لا توجد توصيلات في هذا اليوم.",
   "waterSelfPickup": "استلام ذاتي",
@@ -2777,7 +2845,13 @@
   "pharmacyHomeOneItem": "صنف واحد",
   "@pharmacyHomeOneItem": {},
   "pharmacyHomeItemCount": "{count} أصناف",
-  "@pharmacyHomeItemCount": {"placeholders": {"count": {"type": "String"}}},
+  "@pharmacyHomeItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomeBadgeReviewing": "قيد المراجعة",
   "@pharmacyHomeBadgeReviewing": {},
   "pharmacyHomeBadgeReviewCompleted": "اكتملت المراجعة",
@@ -2789,9 +2863,21 @@
   "pharmacyHomeReviewPrescription": "مراجعة الوصفة",
   "@pharmacyHomeReviewPrescription": {},
   "pharmacyHomeOrderCode": "الطلب {code}",
-  "@pharmacyHomeOrderCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomeOrderCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescriptionCode": "الوصفة {code}",
-  "@pharmacyHomePrescriptionCode": {"placeholders": {"code": {"type": "String"}}},
+  "@pharmacyHomePrescriptionCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyHomePrescription": "الوصفة الطبية",
   "@pharmacyHomePrescription": {},
   "pharmacyHomeViewFullPrescription": "عرض الوصفة كاملة",
@@ -2947,7 +3033,13 @@
   "pharmacyInvNoMedicinesFound": "لم يتم العثور على أدوية",
   "@pharmacyInvNoMedicinesFound": {},
   "pharmacyInvStockLeft": "متبقٍ: {stock}",
-  "@pharmacyInvStockLeft": {"placeholders": {"stock": {"type": "String"}}},
+  "@pharmacyInvStockLeft": {
+    "placeholders": {
+      "stock": {
+        "type": "String"
+      }
+    }
+  },
   "pharmacyInvBoxes": "علب",
   "@pharmacyInvBoxes": {},
   "pharmacyInvEnterQuantity": "يرجى إدخال الكمية",
@@ -3003,5 +3095,149 @@
   "pharmacyInvCameraPermissionBarcode": "يلزم إذن الكاميرا لمسح الباركود",
   "@pharmacyInvCameraPermissionBarcode": {},
   "pharmacyInvPositionBarcode": "ضع الباركود داخل الإطار",
-  "@pharmacyInvPositionBarcode": {}
+  "@pharmacyInvPositionBarcode": {},
+  "mgmtCategories": "الفئات",
+  "@mgmtCategories": {},
+  "mgmtAddCategory": "إضافة فئة",
+  "@mgmtAddCategory": {},
+  "mgmtEditCategory": "تعديل الفئة",
+  "@mgmtEditCategory": {},
+  "mgmtDeleteCategory": "حذف الفئة",
+  "@mgmtDeleteCategory": {},
+  "mgmtDeleteCategoryConfirm": "هل أنت متأكد من حذف الفئة «{name}»؟",
+  "@mgmtDeleteCategoryConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchCategory": "البحث عن فئة",
+  "@mgmtSearchCategory": {},
+  "mgmtAddTag": "إضافة وسم",
+  "@mgmtAddTag": {},
+  "mgmtEditTag": "تعديل الوسم",
+  "@mgmtEditTag": {},
+  "mgmtDeleteTag": "حذف الوسم",
+  "@mgmtDeleteTag": {},
+  "mgmtDeleteTagConfirm": "هل أنت متأكد من حذف الوسم «{name}»؟",
+  "@mgmtDeleteTagConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mgmtSearchTag": "البحث عن وسم",
+  "@mgmtSearchTag": {},
+  "mgmtNoTagsFound": "لم يتم العثور على وسوم",
+  "@mgmtNoTagsFound": {},
+  "mgmtSelectImage": "اختر صورة",
+  "@mgmtSelectImage": {},
+  "mgmtChooseImageSource": "اختر صورة من المعرض أو التقطها بالكاميرا",
+  "@mgmtChooseImageSource": {},
+  "mgmtAddImage": "إضافة صورة",
+  "@mgmtAddImage": {},
+  "mgmtUpdateStatus": "تحديث الحالة",
+  "@mgmtUpdateStatus": {},
+  "mgmtCategoryAdded": "تمت إضافة الفئة بنجاح",
+  "@mgmtCategoryAdded": {},
+  "mgmtCategoryUpdated": "تم تحديث الفئة بنجاح",
+  "@mgmtCategoryUpdated": {},
+  "mgmtCategorySaveFailed": "تعذر حفظ الفئة",
+  "@mgmtCategorySaveFailed": {},
+  "mgmtCategoryDeleted": "تم حذف الفئة بنجاح",
+  "@mgmtCategoryDeleted": {},
+  "mgmtCategoryDeleteFailed": "تعذر حذف الفئة",
+  "@mgmtCategoryDeleteFailed": {},
+  "mgmtTagAdded": "تمت إضافة الوسم بنجاح",
+  "@mgmtTagAdded": {},
+  "mgmtTagUpdated": "تم تحديث الوسم بنجاح",
+  "@mgmtTagUpdated": {},
+  "mgmtTagSaveFailed": "تعذر حفظ الوسم",
+  "@mgmtTagSaveFailed": {},
+  "mgmtTagDeleted": "تم حذف الوسم بنجاح",
+  "@mgmtTagDeleted": {},
+  "mgmtTagDeleteFailed": "تعذر حذف الوسم",
+  "@mgmtTagDeleteFailed": {},
+  "mgmtStatusUpdated": "تم تحديث الحالة بنجاح",
+  "@mgmtStatusUpdated": {},
+  "mgmtStatusUpdateFailed": "تعذر تحديث الحالة",
+  "@mgmtStatusUpdateFailed": {},
+  "itemFormAddOption": "إضافة خيار",
+  "@itemFormAddOption": {},
+  "itemFormEditOption": "تعديل الخيار",
+  "@itemFormEditOption": {},
+  "itemFormOptionName": "اسم الخيار",
+  "@itemFormOptionName": {},
+  "itemFormOptionNameHint": "أدخل اسم الخيار",
+  "@itemFormOptionNameHint": {},
+  "itemFormOptionImage": "صورة الخيار",
+  "@itemFormOptionImage": {},
+  "itemFormAdditionalPrice": "السعر الإضافي",
+  "@itemFormAdditionalPrice": {},
+  "itemFormSaveOption": "حفظ الخيار",
+  "@itemFormSaveOption": {},
+  "itemFormItemImages": "صور الصنف",
+  "@itemFormItemImages": {},
+  "itemFormSelectTags": "اختر الوسوم",
+  "@itemFormSelectTags": {},
+  "itemFormVariants": "المتغيرات",
+  "@itemFormVariants": {},
+  "itemFormVariantGroupName": "اسم مجموعة المتغيرات",
+  "@itemFormVariantGroupName": {},
+  "itemFormVariantGroupHint": "مثال: اختر الحجم",
+  "@itemFormVariantGroupHint": {},
+  "itemFormVariantImage": "صورة المتغير",
+  "@itemFormVariantImage": {},
+  "itemFormVariantName": "اسم المتغير",
+  "@itemFormVariantName": {},
+  "itemFormAddVariant": "إضافة متغير",
+  "@itemFormAddVariant": {},
+  "itemFormVariantRequired": "أضف متغيرًا واحدًا على الأقل مع الاسم والسعر",
+  "@itemFormVariantRequired": {},
+  "itemFormOptionGroups": "مجموعات الخيارات",
+  "@itemFormOptionGroups": {},
+  "itemFormGroupName": "اسم المجموعة",
+  "@itemFormGroupName": {},
+  "itemFormGroupNameHint": "مثال: اختر الطبق الجانبي، أضف إضافة...",
+  "@itemFormGroupNameHint": {},
+  "itemFormMinSelections": "الحد الأدنى للاختيارات",
+  "@itemFormMinSelections": {},
+  "itemFormMaxSelections": "الحد الأقصى للاختيارات",
+  "@itemFormMaxSelections": {},
+  "itemFormSelectionRequirement": "شرط الاختيار",
+  "@itemFormSelectionRequirement": {},
+  "itemFormRequired": "إلزامي",
+  "@itemFormRequired": {},
+  "itemFormDeleteGroup": "حذف المجموعة",
+  "@itemFormDeleteGroup": {},
+  "itemFormAddOptionGroup": "إضافة مجموعة خيارات",
+  "@itemFormAddOptionGroup": {},
+  "itemFormAddExtras": "إضافة إضافات",
+  "@itemFormAddExtras": {},
+  "itemFormItemName": "اسم الصنف",
+  "@itemFormItemName": {},
+  "itemFormItemNameHint": "مثال: برغر",
+  "@itemFormItemNameHint": {},
+  "itemFormAddAnotherItem": "إضافة صنف آخر",
+  "@itemFormAddAnotherItem": {},
+  "itemFormCurrency": "أوقية",
+  "@itemFormCurrency": {},
+  "stockEnterValidQuantity": "أدخل كمية صحيحة",
+  "@stockEnterValidQuantity": {},
+  "stockAddedSuccessfully": "تمت إضافة المخزون بنجاح",
+  "@stockAddedSuccessfully": {},
+  "stockRemovedSuccessfully": "تمت إزالة المخزون بنجاح",
+  "@stockRemovedSuccessfully": {},
+  "busyModeOn": "تم تعيين المتجر كمشغول",
+  "@busyModeOn": {},
+  "busyModeOff": "المتجر يستقبل الطلبات مجددًا",
+  "@busyModeOff": {},
+  "busyModeUpdateFailed": "تعذر تحديث وضع الانشغال",
+  "@busyModeUpdateFailed": {},
+  "noMenusFound": "لم يتم العثور على قوائم.",
+  "@noMenusFound": {},
+  "stockMovementType": "النوع",
+  "@stockMovementType": {}
 }

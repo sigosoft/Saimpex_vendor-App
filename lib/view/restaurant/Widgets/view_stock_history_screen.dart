@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/item_controller.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -118,7 +119,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Update Stock',
+                            S.of(context).waterUpdateStock,
                             style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -149,7 +150,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Type',
+                      S.of(context).stockMovementType,
                       style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -174,14 +175,14 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                             Icons.keyboard_arrow_down,
                             color: Color(0xFF6B7280),
                           ),
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                               value: 'Add',
-                              child: Text('Add'),
+                              child: Text(S.of(context).add),
                             ),
                             DropdownMenuItem(
                               value: 'Remove',
-                              child: Text('Remove'),
+                              child: Text(S.of(context).remove),
                             ),
                           ],
                           onChanged: (value) {
@@ -195,7 +196,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      'Item Quantity',
+                      S.of(context).quantity,
                       style: appFont('Rubik', 
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -253,7 +254,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Cancel',
+                                S.of(context).cancel,
                                 style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -275,7 +276,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                                 if (qty == null || qty <= 0) {
                                   showToast(
                                     context,
-                                    'Please enter valid quantity',
+                                    S.of(context).stockEnterValidQuantity,
                                   );
                                   return;
                                 }
@@ -320,7 +321,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Update',
+                                S.of(context).update,
                                 style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -363,7 +364,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
             ),
           ),
           title: Text(
-            'Stock History',
+            S.of(context).waterStockHistory,
             style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -400,7 +401,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                     ),
                   ),
                   child: Text(
-                    'Update Stock',
+                    S.of(context).waterUpdateStock,
                     style: appFont('Rubik', 
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -501,7 +502,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 32),
                             child: Text(
-                              'No stock history found',
+                              S.of(context).waterNoStockHistoryFound,
                               style: appFont('Rubik', 
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
