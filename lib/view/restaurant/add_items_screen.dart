@@ -75,6 +75,15 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
   String extraSelectionRequirement = 'Optional';
   final List<_ExtraItemModel> extraItems = [];
 
+  /// Dropdown values stay English ('Yes', 'Optional'…); this is what is shown.
+  String _choiceLabel(String value) => switch (value) {
+        'Yes' => S.of(context).yes,
+        'No' => S.of(context).no,
+        'Required' => S.of(context).itemFormRequired,
+        'Optional' => S.of(context).quickEditOptional,
+        _ => value,
+      };
+
   void _openTagsMultiSelect(BuildContext context, ItemController controller) {
     if (controller.restaurantTags.isEmpty) return;
     showModalBottomSheet(
@@ -103,7 +112,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Tags',
+                            S.of(context).tagsLabel,
                             style: appFont('Rubik', 
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -119,7 +128,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                             rebuildSheet();
                           },
                           child: Text(
-                            'Reset',
+                            S.of(context).reset,
                             style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -178,7 +187,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           ),
                         ),
                         child: Text(
-                          'Done',
+                          S.of(context).done,
                           style: appFont('Rubik', 
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -232,7 +241,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     Row(
                       children: [
                         Text(
-                          'Add Option',
+                          S.of(context).itemFormAddOption,
                           style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -251,14 +260,14 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const AddItemsFieldLabel('Option name'),
+                    AddItemsFieldLabel(S.of(context).itemFormOptionName),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: optNameCtrl,
-                      hint: 'Enter option name',
+                      hint: S.of(context).itemFormOptionNameHint,
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Option Image'),
+                    AddItemsFieldLabel(S.of(context).itemFormOptionImage),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -315,7 +324,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ),
                             ),
                             child: Text(
-                              'Upload Image',
+                              S.of(context).uploadImage,
                               style: appFont('Rubik', 
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -327,13 +336,13 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Additional price'),
+                    AddItemsFieldLabel(S.of(context).itemFormAdditionalPrice),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: optPriceCtrl,
                       hint: '0',
                       keyboardType: TextInputType.number,
-                      suffixText: 'MRU',
+                      suffixText: S.of(context).itemFormCurrency,
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -351,7 +360,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Cancel',
+                                S.of(context).cancel,
                                 style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -400,7 +409,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Save Option',
+                                S.of(context).itemFormSaveOption,
                                 style: appFont('Rubik', 
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -476,7 +485,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
           ),
         ),
         title: Text(
-          'Add Item',
+          S.of(context).addItem,
           style: appFont('Rubik', 
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -493,7 +502,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Item Images upload dashed box ─────────────────────────────
-              const AddItemsFieldLabel('Item Images'),
+              AddItemsFieldLabel(S.of(context).itemFormItemImages),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () => controller.pickAndCropImage(context),
@@ -572,7 +581,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                'Upload image here',
+                                S.of(context).uploadImageHere,
                                 style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -613,7 +622,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Product Details',
+                          S.of(context).waterProductDetails,
                           style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -623,11 +632,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const AddItemsFieldLabel('Item Name (English)'),
+                    AddItemsFieldLabel(S.of(context).itemNameEnglishLabel),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: itemNameCtrl,
-                      hint: 'Enter item name',
+                      hint: S.of(context).enterItemNameHint,
                     ),
                     const SizedBox(height: 14),
                     Row(
@@ -636,7 +645,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Category'),
+                              AddItemsFieldLabel(S.of(context).categoryLabel),
                               const SizedBox(height: 6),
                               AddItemsDropdownField(
                                 value:
@@ -647,8 +656,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     ? controller.selectedType
                                     : null,
                                 hint: controller.isMenuListLoading
-                                    ? 'Loading...'
-                                    : 'Select Category',
+                                    ? S.of(context).loading
+                                    : S.of(context).selectCategoryHint,
                                 items: controller.typeDisplayNames,
                                 onChanged: controller.isMenuListLoading
                                     ? (_) {}
@@ -662,11 +671,12 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Is Veg'),
+                              AddItemsFieldLabel(S.of(context).isVegLabel),
                               const SizedBox(height: 6),
                               AddItemsDropdownField(
                                 value: isVeg,
                                 items: const ['No', 'Yes'],
+                                itemLabel: _choiceLabel,
                                 onChanged: (v) =>
                                     setState(() => isVeg = v ?? 'No'),
                               ),
@@ -676,38 +686,38 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Serial Number'),
+                    AddItemsFieldLabel(S.of(context).serialNumber),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: controller.serialNumberCtrl,
-                      hint: 'Enter item name',
+                      hint: S.of(context).enterSerialNumberHint,
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Description (English)'),
+                    AddItemsFieldLabel(S.of(context).descriptionEnglishLabel),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: descriptionCtrl,
-                      hint: 'Enter description',
+                      hint: S.of(context).enterDescriptionHint,
                       maxLines: 3,
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Tags'),
+                    AddItemsFieldLabel(S.of(context).tagsLabel),
                     const SizedBox(height: 6),
                     AddItemsMultiSelectField(
                       displayText: controller.selectedTagDisplayText,
                       hint: controller.isRestaurantTagsLoading
-                          ? 'Loading...'
-                          : 'Select tags',
+                          ? S.of(context).loading
+                          : S.of(context).itemFormSelectTags,
                       onTap: controller.isRestaurantTagsLoading
                           ? () {}
                           : () => _openTagsMultiSelect(context, controller),
                     ),
                     const SizedBox(height: 14),
-                    const AddItemsFieldLabel('Preparation Time (minutes)'),
+                    AddItemsFieldLabel(S.of(context).preparationTimeMinutesLabel),
                     const SizedBox(height: 6),
                     AddItemsTextField(
                       controller: controller.prepTimeCtrl,
-                      hint: 'Enter minutes',
+                      hint: S.of(context).enterMinutesHint,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 14),
@@ -717,11 +727,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Price'),
+                              AddItemsFieldLabel(S.of(context).price),
                               const SizedBox(height: 6),
                               AddItemsTextField(
                                 controller: controller.priceCtrl,
-                                hint: 'Enter Price',
+                                hint: S.of(context).enterPriceHint,
                                 keyboardType: TextInputType.number,
                               ),
                             ],
@@ -732,11 +742,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Discount Price'),
+                              AddItemsFieldLabel(S.of(context).discountPriceLabel),
                               const SizedBox(height: 6),
                               AddItemsTextField(
                                 controller: controller.discountPriceCtrl,
-                                hint: 'Enter Discount Price',
+                                hint: S.of(context).enterDiscountPriceHint,
                                 keyboardType: TextInputType.number,
                               ),
                             ],
@@ -763,7 +773,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Variants',
+                          S.of(context).itemFormVariants,
                           style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -793,11 +803,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                     ),
                     if (isVariantsEnabled) ...[
                       const SizedBox(height: 16),
-                      const AddItemsFieldLabel('Variant Group Name'),
+                      AddItemsFieldLabel(S.of(context).itemFormVariantGroupName),
                       const SizedBox(height: 6),
                       AddItemsTextField(
                         controller: variantGroupNameCtrl,
-                        hint: 'e.g. Choose Your Portion',
+                        hint: S.of(context).itemFormVariantGroupHint,
                       ),
                       const SizedBox(height: 16),
                       ...variants.asMap().entries.map((entry) {
@@ -805,7 +815,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AddItemsFieldLabel('Variant Image'),
+                            AddItemsFieldLabel(S.of(context).itemFormVariantImage),
                             const SizedBox(height: 8),
                             if (item.imageFile == null)
                               Row(
@@ -854,7 +864,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Upload Image',
+                                        S.of(context).uploadImage,
                                         style: appFont('Rubik', 
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
@@ -922,7 +932,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const AddItemsFieldLabel('Variant Name'),
+                                      AddItemsFieldLabel(S.of(context).itemFormVariantName),
                                       const SizedBox(height: 6),
                                       AddItemsTextField(
                                         controller: item.nameCtrl,
@@ -937,13 +947,13 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const AddItemsFieldLabel('Price'),
+                                      AddItemsFieldLabel(S.of(context).price),
                                       const SizedBox(height: 6),
                                       AddItemsTextField(
                                         controller: item.priceCtrl,
                                         hint: '',
                                         keyboardType: TextInputType.number,
-                                        suffixText: 'MRU',
+                                        suffixText: S.of(context).itemFormCurrency,
                                       ),
                                     ],
                                   ),
@@ -951,11 +961,12 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            const AddItemsFieldLabel('Selection requirement'),
+                            AddItemsFieldLabel(S.of(context).itemFormSelectionRequirement),
                             const SizedBox(height: 6),
                             AddItemsDropdownField(
                               value: item.selectionRequirement,
                               items: const ['Optional', 'Required'],
+                              itemLabel: _choiceLabel,
                               onChanged: (v) {
                                 if (v != null) {
                                   setState(() => item.selectionRequirement = v);
@@ -993,7 +1004,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Add Variant',
+                                S.of(context).itemFormAddVariant,
                                 style: appFont('Rubik', 
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -1024,7 +1035,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Option Groups',
+                          S.of(context).itemFormOptionGroups,
                           style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -1041,11 +1052,11 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AddItemsFieldLabel('Group Name'),
+                            AddItemsFieldLabel(S.of(context).itemFormGroupName),
                             const SizedBox(height: 6),
                             AddItemsTextField(
                               controller: group.groupNameCtrl,
-                              hint: 'e.g. Choose Your Side, Add Extra...',
+                              hint: S.of(context).itemFormGroupNameHint,
                             ),
                             const SizedBox(height: 12),
                             Row(
@@ -1055,8 +1066,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const AddItemsFieldLabel(
-                                        'Minimum selections',
+                                      AddItemsFieldLabel(
+                                        S.of(context).itemFormMinSelections,
                                       ),
                                       const SizedBox(height: 6),
                                       AddItemsTextField(
@@ -1073,8 +1084,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const AddItemsFieldLabel(
-                                        'Maximum selections',
+                                      AddItemsFieldLabel(
+                                        S.of(context).itemFormMaxSelections,
                                       ),
                                       const SizedBox(height: 6),
                                       AddItemsTextField(
@@ -1088,11 +1099,12 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            const AddItemsFieldLabel('Selection requirement'),
+                            AddItemsFieldLabel(S.of(context).itemFormSelectionRequirement),
                             const SizedBox(height: 6),
                             AddItemsDropdownField(
                               value: group.selectionRequirement,
                               items: const ['Optional', 'Required'],
+                              itemLabel: _choiceLabel,
                               onChanged: (v) {
                                 if (v != null) {
                                   setState(
@@ -1103,7 +1115,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                             ),
                             if (group.options.isNotEmpty) ...[
                               const SizedBox(height: 14),
-                              const AddItemsFieldLabel('Option Image'),
+                              AddItemsFieldLabel(S.of(context).itemFormOptionImage),
                               const SizedBox(height: 8),
                               ...group.options.asMap().entries.map((optEntry) {
                                 final optIndex = optEntry.key;
@@ -1148,7 +1160,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                             ),
                                             const SizedBox(height: 2),
                                             Text(
-                                              '${opt.price} MRU',
+                                              '${opt.price} ${S.of(context).itemFormCurrency}',
                                               style: appFont('Rubik', 
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w500,
@@ -1223,7 +1235,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          'Add Option',
+                                          S.of(context).itemFormAddOption,
                                           style: appFont('Rubik', 
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
@@ -1264,7 +1276,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          'Delete Group',
+                                          S.of(context).itemFormDeleteGroup,
                                           style: appFont('Rubik', 
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
@@ -1314,7 +1326,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'Add Option Group',
+                                S.of(context).itemFormAddOptionGroup,
                                 style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -1343,7 +1355,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Add Extras',
+                          S.of(context).itemFormAddExtras,
                           style: appFont('Rubik', 
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -1359,7 +1371,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Maximum selections'),
+                              AddItemsFieldLabel(S.of(context).itemFormMaxSelections),
                               const SizedBox(height: 6),
                               AddItemsTextField(
                                 controller: extraMaxSelectionsCtrl,
@@ -1374,11 +1386,12 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const AddItemsFieldLabel('Selection requirement'),
+                              AddItemsFieldLabel(S.of(context).itemFormSelectionRequirement),
                               const SizedBox(height: 6),
                               AddItemsDropdownField(
                                 value: extraSelectionRequirement,
                                 items: const ['Optional', 'Required'],
+                                itemLabel: _choiceLabel,
                                 onChanged: (v) {
                                   if (v != null) {
                                     setState(
@@ -1400,9 +1413,9 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AddItemsFieldLabel(
-                              'Item image',
-                              color: Color(0xFFA855F7),
+                            AddItemsFieldLabel(
+                              S.of(context).itemImageLabel,
+                              color: const Color(0xFFA855F7),
                             ),
                             const SizedBox(height: 8),
                             if (extra.imageFile == null)
@@ -1454,7 +1467,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Upload image',
+                                        S.of(context).uploadImage,
                                         style: appFont('Rubik', 
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
@@ -1501,7 +1514,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                               .isNotEmpty) ...[
                                             const SizedBox(height: 2),
                                             Text(
-                                              '+${extra.priceCtrl.text} MRU',
+                                              '+${extra.priceCtrl.text} ${S.of(context).itemFormCurrency}',
                                               style: appFont('Rubik', 
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w500,
@@ -1554,20 +1567,20 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                                 ),
                               ),
                             const SizedBox(height: 12),
-                            const AddItemsFieldLabel('Item Name'),
+                            AddItemsFieldLabel(S.of(context).itemFormItemName),
                             const SizedBox(height: 6),
                             AddItemsTextField(
                               controller: extra.nameCtrl,
-                              hint: 'e.g. Burger',
+                              hint: S.of(context).itemFormItemNameHint,
                             ),
                             const SizedBox(height: 12),
-                            const AddItemsFieldLabel('Price'),
+                            AddItemsFieldLabel(S.of(context).price),
                             const SizedBox(height: 6),
                             AddItemsTextField(
                               controller: extra.priceCtrl,
                               hint: '',
                               keyboardType: TextInputType.number,
-                              suffixText: 'MRU',
+                              suffixText: S.of(context).itemFormCurrency,
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -1609,8 +1622,8 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 extraItems.isEmpty
-                                    ? 'Add Item'
-                                    : 'Add Another Item',
+                                    ? S.of(context).addItem
+                                    : S.of(context).itemFormAddAnotherItem,
                                 style: appFont('Rubik', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -1687,7 +1700,7 @@ class _AddItemsScreenState extends State<AddItemsScreen> {
                       ))
                   .toList();
           if (isVariantsEnabled && validVariants.isEmpty) {
-            Get.snackbar('', 'Add at least one variant with a name and price',
+            Get.snackbar('', S.current.itemFormVariantRequired,
                 titleText: const SizedBox.shrink());
             return;
           }

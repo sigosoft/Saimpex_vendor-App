@@ -3335,5 +3335,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "addItemAddedSuccessfully": "Item added successfully",
+  "@addItemAddedSuccessfully": {},
+  "addItemFailedToAdd": "Failed to add item",
+  "@addItemFailedToAdd": {}
 }

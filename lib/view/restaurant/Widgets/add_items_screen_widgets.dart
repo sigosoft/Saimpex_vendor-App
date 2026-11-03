@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Custom painter for dashed rounded border.
 class DashedBorderPainter extends CustomPainter {
@@ -157,11 +158,12 @@ class AddItemsTextField extends StatelessWidget {
           ),
           suffixIcon: suffixText != null
               ? Padding(
-                  padding: const EdgeInsets.only(right: 14),
+                  // Directional so the currency sits at the end in Arabic too.
+                  padding: const EdgeInsetsDirectional.only(end: 14),
                   child: Align(
                     // Size to the suffix only; a full-width Align hid the typed value.
                     widthFactor: 1,
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerEnd,
                     child: Text(
                       suffixText!,
                       style: appFont('Rubik', 
@@ -206,6 +208,9 @@ class AddItemsDropdownField extends StatelessWidget {
   final String? hint;
   final bool fullWidth;
 
+  /// Text shown for a value; the value itself (sent to the server) is unchanged.
+  final String Function(String)? itemLabel;
+
   const AddItemsDropdownField({
     super.key,
     required this.items,
@@ -213,6 +218,7 @@ class AddItemsDropdownField extends StatelessWidget {
     this.value,
     this.hint,
     this.fullWidth = true,
+    this.itemLabel,
   });
 
   @override
@@ -273,7 +279,7 @@ class AddItemsDropdownField extends StatelessWidget {
               (e) => DropdownMenuItem(
                 value: e,
                 child: Text(
-                  e,
+                  itemLabel?.call(e) ?? e,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -338,7 +344,7 @@ class AddItemsMultiSelectField extends StatelessWidget {
             ),
           ),
           child: Align(
-            alignment: Alignment.centerLeft,
+            alignment: AlignmentDirectional.centerStart,
             child: Text(
               textToShow ?? (hint ?? ''),
               maxLines: 1,
@@ -403,7 +409,7 @@ class AddItemsBottomBar extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Reset',
+                      S.of(context).reset,
                       style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -428,7 +434,7 @@ class AddItemsBottomBar extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Submit',
+                      S.of(context).submit,
                       style: appFont('Rubik', 
                         fontSize: 15,
                         fontWeight: FontWeight.w700,

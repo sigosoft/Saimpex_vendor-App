@@ -259,6 +259,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add distance range",
     ),
     "addItem": MessageLookupByLibrary.simpleMessage("Add Item"),
+    "addItemAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Item added successfully",
+    ),
+    "addItemFailedToAdd": MessageLookupByLibrary.simpleMessage(
+      "Failed to add item",
+    ),
     "addItemsTitle": MessageLookupByLibrary.simpleMessage("Add Items"),
     "addMenuTitle": MessageLookupByLibrary.simpleMessage("Add Menu"),
     "addMoreItems": MessageLookupByLibrary.simpleMessage("Add More Items"),

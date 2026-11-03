@@ -14190,6 +14190,26 @@ class S {
       args: [count],
     );
   }
+
+  /// `Item added successfully`
+  String get addItemAddedSuccessfully {
+    return Intl.message(
+      'Item added successfully',
+      name: 'addItemAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to add item`
+  String get addItemFailedToAdd {
+    return Intl.message(
+      'Failed to add item',
+      name: 'addItemFailedToAdd',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

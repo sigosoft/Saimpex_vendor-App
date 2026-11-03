@@ -257,6 +257,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "إضافة نطاق مسافة",
     ),
     "addItem": MessageLookupByLibrary.simpleMessage("إضافة عنصر"),
+    "addItemAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تمت إضافة المنتج بنجاح",
+    ),
+    "addItemFailedToAdd": MessageLookupByLibrary.simpleMessage(
+      "فشل إضافة المنتج",
+    ),
     "addItemsTitle": MessageLookupByLibrary.simpleMessage("إضافة عناصر"),
     "addMenuTitle": MessageLookupByLibrary.simpleMessage("إضافة قائمة"),
     "addMoreItems": MessageLookupByLibrary.simpleMessage(

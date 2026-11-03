@@ -793,19 +793,8 @@ class ItemController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Item added successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            } else if (response.data['message'] is String) {
-              successMessage = response.data['message'];
-            }
-          }
-          showToast(context, successMessage);
+          // App text: the server's message_en showed in French/Arabic mode.
+          showToast(context, S.current.addItemAddedSuccessfully);
           if (Get.isRegistered<ProfileController>()) {
             final profileController = Get.find<ProfileController>();
             await profileController.fetchGroceryMenuItems();
@@ -816,12 +805,15 @@ class ItemController extends GetxController {
         }
       } else {
         if (context.mounted) {
-          showToast(
-            context,
-            response.data['message']?.toString() ?? "Failed to add item",
-          );
+          showToast(context, _serverMessage(response.data, S.current.addItemFailedToAdd));
         }
       }
+    } on dio.DioException catch (error) {
+      if (context.mounted) {
+        Get.back();
+        showToast(context, _serverMessage(error.response?.data, S.current.addItemFailedToAdd));
+      }
+      debugPrint("addItem Error: $error");
     } catch (error) {
       if (context.mounted) {
         Get.back();
