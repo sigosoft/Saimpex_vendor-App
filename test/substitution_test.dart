@@ -21,7 +21,7 @@ class _FakeApi extends SubstitutionApi {
   }
 
   @override
-  Future<List<StoreProduct>> products(String keyword) async => [
+  Future<List<StoreProduct>> products(String keyword, {int? categoryId}) async => [
         StoreProduct({'menu_item_id': 11, 'name_en': 'Coca-Cola 1L', 'price': '50', 'status': 1, 'available_status': 1}),
         StoreProduct({'menu_item_id': 22, 'name_en': 'Pepsi 1L', 'price': '45', 'status': 1, 'available_status': 1, 'stock': 12}),
         StoreProduct({'menu_item_id': 33, 'name_en': 'Fanta 1L', 'price': '45', 'status': 1, 'available_status': 2}),
@@ -91,6 +91,31 @@ void main() {
     await t.tap(find.widgetWithText(TextButton, 'Remove Item'));
     await t.pumpAndSettle();
     expect(api.calls.single, {'order_item_id': 2, 'substitute_product_id': null, 'quantity': null, 'note': null});
+  });
+
+  test('removed lines, same category first, unit words', () {
+    expect(Substitution({'status': 'accepted', 'substitute': null}).removesLine, isTrue);
+    expect(Substitution({'status': 'auto_accepted', 'kind': 'unavailable'}).removesLine, isTrue);
+    expect(Substitution({'status': 'rejected', 'kind': 'substitute', 'substitute': {}}).removesLine, isTrue);
+    expect(Substitution({'status': 'accepted', 'kind': 'substitute', 'substitute': {}}).removesLine, isFalse);
+    expect(Substitution({'status': 'pending', 'substitute': null}).removesLine, isFalse);
+
+    final milk = StoreProduct({'menu_item_id': 1, 'category_name_en': 'Dairy'});
+    final soap = StoreProduct({'menu_item_id': 2, 'category_name_en': 'Home'});
+    final yogurt = StoreProduct({'menu_item_id': 3, 'category_name_en': 'dairy'});
+    expect(sameCategoryFirst([soap, yogurt], milk).map((p) => p.id), [3, 2]);
+    expect(sameCategoryFirst([soap, yogurt], null).map((p) => p.id), [2, 3]);
+  });
+
+  testWidgets('a removed line shows no actions', (t) async {
+    final api = _FakeApi([
+      {'id': 8, 'order_item_id': 1, 'status': 'accepted', 'kind': 'unavailable', 'original': {'quantity': 1, 'unit_price': 50}},
+    ]);
+    await t.pumpWidget(_app(EditItemsView(orderId: '9', lines: _lines, api: api)));
+    await t.pumpAndSettle();
+    expect(find.text('Item Removed'), findsOneWidget);
+    // Only the banana line keeps its buttons.
+    expect(find.text('Remove Item'), findsOneWidget);
   });
 
   testWidgets('change quantity sends the same product with fewer units', (t) async {

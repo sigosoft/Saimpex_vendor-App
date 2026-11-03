@@ -2744,5 +2744,13 @@
   "preparingOrder": "تحضير الطلب",
   "@preparingOrder": {},
   "storeManagement": "إدارة المتجر",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "unitGram": "غ",
+  "unitLitre": "لتر",
+  "unitMillilitre": "مل",
+  "unitPack": "عبوة",
+  "unitSet": "طقم",
+  "unitBox": "علبة",
+  "unitBottle": "زجاجة",
+  "unitDozen": "دزينة"
 }

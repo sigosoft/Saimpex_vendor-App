@@ -1399,7 +1399,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         children: [
           NoDataWidget(
             context,
-            "No items found.",
+            S.of(context).noItemsFound,
             "",
             "lib/assets/images/nodata.png",
           ),
