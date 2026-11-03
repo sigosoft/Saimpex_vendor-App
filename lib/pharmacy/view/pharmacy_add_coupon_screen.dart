@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyCouponDraft {
@@ -628,8 +629,6 @@ Widget _label(String text) {
   );
 }
 
-const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 String _formatInput(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');
   final month = date.month.toString().padLeft(2, '0');
@@ -637,16 +636,12 @@ String _formatInput(DateTime date) {
 }
 
 String _formatShort(DateTime date) {
-  return '${_months[date.month - 1]} ${date.day},${date.year}';
+  return appDateFormat('MMM d,yyyy').format(date);
 }
 
 String _formatStamp(DateTime date) {
-  final day = date.day.toString().padLeft(2, '0');
-  var hour = date.hour % 12;
-  if (hour == 0) hour = 12;
-  final minute = date.minute.toString().padLeft(2, '0');
-  final suffix = date.hour < 12 ? 'AM' : 'PM';
-  return '${_months[date.month - 1]} $day, ${date.year} $hour:$minute $suffix, Today';
+  // Month and AM/PM in the app language (V17).
+  return '${appDateFormat('MMM dd, yyyy h:mm a').format(date)}, ${S.current.today}';
 }
 
 class _Header extends StatelessWidget {

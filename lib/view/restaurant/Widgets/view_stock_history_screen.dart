@@ -66,9 +66,7 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
       final movementType = log.movementType ?? 0;
       final isAdded = movementType == 1;
       final quantity = (log.quantity ?? 0).abs();
-      final parsedDate = log.createdAt != null
-          ? DateTime.tryParse(log.createdAt!)?.toLocal()
-          : null;
+      final parsedDate = parseServerTime(log.createdAt);
       return _StockHistoryEntry(
         stockId: (log.id ?? '').toString(),
         dateTime: parsedDate,

@@ -900,9 +900,7 @@ class FCM {
       // The server sends English text; show it in the app's language.
       try {
         final code = effectiveData['order_code']?.toString() ?? '';
-        final at = DateTime.tryParse(
-          effectiveData['scheduled_for']?.toString() ?? '',
-        );
+        final at = parseServerTime(effectiveData['scheduled_for']);
         title = S.current.preorderReminderTitle;
         if (at != null) {
           body = S.current.preorderReminderBody(code, formatPreorderTime(at));

@@ -1834,15 +1834,21 @@ class ItemController extends GetxController {
         );
       }
     } on dio.DioException catch (error) {
-      // e.g. 400 "Only 3 items are available to remove".
+      // e.g. 400 "Only 3 items are available to remove": the server sends
+      // plain English, so that one is shown in the app language (V17).
       debugPrint("updateMenuItemStock Error: $error");
+      final serverText = _serverMessage(
+        error.response?.data,
+        S.current.waterFailedToUpdateStock,
+      );
+      final onlyN = RegExp(r'Only (d+) items? (?:are|is) available to remove')
+          .firstMatch(serverText);
       if (context.mounted) {
         showToast(
           context,
-          _serverMessage(
-            error.response?.data,
-            S.current.waterFailedToUpdateStock,
-          ),
+          onlyN != null
+              ? S.current.stockOnlyAvailableToRemove(onlyN.group(1)!)
+              : serverText,
         );
       }
     } catch (error, stackTrace) {

@@ -1489,23 +1489,7 @@ String _formatExpiryShort(String? dateStr) {
   try {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final m = months[date.month - 1];
-    final y = (date.year % 100).toString().padLeft(2, '0');
-    return "$m '$y";
+    return appDateFormat("MMM ''yy").format(date);
   } catch (_) {
     return dateStr;
   }
@@ -1516,24 +1500,7 @@ String _formatExpiryLong(String? dateStr) {
   try {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final d = date.day;
-    final m = months[date.month - 1];
-    final y = date.year;
-    return "$d $m, $y";
+    return appDateFormat('d MMM, yyyy').format(date);
   } catch (_) {
     return dateStr;
   }

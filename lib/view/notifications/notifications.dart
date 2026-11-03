@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
 import 'package:saimpex_vendor/utils/widgets/activity_notifications_section.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
@@ -136,8 +137,8 @@ class _NotificationsState extends State<Notifications> {
       // First, try to use notificationsCreatedAt (full datetime string)
       if (createdAt.isNotEmpty) {
         try {
-          dateTime = DateTime.parse(createdAt);
-          return DateFormat('h:mm a').format(dateTime);
+          dateTime = serverTimeToLocal(DateTime.parse(createdAt));
+          return appDateFormat('h:mm a').format(dateTime);
         } catch (e) {
           debugPrint("Failed to parse createdAt: $e");
         }
@@ -146,8 +147,8 @@ class _NotificationsState extends State<Notifications> {
       // Fallback: Try combining date and time
       if (date.isNotEmpty && time.isNotEmpty) {
         try {
-          dateTime = DateTime.parse("$date $time");
-          return DateFormat('h:mm a').format(dateTime);
+          dateTime = serverTimeToLocal(DateTime.parse("$date $time"));
+          return appDateFormat('h:mm a').format(dateTime);
         } catch (e) {
           // If that fails, try parsing just the time with today's date
           try {

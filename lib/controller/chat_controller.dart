@@ -670,10 +670,10 @@ class ChatController extends GetxController {
     if (s == null || s.isEmpty) return DateTime(0);
     try {
       DateTime? dt = DateTime.tryParse(s);
-      if (dt != null) return dt.toLocal();
+      if (dt != null) return serverTimeToLocal(dt);
       // Try common Laravel/Saimpex formats
       if (s.contains('-')) {
-        return DateFormat("yyyy-MM-dd HH:mm:ss").parse(s).toLocal();
+        return serverTimeToLocal(DateFormat("yyyy-MM-dd HH:mm:ss").parse(s));
       }
     } catch (_) {}
     return DateTime(0);

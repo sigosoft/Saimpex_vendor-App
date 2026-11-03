@@ -3274,5 +3274,13 @@
         "type": "String"
       }
     }
+  },
+  "stockOnlyAvailableToRemove": "Seulement {count} articles peuvent être retirés",
+  "@stockOnlyAvailableToRemove": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -65,8 +66,8 @@ class BalanceAdjustmentsSectionState extends State<BalanceAdjustmentsSection> {
   }
 
   String _date(dynamic value) {
-    final dt = DateTime.tryParse(value?.toString() ?? '');
-    return dt == null ? '' : DateFormat('dd/MM/yyyy HH:mm').format(dt.toLocal());
+    final dt = parseServerTime(value);
+    return dt == null ? '' : DateFormat('dd/MM/yyyy HH:mm').format(dt);
   }
 
   @override

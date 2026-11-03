@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
@@ -121,10 +122,11 @@ class _ChatListingState extends State<ChatListing> {
                           context,
                           chat,
                           chat.lastMessage?.messageType == 'image'
-                              ? "📷 Image"
+                              ? "📷 ${S.of(context).waterImage}"
                               : chat.lastMessage?.messageType == 'voice'
-                                  ? "🎤 Voice message"
+                                  ? "🎤 ${S.of(context).waterVoiceMessage}"
                                   : chat.lastMessage?.message ?? "",
+                          isOrder: true,
                         ),
                         timestamp: formatChatTime(timeStr),
                         unreadCount: chat.unreadCount ?? 0,
@@ -155,13 +157,8 @@ class _ChatListingState extends State<ChatListing> {
   String formatChatTime(String? timeStr) {
     if (timeStr == null || timeStr.isEmpty) return "";
     try {
-      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
-      if (timeStr.contains('-') && !timeStr.contains('T')) {
-        try {
-          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
-        } catch (_) {}
-      }
-      dt = dt.toLocal();
+      // Server UTC without an offset, shown in phone time.
+      DateTime dt = parseServerTime(timeStr) ?? DateTime.now();
       DateTime now = DateTime.now();
       if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
         return DateFormat('hh:mm a').format(dt);
