@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart' show cleaningPropertyLabel;
 
 /// Locale-aware formatting shared by the home list and the details screen.
 class CleaningBookingFormat {
@@ -53,21 +54,24 @@ class CleaningBookingFormat {
     if (created == null) return '';
     final diff = DateTime.now().difference(serverTimeToLocal(created));
     if (diff.inMinutes < 1) return S.of(context).cleaningJustNow;
+    // Plural forms: Arabic needs 1 / 2 / 3-10 / 11+ ("منذ 5 ساعات", V18).
     if (diff.inHours < 1) {
-      return S.of(context).cleaningBookingMinutesAgo(diff.inMinutes.toString());
+      return S.of(context).cleaningMinutesAgoCount(diff.inMinutes);
     }
     if (diff.inDays < 1) {
-      return S.of(context).cleaningBookingHoursAgo(diff.inHours.toString());
+      return S.of(context).cleaningHoursAgoCount(diff.inHours);
     }
-    return S.of(context).cleaningBookingDaysAgo(diff.inDays.toString());
+    return S.of(context).cleaningDaysAgoCount(diff.inDays);
   }
 
   /// Chip label: "Bedroom × 4" for priced lines, plain name otherwise.
-  static String chip(CleaningBookingLine line) {
+  /// Property types arrive as their English value ("Apartment", V17).
+  static String chip(BuildContext context, CleaningBookingLine line) {
+    final name = line.kind == 'property' ? cleaningPropertyLabel(context, line.name) : line.name;
     if (line.isSpace || line.isAddon || line.quantity > 1) {
-      return '${line.name} × ${line.quantity}';
+      return '$name × ${line.quantity}';
     }
-    return line.name;
+    return name;
   }
 
   static String? paymentType(BuildContext context, String? type) {

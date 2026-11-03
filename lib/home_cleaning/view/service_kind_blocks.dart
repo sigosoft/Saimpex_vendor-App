@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 
 // Laundry and car wash parts of Booking Details (task V14), Figma "Vendor
 // Apps": laundry Waiting Order Detail Page (9714:87154), After checking
@@ -54,6 +55,14 @@ Widget _row(String l, String v, {Color color = _ink, bool bold = false}) => Padd
       ),
     );
 
+/// Laundry processing time as stored ("Express", "Standard (24h)") in the
+/// app language; other values are shown as sent.
+String laundryProcessingLabel(S s, String value) => switch (value.trim().toLowerCase()) {
+      'express' => s.processingExpress,
+      'standard' || 'standard (24h)' => s.processingStandard24h,
+      _ => value,
+    };
+
 // ── Laundry ─────────────────────────────────────────────────────────────
 
 class LaundryBookingBlock extends StatelessWidget {
@@ -65,7 +74,8 @@ class LaundryBookingBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final r = booking.raw;
-    final speed = _str(r['processing_label']) ?? _str(r['turnaround']);
+    final speedRaw = _str(r['processing_label']) ?? _str(r['turnaround']);
+    final speed = speedRaw == null ? null : laundryProcessingLabel(s, speedRaw);
     final estimate = _num(r['estimate_kg']);
     final actual = _num(r['actual_kg']);
     final rate = _num(r['rate_per_kg']);
@@ -285,7 +295,7 @@ class CarWashBookingBlock extends StatelessWidget {
             const SizedBox(height: 10),
             Text(s.carWashAddOns.toUpperCase(), style: _t(11, FontWeight.w600, _muted)),
             for (final a in addons)
-              _row('• ${_str(a['name']) ?? ''}', '+${_mru(_num(a['price']) ?? 0)} MRU'),
+              _row('• ${_str(a['name']) ?? ''}', signedMru('+', _mru(_num(a['price']) ?? 0))),
           ],
         ],
       ),
@@ -377,7 +387,7 @@ class _VerifyWeightSheetState extends State<_VerifyWeightSheet> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                suffixText: 'kg',
+                suffixText: s.unitKg,
                 filled: true,
                 fillColor: const Color(0xFFF3F4F6),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
@@ -398,7 +408,7 @@ class _VerifyWeightSheetState extends State<_VerifyWeightSheet> {
                     _row(s.laundryCustomerEstimate(_kg(estimate)), '${_mru(estimateAmount)} MRU'),
                     _row(s.laundryActualWeight(_kg(actual)), '${_mru(actualAmount)} MRU', bold: true),
                     if (difference.abs() >= 0.01)
-                      _row(s.laundryInvoiceDifference, '${difference > 0 ? '+' : ''}${_mru(difference)} MRU',
+                      _row(s.laundryInvoiceDifference, signedMru(difference > 0 ? '+' : '-', _mru(difference.abs())),
                           color: difference > 0 ? _orange : _red),
                   ],
                 ),

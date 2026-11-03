@@ -15,6 +15,7 @@ import 'package:saimpex_vendor/view/chat/ChatDetails.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/home/reject_order_sheet.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/utils/printing/print_order_ticket.dart';
 
 class OrderDetailsView extends StatefulWidget {
@@ -1332,7 +1333,7 @@ class _OrderItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name.isNotEmpty ? name : S.of(context).waterItem,
+                  name.isNotEmpty ? keepNumberUnitsLtr(name) : S.of(context).waterItem,
                   style: const TextStyle(
                     color: OrderDetailsView._title,
                     fontWeight: FontWeight.w600,

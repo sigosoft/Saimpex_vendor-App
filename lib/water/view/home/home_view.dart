@@ -17,6 +17,7 @@ import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart'
 import 'package:saimpex_vendor/water/view/subscription_calendar/subscription_calendar_view.dart';
 import 'package:saimpex_vendor/water/view/subscription_details/subscription_details_view.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -1583,7 +1584,7 @@ class _OrderCard extends StatelessWidget {
                   if (!_isReady) ...[
                     _OrderChip(
                       icon: Icons.inventory_2_outlined,
-                      label: order.itemLabel,
+                      label: keepNumberUnitsLtr(order.itemLabel),
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -2082,7 +2083,7 @@ class _SubscriptionOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        order.productLabel,
+                        keepNumberUnitsLtr(order.productLabel),
                         style: const TextStyle(
                           color: _metaGray,
                           fontWeight: FontWeight.w500,

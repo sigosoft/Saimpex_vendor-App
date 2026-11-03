@@ -2745,5 +2745,23 @@
   "preparingOrder": "Préparation de la commande",
   "@preparingOrder": {},
   "storeManagement": "Gestion du magasin",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "cleaningMinutesAgoCount": "il y a {count} min",
+  "@cleaningMinutesAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleaningHoursAgoCount": "il y a {count} h",
+  "@cleaningHoursAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleaningDaysAgoCount": "il y a {count} j",
+  "@cleaningDaysAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleanerDeactivateTitle": "Désactiver l'agent ?",
+  "@cleanerDeactivateTitle": {},
+  "cleanerDeactivateConfirm": "{name} ne pourra plus être affecté(e) à de nouvelles réservations tant que vous ne l’aurez pas réactivé(e).",
+  "@cleanerDeactivateConfirm": {
+    "placeholders": {"name": {"type": "String"}}
+  }
 }

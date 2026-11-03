@@ -737,6 +737,15 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
               title: S.of(context).cleaningBusinessSettings,
               onTap: () => ServiceBusinessSettingsView.open(context),
             ),
+            // Cleaners are part of running the business, not support (V18).
+            if (ServiceKinds.isCleaning)
+              _buildSettingRow(
+                icon: Icons.people_alt_outlined,
+                title: S.of(context).myCleaners,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const MyCleanersView()),
+                ),
+              ),
             _buildSettingRow(
               icon: Icons.payments_outlined,
               title: S.of(context).earnings,
@@ -774,14 +783,6 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
         const SizedBox(height: 8),
         _buildGroupedCard(
           children: [
-            if (ServiceKinds.isCleaning)
-              _buildSettingRow(
-                icon: Icons.people_alt_outlined,
-                title: S.of(context).myCleaners,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => const MyCleanersView()),
-                ),
-              ),
             _buildSettingRow(
               icon: Icons.rule_outlined,
               title: S.of(context).orderRules,

@@ -12310,6 +12310,56 @@ class S {
       args: [],
     );
   }
+
+  /// `{count} min ago`
+  String cleaningMinutesAgoCount(int count) {
+    return Intl.message(
+      '$count min ago',
+      name: 'cleaningMinutesAgoCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} h ago`
+  String cleaningHoursAgoCount(int count) {
+    return Intl.message(
+      '$count h ago',
+      name: 'cleaningHoursAgoCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} d ago`
+  String cleaningDaysAgoCount(int count) {
+    return Intl.message(
+      '$count d ago',
+      name: 'cleaningDaysAgoCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Deactivate cleaner?`
+  String get cleanerDeactivateTitle {
+    return Intl.message(
+      'Deactivate cleaner?',
+      name: 'cleanerDeactivateTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} can't be assigned to new bookings until you activate them again.`
+  String cleanerDeactivateConfirm(String name) {
+    return Intl.message(
+      '$name can\'t be assigned to new bookings until you activate them again.',
+      name: 'cleanerDeactivateConfirm',
+      desc: '',
+      args: [name],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

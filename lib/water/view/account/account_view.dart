@@ -7,6 +7,7 @@ import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -48,6 +49,10 @@ class AccountView extends StatefulWidget {
 class _AccountViewState extends State<AccountView> {
   late final WaterAccountController controller;
 
+  /// Installed app version (V18: a fixed "V2.8.1" was shown here while the
+  /// other sections read it from the build).
+  String? _appVersion;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +60,14 @@ class _AccountViewState extends State<AccountView> {
         ? Get.find<WaterAccountController>()
         : Get.put(WaterAccountController());
     controller.fetchProfile();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) setState(() => _appVersion = info.version);
+    } catch (_) {}
   }
 
   Future<bool?> _showDeleteAccountConfirmationDialog(BuildContext context) {
@@ -530,15 +543,16 @@ class _AccountViewState extends State<AccountView> {
                 const SizedBox(height: 28),
                 _LogoutButton(onTap: _handleLogout),
                 const SizedBox(height: 14),
-                const Text(
-                  'V2.8.1',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
+                if (_appVersion != null)
+                  Text(
+                    'V$_appVersion',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
                 const SizedBox(height: 4),
                 Text(
                   S.of(context).checkForUpdate,
@@ -826,10 +840,19 @@ class _ProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.fieldBorder),
       ),
-      child: const Icon(
-        Icons.local_pharmacy_outlined,
+      // Store mark, not the pharmacy cross (V18).
+      alignment: Alignment.center,
+      child: Image.asset(
+        AppAssets.shopOpenIcon,
+        width: 44,
+        height: 44,
         color: AppColors.primaryOrange,
-        size: 40,
+        colorBlendMode: BlendMode.srcIn,
+        errorBuilder: (_, _, _) => const Icon(
+          Icons.storefront_outlined,
+          color: AppColors.primaryOrange,
+          size: 40,
+        ),
       ),
     );
   }

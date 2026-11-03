@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 
 Widget _app(Widget child) => MaterialApp(
       localizationsDelegates: const [S.delegate],
@@ -67,7 +68,7 @@ void main() {
     expect(find.text('1234 AB 01'), findsOneWidget);
     expect(find.text('550 MRU'), findsOneWidget);
     expect(find.text('• Engine Wash'), findsOneWidget);
-    expect(find.text('+50 MRU'), findsOneWidget);
+    expect(find.text(signedMru('+', '50')), findsOneWidget);
     expect(find.text('At Wash Station'), findsOneWidget);
   });
 

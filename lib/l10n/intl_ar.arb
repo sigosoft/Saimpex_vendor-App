@@ -2744,5 +2744,23 @@
   "preparingOrder": "تحضير الطلب",
   "@preparingOrder": {},
   "storeManagement": "إدارة المتجر",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "cleaningMinutesAgoCount": "{count, plural, zero{منذ لحظات} one{منذ دقيقة} two{منذ دقيقتين} few{منذ {count} دقائق} many{منذ {count} دقيقة} other{منذ {count} دقيقة}}",
+  "@cleaningMinutesAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleaningHoursAgoCount": "{count, plural, zero{منذ لحظات} one{منذ ساعة} two{منذ ساعتين} few{منذ {count} ساعات} many{منذ {count} ساعة} other{منذ {count} ساعة}}",
+  "@cleaningHoursAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleaningDaysAgoCount": "{count, plural, zero{اليوم} one{منذ يوم} two{منذ يومين} few{منذ {count} أيام} many{منذ {count} يومًا} other{منذ {count} يوم}}",
+  "@cleaningDaysAgoCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "cleanerDeactivateTitle": "تعطيل العامل؟",
+  "@cleanerDeactivateTitle": {},
+  "cleanerDeactivateConfirm": "لن يمكن تعيين {name} لحجوزات جديدة حتى تعيد تفعيله.",
+  "@cleanerDeactivateConfirm": {
+    "placeholders": {"name": {"type": "String"}}
+  }
 }

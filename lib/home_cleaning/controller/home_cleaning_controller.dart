@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 /// Home cleaning shell state (bottom nav) plus the home/bookings data:
 /// GET serviceDashboard, GET home (membership only), GET serviceBookings,
@@ -32,6 +33,7 @@ class HomeCleaningController extends GetxController {
   bool dashboardLoading = false;
   String? dashboardError;
   CleaningMembership? membership;
+  String? storeName;
 
   bool acceptingBookings = true;
   bool? storeOpen;
@@ -72,7 +74,31 @@ class HomeCleaningController extends GetxController {
   }
 
   Future<void> refreshAll() async {
-    await Future.wait([loadDashboard().then((_) => loadMembership()), loadBookings()]);
+    await Future.wait([
+      loadDashboard().then((_) => loadMembership()),
+      loadBookings(),
+      loadStoreName(),
+    ]);
+  }
+
+  /// Store name for the home header (V18; it showed "Saimpex Vendor"):
+  /// GET profile, the same call the Account tab makes.
+  Future<void> loadStoreName() async {
+    final saved = (await getSavedObject('vendorType'))?.toString() ?? '';
+    final vendorType = saved.isNotEmpty && saved != 'null' && saved != '0' ? saved : '9';
+    final res = await CleaningApi.get(ApiEndPoints.profile, query: {'vendor_type': vendorType});
+    if (!res.ok) return;
+    final vendor = res.map['vendor'] is Map ? Map<String, dynamic>.from(res.map['vendor'] as Map) : res.map;
+    String? text(dynamic v) {
+      final t = v?.toString().trim();
+      return t == null || t.isEmpty || t == 'null' ? null : t;
+    }
+    final lang = CleaningApi.languageCode;
+    storeName = (lang == 'fr' ? text(vendor['name_fr']) : null) ??
+        (lang == 'ar' ? text(vendor['name_ar']) : null) ??
+        text(vendor['name']) ??
+        text(vendor['name_en']);
+    update();
   }
 
   Future<void> loadDashboard() async {

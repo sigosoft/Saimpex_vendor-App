@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
 import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart';
@@ -555,7 +556,7 @@ class _ServiceCard extends StatelessWidget {
                       for (final addon in service.addons)
                         _ServiceBadge(
                           label: addon.name,
-                          price: '+${formatServicePrice(addon.price)} MRU',
+                          price: signedMru('+', formatServicePrice(addon.price)),
                         ),
                     ],
                   ),
