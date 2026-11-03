@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/model/OrderStatusModel.dart' as order;
 import 'package:saimpex_vendor/controller/home_controller.dart';
@@ -164,28 +165,90 @@ class OrderDetailsController extends GetxController {
     }
   }
 
-  /// After a successful accept: close the loader, take the card off the list,
-  /// show the dialog, then print in the background. Printing used to run
-  /// first with the loader still up, and the card stayed under Pending until
-  /// it and the dialog finished (test day V-B5).
-  void _onAccepted(String orderid, String orderType, bool printAfter) {
-    Get.back();
+  /// Accept is instant on screen (test day V-B5): the server takes 8–20 s to
+  /// answer, so the card leaves the list and the screen closes straight away,
+  /// and the request runs behind. If the server refuses, the card comes back
+  /// and the home list reloads. Printing still waits for the server.
+  Future<bool> _acceptOrder(
+    BuildContext context,
+    String orderid,
+    String endpoint,
+    String orderType,
+    bool printAfter,
+  ) async {
+    HomeController? homeCtrl;
+    int removedAt = -1;
+    dynamic removed;
     try {
-      final homeCtrl = Get.find<HomeController>();
-      homeCtrl.homeData?.data?.orders?.data?.removeWhere(
-        (element) => element.id.toString() == orderid,
-      );
-      homeCtrl.update();
+      homeCtrl = Get.find<HomeController>();
+      final list = homeCtrl.homeData?.data?.orders?.data;
+      removedAt = list?.indexWhere((e) => e.id.toString() == orderid) ?? -1;
+      if (removedAt >= 0) {
+        removed = list!.removeAt(removedAt);
+        homeCtrl.update();
+      }
     } catch (_) {}
     if (Get.currentRoute != '/' && Get.previousRoute.isNotEmpty) {
       Get.until((route) => route.isFirst);
     }
-    showSuccessDialog(S.current.orderAcceptedSuccessfully);
-    if (printAfter) {
-      OrderPrintService()
-          .printOrder(orderId: orderid, orderType: orderType)
-          .catchError((e) => debugPrint("Print error: $e"));
+
+    String? failure;
+    try {
+      var token = await getSavedObject("token");
+      DioClient().updateToken(token);
+      final response = await DioClient().get(
+        endpoint,
+        query: {"order_id": orderid},
+      );
+      order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
+        response.data,
+      );
+      if (orderStatusModel.status.toString() == "true") {
+        _toast(S.current.orderAcceptedSuccessfully);
+        if (printAfter) {
+          OrderPrintService()
+              .printOrder(orderId: orderid, orderType: orderType)
+              .catchError((e) => debugPrint("Print error: $e"));
+        }
+        return true;
+      }
+      failure = S.current.somethingWentWrong;
+    } catch (error, stackTrace) {
+      debugPrint("stackTrace: $stackTrace");
+      debugPrint("accept order Error $orderType: $error");
+      if (error.toString() == "Unauthorized") {
+        final prefs = await SharedPreferences.getInstance();
+        await clearPrefsKeepLanguage(prefs);
+        _toast(S.current.youAreLoggedOutSuccessfully);
+        Get.offAll(() => const LoginScreen());
+        return false;
+      }
+      failure = error.toString();
     }
+
+    // Refused: put the card back where it was, then reload the real list.
+    try {
+      final list = homeCtrl?.homeData?.data?.orders?.data;
+      if (removed != null &&
+          list != null &&
+          !list.any((e) => e.id.toString() == orderid)) {
+        list.insert(removedAt.clamp(0, list.length), removed);
+      }
+      homeCtrl?.update();
+      homeCtrl?.triggerFullRefresh();
+    } catch (_) {}
+    _toast(failure);
+    return false;
+  }
+
+  void _toast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: const Color(0xFF000000),
+      textColor: const Color(0xFFFFFFFF),
+    );
   }
 
   /// Returns true when the server accepted the order.
@@ -193,76 +256,26 @@ class OrderDetailsController extends GetxController {
     BuildContext context,
     String orderid, {
     bool printAfter = false,
-  }) async {
-    try {
-      showLoadingDialog(context);
-      var token = await getSavedObject("token");
-      DioClient().updateToken(token);
-      final response = await DioClient().get(
-        ApiEndPoints.acceptRestaurantOrder,
-        query: {"order_id": orderid},
-      );
-      order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
-        response.data,
-      );
-      if (orderStatusModel.status.toString() == "true") {
-        _onAccepted(orderid, "restaurant", printAfter);
-        return true;
-      }
-      Get.back(); // loader stayed up when the server said no
-    } catch (error, stackTrace) {
-      Get.back();
-      debugPrint("stackTrace: $stackTrace");
-      debugPrint("accept order Error restaurant: $error");
-      if (error.toString() == "Unauthorized") {
-        final prefs = await SharedPreferences.getInstance();
-        await clearPrefsKeepLanguage(prefs);
-        showToast(context, S.of(context).youAreLoggedOutSuccessfully);
-        Get.offAll(() => const LoginScreen());
-      } else {
-        showToast(context, error.toString());
-      }
-    }
-    return false;
-  }
+  }) => _acceptOrder(
+    context,
+    orderid,
+    ApiEndPoints.acceptRestaurantOrder,
+    "restaurant",
+    printAfter,
+  );
 
   /// Returns true when the server accepted the order.
   Future<bool> acceptGroceryOrder(
     BuildContext context,
     String orderid, {
     bool printAfter = false,
-  }) async {
-    try {
-      showLoadingDialog(context);
-      var token = await getSavedObject("token");
-      DioClient().updateToken(token);
-      final response = await DioClient().get(
-        ApiEndPoints.acceptGroceryOrder,
-        query: {"order_id": orderid},
-      );
-      order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
-        response.data,
-      );
-      if (orderStatusModel.status.toString() == "true") {
-        _onAccepted(orderid, "grocery", printAfter);
-        return true;
-      }
-      Get.back(); // loader stayed up when the server said no
-    } catch (error, stackTrace) {
-      Get.back();
-      debugPrint("stackTrace: $stackTrace");
-      debugPrint("accept order Error grocery: $error");
-      if (error.toString() == "Unauthorized") {
-        final prefs = await SharedPreferences.getInstance();
-        await clearPrefsKeepLanguage(prefs);
-        showToast(context, S.of(context).youAreLoggedOutSuccessfully);
-        Get.offAll(() => const LoginScreen());
-      } else {
-        showToast(context, error.toString());
-      }
-    }
-    return false;
-  }
+  }) => _acceptOrder(
+    context,
+    orderid,
+    ApiEndPoints.acceptGroceryOrder,
+    "grocery",
+    printAfter,
+  );
 
   Future<void> cancelRestaurantOrder(
     BuildContext context,
