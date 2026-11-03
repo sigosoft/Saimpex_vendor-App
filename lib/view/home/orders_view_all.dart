@@ -187,9 +187,14 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
   }
 
   void _handleAcceptOrder(String orderId) {
-    // Accept & Print didn't pass printAfter, so nothing printed; the tab
-    // count now drops as soon as the server accepts (test day V-B5).
+    // Accept & Print didn't pass printAfter, so nothing printed. The tab
+    // count drops at the tap and comes back if the server refuses (V-B5).
     Future<void> accept({required bool print}) async {
+      final tab = selectedTab;
+      setState(() {
+        final n = (_tabCounts[tab] ?? 0) - 1;
+        _tabCounts[tab] = n < 0 ? 0 : n;
+      });
       final vendorType =
           homeController.homeData?.data?.vendor?.vendorType?.toString() ??
           "0";
@@ -204,11 +209,8 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
               orderId,
               printAfter: print,
             );
-      if (ok && mounted) {
-        setState(() {
-          final n = (_tabCounts[selectedTab] ?? 0) - 1;
-          _tabCounts[selectedTab] = n < 0 ? 0 : n;
-        });
+      if (!ok && mounted) {
+        setState(() => _tabCounts[tab] = (_tabCounts[tab] ?? 0) + 1);
       }
     }
 
