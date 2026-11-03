@@ -2745,5 +2745,13 @@
   "preparingOrder": "Préparation de la commande",
   "@preparingOrder": {},
   "storeManagement": "Gestion du magasin",
-  "@storeManagement": {}
+  "@storeManagement": {},
+  "unitGram": "g",
+  "unitLitre": "L",
+  "unitMillilitre": "ml",
+  "unitPack": "paquet",
+  "unitSet": "lot",
+  "unitBox": "boîte",
+  "unitBottle": "bouteille",
+  "unitDozen": "douzaine"
 }

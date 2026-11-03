@@ -47,6 +47,7 @@ class SubstitutionLine {
     required this.image,
     required this.unitPrice,
     required this.quantity,
+    this.nameEn = '',
   });
 
   final int orderItemId;
@@ -55,6 +56,10 @@ class SubstitutionLine {
   final String image;
   final double unitPrice;
   final int quantity;
+
+  /// English name, used to find the product in the store list (the
+  /// substitute picker puts its category first).
+  final String nameEn;
 }
 
 /// A proposal as the API returns it.
@@ -82,6 +87,12 @@ class Substitution {
   int get secondsLeft => int.tryParse('${raw['seconds_left'] ?? 0}') ?? 0;
   double get amountChange => _num(raw['amount_change']);
   bool get isPending => status == 'pending';
+
+  /// The line is gone from the order (quantity 0): a rejected proposal, or an
+  /// unavailable item the customer accepted (or that was accepted
+  /// automatically). §6.11 "Effect on the order".
+  bool get removesLine =>
+      status == 'rejected' || (kind == 'unavailable' && (status == 'accepted' || status == 'auto_accepted'));
 }
 
 /// A store product that can be offered instead (`GET groceryMenuItems`).
@@ -99,6 +110,23 @@ class StoreProduct {
     final n = _pickName(raw);
     return extra.isEmpty ? n : '$n $extra';
   }
+
+  /// [name] with the unit word ("pcs", "pack", "set"...) translated when the
+  /// store gave no variant name in the app language (test day V17).
+  String displayName(S s) {
+    final lang = LocalizationService.currentLanguageCode;
+    final own = '${raw['variant_name_$lang'] ?? ''}'.trim();
+    var variant = _pickName(raw, base: 'variant_name');
+    if (lang != 'en' && (own.isEmpty || own == 'null')) variant = groceryUnitLabel(s, variant);
+    final value = '${raw['attribute_value'] ?? ''}'.trim();
+    final extra = [if (value.isNotEmpty && value != 'null') value, if (variant.isNotEmpty) variant].join(' ');
+    final n = _pickName(raw);
+    return extra.isEmpty ? n : '$n $extra';
+  }
+
+  /// Category of the row, to list the ordered product's category first.
+  int? get categoryId => int.tryParse('${raw['category_id'] ?? ''}');
+  String get categoryName => '${raw['category_name_en'] ?? ''}'.trim().toLowerCase();
 
   String get image => '${raw['image'] ?? ''}';
   /// What the customer pays: the discount (selling) price when the item has
@@ -149,19 +177,47 @@ class SubstitutionApi {
     return WaterApi.message(body);
   }
 
-  Future<List<StoreProduct>> products(String keyword) async {
+  /// [categoryId] narrows the list to one category (the same filter the
+  /// store's item list sends).
+  Future<List<StoreProduct>> products(String keyword, {int? categoryId}) async {
     await _prepare();
     final res = await DioClient().get(ApiEndPoints.groceryMenuItems, query: {
       'limit': 30,
       'page': 1,
       'status': 1,
       if (keyword.trim().isNotEmpty) 'keyword': keyword.trim(),
+      'category_id': ?categoryId,
     });
     final body = res.data;
     if (!WaterApi.isOk(body)) throw WaterApi.message(body) ?? S.current.somethingWentWrong;
     final data = body['data'];
     return WaterApi.pageItems(data is Map ? data['grocery_menu_items'] : null).map(StoreProduct.new).toList();
   }
+}
+
+/// Translated unit word for a grocery variant ("pcs" → "قطعة"); anything
+/// unknown is shown as the store wrote it.
+String groceryUnitLabel(S s, String unit) => switch (unit.trim().toLowerCase()) {
+      'pc' || 'pcs' || 'piece' || 'pieces' => s.unitPiece,
+      'kg' || 'kgs' => s.unitKg,
+      'g' || 'gm' || 'gram' || 'grams' => s.unitGram,
+      'l' || 'ltr' || 'litre' || 'liter' => s.unitLitre,
+      'ml' => s.unitMillilitre,
+      'pack' || 'packs' || 'pkt' => s.unitPack,
+      'set' || 'sets' => s.unitSet,
+      'box' || 'boxes' => s.unitBox,
+      'bottle' || 'bottles' => s.unitBottle,
+      'dozen' || 'dz' => s.unitDozen,
+      _ => unit,
+    };
+
+/// Products of the ordered item's category first, server order otherwise.
+List<StoreProduct> sameCategoryFirst(List<StoreProduct> list, StoreProduct? original) {
+  if (original == null) return list;
+  bool same(StoreProduct p) =>
+      (original.categoryId != null && p.categoryId == original.categoryId) ||
+      (original.categoryName.isNotEmpty && p.categoryName == original.categoryName);
+  return [...list.where(same), ...list.where((p) => !same(p))];
 }
 
 /// Latest proposal per line (the list is oldest first).
@@ -343,43 +399,98 @@ class SubstitutionSummary extends StatelessWidget {
 
 /// Figma "Edit Items": every line with Remove Item / Change Qty / Suggest
 /// Substitute. A line with a proposal waiting for the customer shows it
-/// instead of the buttons.
+/// instead of the buttons; a removed line shows no buttons.
+///
+/// The screen reloads (test day V18: it kept showing "Waiting" after the
+/// customer answered): pull to refresh, when the app comes back to the
+/// foreground, on any push in [refreshSignals], and every 20 s while a
+/// proposal is waiting (the vendor gets no push for the customer's answer).
 class EditItemsView extends StatefulWidget {
-  const EditItemsView({super.key, required this.orderId, required this.lines, this.api = const SubstitutionApi()});
+  const EditItemsView({
+    super.key,
+    required this.orderId,
+    required this.lines,
+    this.api = const SubstitutionApi(),
+    this.reloadLines,
+    this.refreshSignals,
+  });
 
   final String orderId;
   final List<SubstitutionLine> lines;
   final SubstitutionApi api;
 
+  /// Fresh order lines (order details again); an accepted substitute or a
+  /// removed item changes them.
+  final Future<List<SubstitutionLine>> Function()? reloadLines;
+  final Stream<Object?>? refreshSignals;
+
   @override
   State<EditItemsView> createState() => _EditItemsViewState();
 }
 
-class _EditItemsViewState extends State<EditItemsView> {
+class _EditItemsViewState extends State<EditItemsView> with WidgetsBindingObserver {
+  static const _pollEvery = Duration(seconds: 20);
+
+  late List<SubstitutionLine> _lines = widget.lines;
   Map<int, Substitution> _subs = {};
   int _timeout = 10;
   bool _loading = true;
   bool _busy = false;
+  StreamSubscription<Object?>? _signals;
+  Timer? _poll;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _signals = widget.refreshSignals?.listen((_) => _load(lines: true, quiet: true));
     _load();
   }
 
-  Future<void> _load() async {
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _signals?.cancel();
+    _poll?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _load(lines: true, quiet: true);
+  }
+
+  /// [lines] also reloads the order lines (an answer may have changed them);
+  /// [quiet] skips the error message (background refreshes).
+  Future<void> _load({bool lines = false, bool quiet = false}) async {
     try {
       final r = await widget.api.list(widget.orderId);
+      final fresh = lines && widget.reloadLines != null ? await widget.reloadLines!() : null;
       if (!mounted) return;
+      final before = _subs;
       setState(() {
         _subs = latestByLine(r.items);
         _timeout = r.timeoutMinutes;
+        if (fresh != null && fresh.isNotEmpty) _lines = fresh;
       });
+      // A proposal was answered since the last load: the lines changed too.
+      final answered = before.values.any((b) => b.isPending && _subs[b.orderItemId]?.isPending != true);
+      if (answered && !lines && widget.reloadLines != null) {
+        final next = await widget.reloadLines!();
+        if (mounted && next.isNotEmpty) setState(() => _lines = next);
+      }
     } catch (e) {
-      _snack(WaterApi.errorText(e));
+      if (!quiet) _snack(WaterApi.errorText(e));
     } finally {
       if (mounted) setState(() => _loading = false);
+      _schedulePoll();
     }
+  }
+
+  void _schedulePoll() {
+    _poll?.cancel();
+    if (!mounted || !_subs.values.any((s) => s.isPending)) return;
+    _poll = Timer(_pollEvery, () => _load(quiet: true));
   }
 
   void _snack(String text) {
@@ -432,22 +543,47 @@ class _EditItemsViewState extends State<EditItemsView> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final rtl = Directionality.of(context) == TextDirection.rtl;
     return Scaffold(
       backgroundColor: const Color(0xFFFFF9F6),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFF9F6),
         elevation: 0,
         foregroundColor: _ink,
-        title: Text(s.substitutionEditItems, style: appFont('Inter', fontSize: 18, fontWeight: FontWeight.w600)),
+        // The app theme paints AppBar icons white, so the default arrow was
+        // nearly invisible here; use the app's back icon (as CustomAppBar).
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                icon: Transform.rotate(
+                  angle: rtl ? 3.1416 : 0,
+                  child: Image.asset(
+                    'lib/assets/images/back.png',
+                    height: 35,
+                    width: 35,
+                    errorBuilder: (c, e, st) => const Icon(Icons.arrow_back, color: _ink),
+                  ),
+                ),
+                onPressed: () => Navigator.maybePop(context),
+              )
+            : null,
+        title: Text(s.substitutionEditItems, style: appFont('Inter', fontSize: 18, fontWeight: FontWeight.w600, color: _ink)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: _orange))
           : Stack(children: [
-              ListView(padding: const EdgeInsets.all(16), children: [
-                Text('${s.orderItems} (${widget.lines.length})',
+              RefreshIndicator(
+                color: _orange,
+                onRefresh: () => _load(lines: true),
+                child: ListView(
+                // Clear of the system navigation bar (edge-to-edge Android).
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).padding.bottom),
+                children: [
+                Text('${s.orderItems} (${_lines.length})',
                     style: appFont('Inter', fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF9CA3AF))),
                 const SizedBox(height: 12),
-                for (final line in widget.lines) _lineCard(line),
+                for (final line in _lines) _lineCard(line),
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -461,6 +597,7 @@ class _EditItemsViewState extends State<EditItemsView> {
                   ]),
                 ),
               ]),
+              ),
               if (_busy) const Positioned.fill(child: ColoredBox(color: Color(0x33FFFFFF), child: Center(child: CircularProgressIndicator(color: _orange)))),
             ]),
     );
@@ -470,6 +607,8 @@ class _EditItemsViewState extends State<EditItemsView> {
     final s = S.of(context);
     final sub = _subs[line.orderItemId];
     final pending = sub?.isPending == true;
+    // Removed from the order: nothing left to change on it (test day V18).
+    final removed = line.quantity <= 0 || sub?.removesLine == true;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -492,8 +631,17 @@ class _EditItemsViewState extends State<EditItemsView> {
             ]),
           ),
         ]),
-        if (sub != null) SubstitutionSummary(key: ValueKey('sum-${sub.id}'), sub: sub),
-        if (!pending) ...[
+        if (sub != null)
+          SubstitutionSummary(key: ValueKey('sum-${sub.id}'), sub: sub)
+        else if (removed)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: _pill(s.substitutionItemRemoved, _red, icon: Icons.delete_outline),
+            ),
+          ),
+        if (!pending && !removed) ...[
           const SizedBox(height: 12),
           Row(children: [
             _action(Icons.delete_outline, s.substitutionRemoveItem, _red, () => _remove(line)),
@@ -768,10 +916,13 @@ class _SuggestSubstituteSheetState extends State<_SuggestSubstituteSheet> {
   int _qty = 0;
   Timer? _debounce;
 
+  /// The ordered product's own row (for its category), when found.
+  StoreProduct? _original;
+
   @override
   void initState() {
     super.initState();
-    _search('');
+    _start();
   }
 
   @override
@@ -780,13 +931,38 @@ class _SuggestSubstituteSheetState extends State<_SuggestSubstituteSheet> {
     super.dispose();
   }
 
+  /// Suggestions were unrelated to the item (test day V18): the first page
+  /// of the whole store. Find the ordered product's row by its name, then
+  /// open on its category; the store's other products follow.
+  Future<void> _start() async {
+    final line = widget.line;
+    final key = line.nameEn.trim().isNotEmpty ? line.nameEn : line.name;
+    try {
+      final rows = await widget.api.products(key);
+      for (final p in rows) {
+        if (p.id == line.productId) _original = p;
+      }
+    } catch (_) {
+      // Not found: the plain list below still works.
+    }
+    if (mounted) await _search('');
+  }
+
+  bool _usable(StoreProduct p) => p.id != widget.line.productId && p.isAvailable;
+
   Future<void> _search(String keyword) async {
     setState(() => _loading = true);
     try {
-      final list = await widget.api.products(keyword);
+      final categoryId = _original?.categoryId;
+      var list = <StoreProduct>[];
+      if (keyword.trim().isEmpty && categoryId != null) {
+        list = (await widget.api.products('', categoryId: categoryId)).where(_usable).toList();
+      }
+      final ids = {for (final p in list) p.id};
+      list = [...list, ...(await widget.api.products(keyword)).where((p) => _usable(p) && !ids.contains(p.id))];
       if (!mounted) return;
       setState(() {
-        _products = list.where((p) => p.id != widget.line.productId && p.isAvailable).toList();
+        _products = sameCategoryFirst(list, _original);
         _error = null;
       });
     } catch (e) {
@@ -881,7 +1057,7 @@ class _SuggestSubstituteSheetState extends State<_SuggestSubstituteSheet> {
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(p.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: appFont('Inter', fontSize: 15, fontWeight: FontWeight.w500, color: _ink)),
+            Text(p.displayName(s), maxLines: 2, overflow: TextOverflow.ellipsis, style: appFont('Inter', fontSize: 15, fontWeight: FontWeight.w500, color: _ink)),
             if (p.stock != null) ...[
               const SizedBox(height: 4),
               _pill(s.substitutionInStock('${p.stock}'), _green),

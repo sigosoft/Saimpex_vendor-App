@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
@@ -1080,8 +1083,13 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 ),
                               ],
 
-                              SizedBox(height: 200),
-                              // Spacing for bottom buttons
+                              // Spacing for bottom buttons, plus the system
+                              // navigation bar the buttons now sit above
+                              // (Edit Items was hidden behind them, V18).
+                              SizedBox(
+                                height:
+                                    220 + MediaQuery.of(context).padding.bottom,
+                              ),
                             ],
                           ),
                         ),
@@ -1094,7 +1102,17 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                         left: 0,
                         right: 0,
                         child: Container(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                          // Edge-to-edge Android draws the body under the
+                          // system navigation bar; keep the buttons above it.
+                          padding: EdgeInsets.fromLTRB(
+                            20,
+                            20,
+                            20,
+                            math.max(
+                              30,
+                              16 + MediaQuery.of(context).padding.bottom,
+                            ),
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: const BorderRadius.vertical(
@@ -1641,24 +1659,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         items.any((i) => i.orderItemId == null)) {
       return const SizedBox.shrink();
     }
-    final lang = localization.currentLocale?.languageCode ?? 'en';
-    final lines = [
-      for (final i in items)
-        SubstitutionLine(
-          orderItemId: i.orderItemId!,
-          productId: i.productId ?? 0,
-          name: (lang == 'ar'
-                  ? i.orderItem?.nameAr
-                  : lang == 'fr'
-                  ? i.orderItem?.nameFr
-                  : i.orderItem?.nameEn) ??
-              i.orderItem?.nameEn ??
-              '',
-          image: '${i.image ?? ''}',
-          unitPrice: double.tryParse('${i.unitPrice}') ?? 0,
-          quantity: i.quantity ?? 0,
-        ),
-    ];
+    final lines = _substitutionLines(items);
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: OutlinedButton.icon(
@@ -1674,7 +1675,22 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         label: Text(S.of(context).substitutionEditItems),
         onPressed: () async {
           await Get.to(
-            () => EditItemsView(orderId: widget.orderId, lines: lines),
+            () => EditItemsView(
+              orderId: widget.orderId,
+              lines: lines,
+              // Fresh lines after the customer answers (a substitute
+              // replaces the line, a removed item drops to 0).
+              reloadLines: () async {
+                await controller.getGroceryOrderDetails(
+                  context,
+                  widget.orderId,
+                );
+                return _substitutionLines(
+                  controller.orderData?.orderItems ?? const <OrderItem>[],
+                );
+              },
+              refreshSignals: FirebaseMessaging.onMessage,
+            ),
           );
           if (!mounted) return;
           _loadSubstitutions();
@@ -1682,6 +1698,30 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         },
       ),
     );
+  }
+
+  List<SubstitutionLine> _substitutionLines(List<OrderItem> items) {
+    final lang = localization.currentLocale?.languageCode ?? 'en';
+    return [
+      for (final i in items)
+        if (i.orderItemId != null)
+          SubstitutionLine(
+            orderItemId: i.orderItemId!,
+            productId: i.productId ?? 0,
+            name:
+                (lang == 'ar'
+                    ? i.orderItem?.nameAr
+                    : lang == 'fr'
+                    ? i.orderItem?.nameFr
+                    : i.orderItem?.nameEn) ??
+                i.orderItem?.nameEn ??
+                '',
+            nameEn: i.orderItem?.nameEn ?? '',
+            image: '${i.image ?? ''}',
+            unitPrice: double.tryParse('${i.unitPrice}') ?? 0,
+            quantity: i.quantity ?? 0,
+          ),
+    ];
   }
 
   Widget _itemTile(
