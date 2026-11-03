@@ -256,7 +256,7 @@ class PharmacyPendingOrderItem {
     final uri = Uri.tryParse(base);
     final origin = (uri != null && uri.hasScheme)
         ? '${uri.scheme}://${uri.host}'
-        : 'https://dev.saimpexenterprise.com';
+        : ''; // only the configured server, never a hard-coded host
     if (str.startsWith('/storage/')) {
       return '$origin$str';
     }
