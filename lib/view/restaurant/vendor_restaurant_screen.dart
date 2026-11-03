@@ -61,22 +61,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
   String _formatLeaveDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return "";
     try {
+      // Leave dates are date-only; month name in the app language.
       final dt = DateTime.parse(dateStr);
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return "${months[dt.month - 1]} ${dt.day.toString().padLeft(2, '0')}, ${dt.year}";
+      return appDateFormat('MMM dd, yyyy').format(dt);
     } catch (_) {
       return dateStr;
     }

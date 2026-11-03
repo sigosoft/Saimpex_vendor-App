@@ -193,26 +193,9 @@ class _RestaurantManagementScreenState
 
   String _formatDateFromJson(Map<String, dynamic> map) {
     final raw = map['created_at'] ?? map['updated_at'] ?? map['date'];
-    final parsed = DateTime.tryParse(raw?.toString() ?? '')?.toLocal();
-    final dt = parsed ?? DateTime.now();
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    final period = dt.hour >= 12 ? "PM" : "AM";
-    final hour = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
-    final min = dt.minute.toString().padLeft(2, '0');
-    return "${dt.day.toString().padLeft(2, '0')} ${months[dt.month - 1]} ${dt.year}, ${hour.toString().padLeft(2, '0')}:$min $period";
+    // Server time (UTC, no offset) in phone time; month and AM/PM in the app language.
+    final dt = parseServerTime(raw) ?? DateTime.now();
+    return appDateFormat('dd MMM yyyy, hh:mm a').format(dt);
   }
 
   Future<dio.MultipartFile> _defaultCategoryImage() async {

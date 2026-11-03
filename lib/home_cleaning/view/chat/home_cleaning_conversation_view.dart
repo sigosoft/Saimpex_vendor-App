@@ -57,7 +57,7 @@ class ChatMessage {
       text: json['message']?.toString(),
       attachmentUrl: url == null || url.isEmpty || url == 'null' ? null : url,
       durationSeconds: int.tryParse('${json['attachment_duration'] ?? ''}'),
-      createdAt: DateTime.tryParse('${json['created_at'] ?? ''}')?.toLocal(),
+      createdAt: parseServerTime(json['created_at']),
       isRead:
           json['is_read'] == true ||
           json['is_read']?.toString() == '1' ||
@@ -754,7 +754,7 @@ class _HomeCleaningConversationViewState
         Text(
           message.createdAt == null
               ? ''
-              : DateFormat('hh:mm a').format(message.createdAt!),
+              : appDateFormat('hh:mm a').format(message.createdAt!),
           style: appFont('Inter', 
             color: HomeCleaningConversationView._muted,
             fontSize: 10.5,

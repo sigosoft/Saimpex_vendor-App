@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -388,34 +387,31 @@ class _NotificationItemCard extends StatelessWidget {
   String _formatNotificationTime(
       String? createdAt, String? time, String? date) {
     try {
-      DateTime? dt;
-      if (createdAt != null && createdAt.trim().isNotEmpty) {
-        dt = DateTime.tryParse(createdAt.trim());
-      }
+      // Server times are UTC without an offset: read in phone time.
+      DateTime? dt = parseServerTime(createdAt);
       if (dt == null &&
           date != null &&
           date.trim().isNotEmpty &&
           time != null &&
           time.trim().isNotEmpty) {
-        dt = DateTime.tryParse('${date.trim()} ${time.trim()}');
+        dt = parseServerTime('${date.trim()} ${time.trim()}');
       }
-      if (dt == null && date != null && date.trim().isNotEmpty) {
-        dt = DateTime.tryParse(date.trim());
-      }
+      dt ??= parseServerTime(date);
 
       if (dt != null) {
+        final s = S.current;
         final now = DateTime.now();
         final diff = now.difference(dt);
         if (diff.inSeconds < 60 && diff.inSeconds >= 0) {
-          return 'Just now';
+          return s.cleaningJustNow;
         } else if (diff.inMinutes < 60 && diff.inMinutes > 0) {
-          return '${diff.inMinutes}m ago';
+          return s.cleaningBookingMinutesAgo(diff.inMinutes.toString());
         } else if (diff.inHours < 24 && diff.inHours > 0) {
-          return '${diff.inHours}h ago';
+          return s.cleaningBookingHoursAgo(diff.inHours.toString());
         } else if (diff.inDays < 7 && diff.inDays > 0) {
-          return '${diff.inDays}d ago';
+          return s.cleaningBookingDaysAgo(diff.inDays.toString());
         } else {
-          return DateFormat('MMM dd, yyyy').format(dt);
+          return appDateFormat('MMM dd, yyyy').format(dt);
         }
       }
       return time?.isNotEmpty == true

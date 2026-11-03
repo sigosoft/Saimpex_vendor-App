@@ -1,6 +1,7 @@
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 class PharmacyPrescriptionsModel {
   final bool? status;
@@ -212,15 +213,16 @@ class PrescriptionItem {
   }
 
   String get displayTimeAgo {
+    // Raw time first: the *_formatted text is formatted on the server in UTC.
+    final timeStr = createdAt ?? placedAt;
+    if (timeStr != null && timeStr.isNotEmpty) {
+      return _formatRelativeTime(timeStr);
+    }
     if (createdAtFormatted != null && createdAtFormatted!.isNotEmpty) {
       return createdAtFormatted!;
     }
     if (placedAtFormatted != null && placedAtFormatted!.isNotEmpty) {
       return placedAtFormatted!;
-    }
-    final timeStr = createdAt ?? placedAt;
-    if (timeStr != null && timeStr.isNotEmpty) {
-      return _formatRelativeTime(timeStr);
     }
     return '';
   }
@@ -432,72 +434,35 @@ class PrescriptionItem {
   String get displayQuotedDate {
     final dtStr = quotedAt ?? paymentRequestedAt ?? createdAt;
     if (dtStr != null && dtStr.trim().isNotEmpty) {
-      try {
-        DateTime dt = DateTime.tryParse(dtStr) ?? DateTime.now();
-        if (dtStr.contains('-') && !dtStr.contains('T')) {
-          try {
-            dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(dtStr);
-          } catch (_) {}
-        }
-        dt = dt.toLocal();
-        return DateFormat('dd MMM yyyy  ·  hh:mm a').format(dt);
-      } catch (_) {
-        return dtStr;
-      }
+      // Server time is UTC without an offset: shown in phone time.
+      final dt = parseServerTime(dtStr);
+      if (dt == null) return dtStr;
+      return appDateFormat('dd MMM yyyy  ·  hh:mm a').format(dt);
     }
     return '';
   }
 
   String get displayExpiresText {
     if (quoteExpiresAt != null && quoteExpiresAt!.trim().isNotEmpty) {
-      try {
-        final expStr = quoteExpiresAt!.trim();
-        DateTime dt = DateTime.tryParse(expStr) ?? DateTime.now();
-        if (expStr.contains('-') && !expStr.contains('T')) {
-          try {
-            dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(expStr);
-          } catch (_) {}
-        }
-        dt = dt.toLocal();
-        final now = DateTime.now();
-        final diff = dt.difference(now);
-        if (diff.isNegative) {
-          return 'Expired';
-        }
-        if (diff.inDays > 0) {
-          return 'Expires in ${diff.inDays}d';
-        }
-        if (diff.inHours > 0) {
-          return 'Expires in ${diff.inHours}h ${diff.inMinutes % 60}m';
-        }
-        if (diff.inMinutes > 0) {
-          return 'Expires in ${diff.inMinutes} min';
-        }
-        return 'Expires in < 1 min';
-      } catch (_) {
-        return 'Expires: $quoteExpiresAt';
+      // Server time is UTC without an offset: compared in phone time.
+      final dt = parseServerTime(quoteExpiresAt);
+      if (dt == null) return '';
+      final diff = dt.difference(DateTime.now());
+      if (diff.isNegative) return S.current.quoteExpired;
+      if (diff.inDays > 0) return S.current.expiresInDays(diff.inDays.toString());
+      if (diff.inHours > 0) {
+        return S.current.quoteExpiresInHours(
+          diff.inHours.toString(),
+          (diff.inMinutes % 60).toString(),
+        );
       }
+      return S.current.quoteExpiresInMinutes(
+        (diff.inMinutes < 1 ? 1 : diff.inMinutes).toString(),
+      );
     }
     return '';
   }
 
-  static String _formatRelativeTime(String timeStr) {
-    try {
-      DateTime dt = DateTime.tryParse(timeStr) ?? DateTime.now();
-      if (timeStr.contains('-') && !timeStr.contains('T')) {
-        try {
-          dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
-        } catch (_) {}
-      }
-      dt = dt.toLocal();
-      final diff = DateTime.now().difference(dt);
-      if (diff.inMinutes < 1) return 'Just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
-      if (diff.inHours < 24) return '${diff.inHours}h ago';
-      if (diff.inDays < 7) return '${diff.inDays}d ago';
-      return DateFormat('dd MMM, yyyy').format(dt);
-    } catch (_) {
-      return timeStr;
-    }
-  }
+  static String _formatRelativeTime(String timeStr) =>
+      formatServerTimeAgo(timeStr);
 }

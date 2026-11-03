@@ -6,6 +6,7 @@ import '../../utils/widgets/no_data_widget.dart';
 import '../../controller/profile_controller.dart';
 import '../../generated/l10n.dart';
 import '../../utils/widgets/app_loader.dart';
+import '../../utils/utils.dart';
 
 class LeaveHistoryScreen extends StatefulWidget {
   const LeaveHistoryScreen({super.key});
@@ -48,22 +49,9 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
   String _formatLeaveDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return "";
     try {
+      // Leave dates are date-only; month name in the app language.
       final dt = DateTime.parse(dateStr);
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return "${months[dt.month - 1]} ${dt.day.toString().padLeft(2, '0')}, ${dt.year}";
+      return appDateFormat('MMM dd, yyyy').format(dt);
     } catch (_) {
       return dateStr;
     }

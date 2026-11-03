@@ -15,7 +15,8 @@ Future<CleanersPage> _page() async => CleanersPage([
       Cleaner.fromJson({'id': 1, 'name': 'Fatou Ba', 'phone': '+22222111111', 'rating': 4.8, 'reviews_count': 126, 'availability': 'available', 'status': 1})!,
       Cleaner.fromJson({
         'id': 2, 'name': 'Aminata Sy', 'rating': 4.6, 'reviews_count': 88, 'availability': 'busy', 'status': 1,
-        'busy_with': {'scheduled_for': DateTime(2026, 11, 2, 10).toIso8601String(), 'order_code': '22789002'},
+        // Server time: UTC without an offset, shown in phone time.
+        'busy_with': {'scheduled_for': '2026-11-02 10:00:00', 'order_code': '22789002'},
       })!,
       Cleaner.fromJson({'id': 3, 'name': 'Khadija Diallo', 'availability': 'inactive', 'status': 2})!,
     ], const {'total': 3, 'available': 1, 'busy': 1, 'inactive': 1});
@@ -27,7 +28,9 @@ void main() {
     expect(find.text('All 3'), findsOneWidget);
     expect(find.text('Busy 1'), findsOneWidget);
     expect(find.text('4.8 ★ · 126 reviews'), findsOneWidget);
-    expect(find.text('Busy · 10:00'), findsOneWidget);
+    final busy = DateTime.utc(2026, 11, 2, 10).toLocal();
+    String two(int v) => v.toString().padLeft(2, '0');
+    expect(find.text('Busy · ${two(busy.hour)}:${two(busy.minute)}'), findsOneWidget);
     expect(find.text('Deactivated'), findsOneWidget);
     expect(find.text('Activate'), findsOneWidget); // only the inactive one
     expect(find.text('Deactivate'), findsNWidgets(2));

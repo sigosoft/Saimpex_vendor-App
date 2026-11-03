@@ -192,7 +192,7 @@ class _PharmacyCreateQuotationScreenState
         final effectiveRequestMeta = rawRequestMeta.isNotEmpty && rawRequestMeta != 'Today • 10:45 AM'
             ? rawRequestMeta
             : (prescObj?.createdAt?.trim().isNotEmpty == true
-                ? prescObj!.createdAt!
+                ? formatServerDateTime(prescObj!.createdAt)
                 : (rawRequestMeta.isNotEmpty ? rawRequestMeta : ''));
         final editing = controller.draft != null;
 

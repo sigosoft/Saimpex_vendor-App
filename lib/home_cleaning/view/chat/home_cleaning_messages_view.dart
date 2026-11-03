@@ -19,10 +19,10 @@ String cleaningChatTime(BuildContext context, String? raw) {
   if (raw == null || raw.isEmpty) return '';
   final parsed = DateTime.tryParse(raw);
   if (parsed == null) return '';
-  final dt = parsed.toLocal();
+  final dt = serverTimeToLocal(parsed);
   final now = DateTime.now();
   if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
-    return DateFormat('hh:mm a').format(dt);
+    return appDateFormat('hh:mm a').format(dt);
   }
   final yesterday = now.subtract(const Duration(days: 1));
   if (dt.year == yesterday.year &&

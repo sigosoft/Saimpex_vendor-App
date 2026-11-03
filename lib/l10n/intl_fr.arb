@@ -2753,5 +2753,26 @@
   "unitSet": "lot",
   "unitBox": "boîte",
   "unitBottle": "bouteille",
-  "unitDozen": "douzaine"
+  "unitDozen": "douzaine",
+  "quoteExpired": "Expiré",
+  "@quoteExpired": {},
+  "quoteExpiresInHours": "Expire dans {hours} h {minutes} min",
+  "@quoteExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteExpiresInMinutes": "Expire dans {minutes} min",
+  "@quoteExpiresInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -12311,44 +12311,29 @@ class S {
     );
   }
 
-  /// `g`
-  String get unitGram {
-    return Intl.message('g', name: 'unitGram', desc: '', args: []);
+  /// `Expired`
+  String get quoteExpired {
+    return Intl.message('Expired', name: 'quoteExpired', desc: '', args: []);
   }
 
-  /// `L`
-  String get unitLitre {
-    return Intl.message('L', name: 'unitLitre', desc: '', args: []);
+  /// `Expires in {hours} h {minutes} min`
+  String quoteExpiresInHours(String hours, String minutes) {
+    return Intl.message(
+      'Expires in $hours h $minutes min',
+      name: 'quoteExpiresInHours',
+      desc: '',
+      args: [hours, minutes],
+    );
   }
 
-  /// `ml`
-  String get unitMillilitre {
-    return Intl.message('ml', name: 'unitMillilitre', desc: '', args: []);
-  }
-
-  /// `pack`
-  String get unitPack {
-    return Intl.message('pack', name: 'unitPack', desc: '', args: []);
-  }
-
-  /// `set`
-  String get unitSet {
-    return Intl.message('set', name: 'unitSet', desc: '', args: []);
-  }
-
-  /// `box`
-  String get unitBox {
-    return Intl.message('box', name: 'unitBox', desc: '', args: []);
-  }
-
-  /// `bottle`
-  String get unitBottle {
-    return Intl.message('bottle', name: 'unitBottle', desc: '', args: []);
-  }
-
-  /// `dozen`
-  String get unitDozen {
-    return Intl.message('dozen', name: 'unitDozen', desc: '', args: []);
+  /// `Expires in {minutes} min`
+  String quoteExpiresInMinutes(String minutes) {
+    return Intl.message(
+      'Expires in $minutes min',
+      name: 'quoteExpiresInMinutes',
+      desc: '',
+      args: [minutes],
+    );
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/widgets/deletable_conversation.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
@@ -175,10 +176,11 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
           dt = DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr);
         } catch (_) {}
       }
-      dt = dt.toLocal();
+      // Server times are UTC without an offset: shown in phone time.
+      dt = serverTimeToLocal(dt);
       final now = DateTime.now();
       if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
-        return DateFormat('hh:mm a').format(dt);
+        return appDateFormat('hh:mm a').format(dt);
       } else {
         return DateFormat('dd/MM/yyyy').format(dt);
       }
@@ -948,17 +950,8 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
   }
 
   DateTime? _parseDateTime(String? timeStr) {
-    if (timeStr == null || timeStr.trim().isEmpty) return null;
-    try {
-      if (timeStr.contains('-') && !timeStr.contains('T')) {
-        try {
-          return DateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStr).toLocal();
-        } catch (_) {}
-      }
-      return DateTime.tryParse(timeStr)?.toLocal();
-    } catch (_) {
-      return null;
-    }
+    // Server times are UTC without an offset: read in phone time.
+    return parseServerTime(timeStr);
   }
 
   String _formatMessageTime(String? timeStr) {
@@ -966,7 +959,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
     try {
       final dt = _parseDateTime(timeStr);
       if (dt != null) {
-        return DateFormat('hh:mm a').format(dt);
+        return appDateFormat('hh:mm a').format(dt);
       }
       return timeStr;
     } catch (_) {

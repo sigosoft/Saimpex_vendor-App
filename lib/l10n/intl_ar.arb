@@ -2752,5 +2752,26 @@
   "unitSet": "طقم",
   "unitBox": "علبة",
   "unitBottle": "زجاجة",
-  "unitDozen": "دزينة"
+  "unitDozen": "دزينة",
+  "quoteExpired": "منتهي الصلاحية",
+  "@quoteExpired": {},
+  "quoteExpiresInHours": "تنتهي خلال {hours} ساعة و{minutes} دقيقة",
+  "@quoteExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteExpiresInMinutes": "تنتهي خلال {minutes} دقيقة",
+  "@quoteExpiresInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  }
 }

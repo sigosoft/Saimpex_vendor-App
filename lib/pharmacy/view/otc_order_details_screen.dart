@@ -277,7 +277,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
         if (log.status == status &&
             log.createdAt != null &&
             log.createdAt!.trim().isNotEmpty) {
-          return log.createdAt;
+          return formatServerDateTime(log.createdAt);
         }
       }
       return null;
@@ -525,7 +525,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                   itemTotal: order?.subtotal,
                                   deliveryFee: order?.deliveryFee,
                                   tax: order?.tax,
-                                  paymentOn: order?.placedAt,
+                                  paymentOn: formatServerDateTime(order?.placedAt),
                                   totalPaid: order?.total,
                                 ),
                                 const SizedBox(height: 18),

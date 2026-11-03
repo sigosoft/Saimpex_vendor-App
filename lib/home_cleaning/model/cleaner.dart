@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 /// A home cleaning vendor's cleaner, API doc §6.39 (task V16):
 /// `{id, name, phone, photo_url, status (1 active, 2 deactivated), rating,
@@ -55,7 +56,7 @@ class Cleaner {
       rating: double.tryParse('${json['rating'] ?? ''}'),
       reviewsCount: int.tryParse('${json['reviews_count'] ?? 0}') ?? 0,
       availability: (json['availability'] ?? (status == 1 ? 'available' : 'inactive')).toString(),
-      busyFrom: busy is Map ? DateTime.tryParse('${busy['scheduled_for'] ?? ''}')?.toLocal() : null,
+      busyFrom: busy is Map ? parseServerTime(busy['scheduled_for']) : null,
       busyOrderCode: busy is Map ? busy['order_code']?.toString() : null,
     );
   }

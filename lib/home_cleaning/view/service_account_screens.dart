@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 // Account screens of the service section (laundry, car wash, home cleaning;
 // task V15). They used to open the Water screens, which call the water
@@ -448,7 +449,7 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
 
   Widget _payoutRow(Map<String, dynamic> p) {
     final amount = double.tryParse('${p['total_paid_amount'] ?? p['amount'] ?? 0}') ?? 0;
-    final date = DateTime.tryParse('${p['created_at'] ?? ''}')?.toLocal();
+    final date = parseServerTime(p['created_at']);
     final note = '${p['notes'] ?? p['note'] ?? ''}'.trim();
     return _card([
       Row(children: [

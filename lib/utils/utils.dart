@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'widgets/app_loader.dart';
+import 'localization_service.dart';
 import '../generated/l10n.dart';
 
 String getCurrencySymbol() {
@@ -313,9 +314,73 @@ String formatOrderPlacedAt(DateTime? dateTime) {
       dateTime.month == now.month &&
       dateTime.day == now.day;
   if (isToday) {
-    return '${S.current.today}, ${DateFormat('hh:mm a').format(dateTime)}';
+    return '${S.current.today}, ${appDateFormat('hh:mm a').format(dateTime)}';
   }
-  return DateFormat('MMM dd, yyyy hh:mm a').format(dateTime);
+  return appDateFormat('MMM dd, yyyy hh:mm a').format(dateTime);
+}
+
+/// [formatOrderPlacedAt] from a raw server string (placed_at / created_at);
+/// '' when missing or unparseable so callers can fall back to server text.
+String formatServerPlacedAt(Object? raw) {
+  final t = DateTime.tryParse(raw?.toString().trim() ?? '');
+  return t == null ? '' : formatOrderPlacedAt(t);
+}
+
+/// App language (en / fr / ar) for DateFormat, so month names, AM/PM and
+/// weekdays follow the app and not the phone. Display only: dates sent to
+/// the API keep their fixed 'en' / numeric formats.
+String appDateLocale() => LocalizationService.currentLanguageCode;
+
+DateFormat appDateFormat(String pattern) {
+  try {
+    return DateFormat(pattern, appDateLocale());
+  } catch (_) {
+    return DateFormat(pattern, 'en');
+  }
+}
+
+/// Parses a server time (ISO or "Y-m-d H:i:s") into phone-local time with
+/// [serverTimeToLocal]; null when missing or unparseable. Date-only values
+/// ("2026-11-30") have no time to convert and are returned as that day.
+DateTime? parseServerTime(Object? raw) {
+  final s = raw?.toString().trim() ?? '';
+  if (s.isEmpty || s == 'null') return null;
+  final t = DateTime.tryParse(s);
+  if (t == null) return null;
+  if (s.length <= 10) return t;
+  return serverTimeToLocal(t);
+}
+
+/// "Nov 03, 2026 10:45 AM" in phone time and the app language from a raw
+/// server time; text that isn't a date (already formatted) is returned as is.
+String formatServerDateTime(
+  Object? raw, {
+  String pattern = 'MMM dd, yyyy hh:mm a',
+}) {
+  final s = raw?.toString().trim() ?? '';
+  if (s.isEmpty || s == 'null') return '';
+  final dt = parseServerTime(s);
+  return dt == null ? s : appDateFormat(pattern).format(dt);
+}
+
+/// "Just now" / "5 min ago" / "3 h ago" / "2 d ago" in the app language
+/// from a raw server time, then the date after a week; the raw text when it
+/// can't be parsed.
+String formatServerTimeAgo(Object? raw, {DateTime? now}) {
+  final dt = parseServerTime(raw);
+  if (dt == null) return raw?.toString() ?? '';
+  final diff = (now ?? DateTime.now()).difference(dt);
+  if (diff.inMinutes < 1) return S.current.cleaningJustNow;
+  if (diff.inHours < 1) {
+    return S.current.cleaningBookingMinutesAgo(diff.inMinutes.toString());
+  }
+  if (diff.inDays < 1) {
+    return S.current.cleaningBookingHoursAgo(diff.inHours.toString());
+  }
+  if (diff.inDays < 7) {
+    return S.current.cleaningBookingDaysAgo(diff.inDays.toString());
+  }
+  return appDateFormat('dd MMM, yyyy').format(dt);
 }
 
 /// Server times are UTC but usually come without an offset, so

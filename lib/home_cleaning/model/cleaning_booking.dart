@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 /// Home cleaning order statuses (vendor_type 9) as used by
 /// ServiceVerticalController / VendorScreenData on the backend:
@@ -404,7 +405,9 @@ bool? _bool(dynamic v) {
   return null;
 }
 
+/// Server times are UTC without an offset; kept in phone time so every
+/// screen (slot, placed, paid on, time ago) shows the vendor's clock.
 DateTime? _date(dynamic v) {
   final s = _str(v);
-  return s == null ? null : DateTime.tryParse(s);
+  return parseServerTime(s);
 }

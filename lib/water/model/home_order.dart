@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/utils.dart';
 
 enum HomeOrderStatus {
   newOrder,
@@ -85,13 +86,16 @@ class HomeOrder {
                     ? raw['order_code'].toString().trim()
                     : (raw['order_id'] != null ? '#${raw['order_id']}' : '')));
 
-    final timeAgo = (order.placedAtFormatted?.trim().isNotEmpty == true)
-        ? order.placedAtFormatted!.trim()
-        : (order.placedAt?.trim().isNotEmpty == true
-              ? order.placedAt!.trim()
-              : (raw['placed_at']?.toString().trim().isNotEmpty == true
-                    ? raw['placed_at'].toString().trim()
-                    : (raw['created_at']?.toString().trim() ?? '')));
+    // Card time in phone time from the raw placed_at / created_at;
+    // placed_at_formatted is formatted on the server in UTC.
+    final fromRaw = formatServerPlacedAt(
+      order.placedAt ?? raw['placed_at'] ?? raw['created_at'],
+    );
+    final timeAgo = fromRaw.isNotEmpty
+        ? fromRaw
+        : (order.placedAtFormatted?.trim() ??
+              raw['placed_at_formatted']?.toString().trim() ??
+              '');
 
     final paymentMethod =
         (raw['payment_type'] ?? raw['payment_method'])
@@ -274,12 +278,14 @@ class SubscriptionOrder {
         ? '#$rawOrderId'
         : rawOrderId;
 
-    final timeAgo =
-        json['time_ago']?.toString() ??
-        json['placed_at_formatted']?.toString() ??
-        json['placed_at']?.toString() ??
-        json['created_at']?.toString() ??
-        '';
+    // Phone time from the raw placed_at / created_at; the server's
+    // time_ago / placed_at_formatted text is UTC and English only.
+    final fromRaw = formatServerPlacedAt(json['placed_at'] ?? json['created_at']);
+    final timeAgo = fromRaw.isNotEmpty
+        ? fromRaw
+        : (json['time_ago']?.toString() ??
+              json['placed_at_formatted']?.toString() ??
+              '');
 
     // waterSubscriptions returns `delivery_type`: "Delivery" | "Self Pickup".
     final deliveryTypeText = json['delivery_type'] is String
