@@ -3273,5 +3273,13 @@
         "type": "String"
       }
     }
+  },
+  "stockOnlyAvailableToRemove": "يمكن إزالة {count} عناصر فقط",
+  "@stockOnlyAvailableToRemove": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   }
 }

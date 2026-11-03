@@ -122,9 +122,9 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
       String preview = '';
       if (conv.lastMessage != null) {
         if (conv.lastMessage?.messageType == 'image') {
-          preview = '📷 Image';
+          preview = '📷 ${S.of(context).waterImage}';
         } else if (conv.lastMessage?.messageType == 'voice') {
-          preview = '🎤 Voice message';
+          preview = '🎤 ${S.of(context).waterVoiceMessage}';
         } else {
           preview = conv.lastMessage?.message ?? '';
         }
@@ -148,7 +148,7 @@ class _PharmacyMessagesTabState extends State<PharmacyMessagesTab> {
       list.add(
         _MessageThread(
           name: displayName,
-          preview: conversationPreview(context, conv, preview),
+          preview: conversationPreview(context, conv, preview, isOrder: true),
           time: _formatChatTime(timeStr),
           avatar: avatar,
           unreadCount: conv.unreadCount ?? 0,
@@ -1092,10 +1092,10 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
                                 itemCount: _messages.length + 1,
                                 itemBuilder: (context, index) {
                                   if (index == 0) {
-                                    return const Padding(
-                                      padding: EdgeInsets.only(bottom: 18),
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 18),
                                       child: Center(
-                                        child: _DatePill(label: 'Today'),
+                                        child: _DatePill(label: S.of(context).today),
                                       ),
                                     );
                                   }

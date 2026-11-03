@@ -278,9 +278,9 @@ class _PharmacyNotificationsScreenState
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
-          customerName: 'Customer',
+          customerName: S.current.quoteCustomer,
           requestId: orderId != null ? '#$orderId' : '#22789007',
-          requestMeta: 'Today',
+          requestMeta: S.current.today,
           notesType: PharmacyOrderNotesType.none,
         ),
       ),

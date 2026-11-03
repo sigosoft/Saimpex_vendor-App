@@ -75,7 +75,7 @@ class _SupportChatState extends State<SupportChat> {
   }
 
   String _time(dynamic at) {
-    final d = DateTime.tryParse(at?.toString() ?? '')?.toLocal();
+    final d = parseServerTime(at);
     return d == null ? '' : DateFormat('HH:mm', 'en').format(d);
   }
 

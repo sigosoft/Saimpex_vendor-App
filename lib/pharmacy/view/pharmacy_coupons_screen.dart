@@ -149,24 +149,7 @@ class _Coupon {
     try {
       final dt = DateTime.tryParse(s);
       if (dt != null) {
-        const months = [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ];
-        final m = months[dt.month - 1];
-        final d = dt.day.toString().padLeft(2, '0');
-        final y = dt.year;
-        return '$m $d, $y';
+        return appDateFormat('MMM dd, yyyy').format(dt);
       }
     } catch (_) {}
     return s;
@@ -701,7 +684,7 @@ class _PharmacyCouponsScreenState extends State<PharmacyCouponsScreen> {
                                     count: draft.count,
                                     validUntil: draft.validUntil,
                                     createdOn: coupon.createdOn,
-                                    updatedOn: 'Today',
+                                    updatedOn: S.current.today,
                                     active: coupon.active,
                                     rawMap: coupon.rawMap,
                                   );

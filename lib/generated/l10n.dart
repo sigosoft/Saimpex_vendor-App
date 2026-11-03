@@ -14180,6 +14180,16 @@ class S {
       args: [name],
     );
   }
+
+  /// `Only {count} items are available to remove`
+  String stockOnlyAvailableToRemove(String count) {
+    return Intl.message(
+      'Only $count items are available to remove',
+      name: 'stockOnlyAvailableToRemove',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

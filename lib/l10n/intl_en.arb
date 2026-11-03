@@ -3327,5 +3327,13 @@
         "type": "String"
       }
     }
+  },
+  "stockOnlyAvailableToRemove": "Only {count} items are available to remove",
+  "@stockOnlyAvailableToRemove": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   }
 }

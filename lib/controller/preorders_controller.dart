@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -34,7 +35,7 @@ class PreOrder {
       orderCode: json['order_code']?.toString() ?? id,
       status: int.tryParse(json['status']?.toString() ?? '') ?? 0,
       total: double.tryParse(json['total']?.toString() ?? '') ?? 0,
-      scheduledFor: scheduled.toLocal(),
+      scheduledFor: serverTimeToLocal(scheduled),
       isSelfPickup: json['is_self_pickup']?.toString() == '1',
       driverRequested: json['driver_requested'] == true,
       driverAssigned: json['driver_assigned'] == true,

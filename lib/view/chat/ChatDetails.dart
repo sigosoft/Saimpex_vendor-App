@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -10,7 +11,6 @@ import 'package:saimpex_vendor/controller/chat_controller.dart';
 import 'package:saimpex_vendor/view/chat/widgets/AnimatedAudioWaveform.dart';
 import '../../generated/l10n.dart';
 
-import 'package:intl/intl.dart' hide TextDirection;
 
 class ChatDetails extends StatefulWidget {
   const ChatDetails({
@@ -141,8 +141,10 @@ class _ChatDetailsState extends State<ChatDetails> {
   String formatMessageTime(String? timeStr) {
     if (timeStr == null || timeStr.isEmpty) return "";
     try {
-      DateTime dt = DateTime.parse(timeStr).toLocal();
-      return DateFormat('hh:mm a').format(dt);
+      // Server UTC without an offset, shown in phone time.
+      final dt = parseServerTime(timeStr);
+      if (dt == null) return "";
+      return appDateFormat('hh:mm a').format(dt);
     } catch (e) {
       return "";
     }

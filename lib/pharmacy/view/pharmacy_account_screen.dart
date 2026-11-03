@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/view/settings/widgets/printer_picker_dialog.dart'
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
@@ -1036,13 +1037,18 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(
-                      'V2.8.1',
-                      textAlign: TextAlign.center,
-                      style: appFont('Inter', 
-                        color: const Color(0xFF858585),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
+                    // Installed version from the build; a fixed "V2.8.1" was
+                    // shown here while the other sections read it (V18).
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snap) => Text(
+                        snap.hasData ? 'V${snap.data!.version}' : '',
+                        textAlign: TextAlign.center,
+                        style: appFont('Inter',
+                          color: const Color(0xFF858585),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),
