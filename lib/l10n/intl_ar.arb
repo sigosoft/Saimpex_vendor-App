@@ -3285,5 +3285,45 @@
   "addItemAddedSuccessfully": "تمت إضافة المنتج بنجاح",
   "@addItemAddedSuccessfully": {},
   "addItemFailedToAdd": "فشل إضافة المنتج",
-  "@addItemFailedToAdd": {}
+  "@addItemFailedToAdd": {},
+  "itemValidationEnterName": "يرجى إدخال اسم الصنف",
+  "@itemValidationEnterName": {},
+  "itemValidationSelectCategory": "يرجى اختيار فئة",
+  "@itemValidationSelectCategory": {},
+  "itemValidationSelectItem": "يرجى اختيار صنف",
+  "@itemValidationSelectItem": {},
+  "itemValidationSelectAttribute": "يرجى اختيار خاصية",
+  "@itemValidationSelectAttribute": {},
+  "itemValidationEnterPrice": "يرجى إدخال السعر",
+  "@itemValidationEnterPrice": {},
+  "itemValidationEnterDiscountPrice": "يرجى إدخال سعر الخصم",
+  "@itemValidationEnterDiscountPrice": {},
+  "itemValidationEnterPrepTime": "يرجى إدخال وقت التحضير",
+  "@itemValidationEnterPrepTime": {},
+  "itemValidationEnterSerialNumber": "يرجى إدخال الرقم التسلسلي",
+  "@itemValidationEnterSerialNumber": {},
+  "itemValidationSelectTag": "يرجى اختيار وسم واحد على الأقل",
+  "@itemValidationSelectTag": {},
+  "itemValidationMinOverMax": "لا يمكن أن يتجاوز الحد الأدنى للاختيارات الحد الأقصى في {group}",
+  "@itemValidationMinOverMax": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "itemValidationTooFewOptions": "تسمح {group} بـ {max} اختيارات لكنها تحتوي على {count} خيارات",
+  "@itemValidationTooFewOptions": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -3286,5 +3286,45 @@
   "addItemAddedSuccessfully": "Article ajouté avec succès",
   "@addItemAddedSuccessfully": {},
   "addItemFailedToAdd": "Échec de l'ajout de l'article",
-  "@addItemFailedToAdd": {}
+  "@addItemFailedToAdd": {},
+  "itemValidationEnterName": "Veuillez saisir le nom de l'article",
+  "@itemValidationEnterName": {},
+  "itemValidationSelectCategory": "Veuillez choisir une catégorie",
+  "@itemValidationSelectCategory": {},
+  "itemValidationSelectItem": "Veuillez choisir un article",
+  "@itemValidationSelectItem": {},
+  "itemValidationSelectAttribute": "Veuillez choisir un attribut",
+  "@itemValidationSelectAttribute": {},
+  "itemValidationEnterPrice": "Veuillez saisir le prix",
+  "@itemValidationEnterPrice": {},
+  "itemValidationEnterDiscountPrice": "Veuillez saisir le prix réduit",
+  "@itemValidationEnterDiscountPrice": {},
+  "itemValidationEnterPrepTime": "Veuillez saisir le temps de préparation",
+  "@itemValidationEnterPrepTime": {},
+  "itemValidationEnterSerialNumber": "Veuillez saisir le numéro de série",
+  "@itemValidationEnterSerialNumber": {},
+  "itemValidationSelectTag": "Veuillez choisir au moins une étiquette",
+  "@itemValidationSelectTag": {},
+  "itemValidationMinOverMax": "Le minimum de choix ne peut pas dépasser le maximum dans {group}",
+  "@itemValidationMinOverMax": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "itemValidationTooFewOptions": "{group} autorise {max} choix mais a {count} options",
+  "@itemValidationTooFewOptions": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

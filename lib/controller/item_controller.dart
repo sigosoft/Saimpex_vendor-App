@@ -408,11 +408,11 @@ class ItemController extends GetxController {
 
   void onSubmit(BuildContext context) {
     if (selectedAttribute == null) {
-      showToast(context, "Please select attribute");
+      showToast(context, S.of(context).itemValidationSelectAttribute);
       return;
     }
     if (priceCtrl.text.isEmpty) {
-      showToast(context, "Please enter price");
+      showToast(context, S.of(context).itemValidationEnterPrice);
       return;
     }
     final profileController = Get.find<ProfileController>();
@@ -451,14 +451,18 @@ class ItemController extends GetxController {
         if (min != null && max != null && min > max) {
           showToast(
             context,
-            "Minimum selections can't be more than maximum in ${group.name}",
+            S.of(context).itemValidationMinOverMax(group.name),
           );
           return false;
         }
         if (max != null && max > group.options.length) {
           showToast(
             context,
-            "${group.name} allows $max selections but has ${group.options.length} options",
+            S.of(context).itemValidationTooFewOptions(
+              group.name,
+              '$max',
+              '${group.options.length}',
+            ),
           );
           return false;
         }
@@ -469,49 +473,49 @@ class ItemController extends GetxController {
               ? menuItemId.trim()
               : serialNumberCtrl.text.trim());
       if (name.isEmpty) {
-        showToast(context, "Please enter item name");
+        showToast(context, S.of(context).itemValidationEnterName);
         return false;
       }
       final catId = (menuId != null && menuId.trim().isNotEmpty)
           ? menuId.trim()
           : (selectedMenuId != null ? selectedMenuId.toString() : '');
       if (catId.isEmpty) {
-        showToast(context, "Please select category");
+        showToast(context, S.of(context).itemValidationSelectCategory);
         return false;
       }
       // With variants each variant carries its own price instead.
       if (variants.isEmpty && priceCtrl.text.trim().isEmpty) {
-        showToast(context, "Please enter price");
+        showToast(context, S.of(context).itemValidationEnterPrice);
         return false;
       }
       return true;
     }
 
     if (menuId == null || menuId.trim().isEmpty) {
-      showToast(context, "Menu id is required");
+      showToast(context, S.of(context).itemValidationSelectCategory);
       return false;
     } else if (menuItemId == null || menuItemId.trim().isEmpty) {
-      showToast(context, "Menu item id is required");
+      showToast(context, S.of(context).itemValidationSelectItem);
       return false;
     } else if (restaurantAttributeId == null ||
         restaurantAttributeId.trim().isEmpty) {
-      showToast(context, "Restaurant attribute id is required");
+      showToast(context, S.of(context).itemValidationSelectAttribute);
       return false;
     } else if (priceCtrl.text.trim().isEmpty) {
-      showToast(context, "Please enter price");
+      showToast(context, S.of(context).itemValidationEnterPrice);
       return false;
     } else if (discountPriceCtrl.text.trim().isEmpty) {
-      showToast(context, "Please enter discount price");
+      showToast(context, S.of(context).itemValidationEnterDiscountPrice);
       return false;
     } else if (Get.find<ProfileController>().vendorType != '2' &&
         prepTimeCtrl.text.trim().isEmpty) {
-      showToast(context, "Please enter preparation time");
+      showToast(context, S.of(context).itemValidationEnterPrepTime);
       return false;
     } else if (serialNumberCtrl.text.trim().isEmpty) {
-      showToast(context, "Please enter serial number");
+      showToast(context, S.of(context).itemValidationEnterSerialNumber);
       return false;
     } else if (selectedRestaurantTagIds.isEmpty) {
-      showToast(context, "Please select at least one tag");
+      showToast(context, S.of(context).itemValidationSelectTag);
       return false;
     }
     return true;
@@ -1413,19 +1417,17 @@ class ItemController extends GetxController {
   /// validation errors {field_en: [...]}), else the fallback.
   String _serverMessage(dynamic body, String fallback) {
     if (body is! Map) return fallback;
+    // Server text is shown only in the app language; English from the server
+    // in Arabic or French mode falls back to the app's own text (V17).
+    final lang = appDateLocale();
     final message = body['message'];
-    if (message is String && message.isNotEmpty) return message;
+    if (message is String && message.isNotEmpty) {
+      return lang == 'en' ? message : fallback;
+    }
     if (message is Map) {
-      final lang = Get.locale?.languageCode ?? 'en';
-      for (final key in ['message_$lang', 'message_en']) {
-        final v = message[key];
-        if (v is List && v.isNotEmpty) return v.first.toString();
-        if (v is String && v.isNotEmpty) return v;
-      }
-      for (final v in message.values) {
-        if (v is List && v.isNotEmpty) return v.first.toString();
-        if (v is String && v.isNotEmpty) return v;
-      }
+      final v = message['message_$lang'];
+      if (v is List && v.isNotEmpty) return v.first.toString();
+      if (v is String && v.isNotEmpty) return v;
     }
     return fallback;
   }
@@ -1829,12 +1831,14 @@ class ItemController extends GetxController {
       // e.g. 400 "Only 3 items are available to remove": the server sends
       // plain English, so that one is shown in the app language (V17).
       debugPrint("updateMenuItemStock Error: $error");
+      final body = error.response?.data;
       final serverText = _serverMessage(
-        error.response?.data,
+        body,
         S.current.waterFailedToUpdateStock,
       );
-      final onlyN = RegExp(r'Only (d+) items? (?:are|is) available to remove')
-          .firstMatch(serverText);
+      final rawText = body is Map ? body['message']?.toString() ?? '' : '';
+      final onlyN = RegExp(r'Only (\d+) items? (?:are|is) available to remove')
+          .firstMatch(rawText);
       if (context.mounted) {
         showToast(
           context,
