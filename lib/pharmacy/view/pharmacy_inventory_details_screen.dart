@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_add_product_screen.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
@@ -130,15 +131,15 @@ class _PharmacyInventoryDetailsScreenState
         Fluttertoast.showToast(
           msg: rawMsg is String && rawMsg.isNotEmpty
               ? rawMsg
-              : 'Stock updated successfully',
+              : S.current.waterStockUpdatedSuccessfully,
         );
         _fetchItemDetail();
       } else {
-        Fluttertoast.showToast(msg: 'Failed to update stock');
+        Fluttertoast.showToast(msg: S.current.waterFailedToUpdateStock);
       }
     } catch (e) {
       debugPrint("Error updating stock: $e");
-      Fluttertoast.showToast(msg: 'Failed to update stock');
+      Fluttertoast.showToast(msg: S.current.waterFailedToUpdateStock);
     }
   }
 
@@ -455,7 +456,7 @@ class _DetailsHeader extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Details',
+              S.of(context).details,
               style: appFont('Inter', 
                 color: const Color(0xFF1A1A1A),
                 fontWeight: FontWeight.w700,
@@ -524,14 +525,14 @@ class _SummaryGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _MetricCard(
-                label: 'Current Stock',
-                child: _ValueUnit(value: stock, unit: unit),
+                label: S.of(context).pharmacyInvCurrentStock,
+                child: _ValueUnit(value: stock, unit: pharmacyOptionLabel(context, unit)),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _MetricCard(
-                label: 'Price',
+                label: S.of(context).price,
                 child: _ValueUnit(value: price, unit: 'MRU'),
               ),
             ),
@@ -542,7 +543,7 @@ class _SummaryGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _MetricCard(
-                label: 'Expiry',
+                label: S.of(context).pharmacyInvExpiry,
                 child: Text(
                   expiry,
                   style: appFont('Inter', 
@@ -557,7 +558,7 @@ class _SummaryGrid extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: _MetricCard(
-                label: 'Status',
+                label: S.of(context).status,
                 child: Row(
                   children: [
                     Container(
@@ -570,7 +571,9 @@ class _SummaryGrid extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      inStock ? 'In Stock' : 'Out Of Stock',
+                      inStock
+                          ? S.of(context).waterInStock
+                          : S.of(context).outOfStock,
                       style: appFont('Inter', 
                         color: statusColor,
                         fontWeight: FontWeight.w600,
@@ -692,7 +695,7 @@ class _BarcodeBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Barcode',
+            S.of(context).waterBarcode,
             style: appFont('Inter', 
               color: const Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
@@ -739,7 +742,7 @@ class _EditButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          'Edit',
+          S.of(context).edit,
           style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
@@ -767,7 +770,7 @@ class _UpdateStockButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          'Update Stock',
+          S.of(context).waterUpdateStock,
           style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
         ),
       ),
@@ -797,12 +800,12 @@ class _SpecCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rows = [
-      ('Category', category),
-      ('Form', form),
-      ('Dosage', dosage),
-      ('Price', price),
-      ('Discount Price', discountPrice),
-      ('Expiry Date', expiryDate),
+      (S.of(context).category, pharmacyOptionLabel(context, category)),
+      (S.of(context).pharmacyInvForm, pharmacyOptionLabel(context, form)),
+      (S.of(context).pharmacyInvDosage, dosage),
+      (S.of(context).price, price),
+      (S.of(context).discountPrice, discountPrice),
+      (S.of(context).pharmacyInvExpiryDate, expiryDate),
     ];
 
     return Container(
@@ -825,7 +828,7 @@ class _SpecCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Product Specifications',
+                S.of(context).pharmacyInvProductSpecifications,
                 style: appFont('Inter', 
                   color: const Color(0xFF111827),
                   fontWeight: FontWeight.w700,
@@ -839,7 +842,7 @@ class _SpecCard extends StatelessWidget {
           for (final row in rows) _SpecRow(label: row.$1, value: row.$2),
           if (description.isNotEmpty) ...[
             Text(
-              'Description',
+              S.of(context).waterDescription,
               style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
@@ -1324,12 +1327,12 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
   void _submit() {
     final text = _quantity.text.trim();
     if (text.isEmpty) {
-      Fluttertoast.showToast(msg: 'Please enter quantity');
+      Fluttertoast.showToast(msg: S.of(context).pharmacyInvEnterQuantity);
       return;
     }
     final value = int.tryParse(text);
     if (value == null || value < 0) {
-      Fluttertoast.showToast(msg: 'Please enter a valid quantity');
+      Fluttertoast.showToast(msg: S.of(context).pharmacyInvEnterValidQuantity);
       return;
     }
     Navigator.of(context).pop(value);
@@ -1353,7 +1356,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
               children: [
                 Expanded(
                   child: Text(
-                    'Update Stock',
+                    S.of(context).waterUpdateStock,
                     style: appFont('Inter', 
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w700,
@@ -1384,7 +1387,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Enter Quantity',
+              S.of(context).waterEnterQuantity,
               style: appFont('Inter', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
@@ -1439,7 +1442,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                         ),
                       ),
                       child: Text(
-                        'Cancel',
+                        S.of(context).cancel,
                         style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
@@ -1463,7 +1466,7 @@ class _UpdateStockDialogState extends State<_UpdateStockDialog> {
                         ),
                       ),
                       child: Text(
-                        'Update',
+                        S.of(context).update,
                         style: appFont('Inter', 
                           fontWeight: FontWeight.w600,
                           fontSize: 15,

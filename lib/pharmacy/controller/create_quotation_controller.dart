@@ -275,7 +275,9 @@ class CreateQuotationController extends GetxController {
     altResults = const [];
     draft = line;
     editingIndex = null;
-    update();
+    // The prescription is an image with no quantities, so start at 1 (it
+    // started at 0 and the medicine could not be saved; test day V18).
+    setPrescribed(1);
   }
 
   void removeSavedLine(int index) {

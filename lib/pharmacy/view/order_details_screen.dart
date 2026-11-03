@@ -61,7 +61,7 @@ void _openCustomerChat(
 
   PharmacyChatScreen.open(
     context,
-    customerName: customerName.isNotEmpty ? customerName : 'Customer',
+    customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
     customerId: validCustomerId,
     conversationId: initialConvId,
     avatar: initialAvatar,
@@ -595,7 +595,7 @@ class _PharmacyOrderDetailsScreenState
     final presc = _detailsController.prescriptionObj;
     final customerName = presc?.customerName?.trim().isNotEmpty == true
         ? presc!.customerName!
-        : (widget.customerName != 'Ahmed' ? widget.customerName : 'Customer');
+        : (widget.customerName != 'Ahmed' ? widget.customerName : S.of(context).quoteCustomer);
     final phone = presc?.displayPhone.trim().isNotEmpty == true
         ? presc!.displayPhone
         : (widget.phone != '+222 45 12 34 56' ? widget.phone : '');
@@ -703,7 +703,7 @@ class _PharmacyOrderDetailsScreenState
             ? rawCustName
             : (widget.customerName != 'Ahmed'
                   ? widget.customerName
-                  : (rawCustName ?? 'Customer'));
+                  : (rawCustName ?? S.of(context).quoteCustomer));
 
         final initial = effectiveCustomerName.isNotEmpty
             ? effectiveCustomerName.substring(0, 1).toUpperCase()
@@ -792,7 +792,7 @@ class _PharmacyOrderDetailsScreenState
                               alignment: Alignment.center,
                               children: [
                                 Text(
-                                  'Order Details',
+                                  S.of(context).orderDetails,
                                   style: appFont('Inter', 
                                     color: const Color(0xFF1A1A1A),
                                     fontWeight: FontWeight.w700,
@@ -907,7 +907,7 @@ class _PharmacyOrderDetailsScreenState
                                 const SizedBox(height: 18),
                                 if (hasNote) ...[
                                   Text(
-                                    'SPECIAL NOTES',
+                                    S.of(context).pharmacyDetailSpecialNotes,
                                     style: appFont('Inter', 
                                       color: const Color(0xFFA0A9B8),
                                       fontWeight: FontWeight.w600,
@@ -949,7 +949,7 @@ class _PharmacyOrderDetailsScreenState
                                   const SizedBox(height: 18),
                                 ],
                                 Text(
-                                  'ORDER TIMELINE',
+                                  S.of(context).pharmacyDetailOrderTimeline,
                                   style: appFont('Inter', 
                                     color: const Color(0xFFA0A9B8),
                                     fontWeight: FontWeight.w600,
@@ -971,8 +971,8 @@ class _PharmacyOrderDetailsScreenState
                 if (widget.isToPrepare || widget.isPreparing)
                   _StartPreparingBar(
                     label: widget.isPreparing
-                        ? 'Ready for Dispatch'
-                        : 'Start Preparing',
+                        ? S.of(context).pharmacyDetailReadyForDispatch
+                        : S.of(context).pharmacyDetailStartPreparing,
                   )
                 else if (!isEffectiveAwaitingPayment &&
                     !widget.isReady &&
@@ -985,10 +985,10 @@ class _PharmacyOrderDetailsScreenState
                         ? _markReviewed
                         : _openFullPrescription,
                     primaryLabel: isEffectiveReviewCompleted
-                        ? 'Create Quotation'
+                        ? S.of(context).quoteCreateTitle
                         : isEffectiveReviewing
-                        ? 'Mark as Reviewed'
-                        : 'Review Prescription',
+                        ? S.of(context).pharmacyDetailMarkReviewed
+                        : S.of(context).pharmacyDetailReviewPrescription,
                   ),
               ],
             ),
@@ -1058,7 +1058,7 @@ class _CustomerCard extends StatelessWidget {
               const Icon(Icons.person_search_rounded, color: _accent, size: 20),
               const SizedBox(width: 6),
               Text(
-                'CUSTOMER',
+                S.of(context).pharmacyDetailCustomerHeader,
                 style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
@@ -1090,12 +1090,12 @@ class _CustomerCard extends StatelessWidget {
                   ),
                   child: Text(
                     awaitingPayment
-                        ? 'AWAITING PAYMENT'
+                        ? S.of(context).pharmacyDetailBadgeAwaitingPayment
                         : reviewCompleted
-                        ? 'REVIEW COMPLETED'
+                        ? S.of(context).pharmacyDetailBadgeReviewCompleted
                         : reviewing
-                        ? 'REVIEWING'
-                        : 'NEW',
+                        ? S.of(context).pharmacyDetailBadgeReviewing
+                        : S.of(context).pharmacyDetailBadgeNew,
                     style: appFont('Inter', 
                       color: Colors.white,
                       fontSize: reviewCompleted || awaitingPayment
@@ -1217,7 +1217,7 @@ class _CustomerCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'REQUEST ID',
+                  S.of(context).pharmacyDetailRequestId,
                   style: appFont('Inter', 
                     color: const Color(0xFF9E9E9E),
                     fontWeight: FontWeight.w500,
@@ -1304,7 +1304,7 @@ class _UploadedPrescriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'UPLOADED PRESCRIPTION',
+            S.of(context).pharmacyDetailUploadedPrescription,
             style: appFont('Inter', 
               color: const Color(0xFF1A1A1A),
               fontWeight: FontWeight.w700,
@@ -1345,19 +1345,19 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                                   ),
                                 );
                               },
-                              errorBuilder: (_, error, __) => const Center(
+                              errorBuilder: (_, error, __) => Center(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.broken_image_outlined,
                                       size: 44,
                                       color: Color(0xFF9E9E9E),
                                     ),
-                                    SizedBox(height: 6),
+                                    const SizedBox(height: 6),
                                     Text(
-                                      'Failed to load prescription',
-                                      style: TextStyle(
+                                      S.of(context).pharmacyDetailImageLoadFailed,
+                                      style: const TextStyle(
                                         color: Color(0xFF9E9E9E),
                                         fontSize: 12,
                                       ),
@@ -1377,19 +1377,19 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                                       ),
                                     ),
                                   )
-                                : const Center(
+                                : Center(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.description_outlined,
                                           size: 44,
                                           color: Color(0xFF9E9E9E),
                                         ),
-                                        SizedBox(height: 6),
+                                        const SizedBox(height: 6),
                                         Text(
-                                          'No Prescription Image',
-                                          style: TextStyle(
+                                          S.of(context).pharmacyDetailNoPrescriptionImage,
+                                          style: const TextStyle(
                                             color: Color(0xFF9E9E9E),
                                             fontSize: 12,
                                           ),
@@ -1408,14 +1408,14 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                       children: [
                         _ImageActionChip(
                           icon: Icons.zoom_in_rounded,
-                          label: 'Zoom',
+                          label: S.of(context).pharmacyDetailZoom,
                           onTap: onZoom,
                           color: const Color(0xFFE67E22),
                         ),
                         const SizedBox(width: 8),
                         _ImageActionChip(
                           icon: Icons.rotate_right_rounded,
-                          label: 'Rotate',
+                          label: S.of(context).pharmacyDetailRotate,
                           onTap: onRotate,
                           color: const Color(0xFF544C4C),
                         ),
@@ -1450,7 +1450,7 @@ class _UploadedPrescriptionCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'View Full Prescription',
+                    S.of(context).pharmacyDetailViewFullPrescription,
                     style: appFont('Inter', 
                       color: _orange,
                       fontWeight: FontWeight.w600,
@@ -1816,7 +1816,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
               const Icon(Icons.person_search_rounded, color: _accent, size: 18),
               const SizedBox(width: 6),
               Text(
-                'CUSTOMER',
+                S.of(context).pharmacyDetailCustomerHeader,
                 style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
@@ -1841,12 +1841,12 @@ class _ToPrepareInfoCard extends StatelessWidget {
                 ),
                 child: Text(
                   delivered
-                      ? 'DELIVERED'
+                      ? S.of(context).pharmacyDetailBadgeDelivered
                       : ready
-                      ? 'READY'
+                      ? S.of(context).pharmacyDetailBadgeReady
                       : preparing
-                      ? 'PREPARING'
-                      : 'TO PREPARE',
+                      ? S.of(context).pharmacyDetailBadgePreparing
+                      : S.of(context).pharmacyDetailBadgeToPrepare,
                   style: appFont('Inter', 
                     color: Colors.white,
                     fontSize: delivered ? 9 : 10,
@@ -1950,7 +1950,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'REQUEST ID',
+                        S.of(context).pharmacyDetailRequestId,
                         style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
@@ -2001,7 +2001,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'DELIVERY TYPE',
+                        S.of(context).pharmacyDetailDeliveryType,
                         style: appFont('Inter', 
                           color: _label,
                           fontWeight: FontWeight.w500,
@@ -2022,7 +2022,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              'Delivery',
+                              S.of(context).delivery,
                               style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,
@@ -2045,7 +2045,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
               const Icon(Icons.location_on_rounded, color: _accent, size: 18),
               const SizedBox(width: 6),
               Text(
-                'DELIVERY ADDRESS',
+                S.of(context).deliveryAddress,
                 style: appFont('Inter', 
                   color: _accent,
                   fontWeight: FontWeight.w600,
@@ -2130,7 +2130,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Online Payment',
+                  S.of(context).onlinePayment,
                   style: appFont('Inter', 
                     color: _accent,
                     fontWeight: FontWeight.w600,
@@ -2339,7 +2339,7 @@ class _OrderItemTotals extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Unit',
+              S.of(context).quoteUnit,
               style: appFont('Inter', 
                 color: const Color.fromARGB(255, 80, 80, 80),
                 fontWeight: FontWeight.w600,
@@ -2362,7 +2362,7 @@ class _OrderItemTotals extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Total',
+              S.of(context).quoteTotal,
               style: appFont('Inter', 
                 color: const Color.fromARGB(255, 85, 85, 85),
                 fontWeight: FontWeight.w600,
@@ -2563,7 +2563,7 @@ class _AwaitingCustomerPaymentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Awaiting Customer Payment',
+                  S.of(context).pharmacyDetailAwaitingCustomerPayment,
                   style: appFont('Inter', 
                     color: const Color(0xFF1A1A1A),
                     fontWeight: FontWeight.w700,
@@ -2756,7 +2756,7 @@ class _TimelineRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  step.title,
+                  _timelineTitle(context, step.title),
                   style: appFont('Inter', 
                     color: step.completed
                         ? const Color(0xFF1A1A1A)
@@ -2822,6 +2822,31 @@ class _TimelineGlyph extends StatelessWidget {
 }
 
 enum _TimelineCustomIcon { capsule, scooter, openBox }
+
+/// The timeline lists are `const`, so their titles are English keys;
+/// translate them when drawn (test day V17). Also used by the OTC timeline
+/// (same library). Unknown titles are shown as given.
+String _timelineTitle(BuildContext context, String title) {
+  final s = S.of(context);
+  return switch (title) {
+    'Prescription Received' => s.pharmacyDetailStepPrescriptionReceived,
+    'Under Review' => s.pharmacyDetailStepUnderReview,
+    'Review Completed' => s.pharmacyDetailStepReviewCompleted,
+    'Quotation Sent' => s.pharmacyDetailStepQuotationSent,
+    'Paid' => s.pharmacyDetailStepPaid,
+    'Preparing Medicines' => s.pharmacyDetailStepPreparingMedicines,
+    'Preparing' => s.preparing,
+    'Ready for Dispatch' => s.pharmacyDetailReadyForDispatch,
+    'Ready for Pickup' => s.pharmacyDetailStepReadyForPickup,
+    'Delivery Partner Assigned' => s.pharmacyDetailStepPartnerAssigned,
+    'Order Delivered' => s.pharmacyDetailStepOrderDelivered,
+    'Order Received' => s.pharmacyDetailStepOrderReceived,
+    'Order Accepted' => s.pharmacyDetailStepOrderAccepted,
+    'Picked Up by Rider' => s.pharmacyDetailStepPickedUpByRider,
+    'Picked Up by Customer' => s.pharmacyDetailStepPickedUpByCustomer,
+    _ => title,
+  };
+}
 
 class _TimelineStep {
   const _TimelineStep({
@@ -3054,12 +3079,12 @@ class _BottomActions extends StatelessWidget {
   const _BottomActions({
     required this.onReject,
     required this.onReview,
-    this.primaryLabel = 'Review Prescription',
+    this.primaryLabel,
   });
 
   final VoidCallback onReject;
   final VoidCallback onReview;
-  final String primaryLabel;
+  final String? primaryLabel;
 
   static const Color _orange = Color(0xFFFF5C22);
 
@@ -3090,7 +3115,7 @@ class _BottomActions extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Reject',
+                  S.of(context).reject,
                   style: appFont('Inter', 
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
@@ -3128,7 +3153,8 @@ class _BottomActions extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    primaryLabel,
+                    primaryLabel ??
+                        S.of(context).pharmacyDetailReviewPrescription,
                     maxLines: 1,
                     softWrap: false,
                     style: appFont('Inter', 
@@ -3168,7 +3194,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'DELIVERY PARTNER',
+          S.of(context).pharmacyDetailDeliveryPartner,
           style: appFont('Inter', 
             color: const Color(0xFF9AA6B2),
             fontWeight: FontWeight.w600,
@@ -3276,7 +3302,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '(124 reviews)',
+                            '(124 ${S.of(context).reviews})',
                             style: appFont('Inter', 
                               color: const Color(0xFF9CA3AF),
                               fontWeight: FontWeight.w400,
@@ -3319,9 +3345,9 @@ class _DeliveryPartnerSection extends StatelessWidget {
 }
 
 class _StartPreparingBar extends StatelessWidget {
-  const _StartPreparingBar({this.label = 'Start Preparing'});
+  const _StartPreparingBar({this.label});
 
-  final String label;
+  final String? label;
 
   static const Color _orange = Color(0xFFFF5216);
 
@@ -3349,7 +3375,7 @@ class _StartPreparingBar extends StatelessWidget {
             ),
           ),
           child: Text(
-            label,
+            label ?? S.of(context).pharmacyDetailStartPreparing,
             style: appFont('Inter', 
               fontWeight: FontWeight.w700,
               fontSize: 16,
@@ -3382,7 +3408,7 @@ class _FullPrescriptionViewer extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Prescription'),
+        title: Text(S.of(context).pharmacyDetailPrescription),
       ),
       body: Center(
         child: InteractiveViewer(

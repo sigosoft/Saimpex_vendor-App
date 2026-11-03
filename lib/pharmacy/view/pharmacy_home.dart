@@ -1476,7 +1476,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
           : '#${order.id ?? ''}';
       final customerName = order.userName?.isNotEmpty == true
           ? order.userName!
-          : 'Customer';
+          : S.of(context).quoteCustomer;
       final timeAgo = order.placedAtFormatted?.isNotEmpty == true
           ? order.placedAtFormatted!
           : (order.placedAt ?? '');
@@ -1495,12 +1495,15 @@ class _PharmacyHomeState extends State<PharmacyHome> {
 
         final itemCount = order.orderItemsCount ?? order.totalItems ?? 0;
         final totalStr = order.total?.toString().trim() ?? '';
+        final itemsLabel = itemCount == 1
+            ? S.of(context).pharmacyHomeOneItem
+            : S.of(context).pharmacyHomeItemCount('$itemCount');
         final dynamicItemsSummary = itemCount > 0 && totalStr.isNotEmpty
-            ? '$itemCount ${itemCount == 1 ? 'Item' : 'Items'} • ${totalStr.contains('MRU') ? totalStr : '$totalStr MRU'}'
+            ? '$itemsLabel • ${totalStr.contains('MRU') ? totalStr : '$totalStr MRU'}'
             : (totalStr.isNotEmpty
                   ? (totalStr.contains('MRU') ? totalStr : '$totalStr MRU')
                   : (itemCount > 0
-                        ? '$itemCount ${itemCount == 1 ? 'Item' : 'Items'}'
+                        ? itemsLabel
                         : null));
 
         final rawId = order.id;
@@ -2342,9 +2345,9 @@ class _SearchField extends StatelessWidget {
               onSubmitted: onSubmitted,
               onChanged: onChanged,
               textInputAction: TextInputAction.search,
-              decoration: const InputDecoration(
-                hintText: 'Search by ID, name',
-                hintStyle: TextStyle(
+              decoration: InputDecoration(
+                hintText: S.of(context).searchByIdName,
+                hintStyle: const TextStyle(
                   color: Color(0xFFB0B0B0),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -2525,6 +2528,15 @@ class _StatusFiltersState extends State<_StatusFilters> {
 
 enum PharmacyPrescriptionCardStatus { newOrder, underReview, reviewCompleted }
 
+/// Back from a card's details / quotation screen: the status may have changed
+/// there (reviewed, quote sent, accepted...), so reload the visible list. It
+/// kept showing the old state (test day V18).
+void _refreshListOnReturn(Object? _) {
+  if (Get.isRegistered<PharmacyHomeController>()) {
+    Get.find<PharmacyHomeController>().refreshVisibleList();
+  }
+}
+
 class _PrescriptionOrderCard extends StatelessWidget {
   const _PrescriptionOrderCard({
     this.customerName = '',
@@ -2585,9 +2597,9 @@ class _PrescriptionOrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final badgeLabel = switch (status) {
-      PharmacyPrescriptionCardStatus.underReview => 'REVIEWING',
-      PharmacyPrescriptionCardStatus.reviewCompleted => 'REVIEW COMPLETED',
-      PharmacyPrescriptionCardStatus.newOrder => 'NEW',
+      PharmacyPrescriptionCardStatus.underReview => S.of(context).pharmacyHomeBadgeReviewing,
+      PharmacyPrescriptionCardStatus.reviewCompleted => S.of(context).pharmacyHomeBadgeReviewCompleted,
+      PharmacyPrescriptionCardStatus.newOrder => S.of(context).pharmacyHomeBadgeNew,
     };
     final badgeColor = switch (status) {
       PharmacyPrescriptionCardStatus.underReview => _reviewingBadge,
@@ -2595,9 +2607,9 @@ class _PrescriptionOrderCard extends StatelessWidget {
       PharmacyPrescriptionCardStatus.newOrder => _newBadge,
     };
     final primaryLabel = switch (status) {
-      PharmacyPrescriptionCardStatus.underReview => 'Mark as Reviewed',
-      PharmacyPrescriptionCardStatus.reviewCompleted => 'Create Quotation',
-      PharmacyPrescriptionCardStatus.newOrder => 'Review Prescription',
+      PharmacyPrescriptionCardStatus.underReview => S.of(context).pharmacyHomeMarkAsReviewed,
+      PharmacyPrescriptionCardStatus.reviewCompleted => S.of(context).quoteCreateTitle,
+      PharmacyPrescriptionCardStatus.newOrder => S.of(context).pharmacyHomeReviewPrescription,
     };
 
     void openDetails() {
@@ -2619,7 +2631,7 @@ class _PrescriptionOrderCard extends StatelessWidget {
             prescriptionImageUrl: prescriptionImageUrl,
           ),
         ),
-      );
+      ).then(_refreshListOnReturn);
     }
 
     void openQuotation() {
@@ -2634,7 +2646,7 @@ class _PrescriptionOrderCard extends StatelessWidget {
             prescriptionId: prescriptionId,
           ),
         ),
-      );
+      ).then(_refreshListOnReturn);
     }
 
     return Material(
@@ -2693,8 +2705,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
                                 customerName.trim().isNotEmpty
                                     ? customerName.trim()
                                     : (orderCode.trim().isNotEmpty
-                                          ? 'Order $orderCode'
-                                          : 'Customer'),
+                                          ? S.of(context).pharmacyHomeOrderCode(orderCode)
+                                          : S.of(context).quoteCustomer),
                                 style: const TextStyle(
                                   color: _nameColor,
                                   fontWeight: FontWeight.w700,
@@ -2772,8 +2784,8 @@ class _PrescriptionOrderCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                      ? 'Prescription $orderCode'
-                                      : 'Prescription'),
+                                      ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                      : S.of(context).pharmacyHomePrescription),
                             style: const TextStyle(
                               color: _nameColor,
                               fontSize: 13.5,
@@ -2785,20 +2797,20 @@ class _PrescriptionOrderCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: openDetails,
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'View Full Prescription',
-                                  style: TextStyle(
+                                  S.of(context).pharmacyHomeViewFullPrescription,
+                                  style: const TextStyle(
                                     color: _linkOrange,
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2,
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.open_in_new_rounded,
                                   size: 14,
                                   color: _linkOrange,
@@ -2857,11 +2869,11 @@ class _PrescriptionOrderCard extends StatelessWidget {
                                   color: _nameColor,
                                 ),
                               )
-                            : const Text(
-                                'Reject',
+                            : Text(
+                                S.of(context).reject,
                                 maxLines: 1,
                                 softWrap: false,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 13.5,
                                 ),
@@ -3069,7 +3081,7 @@ class _ToPrepareCard extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
-          customerName: customerName.isNotEmpty ? customerName : 'Customer',
+          customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
           phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
@@ -3082,7 +3094,7 @@ class _ToPrepareCard extends StatelessWidget {
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
-    );
+    ).then(_refreshListOnReturn);
   }
 
   @override
@@ -3136,7 +3148,7 @@ class _ToPrepareCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
-                        customerName.isNotEmpty ? customerName : 'Customer',
+                        customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
                         style: const TextStyle(
                           color: _name,
                           fontWeight: FontWeight.w700,
@@ -3155,9 +3167,9 @@ class _ToPrepareCard extends StatelessWidget {
                       color: _blue,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'TO PREPARE',
-                      style: TextStyle(
+                    child: Text(
+                      S.of(context).pharmacyHomeBadgeToPrepare,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -3191,7 +3203,7 @@ class _ToPrepareCard extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: isSelfPickup ? 'Self Pickup' : 'Delivery',
+                            text: isSelfPickup ? S.of(context).selfPickup : S.of(context).delivery,
                             style: const TextStyle(
                               color: _orange,
                               fontSize: 12.5,
@@ -3320,8 +3332,8 @@ class _ToPrepareCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                      ? 'Prescription $orderCode'
-                                      : 'Prescription'),
+                                      ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                      : S.of(context).pharmacyHomePrescription),
                             style: const TextStyle(
                               color: _name,
                               fontSize: 13.5,
@@ -3333,20 +3345,20 @@ class _ToPrepareCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: () => _openDetails(context),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'View Full Prescription',
-                                  style: TextStyle(
+                                  S.of(context).pharmacyHomeViewFullPrescription,
+                                  style: const TextStyle(
                                     color: _orange,
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2,
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.open_in_new_rounded,
                                   size: 14,
                                   color: _orange,
@@ -3374,9 +3386,9 @@ class _ToPrepareCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'Start Preparing',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                  child: Text(
+                    S.of(context).pharmacyHomeStartPreparing,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
               ),
@@ -3423,7 +3435,7 @@ class _PreparingCard extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
-          customerName: customerName.isNotEmpty ? customerName : 'Customer',
+          customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
           phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
@@ -3436,7 +3448,7 @@ class _PreparingCard extends StatelessWidget {
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
-    );
+    ).then(_refreshListOnReturn);
   }
 
   @override
@@ -3496,7 +3508,7 @@ class _PreparingCard extends StatelessWidget {
                               child: Text(
                                 customerName.isNotEmpty
                                     ? customerName
-                                    : 'Customer',
+                                    : S.of(context).quoteCustomer,
                                 style: const TextStyle(
                                   color: _name,
                                   fontWeight: FontWeight.w700,
@@ -3515,9 +3527,9 @@ class _PreparingCard extends StatelessWidget {
                                 color: _orange,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                'PREPARING',
-                                style: TextStyle(
+                              child: Text(
+                                S.of(context).preparing.toUpperCase(),
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
@@ -3549,8 +3561,8 @@ class _PreparingCard extends StatelessWidget {
                                   children: [
                                     TextSpan(
                                       text: isSelfPickup
-                                          ? 'Self Pickup'
-                                          : 'Delivery',
+                                          ? S.of(context).selfPickup
+                                          : S.of(context).delivery,
                                       style: const TextStyle(
                                         color: _orange,
                                         fontSize: 12.5,
@@ -3607,8 +3619,8 @@ class _PreparingCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                      ? 'Prescription $orderCode'
-                                      : 'Prescription'),
+                                      ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                      : S.of(context).pharmacyHomePrescription),
                             style: const TextStyle(
                               color: _name,
                               fontSize: 13.5,
@@ -3620,20 +3632,20 @@ class _PreparingCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: () => _openDetails(context),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'View Full Prescription',
-                                  style: TextStyle(
+                                  S.of(context).pharmacyHomeViewFullPrescription,
+                                  style: const TextStyle(
                                     color: _orange,
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2,
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.open_in_new_rounded,
                                   size: 14,
                                   color: _orange,
@@ -3696,9 +3708,9 @@ class _PreparingCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'Ready for Dispatch',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                  child: Text(
+                    S.of(context).waterReadyForDispatch,
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
               ),
@@ -3750,7 +3762,7 @@ class _ReadyCard extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
-          customerName: customerName.isNotEmpty ? customerName : 'Customer',
+          customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
           phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
@@ -3764,7 +3776,7 @@ class _ReadyCard extends StatelessWidget {
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
-    );
+    ).then(_refreshListOnReturn);
   }
 
   @override
@@ -3821,7 +3833,7 @@ class _ReadyCard extends StatelessWidget {
                             child: Text(
                               customerName.isNotEmpty
                                   ? customerName
-                                  : 'Customer',
+                                  : S.of(context).quoteCustomer,
                               style: const TextStyle(
                                 color: _name,
                                 fontWeight: FontWeight.w700,
@@ -3840,9 +3852,9 @@ class _ReadyCard extends StatelessWidget {
                               color: _ready,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text(
-                              'READY',
-                              style: TextStyle(
+                            child: Text(
+                              S.of(context).ready.toUpperCase(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
@@ -3877,8 +3889,8 @@ class _ReadyCard extends StatelessWidget {
                                 children: [
                                   TextSpan(
                                     text: isSelfPickup
-                                        ? 'Self Pickup'
-                                        : 'Delivery',
+                                        ? S.of(context).selfPickup
+                                        : S.of(context).delivery,
                                     style: const TextStyle(
                                       color: _orange,
                                       fontSize: 12.5,
@@ -3935,8 +3947,8 @@ class _ReadyCard extends StatelessWidget {
                                   prescriptionFileName!.trim().isNotEmpty)
                               ? prescriptionFileName!.trim()
                               : (orderCode.trim().isNotEmpty
-                                    ? 'Prescription $orderCode'
-                                    : 'Prescription'),
+                                    ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                    : S.of(context).pharmacyHomePrescription),
                           style: const TextStyle(
                             color: _name,
                             fontSize: 13.5,
@@ -3948,20 +3960,20 @@ class _ReadyCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         GestureDetector(
                           onTap: () => _openDetails(context),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'View Full Prescription',
-                                style: TextStyle(
+                                S.of(context).pharmacyHomeViewFullPrescription,
+                                style: const TextStyle(
                                   color: _orange,
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
                                 ),
                               ),
-                              SizedBox(width: 4),
-                              Icon(
+                              const SizedBox(width: 4),
+                              const Icon(
                                 Icons.open_in_new_rounded,
                                 size: 14,
                                 color: _orange,
@@ -4007,10 +4019,10 @@ class _ReadyCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
-                                  'Assigned Delivery Partner',
+                                Text(
+                                  S.of(context).assignedDeliveryPartner,
                                   maxLines: 1,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Color.fromARGB(255, 96, 96, 96),
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w500,
@@ -4021,7 +4033,7 @@ class _ReadyCard extends StatelessWidget {
                                 Text(
                                   partnerName != null && partnerName!.isNotEmpty
                                       ? '($partnerName)'
-                                      : '(Not Assigned)',
+                                      : '(${S.of(context).pharmacyHomeNotAssigned})',
                                   maxLines: 1,
                                   style: const TextStyle(
                                     color: _partner,
@@ -4120,7 +4132,7 @@ class _DeliveredCard extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
-          customerName: customerName.isNotEmpty ? customerName : 'Customer',
+          customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
           phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
           requestId: orderCode,
           requestMeta: timeAgo,
@@ -4133,7 +4145,7 @@ class _DeliveredCard extends StatelessWidget {
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
-    );
+    ).then(_refreshListOnReturn);
   }
 
   @override
@@ -4190,7 +4202,7 @@ class _DeliveredCard extends StatelessWidget {
                             child: Text(
                               customerName.isNotEmpty
                                   ? customerName
-                                  : 'Customer',
+                                  : S.of(context).quoteCustomer,
                               style: const TextStyle(
                                 color: _name,
                                 fontWeight: FontWeight.w700,
@@ -4209,9 +4221,9 @@ class _DeliveredCard extends StatelessWidget {
                               color: _delivered,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text(
-                              'DELIVERED',
-                              style: TextStyle(
+                            child: Text(
+                              S.of(context).delivered.toUpperCase(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
@@ -4246,8 +4258,8 @@ class _DeliveredCard extends StatelessWidget {
                                 children: [
                                   TextSpan(
                                     text: isSelfPickup
-                                        ? 'Self Pickup'
-                                        : 'Delivery',
+                                        ? S.of(context).selfPickup
+                                        : S.of(context).delivery,
                                     style: const TextStyle(
                                       color: _orange,
                                       fontSize: 12.5,
@@ -4304,8 +4316,8 @@ class _DeliveredCard extends StatelessWidget {
                                   prescriptionFileName!.trim().isNotEmpty)
                               ? prescriptionFileName!.trim()
                               : (orderCode.trim().isNotEmpty
-                                    ? 'Prescription $orderCode'
-                                    : 'Prescription'),
+                                    ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                    : S.of(context).pharmacyHomePrescription),
                           style: const TextStyle(
                             color: _name,
                             fontSize: 13.5,
@@ -4317,20 +4329,20 @@ class _DeliveredCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         GestureDetector(
                           onTap: () => _openDetails(context),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'View Full Prescription',
-                                style: TextStyle(
+                                S.of(context).pharmacyHomeViewFullPrescription,
+                                style: const TextStyle(
                                   color: _orange,
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
                                 ),
                               ),
-                              SizedBox(width: 4),
-                              Icon(
+                              const SizedBox(width: 4),
+                              const Icon(
                                 Icons.open_in_new_rounded,
                                 size: 14,
                                 color: _orange,
@@ -4395,18 +4407,18 @@ class _ScheduledPill extends StatelessWidget {
         color: const Color(0xFFE7F1FF),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.calendar_month_rounded,
             size: 13,
             color: Color(0xFF3B82F6),
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
-            'SCHEDULED',
-            style: TextStyle(
+            S.of(context).scheduled,
+            style: const TextStyle(
               color: Color(0xFF3B82F6),
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -4459,7 +4471,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => PharmacyOrderDetailsScreen(
-            customerName: customerName.isNotEmpty ? customerName : 'Customer',
+            customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
             phone: (phone != null && phone!.isNotEmpty) ? phone! : '',
             requestId: orderCode,
             requestMeta: timeAgo,
@@ -4471,7 +4483,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
             prescriptionImageUrl: prescriptionImageUrl,
           ),
         ),
-      );
+      ).then(_refreshListOnReturn);
     }
 
     return Material(
@@ -4528,7 +4540,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
                               child: Text(
                                 customerName.isNotEmpty
                                     ? customerName
-                                    : 'Customer',
+                                    : S.of(context).quoteCustomer,
                                 style: const TextStyle(
                                   color: _nameColor,
                                   fontWeight: FontWeight.w700,
@@ -4547,9 +4559,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
                                 color: _badge,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                'AWAITING PAYMENT',
-                                style: TextStyle(
+                              child: Text(
+                                S.of(context).pharmacyHomeBadgeAwaitingPayment,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 8.5,
                                   fontWeight: FontWeight.w800,
@@ -4610,8 +4622,8 @@ class _AwaitingPaymentCard extends StatelessWidget {
                                     prescriptionFileName!.trim().isNotEmpty)
                                 ? prescriptionFileName!.trim()
                                 : (orderCode.trim().isNotEmpty
-                                      ? 'Prescription $orderCode'
-                                      : 'Prescription'),
+                                      ? S.of(context).pharmacyHomePrescriptionCode(orderCode)
+                                      : S.of(context).pharmacyHomePrescription),
                             style: const TextStyle(
                               color: _nameColor,
                               fontSize: 13.5,
@@ -4623,20 +4635,20 @@ class _AwaitingPaymentCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: openPrescription,
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'View Full Prescription',
-                                  style: TextStyle(
+                                  S.of(context).pharmacyHomeViewFullPrescription,
+                                  style: const TextStyle(
                                     color: _orange,
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2,
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.open_in_new_rounded,
                                   size: 14,
                                   color: _orange,
@@ -4658,9 +4670,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'QUOTATION',
-                          style: TextStyle(
+                        Text(
+                          S.of(context).pharmacyHomeQuotationLabel,
+                          style: const TextStyle(
                             color: _label,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -4689,9 +4701,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text(
-                        'STATUS',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).status.toUpperCase(),
+                        style: const TextStyle(
                           color: _label,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -4711,9 +4723,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
                             child: SizedBox(width: 8, height: 8),
                           ),
                           const SizedBox(width: 6),
-                          const Text(
-                            'Awaiting Payment',
-                            style: TextStyle(
+                          Text(
+                            S.of(context).pharmacyHomeAwaitingPayment,
+                            style: const TextStyle(
                               color: Color(0xFF3A3A3A),
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -4846,7 +4858,7 @@ class _OtcNewOrderCard extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => PharmacyOrderDetailsScreen(
-              customerName: customerName.isNotEmpty ? customerName : 'Customer',
+              customerName: customerName.isNotEmpty ? customerName : S.of(context).quoteCustomer,
               phone: phone ?? '',
               requestId: orderId,
               isOtc: true,
@@ -4862,7 +4874,7 @@ class _OtcNewOrderCard extends StatelessWidget {
               orderRawId: orderRawId,
             ),
           ),
-        );
+        ).then(_refreshListOnReturn);
       },
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -4944,16 +4956,16 @@ class _OtcNewOrderCard extends StatelessWidget {
                             ),
                             child: Text(
                               cancelled
-                                  ? 'CANCELLED'
+                                  ? S.of(context).cancelled.toUpperCase()
                                   : (delivered
-                                        ? 'DELIVERED'
+                                        ? S.of(context).delivered.toUpperCase()
                                         : ready
-                                        ? 'READY'
+                                        ? S.of(context).ready.toUpperCase()
                                         : preparing
-                                        ? 'PREPARING'
+                                        ? S.of(context).preparing.toUpperCase()
                                         : accepted
-                                        ? 'ACCEPTED'
-                                        : 'NEW'),
+                                        ? S.of(context).accepted.toUpperCase()
+                                        : S.of(context).pharmacyHomeBadgeNew),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize:
@@ -4993,9 +5005,9 @@ class _OtcNewOrderCard extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(width: 4),
-                            const Text(
-                              'Self Pickup',
-                              style: TextStyle(
+                            Text(
+                              S.of(context).selfPickup,
+                              style: const TextStyle(
                                 color: _blue,
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w500,
@@ -5020,9 +5032,9 @@ class _OtcNewOrderCard extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             const SizedBox(width: 4),
-                            const Text(
-                              'Delivery',
-                              style: TextStyle(
+                            Text(
+                              S.of(context).delivery,
+                              style: const TextStyle(
                                 color: _orange,
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w500,
@@ -5130,10 +5142,10 @@ class _OtcNewOrderCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
-                                  'Assigned Delivery Partner',
+                                Text(
+                                  S.of(context).assignedDeliveryPartner,
                                   maxLines: 1,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Color(0xFF5F6274),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -5271,7 +5283,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              preparing ? 'Mark as Ready' : 'Prepare Order',
+                              preparing ? S.of(context).markAsReady : S.of(context).prepareOrder,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
@@ -5314,11 +5326,11 @@ class _OtcNewOrderCard extends StatelessWidget {
                                     color: _name,
                                   ),
                                 )
-                              : const Text(
-                                  'Reject',
+                              : Text(
+                                  S.of(context).reject,
                                   maxLines: 1,
                                   softWrap: false,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 14,
                                   ),
@@ -5372,12 +5384,12 @@ class _OtcNewOrderCard extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                   )
-                                : const Text(
-                                    'Accept Order',
+                                : Text(
+                                    S.of(context).acceptOrder,
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     softWrap: false,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
                                     ),
@@ -5533,9 +5545,9 @@ class _OtcOrderCard extends StatelessWidget {
                   color: _newBadge,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  'NEW',
-                  style: TextStyle(
+                child: Text(
+                  S.of(context).pharmacyHomeBadgeNew,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -5605,11 +5617,11 @@ class _OtcOrderCard extends StatelessWidget {
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    child: const Text(
-                      'Reject',
+                    child: Text(
+                      S.of(context).reject,
                       maxLines: 1,
                       softWrap: false,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13.5,
                       ),
@@ -5646,12 +5658,12 @@ class _OtcOrderCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Accept Order',
+                      child: Text(
+                        S.of(context).acceptOrder,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         softWrap: false,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 13.5,
                         ),

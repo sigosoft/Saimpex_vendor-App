@@ -1382,10 +1382,7 @@ class PharmacyHomeController extends GetxController {
       if (dataMap != null && dataMap['message'] != null) {
         final m = dataMap['message'];
         if (m is Map) {
-          message =
-              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
-              ? m['message_en'].first.toString()
-              : m['message_en']?.toString();
+          message = _serverMessage(m);
           if (message == null || message.isEmpty) {
             message = m.values.first?.toString();
           }
@@ -1559,10 +1556,7 @@ class PharmacyHomeController extends GetxController {
       if (dataMap != null && dataMap['message'] != null) {
         final m = dataMap['message'];
         if (m is Map) {
-          message =
-              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
-              ? m['message_en'].first.toString()
-              : m['message_en']?.toString();
+          message = _serverMessage(m);
           if (message == null || message.isEmpty) {
             message = m.values.first?.toString();
           }
@@ -1737,10 +1731,7 @@ class PharmacyHomeController extends GetxController {
       if (dataMap != null && dataMap['message'] != null) {
         final m = dataMap['message'];
         if (m is Map) {
-          message =
-              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
-              ? m['message_en'].first.toString()
-              : m['message_en']?.toString();
+          message = _serverMessage(m);
           if (message == null || message.isEmpty) {
             message = m.values.first?.toString();
           }
@@ -1939,10 +1930,7 @@ class PharmacyHomeController extends GetxController {
       if (dataMap != null && dataMap['message'] != null) {
         final m = dataMap['message'];
         if (m is Map) {
-          message =
-              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
-              ? m['message_en'].first.toString()
-              : m['message_en']?.toString();
+          message = _serverMessage(m);
           if (message == null || message.isEmpty) {
             message = m.values.first?.toString();
           }
@@ -2114,7 +2102,7 @@ class PharmacyHomeController extends GetxController {
           : (response.statusCode == 200);
 
       final message =
-          dataMap?['message']?.toString() ??
+          _serverMessage(dataMap?['message']) ??
           (isSuccess
               ? 'Order accepted successfully'
               : 'Failed to accept order');
@@ -2284,10 +2272,7 @@ class PharmacyHomeController extends GetxController {
       if (dataMap != null && dataMap['message'] != null) {
         final m = dataMap['message'];
         if (m is Map) {
-          message =
-              m['message_en'] is List && (m['message_en'] as List).isNotEmpty
-              ? m['message_en'].first.toString()
-              : m['message_en']?.toString();
+          message = _serverMessage(m);
           if (message == null || message.isEmpty) {
             message = m.values.first?.toString();
           }
@@ -2465,7 +2450,7 @@ class PharmacyHomeController extends GetxController {
           : (response.statusCode == 200);
 
       final message =
-          dataMap?['message']?.toString() ??
+          _serverMessage(dataMap?['message']) ??
           (isSuccess ? 'Order preparation started' : 'Failed to prepare order');
 
       if (context != null && context.mounted) {
@@ -2624,7 +2609,7 @@ class PharmacyHomeController extends GetxController {
           : (response.statusCode == 200);
 
       final message =
-          dataMap?['message']?.toString() ??
+          _serverMessage(dataMap?['message']) ??
           (isSuccess
               ? 'Order marked as ready'
               : 'Failed to mark order as ready');
@@ -2758,6 +2743,47 @@ class PharmacyHomeController extends GetxController {
     update();
     fetchPharmacyPrescriptions(status: 'reviewed');
     fetchPharmacyHome();
+  }
+
+  /// The server's `message` in the app language (`message_ar` / `_fr`),
+  /// falling back to `message_en`: toasts were always English (test day
+  /// V17). Accepts a string, a list or the `{message_en, ...}` map.
+  String? _serverMessage(dynamic m) {
+    String? pick(dynamic v) {
+      if (v is List) return v.isEmpty ? null : v.first?.toString();
+      final s = v?.toString().trim();
+      return (s == null || s.isEmpty) ? null : s;
+    }
+
+    if (m is Map) {
+      return pick(m['message_${LocalizationService.currentLanguageCode}']) ??
+          pick(m['message_en']);
+    }
+    return pick(m);
+  }
+
+  /// Reloads the list the vendor is looking at (tab + status filter) and the
+  /// home counters. Called when coming back from Order Details / Create
+  /// Quotation, where the card's status may have changed (Mark as Reviewed,
+  /// quote sent, accept...): the list kept showing the old state (test day
+  /// V18).
+  Future<void> refreshVisibleList() async {
+    const prescriptionStatuses = ['', 'under_review', 'reviewed', 'quoted'];
+    const prescriptionOrderStatuses = [2, 3, 4, 9];
+    const otcOrderStatuses = [1, 2, 3, 4, 9, 10];
+    final i = selectedFilterIndex;
+    if (!isOtcTab && i < prescriptionStatuses.length) {
+      final status = prescriptionStatuses[i];
+      await fetchPharmacyPrescriptions(status: status.isEmpty ? null : status);
+    } else if (!isOtcTab && i - 4 < prescriptionOrderStatuses.length) {
+      await fetchPharmacyOrders(
+        tab: 'prescription',
+        status: prescriptionOrderStatuses[i - 4],
+      );
+    } else if (isOtcTab && i < otcOrderStatuses.length) {
+      await fetchPharmacyOrders(status: otcOrderStatuses[i]);
+    }
+    await fetchPharmacyHome();
   }
 
   void toggleStore(bool value) {
