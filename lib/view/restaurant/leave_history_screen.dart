@@ -1,7 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import '../../controller/profile_controller.dart';

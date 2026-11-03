@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
 import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
