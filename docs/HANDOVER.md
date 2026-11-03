@@ -495,6 +495,12 @@ AC: login no longer blocks types 7 and 8; bookings flow works.
 **P12. Printing beyond Android restaurant/grocery.** ✅ **Code done (`feature/bluetooth-printing`, V7); needs a real 58 mm and 80 mm printer to verify.**
 AC: print button on pharmacy and water order details; works with a generic 58/80 mm ESC/POS Bluetooth printer; printer choice remembered.
 
+**P14. Test day 2 Nov follow-up.** ✅ App fixes merged to `main` on 2–3 Nov (tip `dd04029`); **not yet retested on a device**. Notes: `test-day-2026-11-02-vendor-issues.md` (issues), `test-day-2026-11-03-fixes.md` (fix log), both untracked in the repo root.
+Fixed in the app (branch → issue): support messages grey screen (`fix/support-messages-grey-screen`, V13); pharmacy Mark as Reviewed and quote prescription image (`fix/pharmacy-mark-reviewed`, V5/V6); no "Online payment" guess when the list has no `payment_type` (`fix/unknown-payment-not-online`, V3); water details Accept/Prepare/Ready/Reject and delivery-vs-pickup (`fix/water-order-details`, V2/V4); laundry paid/final after a weight top-up (`fix/laundry-paid-final-amounts`, V7); Arabic/French names kept on save (`fix/keep-translated-names-on-save`, V9); restaurant Mark Out Of Stock (POST) and Order Rules in Settings (`fix/restaurant-stock-and-order-rules`, V10/V12); Update Stock on `updateRestaurantMenuStock` (`fix/restaurant-strings-and-ux`, V11); server times in phone time and dates in the app language (`fix/server-times-all-sections`, `fix/frontend-leftovers`); instant Accept (`fix/instant-accept`); translations for Restaurant Management, Add Item, Advanced Edit, pharmacy screens, reject sheets, units, plurals and validation messages (V17/V18).
+Still open, backend (`praveensigo/saimpex-backend-new`, not filed yet): `vendorapp/dashboard` returns 0 products / 0 revenue (draft `issue-draft-vendorapp-dashboard.md`); cancel APIs have no reason field (V1); accept takes 8–20 s; water/gas/pharmacy lists lack `payment_type` (V3); laundry `total_paid` should be the amount collected (V7); new-order push lacks `order_code`; server times without UTC offset; local store My Store shows 0 products (V14, #141); document `updateRestaurantMenuStock` / `restaurantMenuStockLogs`.
+Needs a decision: laundry Delivered with an unpaid balance (block or confirm, V8).
+AC: every item in the retest list of `test-day-2026-11-03-fixes.md` passes on a device against dev, in Arabic and French.
+
 **P13. Release readiness.**
 Real release signing (`key.properties`, not committed); iOS bundle id + `GoogleService-Info.plist`; fix or delete `test/widget_test.dart`; remove dead OTP login, `vendor/` fallbacks, unused deps (`tflite_flutter`, `camera`); add `shared_preferences` to `pubspec.yaml`; disable request/header logging in release.
 AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB builds on a clean machine.
@@ -523,7 +529,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 5. **Mock data**: removed in V6. Where the backend has no data (Water delivery calendar/history, some Home Cleaning fields) the block is hidden; gaps in `docs/V6_BACKEND_ISSUES.md`.
 6. **Dead OTP login path** saves a fake `mock_token` (`lib/controller/otp_controller.dart`). Not reachable now; remove.
 7. **Release signed with the debug key**; iOS not configured (template bundle id, no Firebase plist).
-8. **Localisation gaps**: Pharmacy mostly English; FR/AR missing a few older keys; Water/Home Cleaning mock data still English (V6). Reject/pause reasons are sent to the API in English while shown translated.
+8. **Localisation gaps**: Pharmacy, Restaurant Management, Add Item and Advanced Edit translated on 2–3 Nov (P14); FR/AR wording is machine-written and needs the SAIMPEX Arabic review. Reject/pause reasons are sent to the API in English while shown translated.
 9. **Logging**: `DioClient` logs headers and bodies (includes the Bearer token) in all builds. Guard with `kDebugMode`.
 10. **Pusher key hard-coded** in `lib/configs/PusherConfig.dart` (a public key, but it should come from config so DEV and LIVE can differ).
 11. **No automated tests** beyond the receipt builder; template widget test fails.
