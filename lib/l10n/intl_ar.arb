@@ -3273,5 +3273,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "addItemAddedSuccessfully": "تمت إضافة المنتج بنجاح",
+  "@addItemAddedSuccessfully": {},
+  "addItemFailedToAdd": "فشل إضافة المنتج",
+  "@addItemFailedToAdd": {}
 }

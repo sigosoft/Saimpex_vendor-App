@@ -3274,5 +3274,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "addItemAddedSuccessfully": "Article ajouté avec succès",
+  "@addItemAddedSuccessfully": {},
+  "addItemFailedToAdd": "Échec de l'ajout de l'article",
+  "@addItemFailedToAdd": {}
 }

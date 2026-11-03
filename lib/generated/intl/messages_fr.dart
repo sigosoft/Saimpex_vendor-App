@@ -273,6 +273,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ajouter une tranche de distance",
     ),
     "addItem": MessageLookupByLibrary.simpleMessage("Ajouter un article"),
+    "addItemAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Article ajouté avec succès",
+    ),
+    "addItemFailedToAdd": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'ajout de l\'article",
+    ),
     "addItemsTitle": MessageLookupByLibrary.simpleMessage(
       "Ajouter des articles",
     ),
