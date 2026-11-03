@@ -1,3 +1,13 @@
+/// Counts may come as numbers or strings ("8", 8.0). A plain cast threw on
+/// those, so the whole dashboard failed to parse and showed 0 everywhere.
+int? _toInt(dynamic v) {
+  if (v == null) return null;
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  final s = v.toString().trim();
+  return int.tryParse(s) ?? double.tryParse(s)?.toInt();
+}
+
 class DashboardModel {
   bool? status;
   DashboardData? data;
@@ -44,9 +54,9 @@ class DashboardData {
       subscriptionDetails: json['subscription_details'] != null
           ? SubscriptionDetails.fromJson(json['subscription_details'])
           : null,
-      totalOrders: json['total_orders'],
-      todayOrders: json['today_orders'],
-      totalProducts: json['total_products'],
+      totalOrders: _toInt(json['total_orders']),
+      todayOrders: _toInt(json['today_orders']),
+      totalProducts: _toInt(json['total_products']),
       revenueTotal: json['revenue_total']?.toString(),
       revenueYearTotal: json['revenue_year_total']?.toString(),
       revenueReport: report,
@@ -76,8 +86,8 @@ class SubscriptionDetails {
 
   factory SubscriptionDetails.fromJson(Map<String, dynamic> json) {
     return SubscriptionDetails(
-      subscriptionId: json['subscription_id'],
-      subscriptionEndDate: json['subscription_end_date'],
+      subscriptionId: _toInt(json['subscription_id']),
+      subscriptionEndDate: json['subscription_end_date']?.toString(),
       nameEn: json['name_en'],
       nameFr: json['name_fr'],
       nameAr: json['name_ar'],
@@ -110,7 +120,7 @@ class PopularItem {
 
   factory PopularItem.fromJson(Map<String, dynamic> json) {
     return PopularItem(
-      id: json['id'],
+      id: _toInt(json['id']),
       nameEn: json['name_en'],
       nameAr: json['name_ar'],
       nameFr: json['name_fr'],
@@ -118,7 +128,7 @@ class PopularItem {
       attributeNameEn: json['attribute_name_en'],
       attributeNameAr: json['attribute_name_ar'],
       attributeNameFr: json['attribute_name_fr'],
-      orderCount: json['order_count'],
+      orderCount: _toInt(json['order_count']),
     );
   }
 }
