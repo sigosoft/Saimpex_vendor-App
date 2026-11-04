@@ -610,15 +610,17 @@ class _StoreStatusCard extends StatelessWidget {
                           ],
                         ),
                 ),
+                if ((timings ?? '').isNotEmpty) ...[
                 const SizedBox(height: 2),
                 Text(
-                  timings ?? S.of(context).waterTodayTimings('08:00', '22:00'),
+                  timings!,
                   style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                ],
               ],
             ),
           ),

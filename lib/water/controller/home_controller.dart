@@ -135,7 +135,9 @@ class WaterHomeController extends GetxController {
     return '0';
   }
 
-  String get storeTimings {
+  /// Today's hours from home screen.welcome; null when the server sends
+  /// none (it fell back to 08:00 - 22:00).
+  String? get storeTimings {
     final welcome = rawScreen?['welcome'];
     if (welcome is Map) {
       final timings = welcome['timings']?.toString().trim();
@@ -151,7 +153,7 @@ class WaterHomeController extends GetxController {
         return S.current.waterTodayTimings(open, close);
       }
     }
-    return S.current.waterTodayTimings('08:00', '22:00');
+    return null;
   }
 
   String get shopName {
