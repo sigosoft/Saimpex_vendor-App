@@ -448,7 +448,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                 const SizedBox(height: 18),
                                 Text(
                                   S.of(context).quoteOrderItems(
-                                    '${items.isNotEmpty ? items.length : (orderDetailData != null ? 0 : 2)}',
+                                    '${items.isNotEmpty ? items.length : 0}',
                                   ),
                                   style: appFont('Inter', 
                                     color: _section,
@@ -496,18 +496,13 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                     ),
                                   ),
                                 ] else ...[
-                                  const _OtcItemCard(
-                                    name: 'Digital Thermometer',
-                                    price: '50 MRU',
-                                    image:
-                                        'lib/pharmacy/Assets/images/digital_thermometer.jpg',
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const _OtcItemCard(
-                                    name: 'Baby Diapers',
-                                    price: '50 MRU',
-                                    image:
-                                        'lib/pharmacy/Assets/images/baby_diapers.jpg',
+                                  // Still loading (or the call failed): no
+                                  // sample items ("Digital Thermometer").
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(color: Color(0xFFFF5216)),
+                                    ),
                                   ),
                                 ],
                                 const SizedBox(height: 18),
