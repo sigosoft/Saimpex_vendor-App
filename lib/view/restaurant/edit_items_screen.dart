@@ -769,9 +769,11 @@ class _EditItemsScreenState extends State<EditItemsScreen> {
       child: GetBuilder<ItemController>(
         init: ItemController(editRestaurantMenuItemId: widget.itemId),
         builder: (controller) {
-          if (!_didLoadDetails &&
-              controller.editRestaurantMenuItemId != null &&
-              controller.editRestaurantMenuItemId!.isNotEmpty) {
+          // Key off this screen's itemId: GetBuilder reuses an ItemController
+          // that is already registered (Update Stock / Mark Out Of Stock put
+          // one with no item id), and then the form opened empty and Submit
+          // would have saved a blank item (retest 3 Nov).
+          if (!_didLoadDetails && widget.itemId.isNotEmpty) {
             _didLoadDetails = true;
             Future.microtask(() async {
               await controller.loadItemForEdit(widget.itemId);
