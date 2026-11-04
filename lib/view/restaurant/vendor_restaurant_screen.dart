@@ -197,10 +197,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 children: [
                   const SizedBox(height: 60),
                   VendorProfileHeaderCard(
-                    name: profile?.name ?? S.of(context).restaurantOne,
+                    name: profile?.name ?? "",
                     rating: profile?.rating?.isNotEmpty == true
                         ? profile!.rating!
-                        : "4.6",
+                        : "-",
                     imageUrl: profileController.profilePicture.isNotEmpty
                         ? profileController.profilePicture
                         : profile?.image,
@@ -299,15 +299,15 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         children: [
                           _detailRow(
                             S.of(context).name,
-                            profile?.name ?? "Store 1",
+                            profile?.name ?? "-",
                           ),
                           _detailRow(
                             S.of(context).owner,
-                            profile?.owner ?? "Salman",
+                            profile?.owner ?? "-",
                           ),
                           _detailRow(
                             S.of(context).storeId,
-                            profile?.id?.toString() ?? "1",
+                            profile?.id?.toString() ?? "-",
                           ),
                           _detailRow(
                             S.of(context).contact,
@@ -330,7 +330,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           _detailRow(
                             S.of(context).address,
                             _formatLongText(
-                              profile?.address ?? "Store Block 5, Mauritania",
+                              profile?.address ?? "-",
                             ),
                           ),
                         ],

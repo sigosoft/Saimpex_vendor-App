@@ -213,7 +213,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
           return {
             'id': '#PYT${payout['id'] ?? ''}',
             'date': formattedDate,
-            'status': payout['status']?.toString() ?? 'CREDITED',
+            'status': payout['status']?.toString() ?? '',
             'amount': '${payout['amount'] ?? '0.00'} MRU',
             'raw': payout,
           };

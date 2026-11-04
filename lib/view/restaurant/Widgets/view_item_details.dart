@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -288,15 +289,13 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                     width: double.infinity,
                     height: 190,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Image.asset(
-                      'lib/assets/images/Burger.jpg',
+                    errorWidget: (_, __, ___) => noImageBox(
                       width: double.infinity,
                       height: 190,
                       fit: BoxFit.cover,
                     ),
                   )
-                : Image.asset(
-                    'lib/assets/images/Burger.jpg',
+                : noImageBox(
                     width: double.infinity,
                     height: 190,
                     fit: BoxFit.cover,
@@ -697,15 +696,13 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   ? CachedNetworkImage(
                       imageUrl: networkImage,
                       fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => Image.asset(
-                        assetImage ?? 'lib/assets/images/Burger.jpg',
-                        fit: BoxFit.cover,
-                      ),
+                      errorWidget: (_, __, ___) => (assetImage != null
+                        ? Image.asset(assetImage, fit: BoxFit.cover)
+                        : noImageBox()),
                     )
-                  : Image.asset(
-                      assetImage ?? 'lib/assets/images/Burger.jpg',
-                      fit: BoxFit.cover,
-                    ),
+                  : (assetImage != null
+                      ? Image.asset(assetImage, fit: BoxFit.cover)
+                      : noImageBox()),
             ),
           ),
           const SizedBox(width: 12),

@@ -10,7 +10,10 @@ class DashboardController extends GetxController {
   DashboardData? dashboardData;
   String selectedYear = DateTime.now().year.toString();
 
-  final List<String> years = ["2024", "2025", "2026"];
+  // From 2024 to this year (the list stopped at 2026).
+  final List<String> years = [
+    for (var y = 2024; y <= DateTime.now().year; y++) y.toString(),
+  ];
 
   @override
   void onInit() {
