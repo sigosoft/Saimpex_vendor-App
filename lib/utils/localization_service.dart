@@ -243,6 +243,7 @@ class LocalizationService {
       'fr': 'Nouvelles commandes OTC',
       'ar': 'طلبات بدون وصفة جديدة',
     },
+    'Accepted': {'en': 'Accepted', 'fr': 'Acceptée', 'ar': 'تم القبول'},
     'Preparing': {'en': 'Preparing', 'fr': 'En préparation', 'ar': 'قيد التحضير'},
     'Ready to Deliver': {
       'en': 'Ready to Deliver',
