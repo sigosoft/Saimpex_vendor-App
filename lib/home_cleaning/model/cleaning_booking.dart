@@ -190,6 +190,12 @@ class CleaningBooking {
     return (finalAmount - additionalPayment).clamp(0, finalAmount).toDouble();
   }
 
+  /// Still to collect: final minus paid. An unpaid cash booking owes the
+  /// whole final amount, not only the top-up (it showed Paid 0, Final 600,
+  /// Balance 240; test day 3 Nov).
+  double get balanceDue =>
+      (finalAmount - (paidAmount ?? 0)).clamp(0, finalAmount).toDouble();
+
   String get displayCode {
     final code = orderCode?.trim();
     if (code == null || code.isEmpty) return '#$id';

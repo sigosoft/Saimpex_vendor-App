@@ -35,5 +35,12 @@ void main() {
     final b = _booking(3, 600, 0, 240);
     expect(b.paidAmount, 0);
     expect(b.finalAmount, 600);
+    expect(b.balanceDue, 600);
+  });
+
+  test('balance due is only the top-up once the estimate is paid', () {
+    expect(_booking(2, 360, 360, 240).balanceDue, 240);
+    expect(_booking(3, 600, 600, 240).balanceDue, 240);
+    expect(_booking(4, 600, 600, 0).balanceDue, 0);
   });
 }
