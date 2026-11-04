@@ -478,10 +478,9 @@ class _ChatViewState extends State<ChatView> {
       }
     }
 
-    String? duration;
-    if (type == ChatMessageType.audio) {
-      duration = '0:12';
-    }
+    // No length from the server; the player shows the real one once the
+    // audio loads (every voice note read 0:12).
+    const String? duration = null;
 
     String? attachment = m.attachmentUrl;
     if ((attachment == null || attachment.isEmpty) &&

@@ -34,14 +34,11 @@ class WorkingHoursView extends StatefulWidget {
 class _WorkingHoursViewState extends State<WorkingHoursView> {
   bool open24Hours = false;
 
+  // "-" until profile.working_hours loads: every day showed sample hours
+  // (Mon-Sat 08:00 AM - 10:00 PM, Sunday closed) when it was empty.
   final schedule = [
-    _DayHours(day: 'Monday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Tuesday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Wednesday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Thursday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Friday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Saturday', hours: '08:00 AM - 10:00 PM'),
-    _DayHours(day: 'Sunday', hours: 'Closed', closed: true),
+    for (final day in const ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+      _DayHours(day: day, hours: '-'),
   ];
 
   @override
