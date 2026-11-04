@@ -771,10 +771,13 @@ class PharmacyHomeController extends GetxController {
         return;
       }
 
-      final queryParams = <String, dynamic>{'limit': 10};
-      if (status != null && status.isNotEmpty) {
-        queryParams['status'] = status;
-      }
+      // No status = the New tab: only `uploaded` prescriptions. Without the
+      // filter the server sent every prescription (accepted, quoted...), all
+      // drawn as new, and Review failed on them (retest 4 Nov).
+      final queryParams = <String, dynamic>{
+        'limit': 10,
+        'status': (status != null && status.isNotEmpty) ? status : 'uploaded',
+      };
 
       final searchKey = keyword ?? searchController.text.trim();
       if (searchKey.isNotEmpty) {
@@ -884,7 +887,9 @@ class PharmacyHomeController extends GetxController {
       } else if (isQuoted) {
         quotedPrescriptionsList = loaded;
       } else {
-        prescriptionsList = loaded;
+        prescriptionsList = loaded
+            .where((p) => (p.status ?? 'uploaded').trim().toLowerCase() == 'uploaded')
+            .toList();
       }
     } catch (e) {
       debugPrint(
