@@ -32,3 +32,7 @@ final String _fsi = String.fromCharCode(0x2068); // FIRST STRONG ISOLATE
 /// merges into one left-to-right run and the day jumps next to the code.
 String joinIsolated(Iterable<String> parts, String separator) =>
     parts.map((p) => '$_fsi$p$_pdi').join(separator);
+
+/// [text] laid out on its own (first strong isolate), for a piece that sits
+/// next to another one in its own style (booking code • date).
+String isolated(String text) => '$_fsi$text$_pdi';
