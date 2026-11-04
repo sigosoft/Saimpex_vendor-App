@@ -2979,13 +2979,21 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("Vendeur"),
     "vendorType": MessageLookupByLibrary.simpleMessage("Type de vendeur"),
+    "vendorTypeCarWash": MessageLookupByLibrary.simpleMessage("Lavage auto"),
+    "vendorTypeGas": MessageLookupByLibrary.simpleMessage("Gaz"),
+    "vendorTypeGrocery": MessageLookupByLibrary.simpleMessage("Épicerie"),
     "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
       "Épicerie / Restaurant",
     ),
     "vendorTypeHomeCleaning": MessageLookupByLibrary.simpleMessage(
       "Nettoyage à domicile",
     ),
+    "vendorTypeLaundry": MessageLookupByLibrary.simpleMessage("Blanchisserie"),
+    "vendorTypeLocalStore": MessageLookupByLibrary.simpleMessage(
+      "Commerce de proximité",
+    ),
     "vendorTypePharmacy": MessageLookupByLibrary.simpleMessage("Pharmacie"),
+    "vendorTypeRestaurant": MessageLookupByLibrary.simpleMessage("Restaurant"),
     "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
       "Ce type de vendeur n\'est pas encore dans l\'application. Utilisez le portail web vendeur SAIMPEX.",
     ),

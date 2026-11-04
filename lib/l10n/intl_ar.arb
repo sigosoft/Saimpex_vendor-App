@@ -3344,5 +3344,11 @@
   "pharmacyMsgPreparing": "بدأ تحضير الطلب",
   "pharmacyMsgPrepareFailed": "تعذّر بدء تحضير الطلب",
   "pharmacyMsgReady": "تم تحديد الطلب كجاهز",
-  "pharmacyMsgReadyFailed": "تعذّر تحديد الطلب كجاهز"
+  "pharmacyMsgReadyFailed": "تعذّر تحديد الطلب كجاهز",
+  "vendorTypeRestaurant": "مطعم",
+  "vendorTypeGrocery": "بقالة",
+  "vendorTypeLocalStore": "متجر محلي",
+  "vendorTypeGas": "غاز",
+  "vendorTypeLaundry": "مغسلة",
+  "vendorTypeCarWash": "غسيل السيارات"
 }

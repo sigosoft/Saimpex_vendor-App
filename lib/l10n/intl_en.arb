@@ -3416,5 +3416,17 @@
   "pharmacyMsgReady": "Order marked as ready",
   "@pharmacyMsgReady": {},
   "pharmacyMsgReadyFailed": "Couldn't mark the order as ready",
-  "@pharmacyMsgReadyFailed": {}
+  "@pharmacyMsgReadyFailed": {},
+  "vendorTypeRestaurant": "Restaurant",
+  "@vendorTypeRestaurant": {},
+  "vendorTypeGrocery": "Grocery",
+  "@vendorTypeGrocery": {},
+  "vendorTypeLocalStore": "Local store",
+  "@vendorTypeLocalStore": {},
+  "vendorTypeGas": "Gas",
+  "@vendorTypeGas": {},
+  "vendorTypeLaundry": "Laundry",
+  "@vendorTypeLaundry": {},
+  "vendorTypeCarWash": "Car wash",
+  "@vendorTypeCarWash": {}
 }

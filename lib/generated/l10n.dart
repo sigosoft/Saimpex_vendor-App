@@ -14505,6 +14505,61 @@ class S {
       args: [],
     );
   }
+
+  /// `Restaurant`
+  String get vendorTypeRestaurant {
+    return Intl.message(
+      'Restaurant',
+      name: 'vendorTypeRestaurant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grocery`
+  String get vendorTypeGrocery {
+    return Intl.message(
+      'Grocery',
+      name: 'vendorTypeGrocery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Local store`
+  String get vendorTypeLocalStore {
+    return Intl.message(
+      'Local store',
+      name: 'vendorTypeLocalStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gas`
+  String get vendorTypeGas {
+    return Intl.message('Gas', name: 'vendorTypeGas', desc: '', args: []);
+  }
+
+  /// `Laundry`
+  String get vendorTypeLaundry {
+    return Intl.message(
+      'Laundry',
+      name: 'vendorTypeLaundry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Car wash`
+  String get vendorTypeCarWash {
+    return Intl.message(
+      'Car wash',
+      name: 'vendorTypeCarWash',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

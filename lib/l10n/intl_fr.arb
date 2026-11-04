@@ -3345,5 +3345,11 @@
   "pharmacyMsgPreparing": "Préparation de la commande commencée",
   "pharmacyMsgPrepareFailed": "Impossible de commencer la préparation",
   "pharmacyMsgReady": "Commande marquée comme prête",
-  "pharmacyMsgReadyFailed": "Impossible de marquer la commande comme prête"
+  "pharmacyMsgReadyFailed": "Impossible de marquer la commande comme prête",
+  "vendorTypeRestaurant": "Restaurant",
+  "vendorTypeGrocery": "Épicerie",
+  "vendorTypeLocalStore": "Commerce de proximité",
+  "vendorTypeGas": "Gaz",
+  "vendorTypeLaundry": "Blanchisserie",
+  "vendorTypeCarWash": "Lavage auto"
 }
