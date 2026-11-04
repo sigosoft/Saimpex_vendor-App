@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -327,7 +328,7 @@ class PharmacyPendingOrderItem {
         return s.contains('/') ? s.split('/').last : s;
       }
     }
-    return 'Prescription';
+    return S.current.pharmacyHomePrescription;
   }
 
   String? get prescriptionImageUrl {

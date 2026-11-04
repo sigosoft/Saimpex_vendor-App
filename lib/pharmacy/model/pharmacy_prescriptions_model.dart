@@ -330,7 +330,7 @@ class PrescriptionItem {
         }
       }
     }
-    return 'Prescription';
+    return S.current.pharmacyHomePrescription;
   }
 
   String? get displayImageUrl {
