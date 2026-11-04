@@ -204,6 +204,7 @@ String groceryUnitLabel(S s, String unit) => switch (unit.trim().toLowerCase()) 
       'g' || 'gm' || 'gram' || 'grams' => s.unitGram,
       'l' || 'ltr' || 'litre' || 'liter' => s.unitLitre,
       'ml' => s.unitMillilitre,
+      'cl' => s.unitCentilitre,
       'pack' || 'packs' || 'pkt' => s.unitPack,
       'set' || 'sets' => s.unitSet,
       'box' || 'boxes' => s.unitBox,
