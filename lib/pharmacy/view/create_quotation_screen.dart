@@ -418,22 +418,33 @@ class _QuotationMedicine {
     final lang = LocalizationService.currentLanguageCode;
     final en = clean(m['menu_name_en']);
     final local = clean(m['menu_name_$lang']);
-    final variant = [clean(m['attribute_value']), clean(m['attribute_name_en'])]
-        .where((e) => e.isNotEmpty)
-        .join(' ');
-    String withVariant(String n) => variant.isEmpty || n.contains(variant) ? n : '$n $variant';
+    // The unit in the app language: the server's own name when it has one,
+    // else the known unit translated ("Box" → "علبة"); it was always English.
+    final unitEn = clean(m['attribute_name_en']);
+    final unitLocal = clean(m['attribute_name_$lang']);
+    final unit = unitLocal.isNotEmpty
+        ? unitLocal
+        : (lang == 'en' || unitEn.isEmpty ? unitEn : groceryUnitLabel(S.current, unitEn));
+    // Per-language names keep that language's unit from the server.
+    String variantWith(String u) =>
+        [clean(m['attribute_value']), u].where((e) => e.isNotEmpty).join(' ');
+    String withUnit(String n, String u) {
+      final v = variantWith(u);
+      return v.isEmpty || n.contains(v) ? n : '$n $v';
+    }
+    String unitIn(String l) => clean(m['attribute_name_$l']).isNotEmpty ? clean(m['attribute_name_$l']) : unitEn;
     final offer = num.tryParse(clean(m['offer_price']));
     final price = offer != null && offer > 0
         ? offer
         : (num.tryParse(clean(m['selling_price'])) ?? num.tryParse(clean(m['price'])) ?? 0);
     return _QuotationMedicine(
-      withVariant(local.isNotEmpty ? local : en),
+      withUnit(local.isNotEmpty ? local : en, unit),
       price,
       stock: int.tryParse(clean(m['stock'])) ?? 0,
       productId: int.tryParse(clean(m['id'])),
-      nameEn: withVariant(en),
-      nameAr: clean(m['menu_name_ar']).isEmpty ? null : withVariant(clean(m['menu_name_ar'])),
-      nameFr: clean(m['menu_name_fr']).isEmpty ? null : withVariant(clean(m['menu_name_fr'])),
+      nameEn: withUnit(en, unitEn),
+      nameAr: clean(m['menu_name_ar']).isEmpty ? null : withUnit(clean(m['menu_name_ar']), unitIn('ar')),
+      nameFr: clean(m['menu_name_fr']).isEmpty ? null : withUnit(clean(m['menu_name_fr']), unitIn('fr')),
     );
   }
 
