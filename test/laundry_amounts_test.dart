@@ -43,4 +43,17 @@ void main() {
     expect(_booking(3, 600, 600, 240).balanceDue, 240);
     expect(_booking(4, 600, 600, 0).balanceDue, 0);
   });
+
+  test('after the top-up is settled, paid is what the server reports', () {
+    final b = CleaningBooking.fromJson({
+      'id': 1,
+      'status': 9,
+      'total': 300,
+      'total_paid': 300,
+      'additional_payment': 120,
+      'additional_payment_pending': false,
+    });
+    expect(b.paidAmount, 300);
+    expect(b.balanceDue, 0);
+  });
 }
