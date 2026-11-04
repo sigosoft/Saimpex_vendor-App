@@ -950,6 +950,33 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
+  /// One page of `pharmacyOrders`; empty on any failure.
+  Future<List<PharmacyPendingOrderItem>> _fetchOrderItems(
+    Map<String, dynamic> query,
+  ) async {
+    try {
+      final response = await DioClient().get(
+        ApiEndPoints.pharmacyOrders,
+        query: query,
+      );
+      final body = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data;
+      if (body is! Map || '${body['status']}' != 'true') return [];
+      final d = body['data'];
+      final rows = d is Map
+          ? (d['orders'] is Map ? d['orders']['data'] : (d['data'] ?? d['orders']))
+          : null;
+      if (rows is! List) return [];
+      return rows
+          .whereType<Map>()
+          .map((e) => PharmacyPendingOrderItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   Future<void> fetchPharmacyOrders({
     int? status,
     String? keyword,
@@ -1140,7 +1167,12 @@ class PharmacyHomeController extends GetxController {
             prescriptionPreparingOrdersList = loaded;
           } else if (orderStatus == 2) {
             prescriptionToPrepareOrdersData = parsedModel;
-            prescriptionToPrepareOrdersList = loaded;
+            // A paid prescription order arrives as status 1 and was in no
+            // tab (V-B11): list it first here, to accept.
+            prescriptionToPrepareOrdersList = [
+              ...await _fetchOrderItems({...queryParams, 'status': 1}),
+              ...loaded,
+            ];
           }
         } else {
           if (orderStatus == 10) {

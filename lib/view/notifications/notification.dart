@@ -19,6 +19,8 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../utils/utils.dart';
+import '../../utils/vendor_app_router.dart';
+import '../../utils/vendor_app_type.dart';
 import '../home/home.dart';
 
 String? deviceToken;
@@ -449,7 +451,7 @@ class FCM {
 
     final isLoggedIn = await isUserLoggedIn();
     if (isLoggedIn) {
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 300), () async {
         if (Get.context != null) {
           // Extract and map notification data
           final orderData = _extractOrderData(notificationData);
@@ -471,6 +473,16 @@ class FCM {
               targetTab = "Cancelled";
           }
 
+          // Pharmacy, water and service vendors go to their own section:
+          // Home() is the restaurant / grocery one, so a pharmacy's "View
+          // order" opened restaurant screens with an empty order (V-B12).
+          final appType = VendorAppTypeX.fromStorage(
+            (await getSavedObject(VendorAppRouter.storageKey))?.toString(),
+          );
+          if (appType != VendorAppType.groceryRestaurant) {
+            await VendorAppRouter.goToSelectedApp(type: appType);
+            return;
+          }
           if (Get.isRegistered<HomeController>()) {
             Get.find<HomeController>().targetOrderStatusTab = targetTab;
           } else {
