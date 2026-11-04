@@ -170,7 +170,7 @@ class LaundryBookingBlock extends StatelessWidget {
                   const SizedBox(width: 8),
                   _amountBox(s.laundryFinalAmount, finalAmount),
                   const SizedBox(width: 8),
-                  _amountBox(s.laundryBalanceDue, extra, highlight: true),
+                  _amountBox(s.laundryBalanceDue, booking.balanceDue, highlight: true),
                 ]),
               ],
             ),
