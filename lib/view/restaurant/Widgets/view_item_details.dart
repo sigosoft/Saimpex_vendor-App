@@ -697,11 +697,11 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       imageUrl: networkImage,
                       fit: BoxFit.cover,
                       errorWidget: (_, __, ___) => (assetImage != null
-                        ? Image.asset(assetImage!, fit: BoxFit.cover)
+                        ? Image.asset(assetImage, fit: BoxFit.cover)
                         : noImageBox()),
                     )
                   : (assetImage != null
-                      ? Image.asset(assetImage!, fit: BoxFit.cover)
+                      ? Image.asset(assetImage, fit: BoxFit.cover)
                       : noImageBox()),
             ),
           ),
