@@ -923,7 +923,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
 
     if (isAudio) {
       return _ChatItem.audio(
-        duration: '0:12',
+        duration: '',
         time: timeStr,
         isRead: isRead,
         isDelivered: isDelivered,
@@ -1118,7 +1118,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
                                   Widget bubble;
                                   if (msg.isAudio) {
                                     bubble = _AudioBubble(
-                                      duration: msg.audioDuration ?? '0:12',
+                                      duration: msg.audioDuration ?? '',
                                       time: msg.time,
                                       isRead: msg.isRead,
                                       isDelivered: msg.isDelivered,

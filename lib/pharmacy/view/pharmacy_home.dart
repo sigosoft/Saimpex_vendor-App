@@ -188,6 +188,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                   _StoreStatusCard(
                     isOpen: controller.isStoreOpen,
                     onToggle: controller.toggleStore,
+                    timings: controller.storeTimings,
                   ),
                   const SizedBox(height: 12),
                   _MetricsGrid(
@@ -1777,9 +1778,12 @@ class _Header extends StatelessWidget {
 }
 
 class _StoreStatusCard extends StatelessWidget {
-  const _StoreStatusCard({required this.isOpen, required this.onToggle});
+  const _StoreStatusCard({required this.isOpen, required this.onToggle, this.timings});
 
   final bool isOpen;
+
+  /// Today's hours from the server; it always read "Today: 08:00 - 22:00".
+  final String? timings;
   final ValueChanged<bool> onToggle;
 
   @override
@@ -1834,15 +1838,17 @@ class _StoreStatusCard extends StatelessWidget {
                     fontSize: 14.5,
                   ),
                 ),
+                if ((timings ?? '').isNotEmpty) ...[
                 const SizedBox(height: 2),
                 Text(
-                  LocalizationService.tr('Today: 08:00 - 22:00'),
+                  timings!,
                   style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                ],
               ],
             ),
           ),
@@ -2051,7 +2057,8 @@ class _TotalsRow extends StatelessWidget {
               title: LocalizationService.tr('REVENUE'),
               value: revenue,
               suffix: 'MRU',
-              showTrend: true,
+              // No trend in the API: the arrow was always up and green.
+              showTrend: false,
             ),
           ),
         ],

@@ -2760,6 +2760,22 @@ class PharmacyHomeController extends GetxController {
     await fetchPharmacyHome();
   }
 
+  /// Today's hours from home `screen.welcome` (as the water home reads
+  /// them); null when the server sends none, and the line is hidden.
+  String? get storeTimings {
+    final welcome = rawScreen?['welcome'];
+    if (welcome is! Map) return null;
+    String? text(dynamic v) {
+      final t = v?.toString().trim();
+      return (t == null || t.isEmpty || t == 'null') ? null : t;
+    }
+    final timings = text(welcome['timings']);
+    if (timings != null) return timings;
+    final open = text(welcome['opening_time']);
+    final close = text(welcome['closing_time']);
+    return open != null && close != null ? S.current.waterTodayTimings(open, close) : null;
+  }
+
   void toggleStore(bool value) {
     isStoreOpen = value;
     update();
