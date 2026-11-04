@@ -2094,6 +2094,60 @@ class MessageLookup extends MessageLookupByLibrary {
     "pharmacyInvUnitBox": MessageLookupByLibrary.simpleMessage("Boîte"),
     "pharmacyInvUnitPiece": MessageLookupByLibrary.simpleMessage("Pièce"),
     "pharmacyInvUnitStrip": MessageLookupByLibrary.simpleMessage("Plaquette"),
+    "pharmacyMsgAcceptFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'accepter la commande",
+    ),
+    "pharmacyMsgCancelOrderFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'annuler la commande",
+    ),
+    "pharmacyMsgCancelPrescriptionFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'annuler l\'ordonnance",
+    ),
+    "pharmacyMsgOrderAccepted": MessageLookupByLibrary.simpleMessage(
+      "Commande acceptée",
+    ),
+    "pharmacyMsgOrderCancelled": MessageLookupByLibrary.simpleMessage(
+      "Commande annulée",
+    ),
+    "pharmacyMsgPrepareFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de commencer la préparation",
+    ),
+    "pharmacyMsgPreparing": MessageLookupByLibrary.simpleMessage(
+      "Préparation de la commande commencée",
+    ),
+    "pharmacyMsgPrescriptionCancelled": MessageLookupByLibrary.simpleMessage(
+      "Ordonnance annulée",
+    ),
+    "pharmacyMsgQuoteFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'envoyer le devis",
+    ),
+    "pharmacyMsgQuoteSent": MessageLookupByLibrary.simpleMessage(
+      "Devis envoyé",
+    ),
+    "pharmacyMsgReady": MessageLookupByLibrary.simpleMessage(
+      "Commande marquée comme prête",
+    ),
+    "pharmacyMsgReadyFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de marquer la commande comme prête",
+    ),
+    "pharmacyMsgRejectFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de refuser l\'ordonnance",
+    ),
+    "pharmacyMsgRejected": MessageLookupByLibrary.simpleMessage(
+      "Ordonnance refusée",
+    ),
+    "pharmacyMsgReviewFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de lancer l\'examen",
+    ),
+    "pharmacyMsgReviewed": MessageLookupByLibrary.simpleMessage(
+      "Ordonnance marquée comme examinée",
+    ),
+    "pharmacyMsgReviewedFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de marquer l\'ordonnance comme examinée",
+    ),
+    "pharmacyMsgUnderReview": MessageLookupByLibrary.simpleMessage(
+      "Ordonnance mise en cours d\'examen",
+    ),
     "pharmacyOtcBadgeAccepted": MessageLookupByLibrary.simpleMessage(
       "ACCEPTÉE",
     ),

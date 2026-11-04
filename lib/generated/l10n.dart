@@ -14325,6 +14325,186 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Prescription moved to under review`
+  String get pharmacyMsgUnderReview {
+    return Intl.message(
+      'Prescription moved to under review',
+      name: 'pharmacyMsgUnderReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't start the review`
+  String get pharmacyMsgReviewFailed {
+    return Intl.message(
+      'Couldn\'t start the review',
+      name: 'pharmacyMsgReviewFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription marked as reviewed`
+  String get pharmacyMsgReviewed {
+    return Intl.message(
+      'Prescription marked as reviewed',
+      name: 'pharmacyMsgReviewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't mark the prescription as reviewed`
+  String get pharmacyMsgReviewedFailed {
+    return Intl.message(
+      'Couldn\'t mark the prescription as reviewed',
+      name: 'pharmacyMsgReviewedFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription rejected`
+  String get pharmacyMsgRejected {
+    return Intl.message(
+      'Prescription rejected',
+      name: 'pharmacyMsgRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't reject the prescription`
+  String get pharmacyMsgRejectFailed {
+    return Intl.message(
+      'Couldn\'t reject the prescription',
+      name: 'pharmacyMsgRejectFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quotation sent`
+  String get pharmacyMsgQuoteSent {
+    return Intl.message(
+      'Quotation sent',
+      name: 'pharmacyMsgQuoteSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't send the quotation`
+  String get pharmacyMsgQuoteFailed {
+    return Intl.message(
+      'Couldn\'t send the quotation',
+      name: 'pharmacyMsgQuoteFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order accepted`
+  String get pharmacyMsgOrderAccepted {
+    return Intl.message(
+      'Order accepted',
+      name: 'pharmacyMsgOrderAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't accept the order`
+  String get pharmacyMsgAcceptFailed {
+    return Intl.message(
+      'Couldn\'t accept the order',
+      name: 'pharmacyMsgAcceptFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prescription cancelled`
+  String get pharmacyMsgPrescriptionCancelled {
+    return Intl.message(
+      'Prescription cancelled',
+      name: 'pharmacyMsgPrescriptionCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order cancelled`
+  String get pharmacyMsgOrderCancelled {
+    return Intl.message(
+      'Order cancelled',
+      name: 'pharmacyMsgOrderCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't cancel the prescription`
+  String get pharmacyMsgCancelPrescriptionFailed {
+    return Intl.message(
+      'Couldn\'t cancel the prescription',
+      name: 'pharmacyMsgCancelPrescriptionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't cancel the order`
+  String get pharmacyMsgCancelOrderFailed {
+    return Intl.message(
+      'Couldn\'t cancel the order',
+      name: 'pharmacyMsgCancelOrderFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order preparation started`
+  String get pharmacyMsgPreparing {
+    return Intl.message(
+      'Order preparation started',
+      name: 'pharmacyMsgPreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't start preparing the order`
+  String get pharmacyMsgPrepareFailed {
+    return Intl.message(
+      'Couldn\'t start preparing the order',
+      name: 'pharmacyMsgPrepareFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order marked as ready`
+  String get pharmacyMsgReady {
+    return Intl.message(
+      'Order marked as ready',
+      name: 'pharmacyMsgReady',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't mark the order as ready`
+  String get pharmacyMsgReadyFailed {
+    return Intl.message(
+      'Couldn\'t mark the order as ready',
+      name: 'pharmacyMsgReadyFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

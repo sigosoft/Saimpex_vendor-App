@@ -3326,5 +3326,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pharmacyMsgUnderReview": "تم نقل الوصفة إلى قيد المراجعة",
+  "pharmacyMsgReviewFailed": "تعذّر بدء المراجعة",
+  "pharmacyMsgReviewed": "تم تحديد الوصفة كمُراجَعة",
+  "pharmacyMsgReviewedFailed": "تعذّر تحديد الوصفة كمُراجَعة",
+  "pharmacyMsgRejected": "تم رفض الوصفة",
+  "pharmacyMsgRejectFailed": "تعذّر رفض الوصفة",
+  "pharmacyMsgQuoteSent": "تم إرسال عرض السعر",
+  "pharmacyMsgQuoteFailed": "تعذّر إرسال عرض السعر",
+  "pharmacyMsgOrderAccepted": "تم قبول الطلب",
+  "pharmacyMsgAcceptFailed": "تعذّر قبول الطلب",
+  "pharmacyMsgPrescriptionCancelled": "تم إلغاء الوصفة",
+  "pharmacyMsgOrderCancelled": "تم إلغاء الطلب",
+  "pharmacyMsgCancelPrescriptionFailed": "تعذّر إلغاء الوصفة",
+  "pharmacyMsgCancelOrderFailed": "تعذّر إلغاء الطلب",
+  "pharmacyMsgPreparing": "بدأ تحضير الطلب",
+  "pharmacyMsgPrepareFailed": "تعذّر بدء تحضير الطلب",
+  "pharmacyMsgReady": "تم تحديد الطلب كجاهز",
+  "pharmacyMsgReadyFailed": "تعذّر تحديد الطلب كجاهز"
 }
