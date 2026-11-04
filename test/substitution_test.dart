@@ -112,6 +112,7 @@ void main() {
     expect(groceryUnitsInText(s, '30 pcs'), '30 ${s.unitPiece}');
     expect(groceryUnitsInText(s, '1 set'), '1 ${s.unitSet}');
     expect(groceryUnitsInText(s, '1L'), '1 ${s.unitLitre}');
+    expect(groceryUnitsInText(s, '33 cl'), '33 ${s.unitCentilitre}');
     expect(groceryUnitsInText(s, '2 Family'), '2 Family');
     expect(groceryUnitsInText(s, 'Large'), 'Large');
   });

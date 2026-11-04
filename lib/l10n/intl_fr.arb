@@ -2817,6 +2817,7 @@
   "unitGram": "g",
   "unitLitre": "L",
   "unitMillilitre": "ml",
+  "unitCentilitre": "cl",
   "unitPack": "paquet",
   "unitSet": "lot",
   "unitBox": "boîte",
