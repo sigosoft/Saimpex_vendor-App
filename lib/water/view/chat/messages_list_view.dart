@@ -162,6 +162,19 @@ class _MessagesListViewState extends State<MessagesListView> {
     }
   }
 
+  void _onNavSelect(int index) {
+    if (index == 2) return;
+    Navigator.of(context).maybePop();
+  }
+
+  /// The Chat tab badge: deleting an unread conversation left it at "1"
+  /// (test day 3 Nov, water).
+  void _refreshUnreadCount() {
+    if (Get.isRegistered<WaterHomeController>()) {
+      Get.find<WaterHomeController>().fetchUnreadChatCount();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ChatController>(
@@ -310,7 +323,10 @@ class _MessagesListViewState extends State<MessagesListView> {
                               // Swipe to delete for the vendor (§6.43, V18).
                               return DeletableConversation(
                                 conversationId: thread.conversationId,
-                                onDeleted: () => controller.getAllConversations(context),
+                                onDeleted: () {
+                                  controller.getAllConversations(context);
+                                  _refreshUnreadCount();
+                                },
                                 child: _ChatListTile(
                                 thread: thread,
                                 // The trash icon deletes too (it looked
@@ -322,17 +338,17 @@ class _MessagesListViewState extends State<MessagesListView> {
                                             context, thread.conversationId);
                                         if (deleted && context.mounted) {
                                           controller.getAllConversations(context);
+                                          _refreshUnreadCount();
                                         }
                                       },
                                 onTap: () async {
                                   if (thread.unreadCount > 0 &&
                                       thread.conversationId != null) {
-                                    controller
+                                    // Count only after the server marked it read.
+                                    await controller
                                         .markAsRead(thread.conversationId!);
-                                    if (Get.isRegistered<WaterHomeController>()) {
-                                      Get.find<WaterHomeController>()
-                                          .fetchUnreadChatCount();
-                                    }
+                                    _refreshUnreadCount();
+                                    if (!context.mounted) return;
                                   }
                                   await ChatView.open(
                                     context,
@@ -352,15 +368,15 @@ class _MessagesListViewState extends State<MessagesListView> {
                         ),
             ),
             if (!widget.embedded)
-              _MessagesBottomNav(
-                unreadChatCount: Get.isRegistered<WaterHomeController>()
-                    ? Get.find<WaterHomeController>().unreadChatCount
-                    : 0,
-                onSelect: (index) {
-                  if (index == 2) return;
-                  Navigator.of(context).maybePop();
-                },
-              ),
+              // Rebuilt when the count changes, not only with the list.
+              Get.isRegistered<WaterHomeController>()
+                  ? GetBuilder<WaterHomeController>(
+                      builder: (home) => _MessagesBottomNav(
+                        unreadChatCount: home.unreadChatCount,
+                        onSelect: _onNavSelect,
+                      ),
+                    )
+                  : _MessagesBottomNav(onSelect: _onNavSelect),
           ],
         );
 
