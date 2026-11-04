@@ -426,19 +426,22 @@ class _QuotationMedicine {
         ? unitLocal
         : (lang == 'en' || unitEn.isEmpty ? unitEn : groceryUnitLabel(S.current, unitEn));
     // Per-language names keep that language's unit from the server.
-    String variantWith(String u) =>
-        [clean(m['attribute_value']), u].where((e) => e.isNotEmpty).join(' ');
-    String withUnit(String n, String u) {
-      final v = variantWith(u);
-      return v.isEmpty || n.contains(v) ? n : '$n $v';
+    // The value itself is often the unit ("Box", the stock unit).
+    final value = clean(m['attribute_value']);
+    String variantWith(String u, {String? v}) =>
+        [v ?? value, u].where((e) => e.isNotEmpty).join(' ');
+    String withUnit(String n, String u, {String? v}) {
+      final variant = variantWith(u, v: v);
+      return variant.isEmpty || n.contains(variant) ? n : '$n $variant';
     }
+    final shownValue = lang == 'en' || value.isEmpty ? value : groceryUnitLabel(S.current, value);
     String unitIn(String l) => clean(m['attribute_name_$l']).isNotEmpty ? clean(m['attribute_name_$l']) : unitEn;
     final offer = num.tryParse(clean(m['offer_price']));
     final price = offer != null && offer > 0
         ? offer
         : (num.tryParse(clean(m['selling_price'])) ?? num.tryParse(clean(m['price'])) ?? 0);
     return _QuotationMedicine(
-      withUnit(local.isNotEmpty ? local : en, unit),
+      withUnit(local.isNotEmpty ? local : en, unit, v: shownValue),
       price,
       stock: int.tryParse(clean(m['stock'])) ?? 0,
       productId: int.tryParse(clean(m['id'])),
