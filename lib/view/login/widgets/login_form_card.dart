@@ -77,9 +77,9 @@ class LoginFormCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            DropdownButtonFormField<VendorAppType>(
-              key: ValueKey(loginController.selectedAppType),
-              initialValue: loginController.selectedAppType,
+            DropdownButtonFormField<int>(
+              key: ValueKey(loginController.selectedVendorType),
+              initialValue: loginController.selectedVendorType,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
@@ -98,15 +98,15 @@ class LoginFormCard extends StatelessWidget {
               ),
               icon: const Icon(Icons.keyboard_arrow_down),
               style: appFont('Rubik', fontSize: 14, color: Colors.black87),
-              items: VendorAppType.values
+              items: loginVendorTypes
                   .map(
-                    (type) => DropdownMenuItem<VendorAppType>(
+                    (type) => DropdownMenuItem<int>(
                       value: type,
-                      child: Text(type.label),
+                      child: Text(vendorTypeName(type)),
                     ),
                   )
                   .toList(),
-              onChanged: loginController.setSelectedAppType,
+              onChanged: loginController.setSelectedVendorType,
             ),
             const SizedBox(height: 16),
             Text(

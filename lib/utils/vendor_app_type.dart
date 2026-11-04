@@ -82,3 +82,22 @@ extension VendorAppTypeX on VendorAppType {
     }
   }
 }
+
+/// Vendor types offered on the login screen, as the API numbers them. The
+/// list only showed the app's four sections, so laundry, car wash, gas and
+/// local store vendors could not find their type. The section still comes
+/// from the server's vendor_type after login.
+const List<int> loginVendorTypes = [1, 2, 11, 3, 4, 10, 7, 8, 9];
+
+String vendorTypeName(int vendorType) => switch (vendorType) {
+      1 => S.current.vendorTypeRestaurant,
+      2 => S.current.vendorTypeGrocery,
+      11 => S.current.vendorTypeLocalStore,
+      3 => S.current.vendorTypePharmacy,
+      4 => S.current.vendorTypeWater,
+      10 => S.current.vendorTypeGas,
+      7 => S.current.vendorTypeLaundry,
+      8 => S.current.vendorTypeCarWash,
+      9 => S.current.vendorTypeHomeCleaning,
+      _ => S.current.vendorTypeGroceryRestaurant,
+    };

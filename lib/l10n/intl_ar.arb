@@ -3325,5 +3325,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vendorTypeRestaurant": "مطعم",
+  "vendorTypeGrocery": "بقالة",
+  "vendorTypeLocalStore": "متجر محلي",
+  "vendorTypeGas": "غاز",
+  "vendorTypeLaundry": "مغسلة",
+  "vendorTypeCarWash": "غسيل السيارات"
 }

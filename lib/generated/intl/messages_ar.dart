@@ -2601,13 +2601,19 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("بائع"),
     "vendorType": MessageLookupByLibrary.simpleMessage("نوع البائع"),
+    "vendorTypeCarWash": MessageLookupByLibrary.simpleMessage("غسيل السيارات"),
+    "vendorTypeGas": MessageLookupByLibrary.simpleMessage("غاز"),
+    "vendorTypeGrocery": MessageLookupByLibrary.simpleMessage("بقالة"),
     "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
       "بقالة / مطعم",
     ),
     "vendorTypeHomeCleaning": MessageLookupByLibrary.simpleMessage(
       "تنظيف منزلي",
     ),
+    "vendorTypeLaundry": MessageLookupByLibrary.simpleMessage("مغسلة"),
+    "vendorTypeLocalStore": MessageLookupByLibrary.simpleMessage("متجر محلي"),
     "vendorTypePharmacy": MessageLookupByLibrary.simpleMessage("صيدلية"),
+    "vendorTypeRestaurant": MessageLookupByLibrary.simpleMessage("مطعم"),
     "vendorTypeUseWebPanel": MessageLookupByLibrary.simpleMessage(
       "هذا النوع من البائعين غير متاح في التطبيق بعد. يرجى استخدام بوابة البائع على الويب.",
     ),
