@@ -118,7 +118,8 @@ class StoreProduct {
     final own = '${raw['variant_name_$lang'] ?? ''}'.trim();
     var variant = _pickName(raw, base: 'variant_name');
     if (lang != 'en' && (own.isEmpty || own == 'null')) variant = groceryUnitLabel(s, variant);
-    final value = '${raw['attribute_value'] ?? ''}'.trim();
+    var value = '${raw['attribute_value'] ?? ''}'.trim();
+    if (lang != 'en') value = groceryUnitsInText(s, value);
     final extra = [if (value.isNotEmpty && value != 'null') value, if (variant.isNotEmpty) variant].join(' ');
     final n = _pickName(raw);
     return extra.isEmpty ? n : '$n $extra';
@@ -210,6 +211,16 @@ String groceryUnitLabel(S s, String unit) => switch (unit.trim().toLowerCase()) 
       'dozen' || 'dz' => s.unitDozen,
       _ => unit,
     };
+
+final RegExp _amountUnit = RegExp(r'(\d+(?:[.,]\d+)?)\s*([A-Za-z]+)\b');
+
+/// The unit in a variant value the store typed ("30 pcs", "1 set", "1L")
+/// translated; the store's own words stay as written (retest 4 Nov: the
+/// picker showed "بيض 30 pcs").
+String groceryUnitsInText(S s, String text) => text.replaceAllMapped(_amountUnit, (m) {
+      final unit = groceryUnitLabel(s, m[2]!);
+      return unit == m[2] ? m[0]! : '${m[1]} $unit';
+    });
 
 /// Products of the ordered item's category first, server order otherwise.
 List<StoreProduct> sameCategoryFirst(List<StoreProduct> list, StoreProduct? original) {

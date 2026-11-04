@@ -107,6 +107,15 @@ void main() {
     expect(sameCategoryFirst([soap, yogurt], null).map((p) => p.id), [2, 3]);
   });
 
+  test('unit inside the variant value is translated, other words kept', () async {
+    final s = await S.load(const Locale('ar'));
+    expect(groceryUnitsInText(s, '30 pcs'), '30 ${s.unitPiece}');
+    expect(groceryUnitsInText(s, '1 set'), '1 ${s.unitSet}');
+    expect(groceryUnitsInText(s, '1L'), '1 ${s.unitLitre}');
+    expect(groceryUnitsInText(s, '2 Family'), '2 Family');
+    expect(groceryUnitsInText(s, 'Large'), 'Large');
+  });
+
   testWidgets('a removed line shows no actions', (t) async {
     final api = _FakeApi([
       {'id': 8, 'order_item_id': 1, 'status': 'accepted', 'kind': 'unavailable', 'original': {'quantity': 1, 'unit_price': 50}},
