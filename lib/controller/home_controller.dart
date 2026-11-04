@@ -35,7 +35,6 @@ class HomeController extends GetxController {
 
   HomeModel? homeData;
   int? autoAcceptMode; // API mapping: 1 = ON, 2 = OFF
-  bool _hasNextPage = true;
   bool isFirstLoadRunning = true;
   bool isLoadMoreRunning = false;
   ScrollController scrollController = ScrollController();
@@ -124,21 +123,27 @@ class HomeController extends GetxController {
     update();
   }
 
+  /// Next page of the order list until the server's last_page (it was a
+  /// mock that stopped after the first page).
   void _loadMore() async {
-    if (_hasNextPage == true &&
-        isFirstLoadRunning == false &&
-        isLoadMoreRunning == false &&
-        scrollController.position.extentAfter < 300) {
-      isLoadMoreRunning = true;
-      update();
-
-      await Future.delayed(const Duration(seconds: 1));
-      // Mock: No more pages in mock mode to keep it simple
-      _hasNextPage = false;
-
-      isLoadMoreRunning = false;
-      update();
+    final orders = homeData?.data?.orders;
+    final current = orders?.currentPage ?? 1;
+    final last = orders?.lastPage ?? 1;
+    final context = Get.context;
+    if (current >= last ||
+        isFirstLoadRunning ||
+        isLoadMoreRunning ||
+        context == null ||
+        scrollController.position.extentAfter >= 300) {
+      return;
     }
+    await fetchHome(
+      context,
+      orderStatus: currentOrderStatus,
+      keyword: searchController.text.trim(),
+      page: current + 1,
+      isLoadMore: true,
+    );
   }
 
   Future<void> fetchHome(
