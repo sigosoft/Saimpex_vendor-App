@@ -1891,6 +1891,60 @@ class MessageLookup extends MessageLookupByLibrary {
     "pharmacyInvUnitBox": MessageLookupByLibrary.simpleMessage("Box"),
     "pharmacyInvUnitPiece": MessageLookupByLibrary.simpleMessage("Piece"),
     "pharmacyInvUnitStrip": MessageLookupByLibrary.simpleMessage("Strip"),
+    "pharmacyMsgAcceptFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t accept the order",
+    ),
+    "pharmacyMsgCancelOrderFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t cancel the order",
+    ),
+    "pharmacyMsgCancelPrescriptionFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t cancel the prescription",
+    ),
+    "pharmacyMsgOrderAccepted": MessageLookupByLibrary.simpleMessage(
+      "Order accepted",
+    ),
+    "pharmacyMsgOrderCancelled": MessageLookupByLibrary.simpleMessage(
+      "Order cancelled",
+    ),
+    "pharmacyMsgPrepareFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t start preparing the order",
+    ),
+    "pharmacyMsgPreparing": MessageLookupByLibrary.simpleMessage(
+      "Order preparation started",
+    ),
+    "pharmacyMsgPrescriptionCancelled": MessageLookupByLibrary.simpleMessage(
+      "Prescription cancelled",
+    ),
+    "pharmacyMsgQuoteFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t send the quotation",
+    ),
+    "pharmacyMsgQuoteSent": MessageLookupByLibrary.simpleMessage(
+      "Quotation sent",
+    ),
+    "pharmacyMsgReady": MessageLookupByLibrary.simpleMessage(
+      "Order marked as ready",
+    ),
+    "pharmacyMsgReadyFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t mark the order as ready",
+    ),
+    "pharmacyMsgRejectFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t reject the prescription",
+    ),
+    "pharmacyMsgRejected": MessageLookupByLibrary.simpleMessage(
+      "Prescription rejected",
+    ),
+    "pharmacyMsgReviewFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t start the review",
+    ),
+    "pharmacyMsgReviewed": MessageLookupByLibrary.simpleMessage(
+      "Prescription marked as reviewed",
+    ),
+    "pharmacyMsgReviewedFailed": MessageLookupByLibrary.simpleMessage(
+      "Couldn\'t mark the prescription as reviewed",
+    ),
+    "pharmacyMsgUnderReview": MessageLookupByLibrary.simpleMessage(
+      "Prescription moved to under review",
+    ),
     "pharmacyOtcBadgeAccepted": MessageLookupByLibrary.simpleMessage(
       "ACCEPTED",
     ),
