@@ -55,13 +55,15 @@ Widget _row(String l, String v, {Color color = _ink, bool bold = false}) => Padd
       ),
     );
 
-/// Laundry processing time as stored ("Express", "Standard (24h)") in the
-/// app language; other values are shown as sent.
-String laundryProcessingLabel(S s, String value) => switch (value.trim().toLowerCase()) {
-      'express' => s.processingExpress,
-      'standard' || 'standard (24h)' => s.processingStandard24h,
-      _ => value,
-    };
+/// Laundry processing time as stored ("Express", "Standard (24h)", or the
+/// booking's "Standard Delivery (Ready in 24 hours)") in the app language;
+/// other values are shown as sent.
+String laundryProcessingLabel(S s, String value) {
+  final v = value.trim().toLowerCase();
+  if (v.startsWith('express')) return s.processingExpress;
+  if (v.startsWith('standard')) return s.processingStandard24h;
+  return value;
+}
 
 // ── Laundry ─────────────────────────────────────────────────────────────
 
