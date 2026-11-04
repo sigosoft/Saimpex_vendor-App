@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -462,15 +463,13 @@ class _ViewStockHistoryScreenState extends State<ViewStockHistoryScreen> {
                             width: double.infinity,
                             height: 190,
                             fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => Image.asset(
-                              'lib/assets/images/Burger.jpg',
+                            errorWidget: (_, __, ___) => noImageBox(
                               width: double.infinity,
                               height: 190,
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Image.asset(
-                            'lib/assets/images/Burger.jpg',
+                        : noImageBox(
                             width: double.infinity,
                             height: 190,
                             fit: BoxFit.cover,

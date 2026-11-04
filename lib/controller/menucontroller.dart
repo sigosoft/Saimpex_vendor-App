@@ -434,9 +434,9 @@ class MenuController extends GetxController {
           ]
         : [];
     prepTimeCtrl.text = menu.preparationTime ?? '';
-    priceCtrl.text = _cleanPrice(menu.price ?? '20');
-    discountPriceCtrl.text = _cleanPrice(menu.discountPrice ?? '10');
-    quantityAllowedCtrl.text = menu.quantityAllowed?.toString() ?? '10';
+    priceCtrl.text = _cleanPrice(menu.price ?? '');
+    discountPriceCtrl.text = _cleanPrice(menu.discountPrice ?? '');
+    quantityAllowedCtrl.text = menu.quantityAllowed?.toString() ?? '';
     currentEditAttributeId = menu.firstAttributeId;
     selectedAttributeId = menu.firstAttributeId?.toString();
     hasPopulatedEditForm = true;
@@ -468,9 +468,9 @@ class MenuController extends GetxController {
     descArCtrl.clear();
     descFrCtrl.clear();
     prepTimeCtrl.clear();
-    priceCtrl.text = '20 MRU';
-    discountPriceCtrl.text = '10 MRU';
-    quantityAllowedCtrl.text = '10';
+    priceCtrl.clear();
+    discountPriceCtrl.clear();
+    quantityAllowedCtrl.clear();
     selectedEditCategoryName = categoryDisplayNames.isNotEmpty
         ? categoryDisplayNames.first
         : '';

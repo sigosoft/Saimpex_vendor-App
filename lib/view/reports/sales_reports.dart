@@ -287,7 +287,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
                       tax: datum.tax ?? '0',
                       earnings: earning?.totalAmount ?? datum.subtotal ?? '0',
                       commission: earning?.commissionAmount ?? '0',
-                      paymentMethod: datum.paymentType ?? 'Cash',
+                      paymentMethod: datum.paymentType ?? '-',
                       currency: _currency,
                     ),
                   ),

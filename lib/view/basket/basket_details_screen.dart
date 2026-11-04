@@ -188,7 +188,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                     Text(
                                       vendorName.isNotEmpty
                                           ? vendorName
-                                          : S.of(context).restaurantOne,
+                                          : '-',
                                       style: appFont('Rubik', 
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -245,7 +245,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                   S.of(context).vendor.toUpperCase(),
                                   vendorName.isNotEmpty
                                       ? vendorName
-                                      : S.of(context).restaurantOne,
+                                      : '-',
                                 ),
                                 const SizedBox(width: 12),
                                 _infoBox(
