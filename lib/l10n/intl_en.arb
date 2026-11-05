@@ -3379,5 +3379,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "reachedStore": "REACHED STORE",
+  "@reachedStore": {},
+  "storeStatus": "Store Status",
+  "@storeStatus": {},
+  "storeCommission": "Store Commission Percentage per Order",
+  "@storeCommission": {}
 }

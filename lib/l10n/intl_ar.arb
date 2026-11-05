@@ -3325,5 +3325,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "reachedStore": "وصل إلى المتجر",
+  "storeStatus": "حالة المتجر",
+  "storeCommission": "نسبة عمولة المتجر لكل طلب"
 }

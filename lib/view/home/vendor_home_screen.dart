@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -308,7 +309,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
       case 5:
         return S.current.assignedStatus;
       case 6:
-        return S.of(context).reachedRestaurant;
+        return reachedVendorLabel();
       case 7:
         return S.of(context).pickedUp;
       case 8:

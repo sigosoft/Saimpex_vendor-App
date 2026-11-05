@@ -2246,6 +2246,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reachedRestaurant": MessageLookupByLibrary.simpleMessage(
       "REACHED RESTAURANT",
     ),
+    "reachedStore": MessageLookupByLibrary.simpleMessage("REACHED STORE"),
     "ready": MessageLookupByLibrary.simpleMessage("Ready"),
     "reasonColonLabel": m51,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Reason For Leave"),
@@ -2458,10 +2459,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "stockRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Stock removed successfully",
     ),
+    "storeCommission": MessageLookupByLibrary.simpleMessage(
+      "Store Commission Percentage per Order",
+    ),
     "storeDetails": MessageLookupByLibrary.simpleMessage("STORE DETAILS"),
     "storeId": MessageLookupByLibrary.simpleMessage("Store ID"),
     "storeManagement": MessageLookupByLibrary.simpleMessage("Store Management"),
     "storeReports": MessageLookupByLibrary.simpleMessage("Store Reports"),
+    "storeStatus": MessageLookupByLibrary.simpleMessage("Store Status"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "submitButton": MessageLookupByLibrary.simpleMessage("Submit"),
     "submitLeaveRequest": MessageLookupByLibrary.simpleMessage(

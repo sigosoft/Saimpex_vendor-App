@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/home_controller.dart';
 import 'package:saimpex_vendor/controller/vendor_home_controller.dart';
@@ -142,7 +143,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       case 5:
         return S.current.assignedStatus;
       case 6:
-        return S.of(context).reachedRestaurant;
+        return reachedVendorLabel();
       case 7:
         return S.of(context).pickedUp;
       case 8:

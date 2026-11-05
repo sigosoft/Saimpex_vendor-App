@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
@@ -244,7 +245,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                   const SizedBox(height: 24),
 
                   if (selectedMenu == "Account") ...[
-                    _sectionHeader(S.of(context).restaurantStatus),
+                    _sectionHeader(vendorStatusTitle()),
                     const SizedBox(height: 12),
                     Material(
                       elevation: 3,

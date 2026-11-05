@@ -14320,6 +14320,36 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `REACHED STORE`
+  String get reachedStore {
+    return Intl.message(
+      'REACHED STORE',
+      name: 'reachedStore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Status`
+  String get storeStatus {
+    return Intl.message(
+      'Store Status',
+      name: 'storeStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Store Commission Percentage per Order`
+  String get storeCommission {
+    return Intl.message(
+      'Store Commission Percentage per Order',
+      name: 'storeCommission',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -3326,5 +3326,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "reachedStore": "ARRIVÉ AU MAGASIN",
+  "storeStatus": "Statut du magasin",
+  "storeCommission": "Pourcentage de commission du magasin par commande"
 }
