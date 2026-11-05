@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/water/core/water_api.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/water/controller/inventory_details_controller.dart';
-import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/inventory_product.dart';
 import 'package:saimpex_vendor/water/view/inventory/add_product_view.dart';
@@ -168,11 +168,14 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                         onUpdateStock: _onUpdateStock,
                       ),
                       const SizedBox(height: 14),
+                      // Gas has no stock or returnable bottles (#84).
+                      if (!WaterApi.isGas) ...[
                       _BottleReturnCard(
                         enabled: controller.returnableBottle,
                         onChanged: controller.setReturnableBottle,
                       ),
                       const SizedBox(height: 14),
+                      ],
                       _ProductDetailsCard(
                         category: product.categoryName,
                         unitType: product.rawJson?['unit_name']?.toString() ??
@@ -187,8 +190,10 @@ class _InventoryDetailsViewState extends State<InventoryDetailsView> {
                         const SizedBox(height: 14),
                         _SalesPerformanceCard(salesData: controller.salesData!),
                       ],
+                      if (!WaterApi.isGas) ...[
                       const SizedBox(height: 18),
                       _StockHistorySection(stockLogs: controller.stockLogs),
+                      ],
                     ],
                   ),
                 ),
@@ -344,71 +349,24 @@ String _resolveWaterImageUrl(String path) {
   return '$cleanBase$str';
 }
 
+  /// No sample photo: a neutral box when the product has none (a 19 L water
+  /// can was shown, also for gas cylinders).
   Widget _buildSingleImage(String path) {
-    if (path.isEmpty) {
-      return Image.asset(
-        AppAssets.waterCan19L,
-        fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => const Icon(
-          Icons.water_drop,
-          size: 72,
-          color: AppColors.planPurple,
-        ),
-      );
-    }
+    if (path.isEmpty) return noImageBox();
     final resolved = _resolveWaterImageUrl(path);
     if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
-      return Image.network(
-        resolved,
-        fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => Image.asset(
-          AppAssets.waterCan19L,
-          fit: BoxFit.contain,
-        ),
-      );
+      return Image.network(resolved, fit: BoxFit.contain, errorBuilder: (_, __, ___) => noImageBox());
     }
-    return Image.asset(
-      resolved,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => const Icon(
-        Icons.water_drop,
-        size: 72,
-        color: AppColors.planPurple,
-      ),
-    );
+    return noImageBox();
   }
 
   Widget _buildThumbnailImage(String path) {
-    if (path.isEmpty) {
-      return Container(
-        color: AppColors.inventoryHeroBg,
-        child: const Icon(
-          Icons.water_drop,
-          size: 20,
-          color: AppColors.planPurple,
-        ),
-      );
-    }
+    if (path.isEmpty) return noImageBox();
     final resolved = _resolveWaterImageUrl(path);
     if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
-      return Image.network(
-        resolved,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.asset(
-          AppAssets.waterCan19L,
-          fit: BoxFit.cover,
-        ),
-      );
+      return Image.network(resolved, fit: BoxFit.cover, errorBuilder: (_, __, ___) => noImageBox());
     }
-    return Image.asset(
-      resolved,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => const Icon(
-        Icons.water_drop,
-        size: 20,
-        color: AppColors.planPurple,
-      ),
-    );
+    return noImageBox();
   }
 
   @override
@@ -556,6 +514,7 @@ class _InfoGrid extends StatelessWidget {
       children: [
         Row(
           children: [
+            if (!WaterApi.isGas) ...[
             Expanded(
               child: _InfoTile(
                 label: S.of(context).waterAvailableStock,
@@ -563,6 +522,7 @@ class _InfoGrid extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
+            ],
             Expanded(
               child: _InfoTile(
                 label: S.of(context).todaysOrders,

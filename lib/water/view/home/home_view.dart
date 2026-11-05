@@ -691,6 +691,8 @@ class _MetricsGrid extends StatelessWidget {
                 countColor: Colors.white,
               ),
             ),
+            // Gas has no subscriptions (#84): no subscription card.
+            if (!WaterApi.isGas) ...[
             const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
@@ -700,6 +702,7 @@ class _MetricsGrid extends StatelessWidget {
                 countColor: const Color(0xFF00695C),
               ),
             ),
+            ],
           ],
         ),
         const SizedBox(height: 12),
@@ -834,7 +837,8 @@ class _TotalsRow extends StatelessWidget {
               title: S.of(context).waterRevenueHeader,
               value: revenue,
               suffix: 'MRU',
-              showTrend: true,
+              // No trend in the API: the arrow was always up and green.
+              showTrend: false,
             ),
           ),
         ],
