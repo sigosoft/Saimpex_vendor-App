@@ -12326,6 +12326,11 @@ class S {
     return Intl.message('ml', name: 'unitMillilitre', desc: '', args: []);
   }
 
+  /// `cl`
+  String get unitCentilitre {
+    return Intl.message('cl', name: 'unitCentilitre', desc: '', args: []);
+  }
+
   /// `pack`
   String get unitPack {
     return Intl.message('pack', name: 'unitPack', desc: '', args: []);

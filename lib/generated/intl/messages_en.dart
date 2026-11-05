@@ -2609,6 +2609,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unavailable": MessageLookupByLibrary.simpleMessage("Unavailable"),
     "unitBottle": MessageLookupByLibrary.simpleMessage("bottle"),
     "unitBox": MessageLookupByLibrary.simpleMessage("box"),
+    "unitCentilitre": MessageLookupByLibrary.simpleMessage("cl"),
     "unitDozen": MessageLookupByLibrary.simpleMessage("dozen"),
     "unitGram": MessageLookupByLibrary.simpleMessage("g"),
     "unitKg": MessageLookupByLibrary.simpleMessage("kg"),
