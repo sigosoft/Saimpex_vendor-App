@@ -16,4 +16,10 @@ void main() {
     expect(keepNumberUnitsLtr('Litre'), 'Litre');
     expect(keepNumberUnitsLtr('12 items'), '12 items');
   });
+
+  test('joined header parts are isolated so the code and day stay apart', () {
+    final fsi = String.fromCharCode(0x2068), pdi = String.fromCharCode(0x2069);
+    expect(joinIsolated(['الحجز #HCNYJHTV', '5 نوفمبر 2026'], ' • '),
+        '$fsiالحجز #HCNYJHTV$pdi • ${fsi}5 نوفمبر 2026$pdi');
+  });
 }

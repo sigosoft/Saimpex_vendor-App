@@ -660,8 +660,10 @@ class _CustomerCard extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: b.displayCode,
-                        style: appFont('Inter', 
+                        // Each piece isolated: in Arabic the day jumped next
+                        // to the code ("4# LNGWG1SR نوفمبر").
+                        text: isolated(b.displayCode),
+                        style: appFont('Inter',
                           color: BookingDetailsView._orange,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -669,7 +671,7 @@ class _CustomerCard extends StatelessWidget {
                       ),
                       if (created != null)
                         TextSpan(
-                          text: ' • ${CleaningBookingFormat.dateTime(created)}',
+                          text: ' • ${isolated(CleaningBookingFormat.dateTime(created))}',
                           style: appFont('Inter', 
                             color: BookingDetailsView._muted,
                             fontWeight: FontWeight.w400,

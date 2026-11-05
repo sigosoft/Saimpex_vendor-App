@@ -56,9 +56,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(date) => "تم الإنشاء في ${date}";
 
-  static String m16(value) => "${value} أوقية";
+  static String m16(value) => "${value} MRU";
 
-  static String m17(value) => "${value} أوقية لكل كم";
+  static String m17(value) => "${value} MRU لكل كم";
 
   static String m18(value) => "${value}% من الطلب";
 
@@ -82,7 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m27(kg) => "تقدير العميل (${kg} كغ)";
 
-  static String m28(rate) => "${rate} أوقية / كغ";
+  static String m28(rate) => "${rate} MRU / كغ";
 
   static String m29(file) => "تم تصدير القائمة: ${file}";
 
@@ -92,7 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m32(minutes) => "${minutes} د";
 
-  static String m33(unit) => "أوقية / ${unit}";
+  static String m33(unit) => "MRU / ${unit}";
 
   static String m34(id) => "طلب #${id}";
 
@@ -1127,7 +1127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemFormAdditionalPrice": MessageLookupByLibrary.simpleMessage(
       "السعر الإضافي",
     ),
-    "itemFormCurrency": MessageLookupByLibrary.simpleMessage("أوقية"),
+    "itemFormCurrency": MessageLookupByLibrary.simpleMessage("MRU"),
     "itemFormDeleteGroup": MessageLookupByLibrary.simpleMessage("حذف المجموعة"),
     "itemFormEditOption": MessageLookupByLibrary.simpleMessage("تعديل الخيار"),
     "itemFormGroupName": MessageLookupByLibrary.simpleMessage("اسم المجموعة"),
@@ -1403,7 +1403,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "monday": MessageLookupByLibrary.simpleMessage("الاثنين"),
     "morePoints": MessageLookupByLibrary.simpleMessage("المزيد من النقاط"),
     "mruOnThisOrder": MessageLookupByLibrary.simpleMessage("MRU على هذا الطلب"),
-    "mruPerKg": MessageLookupByLibrary.simpleMessage("أوقية / كغ"),
+    "mruPerKg": MessageLookupByLibrary.simpleMessage("MRU / كغ"),
     "mruPerUnit": m33,
     "mruWithThisCode": MessageLookupByLibrary.simpleMessage("MRU مع هذا الرمز"),
     "myCleaners": MessageLookupByLibrary.simpleMessage("عمال النظافة"),
