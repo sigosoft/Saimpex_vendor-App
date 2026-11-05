@@ -107,8 +107,8 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
     if (d.userDisplayName != null && d.userDisplayName!.isNotEmpty)
       return d.userDisplayName!;
     if (d.userName != null)
-      return userNameValues.reverse[d.userName!] ?? 'Customer';
-    return 'Customer';
+      return userNameValues.reverse[d.userName!] ?? S.current.waterCustomer;
+    return S.current.waterCustomer;
   }
 
   String _statusString(int? status) {

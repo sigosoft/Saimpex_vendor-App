@@ -186,7 +186,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               child: Text(
-                'View Stock History',
+                S.of(context).rsViewStockHistory,
                 style: appFont('Rubik', 
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -359,7 +359,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            isAvailable ? "Available" : "Out of Stock",
+                            isAvailable
+                                ? S.of(context).available
+                                : S.of(context).outOfStock,
                             style: appFont('Rubik', 
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -385,7 +387,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "Category: ",
+                              text: "${S.of(context).categoryLabel}: ",
                               style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF64748B),
@@ -411,7 +413,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "Serial No: ",
+                            text: "${S.of(context).serialNoLabel}: ",
                             style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
@@ -488,7 +490,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "Preparation Time: ",
+                            text: "${S.of(context).preparationTimeLabel}: ",
                             style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
@@ -550,7 +552,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
 
                 // Description
                 Text(
-                  "DESCRIPTION",
+                  S.of(context).description.toUpperCase(),
                   style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -597,7 +599,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               child: Text(
-                "Edit Item",
+                S.of(context).editItem,
                 style: appFont('Rubik', 
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -610,7 +612,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           // SALES & PERFORMANCE Section (Dynamic Data from Response)
           const SizedBox(height: 22),
           Text(
-            "SALES & PERFORMANCE",
+            S.of(context).salesPerformanceHeader,
             style: appFont('Rubik', 
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -740,7 +742,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ),
               const SizedBox(width: 4),
               Text(
-                isAvailable ? "Available" : "Out of Stock",
+                isAvailable
+                                ? S.of(context).available
+                                : S.of(context).outOfStock,
                 style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -758,7 +762,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
 
   Widget _availabilityList(List<WorkingHour> hours) {
     if (hours.isEmpty) {
-      return _availabilityRow("Today", "0%");
+      return _availabilityRow(S.of(context).today, "0%");
     }
 
     final todayWeekday = DateTime.now().weekday; // 1..7 (Mon..Sun)
@@ -769,7 +773,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       children: sorted.take(7).map((h) {
         final dow = h.dayOfWeek ?? 0;
         final dayName = _dayNameFromDow(dow);
-        final label = dow == todayWeekday ? "Today" : dayName;
+        final label = dow == todayWeekday ? S.of(context).today : dayName;
         final percent = _openPercentFromWorkingHour(h);
         return _availabilityRow(label, "${percent}%");
       }).toList(),
@@ -840,17 +844,12 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
 
   String _dayNameFromDow(int dow) {
     // Common backend: 1=Monday ... 7=Sunday
-    const names = [
-      '',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    if (dow >= 1 && dow <= 7) return names[dow];
+    // 1 Jan 2024 was a Monday, so day (dow) of that month has weekday dow.
+    if (dow >= 1 && dow <= 7) {
+      final locale =
+          FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+      return DateFormat('EEEE', locale).format(DateTime(2024, 1, dow));
+    }
     return '—';
   }
 
@@ -936,10 +935,14 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       final dt = DateTime.parse(date);
       final diff = DateTime.now().difference(dt);
       if (diff.inSeconds < 0) return "-";
-      if (diff.inMinutes < 1) return "Just now";
-      if (diff.inHours < 1) return "${diff.inMinutes} minutes ago";
-      if (diff.inHours < 24) return "${diff.inHours} hours ago";
-      if (diff.inDays < 7) return "${diff.inDays} days ago";
+      if (diff.inMinutes < 1) return S.of(context).cleaningJustNow;
+      if (diff.inHours < 1) {
+        return S.of(context).cleaningMinutesAgoCount(diff.inMinutes);
+      }
+      if (diff.inHours < 24) {
+        return S.of(context).cleaningHoursAgoCount(diff.inHours);
+      }
+      if (diff.inDays < 7) return S.of(context).cleaningDaysAgoCount(diff.inDays);
       return _formatDateTime(date);
     } catch (_) {
       return "-";
@@ -1132,7 +1135,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "ORDER #ORD-${orderId}",
+                      S.of(context).orderIdLabel("ORD-$orderId"),
                       style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -1161,7 +1164,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  isDelivered ? "DELIVERED" : "PENDING",
+                  isDelivered
+                      ? S.of(context).delivered.toUpperCase()
+                      : S.of(context).pending.toUpperCase(),
                   style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -1177,7 +1182,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             children: [
               Expanded(
                 child: Text(
-                  "ITEMS TOTAL",
+                  S.of(context).itemsTotalLabel,
                   style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -1187,7 +1192,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               Text(
-                "DATE & TIME",
+                S.of(context).dateTimeLabel,
                 style: appFont('Rubik', 
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -1204,7 +1209,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 child: Row(
                   children: [
                     Text(
-                      "${itemsCount} Items - ",
+                      "${S.of(context).pharmacyHomeItemCount('$itemsCount')} - ",
                       style: appFont('Rubik', 
                         fontSize: 11,
                         fontWeight: FontWeight.w500,

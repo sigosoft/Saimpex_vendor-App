@@ -72,7 +72,7 @@ class _BasketListingState extends State<BasketListing> {
 
   String _restaurantTitlePrefix(String? profileName) {
     final t = profileName?.trim();
-    if (t == null || t.isEmpty) return 'Restaurant';
+    if (t == null || t.isEmpty) return S.current.restaurant;
     return t.split(RegExp(r'\s+')).first;
   }
 
@@ -147,7 +147,7 @@ class _BasketListingState extends State<BasketListing> {
               ListTile(
                 // API filter is `blocked`; UI uses the existing "inactive" label.
                 title: Text(
-                  'Blocked',
+                  S.of(context).blocked,
                   style: appFont('Rubik'),
                 ),
                 onTap: () {

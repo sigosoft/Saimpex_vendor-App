@@ -14810,6 +14810,651 @@ class S {
       args: [],
     );
   }
+
+  /// `View Stock History`
+  String get rsViewStockHistory {
+    return Intl.message(
+      'View Stock History',
+      name: 'rsViewStockHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added`
+  String get rsAdded {
+    return Intl.message('Added', name: 'rsAdded', desc: '', args: []);
+  }
+
+  /// `Removed`
+  String get rsRemoved {
+    return Intl.message('Removed', name: 'rsRemoved', desc: '', args: []);
+  }
+
+  /// `STOCK ID: #{id}`
+  String rsStockId(String id) {
+    return Intl.message(
+      'STOCK ID: #$id',
+      name: 'rsStockId',
+      desc: '',
+      args: [id],
+    );
+  }
+
+  /// `by {name}`
+  String rsByUser(String name) {
+    return Intl.message('by $name', name: 'rsByUser', desc: '', args: [name]);
+  }
+
+  /// `REMAINING`
+  String get rsRemaining {
+    return Intl.message('REMAINING', name: 'rsRemaining', desc: '', args: []);
+  }
+
+  /// `Open 24 Hr`
+  String get rsOpen24Hr {
+    return Intl.message('Open 24 Hr', name: 'rsOpen24Hr', desc: '', args: []);
+  }
+
+  /// `Add Time Slot`
+  String get rsAddTimeSlot {
+    return Intl.message(
+      'Add Time Slot',
+      name: 'rsAddTimeSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please add at least one valid time slot.`
+  String get rsAddValidTimeSlot {
+    return Intl.message(
+      'Please add at least one valid time slot.',
+      name: 'rsAddValidTimeSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select both dates`
+  String get rsSelectBothDates {
+    return Intl.message(
+      'Please select both dates',
+      name: 'rsSelectBothDates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import`
+  String get rsImport {
+    return Intl.message('Import', name: 'rsImport', desc: '', args: []);
+  }
+
+  /// `Printed successfully`
+  String get rsPrintedSuccessfully {
+    return Intl.message(
+      'Printed successfully',
+      name: 'rsPrintedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Basket order`
+  String get rsBasketOrder {
+    return Intl.message(
+      'Basket order',
+      name: 'rsBasketOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose from Gallery`
+  String get rsChooseFromGallery {
+    return Intl.message(
+      'Choose from Gallery',
+      name: 'rsChooseFromGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Delivery Boy`
+  String get rsDeleteDeliveryBoy {
+    return Intl.message(
+      'Delete Delivery Boy',
+      name: 'rsDeleteDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete "{name}"?`
+  String rsConfirmDeleteDeliveryBoyNamed(String name) {
+    return Intl.message(
+      'Are you sure you want to delete "$name"?',
+      name: 'rsConfirmDeleteDeliveryBoyNamed',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Are you sure you want to delete this delivery boy?`
+  String get rsConfirmDeleteDeliveryBoy {
+    return Intl.message(
+      'Are you sure you want to delete this delivery boy?',
+      name: 'rsConfirmDeleteDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery boy deleted successfully`
+  String get rsDeliveryBoyDeleted {
+    return Intl.message(
+      'Delivery boy deleted successfully',
+      name: 'rsDeliveryBoyDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to delete delivery boy`
+  String get rsFailedDeleteDeliveryBoy {
+    return Intl.message(
+      'Failed to delete delivery boy',
+      name: 'rsFailedDeleteDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter name`
+  String get rsEnterName {
+    return Intl.message(
+      'Please enter name',
+      name: 'rsEnterName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name must be at least 3 characters`
+  String get rsNameMin3 {
+    return Intl.message(
+      'Name must be at least 3 characters',
+      name: 'rsNameMin3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter country code`
+  String get rsEnterCountryCode {
+    return Intl.message(
+      'Please enter country code',
+      name: 'rsEnterCountryCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter mobile number`
+  String get rsEnterMobile {
+    return Intl.message(
+      'Please enter mobile number',
+      name: 'rsEnterMobile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter email`
+  String get rsEnterEmail {
+    return Intl.message(
+      'Please enter email',
+      name: 'rsEnterEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select gender`
+  String get rsSelectGender {
+    return Intl.message(
+      'Please select gender',
+      name: 'rsSelectGender',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter address`
+  String get rsEnterAddress {
+    return Intl.message(
+      'Please enter address',
+      name: 'rsEnterAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address must be at least 3 characters`
+  String get rsAddressMin3 {
+    return Intl.message(
+      'Address must be at least 3 characters',
+      name: 'rsAddressMin3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select profile image`
+  String get rsSelectProfileImage {
+    return Intl.message(
+      'Please select profile image',
+      name: 'rsSelectProfileImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select ID proof`
+  String get rsSelectIdProof {
+    return Intl.message(
+      'Please select ID proof',
+      name: 'rsSelectIdProof',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter monthly salary`
+  String get rsEnterMonthlySalary {
+    return Intl.message(
+      'Please enter monthly salary',
+      name: 'rsEnterMonthlySalary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter bank name`
+  String get rsEnterBankName {
+    return Intl.message(
+      'Please enter bank name',
+      name: 'rsEnterBankName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter account holder name`
+  String get rsEnterAccountHolderName {
+    return Intl.message(
+      'Please enter account holder name',
+      name: 'rsEnterAccountHolderName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter account number`
+  String get rsEnterAccountNumber {
+    return Intl.message(
+      'Please enter account number',
+      name: 'rsEnterAccountNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter IFSC / SWIFT code`
+  String get rsEnterIfscSwift {
+    return Intl.message(
+      'Please enter IFSC / SWIFT code',
+      name: 'rsEnterIfscSwift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter country`
+  String get rsEnterCountry {
+    return Intl.message(
+      'Please enter country',
+      name: 'rsEnterCountry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery boy updated successfully`
+  String get rsDeliveryBoyUpdated {
+    return Intl.message(
+      'Delivery boy updated successfully',
+      name: 'rsDeliveryBoyUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery boy added successfully`
+  String get rsDeliveryBoyAdded {
+    return Intl.message(
+      'Delivery boy added successfully',
+      name: 'rsDeliveryBoyAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update delivery boy`
+  String get rsFailedUpdateDeliveryBoy {
+    return Intl.message(
+      'Failed to update delivery boy',
+      name: 'rsFailedUpdateDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to add delivery boy`
+  String get rsFailedAddDeliveryBoy {
+    return Intl.message(
+      'Failed to add delivery boy',
+      name: 'rsFailedAddDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Delivery Boy`
+  String get rsUpdateDeliveryBoy {
+    return Intl.message(
+      'Update Delivery Boy',
+      name: 'rsUpdateDeliveryBoy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Added on: {date}`
+  String rsAddedOn(String date) {
+    return Intl.message(
+      'Added on: $date',
+      name: 'rsAddedOn',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Personal Information`
+  String get rsPersonalInformation {
+    return Intl.message(
+      'Personal Information',
+      name: 'rsPersonalInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Boy Name`
+  String get rsDeliveryBoyName {
+    return Intl.message(
+      'Delivery Boy Name',
+      name: 'rsDeliveryBoyName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter delivery boy name`
+  String get rsEnterDeliveryBoyNameHint {
+    return Intl.message(
+      'Enter delivery boy name',
+      name: 'rsEnterDeliveryBoyNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Code`
+  String get rsCode {
+    return Intl.message('Code', name: 'rsCode', desc: '', args: []);
+  }
+
+  /// `Mobile Number`
+  String get rsMobileNumber {
+    return Intl.message(
+      'Mobile Number',
+      name: 'rsMobileNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter mobile number`
+  String get rsEnterMobileHint {
+    return Intl.message(
+      'Enter mobile number',
+      name: 'rsEnterMobileHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email Address`
+  String get rsEmailAddress {
+    return Intl.message(
+      'Email Address',
+      name: 'rsEmailAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter email address`
+  String get rsEnterEmailHint {
+    return Intl.message(
+      'Enter email address',
+      name: 'rsEnterEmailHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gender`
+  String get rsGender {
+    return Intl.message('Gender', name: 'rsGender', desc: '', args: []);
+  }
+
+  /// `Select Gender`
+  String get rsSelectGenderHint {
+    return Intl.message(
+      'Select Gender',
+      name: 'rsSelectGenderHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Male`
+  String get rsMale {
+    return Intl.message('Male', name: 'rsMale', desc: '', args: []);
+  }
+
+  /// `Female`
+  String get rsFemale {
+    return Intl.message('Female', name: 'rsFemale', desc: '', args: []);
+  }
+
+  /// `Enter address`
+  String get rsEnterAddressHint {
+    return Intl.message(
+      'Enter address',
+      name: 'rsEnterAddressHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `License Number (Optional)`
+  String get rsLicenseNumberOptional {
+    return Intl.message(
+      'License Number (Optional)',
+      name: 'rsLicenseNumberOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter license number`
+  String get rsEnterLicenseHint {
+    return Intl.message(
+      'Enter license number',
+      name: 'rsEnterLicenseHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Documents`
+  String get rsDocuments {
+    return Intl.message('Documents', name: 'rsDocuments', desc: '', args: []);
+  }
+
+  /// `Profile Photo`
+  String get rsProfilePhoto {
+    return Intl.message(
+      'Profile Photo',
+      name: 'rsProfilePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ID Proof`
+  String get rsIdProof {
+    return Intl.message('ID Proof', name: 'rsIdProof', desc: '', args: []);
+  }
+
+  /// `PNG, JPG up to 4MB`
+  String get rsUploadLimitHint {
+    return Intl.message(
+      'PNG, JPG up to 4MB',
+      name: 'rsUploadLimitHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Employment & Bank Information`
+  String get rsEmploymentBankInfo {
+    return Intl.message(
+      'Employment & Bank Information',
+      name: 'rsEmploymentBankInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Salary`
+  String get rsMonthlySalary {
+    return Intl.message(
+      'Monthly Salary',
+      name: 'rsMonthlySalary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter monthly salary`
+  String get rsEnterSalaryHint {
+    return Intl.message(
+      'Enter monthly salary',
+      name: 'rsEnterSalaryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country`
+  String get rsCountry {
+    return Intl.message('Country', name: 'rsCountry', desc: '', args: []);
+  }
+
+  /// `Enter country`
+  String get rsEnterCountryHint {
+    return Intl.message(
+      'Enter country',
+      name: 'rsEnterCountryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter bank name`
+  String get rsEnterBankNameHint {
+    return Intl.message(
+      'Enter bank name',
+      name: 'rsEnterBankNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account Holder Name`
+  String get rsAccountHolderName {
+    return Intl.message(
+      'Account Holder Name',
+      name: 'rsAccountHolderName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter account holder name`
+  String get rsEnterHolderHint {
+    return Intl.message(
+      'Enter account holder name',
+      name: 'rsEnterHolderHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter account number / IBAN`
+  String get rsEnterAccountIbanHint {
+    return Intl.message(
+      'Enter account number / IBAN',
+      name: 'rsEnterAccountIbanHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IFSC / SWIFT Code`
+  String get rsIfscSwiftCode {
+    return Intl.message(
+      'IFSC / SWIFT Code',
+      name: 'rsIfscSwiftCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter SWIFT/BIC code (8 or 11 characters)`
+  String get rsEnterSwiftHint {
+    return Intl.message(
+      'Enter SWIFT/BIC code (8 or 11 characters)',
+      name: 'rsEnterSwiftHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

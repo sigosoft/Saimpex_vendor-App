@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Filter options for stock history lists.
 enum StockHistoryFilterKind { all, added, removed }
@@ -21,7 +22,7 @@ class StockHistoryFilterBar extends StatelessWidget {
       children: [
         Expanded(
           child: _Chip(
-            label: 'All',
+            label: S.of(context).all,
             isSelected: selected == StockHistoryFilterKind.all,
             onTap: () => onChanged(StockHistoryFilterKind.all),
           ),
@@ -29,7 +30,7 @@ class StockHistoryFilterBar extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _Chip(
-            label: 'Added',
+            label: S.of(context).rsAdded,
             isSelected: selected == StockHistoryFilterKind.added,
             onTap: () => onChanged(StockHistoryFilterKind.added),
           ),
@@ -37,7 +38,7 @@ class StockHistoryFilterBar extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _Chip(
-            label: 'Removed',
+            label: S.of(context).rsRemoved,
             isSelected: selected == StockHistoryFilterKind.removed,
             onTap: () => onChanged(StockHistoryFilterKind.removed),
           ),
