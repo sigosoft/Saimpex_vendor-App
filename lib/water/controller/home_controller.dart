@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -175,6 +176,29 @@ class WaterHomeController extends GetxController {
     }
     return S.current.welcomeToSaimpexVendor;
   }
+
+  /// Membership plan name from GET home `membership`, in the app language
+  /// (falls back to another language). Null when the vendor has no plan,
+  /// so the home shows no membership card.
+  String? get membershipName {
+    final m = homeData?.data?.membership;
+    if (m == null) return null;
+    final lang =
+        FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+    final byLang = switch (lang) {
+      'ar' => [m.nameAr, m.nameEn, m.nameFr],
+      'fr' => [m.nameFr, m.nameEn, m.nameAr],
+      _ => [m.nameEn, m.nameFr, m.nameAr],
+    };
+    for (final n in byLang) {
+      final v = n?.trim() ?? '';
+      if (v.isNotEmpty && v != 'null') return v;
+    }
+    return null;
+  }
+
+  /// Days until the membership expires (GET home `membership.expires_in_days`).
+  int? get membershipDaysLeft => homeData?.data?.membership?.expiresInDays;
 
   Future<void> fetchHome({
     String? keyword,
