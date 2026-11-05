@@ -50,7 +50,9 @@ void main() {
         },
       },
     });
-    final row = (reply['data']['grocery_menu_items']['data'] as List).first as Map;
+    expect(reply, isA<Map<String, dynamic>>());
+    expect(reply['data'], isA<Map<String, dynamic>>());
+    final row = (reply['data']['grocery_menu_items']['data'] as List).first as Map<String, dynamic>;
     expect(row['grocery_menu_id'], 1);
     expect(row['local_store_id'], 60);
     expect(row['name_en'], 'Smartphone');

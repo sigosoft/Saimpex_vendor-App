@@ -85,9 +85,13 @@ class StoreEndpoints {
 
   /// A local store response with its keys renamed to the grocery ones the
   /// screens read (local_store_menus → grocery_menus), at every level.
+  /// Keeps the JSON types (Map<String, dynamic>): the models cast to it,
+  /// and a Map<dynamic, dynamic> made them fail, so the list came back empty.
   static dynamic toGroceryKeys(dynamic data) {
     if (data is Map) {
-      return data.map((k, v) => MapEntry(k is String ? _toGroceryKey(k) : k, toGroceryKeys(v)));
+      return <String, dynamic>{
+        for (final e in data.entries) _toGroceryKey('${e.key}'): toGroceryKeys(e.value),
+      };
     }
     if (data is List) return data.map(toGroceryKeys).toList();
     return data;
