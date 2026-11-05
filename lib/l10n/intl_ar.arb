@@ -3325,5 +3325,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "carWashAtStation": "في محطة الغسيل",
+  "carWashAtHome": "في المنزل",
+  "carWashAtWorkplace": "في مكان العمل",
+  "carWashAtOtherAddress": "في عنوان آخر",
+  "carWashAtHomeOrWork": "في المنزل / مكان العمل"
 }

@@ -3379,5 +3379,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "carWashAtStation": "At Wash Station",
+  "@carWashAtStation": {},
+  "carWashAtHome": "At Home",
+  "@carWashAtHome": {},
+  "carWashAtWorkplace": "At Workplace",
+  "@carWashAtWorkplace": {},
+  "carWashAtOtherAddress": "At Another Address",
+  "@carWashAtOtherAddress": {},
+  "carWashAtHomeOrWork": "At Home/Workplace",
+  "@carWashAtHomeOrWork": {}
 }

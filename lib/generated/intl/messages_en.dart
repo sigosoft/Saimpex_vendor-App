@@ -458,6 +458,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
     "cancelledOnLabel": m4,
     "carWashAddOns": MessageLookupByLibrary.simpleMessage("Add-ons"),
+    "carWashAtHome": MessageLookupByLibrary.simpleMessage("At Home"),
+    "carWashAtHomeOrWork": MessageLookupByLibrary.simpleMessage(
+      "At Home/Workplace",
+    ),
+    "carWashAtOtherAddress": MessageLookupByLibrary.simpleMessage(
+      "At Another Address",
+    ),
+    "carWashAtStation": MessageLookupByLibrary.simpleMessage("At Wash Station"),
+    "carWashAtWorkplace": MessageLookupByLibrary.simpleMessage("At Workplace"),
     "carWashMarkReadyForPickup": MessageLookupByLibrary.simpleMessage(
       "Mark as Ready for Pickup",
     ),

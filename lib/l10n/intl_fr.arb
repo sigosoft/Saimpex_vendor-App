@@ -3326,5 +3326,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "carWashAtStation": "À la station de lavage",
+  "carWashAtHome": "À domicile",
+  "carWashAtWorkplace": "Sur le lieu de travail",
+  "carWashAtOtherAddress": "À une autre adresse",
+  "carWashAtHomeOrWork": "À domicile / au travail"
 }
