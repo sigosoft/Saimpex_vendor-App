@@ -61,7 +61,7 @@ class _SubscriptionCalendarViewState extends State<SubscriptionCalendarView> {
     final res = await DioClient().get(ApiEndPoints.waterDeliveryCalendar, query: query);
     final body = res.data;
     if (!WaterApi.isOk(body) || body is! Map || body['data'] is! Map) {
-      throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+      throw WaterApi.localMessage(body) ?? S.current.waterSomethingWentWrong;
     }
     return Map<String, dynamic>.from(body['data'] as Map);
   }

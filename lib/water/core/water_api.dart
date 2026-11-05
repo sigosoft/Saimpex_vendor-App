@@ -47,6 +47,30 @@ class WaterApi {
     return status == true || status?.toString() == 'true' || status?.toString() == '1';
   }
 
+  /// Server message only when it is in the app language, else null.
+  /// Many water endpoints answer with a plain English string ("Water order
+  /// cancelled"), which showed in Arabic and French (device 5 Nov). A plain
+  /// string counts as English; a {message_en|fr|ar} map gives its own
+  /// language and no English fallback.
+  static String? localMessage(dynamic body) {
+    if (body is! Map) return null;
+    final lang =
+        FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
+    final msg = body['message'];
+    if (msg is String) {
+      return lang == 'en' && msg.trim().isNotEmpty ? msg.trim() : null;
+    }
+    if (msg is Map) {
+      final v = msg['message_$lang'];
+      if (v is List && v.isNotEmpty) {
+        final s = v.first?.toString().trim() ?? '';
+        return s.isEmpty ? null : s;
+      }
+      if (v is String && v.trim().isNotEmpty) return v.trim();
+    }
+    return null;
+  }
+
   /// Server message in the current app language, or null.
   static String? message(dynamic body) {
     if (body is! Map) return null;

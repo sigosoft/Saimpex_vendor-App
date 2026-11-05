@@ -184,7 +184,7 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
       final body = response.data;
       final data = body is Map ? body['data'] : null;
       if (!WaterApi.isOk(body) || data is! Map || data['subscription'] is! Map) {
-        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+        throw WaterApi.localMessage(body) ?? S.current.waterSomethingWentWrong;
       }
       if (!mounted) return;
       setState(() {

@@ -227,7 +227,7 @@ class _CouponsViewState extends State<CouponsView> {
       final response = await call();
       final data = response.data;
       ok = WaterApi.isOk(data);
-      message = WaterApi.message(data);
+      message = WaterApi.localMessage(data);
     } catch (e) {
       message = WaterApi.errorText(e);
     }
