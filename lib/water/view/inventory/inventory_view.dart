@@ -461,6 +461,9 @@ class _StatsGrid extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
+            // Gas has no stock (#84): no Low Stock tile; Out of Stock is
+            // the availability switch.
+            if (!WaterApi.isGas) ...[
             Expanded(
               child: _StatCard(
                 label: S.of(context).waterLowStock.toUpperCase(),
@@ -471,6 +474,7 @@ class _StatsGrid extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
+            ],
             Expanded(
               child: _StatCard(
                 label: S.of(context).outOfStock.toUpperCase(),
@@ -840,7 +844,7 @@ class _FilterChips extends StatelessWidget {
   List<String> _labels(BuildContext context) => [
     S.of(context).waterFilterAllCount(allCount.toString()),
     S.of(context).waterFilterInStockCount(inStockCount.toString()),
-    S.of(context).waterFilterLowStockCount(lowStockCount.toString()),
+    if (!WaterApi.isGas) S.of(context).waterFilterLowStockCount(lowStockCount.toString()),
   ];
 
   @override
