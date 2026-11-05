@@ -810,7 +810,7 @@ class _CouponCard extends StatelessWidget {
                 ),
               ),
               _Pill(
-                text: coupon.active ? 'ACTIVE' : 'INACTIVE',
+                text: coupon.active ? S.of(context).active : S.of(context).inactive,
                 background: coupon.active
                     ? const Color(0xFFD1FAE5)
                     : const Color(0xFFF3F4F6),
