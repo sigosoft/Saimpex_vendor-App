@@ -1,6 +1,8 @@
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'dart:convert';
 
+import 'package:saimpex_vendor/water/core/water_api.dart';
+
 enum InventoryStockStatus { inStock, lowStock, outOfStock }
 
 class WaterInventorySummary {
@@ -143,7 +145,13 @@ class InventoryProduct {
         .trim();
 
     final InventoryStockStatus stockStatus;
-    if (availStatus == 2 ||
+    // Gas has no stock (#84): only the availability flag counts, so a
+    // stock of 0 doesn't make every cylinder "out of stock".
+    if (WaterApi.isGas) {
+      stockStatus = (availStatus == 2 || availStatus == 0)
+          ? InventoryStockStatus.outOfStock
+          : InventoryStockStatus.inStock;
+    } else if (availStatus == 2 ||
         availStatus == 0 ||
         stockStatusStr == 'out of stock' ||
         stockInt == 0) {
