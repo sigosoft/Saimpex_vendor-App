@@ -9,7 +9,6 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
-import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
@@ -22,7 +21,6 @@ class PharmacyNotificationsScreen extends StatefulWidget {
   static const _name = Color(0xFF2D3444);
   static const _meta = Color(0xFF6B7280);
   static const _badge = Color(0xFFF59E0B);
-  static const _payBg = Color(0xFFF4F4F0);
 
   @override
   State<PharmacyNotificationsScreen> createState() =>
