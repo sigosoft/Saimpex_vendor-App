@@ -7,6 +7,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/controller/pharmacy_home_controller.dart';
+import 'package:saimpex_vendor/pharmacy/model/pharmacy_pending_orders_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_order.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
 import 'package:saimpex_vendor/pharmacy/view/pharmacy_account_screen.dart';
@@ -870,22 +871,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
-        final item = controller.prescriptionToPrepareOrdersList[i];
-        final rawId = item.resolvedId;
-        widgets.add(
-          _ToPrepareCard(
-            customerName: item.displayCustomerName,
-            orderCode: item.displayOrderCode,
-            timeAgo: item.displayTimeAgo,
-            isSelfPickup: item.isSelfPickupBool,
-            prescriptionId: rawId,
-            phone: item.phone,
-            prescriptionFileName: item.prescriptionFileName,
-            prescriptionImageUrl: item.prescriptionImageUrl,
-            isCashOnDelivery: item.isCashOnDeliveryBool,
-            paymentType: item.paymentType,
-          ),
-        );
+        widgets.add(_prescriptionOrderCard(
+          context,
+          controller,
+          controller.prescriptionToPrepareOrdersList[i],
+        ));
       }
       return widgets;
     }
@@ -928,22 +918,11 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         if (i > 0) {
           widgets.add(const SizedBox(height: 12));
         }
-        final item = controller.prescriptionPreparingOrdersList[i];
-        final rawId = item.resolvedId;
-        widgets.add(
-          _PreparingCard(
-            customerName: item.displayCustomerName,
-            orderCode: item.displayOrderCode,
-            timeAgo: item.displayTimeAgo,
-            isSelfPickup: item.isSelfPickupBool,
-            prescriptionId: rawId,
-            phone: item.phone,
-            prescriptionFileName: item.prescriptionFileName,
-            prescriptionImageUrl: item.prescriptionImageUrl,
-            isCashOnDelivery: item.isCashOnDeliveryBool,
-            paymentType: item.paymentType,
-          ),
-        );
+        widgets.add(_prescriptionOrderCard(
+          context,
+          controller,
+          controller.prescriptionPreparingOrdersList[i],
+        ));
       }
       return widgets;
     }
@@ -2534,6 +2513,51 @@ enum PharmacyPrescriptionCardStatus { newOrder, underReview, reviewCompleted }
 /// Back from a card's details / quotation screen: the status may have changed
 /// there (reviewed, quote sent, accepted...), so reload the visible list. It
 /// kept showing the old state (test day V18).
+/// A paid prescription order in To Prepare / Preparing: the OTC order card,
+/// whose Accept, Start Preparing and Ready buttons call the order API. The
+/// prescription cards only opened a details screen whose button did
+/// nothing, and a new paid order (status 1) was in no tab (V-B11).
+Widget _prescriptionOrderCard(
+  BuildContext context,
+  PharmacyHomeController controller,
+  PharmacyPendingOrderItem order,
+) {
+  final rawId = order.resolvedId;
+  final status = order.status ?? 2;
+  return _OtcNewOrderCard(
+    customerName: order.displayCustomerName,
+    orderId: order.displayOrderCode,
+    timeAgo: order.displayTimeAgo,
+    selfPickup: order.isSelfPickupBool,
+    cashOnDelivery: order.isCashOnDeliveryBool,
+    paymentType: order.paymentType,
+    accepted: status == 2,
+    preparing: status == 3,
+    ready: false,
+    delivered: false,
+    partnerName: order.deliveryBoyName,
+    itemsSummary: order.displayItemsSummary,
+    phone: order.phone,
+    orderRawId: rawId,
+    isAccepting: controller.isAcceptingOrder && controller.acceptingOrderId == rawId,
+    onAccept: rawId == null || status != 1
+        ? null
+        : () => controller.acceptPharmacyOrder(rawId, context: context),
+    isRejecting: controller.isCancellingOrder && controller.cancellingOrderId == rawId,
+    onReject: rawId == null || status != 1
+        ? null
+        : () => controller.cancelPharmacyOrder(rawId, context: context),
+    isPreparingAction: controller.isPreparingOrder && controller.preparingOrderId == rawId,
+    onPrepare: rawId == null || status != 2
+        ? null
+        : () => controller.preparePharmacyOrder(rawId, context: context),
+    isMarkingReadyAction: controller.isMarkingReadyOrder && controller.markingReadyOrderId == rawId,
+    onMarkAsReady: rawId == null || status != 3
+        ? null
+        : () => controller.markAsReadyPharmacyOrder(rawId, context: context),
+  );
+}
+
 void _refreshListOnReturn(Object? _) {
   if (Get.isRegistered<PharmacyHomeController>()) {
     Get.find<PharmacyHomeController>().refreshVisibleList();
