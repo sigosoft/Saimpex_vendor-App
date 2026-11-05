@@ -31,6 +31,15 @@ CleaningBooking _laundry({double? actual, bool pending = false}) => CleaningBook
 void main() {
   tearDown(() => ServiceKinds.current = ServiceKind.homeCleaning);
 
+  test('next step without next_status follows each service flow (V-B16)', () {
+    ServiceKinds.current = ServiceKind.laundry;
+    expect([1, 2, 3, 4, 9].map(CleaningStatus.fallbackNext).toList(), [2, 3, 4, 9, null]);
+    ServiceKinds.current = ServiceKind.carWash;
+    expect(CleaningStatus.fallbackNext(4), 9);
+    ServiceKinds.current = ServiceKind.homeCleaning;
+    expect([1, 2, 8, 3, 9].map(CleaningStatus.fallbackNext).toList(), [2, 8, 3, 9, null]);
+  });
+
   test('laundry and car wash have six tabs with Ready (status 4)', () {
     ServiceKinds.current = ServiceKind.laundry;
     expect(CleaningBookingTab.values.map((t) => t.statuses).toList(), [

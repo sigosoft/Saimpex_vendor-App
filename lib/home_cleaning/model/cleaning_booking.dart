@@ -17,14 +17,27 @@ class CleaningStatus {
   static const int completed = 9;
   static const int cancelled = 10;
 
-  /// Next status when the server does not send `next_status`.
-  static int? fallbackNext(int status) => switch (status) {
-        newBooking => accepted,
-        accepted => onTheWay,
-        onTheWay => inProgress,
-        inProgress => completed,
-        _ => null,
-      };
+  /// Laundry / car wash: Ready for Delivery / Ready for Pickup.
+  static const int ready = 4;
+
+  /// Next status when the server does not send `next_status`. Laundry and
+  /// car wash go 1 → 2 → 3 → 4 → 9; Ready had no next step, so "Mark as
+  /// Delivered" did nothing (test day V-B16).
+  static int? fallbackNext(int status) => ServiceKinds.isCleaning
+      ? switch (status) {
+          newBooking => accepted,
+          accepted => onTheWay,
+          onTheWay => inProgress,
+          inProgress => completed,
+          _ => null,
+        }
+      : switch (status) {
+          newBooking => accepted,
+          accepted => inProgress,
+          inProgress => ready,
+          ready => completed,
+          _ => null,
+        };
 }
 
 /// A filter chip on the bookings list. The chips depend on the service
