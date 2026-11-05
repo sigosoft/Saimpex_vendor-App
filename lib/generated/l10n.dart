@@ -2394,6 +2394,96 @@ class S {
     );
   }
 
+  /// `Delivery Partner Accepted`
+  String get deliveryPartnerAccepted {
+    return Intl.message(
+      'Delivery Partner Accepted',
+      name: 'deliveryPartnerAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The order will be picked up shortly`
+  String get deliveryPartnerAcceptedSub {
+    return Intl.message(
+      'The order will be picked up shortly',
+      name: 'deliveryPartnerAcceptedSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reached Restaurant`
+  String get reachedRestaurantTitle {
+    return Intl.message(
+      'Reached Restaurant',
+      name: 'reachedRestaurantTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The delivery partner has arrived at the restaurant`
+  String get reachedRestaurantSub {
+    return Intl.message(
+      'The delivery partner has arrived at the restaurant',
+      name: 'reachedRestaurantSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restaurant Acceptance Time`
+  String get durationAcceptanceTime {
+    return Intl.message(
+      'Restaurant Acceptance Time',
+      name: 'durationAcceptanceTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparation Duration`
+  String get durationPreparation {
+    return Intl.message(
+      'Preparation Duration',
+      name: 'durationPreparation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partner to Restaurant`
+  String get durationPartnerToRestaurant {
+    return Intl.message(
+      'Delivery Partner to Restaurant',
+      name: 'durationPartnerToRestaurant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pickup Wait Duration`
+  String get durationPickupWait {
+    return Intl.message(
+      'Pickup Wait Duration',
+      name: 'durationPickupWait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restaurant to Customer Duration`
+  String get durationToCustomer {
+    return Intl.message(
+      'Restaurant to Customer Duration',
+      name: 'durationToCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Restaurant Temporarily Closed`
   String get rejectReasonRestaurantClosed {
     return Intl.message(

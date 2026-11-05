@@ -1024,6 +1024,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "Livreurs SAIMPEX uniquement",
     ),
+    "deliveryPartnerAccepted": MessageLookupByLibrary.simpleMessage(
+      "Livreur a accepté",
+    ),
+    "deliveryPartnerAcceptedSub": MessageLookupByLibrary.simpleMessage(
+      "La commande sera bientôt récupérée",
+    ),
     "deliveryPartners": MessageLookupByLibrary.simpleMessage(
       "Partenaires de livraison",
     ),
@@ -1073,7 +1079,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "driverRequested": MessageLookupByLibrary.simpleMessage("Livreur demandé"),
     "dueInHoursMinutes": m19,
     "dueInMinutes": m20,
+    "durationAcceptanceTime": MessageLookupByLibrary.simpleMessage(
+      "Délai d’acceptation",
+    ),
     "durationLabel": MessageLookupByLibrary.simpleMessage("Durée"),
+    "durationPartnerToRestaurant": MessageLookupByLibrary.simpleMessage(
+      "Livreur jusqu’au restaurant",
+    ),
+    "durationPickupWait": MessageLookupByLibrary.simpleMessage(
+      "Attente au retrait",
+    ),
+    "durationPreparation": MessageLookupByLibrary.simpleMessage(
+      "Durée de préparation",
+    ),
+    "durationToCustomer": MessageLookupByLibrary.simpleMessage(
+      "Restaurant jusqu’au client",
+    ),
     "earnings": MessageLookupByLibrary.simpleMessage("Gains"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("Disponible"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("En attente"),
@@ -2480,6 +2501,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reachedRestaurant": MessageLookupByLibrary.simpleMessage(
       "ARRIVÉ AU RESTAURANT",
+    ),
+    "reachedRestaurantSub": MessageLookupByLibrary.simpleMessage(
+      "Le livreur est arrivé au restaurant",
+    ),
+    "reachedRestaurantTitle": MessageLookupByLibrary.simpleMessage(
+      "Arrivé au restaurant",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Prêt"),
     "reasonColonLabel": m51,

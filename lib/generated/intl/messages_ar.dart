@@ -915,6 +915,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "سائقو SAIMPEX فقط",
     ),
+    "deliveryPartnerAccepted": MessageLookupByLibrary.simpleMessage(
+      "قبل مندوب التوصيل",
+    ),
+    "deliveryPartnerAcceptedSub": MessageLookupByLibrary.simpleMessage(
+      "سيتم استلام الطلب قريبًا",
+    ),
     "deliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
     "deliveryStarted": MessageLookupByLibrary.simpleMessage("بدأ التسليم"),
     "description": MessageLookupByLibrary.simpleMessage("الوصف"),
@@ -954,7 +960,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "driverRequested": MessageLookupByLibrary.simpleMessage("تم طلب سائق"),
     "dueInHoursMinutes": m19,
     "dueInMinutes": m20,
+    "durationAcceptanceTime": MessageLookupByLibrary.simpleMessage(
+      "وقت قبول المطعم",
+    ),
     "durationLabel": MessageLookupByLibrary.simpleMessage("المدة"),
+    "durationPartnerToRestaurant": MessageLookupByLibrary.simpleMessage(
+      "من مندوب التوصيل إلى المطعم",
+    ),
+    "durationPickupWait": MessageLookupByLibrary.simpleMessage(
+      "مدة انتظار الاستلام",
+    ),
+    "durationPreparation": MessageLookupByLibrary.simpleMessage("مدة التحضير"),
+    "durationToCustomer": MessageLookupByLibrary.simpleMessage(
+      "من المطعم إلى العميل",
+    ),
     "earnings": MessageLookupByLibrary.simpleMessage("الأرباح"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("متاح"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
@@ -2227,6 +2246,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reachedRestaurant": MessageLookupByLibrary.simpleMessage(
       "تم الوصول إلى المطعم",
+    ),
+    "reachedRestaurantSub": MessageLookupByLibrary.simpleMessage(
+      "وصل مندوب التوصيل إلى المطعم",
+    ),
+    "reachedRestaurantTitle": MessageLookupByLibrary.simpleMessage(
+      "وصل إلى المطعم",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
     "reasonColonLabel": m51,

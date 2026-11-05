@@ -931,6 +931,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "SAIMPEX drivers only",
     ),
+    "deliveryPartnerAccepted": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partner Accepted",
+    ),
+    "deliveryPartnerAcceptedSub": MessageLookupByLibrary.simpleMessage(
+      "The order will be picked up shortly",
+    ),
     "deliveryPartners": MessageLookupByLibrary.simpleMessage(
       "Delivery Partners",
     ),
@@ -978,7 +984,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "driverRequested": MessageLookupByLibrary.simpleMessage("Driver requested"),
     "dueInHoursMinutes": m19,
     "dueInMinutes": m20,
+    "durationAcceptanceTime": MessageLookupByLibrary.simpleMessage(
+      "Restaurant Acceptance Time",
+    ),
     "durationLabel": MessageLookupByLibrary.simpleMessage("Duration"),
+    "durationPartnerToRestaurant": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partner to Restaurant",
+    ),
+    "durationPickupWait": MessageLookupByLibrary.simpleMessage(
+      "Pickup Wait Duration",
+    ),
+    "durationPreparation": MessageLookupByLibrary.simpleMessage(
+      "Preparation Duration",
+    ),
+    "durationToCustomer": MessageLookupByLibrary.simpleMessage(
+      "Restaurant to Customer Duration",
+    ),
     "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("Available"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("Pending"),
@@ -2249,6 +2270,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ratingReviews": MessageLookupByLibrary.simpleMessage("Rating & Reviews"),
     "reachedRestaurant": MessageLookupByLibrary.simpleMessage(
       "REACHED RESTAURANT",
+    ),
+    "reachedRestaurantSub": MessageLookupByLibrary.simpleMessage(
+      "The delivery partner has arrived at the restaurant",
+    ),
+    "reachedRestaurantTitle": MessageLookupByLibrary.simpleMessage(
+      "Reached Restaurant",
     ),
     "ready": MessageLookupByLibrary.simpleMessage("Ready"),
     "reasonColonLabel": m51,

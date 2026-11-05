@@ -51,29 +51,29 @@ class OrderDetailsController extends GetxController {
           final d = orderData!.orderDurations;
           durationBreakdownItems = [
             (
-              label: 'Restaurant acceptance time',
+              label: S.current.durationAcceptanceTime,
               value: formatDurationToMinutes(
                 d?.restaurantAcceptanceDuration?.toString(),
               ),
             ),
             (
-              label: 'Prepare food Duration',
+              label: S.current.durationPreparation,
               value: formatDurationToMinutes(
                 d?.preparationDuration?.toString(),
               ),
             ),
             (
-              label: 'Delivery/Pickup to Restaurant',
+              label: S.current.durationPartnerToRestaurant,
               value: formatDurationToMinutes(
                 d?.deliveryPartnerToRestaurantDuration?.toString(),
               ),
             ),
             (
-              label: 'Pickup/Wait Duration',
+              label: S.current.durationPickupWait,
               value: formatDurationToMinutes(d?.pickupWaitDuration?.toString()),
             ),
             (
-              label: 'Restaurant to Customer Duration',
+              label: S.current.durationToCustomer,
               value: formatDurationToMinutes(
                 d?.restaurantToCustomerDuration?.toString(),
               ),
@@ -118,29 +118,29 @@ class OrderDetailsController extends GetxController {
           final d = orderData!.orderDurations;
           durationBreakdownItems = [
             (
-              label: 'Restaurant acceptance time',
+              label: S.current.durationAcceptanceTime,
               value: formatDurationToMinutes(
                 d?.restaurantAcceptanceDuration?.toString(),
               ),
             ),
             (
-              label: 'Prepare food Duration',
+              label: S.current.durationPreparation,
               value: formatDurationToMinutes(
                 d?.preparationDuration?.toString(),
               ),
             ),
             (
-              label: 'Delivery/Pickup to Restaurant',
+              label: S.current.durationPartnerToRestaurant,
               value: formatDurationToMinutes(
                 d?.deliveryPartnerToRestaurantDuration?.toString(),
               ),
             ),
             (
-              label: 'Pickup/Wait Duration',
+              label: S.current.durationPickupWait,
               value: formatDurationToMinutes(d?.pickupWaitDuration?.toString()),
             ),
             (
-              label: 'Restaurant to Customer Duration',
+              label: S.current.durationToCustomer,
               value: formatDurationToMinutes(
                 d?.restaurantToCustomerDuration?.toString(),
               ),
