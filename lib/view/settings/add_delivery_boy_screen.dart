@@ -607,7 +607,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
       if (isSuccess) {
         final message =
             resData['message']?.toString() ??
-            S.of(context).rsDeliveryBoyDeleted;
+            S.current.rsDeliveryBoyDeleted;
         if (mounted) {
           showToast(context, message);
           Navigator.of(context).pop(true);
@@ -615,8 +615,8 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
       } else {
         final message = resData is Map
             ? resData['message']?.toString() ??
-                  S.of(context).rsFailedDeleteDeliveryBoy
-            : S.of(context).rsFailedDeleteDeliveryBoy;
+                  S.current.rsFailedDeleteDeliveryBoy
+            : S.current.rsFailedDeleteDeliveryBoy;
         if (mounted) {
           showToast(context, message);
         }
