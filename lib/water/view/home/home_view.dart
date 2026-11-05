@@ -18,6 +18,7 @@ import 'package:saimpex_vendor/water/view/subscription_calendar/subscription_cal
 import 'package:saimpex_vendor/water/view/subscription_details/subscription_details_view.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/bidi_text.dart';
+import 'package:saimpex_vendor/view/home/widgets/vendor_membership_card.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -129,6 +130,20 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Figma Water "Home": membership card under the header.
+                if (controller.membershipName != null) ...[
+                  VendorMembershipCard(
+                    horizontalPadding: 0,
+                    width: double.infinity,
+                    height: 56,
+                    membershipName: controller.membershipName!,
+                    expiryText: S.of(context).expiresInDays(
+                      (controller.membershipDaysLeft ?? 0).toString(),
+                    ),
+                    isWarning: (controller.membershipDaysLeft ?? 0) <= 10,
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 _StoreStatusCard(
                   isOpen: controller.isStoreOpen,
                   timings: controller.storeTimings,
