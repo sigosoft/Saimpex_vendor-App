@@ -125,14 +125,21 @@ class WaterHomeController extends GetxController {
     return count.toString();
   }
 
+  /// Revenue of delivered orders. GET home sends it in
+  /// `screen.kpis.revenue` / `screen.at_a_glance.revenue` (backend
+  /// VendorScreenData: sum of `total` for status 9); `summary` has only
+  /// counts, so the tile always read 0 (retest W-13).
   String get revenueValue {
+    final kpis = rawScreen?['kpis'];
+    final glance = rawScreen?['at_a_glance'];
     final v =
         rawSummary?['revenue'] ??
-        rawSummary?['revenue_total'] ??
-        rawSummary?['total_revenue'] ??
+        (kpis is Map ? kpis['revenue'] : null) ??
+        (glance is Map ? glance['revenue'] : null) ??
         rawScreen?['revenue'];
-    if (v != null) return v.toString();
-    return '0';
+    final n = num.tryParse(v?.toString() ?? '');
+    if (n == null) return '0';
+    return n == n.roundToDouble() ? n.round().toString() : n.toStringAsFixed(2);
   }
 
   String get storeTimings {
