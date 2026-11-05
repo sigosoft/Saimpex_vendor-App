@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/delivery_boys_model.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -316,7 +317,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: colorPrimary),
                 title: Text(
-                  'Take Photo',
+                  S.of(context).waterTakeAPhoto,
                   style: appFont('Rubik', fontWeight: FontWeight.w500),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
@@ -324,7 +325,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
               ListTile(
                 leading: const Icon(Icons.photo_library, color: colorPrimary),
                 title: Text(
-                  'Choose from Gallery',
+                  S.of(context).rsChooseFromGallery,
                   style: appFont('Rubik', fontWeight: FontWeight.w500),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
@@ -481,7 +482,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         backgroundColor: Colors.white,
         title: Text(
-          'Delete Delivery Boy',
+          S.of(context).rsDeleteDeliveryBoy,
           style: appFont('Rubik', 
             fontWeight: FontWeight.w700,
             fontSize: 18,
@@ -490,8 +491,10 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         ),
         content: Text(
           _nameController.text.trim().isNotEmpty
-              ? 'Are you sure you want to delete "${_nameController.text.trim()}"?'
-              : 'Are you sure you want to delete this delivery boy?',
+              ? S.of(context).rsConfirmDeleteDeliveryBoyNamed(
+                  _nameController.text.trim(),
+                )
+              : S.of(context).rsConfirmDeleteDeliveryBoy,
           style: appFont('Rubik', 
             fontSize: 14,
             color: const Color(0xFF6B7280),
@@ -501,7 +504,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
-              'Cancel',
+              S.of(context).cancel,
               style: appFont('Rubik', 
                 color: const Color(0xFF6B7280),
                 fontWeight: FontWeight.w600,
@@ -511,7 +514,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
-              'Delete',
+              S.of(context).delete,
               style: appFont('Rubik', 
                 color: const Color(0xFFEF4444),
                 fontWeight: FontWeight.w600,
@@ -604,15 +607,16 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
       if (isSuccess) {
         final message =
             resData['message']?.toString() ??
-            'Delivery boy deleted successfully';
+            S.current.rsDeliveryBoyDeleted;
         if (mounted) {
           showToast(context, message);
           Navigator.of(context).pop(true);
         }
       } else {
         final message = resData is Map
-            ? resData['message']?.toString() ?? 'Failed to delete delivery boy'
-            : 'Failed to delete delivery boy';
+            ? resData['message']?.toString() ??
+                  S.current.rsFailedDeleteDeliveryBoy
+            : S.current.rsFailedDeleteDeliveryBoy;
         if (mounted) {
           showToast(context, message);
         }
@@ -671,73 +675,73 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
     final licenseNumber = _licenseController.text.trim();
 
     if (name.isEmpty) {
-      showToast(context, 'Please enter name');
+      showToast(context, S.of(context).rsEnterName);
       return;
     }
     if (name.length < 3) {
-      showToast(context, 'Name must be at least 3 characters');
+      showToast(context, S.of(context).rsNameMin3);
       return;
     }
     if (countryCode.isEmpty) {
-      showToast(context, 'Please enter country code');
+      showToast(context, S.of(context).rsEnterCountryCode);
       return;
     }
     if (mobile.isEmpty) {
-      showToast(context, 'Please enter mobile number');
+      showToast(context, S.of(context).rsEnterMobile);
       return;
     }
     if (email.isEmpty) {
-      showToast(context, 'Please enter email');
+      showToast(context, S.of(context).rsEnterEmail);
       return;
     }
     if (_selectedGender == null) {
-      showToast(context, 'Please select gender');
+      showToast(context, S.of(context).rsSelectGender);
       return;
     }
     if (address.isEmpty) {
-      showToast(context, 'Please enter address');
+      showToast(context, S.of(context).rsEnterAddress);
       return;
     }
     if (address.length < 3) {
-      showToast(context, 'Address must be at least 3 characters');
+      showToast(context, S.of(context).rsAddressMin3);
       return;
     }
     if (!_isEditing && _imageFile == null) {
-      showToast(context, 'Please select profile image');
+      showToast(context, S.of(context).rsSelectProfileImage);
       return;
     }
     if (!_isEditing && _idProofFile == null) {
-      showToast(context, 'Please select ID proof');
+      showToast(context, S.of(context).rsSelectIdProof);
       return;
     }
     if (monthlySalary.isEmpty) {
-      showToast(context, 'Please enter monthly salary');
+      showToast(context, S.of(context).rsEnterMonthlySalary);
       return;
     }
     if (bankName.isEmpty) {
-      showToast(context, 'Please enter bank name');
+      showToast(context, S.of(context).rsEnterBankName);
       return;
     }
     if (accountHolderName.isEmpty) {
-      showToast(context, 'Please enter account holder name');
+      showToast(context, S.of(context).rsEnterAccountHolderName);
       return;
     }
     if (accountNumber.isEmpty) {
-      showToast(context, 'Please enter account number');
+      showToast(context, S.of(context).rsEnterAccountNumber);
       return;
     }
 
     final cleanAccountNumber = accountNumber.trim().toUpperCase().replaceAll(' ', '');
 
     if (ifscCode.isEmpty) {
-      showToast(context, 'Please enter IFSC / SWIFT code');
+      showToast(context, S.of(context).rsEnterIfscSwift);
       return;
     }
 
     final cleanIfsc = ifscCode.trim().toUpperCase().replaceAll(' ', '');
 
     if (country.isEmpty) {
-      showToast(context, 'Please enter country');
+      showToast(context, S.of(context).rsEnterCountry);
       return;
     }
 
@@ -846,8 +850,8 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         HapticFeedback.lightImpact();
         if (mounted) {
           final defaultMsg = _isEditing
-              ? 'Delivery boy updated successfully'
-              : 'Delivery boy added successfully';
+              ? S.of(context).rsDeliveryBoyUpdated
+              : S.of(context).rsDeliveryBoyAdded;
           final message = resData['message']?.toString() ?? defaultMsg;
           try {
             showToast(context, message);
@@ -857,8 +861,8 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
       } else {
         if (mounted) {
           final defaultMsg = _isEditing
-              ? 'Failed to update delivery boy'
-              : 'Failed to add delivery boy';
+              ? S.of(context).rsFailedUpdateDeliveryBoy
+              : S.of(context).rsFailedAddDeliveryBoy;
           final message = resData is Map
               ? resData['message']?.toString() ?? defaultMsg
               : defaultMsg;
@@ -921,7 +925,9 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              _isEditing ? 'Update Delivery Boy' : 'Add Delivery Boy',
+              _isEditing
+                  ? S.of(context).rsUpdateDeliveryBoy
+                  : S.of(context).waterAddDeliveryBoy,
               style: appFont('Rubik', 
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -930,7 +936,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
             ),
             if (_isEditing && _addedOnTime != null && _addedOnTime!.isNotEmpty)
               Text(
-                'Added on: $_addedOnTime',
+                S.of(context).rsAddedOn(_addedOnTime!),
                 style: appFont('Rubik', 
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
@@ -965,7 +971,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Delete',
+                        S.of(context).delete,
                         style: appFont('Rubik', 
                           color: const Color(0xFFEF4444),
                           fontWeight: FontWeight.w500,
@@ -996,12 +1002,15 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Section: Personal Information
-                    _buildSectionHeader('Personal Information'),
+                    _buildSectionHeader(S.of(context).rsPersonalInformation),
                     const SizedBox(height: 14),
 
-                    _buildLabel('Delivery Boy Name *'),
+                    _buildLabel('${S.of(context).rsDeliveryBoyName} *'),
                     const SizedBox(height: 8),
-                    _buildTextField(_nameController, 'Enter delivery boy name'),
+                    _buildTextField(
+                      _nameController,
+                      S.of(context).rsEnterDeliveryBoyNameHint,
+                    ),
                     const SizedBox(height: 16),
 
                     Row(
@@ -1012,11 +1021,11 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildLabel('Code *'),
+                              _buildLabel('${S.of(context).rsCode} *'),
                               const SizedBox(height: 8),
                               _buildTextField(
                                 _countryCodeController,
-                                'Code',
+                                S.of(context).rsCode,
                                 keyboardType: TextInputType.phone,
                               ),
                             ],
@@ -1027,11 +1036,11 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildLabel('Mobile Number *'),
+                              _buildLabel('${S.of(context).rsMobileNumber} *'),
                               const SizedBox(height: 8),
                               _buildTextField(
                                 _mobileController,
-                                'Enter mobile number',
+                                S.of(context).rsEnterMobileHint,
                                 keyboardType: TextInputType.phone,
                               ),
                             ],
@@ -1041,43 +1050,46 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Email Address *'),
+                    _buildLabel('${S.of(context).rsEmailAddress} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       _emailController,
-                      'Enter email address',
+                      S.of(context).rsEnterEmailHint,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Gender *'),
+                    _buildLabel('${S.of(context).rsGender} *'),
                     const SizedBox(height: 8),
                     _buildGenderDropdown(),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Address *'),
+                    _buildLabel('${S.of(context).address} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       _addressController,
-                      'Enter address',
+                      S.of(context).rsEnterAddressHint,
                       maxLines: 2,
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('License Number (Optional)'),
+                    _buildLabel(S.of(context).rsLicenseNumberOptional),
                     const SizedBox(height: 8),
-                    _buildTextField(_licenseController, 'Enter license number'),
+                    _buildTextField(
+                      _licenseController,
+                      S.of(context).rsEnterLicenseHint,
+                    ),
                     const SizedBox(height: 24),
 
                     // Section: Documents
-                    _buildSectionHeader('Documents'),
+                    _buildSectionHeader(S.of(context).rsDocuments),
                     const SizedBox(height: 14),
 
                     Row(
                       children: [
                         Expanded(
                           child: _buildUploadCard(
-                            label: 'Profile Photo *',
+                            label: '${S.of(context).rsProfilePhoto} *',
                             file: _imageFile,
                             existingUrl: _existingImageUrl,
                             onTap: () => _pickImage(isProfile: true),
@@ -1086,7 +1098,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                         const SizedBox(width: 14),
                         Expanded(
                           child: _buildUploadCard(
-                            label: 'ID Proof *',
+                            label: '${S.of(context).rsIdProof} *',
                             file: _idProofFile,
                             existingUrl: _existingIdProofUrl,
                             onTap: () => _pickImage(isProfile: false),
@@ -1097,53 +1109,59 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                     const SizedBox(height: 24),
 
                     // Section: Employment & Bank Information
-                    _buildSectionHeader('Employment & Bank Information'),
+                    _buildSectionHeader(S.of(context).rsEmploymentBankInfo),
                     const SizedBox(height: 14),
 
-                    _buildLabel('Monthly Salary *'),
+                    _buildLabel('${S.of(context).rsMonthlySalary} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       _salaryController,
-                      'Enter monthly salary',
+                      S.of(context).rsEnterSalaryHint,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Country *'),
-                    const SizedBox(height: 8),
-                    _buildTextField(_countryController, 'Enter country'),
-                    const SizedBox(height: 16),
-
-                    _buildLabel('Bank Name *'),
-                    const SizedBox(height: 8),
-                    _buildTextField(_bankNameController, 'Enter bank name'),
-                    const SizedBox(height: 16),
-
-                    _buildLabel('Account Holder Name *'),
+                    _buildLabel('${S.of(context).rsCountry} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
-                      _accountHolderController,
-                      'Enter account holder name',
+                      _countryController,
+                      S.of(context).rsEnterCountryHint,
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('Account Number *'),
+                    _buildLabel('${S.of(context).bankName} *'),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                      _bankNameController,
+                      S.of(context).rsEnterBankNameHint,
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildLabel('${S.of(context).rsAccountHolderName} *'),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                      _accountHolderController,
+                      S.of(context).rsEnterHolderHint,
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildLabel('${S.of(context).accountNumber} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       _accountNumberController,
-                      'Enter account number / IBAN',
+                      S.of(context).rsEnterAccountIbanHint,
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.characters,
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('IFSC / SWIFT Code *'),
+                    _buildLabel('${S.of(context).rsIfscSwiftCode} *'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       _ifscController,
-                      'Enter SWIFT/BIC code (8 or 11 characters)',
+                      S.of(context).rsEnterSwiftHint,
                       textCapitalization: TextCapitalization.characters,
                     ),
                     const SizedBox(height: 40),
@@ -1174,7 +1192,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                     ),
                   ),
                   child: Text(
-                    'Cancel',
+                    S.of(context).cancel,
                     style: appFont('Rubik', 
                       color: const Color(0xFF374151),
                       fontSize: 15,
@@ -1209,7 +1227,9 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                           ),
                         )
                       : Text(
-                          _isEditing ? 'Update' : 'Add Delivery Boy',
+                          _isEditing
+                              ? S.of(context).update
+                              : S.of(context).waterAddDeliveryBoy,
                           style: appFont('Rubik', 
                             color: Colors.white,
                             fontSize: 15,
@@ -1301,7 +1321,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         child: DropdownButton<String>(
           value: _selectedGender,
           hint: Text(
-            'Select Gender',
+            S.of(context).rsSelectGenderHint,
             style: appFont('Rubik', 
               fontSize: 14,
               color: const Color(0xFF9CA3AF),
@@ -1313,7 +1333,9 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                 (item) => DropdownMenuItem<String>(
                   value: item,
                   child: Text(
-                    item,
+                    item == 'Female'
+                        ? S.of(context).rsFemale
+                        : S.of(context).rsMale,
                     style: appFont('Rubik', 
                       fontSize: 14,
                       color: const Color(0xFF1F2937),
@@ -1371,7 +1393,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       color: Colors.black.withOpacity(0.5),
                       child: Text(
-                        'Change',
+                        S.of(context).change,
                         textAlign: TextAlign.center,
                         style: appFont('Rubik', 
                           color: Colors.white,
@@ -1407,7 +1429,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       color: Colors.black.withOpacity(0.5),
                       child: Text(
-                        'Change',
+                        S.of(context).change,
                         textAlign: TextAlign.center,
                         style: appFont('Rubik', 
                           color: Colors.white,
@@ -1447,7 +1469,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'PNG, JPG up to 4MB',
+                    S.of(context).rsUploadLimitHint,
                     style: appFont('Rubik', 
                       fontSize: 10,
                       color: const Color(0xFF9CA3AF),

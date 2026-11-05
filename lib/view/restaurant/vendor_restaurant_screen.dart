@@ -743,7 +743,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       onToTap: () => _selectDate(context, false),
       onMarkLeave: () {
         if (_fromDate == null || _toDate == null) {
-          showToast(context, "Please select both dates");
+          showToast(context, S.of(context).rsSelectBothDates);
           return;
         }
         Get.find<ProfileController>()
@@ -1792,7 +1792,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                 elevation: 0,
               ),
               child: Text(
-                "Import",
+                S.of(context).rsImport,
                 style: appFont('Rubik', 
                   color: Colors.white,
                   fontSize: 13,

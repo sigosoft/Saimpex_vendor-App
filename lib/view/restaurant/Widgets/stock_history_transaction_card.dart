@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 
 /// Transaction card for stock history.
 class StockHistoryTransactionCard extends StatelessWidget {
@@ -58,7 +59,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'STOCK ID: #$stockId',
+                      S.of(context).rsStockId(stockId),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: appFont('Rubik', 
@@ -90,7 +91,9 @@ class StockHistoryTransactionCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            isStockAdded ? 'Stock Added' : 'Stock Removed',
+                            isStockAdded
+                                ? S.of(context).waterStockAdded
+                                : S.of(context).waterStockRemoved,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: appFont('Rubik', 
@@ -125,7 +128,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                     if (byUser.trim().isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'by ${byUser.trim()}',
+                        S.of(context).rsByUser(byUser.trim()),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.end,
@@ -151,7 +154,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'QUANTITY',
+                    S.of(context).quantity.toUpperCase(),
                     style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -174,7 +177,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'REMAINING',
+                    S.of(context).rsRemaining,
                     style: appFont('Rubik', 
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
