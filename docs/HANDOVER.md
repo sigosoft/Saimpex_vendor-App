@@ -61,7 +61,7 @@ One app serves all vendor types. After login the app opens a section based on th
 | 10 | Gas | Water design on the `water*` endpoints (backend #84, on dev). One-time orders + refills: subscription tabs, stock controls and the returnable toggle are hidden for gas; orders show "N empty cylinders to collect" (`feature/gas-on-water`) | `lib/water/` (`WaterApi.isGas`) |
 | 9 | Home cleaning | Home Cleaning on the `service*` endpoints (V6, V15, V16) | `lib/home_cleaning/` |
 | 7 | Laundry | Service section shared with home cleaning (V14, §3.5b); retested on a device 4 Nov | `service*` |
-| 8 | Car wash | Service section shared with home cleaning (V14, §3.5b); not retested since 2 Nov | `service*` |
+| 8 | Car wash | Service section shared with home cleaning (V14, §3.5b); retested on a device 5 Nov | `service*` |
 
 Mapping code: `lib/utils/vendor_app_type.dart` (`VendorAppTypeX.fromVendorType`). Navigation: `lib/utils/vendor_app_router.dart`.
 
@@ -301,7 +301,7 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
 | Laundry (7) | **Done** (V14) | Service section; full booking flow retested on a device 4 Nov (P15). |
-| Car wash (8) | **Done** (V14) | Service section; not retested on a device since 2 Nov. |
+| Car wash (8) | **Done** (V14) | Service section; full booking flow retested on a device 5 Nov (P15). |
 | Home cleaning (9) | **Done** | Bookings, services, chat, cleaners and account on `service*` (V6, V15, V16, V18b). |
 
 ### 4.2 By feature, Grocery / Restaurant / Local store section
@@ -517,6 +517,7 @@ AC: print button on pharmacy and water order details; works with a generic 58/80
   - Unread count with deleted chats (to confirm).
   - Prescription detail fields.
   - Home opening hours.
+- 5 Nov: car wash retested on a device (full flow) and its location labels translated (`fix/carwash-place-label`). Pharmacy Profile translated. Water chat badge and home cleaning header confirmed. Unused sample screens removed (`chore/remove-unused-sample-screens`).
 - Needs a decision: V8 (Delivered with an unpaid balance), and whether to keep the login type list.
 - AC: each branch passes on a device in Arabic and French; `flutter analyze --no-pub` has no new errors (0 errors on the combined test branch `test/retest-2026-11-04b`).
 
