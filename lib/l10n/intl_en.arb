@@ -3428,5 +3428,13 @@
   "vendorTypeLaundry": "Laundry",
   "@vendorTypeLaundry": {},
   "vendorTypeCarWash": "Car wash",
-  "@vendorTypeCarWash": {}
+  "@vendorTypeCarWash": {},
+  "pharmacyProfileTitle": "Pharmacy Profile",
+  "@pharmacyProfileTitle": {},
+  "pharmacyDetailsTitle": "PHARMACY DETAILS",
+  "@pharmacyDetailsTitle": {},
+  "vendorIdLabel": "ID",
+  "@vendorIdLabel": {},
+  "tinNifNumber": "TIN/NIF Number",
+  "@tinNifNumber": {}
 }

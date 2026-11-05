@@ -3350,5 +3350,9 @@
   "vendorTypeLocalStore": "متجر محلي",
   "vendorTypeGas": "غاز",
   "vendorTypeLaundry": "مغسلة",
-  "vendorTypeCarWash": "غسيل السيارات"
+  "vendorTypeCarWash": "غسيل السيارات",
+  "pharmacyProfileTitle": "ملف الصيدلية",
+  "pharmacyDetailsTitle": "تفاصيل الصيدلية",
+  "vendorIdLabel": "المعرّف",
+  "tinNifNumber": "رقم التعريف الضريبي (NIF)"
 }

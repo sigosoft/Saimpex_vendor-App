@@ -3351,5 +3351,9 @@
   "vendorTypeLocalStore": "Commerce de proximité",
   "vendorTypeGas": "Gaz",
   "vendorTypeLaundry": "Blanchisserie",
-  "vendorTypeCarWash": "Lavage auto"
+  "vendorTypeCarWash": "Lavage auto",
+  "pharmacyProfileTitle": "Profil de la pharmacie",
+  "pharmacyDetailsTitle": "DÉTAILS DE LA PHARMACIE",
+  "vendorIdLabel": "ID",
+  "tinNifNumber": "Numéro TIN/NIF"
 }
