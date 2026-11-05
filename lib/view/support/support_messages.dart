@@ -19,6 +19,11 @@ const Color _muted = Color(0xff6B7280);
 class SupportMessages extends StatelessWidget {
   const SupportMessages({super.key});
 
+  static SupportMessagesController _controller() =>
+      Get.isRegistered<SupportMessagesController>()
+          ? Get.find<SupportMessagesController>()
+          : Get.put(SupportMessagesController());
+
   TextStyle _style(double size, FontWeight weight, Color color) =>
       appFont('Rubik', fontSize: size, fontWeight: weight, color: color);
 
@@ -32,13 +37,11 @@ class SupportMessages extends StatelessWidget {
         backgroundColor: _pageBg,
         body: SafeArea(
           child: GetBuilder<SupportMessagesController>(
-            // Register before initState runs: GetBuilder calls initState
-            // before it registers `init`, so a plain constructor here made
-            // Get.find throw (grey screen in release builds).
-            init: Get.isRegistered<SupportMessagesController>()
-                ? Get.find<SupportMessagesController>()
-                : Get.put(SupportMessagesController()),
-            initState: (_) => Get.find<SupportMessagesController>().loadThreads(),
+            // GetBuilder runs this callback before it registers a controller,
+            // and Get.find here threw "not found" (grey screen in release,
+            // still on 3 Nov even with Get.put in `init`). Register it in the
+            // callback itself; GetBuilder then finds it.
+            initState: (_) => _controller().loadThreads(),
             builder: (c) => Column(
               children: [
                 Padding(
