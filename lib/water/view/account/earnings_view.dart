@@ -334,7 +334,7 @@ class _EarningsViewState extends State<EarningsView> {
 
         final rawAmount = payout['amount'] ?? payout['payout_amount'];
         final amountStr = '${_formatVal(rawAmount)} MRU';
-        final statusStr = payout['status']?.toString() ?? 'CREDITED';
+        final statusStr = payout['status']?.toString() ?? '';
 
         parsedPayouts.add(
           _Payout(
