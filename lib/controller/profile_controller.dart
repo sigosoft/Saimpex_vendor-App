@@ -1055,52 +1055,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> getMyPoints(BuildContext context) async {
-    try {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (context.mounted) {
-        Get.back();
-      }
-      points = 100.0;
-      redeemableAmount = 10.0;
-      update();
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
-      debugPrint("getMyPoints Mock Error: $error");
-    }
-  }
-
-  Future<void> getNotificationStatus(BuildContext context) async {
-    try {
-      notificationEnabled = true;
-      update();
-    } catch (error) {
-      debugPrint("getNotificationStatus Mock Error: $error");
-    }
-  }
-
-  Future<void> updateNotificationStatus(BuildContext context) async {
-    try {
-      showLoadingDialog(context);
-      await Future.delayed(const Duration(seconds: 1));
-      if (context.mounted) {
-        Get.back();
-        showToast(context, "Notification status updated successfully (Mock)");
-      }
-      update();
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
-      debugPrint("updateNotificationStatus Mock Error: $error");
-    }
-  }
-
   Future<void> getAllCategories({int? categoryId}) async {
     debugPrint(
       "[ProfileController] getAllCategories:start prevCount=${restaurantCategories.length} selectedCategoryId=$selectedRestaurantCategoryId",
@@ -1808,7 +1762,7 @@ class ProfileController extends GetxController {
         Get.back();
         showToast(context, error.toString());
       }
-      debugPrint("getMyPoints Mock Error: $error");
+      debugPrint("updateWorkingHours error: $error");
     }
   }
 
