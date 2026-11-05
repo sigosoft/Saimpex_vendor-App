@@ -2246,6 +2246,8 @@
   "waterVoiceMessage": "رسالة صوتية",
   "@waterVoiceMessage": {},
   "waterWaterSupplyIssue": "مشكلة في إمدادات المياه",
+  "waterCancelReason": "السبب: {reason}",
+  "@waterCancelReason": {"placeholders": {"reason": {"type": "String"}}},
   "@waterWaterSupplyIssue": {},
   "waterWeek": "الأسبوع",
   "@waterWeek": {},
