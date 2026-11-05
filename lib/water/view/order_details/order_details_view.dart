@@ -58,12 +58,15 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     if (mounted) await _fetchOrderDetail();
   }
 
-  Future<void> _advance(HomeOrderStatus status) async {
+  Future<void> _advance(HomeOrderStatus status, {bool isDelivery = true}) async {
     if (_apiOrderId == null) return;
     if (status == HomeOrderStatus.accepted) {
       await _home.prepareWaterOrder(_apiOrderId, context: context);
     } else if (status == HomeOrderStatus.preparing) {
       await _home.markAsReadyWaterOrder(_apiOrderId, context: context);
+    } else if (status == HomeOrderStatus.ready && !isDelivery) {
+      // W-03: "Mark as Picked Up" had no handler here either.
+      await _home.markWaterSelfPickupCompleted(_apiOrderId, context: context);
     } else {
       return;
     }
@@ -731,7 +734,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           isDelivery: isDelivery,
           onReject: _reject,
           onAccept: _accept,
-          onPrepare: () => _advance(currentStatus),
+          onPrepare: () => _advance(currentStatus, isDelivery: isDelivery),
         ),
       ],
     );

@@ -7871,6 +7871,26 @@ class S {
     );
   }
 
+  /// `Order handed over to the customer`
+  String get waterOrderPickedUp {
+    return Intl.message(
+      'Order handed over to the customer',
+      name: 'waterOrderPickedUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not mark the order as picked up`
+  String get waterFailedToMarkPickedUp {
+    return Intl.message(
+      'Could not mark the order as picked up',
+      name: 'waterFailedToMarkPickedUp',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Order moved to preparing successfully`
   String get waterOrderMovedToPreparing {
     return Intl.message(
