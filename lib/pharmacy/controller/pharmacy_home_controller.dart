@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' hide FormData;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_pending_orders_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
@@ -1378,23 +1379,10 @@ class PharmacyHomeController extends GetxController {
                 dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      String? message;
-      if (dataMap != null && dataMap['message'] != null) {
-        final m = dataMap['message'];
-        if (m is Map) {
-          message = _serverMessage(m);
-          if (message == null || message.isEmpty) {
-            message = m.values.first?.toString();
-          }
-        } else if (m is List && m.isNotEmpty) {
-          message = m.first.toString();
-        } else {
-          message = m.toString();
-        }
-      }
+      String? message = _serverMessage(dataMap?['message']);
       message ??= (isSuccess
-          ? 'Prescription marked for review successfully'
-          : 'Failed to review prescription');
+          ? S.current.pharmacyMsgUnderReview
+          : S.current.pharmacyMsgReviewFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1552,23 +1540,10 @@ class PharmacyHomeController extends GetxController {
                 dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      String? message;
-      if (dataMap != null && dataMap['message'] != null) {
-        final m = dataMap['message'];
-        if (m is Map) {
-          message = _serverMessage(m);
-          if (message == null || message.isEmpty) {
-            message = m.values.first?.toString();
-          }
-        } else if (m is List && m.isNotEmpty) {
-          message = m.first.toString();
-        } else {
-          message = m.toString();
-        }
-      }
+      String? message = _serverMessage(dataMap?['message']);
       message ??= (isSuccess
-          ? 'Prescription marked as reviewed successfully'
-          : 'Failed to mark prescription as reviewed');
+          ? S.current.pharmacyMsgReviewed
+          : S.current.pharmacyMsgReviewedFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1727,23 +1702,10 @@ class PharmacyHomeController extends GetxController {
                 dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      String? message;
-      if (dataMap != null && dataMap['message'] != null) {
-        final m = dataMap['message'];
-        if (m is Map) {
-          message = _serverMessage(m);
-          if (message == null || message.isEmpty) {
-            message = m.values.first?.toString();
-          }
-        } else if (m is List && m.isNotEmpty) {
-          message = m.first.toString();
-        } else {
-          message = m.toString();
-        }
-      }
+      String? message = _serverMessage(dataMap?['message']);
       message ??= (isSuccess
-          ? 'Prescription rejected successfully'
-          : 'Failed to reject prescription');
+          ? S.current.pharmacyMsgRejected
+          : S.current.pharmacyMsgRejectFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -1926,23 +1888,10 @@ class PharmacyHomeController extends GetxController {
                 dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      String? message;
-      if (dataMap != null && dataMap['message'] != null) {
-        final m = dataMap['message'];
-        if (m is Map) {
-          message = _serverMessage(m);
-          if (message == null || message.isEmpty) {
-            message = m.values.first?.toString();
-          }
-        } else if (m is List && m.isNotEmpty) {
-          message = m.first.toString();
-        } else {
-          message = m.toString();
-        }
-      }
+      String? message = _serverMessage(dataMap?['message']);
       message ??= (isSuccess
-          ? 'Quotation created successfully'
-          : 'Failed to create quotation');
+          ? S.current.pharmacyMsgQuoteSent
+          : S.current.pharmacyMsgQuoteFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -2104,8 +2053,8 @@ class PharmacyHomeController extends GetxController {
       final message =
           _serverMessage(dataMap?['message']) ??
           (isSuccess
-              ? 'Order accepted successfully'
-              : 'Failed to accept order');
+              ? S.current.pharmacyMsgOrderAccepted
+              : S.current.pharmacyMsgAcceptFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -2268,27 +2217,14 @@ class PharmacyHomeController extends GetxController {
                 dataMap['status'].toString() == 'true')
           : (response.statusCode == 200);
 
-      String? message;
-      if (dataMap != null && dataMap['message'] != null) {
-        final m = dataMap['message'];
-        if (m is Map) {
-          message = _serverMessage(m);
-          if (message == null || message.isEmpty) {
-            message = m.values.first?.toString();
-          }
-        } else if (m is List && m.isNotEmpty) {
-          message = m.first.toString();
-        } else {
-          message = m.toString();
-        }
-      }
+      String? message = _serverMessage(dataMap?['message']);
       message ??= (isSuccess
           ? (isPrescription || prescriptionId != null
-                ? 'Prescription cancelled successfully'
-                : 'Order cancelled successfully')
+                ? S.current.pharmacyMsgPrescriptionCancelled
+                : S.current.pharmacyMsgOrderCancelled)
           : (isPrescription || prescriptionId != null
-                ? 'Failed to cancel prescription'
-                : 'Failed to cancel order'));
+                ? S.current.pharmacyMsgCancelPrescriptionFailed
+                : S.current.pharmacyMsgCancelOrderFailed));
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -2451,7 +2387,7 @@ class PharmacyHomeController extends GetxController {
 
       final message =
           _serverMessage(dataMap?['message']) ??
-          (isSuccess ? 'Order preparation started' : 'Failed to prepare order');
+          (isSuccess ? S.current.pharmacyMsgPreparing : S.current.pharmacyMsgPrepareFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -2611,8 +2547,8 @@ class PharmacyHomeController extends GetxController {
       final message =
           _serverMessage(dataMap?['message']) ??
           (isSuccess
-              ? 'Order marked as ready'
-              : 'Failed to mark order as ready');
+              ? S.current.pharmacyMsgReady
+              : S.current.pharmacyMsgReadyFailed);
 
       if (context != null && context.mounted) {
         showToast(context, message);
@@ -2755,11 +2691,12 @@ class PharmacyHomeController extends GetxController {
       return (s == null || s.isEmpty) ? null : s;
     }
 
-    if (m is Map) {
-      return pick(m['message_${LocalizationService.currentLanguageCode}']) ??
-          pick(m['message_en']);
-    }
-    return pick(m);
+    // Server text only in the app language: in Arabic or French, English
+    // from the server falls back to the app's own text (as V17 did for
+    // restaurant / grocery).
+    final lang = LocalizationService.currentLanguageCode;
+    if (m is Map) return pick(m['message_$lang']);
+    return lang == 'en' ? pick(m) : null;
   }
 
   /// Reloads the list the vendor is looking at (tab + status filter) and the

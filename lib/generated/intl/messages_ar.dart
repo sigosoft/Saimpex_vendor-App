@@ -1885,6 +1885,60 @@ class MessageLookup extends MessageLookupByLibrary {
     "pharmacyInvUnitBox": MessageLookupByLibrary.simpleMessage("علبة"),
     "pharmacyInvUnitPiece": MessageLookupByLibrary.simpleMessage("قطعة"),
     "pharmacyInvUnitStrip": MessageLookupByLibrary.simpleMessage("شريط"),
+    "pharmacyMsgAcceptFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر قبول الطلب",
+    ),
+    "pharmacyMsgCancelOrderFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إلغاء الطلب",
+    ),
+    "pharmacyMsgCancelPrescriptionFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إلغاء الوصفة",
+    ),
+    "pharmacyMsgOrderAccepted": MessageLookupByLibrary.simpleMessage(
+      "تم قبول الطلب",
+    ),
+    "pharmacyMsgOrderCancelled": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء الطلب",
+    ),
+    "pharmacyMsgPrepareFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر بدء تحضير الطلب",
+    ),
+    "pharmacyMsgPreparing": MessageLookupByLibrary.simpleMessage(
+      "بدأ تحضير الطلب",
+    ),
+    "pharmacyMsgPrescriptionCancelled": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء الوصفة",
+    ),
+    "pharmacyMsgQuoteFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إرسال عرض السعر",
+    ),
+    "pharmacyMsgQuoteSent": MessageLookupByLibrary.simpleMessage(
+      "تم إرسال عرض السعر",
+    ),
+    "pharmacyMsgReady": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد الطلب كجاهز",
+    ),
+    "pharmacyMsgReadyFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر تحديد الطلب كجاهز",
+    ),
+    "pharmacyMsgRejectFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر رفض الوصفة",
+    ),
+    "pharmacyMsgRejected": MessageLookupByLibrary.simpleMessage(
+      "تم رفض الوصفة",
+    ),
+    "pharmacyMsgReviewFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر بدء المراجعة",
+    ),
+    "pharmacyMsgReviewed": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد الوصفة كمُراجَعة",
+    ),
+    "pharmacyMsgReviewedFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذّر تحديد الوصفة كمُراجَعة",
+    ),
+    "pharmacyMsgUnderReview": MessageLookupByLibrary.simpleMessage(
+      "تم نقل الوصفة إلى قيد المراجعة",
+    ),
     "pharmacyOtcBadgeAccepted": MessageLookupByLibrary.simpleMessage("مقبول"),
     "pharmacyOtcBadgeCancelled": MessageLookupByLibrary.simpleMessage("ملغى"),
     "pharmacyOtcBadgeDelivered": MessageLookupByLibrary.simpleMessage(
