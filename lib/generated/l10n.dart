@@ -14320,6 +14320,16 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Today's Deliveries`
+  String get todaysDeliveries {
+    return Intl.message(
+      'Today\'s Deliveries',
+      name: 'todaysDeliveries',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

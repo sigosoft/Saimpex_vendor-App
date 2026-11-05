@@ -61,6 +61,32 @@ class WaterHomeController extends GetxController {
     update();
   }
 
+  /// Figma home card 1: "Today's Orders" (GET home `summary.today_orders`).
+  String get todayOrdersCount => rawSummary?['today_orders']?.toString() ?? '-';
+
+  /// Figma home card 2: "Today's Deliveries". The home API has no such count,
+  /// so it is today's total from `waterDeliveryCalendar` (`stats.total`).
+  /// '-' until it loads or if the call fails. Not used for gas.
+  String todayDeliveriesCount = '-';
+
+  Future<void> fetchTodayDeliveries() async {
+    if (WaterApi.isGas) return;
+    try {
+      final n = DateTime.now();
+      final day = '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
+      final res = await DioClient().get(ApiEndPoints.waterDeliveryCalendar,
+          query: {'from': day, 'to': day, 'date': day});
+      final body = res.data;
+      final data = body is Map ? body['data'] : null;
+      final stats = data is Map ? data['stats'] : null;
+      final total = stats is Map ? stats['total'] : null;
+      todayDeliveriesCount = WaterApi.isOk(body) && total != null ? total.toString() : '-';
+    } catch (_) {
+      todayDeliveriesCount = '-';
+    }
+    update();
+  }
+
   String get newOrdersCount {
     final v =
         rawSummary?['pending_orders_count'] ??
@@ -262,6 +288,7 @@ class WaterHomeController extends GetxController {
           if (summaryMap is Map) {
             rawSummary = Map<String, dynamic>.from(summaryMap);
           }
+          fetchTodayDeliveries();
           final vendorMap = d['vendor'];
           if (vendorMap is Map) {
             rawVendor = Map<String, dynamic>.from(vendorMap);

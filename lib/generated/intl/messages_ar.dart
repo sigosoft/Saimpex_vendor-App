@@ -2518,6 +2518,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toPay": MessageLookupByLibrary.simpleMessage("المبلغ المستحق"),
     "today": MessageLookupByLibrary.simpleMessage("اليوم"),
+    "todaysDeliveries": MessageLookupByLibrary.simpleMessage("توصيلات اليوم"),
     "todaysOrders": MessageLookupByLibrary.simpleMessage("طلبات اليوم"),
     "topSellingDishes": MessageLookupByLibrary.simpleMessage(
       "الأطباق الأكثر مبيعاً",

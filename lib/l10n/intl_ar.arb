@@ -3325,5 +3325,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todaysDeliveries": "توصيلات اليوم"
 }

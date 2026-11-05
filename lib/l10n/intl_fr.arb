@@ -3326,5 +3326,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todaysDeliveries": "Livraisons du jour"
 }

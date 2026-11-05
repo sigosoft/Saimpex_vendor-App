@@ -3379,5 +3379,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todaysDeliveries": "Today's Deliveries"
 }
