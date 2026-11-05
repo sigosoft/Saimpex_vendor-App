@@ -1,7 +1,11 @@
 /// Local store vendors (vendor_type 11, `app_section` local_store) use the
 /// grocery screens, but must call the `localStore*` endpoints: the grocery
 /// ones only return grocery orders and products (backend API doc §6.23, V12).
-/// Request parameters and response keys are the same.
+/// The local store endpoints name their keys `local_store_menu…` /
+/// `local_store_tag…` where grocery has `grocery_menu…` / `grocery_tag…`
+/// (backend `LocalStoreController` / `LocalStoreMenuController`); see
+/// [toLocalStoreKey] and [toGroceryKeys]. Without that, local store My Store
+/// showed no products (5 Nov retest).
 class StoreEndpoints {
   static const String localStoreVendorType = '11';
 
@@ -51,5 +55,40 @@ class StoreEndpoints {
     final twin = groceryToLocalStore[last];
     if (twin == null) return path;
     return '${base.substring(0, slash + 1)}$twin$query';
+  }
+
+  /// True when [path] is a grocery endpoint that [forVendorType] swaps.
+  static bool isSwapped(String path, String? vendorType) =>
+      forVendorType(path, vendorType) != path;
+
+  static const _keyPairs = [
+    ('grocery_menu', 'local_store_menu'),
+    ('grocery_tag', 'local_store_tag'),
+  ];
+
+  /// Request key for the local store endpoint (grocery_menu_id →
+  /// local_store_menu_id); other keys are unchanged.
+  static String toLocalStoreKey(String key) {
+    for (final (g, l) in _keyPairs) {
+      if (key.startsWith(g)) return l + key.substring(g.length);
+    }
+    return key;
+  }
+
+  static String _toGroceryKey(String key) {
+    for (final (g, l) in _keyPairs) {
+      if (key.startsWith(l)) return g + key.substring(l.length);
+    }
+    return key;
+  }
+
+  /// A local store response with its keys renamed to the grocery ones the
+  /// screens read (local_store_menus → grocery_menus), at every level.
+  static dynamic toGroceryKeys(dynamic data) {
+    if (data is Map) {
+      return data.map((k, v) => MapEntry(k is String ? _toGroceryKey(k) : k, toGroceryKeys(v)));
+    }
+    if (data is List) return data.map(toGroceryKeys).toList();
+    return data;
   }
 }

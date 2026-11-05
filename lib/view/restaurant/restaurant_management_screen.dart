@@ -64,9 +64,16 @@ class _RestaurantManagementScreenState
   final List<CategoryItem> _categories = [];
   final List<TagItem> _tags = [];
 
+  /// Grocery and local store share this screen: "Store Management" for them
+  /// (it said Restaurant Management), as the Settings row does.
+  bool _isRestaurant = true;
+
   @override
   void initState() {
     super.initState();
+    getSavedObject("vendorType").then((type) {
+      if (mounted) setState(() => _isRestaurant = '$type' == '1');
+    });
     _fetchCategories();
     _fetchTags();
   }
@@ -1097,7 +1104,7 @@ class _RestaurantManagementScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          S.of(context).restaurantManagement,
+          _isRestaurant ? S.of(context).restaurantManagement : S.of(context).storeManagement,
           style: appFont('Rubik', 
             color: const Color(0xFF333E63),
             fontSize: 18,
