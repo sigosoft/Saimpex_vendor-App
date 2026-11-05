@@ -33,6 +33,18 @@ class LoginController extends GetxController {
     update();
   }
 
+  /// The vendor type picked on the login screen (API number, see
+  /// loginVendorTypes); it sets the matching app section.
+  int selectedVendorType = 1;
+
+  void setSelectedVendorType(int? vendorType) {
+    if (vendorType == null) return;
+    selectedVendorType = vendorType;
+    selectedAppType =
+        VendorAppTypeX.fromVendorType(vendorType) ?? VendorAppType.groceryRestaurant;
+    update();
+  }
+
   @override
   void onInit() {
     super.onInit();

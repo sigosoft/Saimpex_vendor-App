@@ -3326,5 +3326,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vendorTypeRestaurant": "Restaurant",
+  "vendorTypeGrocery": "Épicerie",
+  "vendorTypeLocalStore": "Commerce de proximité",
+  "vendorTypeGas": "Gaz",
+  "vendorTypeLaundry": "Blanchisserie",
+  "vendorTypeCarWash": "Lavage auto"
 }

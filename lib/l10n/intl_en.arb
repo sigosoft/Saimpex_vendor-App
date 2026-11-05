@@ -3379,5 +3379,17 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vendorTypeRestaurant": "Restaurant",
+  "@vendorTypeRestaurant": {},
+  "vendorTypeGrocery": "Grocery",
+  "@vendorTypeGrocery": {},
+  "vendorTypeLocalStore": "Local store",
+  "@vendorTypeLocalStore": {},
+  "vendorTypeGas": "Gas",
+  "@vendorTypeGas": {},
+  "vendorTypeLaundry": "Laundry",
+  "@vendorTypeLaundry": {},
+  "vendorTypeCarWash": "Car wash",
+  "@vendorTypeCarWash": {}
 }
