@@ -137,10 +137,12 @@ class _HomeViewState extends State<HomeView> {
                     width: double.infinity,
                     height: 56,
                     membershipName: controller.membershipName!,
-                    expiryText: S.of(context).expiresInDays(
-                      (controller.membershipDaysLeft ?? 0).toString(),
-                    ),
-                    isWarning: (controller.membershipDaysLeft ?? 0) <= 10,
+                    // "Expires in 0 days" was shown when the API sent no
+                    // expiry; then no chip.
+                    expiryText: controller.membershipDaysLeft == null
+                        ? ''
+                        : S.of(context).expiresInDays(controller.membershipDaysLeft.toString()),
+                    isWarning: (controller.membershipDaysLeft ?? 99) <= 10,
                   ),
                   const SizedBox(height: 12),
                 ],
