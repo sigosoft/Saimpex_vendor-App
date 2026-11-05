@@ -1387,6 +1387,76 @@ class WaterHomeController extends GetxController {
     }
   }
 
+  /// Ready self-pickup order → handed over to the customer (status 9).
+  /// `POST markSelfPickupCompleted {order_id}`: the server accepts a
+  /// self-pickup order in Preparing or Ready only. Returns true on success.
+  Future<bool> markWaterSelfPickupCompleted(
+    dynamic orderId, {
+    BuildContext? context,
+  }) async {
+    dynamic id = orderId;
+    if (id is String) {
+      final clean = id.replaceAll('#', '').trim();
+      id = int.tryParse(clean) ?? clean;
+    }
+    bool dialogShown = false;
+    void closeDialog() {
+      if (!dialogShown) return;
+      dialogShown = false;
+      if (context != null && context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      } else {
+        Get.back();
+      }
+    }
+
+    try {
+      if (context != null && context.mounted) {
+        showLoadingDialog(context);
+        dialogShown = true;
+      }
+      await WaterApi.prepare();
+      final response = await DioClient().post(
+        ApiEndPoints.markSelfPickupCompleted,
+        body: {'order_id': id},
+      );
+      closeDialog();
+      final body = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data;
+      if (WaterApi.isOk(body)) {
+        if (context != null && context.mounted) {
+          showToast(context, S.current.waterOrderPickedUp);
+        }
+        orders.removeWhere(
+          (o) =>
+              (o.rawId != null && o.rawId.toString() == id.toString()) ||
+              o.orderId.replaceAll('#', '').trim() == id.toString(),
+        );
+        update();
+        await fetchWaterOrders(limit: 10, status: 4);
+        await fetchHome();
+        return true;
+      }
+      if (context != null && context.mounted) {
+        showToast(
+          context,
+          WaterApi.message(body) ?? S.current.waterFailedToMarkPickedUp,
+        );
+      }
+      return false;
+    } catch (e) {
+      closeDialog();
+      debugPrint('markWaterSelfPickupCompleted error: $e');
+      if (context != null && context.mounted) {
+        showToast(context, S.current.waterFailedToMarkPickedUp);
+      }
+      return false;
+    } finally {
+      update();
+    }
+  }
+
   Future<void> cancelWaterOrder(
     dynamic orderId, {
     String? reason,
@@ -1412,16 +1482,20 @@ class WaterHomeController extends GetxController {
         id = int.tryParse(clean) ?? clean;
       }
 
-      final queryParams = <String, dynamic>{'order_id': id};
+      // W-04: the reason must reach the server (cancelWaterOrder `reason`,
+      // kept in the order timeline and shown to the customer as
+      // cancel_reason); it was only printed to the log.
+      final queryParams = <String, dynamic>{
+        'order_id': id,
+        if (reason != null && reason.trim().isNotEmpty)
+          'reason': reason.trim(),
+      };
 
       debugPrint(
         '==================== CANCEL WATER ORDER ====================',
       );
       debugPrint('Endpoint: ${ApiEndPoints.CancelWaterOrder}');
       debugPrint('Query: $queryParams');
-      if (reason != null && reason.isNotEmpty) {
-        debugPrint('Reason: $reason');
-      }
 
       final response = await DioClient().get(
         ApiEndPoints.CancelWaterOrder,

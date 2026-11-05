@@ -1909,6 +1909,8 @@
   },
   "waterOrderMarkedAsReady": "Order marked as ready successfully",
   "waterWaitingForDeliveryPartner": "Ready: waiting for a delivery partner to pick it up",
+  "waterOrderPickedUp": "Order handed over to the customer",
+  "waterFailedToMarkPickedUp": "Could not mark the order as picked up",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Order moved to preparing successfully",
   "@waterOrderMovedToPreparing": {},
