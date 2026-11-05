@@ -2332,6 +2332,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reachedRestaurantTitle": MessageLookupByLibrary.simpleMessage(
       "وصل إلى المطعم",
     ),
+    "reachedStore": MessageLookupByLibrary.simpleMessage("وصل إلى المتجر"),
     "ready": MessageLookupByLibrary.simpleMessage("جاهز"),
     "reasonColonLabel": m51,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("سبب الإجازة"),
@@ -2683,10 +2684,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "stockRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تمت إزالة المخزون بنجاح",
     ),
+    "storeCommission": MessageLookupByLibrary.simpleMessage(
+      "نسبة عمولة المتجر لكل طلب",
+    ),
     "storeDetails": MessageLookupByLibrary.simpleMessage("تفاصيل المتجر"),
     "storeId": MessageLookupByLibrary.simpleMessage("معرف المتجر"),
     "storeManagement": MessageLookupByLibrary.simpleMessage("إدارة المتجر"),
     "storeReports": MessageLookupByLibrary.simpleMessage("تقارير المتجر"),
+    "storeStatus": MessageLookupByLibrary.simpleMessage("حالة المتجر"),
     "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
     "submitButton": MessageLookupByLibrary.simpleMessage("إرسال"),
     "submitLeaveRequest": MessageLookupByLibrary.simpleMessage(

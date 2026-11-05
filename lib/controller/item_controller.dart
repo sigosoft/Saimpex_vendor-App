@@ -507,7 +507,7 @@ class ItemController extends GetxController {
     } else if (discountPriceCtrl.text.trim().isEmpty) {
       showToast(context, S.of(context).itemValidationEnterDiscountPrice);
       return false;
-    } else if (Get.find<ProfileController>().vendorType != '2' &&
+    } else if (!isStoreVendorType(Get.find<ProfileController>().vendorType) &&
         prepTimeCtrl.text.trim().isEmpty) {
       showToast(context, S.of(context).itemValidationEnterPrepTime);
       return false;

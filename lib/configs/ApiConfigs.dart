@@ -132,6 +132,7 @@ class ApiEndPoints {
   static String getGroceryMenuDetails = "groceryMenuDetails";
   static String importGroceryMenuItems = "importGroceryMenuItems";
   static String uploadGroceryMenuBulkImport = "uploadGroceryBulkMenu";
+  static String downloadGroceryBulkTemplate = "downloadGroceryBulkTemplate";
   static String getGroceryCategories = "getGroceryCategories";
   static String getGroceryTags = "getGroceryTags";
   static String getGroceryMenus = "getAllGroceryMenus";

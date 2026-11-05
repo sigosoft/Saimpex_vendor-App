@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/controller/preorders_controller.dart';
@@ -42,7 +43,7 @@ class _PreordersScreenState extends State<PreordersScreen> {
       case 5:
         return S.current.assignedStatus;
       case 6:
-        return S.current.reachedRestaurant;
+        return reachedVendorLabel();
       case 7:
         return S.current.pickedUp;
       case 8:

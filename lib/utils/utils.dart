@@ -736,3 +736,11 @@ String translateOffreToEnglish(String name, String langCode) {
   return name;
 }
 
+
+/// Grocery (2) and local store (11) share the store screens; restaurant (1)
+/// has its own. Checks that compared only with "2" sent local stores down
+/// the restaurant path (restaurant categories, preparation time).
+bool isStoreVendorType(Object? vendorType) {
+  final t = vendorType?.toString().trim();
+  return t == '2' || t == '11';
+}

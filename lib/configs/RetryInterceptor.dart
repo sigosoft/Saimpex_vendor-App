@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart' hide Response;
+import 'package:get/get.dart' hide Response, FormData;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/model/login_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -23,14 +23,23 @@ class RetryInterceptor extends Interceptor {
     return connectivity.isNotEmpty && connectivity.any((r) => r != ConnectivityResult.none);
   }
 
+  /// Repeats the request as it was sent. `extra` carries the local store key
+  /// rename flag (without it a retried localStore* reply kept its
+  /// local_store_menu… keys and the store screens showed empty lists), and a
+  /// sent FormData can't be sent again, so it is cloned.
   Future<Response?> _retry(RequestOptions requestOptions) async {
+    final data = requestOptions.data;
     return dio.request(
       requestOptions.path,
-      data: requestOptions.data,
+      data: data is FormData ? data.clone() : data,
       queryParameters: requestOptions.queryParameters,
       options: Options(
         method: requestOptions.method,
         headers: requestOptions.headers,
+        extra: requestOptions.extra,
+        responseType: requestOptions.responseType,
+        contentType: requestOptions.contentType,
+        validateStatus: requestOptions.validateStatus,
       ),
     );
   }

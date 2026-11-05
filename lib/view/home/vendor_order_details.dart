@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
@@ -357,9 +358,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                 : controller.orderData?.status
                                                           .toString() ==
                                                       '6'
-                                                ? S
-                                                      .of(context)
-                                                      .reachedRestaurant
+                                                ? reachedVendorLabel()
                                                 : controller.orderData?.status
                                                           .toString() ==
                                                       '7'

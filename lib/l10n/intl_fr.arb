@@ -3547,5 +3547,8 @@
   "rsIfscSwiftCode": "Code IFSC / SWIFT",
   "@rsIfscSwiftCode": {},
   "rsEnterSwiftHint": "Saisir le code SWIFT/BIC (8 ou 11 caractères)",
-  "@rsEnterSwiftHint": {}
+  "@rsEnterSwiftHint": {},
+  "reachedStore": "ARRIVÉ AU MAGASIN",
+  "storeStatus": "Statut du magasin",
+  "storeCommission": "Pourcentage de commission du magasin par commande"
 }

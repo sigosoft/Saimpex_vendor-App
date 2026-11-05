@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/utils/vendor_initials.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/vendor_words.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1227,7 +1228,7 @@ class VendorDetailRow extends StatelessWidget {
       localizedLabel = S.of(context).serviceDeliveryCharge;
     }
     if (label == "Restaurant Commission Percentage per Order") {
-      localizedLabel = S.of(context).restaurantCommission;
+      localizedLabel = vendorCommissionLabel();
     }
     if (label == "Gst/Vat") localizedLabel = S.of(context).gstVat;
     if (label == "Packaging Cost") localizedLabel = S.of(context).packagingCost;

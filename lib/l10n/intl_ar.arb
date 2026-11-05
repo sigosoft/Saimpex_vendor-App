@@ -3546,5 +3546,8 @@
   "rsIfscSwiftCode": "رمز IFSC / SWIFT",
   "@rsIfscSwiftCode": {},
   "rsEnterSwiftHint": "أدخل رمز SWIFT/BIC (8 أو 11 حرفًا)",
-  "@rsEnterSwiftHint": {}
+  "@rsEnterSwiftHint": {},
+  "reachedStore": "وصل إلى المتجر",
+  "storeStatus": "حالة المتجر",
+  "storeCommission": "نسبة عمولة المتجر لكل طلب"
 }

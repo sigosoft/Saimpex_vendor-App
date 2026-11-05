@@ -3633,5 +3633,11 @@
   "rsIfscSwiftCode": "IFSC / SWIFT Code",
   "@rsIfscSwiftCode": {},
   "rsEnterSwiftHint": "Enter SWIFT/BIC code (8 or 11 characters)",
-  "@rsEnterSwiftHint": {}
+  "@rsEnterSwiftHint": {},
+  "reachedStore": "REACHED STORE",
+  "@reachedStore": {},
+  "storeStatus": "Store Status",
+  "@storeStatus": {},
+  "storeCommission": "Store Commission Percentage per Order",
+  "@storeCommission": {}
 }
