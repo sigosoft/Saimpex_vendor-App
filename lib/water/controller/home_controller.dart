@@ -1482,16 +1482,20 @@ class WaterHomeController extends GetxController {
         id = int.tryParse(clean) ?? clean;
       }
 
-      final queryParams = <String, dynamic>{'order_id': id};
+      // W-04: the reason must reach the server (cancelWaterOrder `reason`,
+      // kept in the order timeline and shown to the customer as
+      // cancel_reason); it was only printed to the log.
+      final queryParams = <String, dynamic>{
+        'order_id': id,
+        if (reason != null && reason.trim().isNotEmpty)
+          'reason': reason.trim(),
+      };
 
       debugPrint(
         '==================== CANCEL WATER ORDER ====================',
       );
       debugPrint('Endpoint: ${ApiEndPoints.CancelWaterOrder}');
       debugPrint('Query: $queryParams');
-      if (reason != null && reason.isNotEmpty) {
-        debugPrint('Reason: $reason');
-      }
 
       final response = await DioClient().get(
         ApiEndPoints.CancelWaterOrder,
