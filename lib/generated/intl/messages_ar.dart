@@ -2892,6 +2892,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
       "تعذّر تحديد الطلب كجاهز",
     ),
+    "waterFailedToMarkPickedUp": MessageLookupByLibrary.simpleMessage(
+      "تعذّر تحديد الطلب كمُستلَم",
+    ),
     "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
       "تعذّر إيقاف الاشتراك مؤقتًا",
     ),
@@ -3059,6 +3062,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
       "تم نقل الطلب إلى التحضير بنجاح",
+    ),
+    "waterOrderPickedUp": MessageLookupByLibrary.simpleMessage(
+      "تم تسليم الطلب للعميل",
     ),
     "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
       "تم استلام الطلب",

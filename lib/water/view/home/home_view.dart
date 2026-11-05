@@ -1741,6 +1741,23 @@ class _OrderCard extends StatelessWidget {
                             context: context,
                           );
                         }
+                      } else if (order.status == HomeOrderStatus.ready &&
+                          !order.isDelivery) {
+                        // W-03: the button had no handler, so a ready
+                        // self-pickup order could never be completed.
+                        final dynamic id =
+                            order.rawId ??
+                            order.orderData?.id ??
+                            order.orderData?.rawJson?['order_id'] ??
+                            order.orderData?.rawJson?['id'] ??
+                            order.orderId.replaceAll('#', '').trim();
+                        if (Get.isRegistered<WaterHomeController>()) {
+                          Get.find<WaterHomeController>()
+                              .markWaterSelfPickupCompleted(
+                                id,
+                                context: context,
+                              );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
