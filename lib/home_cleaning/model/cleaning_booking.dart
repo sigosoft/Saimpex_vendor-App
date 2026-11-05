@@ -184,11 +184,22 @@ class CleaningBooking {
   /// What the customer actually paid. The API's `total_paid` is the whole
   /// order total once paid, so after pickup it included the unpaid top-up
   /// (Paid 600 for a 360 + 240 booking, test day 2 Nov, V7).
+  /// Only while the top-up is still owed: once it is settled (delivered and
+  /// paid in cash) the old value stayed and Paid read 180 of 300 (retest 4 Nov).
   double? get paidAmount {
     final reported = totalPaid;
     if (reported == null || reported <= 0) return reported;
+    if (raw['additional_payment_pending'] == false) {
+      return reported.clamp(0, finalAmount).toDouble();
+    }
     return (finalAmount - additionalPayment).clamp(0, finalAmount).toDouble();
   }
+
+  /// Still to collect: final minus paid. An unpaid cash booking owes the
+  /// whole final amount, not only the top-up (it showed Paid 0, Final 600,
+  /// Balance 240; test day 3 Nov).
+  double get balanceDue =>
+      (finalAmount - (paidAmount ?? 0)).clamp(0, finalAmount).toDouble();
 
   String get displayCode {
     final code = orderCode?.trim();
