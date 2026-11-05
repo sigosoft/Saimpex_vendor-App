@@ -6,6 +6,7 @@ import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/cleaner_widgets.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 
 /// Assign Cleaner (task V16), Figma 10868:11841: the booking, a search, and
@@ -97,7 +98,7 @@ class _AssignCleanerViewState extends State<AssignCleanerView> {
               decoration: BoxDecoration(color: const Color(0xFFFFF1E6), borderRadius: BorderRadius.circular(14)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
-                  [s.bookingHash(b.orderCode ?? '${b.id}'), if ((slot ?? '').isNotEmpty) slot!].join(' • '),
+                  joinIsolated([s.bookingHash(b.orderCode ?? '${b.id}'), if ((slot ?? '').isNotEmpty) slot!], ' • '),
                   style: cleanerText(14, FontWeight.w700, cleanerInk),
                 ),
                 if ((b.address ?? '').isNotEmpty || (b.serviceName ?? '').isNotEmpty)
