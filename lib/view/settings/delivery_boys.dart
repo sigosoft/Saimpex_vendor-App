@@ -47,7 +47,7 @@ class _DeliveryBoysScreenState extends State<DeliveryBoysScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            S.of(context).deliveryBoys,
+            S.of(context).deliveryPartners,
             style: appFont('Rubik', 
               fontSize: 18,
               fontWeight: FontWeight.w700,
