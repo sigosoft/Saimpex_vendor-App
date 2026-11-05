@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
@@ -31,6 +32,16 @@ class _Details {
   String get requestedOn => WaterApi.formatDateTime(json['created_at']);
   String get address => _str('address_line1');
   String get product => _str('service').isNotEmpty ? _str('service') : _str('product_name');
+
+  /// The product photo from the API (a fixed 19 L can was shown for every
+  /// subscription); empty when there is none.
+  String get productImage {
+    for (final k in const ['product_image', 'image', 'service_image']) {
+      final v = _str(k);
+      if (v.isNotEmpty) return v.startsWith('http') ? v : '${ApiConfigs.IMAGE_URL}$v';
+    }
+    return '';
+  }
 
   int get _bottles => int.tryParse(_str('bottles_per_delivery')) ?? int.tryParse(_str('qty')) ?? 1;
   int get _quantity {
@@ -309,7 +320,7 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _ProductCard(name: keepNumberUnitsLtr(details.product), qty: details.qty),
+                      _ProductCard(name: keepNumberUnitsLtr(details.product), qty: details.qty, image: details.productImage),
                       const SizedBox(height: 12),
                       _PlanGrid(
                         frequency: details.frequency,
@@ -792,8 +803,9 @@ class _CustomerCard extends StatelessWidget {
 }
 
 class _ProductCard extends StatelessWidget {
-  const _ProductCard({required this.name, required this.qty});
+  const _ProductCard({required this.name, required this.qty, this.image = ''});
 
+  final String image;
   final String name;
   final int qty;
 
@@ -820,12 +832,9 @@ class _ProductCard extends StatelessWidget {
               width: 64,
               height: 64,
               color: AppColors.softGrayAlt,
-              child: Image.asset(
-                AppAssets.waterCan19L,
-                fit: BoxFit.contain,
-                errorBuilder: (_, _, _) =>
-                    const Icon(Icons.water_drop, color: AppColors.textMuted),
-              ),
+              child: image.isEmpty
+                  ? noImageBox()
+                  : Image.network(image, fit: BoxFit.contain, errorBuilder: (_, _, _) => noImageBox()),
             ),
           ),
           const SizedBox(width: 12),

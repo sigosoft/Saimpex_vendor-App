@@ -139,12 +139,14 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
         );
       } else {
         all24 = false;
-        String open = h.openingTime ?? '08:00';
-        String close = h.closingTime ?? '22:00';
+        String? open = h.openingTime;
+        String? close = h.closingTime;
         if (h.timeSlots != null && h.timeSlots!.isNotEmpty) {
           open = h.timeSlots!.first.openTime ?? open;
           close = h.timeSlots!.first.closeTime ?? close;
         }
+        // No made-up 08:00 - 22:00 when the server sends no times: keep "-".
+        if (open == null || close == null) continue;
         final startFormatted = _formatTimePart(open);
         final endFormatted = _formatTimePart(close);
         schedule[i] = _DayHours(
