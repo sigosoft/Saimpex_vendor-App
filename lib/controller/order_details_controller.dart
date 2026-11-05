@@ -279,15 +279,22 @@ class OrderDetailsController extends GetxController {
 
   Future<void> cancelRestaurantOrder(
     BuildContext context,
-    String orderid,
-  ) async {
+    String orderid, {
+    String? reason,
+  }) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
       DioClient().updateToken(token);
       final response = await DioClient().get(
         ApiEndPoints.cancelRestaurantOrder,
-        query: {"order_id": orderid},
+        query: {
+          "order_id": orderid,
+          // The reject reason was picked but never sent; the server keeps it
+          // and shows it to the customer (VendorRejection `reason`).
+          if (reason != null && reason.trim().isNotEmpty)
+            "reason": reason.trim(),
+        },
       );
       order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
         response.data,
@@ -321,14 +328,22 @@ class OrderDetailsController extends GetxController {
     }
   }
 
-  Future<void> cancelGroceryOrder(BuildContext context, String orderid) async {
+  Future<void> cancelGroceryOrder(
+    BuildContext context,
+    String orderid, {
+    String? reason,
+  }) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
       DioClient().updateToken(token);
       final response = await DioClient().get(
         ApiEndPoints.cancelGroceryOrder,
-        query: {"order_id": orderid},
+        query: {
+          "order_id": orderid,
+          if (reason != null && reason.trim().isNotEmpty)
+            "reason": reason.trim(),
+        },
       );
       order.OrderStatusModel orderStatusModel = order.OrderStatusModel.fromJson(
         response.data,

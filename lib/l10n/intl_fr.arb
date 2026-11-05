@@ -520,6 +520,8 @@
   "account": "Compte",
   "@account": {},
   "myRestaurant": "Mon Restaurant",
+  "rejectReasonRestaurantClosed": "Restaurant temporairement fermé",
+  "rejectReasonTechnicalIssue": "Problème technique",
   "deliveryPartners": "Partenaires de livraison",
   "itemBulkImport": "Import groupé d’articles",
   "@myRestaurant": {},

@@ -567,6 +567,8 @@
   "account": "Account",
   "@account": {},
   "myRestaurant": "My Restaurant",
+  "rejectReasonRestaurantClosed": "Restaurant Temporarily Closed",
+  "rejectReasonTechnicalIssue": "Technical Issue",
   "deliveryPartners": "Delivery Partners",
   "itemBulkImport": "Item Bulk Import",
   "@myRestaurant": {},

@@ -2394,6 +2394,26 @@ class S {
     );
   }
 
+  /// `Restaurant Temporarily Closed`
+  String get rejectReasonRestaurantClosed {
+    return Intl.message(
+      'Restaurant Temporarily Closed',
+      name: 'rejectReasonRestaurantClosed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Technical Issue`
+  String get rejectReasonTechnicalIssue {
+    return Intl.message(
+      'Technical Issue',
+      name: 'rejectReasonTechnicalIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Delivery Partners`
   String get deliveryPartners {
     return Intl.message(

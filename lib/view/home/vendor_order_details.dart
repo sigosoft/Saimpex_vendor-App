@@ -1159,12 +1159,16 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                         .cancelRestaurantOrder(
                                                           context,
                                                           widget.orderId,
+                                                          reason:
+                                                              selectedReason,
                                                         );
                                                   } else {
                                                     controller
                                                         .cancelGroceryOrder(
                                                           context,
                                                           widget.orderId,
+                                                          reason:
+                                                              selectedReason,
                                                         );
                                                   }
                                                 }

@@ -2257,8 +2257,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "rejectReasonOperationalIssue": MessageLookupByLibrary.simpleMessage(
       "مشكلة تشغيلية مؤقتة",
     ),
+    "rejectReasonRestaurantClosed": MessageLookupByLibrary.simpleMessage(
+      "المطعم مغلق مؤقتًا",
+    ),
     "rejectReasonSlotFull": MessageLookupByLibrary.simpleMessage(
       "الموعد محجوز بالكامل",
+    ),
+    "rejectReasonTechnicalIssue": MessageLookupByLibrary.simpleMessage(
+      "مشكلة تقنية",
     ),
     "rejectReasonTimeUnavailable": MessageLookupByLibrary.simpleMessage(
       "لا يمكن القبول في الوقت المحدد",

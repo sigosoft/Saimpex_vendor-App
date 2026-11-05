@@ -56,6 +56,27 @@ class VendorOrderCard extends StatelessWidget {
         isSelfPickup: isSelfPickup,
       );
 
+  /// Order status code (1 pending … 10 cancelled) from [status]. The
+  /// callers pass the label in the app language, so the colour and the
+  /// buttons compared it with English words and broke in French and Arabic.
+  /// Both the translated label and the English word are recognised.
+  int get _code {
+    final s = status.trim().toLowerCase();
+    bool isAny(String translated, List<String> english) =>
+        s == translated.trim().toLowerCase() || english.contains(s);
+    if (isAny(S.current.pending, ['pending'])) return 1;
+    if (isAny(S.current.accepted, ['accepted'])) return 2;
+    if (isAny(S.current.preparing, ['preparing'])) return 3;
+    if (isAny(S.current.ready, ['ready'])) return 4;
+    if (isAny(S.current.assignedStatus, ['assigned'])) return 5;
+    if (isAny(S.current.reachedRestaurant, ['reached restaurant'])) return 6;
+    if (isAny(S.current.pickedUp, ['picked up'])) return 7;
+    if (isAny(S.current.delivering, ['delivering'])) return 8;
+    if (isAny(S.current.delivered, ['delivered'])) return 9;
+    if (isAny(S.current.cancelled, ['cancelled'])) return 10;
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -143,22 +164,22 @@ class VendorOrderCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: status.toLowerCase() == 'pending'
+                    color: _code == 1
                         ? const Color(0xFFF59E0B)
-                        : status.toLowerCase() == 'accepted'
+                        : _code == 2
                         ? const Color(0xFF22C55E)
-                        : status.toLowerCase() == 'preparing'
+                        : _code == 3
                         ? const Color(0xFF60A5FA)
-                        : status.toLowerCase() == 'ready'
+                        : _code == 4
                         ? const Color(0xFF22C55E)
-                        : status.toLowerCase() == 'assigned' ||
-                              status.toLowerCase() == 'reached restaurant' ||
-                              status.toLowerCase() == 'picked up' ||
-                              status.toLowerCase() == 'delivering'
+                        : _code == 5 ||
+                              _code == 6 ||
+                              _code == 7 ||
+                              _code == 8
                         ? const Color(0xFF22C55E)
-                        : status.toLowerCase() == 'delivered'
+                        : _code == 9
                         ? const Color(0xFF15803D)
-                        : status.toLowerCase() == 'cancelled'
+                        : _code == 10
                         ? const Color(0xFFEF4444)
                         : const Color(0xFFFFB800),
                     borderRadius: BorderRadius.circular(8),
@@ -174,7 +195,7 @@ class VendorOrderCard extends StatelessWidget {
                 ),
               ],
             ),
-            // if (status.toLowerCase() == 'preparing')
+            // if (_code == 3)
             //   Align(
             //     alignment: Alignment.centerRight,
             //     child: Padding(
@@ -284,12 +305,12 @@ class VendorOrderCard extends StatelessWidget {
               ],
             ),
             if (!_isSelfPickup &&
-                (status.toLowerCase() == 'ready' ||
-                    status.toLowerCase() == 'delivered' ||
-                    status.toLowerCase() == 'assigned' ||
-                    status.toLowerCase() == 'reached restaurant' ||
-                    status.toLowerCase() == 'picked up' ||
-                    status.toLowerCase() == 'delivering' ||
+                (_code == 4 ||
+                    _code == 9 ||
+                    _code == 5 ||
+                    _code == 6 ||
+                    _code == 7 ||
+                    _code == 8 ||
                     status == S.of(context).ready ||
                     status == S.of(context).delivered ||
                     status == S.of(context).assignedStatus)) ...[
@@ -320,7 +341,7 @@ class VendorOrderCard extends StatelessWidget {
                               deliveryBoyName == "null" ||
                               deliveryBoyName == null)
                           ? ""
-                          : "[$deliveryBoyName]",
+                          : "($deliveryBoyName)",
                       style: const TextStyle(
                         color: Color(0xFF6B7280),
                         fontSize: 11,
@@ -332,7 +353,7 @@ class VendorOrderCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            if (status.toLowerCase() == 'cancelled') ...[
+            if (_code == 10) ...[
               const SizedBox(height: 16),
               Container(
                 width: double.infinity,
@@ -365,7 +386,7 @@ class VendorOrderCard extends StatelessWidget {
               ],
             ],
             const SizedBox(height: 24),
-            if (status.toLowerCase() == 'pending')
+            if (_code == 1)
               Row(
                 children: [
                   Expanded(
@@ -407,7 +428,7 @@ class VendorOrderCard extends StatelessWidget {
                   ),
                 ],
               )
-            else if (status.toLowerCase() == 'preparing')
+            else if (_code == 3)
               Column(
                 children: [
                   Row(
@@ -478,10 +499,10 @@ class VendorOrderCard extends StatelessWidget {
                   ),
                 ],
               )
-            else if (status.toLowerCase() == 'cancelled')
+            else if (_code == 10)
               const SizedBox.shrink()
             else if (_isSelfPickup &&
-                status.toLowerCase() == 'ready' &&
+                _code == 4 &&
                 onMarkSelfPickupCompleted != null)
               Column(
                 children: [
@@ -554,7 +575,7 @@ class VendorOrderCard extends StatelessWidget {
                   ),
                 ],
               )
-            else if (status.toLowerCase() == 'accepted')
+            else if (_code == 2)
               Row(
                 children: [
                   Expanded(
@@ -622,7 +643,7 @@ class VendorOrderCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  status.toLowerCase() == 'cancelled'
+                  _code == 10
                       ? Container()
                       : SizedBox(
                           width: double.infinity,
