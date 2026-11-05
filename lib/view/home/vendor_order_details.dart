@@ -275,7 +275,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                         ),
                                                   ),
                                                   child: Text(
-                                                    "Basket order",
+                                                    S.of(context).rsBasketOrder,
                                                     style: appFont('Rubik', 
                                                       fontSize: 10,
                                                       fontWeight:

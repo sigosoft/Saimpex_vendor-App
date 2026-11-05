@@ -433,7 +433,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Edit Working Hour",
+                        S.of(context).waterEditWorkingHour,
                         style: appFont('Rubik', 
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -490,7 +490,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                             },
                           ),
                           Text(
-                            "Open 24 Hr",
+                            S.of(context).rsOpen24Hr,
                             style: appFont('Rubik', 
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -508,7 +508,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Start Time",
+                                    S.of(context).waterStartTime,
                                     style: appFont('Rubik', 
                                       fontSize: 12,
                                       color: const Color(0xFF6B7280),
@@ -530,7 +530,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "End Time",
+                                    S.of(context).waterEndTime,
                                     style: appFont('Rubik', 
                                       fontSize: 12,
                                       color: const Color(0xFF6B7280),
@@ -590,7 +590,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                               color: Color(0xFFFF5216),
                             ),
                             label: Text(
-                              "Add Time Slot",
+                              S.of(context).rsAddTimeSlot,
                               style: appFont('Rubik', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -635,7 +635,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                   color: Color(0xFFFF5216),
                                 ),
                                 label: Text(
-                                  "+ Add Time Slot",
+                                  "+ ${S.of(context).rsAddTimeSlot}",
                                   style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -661,7 +661,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "Start Time",
+                                                S.of(context).waterStartTime,
                                                 style: appFont('Rubik', 
                                                   fontSize: 12,
                                                   color: const Color(
@@ -691,7 +691,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "End Time",
+                                                S.of(context).waterEndTime,
                                                 style: appFont('Rubik', 
                                                   fontSize: 12,
                                                   color: const Color(
@@ -774,7 +774,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                     color: Color(0xFFFF5216),
                                   ),
                                   label: Text(
-                                    "+ Add Time Slot",
+                                    "+ ${S.of(context).rsAddTimeSlot}",
                                     style: appFont('Rubik', 
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
@@ -802,7 +802,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  "Cancel",
+                                  S.of(context).cancel,
                                   style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -857,7 +857,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                     if (validSlots.isEmpty) {
                                       showToast(
                                         context,
-                                        "Please add at least one valid time slot.",
+                                        S.of(context).rsAddValidTimeSlot,
                                       );
                                       return;
                                     }
@@ -904,7 +904,7 @@ class VendorWorkingHoursList extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  "Save",
+                                  S.of(context).save,
                                   style: appFont('Rubik', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -1901,7 +1901,7 @@ class VendorRichCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "ID: # $id",
+                            S.of(context).waterIdLabel("# $id"),
                             style: appFont('Rubik', 
                               fontSize: 10,
                               color: const Color(0xFF94A3B8),
@@ -2024,7 +2024,7 @@ class VendorRichCard extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Add Item',
+                              S.of(context).addItem,
                               style: appFont('Rubik', 
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

@@ -433,7 +433,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
       );
       debugPrint('ESC/POS bytes generated: ${payload.bytes80mm.length}');
       if (!mounted) return;
-      showToast(context, 'Printed successfully');
+      showToast(context, S.of(context).rsPrintedSuccessfully);
       debugPrint(payload.preview);
     } catch (error) {
       if (!mounted) return;

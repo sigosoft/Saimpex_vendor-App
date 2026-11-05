@@ -124,7 +124,7 @@ class VendorOrderCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            "Basket order",
+                            S.of(context).rsBasketOrder,
                             style: appFont('Rubik', 
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
