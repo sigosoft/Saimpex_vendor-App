@@ -7,6 +7,7 @@ import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:saimpex_vendor/water/view/chat/chat_view.dart';
 import 'package:saimpex_vendor/water/view/subscription_details/delivery_history_view.dart';
 import 'package:saimpex_vendor/water/view/home/pause_subscription_sheet.dart';
+import 'package:saimpex_vendor/water/view/home/reject_order_sheet.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -215,6 +216,20 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
       ? Get.find<WaterHomeController>()
       : Get.put(WaterHomeController());
 
+  /// A new request: accept or reject here too (the page offered only Pause,
+  /// as if it were already active). Back to the list afterwards.
+  Future<void> _accept() async {
+    await _homeController.acceptWaterSubscription(order.subscriptionId, context: context);
+    if (mounted) Navigator.of(context).maybePop();
+  }
+
+  Future<void> _reject() async {
+    final reason = await showRejectOrderSheet(context);
+    if (reason == null || !mounted) return;
+    await _homeController.rejectWaterSubscription(order.subscriptionId, reason: reason, context: context);
+    if (mounted) Navigator.of(context).maybePop();
+  }
+
   Future<void> _pause() async {
     final reason = await showPauseSubscriptionSheet(context);
     if (reason == null || !mounted) return;
@@ -380,6 +395,8 @@ class _SubscriptionDetailsViewState extends State<SubscriptionDetailsView> {
                     avatarUrl: order.customerAvatar,
                     onPause: _pause,
                     onResume: _resume,
+                    onAccept: _accept,
+                    onReject: _reject,
                   ),
               ],
             ),
@@ -470,7 +487,7 @@ class _CustomerCard extends StatelessWidget {
         : AppColors.selfPickupBlue;
 
     final (badgeLabel, badgeColor) = switch (order.status) {
-      SubscriptionOrderStatus.newOrder ||
+      SubscriptionOrderStatus.newOrder => (S.current.waterNewBadge, AppColors.primaryOrange),
       SubscriptionOrderStatus.active => (S.current.active, AppColors.activeGreen),
       SubscriptionOrderStatus.paused => (S.current.waterPaused.toUpperCase(), AppColors.primaryOrange),
       SubscriptionOrderStatus.cancelled => (S.current.cancelled.toUpperCase(), AppColors.textMuted),
@@ -1367,6 +1384,8 @@ class _BottomActions extends StatelessWidget {
     required this.customerName,
     required this.onPause,
     required this.onResume,
+    required this.onAccept,
+    required this.onReject,
     this.customerId,
     this.orderId,
     this.avatarUrl,
@@ -1377,6 +1396,8 @@ class _BottomActions extends StatelessWidget {
   final String customerName;
   final VoidCallback onPause;
   final VoidCallback onResume;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
   final int? customerId;
   final dynamic orderId;
   final String? avatarUrl;
@@ -1484,6 +1505,33 @@ class _BottomActions extends StatelessWidget {
     final isVendorPaused =
         status == SubscriptionOrderStatus.paused && pausedByVendor;
 
+    if (status == SubscriptionOrderStatus.newOrder) {
+      return Container(
+        color: Colors.white,
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+        child: SafeArea(
+          top: false,
+          child: Row(children: [
+            Expanded(
+              child: SizedBox(
+                height: 52,
+                child: OutlinedButton(
+                  onPressed: onReject,
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: Text(S.of(context).reject, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _primaryButton(label: S.of(context).acceptOrder, icon: Icons.check, onPressed: onAccept),
+            ),
+          ]),
+        ),
+      );
+    }
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
