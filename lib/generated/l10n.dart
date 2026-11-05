@@ -8956,6 +8956,16 @@ class S {
     );
   }
 
+  /// `Reason: {reason}`
+  String waterCancelReason(String reason) {
+    return Intl.message(
+      'Reason: $reason',
+      name: 'waterCancelReason',
+      desc: '',
+      args: [reason],
+    );
+  }
+
   /// `Week`
   String get waterWeek {
     return Intl.message('Week', name: 'waterWeek', desc: '', args: []);
