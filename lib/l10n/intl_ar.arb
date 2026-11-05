@@ -2426,7 +2426,7 @@
     }
   },
   "deliveryFeeLabel": "رسوم التوصيل",
-  "deliveryFeePerKm": "{value} أوقية لكل كم",
+  "deliveryFeePerKm": "{value} MRU لكل كم",
   "@deliveryFeePerKm": {
     "placeholders": {
       "value": {
@@ -2434,7 +2434,7 @@
       }
     }
   },
-  "deliveryFeeFixed": "{value} أوقية",
+  "deliveryFeeFixed": "{value} MRU",
   "@deliveryFeeFixed": {
     "placeholders": {
       "value": {
@@ -2533,7 +2533,7 @@
   "laundryVerifyWeight": "التحقق من الوزن",
   "laundryActualWeightLabel": "الوزن الفعلي",
   "laundryPriceBreakdown": "تفاصيل السعر",
-  "laundryRatePerKg": "{rate} أوقية / كغ",
+  "laundryRatePerKg": "{rate} MRU / كغ",
   "@laundryRatePerKg": {
     "placeholders": {
       "rate": {
@@ -2565,12 +2565,12 @@
   "pricingUnit": "وحدة التسعير",
   "pricingPerKg": "لكل كغ",
   "pricingPerItem": "لكل قطعة",
-  "mruPerKg": "أوقية / كغ",
+  "mruPerKg": "MRU / كغ",
   "shortDescription": "وصف قصير",
   "enterDescription": "أدخل وصفًا",
   "itemPricing": "تسعير القطع",
   "itemPricingHelp": "حدد سعرًا لكل نوع من الملابس. يختار العملاء الكميات عند الحجز.",
-  "mruPerUnit": "أوقية / {unit}",
+  "mruPerUnit": "MRU / {unit}",
   "@mruPerUnit": {
     "placeholders": {
       "unit": {
@@ -3223,7 +3223,7 @@
   "@itemFormItemNameHint": {},
   "itemFormAddAnotherItem": "إضافة صنف آخر",
   "@itemFormAddAnotherItem": {},
-  "itemFormCurrency": "أوقية",
+  "itemFormCurrency": "MRU",
   "@itemFormCurrency": {},
   "stockEnterValidQuantity": "أدخل كمية صحيحة",
   "@stockEnterValidQuantity": {},
