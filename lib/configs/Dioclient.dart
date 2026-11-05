@@ -41,7 +41,10 @@ class DioClient {
       onRequest: (options, handler) async {
         // Local store vendors: grocery endpoints → localStore* (V12, §6.23).
         final vendorType = (await getSavedObject('vendorType'))?.toString();
-        options.path = StoreEndpoints.forVendorType(options.path, vendorType);
+        if (StoreEndpoints.isSwapped(options.path, vendorType)) {
+          options.path = StoreEndpoints.forVendorType(options.path, vendorType);
+          _toLocalStoreRequest(options);
+        }
         final path = options.path;
         final isLogin = path.contains(ApiEndPoints.login) || path.contains('/login');
         if (!isLogin) {
@@ -64,7 +67,31 @@ class DioClient {
         }
         return handler.next(options);
       },
+      onResponse: (response, handler) {
+        // Local store replies use local_store_menu… keys; the grocery screens
+        // read grocery_menu….
+        if (response.requestOptions.extra['localStoreKeys'] == true) {
+          response.data = StoreEndpoints.toGroceryKeys(response.data);
+        }
+        return handler.next(response);
+      },
     );
+  }
+
+  /// Renames grocery_menu… / grocery_tag… request keys (query, form, JSON)
+  /// for a local store endpoint, and marks the reply for renaming back.
+  static void _toLocalStoreRequest(RequestOptions options) {
+    options.extra['localStoreKeys'] = true;
+    options.queryParameters = options.queryParameters
+        .map((k, v) => MapEntry(StoreEndpoints.toLocalStoreKey(k), v));
+    final data = options.data;
+    if (data is FormData) {
+      options.data = FormData()
+        ..fields.addAll(data.fields.map((e) => MapEntry(StoreEndpoints.toLocalStoreKey(e.key), e.value)))
+        ..files.addAll(data.files.map((e) => MapEntry(StoreEndpoints.toLocalStoreKey(e.key), e.value)));
+    } else if (data is Map) {
+      options.data = data.map((k, v) => MapEntry(k is String ? StoreEndpoints.toLocalStoreKey(k) : k, v));
+    }
   }
 
   /// Logger Interceptor
