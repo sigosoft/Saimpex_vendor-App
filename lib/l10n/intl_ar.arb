@@ -3325,5 +3325,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pharmacyProfileTitle": "ملف الصيدلية",
+  "pharmacyDetailsTitle": "تفاصيل الصيدلية",
+  "vendorIdLabel": "المعرّف",
+  "tinNifNumber": "رقم التعريف الضريبي (NIF)"
 }
