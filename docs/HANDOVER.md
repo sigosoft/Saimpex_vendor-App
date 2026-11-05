@@ -59,9 +59,9 @@ One app serves all vendor types. After login the app opens a section based on th
 | 3 | Pharmacy | Pharmacy | `lib/pharmacy/` |
 | 4 | Water | Water | `lib/water/` |
 | 10 | Gas | Water design on the `water*` endpoints (backend #84, on dev). One-time orders + refills: subscription tabs, stock controls and the returnable toggle are hidden for gas; orders show "N empty cylinders to collect" (`feature/gas-on-water`) | `lib/water/` (`WaterApi.isGas`) |
-| 9 | Home cleaning | Home Cleaning (UI only, mock data) | `lib/home_cleaning/` |
-| 7 | Laundry | **To build (V14)**: app section per Figma "Vendor Apps" → Laundry Vendor App (every vendor type has this app and the web panel, final) | `service*` |
-| 8 | Car wash | **To build (V14)**: app section per Figma "Vendor Apps" → Car Wash Vendor App (every vendor type has this app and the web panel, final) | `service*` |
+| 9 | Home cleaning | Home Cleaning on the `service*` endpoints (V6, V15, V16) | `lib/home_cleaning/` |
+| 7 | Laundry | Service section shared with home cleaning (V14, §3.5b); retested on a device 4 Nov | `service*` |
+| 8 | Car wash | Service section shared with home cleaning (V14, §3.5b); retested on a device 5 Nov | `service*` |
 
 Mapping code: `lib/utils/vendor_app_type.dart` (`VendorAppTypeX.fromVendorType`). Navigation: `lib/utils/vendor_app_router.dart`.
 
@@ -78,7 +78,7 @@ From `V2_DECISIONS_AND_PLAN.md` (sections 3, 5, 7, 9, 11):
 | **Pre-order reminder 30 min before** scheduled time; driver requested when Ready or 15 min before | Show scheduled orders, show the scheduled time on cards, handle the reminder push. | Not started. Contract pending from backend (phase 2). |
 | **Grocery substitution, auto-accepted after 10 min** | Vendor proposes a replacement item per order line; show pending/accepted/auto-accepted state. | ✅ Done (V2, `feature/v2-substitution`). |
 | **Balance adjustments visible in Earnings** | Show admin add/deduct entries with note, amount, balance after, date. | **Done (V4, branch `feature/earnings-adjustments`). Empty state checked on the emulator against dev in EN and AR (restaurant Majlis has no adjustments yet); a list with real entries not yet seen.** `lib/utils/widgets/balance_adjustments_section.dart` on the Payouts tab of all three earnings screens. Built without a Figma screen. |
-| **EN / FR / AR, Arabic right-to-left** | All strings translated; RTL layout correct. | Grocery/restaurant mostly translated. Water and Home Cleaning are English only. Pharmacy partly. |
+| **EN / FR / AR, Arabic right-to-left** | All strings translated; RTL layout correct. | All sections use `S` (EN/FR/AR). Pharmacy toasts and labels translated on 4 Nov (P15). FR/AR wording is machine-written: needs the SAIMPEX Arabic review. |
 | **Printing: generic** (no specific device) | Receipt printing should work with common ESC/POS printers. | Android Bluetooth ESC/POS works for grocery/restaurant orders. No iOS. Not in pharmacy/water. |
 | **API responses carry `message_en/fr/ar`** | Show the message in the current app language. | Done in login and profile; other screens vary (unverified per screen). |
 | **Figma is the design source** | Build screens as designed. Anything without a Figma screen: same style, and list it as "built without a Figma screen". | Figma page "Vendor Apps & Driver App" (node `5:4744`) in file `gcPrdiT2s5VbO51zOdwT36`. Developers must not edit Figma. |
@@ -300,9 +300,9 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Pharmacy (3) | **Partial** | Orders, prescriptions, quotations, inventory, stock, add product, coupons, drivers, earnings, chat, notifications on API. Mostly English. No printing. |
 | Water (4) | **Partial** | Orders, subscriptions (accept/reject/pause/resume), inventory, stock, earnings, chat on API. Notifications, received payouts, coupons (add/edit/status/delete) and subscription details on API since V6; delivery calendar and delivery history hidden (no endpoint, see `docs/V6_BACKEND_ISSUES.md`). EN/FR/AR since V5. |
 | Gas (10) | **Unverified / likely broken** | Opens the Water section and calls `water*` endpoints. Backend treats type 10 as a service vertical (`HomeController`: `isService` for 7, 8, 9, 10). Must be confirmed with backend. |
-| Laundry (7) | **Not started** in app (V14) | Still blocked at login; build per Figma on `service*`, then remove the block. Every vendor type has this app and the web panel (final). |
-| Car wash (8) | **Not started** in app (V14) | Still blocked at login; build per Figma on `service*`, then remove the block. Every vendor type has this app and the web panel (final). |
-| Home cleaning (9) | **Partial (UI only)** | Screens from Figma with hard-coded bookings (`lib/home_cleaning/view/home_cleaning_home.dart`). Only profile, logout and delete account call the API (`lib/home_cleaning/view/home_cleaning_account_view.dart`). Backend `service*` endpoints exist but are not used. |
+| Laundry (7) | **Done** (V14) | Service section; full booking flow retested on a device 4 Nov (P15). |
+| Car wash (8) | **Done** (V14) | Service section; full booking flow retested on a device 5 Nov (P15). |
+| Home cleaning (9) | **Done** | Bookings, services, chat, cleaners and account on `service*` (V6, V15, V16, V18b). |
 
 ### 4.2 By feature, Grocery / Restaurant / Local store section
 
@@ -366,7 +366,7 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Earnings | Partial | `lib/water/view/account/earnings_view.dart`, `lib/water/view/account/payout_details_view.dart` | `lib/water/view/account/received_payouts_view.dart` is static. Balance adjustments listed on the Payouts tab (V4). |
 | Profile, hours, leave, business settings | Done (unverified) | `lib/water/view/account/store_profile_view.dart`, `lib/water/view/account/working_hours_view.dart`, `lib/water/view/account/leave_management_view.dart`, `lib/water/view/account/business_settings_view.dart` | |
 | Chat | Done | `lib/water/view/chat/messages_list_view.dart`, `lib/water/view/chat/chat_view.dart` | Reuses `ChatController`. |
-| Notifications | Partial (mock) | `lib/water/view/notifications/notifications_view.dart` | Hard-coded list. |
+| Notifications | Done | `lib/water/view/notifications/notifications_view.dart` | From `notifications` (static data audit, 4 Nov). |
 | Printing | Done (Android), `feature/bluetooth-printing` | `lib/water/view/order_details/order_details_view.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the order header (hidden until the order loads); `waterOrderDetail` mapped onto the same ticket. Printer picker in Account. Gas not covered. **Not yet tested on a real printer.** |
 | Localisation | Not started | - | English literals only. |
 
@@ -495,6 +495,43 @@ AC: login no longer blocks types 7 and 8; bookings flow works.
 **P12. Printing beyond Android restaurant/grocery.** ✅ **Code done (`feature/bluetooth-printing`, V7); needs a real 58 mm and 80 mm printer to verify.**
 AC: print button on pharmacy and water order details; works with a generic 58/80 mm ESC/POS Bluetooth printer; printer choice remembered.
 
+**P15. Retest and fixes, 4–5 Nov (test report "SAIMPEX-V2-full-report-4nov").** One branch per fix, each pushed with its own PR (none merged without Praveen, except #40 and #43). Full list, test data and how to continue: `HANDOVER-vendor-app-2026-11-04.md` (repo root, untracked).
+- ✅ Device-verified (Samsung M11, dev, Arabic):
+  - V-B11 / V-B12 paid prescription orders and popup "View order" (`fix/pharmacy-paid-prescription-orders`).
+  - V-B13 / V-B14 pharmacy New tab and counts (`fix/pharmacy-new-tab-only-new`).
+  - V-B15 laundry balance on unpaid cash and paid after delivery (`fix/laundry-balance-unpaid-cash`).
+  - V-B16 laundry Ready → Delivered (`fix/laundry-ready-next-step`).
+  - V-B17 store name in the service header.
+  - V-B2, V-B3, V-B4, V-B5 (accept under 2 s), V-B7, V-B9 retested on restaurant.
+  - Grocery units in substitutes (`fix/grocery-units-in-variant-value`).
+  - Pharmacy messages, OTC chip and quote units in the app language (`fix/pharmacy-localized-messages`, `fix/pharmacy-otc-accepted-chip`, `fix/pharmacy-quote-units`).
+  - Status badge / Arabic currency (`fix/status-badge-and-currency-ar`, merged #40).
+  - Arabic code + date (`fix/home-cleaning-header-date-ar`, merged #43).
+  - Login lists all nine vendor types (`fix/login-vendor-types`).
+- New P1, not in the report yet: the keyboard added a space after "." in the username (like kitchen K-B1). Fixed in `fix/login-username-spaces`.
+- Static data audit: sample values replaced by server data or hidden in `fix/pharmacy-real-data`, `fix/restaurant-real-data` and `fix/water-real-data`. Unused sample screens removed in `chore/remove-unused-sample-screens`.
+- Backend, filed: dashboard zeros (V-B10); Add Product lookups for pharmacy and water (the forms still use fixed lists until the API is documented).
+- Backend, ✅ filed 5 Nov (from `issue-drafts-vendorapp-backend-2026-11-05.md`):
+  - Update Stock vs the variant stock.
+  - English-only push.
+  - Unread count with deleted chats (confirmed on the phone).
+  - Prescription detail fields.
+  - Home opening hours (confirmed on the phone).
+  - Local store vendor sees 0 products (#141 follow-up).
+- Gas (`fix/gas-section-real-data`) and local store (`fix/local-store-api-keys`) device-tested 5 Nov.
+- Figma check, Water (5 Nov, from exports in `figma/water/`, 32% zoom): every Water frame has a screen in `lib/water/view` (home, orders, order details per status, reject and pause popups, subscription calendar and details, notifications, chat, inventory and popups, product details, add product, account, store profile, business settings, working hours, leaves, earnings, payouts, coupons, delivery partners, help, terms, privacy). Most Home frames show New Orders / Subscription Orders as the app does, so the metric cards stay. Missing: the membership card on Home, added in `design/water-home-membership`. Login: the design has no type list (decision below). Pixel-level spacing and colours still need 100% exports or Dev Mode.
+- 5 Nov: car wash retested on a device (full flow) and its location labels translated (`fix/carwash-place-label`). Pharmacy Profile translated. Water chat badge and home cleaning header confirmed. Unused sample screens removed (`chore/remove-unused-sample-screens`).
+- PRs into `main` (opened 5 Nov, none merged; Praveen approves): #44 `fix/pharmacy-paid-prescription-orders` (P1), #45 `fix/login-username-spaces` (P1), #46 `fix/local-store-api-keys`, #47 `fix/support-messages-grey-screen-2`, #48 `fix/advanced-edit-empty-after-stock`, #49 `fix/pharmacy-new-tab-only-new`, #50 `fix/pharmacy-localized-messages`, #51 `fix/pharmacy-otc-accepted-chip`, #52 `fix/pharmacy-quote-units`, #53 `fix/water-real-data`, #54 `fix/gas-section-real-data`, #55 `fix/laundry-balance-unpaid-cash`, #56 `fix/laundry-ready-next-step`, #57 `fix/carwash-place-label`, #58 `fix/grocery-units-in-variant-value`, #59 `fix/login-vendor-types`, #60 `chore/remove-unused-sample-screens`, #61 `docs/handover-test-day-fixes`, #62 `design/water-home-membership`. Also open from before: #39 water chat badge, #41 restaurant real data, #42 pharmacy real data. Merging them one after another gives conflicts in `lib/l10n/intl_*.arb`: keep both key sets, then `flutter pub run intl_utils:generate`.
+- 5 Nov evening, frontend only: `chore/remove-leftover-sample-data` (PR to open) removes the unreachable customer-app mock code: a mock OTP login that saved a fake `mock_token`, the orders / restaurant details / food search mock controllers and the screens only they used, and the points / notification-status mocks in `ProfileController`. A new commit on #42 (`fix/pharmacy-real-data`) clears the pharmacy order details sample defaults ("Ahmed", "+222 45 12 34 56", "#22789007", Lorem note); before, a real customer named Ahmed was shown as "Customer". Still from the design, needing the backend: water notification action buttons (the notification rows carry no order or subscription link).
+- Needs a decision: V8 (Delivered with an unpaid balance), and whether to keep the login type list.
+- AC: each branch passes on a device in Arabic and French; `flutter analyze --no-pub` has no new errors (0 errors on the combined test branch `test/retest-2026-11-04b`).
+
+**P14. Test day 2 Nov follow-up.** ✅ App fixes merged to `main` on 2–3 Nov (tip `dd04029`); **not yet retested on a device**. Notes: `test-day-2026-11-02-vendor-issues.md` (issues), `test-day-2026-11-03-fixes.md` (fix log), both untracked in the repo root.
+Fixed in the app (branch → issue): support messages grey screen (`fix/support-messages-grey-screen`, V13); pharmacy Mark as Reviewed and quote prescription image (`fix/pharmacy-mark-reviewed`, V5/V6); no "Online payment" guess when the list has no `payment_type` (`fix/unknown-payment-not-online`, V3); water details Accept/Prepare/Ready/Reject and delivery-vs-pickup (`fix/water-order-details`, V2/V4); laundry paid/final after a weight top-up (`fix/laundry-paid-final-amounts`, V7); Arabic/French names kept on save (`fix/keep-translated-names-on-save`, V9); restaurant Mark Out Of Stock (POST) and Order Rules in Settings (`fix/restaurant-stock-and-order-rules`, V10/V12); Update Stock on `updateRestaurantMenuStock` (`fix/restaurant-strings-and-ux`, V11); server times in phone time and dates in the app language (`fix/server-times-all-sections`, `fix/frontend-leftovers`); instant Accept (`fix/instant-accept`); translations for Restaurant Management, Add Item, Advanced Edit, pharmacy screens, reject sheets, units, plurals and validation messages (V17/V18).
+Still open, backend (`praveensigo/saimpex-backend-new`, not filed yet): `vendorapp/dashboard` returns 0 products / 0 revenue (draft `issue-draft-vendorapp-dashboard.md`); cancel APIs have no reason field (V1); accept takes 8–20 s; water/gas/pharmacy lists lack `payment_type` (V3); laundry `total_paid` should be the amount collected (V7); new-order push lacks `order_code`; server times without UTC offset; local store My Store shows 0 products (V14, #141); document `updateRestaurantMenuStock` / `restaurantMenuStockLogs`.
+Needs a decision: laundry Delivered with an unpaid balance (block or confirm, V8).
+AC: every item in the retest list of `test-day-2026-11-03-fixes.md` passes on a device against dev, in Arabic and French.
+
 **P13. Release readiness.**
 Real release signing (`key.properties`, not committed); iOS bundle id + `GoogleService-Info.plist`; fix or delete `test/widget_test.dart`; remove dead OTP login, `vendor/` fallbacks, unused deps (`tflite_flutter`, `camera`); add `shared_preferences` to `pubspec.yaml`; disable request/header logging in release.
 AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB builds on a clean machine.
@@ -523,7 +560,7 @@ AC: `flutter analyze` clean of errors; `flutter test` passes; signed release AAB
 5. **Mock data**: removed in V6. Where the backend has no data (Water delivery calendar/history, some Home Cleaning fields) the block is hidden; gaps in `docs/V6_BACKEND_ISSUES.md`.
 6. **Dead OTP login path** saves a fake `mock_token` (`lib/controller/otp_controller.dart`). Not reachable now; remove.
 7. **Release signed with the debug key**; iOS not configured (template bundle id, no Firebase plist).
-8. **Localisation gaps**: Pharmacy mostly English; FR/AR missing a few older keys; Water/Home Cleaning mock data still English (V6). Reject/pause reasons are sent to the API in English while shown translated.
+8. **Localisation gaps**: Pharmacy, Restaurant Management, Add Item and Advanced Edit translated on 2–3 Nov (P14); FR/AR wording is machine-written and needs the SAIMPEX Arabic review. Reject/pause reasons are sent to the API in English while shown translated.
 9. **Logging**: `DioClient` logs headers and bodies (includes the Bearer token) in all builds. Guard with `kDebugMode`.
 10. **Pusher key hard-coded** in `lib/configs/PusherConfig.dart` (a public key, but it should come from config so DEV and LIVE can differ).
 11. **No automated tests** beyond the receipt builder; template widget test fails.
