@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/bidi_text.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/water/controller/inventory_controller.dart';
-import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/water/model/inventory_product.dart';
 import 'package:saimpex_vendor/water/view/chat/messages_list_view.dart';
@@ -461,6 +461,9 @@ class _StatsGrid extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
+            // Gas has no stock (#84): no Low Stock tile; Out of Stock is
+            // the availability switch.
+            if (!WaterApi.isGas) ...[
             Expanded(
               child: _StatCard(
                 label: S.of(context).waterLowStock.toUpperCase(),
@@ -471,6 +474,7 @@ class _StatsGrid extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
+            ],
             Expanded(
               child: _StatCard(
                 label: S.of(context).outOfStock.toUpperCase(),
@@ -840,7 +844,7 @@ class _FilterChips extends StatelessWidget {
   List<String> _labels(BuildContext context) => [
     S.of(context).waterFilterAllCount(allCount.toString()),
     S.of(context).waterFilterInStockCount(inStockCount.toString()),
-    S.of(context).waterFilterLowStockCount(lowStockCount.toString()),
+    if (!WaterApi.isGas) S.of(context).waterFilterLowStockCount(lowStockCount.toString()),
   ];
 
   @override
@@ -1008,26 +1012,16 @@ class _CategoryActionsRow extends StatelessWidget {
 String _categoryLabel(BuildContext context, String category) =>
     category == 'All Categories' ? S.of(context).allCategories : category;
 
+/// The product photo; a neutral box when there is none or it fails (a 19 L
+/// water can was shown, also for gas cylinders).
 Widget _buildItemImage(String? imagePath) {
   if (imagePath == null || imagePath.trim().isEmpty) {
-    return Image.asset(
-      AppAssets.waterCan19L,
-      fit: BoxFit.contain,
-      errorBuilder: (_, _, _) =>
-          const Icon(Icons.water_drop, color: AppColors.inventoryOrders),
-    );
+    return noImageBox();
   }
-
-  final fullUrl = _resolveWaterImageUrl(imagePath);
   return Image.network(
-    fullUrl,
+    _resolveWaterImageUrl(imagePath),
     fit: BoxFit.contain,
-    errorBuilder: (_, _, _) => Image.asset(
-      AppAssets.waterCan19L,
-      fit: BoxFit.contain,
-      errorBuilder: (_, _, _) =>
-          const Icon(Icons.water_drop, color: AppColors.inventoryOrders),
-    ),
+    errorBuilder: (_, _, _) => noImageBox(),
   );
 }
 
@@ -1334,6 +1328,8 @@ class _ProductCard extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              // Gas has no stock (#84): no bottles count.
+                              if (!WaterApi.isGas) ...[
                               const SizedBox(width: 8),
                               Container(
                                 width: 54,
@@ -1381,6 +1377,9 @@ class _ProductCard extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              ] else
+                                // Keeps the card height (the texts rely on it).
+                                const SizedBox(height: 54),
                             ],
                           ),
                         ],

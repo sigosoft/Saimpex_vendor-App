@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
+import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1306,27 +1307,14 @@ class _OrderItemCard extends StatelessWidget {
               width: 64,
               height: 64,
               color: const Color(0xFFE8E8E8),
+              // No sample photo (a 19 L water can, also for gas cylinders).
               child: imageUrl.isNotEmpty
                   ? Image.network(
                       imageUrl,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => Image.asset(
-                        AppAssets.waterCan19L,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, _, _) => const Icon(
-                          Icons.water_drop,
-                          color: Color(0xFF9E9E9E),
-                        ),
-                      ),
+                      errorBuilder: (_, _, _) => noImageBox(),
                     )
-                  : Image.asset(
-                      AppAssets.waterCan19L,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Icon(
-                        Icons.water_drop,
-                        color: Color(0xFF9E9E9E),
-                      ),
-                    ),
+                  : noImageBox(),
             ),
           ),
           const SizedBox(width: 12),
@@ -1895,8 +1883,9 @@ class _BottomActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryLabel = _primaryLabel;
-    final showRejectAccept = status == HomeOrderStatus.newOrder ||
-        status == HomeOrderStatus.delivered;
+    // Only a new order can be accepted or rejected (a delivered one showed
+    // Accept / Reject, 5 Nov retest).
+    final showRejectAccept = status == HomeOrderStatus.newOrder;
 
     if (primaryLabel == null && !showRejectAccept) {
       return const SizedBox.shrink();
