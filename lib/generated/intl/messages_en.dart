@@ -3376,6 +3376,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterUpdateStock": MessageLookupByLibrary.simpleMessage("Update Stock"),
     "waterValidUpto": MessageLookupByLibrary.simpleMessage("Valid Upto"),
     "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("Voice message"),
+    "waterWaitingForDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "Ready: waiting for a delivery partner to pick it up",
+    ),
     "waterWallet": MessageLookupByLibrary.simpleMessage("Wallet"),
     "waterWaterSupplyIssue": MessageLookupByLibrary.simpleMessage(
       "Water Supply Issue",

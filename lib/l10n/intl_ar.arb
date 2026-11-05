@@ -1973,6 +1973,7 @@
   "waterOrderMarkedAsReady": "تم تحديد الطلب كجاهز بنجاح",
   "waterOrderPickedUp": "تم تسليم الطلب للعميل",
   "waterFailedToMarkPickedUp": "تعذّر تحديد الطلب كمُستلَم",
+  "waterWaitingForDeliveryPartner": "جاهز: بانتظار مندوب التوصيل لاستلامه",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "تم نقل الطلب إلى التحضير بنجاح",
   "@waterOrderMovedToPreparing": {},

@@ -3319,6 +3319,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterUpdateStock": MessageLookupByLibrary.simpleMessage("تحديث المخزون"),
     "waterValidUpto": MessageLookupByLibrary.simpleMessage("صالح حتى"),
     "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("رسالة صوتية"),
+    "waterWaitingForDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "جاهز: بانتظار مندوب التوصيل لاستلامه",
+    ),
     "waterWallet": MessageLookupByLibrary.simpleMessage("المحفظة"),
     "waterWaterSupplyIssue": MessageLookupByLibrary.simpleMessage(
       "مشكلة في إمدادات المياه",

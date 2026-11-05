@@ -1974,6 +1974,7 @@
   "waterOrderMarkedAsReady": "Commande marquée comme prête",
   "waterOrderPickedUp": "Commande remise au client",
   "waterFailedToMarkPickedUp": "Impossible de marquer la commande comme retirée",
+  "waterWaitingForDeliveryPartner": "Prête : en attente d’un livreur",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Commande passée en préparation",
   "@waterOrderMovedToPreparing": {},

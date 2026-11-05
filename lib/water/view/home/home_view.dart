@@ -1597,18 +1597,56 @@ class _OrderCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+            ] else if (_isReady && order.isDelivery) ...[
+              // W-14: a ready delivery order waits for a delivery partner to
+              // pick it up; the list carries no driver, so say that instead
+              // of showing nothing.
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: _partnerBg,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.delivery_dining_outlined,
+                      size: 16,
+                      color: _partnerPurple,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        S.of(context).waterWaitingForDeliveryPartner,
+                        style: const TextStyle(
+                          color: _partnerPurple,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
             ],
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  if (!_isReady) ...[
-                    _OrderChip(
-                      icon: Icons.inventory_2_outlined,
-                      label: keepNumberUnitsLtr(order.itemLabel),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+                  // Items and amount ("1 Bottle (19L) • 80 MRU"), also on
+                  // ready orders (W-14: the ready card showed no amount).
+                  _OrderChip(
+                    icon: Icons.inventory_2_outlined,
+                    label: keepNumberUnitsLtr(order.itemLabel),
+                  ),
+                  const SizedBox(width: 8),
                   if (order.paymentLabel.isNotEmpty)
                     _OrderChip(
                       icon: order.isOnlinePayment
@@ -1775,6 +1813,37 @@ class _OrderCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
+                    ),
+                  ),
+                ),
+              ),
+            ] else if (_isReady && order.isDelivery) ...[
+              // W-14: the ready delivery card had no action; open the
+              // details, which show the assigned partner when there is one.
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => OrderDetailsView(order: order),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: _orange,
+                    side: const BorderSide(color: _orange),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    S.of(context).viewDetails,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ),
