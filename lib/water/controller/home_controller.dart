@@ -137,12 +137,39 @@ class WaterHomeController extends GetxController {
 
   /// Today's hours from home screen.welcome; null when the server sends
   /// none (it fell back to 08:00 - 22:00).
+  ///
+  /// Backend VendorScreenData::todayHours sends `is_open_24h` and `timings`
+  /// as a list of `{open_time, close_time}` slots ("HH:mm"). The list was
+  /// printed as is ("[{open_time: 00:00, close_time: 23:59}]", device
+  /// 5 Nov); it is now formatted.
   String? get storeTimings {
     final welcome = rawScreen?['welcome'];
     if (welcome is Map) {
-      final timings = welcome['timings']?.toString().trim();
-      if (timings != null && timings.isNotEmpty && timings != 'null') {
-        return timings;
+      final is24 = welcome['is_open_24h'];
+      if (is24 == true || is24 == 1 || is24?.toString() == '1') {
+        return S.current.waterOpen24Hours;
+      }
+      final timings = welcome['timings'];
+      if (timings is List) {
+        final slots = <(String, String)>[];
+        for (final t in timings) {
+          if (t is! Map) continue;
+          final o = t['open_time']?.toString().trim() ?? '';
+          final c = t['close_time']?.toString().trim() ?? '';
+          if (o.isNotEmpty && c.isNotEmpty) slots.add((o, c));
+        }
+        if (slots.isNotEmpty) {
+          // "Today: 08:00 - 12:00, 14:00 - 22:00" for split hours.
+          final rest = slots.skip(1).map((s) => '${s.$1} - ${s.$2}');
+          return [
+            S.current.waterTodayTimings(slots.first.$1, slots.first.$2),
+            ...rest,
+          ].join(', ');
+        }
+      } else if (timings is String &&
+          timings.trim().isNotEmpty &&
+          timings.trim() != 'null') {
+        return timings.trim();
       }
       final open = welcome['opening_time']?.toString().trim();
       final close = welcome['closing_time']?.toString().trim();
