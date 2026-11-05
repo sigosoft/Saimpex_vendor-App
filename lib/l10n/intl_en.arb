@@ -2180,6 +2180,8 @@
   "waterVoiceMessage": "Voice message",
   "@waterVoiceMessage": {},
   "waterWaterSupplyIssue": "Water Supply Issue",
+  "waterCancelReason": "Reason: {reason}",
+  "@waterCancelReason": {"placeholders": {"reason": {"type": "String"}}},
   "@waterWaterSupplyIssue": {},
   "waterWeek": "Week",
   "@waterWeek": {},

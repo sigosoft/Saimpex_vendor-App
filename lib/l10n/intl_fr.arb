@@ -2244,6 +2244,8 @@
   "waterVoiceMessage": "Message vocal",
   "@waterVoiceMessage": {},
   "waterWaterSupplyIssue": "Problème d'approvisionnement en eau",
+  "waterCancelReason": "Motif : {reason}",
+  "@waterCancelReason": {"placeholders": {"reason": {"type": "String"}}},
   "@waterWaterSupplyIssue": {},
   "waterWeek": "Semaine",
   "@waterWeek": {},

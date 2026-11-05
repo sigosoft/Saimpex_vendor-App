@@ -721,6 +721,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       partnerName != null && partnerName.isNotEmpty && partnerName != 'null',
                   statusLogs: statusLogs,
                   placedAt: placedTime.isNotEmpty ? placedTime : widget.order.timeAgo,
+                  cancelReason: orderMap['cancel_reason']?.toString(),
                 ),
               ],
             ),
@@ -1671,6 +1672,7 @@ class _OrderTimeline extends StatelessWidget {
     this.hasDeliveryPartner = false,
     this.statusLogs = const [],
     this.placedAt,
+    this.cancelReason,
   });
 
   final bool isDelivery;
@@ -1678,6 +1680,44 @@ class _OrderTimeline extends StatelessWidget {
   final bool hasDeliveryPartner;
   final List<Map<String, dynamic>> statusLogs;
   final String? placedAt;
+
+  /// `order.cancel_reason` from waterOrderDetail (the status-10 log remark).
+  final String? cancelReason;
+
+  static const Color _cancelRed = Color(0xFFE53935);
+
+  /// Remarks the server writes when no reason was sent: not a reason.
+  static const _defaultCancelRemarks = {
+    'Order Cancelled by water vendor',
+    'Order Cancelled by Vendor',
+    'Order Cancelled by pharmacy',
+  };
+
+  /// The reason in the app language: the reject sheet sends the English
+  /// value of a fixed reason, so those are translated; "Other" text is
+  /// shown as typed.
+  String? get _cancelReasonText {
+    final r = cancelReason?.trim() ?? '';
+    if (r.isEmpty || r == 'null' || _defaultCancelRemarks.contains(r)) {
+      return null;
+    }
+    return switch (r) {
+      'Out of Stock' => S.current.outOfStock,
+      'Temporary Store Closure' => S.current.waterTemporaryStoreClosure,
+      'Water Supply Issue' => S.current.waterWaterSupplyIssue,
+      _ => r,
+    };
+  }
+
+  /// Highest status the order reached before it was cancelled.
+  int get _lastStatusBeforeCancel {
+    var last = 1;
+    for (final log in statusLogs) {
+      final s = int.tryParse(log['status']?.toString() ?? '');
+      if (s != null && s != 10 && s > last) last = s;
+    }
+    return last;
+  }
 
   static const Color _containerBg = Color(0xFFF8F7F4);
 
@@ -1731,9 +1771,53 @@ class _OrderTimeline extends StatelessWidget {
     return '';
   }
 
+  /// Cancelled order: the steps it reached, then a red Cancelled step with
+  /// its time and reason (device 5 Nov: only "Order received" was shown).
+  Widget _buildCancelled(List<(IconData, String, List<int>)> base) {
+    final last = _lastStatusBeforeCancel;
+    final reached = base.where((s) => s.$3.first <= last).length.clamp(1, base.length);
+    final cancelTime = _getTimestampForStep(-1, const [10]);
+    final reason = _cancelReasonText;
+    final cancelSubtitle = [
+      if (cancelTime.isNotEmpty) cancelTime,
+      if (reason != null) S.current.waterCancelReason(reason),
+    ].join('\n');
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
+      decoration: BoxDecoration(
+        color: _containerBg,
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < reached; i++)
+            _TimelineStep(
+              icon: base[i].$1,
+              title: base[i].$2,
+              subtitle: _getTimestampForStep(i, base[i].$3),
+              active: true,
+              showLine: true,
+              lineActive: true,
+            ),
+          _TimelineStep(
+            icon: Icons.close_rounded,
+            title: S.current.cancelled,
+            subtitle: cancelSubtitle,
+            active: true,
+            showLine: false,
+            lineActive: false,
+            activeColor: _cancelRed,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final base = isDelivery ? deliveryBase : selfPickupBase;
+    if (status == HomeOrderStatus.cancelled) return _buildCancelled(base);
     final completed = _completedCount;
 
     return Container(
@@ -1768,6 +1852,7 @@ class _TimelineStep extends StatelessWidget {
     required this.active,
     required this.showLine,
     required this.lineActive,
+    this.activeColor = OrderDetailsView._orange,
   });
 
   final IconData icon;
@@ -1776,6 +1861,9 @@ class _TimelineStep extends StatelessWidget {
   final bool active;
   final bool showLine;
   final bool lineActive;
+
+  /// Circle colour of an active step (red for Cancelled).
+  final Color activeColor;
 
   static const Color _inactiveCircle = Color(0xFFE8EEF5);
   static const Color _inactiveIcon = Color(0xFFAAB7C6);
@@ -1796,14 +1884,13 @@ class _TimelineStep extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: active ? OrderDetailsView._orange : _inactiveCircle,
+                    color: active ? activeColor : _inactiveCircle,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 4),
                     boxShadow: active
                         ? [
                             BoxShadow(
-                              color: OrderDetailsView._orange
-                                  .withValues(alpha: 0.25),
+                              color: activeColor.withValues(alpha: 0.25),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
