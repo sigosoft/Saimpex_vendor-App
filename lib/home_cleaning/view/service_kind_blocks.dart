@@ -367,8 +367,12 @@ class _VerifyWeightSheetState extends State<_VerifyWeightSheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final r = widget.booking.raw;
-    final estimate = _num(r['estimate_kg']) ?? 0;
-    final rate = _num(r['rate_per_kg']) ?? 0;
+    // No made-up 0 kg / 0 MRU: the estimate and the price breakdown show
+    // only when the booking carries them.
+    final estimateKg = _num(r['estimate_kg']);
+    final rateKg = _num(r['rate_per_kg']);
+    final estimate = estimateKg ?? 0;
+    final rate = rateKg ?? 0;
     final actual = double.tryParse(_kgCtrl.text.replaceAll(',', '.'));
     final estimateAmount = estimate * rate;
     final actualAmount = (actual ?? 0) * rate;
@@ -388,9 +392,10 @@ class _VerifyWeightSheetState extends State<_VerifyWeightSheet> {
               Expanded(child: Text(s.laundryVerifyWeight, style: _t(17, FontWeight.w700, _ink))),
               IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close)),
             ]),
+            if (estimateKg != null)
             _card(
               color: const Color(0xFFF7F7F8),
-              child: _row(s.laundryCustomerEstimate(_kg(estimate)), '${_mru(estimateAmount)} MRU', color: _orange, bold: true),
+              child: _row(s.laundryCustomerEstimate(_kg(estimate)), rateKg == null ? '' : '${_mru(estimateAmount)} MRU', color: _orange, bold: true),
             ),
             const SizedBox(height: 14),
             Text(s.laundryActualWeightLabel, style: _t(13, FontWeight.w600, _soft)),
@@ -407,7 +412,7 @@ class _VerifyWeightSheetState extends State<_VerifyWeightSheet> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
             ),
-            if (valid) ...[
+            if (valid && rateKg != null && estimateKg != null) ...[
               const SizedBox(height: 14),
               _card(
                 color: const Color(0xFFF7F8FF),

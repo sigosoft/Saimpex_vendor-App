@@ -172,9 +172,9 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
                           if (d['closed'] == true || d['closed'] == 1)
                             Text(s.closed, style: _t(13, FontWeight.w500, _muted))
                           else ...[
-                            _timeChip('${d['start']}', () => _pickTime(d, 'start')),
+                            _timeChip('${d['start'] ?? '-'}', () => _pickTime(d, 'start')),
                             const Padding(padding: EdgeInsets.symmetric(horizontal: 4), child: Text('–')),
-                            _timeChip('${d['end']}', () => _pickTime(d, 'end')),
+                            _timeChip('${d['end'] ?? '-'}', () => _pickTime(d, 'end')),
                           ],
                           Switch(
                             value: !(d['closed'] == true || d['closed'] == 1),
@@ -257,10 +257,17 @@ class _ServiceBusinessSettingsViewState extends State<ServiceBusinessSettingsVie
   Future<void> _load() async {
     final res = await CleaningApi.get(ApiEndPoints.serviceDashboard);
     if (!mounted) return;
+    // On a failed load the switches stay off and disabled (they showed
+    // "accepting on, busy off" as if that came from the server).
+    if (!res.ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).somethingWentWrong)));
+      return;
+    }
     final m = res.map;
     setState(() {
-      _accepting = '${m['accepting_bookings'] ?? 1}' != '2';
-      _busy = '${m['is_busy'] ?? m['busy'] ?? 2}' == '1';
+      if (m['accepting_bookings'] != null) _accepting = '${m['accepting_bookings']}' != '2';
+      final busy = m['is_busy'] ?? m['busy'];
+      if (busy != null) _busy = '$busy' == '1';
     });
   }
 
@@ -340,9 +347,13 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
     if (!mounted) return;
     setState(() {
       _loading = false;
+      _failed = !res.ok;
       if (res.ok) _data = res.map;
     });
   }
+
+  /// The last load failed: show the error, not "0 MRU / No earnings yet".
+  bool _failed = false;
 
   double _num(String key) => double.tryParse('${_data[key] ?? 0}') ?? 0;
 
@@ -363,6 +374,12 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
         color: _orange,
         onRefresh: _load,
         child: ListView(padding: const EdgeInsets.all(16), children: [
+          if (_failed && !_loading)
+            Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: Text(s.somethingWentWrong, textAlign: TextAlign.center, style: _t(14, FontWeight.w500, _muted)),
+            )
+          else ...[
           Row(children: [
             _stat(s.earningsPending, _num('pending_order_balance')),
             const SizedBox(width: 8),
@@ -403,6 +420,7 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
           ] else ...[
             if (_rows('payouts').isEmpty) _empty(s.noPayoutsYet),
             for (final p in _rows('payouts')) _payoutRow(p),
+          ],
           ],
         ]),
       ),

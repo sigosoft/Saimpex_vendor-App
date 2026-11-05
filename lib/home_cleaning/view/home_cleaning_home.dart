@@ -120,10 +120,13 @@ class _HomeTab extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: 12),
+              // Only once the dashboard has loaded: before that (or when it
+              // fails) it showed "Open • Accepting bookings" as if real.
+              if (dashboard != null)
               _StatusCard(
                 open: controller.storeOpen ?? controller.acceptingBookings,
                 accepting: controller.acceptingBookings,
-                todayHours: dashboard?.todayHours,
+                todayHours: dashboard.todayHours,
                 busy: controller.togglingAvailability,
                 onToggle: (value) async {
                   HapticFeedback.lightImpact();
