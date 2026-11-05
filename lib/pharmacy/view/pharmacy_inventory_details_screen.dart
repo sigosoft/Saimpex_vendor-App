@@ -1107,59 +1107,6 @@ class _RevenueStat extends StatelessWidget {
   }
 }
 
-class _HistoryCard extends StatelessWidget {
-  const _HistoryCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              'Stock History',
-              style: appFont('Inter', 
-                color: const Color(0xFF111827),
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                height: 1.2,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              'See All',
-              style: appFont('Inter', 
-                color: PharmacyInventoryDetailsScreen._orange,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                height: 1.2,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        const _StockHistoryTile(
-          stockId: 'STOCK ID: #927',
-          date: '26 Mar, 2026, 03:59 AM',
-          added: false,
-          title: 'Stock Removed',
-          quantity: '-50',
-          remaining: '400',
-        ),
-        const SizedBox(height: 12),
-        const _StockHistoryTile(
-          stockId: 'STOCK ID: #926',
-          date: '26 Mar, 2026, 03:59 AM',
-          added: true,
-          title: 'Stock Added',
-          quantity: '+450',
-          remaining: '450',
-        ),
-      ],
-    );
-  }
-}
-
 class _StockHistoryTile extends StatelessWidget {
   const _StockHistoryTile({
     required this.stockId,
