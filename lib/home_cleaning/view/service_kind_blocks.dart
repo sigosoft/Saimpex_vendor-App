@@ -65,6 +65,17 @@ String laundryProcessingLabel(S s, String value) {
   return value;
 }
 
+/// Car wash location as the API sends it ("At Wash Station", or the place
+/// key "station") in the app language; anything else is shown as sent.
+String carWashPlaceLabel(S s, String value) => switch (value.trim().toLowerCase()) {
+      'at wash station' || 'station' => s.carWashAtStation,
+      'at home' || 'home' => s.carWashAtHome,
+      'at workplace' || 'workplace' => s.carWashAtWorkplace,
+      'at another address' || 'other' => s.carWashAtOtherAddress,
+      'at home/workplace' => s.carWashAtHomeOrWork,
+      _ => value,
+    };
+
 // ── Laundry ─────────────────────────────────────────────────────────────
 
 class LaundryBookingBlock extends StatelessWidget {
@@ -230,7 +241,8 @@ class CarWashBookingBlock extends StatelessWidget {
     final vehicles = booking.raw['vehicles'] is List
         ? (booking.raw['vehicles'] as List).whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
         : <Map<String, dynamic>>[];
-    final place = _str(booking.raw['service_location']) ?? _str(booking.raw['place']) ?? _str(booking.raw['address_label']);
+    final placeRaw = _str(booking.raw['service_location']) ?? _str(booking.raw['place']) ?? _str(booking.raw['address_label']);
+    final place = placeRaw == null ? null : carWashPlaceLabel(s, placeRaw);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

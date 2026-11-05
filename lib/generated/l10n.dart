@@ -14595,6 +14595,51 @@ class S {
       args: [],
     );
   }
+
+  /// `At Wash Station`
+  String get carWashAtStation {
+    return Intl.message(
+      'At Wash Station',
+      name: 'carWashAtStation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Home`
+  String get carWashAtHome {
+    return Intl.message('At Home', name: 'carWashAtHome', desc: '', args: []);
+  }
+
+  /// `At Workplace`
+  String get carWashAtWorkplace {
+    return Intl.message(
+      'At Workplace',
+      name: 'carWashAtWorkplace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Another Address`
+  String get carWashAtOtherAddress {
+    return Intl.message(
+      'At Another Address',
+      name: 'carWashAtOtherAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Home/Workplace`
+  String get carWashAtHomeOrWork {
+    return Intl.message(
+      'At Home/Workplace',
+      name: 'carWashAtHomeOrWork',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
