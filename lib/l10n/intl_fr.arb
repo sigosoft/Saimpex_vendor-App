@@ -1972,6 +1972,7 @@
     }
   },
   "waterOrderMarkedAsReady": "Commande marquée comme prête",
+  "waterWaitingForDeliveryPartner": "Prête : en attente d’un livreur",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Commande passée en préparation",
   "@waterOrderMovedToPreparing": {},

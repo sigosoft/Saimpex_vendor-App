@@ -7871,6 +7871,16 @@ class S {
     );
   }
 
+  /// `Ready: waiting for a delivery partner to pick it up`
+  String get waterWaitingForDeliveryPartner {
+    return Intl.message(
+      'Ready: waiting for a delivery partner to pick it up',
+      name: 'waterWaitingForDeliveryPartner',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Order moved to preparing successfully`
   String get waterOrderMovedToPreparing {
     return Intl.message(

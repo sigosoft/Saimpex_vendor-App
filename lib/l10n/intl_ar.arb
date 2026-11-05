@@ -1971,6 +1971,7 @@
     }
   },
   "waterOrderMarkedAsReady": "تم تحديد الطلب كجاهز بنجاح",
+  "waterWaitingForDeliveryPartner": "جاهز: بانتظار مندوب التوصيل لاستلامه",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "تم نقل الطلب إلى التحضير بنجاح",
   "@waterOrderMovedToPreparing": {},
