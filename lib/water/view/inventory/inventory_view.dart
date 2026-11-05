@@ -1373,7 +1373,9 @@ class _ProductCard extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              ],
+                              ] else
+                                // Keeps the card height (the texts rely on it).
+                                const SizedBox(height: 54),
                             ],
                           ),
                         ],
