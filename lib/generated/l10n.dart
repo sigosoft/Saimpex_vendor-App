@@ -14320,6 +14320,41 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Pharmacy Profile`
+  String get pharmacyProfileTitle {
+    return Intl.message(
+      'Pharmacy Profile',
+      name: 'pharmacyProfileTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PHARMACY DETAILS`
+  String get pharmacyDetailsTitle {
+    return Intl.message(
+      'PHARMACY DETAILS',
+      name: 'pharmacyDetailsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ID`
+  String get vendorIdLabel {
+    return Intl.message('ID', name: 'vendorIdLabel', desc: '', args: []);
+  }
+
+  /// `TIN/NIF Number`
+  String get tinNifNumber {
+    return Intl.message(
+      'TIN/NIF Number',
+      name: 'tinNifNumber',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

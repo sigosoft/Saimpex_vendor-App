@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' hide FormData;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_pending_orders_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
@@ -2784,6 +2785,22 @@ class PharmacyHomeController extends GetxController {
       await fetchPharmacyOrders(status: otcOrderStatuses[i]);
     }
     await fetchPharmacyHome();
+  }
+
+  /// Today's hours from home `screen.welcome` (as the water home reads
+  /// them); null when the server sends none, and the line is hidden.
+  String? get storeTimings {
+    final welcome = rawScreen?['welcome'];
+    if (welcome is! Map) return null;
+    String? text(dynamic v) {
+      final t = v?.toString().trim();
+      return (t == null || t.isEmpty || t == 'null') ? null : t;
+    }
+    final timings = text(welcome['timings']);
+    if (timings != null) return timings;
+    final open = text(welcome['opening_time']);
+    final close = text(welcome['closing_time']);
+    return open != null && close != null ? S.current.waterTodayTimings(open, close) : null;
   }
 
   void toggleStore(bool value) {

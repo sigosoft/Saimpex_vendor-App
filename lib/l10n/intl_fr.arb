@@ -3326,5 +3326,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pharmacyProfileTitle": "Profil de la pharmacie",
+  "pharmacyDetailsTitle": "DÉTAILS DE LA PHARMACIE",
+  "vendorIdLabel": "ID",
+  "tinNifNumber": "Numéro TIN/NIF"
 }

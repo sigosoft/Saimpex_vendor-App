@@ -1760,6 +1760,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "View Full Prescription",
     ),
     "pharmacyDetailZoom": MessageLookupByLibrary.simpleMessage("Zoom"),
+    "pharmacyDetailsTitle": MessageLookupByLibrary.simpleMessage(
+      "PHARMACY DETAILS",
+    ),
     "pharmacyGenericEquivalent": MessageLookupByLibrary.simpleMessage(
       "Generic equivalent",
     ),
@@ -1967,6 +1970,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Temporary Store Closure",
     ),
     "pharmacyOtcTotalPaid": MessageLookupByLibrary.simpleMessage("Total paid"),
+    "pharmacyProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Pharmacy Profile",
+    ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone Number"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(
       "Pick what you want and fill your basket!",
@@ -2565,6 +2571,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
       "Ticket sent to the printer",
     ),
+    "tinNifNumber": MessageLookupByLibrary.simpleMessage("TIN/NIF Number"),
     "toDate": MessageLookupByLibrary.simpleMessage("To Date"),
     "toPay": MessageLookupByLibrary.simpleMessage("To Pay"),
     "today": MessageLookupByLibrary.simpleMessage("Today"),
@@ -2653,6 +2660,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vehicle type, e.g. Sedan",
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("Vendor"),
+    "vendorIdLabel": MessageLookupByLibrary.simpleMessage("ID"),
     "vendorType": MessageLookupByLibrary.simpleMessage("Vendor Type"),
     "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
       "Grocery / Restaurant",
