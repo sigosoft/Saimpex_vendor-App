@@ -1484,7 +1484,12 @@ class _OrderCard extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _OrderTypeBadge(isDelivery: order.isDelivery),
+                            // Figma: express orders show a yellow
+                            // "Express Delivery" tag in place of "Delivery".
+                            if (order.isExpress)
+                              const _ExpressTag()
+                            else
+                              _OrderTypeBadge(isDelivery: order.isDelivery),
                             Text(
                               ' • ',
                               style: TextStyle(
@@ -1872,6 +1877,31 @@ class _OrderCard extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpressTag extends StatelessWidget {
+  const _ExpressTag();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFD33D),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        S.of(context).waterExpressDelivery,
+        softWrap: false,
+        style: const TextStyle(
+          color: Color(0xFF3A2A00),
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
+          height: 1.2,
         ),
       ),
     );
