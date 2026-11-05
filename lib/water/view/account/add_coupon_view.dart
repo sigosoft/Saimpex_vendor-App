@@ -185,11 +185,11 @@ class _AddCouponViewState extends State<AddCouponView> {
       final data = response.data;
       if (!mounted) return;
       if (WaterApi.isOk(data)) {
-        final msg = WaterApi.message(data);
+        final msg = WaterApi.localMessage(data);
         if (msg != null) showToast(context, msg);
         Navigator.of(context).pop(true);
       } else {
-        setState(() => _error = WaterApi.message(data) ?? S.of(context).waterSomethingWentWrong);
+        setState(() => _error = WaterApi.localMessage(data) ?? S.of(context).waterSomethingWentWrong);
       }
     } catch (e) {
       if (mounted) setState(() => _error = WaterApi.errorText(e));

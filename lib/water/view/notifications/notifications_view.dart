@@ -101,7 +101,7 @@ class _NotificationsViewState extends State<NotificationsView> {
       );
       final body = response.data;
       if (!WaterApi.isOk(body)) {
-        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+        throw WaterApi.localMessage(body) ?? S.current.waterSomethingWentWrong;
       }
       if (!mounted) return;
       final lang = Localizations.localeOf(context).languageCode;

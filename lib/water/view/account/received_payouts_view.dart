@@ -117,7 +117,7 @@ class _ReceivedPayoutsViewState extends State<ReceivedPayoutsView> {
       );
       final body = response.data;
       if (!WaterApi.isOk(body)) {
-        throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+        throw WaterApi.localMessage(body) ?? S.current.waterSomethingWentWrong;
       }
       final data = body['data'] is Map ? body['data'] as Map : const {};
       final pageData = data['received_payouts'];
