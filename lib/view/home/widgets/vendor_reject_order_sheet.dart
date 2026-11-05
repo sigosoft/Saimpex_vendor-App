@@ -39,6 +39,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
   static const int _otherIndex = 3;
 
   late final List<String> reasons;
+  late final List<String> _sentReasons;
   int? selectedIndex;
   final TextEditingController otherController = TextEditingController();
 
@@ -46,11 +47,24 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
   void initState() {
     super.initState();
     // Translated (were English in Arabic and French, test day 2 Nov, V17).
+    // Figma restaurant Reject Order: Out of Stock, Restaurant Temporarily
+    // Closed, Technical Issue, Other (stores: Temporary Store Closure).
     reasons = [
       S.current.outOfStock,
-      S.current.waterTemporaryStoreClosure,
-      S.current.rejectReasonOperationalIssue,
+      widget.isRestaurant
+          ? S.current.rejectReasonRestaurantClosed
+          : S.current.waterTemporaryStoreClosure,
+      S.current.rejectReasonTechnicalIssue,
       S.current.waterOther,
+    ];
+    // Sent to the server in English (as the water app does), so the order
+    // keeps one stable reason; the app shows the translated label.
+    _sentReasons = [
+      'Out of Stock',
+      widget.isRestaurant
+          ? 'Restaurant Temporarily Closed'
+          : 'Temporary Store Closure',
+      'Technical Issue',
     ];
   }
 
@@ -74,7 +88,7 @@ class _VendorRejectOrderSheetState extends State<VendorRejectOrderSheet> {
       Navigator.of(context).pop(otherController.text.trim());
       return;
     }
-    Navigator.of(context).pop(reasons[selectedIndex!]);
+    Navigator.of(context).pop(_sentReasons[selectedIndex!]);
   }
 
   @override

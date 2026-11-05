@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/vendor_initials.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -289,7 +290,7 @@ class _SettingsState extends State<Settings> {
                             ),
                             _buildMenuItem(
                               context,
-                              S.of(context).deliveryBoys,
+                              S.of(context).deliveryPartners,
                               const AssetImage(
                                 "lib/assets/images/DeliveryBoys.png",
                               ),
@@ -335,7 +336,7 @@ class _SettingsState extends State<Settings> {
                             ),
                             _buildMenuItem(
                               context,
-                              S.of(context).settings,
+                              S.of(context).waterBusinessSettings,
                               const AssetImage(
                                 "lib/assets/images/SettingsVendor.png",
                               ),
@@ -646,9 +647,8 @@ class _SettingsState extends State<Settings> {
   Widget _initials(String? name) {
     return Center(
       child: Text(
-        name != null && name.length >= 2
-            ? name.substring(0, 2).toUpperCase()
-            : (name?.isNotEmpty == true ? name![0].toUpperCase() : "R1"),
+        // Same initials as My Restaurant ("LM"); no "R1" sample text.
+        vendorInitials(name),
         style: TextStyle(
           color: colorPrimary,
           fontSize: 24,

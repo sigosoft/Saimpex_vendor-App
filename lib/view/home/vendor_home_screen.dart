@@ -404,9 +404,17 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
     );
     if (selectedReason != null && mounted) {
       if (isRestaurant) {
-        detailsController.cancelRestaurantOrder(context, orderId);
+        detailsController.cancelRestaurantOrder(
+          context,
+          orderId,
+          reason: selectedReason,
+        );
       } else {
-        detailsController.cancelGroceryOrder(context, orderId);
+        detailsController.cancelGroceryOrder(
+          context,
+          orderId,
+          reason: selectedReason,
+        );
       }
     }
   }

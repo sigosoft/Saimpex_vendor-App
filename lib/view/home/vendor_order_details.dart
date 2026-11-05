@@ -1020,61 +1020,73 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       controller.orderData!.status! >= 3,
                                   asset: "lib/assets/images/Preparing food.png",
                                 ),
-                                _timelineItem(
-                                  S.of(context).ready,
-                                  S.of(context).orderReady,
-                                  controller.orderData!.status! >= 4
-                                      ? _logTime(controller.orderData!, 4, 3)
-                                      : "",
-                                  isCompleted:
-                                      controller.orderData!.status! >= 4,
-                                  asset: "lib/assets/images/Delivery.png",
-                                ),
-                                _timelineItem(
-                                  S.of(context).pickedUp[0].toUpperCase() +
-                                      S
-                                          .of(context)
-                                          .pickedUp
-                                          .substring(1)
-                                          .toLowerCase(),
-                                  S.of(context).orderPickedUp,
-                                  controller.orderData!.status! >= 7
-                                      ? _logTime(controller.orderData!, 7, 4)
-                                      : "",
-                                  isCompleted:
-                                      controller.orderData!.status! >= 7,
-                                  asset:
-                                      "lib/assets/images/Reached Restaurant.png",
-                                ),
-                                _timelineItem(
-                                  S.of(context).delivering[0].toUpperCase() +
-                                      S
-                                          .of(context)
-                                          .delivering
-                                          .substring(1)
-                                          .toLowerCase(),
-                                  S.of(context).deliveryStarted,
-                                  controller.orderData!.status! >= 8
-                                      ? _logTime(controller.orderData!, 8, 5)
-                                      : "",
-                                  asset:
-                                      "lib/assets/images/Order delivered.png",
-                                  isCompleted:
-                                      controller.orderData!.status! >= 8,
-                                ),
-
-                                _timelineItem(
-                                  S.of(context).delivered,
-                                  S.of(context).deliveryCompleted,
-                                  controller.orderData!.status! >= 9
-                                      ? _logTime(controller.orderData!, 9, 6)
-                                      : "",
-                                  asset:
-                                      "lib/assets/images/Order delivered.png",
-                                  isCompleted:
-                                      controller.orderData!.status! >= 9,
-                                  isLast: true,
-                                ),
+                                // Figma: a pickup order ends Ready for Pickup →
+                                // Picked Up; a delivery order goes Delivery
+                                // Partner Accepted → Reached Restaurant →
+                                // Order Delivered (one list was shown for both).
+                                if (OrderFulfillment.isSelfPickupFrom(
+                                  deliveryType:
+                                      controller.orderData?.deliveryType,
+                                  isSelfPickup:
+                                      controller.orderData?.isSelfPickup,
+                                )) ...[
+                                  _timelineItem(
+                                    S.of(context).waterReadyForPickup,
+                                    S.of(context).orderReady,
+                                    controller.orderData!.status! >= 4
+                                        ? _logTime(controller.orderData!, 4, 3)
+                                        : "",
+                                    isCompleted:
+                                        controller.orderData!.status! >= 4,
+                                    asset: "lib/assets/images/Delivery.png",
+                                  ),
+                                  _timelineItem(
+                                    S.of(context).waterPickedUpByCustomer,
+                                    S.of(context).orderPickedUp,
+                                    controller.orderData!.status! >= 9
+                                        ? _logTime(controller.orderData!, 9, 4)
+                                        : "",
+                                    isCompleted:
+                                        controller.orderData!.status! >= 9,
+                                    asset:
+                                        "lib/assets/images/Order delivered.png",
+                                    isLast: true,
+                                  ),
+                                ] else ...[
+                                  _timelineItem(
+                                    S.of(context).deliveryPartnerAccepted,
+                                    S.of(context).deliveryPartnerAcceptedSub,
+                                    controller.orderData!.status! >= 5
+                                        ? _logTime(controller.orderData!, 5, 3)
+                                        : "",
+                                    isCompleted:
+                                        controller.orderData!.status! >= 5,
+                                    asset: "lib/assets/images/Delivery.png",
+                                  ),
+                                  _timelineItem(
+                                    S.of(context).reachedRestaurantTitle,
+                                    S.of(context).reachedRestaurantSub,
+                                    controller.orderData!.status! >= 6
+                                        ? _logTime(controller.orderData!, 6, 4)
+                                        : "",
+                                    isCompleted:
+                                        controller.orderData!.status! >= 6,
+                                    asset:
+                                        "lib/assets/images/Reached Restaurant.png",
+                                  ),
+                                  _timelineItem(
+                                    S.of(context).waterOrderDelivered,
+                                    S.of(context).deliveryCompleted,
+                                    controller.orderData!.status! >= 9
+                                        ? _logTime(controller.orderData!, 9, 5)
+                                        : "",
+                                    asset:
+                                        "lib/assets/images/Order delivered.png",
+                                    isCompleted:
+                                        controller.orderData!.status! >= 9,
+                                    isLast: true,
+                                  ),
+                                ],
                               ],
                               if (controller.selectedOrderTabIndex == 1) ...[
                                 _buildOrderDurationBreakdown(
@@ -1159,12 +1171,16 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                         .cancelRestaurantOrder(
                                                           context,
                                                           widget.orderId,
+                                                          reason:
+                                                              selectedReason,
                                                         );
                                                   } else {
                                                     controller
                                                         .cancelGroceryOrder(
                                                           context,
                                                           widget.orderId,
+                                                          reason:
+                                                              selectedReason,
                                                         );
                                                   }
                                                 }

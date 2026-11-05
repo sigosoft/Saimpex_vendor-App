@@ -146,7 +146,9 @@ class _HomeState extends State<Home> {
                               height: 24,
                               color: colorPrimary,
                             ),
-                            label: S.of(context).myStore,
+                            label: Get.find<ProfileController>().vendorType == "1"
+                                ? S.of(context).myRestaurant
+                                : S.of(context).myStore,
                           ),
                           BottomNavigationBarItem(
                             icon: Stack(
