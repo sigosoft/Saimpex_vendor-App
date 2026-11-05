@@ -79,7 +79,7 @@ class _DeliveryHistoryViewState extends State<DeliveryHistoryView> {
       final res = await DioClient().get(ApiEndPoints.waterSubscriptionDeliveries,
           query: {'subscription_id': widget.subscriptionId, 'page': _page, 'limit': 20});
       final body = res.data;
-      if (!WaterApi.isOk(body)) throw WaterApi.message(body) ?? S.current.waterSomethingWentWrong;
+      if (!WaterApi.isOk(body)) throw WaterApi.localMessage(body) ?? S.current.waterSomethingWentWrong;
       final data = body is Map ? body['data'] : null;
       final page = data is Map ? (data['deliveries'] ?? data) : null;
       if (!mounted) return;
