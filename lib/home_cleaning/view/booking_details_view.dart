@@ -243,7 +243,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 12),
         _LocationCard(
           label: b.raw['address_label']?.toString(),
-          address: b.address!,
+          address: carWashPlaceLabel(S.of(context), b.address!),
           latitude: b.latitude,
           longitude: b.longitude,
         ),

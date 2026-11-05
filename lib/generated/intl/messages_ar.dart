@@ -452,6 +452,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
     "cancelledOnLabel": m4,
     "carWashAddOns": MessageLookupByLibrary.simpleMessage("الإضافات"),
+    "carWashAtHome": MessageLookupByLibrary.simpleMessage("في المنزل"),
+    "carWashAtHomeOrWork": MessageLookupByLibrary.simpleMessage(
+      "في المنزل / مكان العمل",
+    ),
+    "carWashAtOtherAddress": MessageLookupByLibrary.simpleMessage(
+      "في عنوان آخر",
+    ),
+    "carWashAtStation": MessageLookupByLibrary.simpleMessage("في محطة الغسيل"),
+    "carWashAtWorkplace": MessageLookupByLibrary.simpleMessage("في مكان العمل"),
     "carWashMarkReadyForPickup": MessageLookupByLibrary.simpleMessage(
       "جاهزة للاستلام",
     ),

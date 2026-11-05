@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/home_cleaning_controller.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
@@ -1041,7 +1042,7 @@ class _BookingCard extends StatelessWidget {
     final meta = [booking.displayCode, if (timeAgo.isNotEmpty) timeAgo];
     final chips = booking.chipLines;
     final slot = CleaningBookingFormat.slot(booking);
-    final address = booking.address;
+    final address = booking.address == null ? null : carWashPlaceLabel(S.of(context), booking.address!);
     final pill = _statusPill(context, booking);
     return GestureDetector(
       onTap: () {

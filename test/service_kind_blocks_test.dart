@@ -101,4 +101,11 @@ void main() {
     final again = await weigh(t, _laundry(actual: 3.6, pending: true), '3.6', 'Confirm Pickup');
     expect(again?.paymentRequest, isFalse);
   });
+
+  test('car wash place labels are translated, addresses kept', () async {
+    final s = await S.load(const Locale('ar'));
+    expect(carWashPlaceLabel(s, 'At Wash Station'), s.carWashAtStation);
+    expect(carWashPlaceLabel(s, 'home'), s.carWashAtHome);
+    expect(carWashPlaceLabel(s, 'Ksar, Nouakchott'), 'Ksar, Nouakchott');
+  });
 }
