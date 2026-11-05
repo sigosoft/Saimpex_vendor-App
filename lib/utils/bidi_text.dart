@@ -24,3 +24,15 @@ final RegExp _numberUnit = RegExp(
 /// Keeps every "19 L" / "1.5L" / "12 kg" in [text] as one LTR run.
 String keepNumberUnitsLtr(String text) =>
     text.replaceAllMapped(_numberUnit, (m) => ltrIsolate(m[0]!));
+
+final String _fsi = String.fromCharCode(0x2068); // FIRST STRONG ISOLATE
+
+/// [parts] joined with [separator], each laid out on its own. In Arabic a
+/// Latin booking code followed by a date ("#HCNYJHTV • 5 نوفمبر") otherwise
+/// merges into one left-to-right run and the day jumps next to the code.
+String joinIsolated(Iterable<String> parts, String separator) =>
+    parts.map((p) => '$_fsi$p$_pdi').join(separator);
+
+/// [text] laid out on its own (first strong isolate), for a piece that sits
+/// next to another one in its own style (booking code • date).
+String isolated(String text) => '$_fsi$text$_pdi';

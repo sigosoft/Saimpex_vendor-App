@@ -196,7 +196,7 @@ class _SettingsState extends State<Settings> {
                             _buildStatusRow(
                               context,
                               S.of(context).status,
-                              controller.profileData?.status ?? "",
+                              _statusLabel(context, controller.profileData?.status),
                             ),
                             const SizedBox(height: 10),
                             _buildDetailRow(
@@ -542,6 +542,14 @@ class _SettingsState extends State<Settings> {
       ],
     );
   }
+
+  /// The profile keeps ACTIVE / INACTIVE in English; show it translated.
+  String _statusLabel(BuildContext context, String? status) =>
+      switch (status?.toUpperCase()) {
+        'ACTIVE' => S.of(context).active,
+        'INACTIVE' => S.of(context).inactive,
+        _ => status ?? '',
+      };
 
   Widget _buildStatusRow(BuildContext context, String label, String status) {
     return Row(
