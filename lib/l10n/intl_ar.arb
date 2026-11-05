@@ -1971,6 +1971,8 @@
     }
   },
   "waterOrderMarkedAsReady": "تم تحديد الطلب كجاهز بنجاح",
+  "waterOrderPickedUp": "تم تسليم الطلب للعميل",
+  "waterFailedToMarkPickedUp": "تعذّر تحديد الطلب كمُستلَم",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "تم نقل الطلب إلى التحضير بنجاح",
   "@waterOrderMovedToPreparing": {},
