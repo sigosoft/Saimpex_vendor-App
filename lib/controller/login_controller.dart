@@ -11,7 +11,6 @@ import 'package:saimpex_vendor/model/login_model.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 import '../utils/utils.dart';
-import '../view/otp/otp.dart';
 
 class LoginController extends GetxController {
   final FlutterLocalization localization = FlutterLocalization.instance;
@@ -48,32 +47,6 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-  }
-
-  Future<void> sendOtp(
-    BuildContext context,
-    String countryCode,
-    String mobile,
-    String route,
-  ) async {
-    try {
-      showLoadingDialog(context);
-      if (context.mounted) {
-        Get.back();
-      }
-      update();
-      if (route == "login") {
-        if (context.mounted) {
-          Get.to(Otp(country_code: countryCode, mobile: mobile));
-        }
-      }
-    } catch (error) {
-      if (context.mounted) {
-        Get.back();
-        showToast(context, error.toString());
-      }
-      debugPrint("Login Error: $error");
-    }
   }
 
   Future<void> Login(

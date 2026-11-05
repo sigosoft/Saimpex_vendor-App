@@ -72,13 +72,12 @@ void _openCustomerChat(
 class PharmacyOrderDetailsScreen extends StatefulWidget {
   const PharmacyOrderDetailsScreen({
     super.key,
-    this.customerName = 'Ahmed',
-    this.phone = '+222 45 12 34 56',
-    this.requestId = '#22789007',
-    this.requestMeta = 'Today • 10:45 AM',
+    this.customerName = '',
+    this.phone = '',
+    this.requestId = '',
+    this.requestMeta = '',
     this.notesType = PharmacyOrderNotesType.none,
-    this.specialNotes =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
+    this.specialNotes = '',
     this.voiceNoteDuration = const Duration(seconds: 15),
     this.isSelfPickup = false,
     this.isUnderReview = false,
@@ -595,16 +594,16 @@ class _PharmacyOrderDetailsScreenState
     final presc = _detailsController.prescriptionObj;
     final customerName = presc?.customerName?.trim().isNotEmpty == true
         ? presc!.customerName!
-        : (widget.customerName != 'Ahmed' ? widget.customerName : S.of(context).quoteCustomer);
+        : (widget.customerName.isNotEmpty ? widget.customerName : S.of(context).quoteCustomer);
     final phone = presc?.displayPhone.trim().isNotEmpty == true
         ? presc!.displayPhone
-        : (widget.phone != '+222 45 12 34 56' ? widget.phone : '');
+        : (widget.phone.isNotEmpty ? widget.phone : '');
     final requestId = presc?.prescriptionId != null
         ? '#${presc!.prescriptionId}'
-        : (widget.requestId != '#22789007' ? widget.requestId : '');
+        : (widget.requestId.isNotEmpty ? widget.requestId : '');
     final requestMeta = presc?.createdAt?.trim().isNotEmpty == true
         ? formatServerDateTime(presc!.createdAt)
-        : (widget.requestMeta != 'Today • 10:45 AM' ? widget.requestMeta : '');
+        : (widget.requestMeta.isNotEmpty ? widget.requestMeta : '');
     final primaryImageUrl =
         _detailsController.prescriptionDetailData?.primaryImageUrl ??
         widget.prescriptionImageUrl;
@@ -701,7 +700,7 @@ class _PharmacyOrderDetailsScreenState
         final effectiveCustomerName =
             (rawCustName != null && rawCustName.isNotEmpty)
             ? rawCustName
-            : (widget.customerName != 'Ahmed'
+            : (widget.customerName.isNotEmpty
                   ? widget.customerName
                   : (rawCustName ?? S.of(context).quoteCustomer));
 
@@ -712,13 +711,13 @@ class _PharmacyOrderDetailsScreenState
         final rawPhone = prescObj?.displayPhone.trim();
         final effectivePhone = (rawPhone != null && rawPhone.isNotEmpty)
             ? rawPhone
-            : (widget.phone != '+222 45 12 34 56'
+            : (widget.phone.isNotEmpty
                   ? widget.phone
                   : (rawPhone ?? ''));
 
         final effectiveRequestId = prescObj?.prescriptionId != null
             ? '#${prescObj!.prescriptionId}'
-            : (widget.requestId != '#22789007'
+            : (widget.requestId.isNotEmpty
                   ? widget.requestId
                   : (prescObj?.displayOrderCode ?? widget.requestId));
 
@@ -726,15 +725,14 @@ class _PharmacyOrderDetailsScreenState
         final effectiveRequestMeta =
             (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
             ? formatServerDateTime(rawCreatedAt)
-            : (widget.requestMeta != 'Today • 10:45 AM'
+            : (widget.requestMeta.isNotEmpty
                   ? widget.requestMeta
                   : (rawCreatedAt ?? ''));
 
         final rawNote = prescObj?.note?.trim();
         final effectiveNote = (rawNote != null && rawNote.isNotEmpty)
             ? rawNote
-            : (widget.specialNotes !=
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis'
+            : (widget.specialNotes.isNotEmpty
                   ? widget.specialNotes
                   : (rawNote ?? ''));
 
