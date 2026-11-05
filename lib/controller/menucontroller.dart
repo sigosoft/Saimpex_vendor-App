@@ -592,7 +592,7 @@ class MenuController extends GetxController {
           : (Get.isRegistered<ProfileController>()
                 ? Get.find<ProfileController>().vendorType
                 : "1");
-      final isGrocery = vendorType == "2";
+      final isGrocery = isStoreVendorType(vendorType);
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -675,7 +675,7 @@ class MenuController extends GetxController {
         if (Get.isRegistered<ProfileController>()) {
           final profileCtrl = Get.find<ProfileController>();
           await profileCtrl.fetchRestaurantMenus();
-          if (profileCtrl.vendorType == '2') {
+          if (isStoreVendorType(profileCtrl.vendorType)) {
             await profileCtrl.fetchGroceryMenuItems(
               categoryId: profileCtrl.selectedRestaurantCategoryId,
             );
@@ -861,7 +861,7 @@ class MenuController extends GetxController {
           : (Get.isRegistered<ProfileController>()
                 ? Get.find<ProfileController>().vendorType
                 : "1");
-      final isGrocery = vendorType == "2";
+      final isGrocery = isStoreVendorType(vendorType);
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -979,7 +979,7 @@ class MenuController extends GetxController {
           : (Get.isRegistered<ProfileController>()
                 ? Get.find<ProfileController>().vendorType
                 : "1");
-      final isGrocery = vendorType == "2";
+      final isGrocery = isStoreVendorType(vendorType);
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -1077,7 +1077,7 @@ class MenuController extends GetxController {
           : (Get.isRegistered<ProfileController>()
                 ? Get.find<ProfileController>().vendorType
                 : "1");
-      final isGrocery = vendorType == "2";
+      final isGrocery = isStoreVendorType(vendorType);
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -1477,7 +1477,7 @@ class MenuController extends GetxController {
         if (Get.isRegistered<ProfileController>()) {
           final profileCtrl = Get.find<ProfileController>();
           await profileCtrl.fetchRestaurantMenus();
-          if (profileCtrl.vendorType == '2') {
+          if (isStoreVendorType(profileCtrl.vendorType)) {
             await profileCtrl.fetchGroceryMenuItems(
               categoryId: profileCtrl.selectedRestaurantCategoryId,
             );

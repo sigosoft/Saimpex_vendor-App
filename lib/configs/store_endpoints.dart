@@ -39,6 +39,7 @@ class StoreEndpoints {
     'updateGroceryMenuItem': 'updateLocalStoreMenuItem',
     'updateGrocerytItemStock': 'updateLocalStoretItemStock',
     'uploadGroceryBulkMenu': 'uploadLocalStoreBulkMenu',
+    'downloadGroceryBulkTemplate': 'downloadLocalStoreBulkTemplate',
     'uploadGroceryMenuImages': 'uploadLocalStoreMenuImages',
   };
 

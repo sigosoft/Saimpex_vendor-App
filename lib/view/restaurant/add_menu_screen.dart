@@ -517,7 +517,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  if (Get.find<ProfileController>().vendorType != '2')
+                  if (!isStoreVendorType(Get.find<ProfileController>().vendorType))
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,7 +595,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
                       fullWidth: true,
                     ),
               SizedBox(height: screenHeight * 0.02),
-              if (Get.find<ProfileController>().vendorType != '2') ...[
+              if (!isStoreVendorType(Get.find<ProfileController>().vendorType)) ...[
                 AddMenuFieldLabel(S.of(context).preparationTimeMinutesLabel),
                 SizedBox(height: screenHeight * 0.007),
                 AddMenuTextField(

@@ -1116,7 +1116,7 @@ class ProfileController extends GetxController {
           (rawVendorType != null && rawVendorType.isNotEmpty)
               ? rawVendorType
               : vendorType;
-      final isGrocery = currentVendorType == "2";
+      final isGrocery = isStoreVendorType(currentVendorType);
       if (token != null) {
         DioClient().updateToken(token);
       } else {
@@ -1346,8 +1346,13 @@ class ProfileController extends GetxController {
         DioClient().updateToken("");
       }
 
+      // Grocery and local store have their own template: the restaurant
+      // catalog import refuses non-restaurant vendors on the server.
+      final store = isStoreVendorType(await getSavedObject("vendorType"));
       final response = await DioClient().dio.get<List<int>>(
-        ApiEndPoints.downloadRestaurantCatalogTemplate,
+        store
+            ? ApiEndPoints.downloadGroceryBulkTemplate
+            : ApiEndPoints.downloadRestaurantCatalogTemplate,
         options: dio.Options(
           responseType: dio.ResponseType.bytes,
           headers: {
@@ -1481,8 +1486,11 @@ class ProfileController extends GetxController {
         debugPrint("  file ${e.key}: ${e.value.filename}");
       }
       // Read 422 bodies too: they list the rows to fix (`data.errors`).
+      final store = isStoreVendorType(await getSavedObject("vendorType"));
       final response = await DioClient().dio.post(
-        ApiEndPoints.importRestaurantCatalogItems,
+        store
+            ? ApiEndPoints.uploadGroceryMenuBulkImport
+            : ApiEndPoints.importRestaurantCatalogItems,
         data: formData,
         options: dio.Options(
           contentType: dio.Headers.multipartFormDataContentType,
