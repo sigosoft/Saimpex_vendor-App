@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/utils/vendor_initials.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -3341,9 +3342,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) =>
                                 Center(
                                   child: Text(
-                                    name.isNotEmpty
-                                        ? name[0].toUpperCase()
-                                        : "R1",
+                                    vendorInitials(name),
                                     style: appFont('Rubik', 
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -3359,9 +3358,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) =>
                                 Center(
                                   child: Text(
-                                    name.isNotEmpty
-                                        ? name[0].toUpperCase()
-                                        : "R1",
+                                    vendorInitials(name),
                                     style: appFont('Rubik', 
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -3372,7 +3369,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                           )
                         : Center(
                             child: Text(
-                              name.isNotEmpty ? name[0].toUpperCase() : "R1",
+                              vendorInitials(name),
                               style: appFont('Rubik', 
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -3385,7 +3382,7 @@ class VendorProfileHeaderCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
-                        name.isNotEmpty ? name[0].toUpperCase() : "R1",
+                        vendorInitials(name),
                         style: appFont('Rubik', 
                           fontSize: 24,
                           fontWeight: FontWeight.bold,

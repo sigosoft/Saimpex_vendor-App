@@ -552,6 +552,8 @@
   "account": "الحساب",
   "@account": {},
   "myRestaurant": "مطعمي",
+  "deliveryPartners": "شركاء التوصيل",
+  "itemBulkImport": "استيراد المنتجات دفعة واحدة",
   "@myRestaurant": {},
   "restaurantManagement": "إدارة المطعم",
   "@restaurantManagement": {},

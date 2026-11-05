@@ -223,7 +223,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         _buildMenuButton(S.of(context).items, "Items"),
                         const SizedBox(width: 10),
                         _buildMenuButton(
-                          S.of(context).menuBulkImport,
+                          S.of(context).itemBulkImport,
                           "Menu Bulk Import",
                         ),
                         const SizedBox(width: 10),
@@ -235,7 +235,10 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                         ),
                         const SizedBox(width: 10),
                         _buildMenuButton(
-                          S.of(context).storeReports,
+                          // Figma restaurant: "Restaurant Reports".
+                          profileController.vendorType == "1"
+                              ? S.of(context).restaurantReports
+                              : S.of(context).storeReports,
                           "Store Reports",
                         ),
                       ],
@@ -290,7 +293,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _sectionHeader(S.of(context).storeDetails),
+                    _sectionHeader(profileController.vendorType == "1"
+                        ? S.of(context).restaurantDetails
+                        : S.of(context).storeDetails),
                     const SizedBox(height: 12),
                     _buildDetailCard(
                       height: MediaQuery.of(context).size.height * 0.36,
@@ -306,7 +311,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             profile?.owner ?? "Salman",
                           ),
                           _detailRow(
-                            S.of(context).storeId,
+                            S.of(context).idNumber,
                             profile?.id?.toString() ?? "1",
                           ),
                           _detailRow(
@@ -349,7 +354,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             profile?.accountHolderName ?? "-",
                           ),
                           _detailRow(
-                            S.of(context).accountNumber,
+                            S.of(context).ibanNumber,
                             _formatLongText(profile?.accountNumber ?? "-"),
                           ),
                           _detailRow(
@@ -361,7 +366,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     ),
                     const SizedBox(height: 24),
                     if (profileController.vendorType == "1") ...[
-                      _sectionHeader(S.of(context).aboutTheStore),
+                      _sectionHeader(profileController.vendorType == "1"
+                          ? S.of(context).aboutTheRestaurant
+                          : S.of(context).aboutTheStore),
                       const SizedBox(height: 12),
                       _buildDetailCard(
                         height: MediaQuery.of(context).size.height * 0.09,
@@ -389,10 +396,12 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           ),
                           _detailRow(
                             S.of(context).regDate,
-                            _formatLeaveDate(profile?.registrationDate),
+                            _formatLeaveDate(profile?.registrationDate).isEmpty
+                                ? "-"
+                                : _formatLeaveDate(profile?.registrationDate),
                           ),
                           _detailRow(
-                            S.of(context).gstNumber,
+                            S.of(context).waterTinNifNumber,
                             profile?.gstNo ?? "-",
                           ),
                         ],
@@ -612,7 +621,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                     const SizedBox(height: 20),
                   ] else if (selectedMenu == "Menu Bulk Import") ...[
                     const SizedBox(height: 20),
-                    _sectionHeader(S.of(context).menuBulkImport),
+                    _sectionHeader(S.of(context).itemBulkImport),
                     const SizedBox(height: 16),
                     Text(
                       S.of(context).importSelectCategoryHint,

@@ -567,6 +567,8 @@
   "account": "Account",
   "@account": {},
   "myRestaurant": "My Restaurant",
+  "deliveryPartners": "Delivery Partners",
+  "itemBulkImport": "Item Bulk Import",
   "@myRestaurant": {},
   "restaurantManagement": "Restaurant Management",
   "@restaurantManagement": {},

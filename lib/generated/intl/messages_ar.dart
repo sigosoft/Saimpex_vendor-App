@@ -915,6 +915,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "سائقو SAIMPEX فقط",
     ),
+    "deliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
     "deliveryStarted": MessageLookupByLibrary.simpleMessage("بدأ التسليم"),
     "description": MessageLookupByLibrary.simpleMessage("الوصف"),
     "descriptionArabic": MessageLookupByLibrary.simpleMessage(
@@ -1115,6 +1116,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "isVeg": MessageLookupByLibrary.simpleMessage("هل نباتي"),
     "isVegLabel": MessageLookupByLibrary.simpleMessage("نباتي؟"),
     "item": MessageLookupByLibrary.simpleMessage("عنصر"),
+    "itemBulkImport": MessageLookupByLibrary.simpleMessage(
+      "استيراد المنتجات دفعة واحدة",
+    ),
     "itemFormAddAnotherItem": MessageLookupByLibrary.simpleMessage(
       "إضافة صنف آخر",
     ),

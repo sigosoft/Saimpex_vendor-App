@@ -1024,6 +1024,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "Livreurs SAIMPEX uniquement",
     ),
+    "deliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Partenaires de livraison",
+    ),
     "deliveryStarted": MessageLookupByLibrary.simpleMessage(
       "Livraison commencée",
     ),
@@ -1244,6 +1247,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "isVeg": MessageLookupByLibrary.simpleMessage("Est végétarien"),
     "isVegLabel": MessageLookupByLibrary.simpleMessage("Végétarien ?"),
     "item": MessageLookupByLibrary.simpleMessage("Article"),
+    "itemBulkImport": MessageLookupByLibrary.simpleMessage(
+      "Import groupé d’articles",
+    ),
     "itemFormAddAnotherItem": MessageLookupByLibrary.simpleMessage(
       "Ajouter un autre article",
     ),

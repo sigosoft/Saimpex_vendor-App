@@ -931,6 +931,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryModelSaimpex": MessageLookupByLibrary.simpleMessage(
       "SAIMPEX drivers only",
     ),
+    "deliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partners",
+    ),
     "deliveryStarted": MessageLookupByLibrary.simpleMessage("Delivery Started"),
     "description": MessageLookupByLibrary.simpleMessage("DESCRIPTION"),
     "descriptionArabic": MessageLookupByLibrary.simpleMessage(
@@ -1141,6 +1144,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "isVeg": MessageLookupByLibrary.simpleMessage("Is Veg"),
     "isVegLabel": MessageLookupByLibrary.simpleMessage("Is Veg"),
     "item": MessageLookupByLibrary.simpleMessage("Item"),
+    "itemBulkImport": MessageLookupByLibrary.simpleMessage("Item Bulk Import"),
     "itemFormAddAnotherItem": MessageLookupByLibrary.simpleMessage(
       "Add Another Item",
     ),

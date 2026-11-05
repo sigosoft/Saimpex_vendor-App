@@ -2394,6 +2394,26 @@ class S {
     );
   }
 
+  /// `Delivery Partners`
+  String get deliveryPartners {
+    return Intl.message(
+      'Delivery Partners',
+      name: 'deliveryPartners',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Bulk Import`
+  String get itemBulkImport {
+    return Intl.message(
+      'Item Bulk Import',
+      name: 'itemBulkImport',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Restaurant Management`
   String get restaurantManagement {
     return Intl.message(

@@ -520,6 +520,8 @@
   "account": "Compte",
   "@account": {},
   "myRestaurant": "Mon Restaurant",
+  "deliveryPartners": "Partenaires de livraison",
+  "itemBulkImport": "Import groupé d’articles",
   "@myRestaurant": {},
   "restaurantManagement": "Gestion de restaurant",
   "@restaurantManagement": {},
