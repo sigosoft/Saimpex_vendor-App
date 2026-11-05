@@ -511,12 +511,15 @@ AC: print button on pharmacy and water order details; works with a generic 58/80
 - New P1, not in the report yet: the keyboard added a space after "." in the username (like kitchen K-B1). Fixed in `fix/login-username-spaces`.
 - Static data audit: sample values replaced by server data or hidden in `fix/pharmacy-real-data`, `fix/restaurant-real-data` and `fix/water-real-data`. Unused sample screens removed in `chore/remove-unused-sample-screens`.
 - Backend, filed: dashboard zeros (V-B10); Add Product lookups for pharmacy and water (the forms still use fixed lists until the API is documented).
-- Backend, drafted in `issue-drafts-vendorapp-backend-2026-11-05.md`:
+- Backend, ✅ filed 5 Nov (from `issue-drafts-vendorapp-backend-2026-11-05.md`):
   - Update Stock vs the variant stock.
   - English-only push.
-  - Unread count with deleted chats (to confirm).
+  - Unread count with deleted chats (confirmed on the phone).
   - Prescription detail fields.
-  - Home opening hours.
+  - Home opening hours (confirmed on the phone).
+  - Local store vendor sees 0 products (#141 follow-up).
+- Gas (`fix/gas-section-real-data`) and local store (`fix/local-store-api-keys`) device-tested 5 Nov.
+- Figma check, Water (5 Nov, from exports in `figma/water/`, 32% zoom): every Water frame has a screen in `lib/water/view` (home, orders, order details per status, reject and pause popups, subscription calendar and details, notifications, chat, inventory and popups, product details, add product, account, store profile, business settings, working hours, leaves, earnings, payouts, coupons, delivery partners, help, terms, privacy). Most Home frames show New Orders / Subscription Orders as the app does, so the metric cards stay. Missing: the membership card on Home, added in `design/water-home-membership`. Login: the design has no type list (decision below). Pixel-level spacing and colours still need 100% exports or Dev Mode.
 - 5 Nov: car wash retested on a device (full flow) and its location labels translated (`fix/carwash-place-label`). Pharmacy Profile translated. Water chat badge and home cleaning header confirmed. Unused sample screens removed (`chore/remove-unused-sample-screens`).
 - Needs a decision: V8 (Delivered with an unpaid balance), and whether to keep the login type list.
 - AC: each branch passes on a device in Arabic and French; `flutter analyze --no-pub` has no new errors (0 errors on the combined test branch `test/retest-2026-11-04b`).
