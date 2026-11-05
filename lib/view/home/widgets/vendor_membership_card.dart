@@ -60,6 +60,8 @@ class VendorMembershipCard extends StatelessWidget {
                 ),
               ),
             ),
+            // No expiry chip when the API sends no expiry.
+            if (expiryText.isNotEmpty)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
