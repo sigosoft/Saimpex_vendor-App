@@ -101,12 +101,39 @@ class HomeCleaningController extends GetxController {
     update();
   }
 
-  Future<void> loadDashboard() async {
-    dashboardLoading = true;
-    dashboardError = null;
-    update();
+  bool _quietRefreshing = false;
+
+  /// Quiet refresh for live updates (VA-28): a foreground push, the 30 s
+  /// poll while the home is on screen, or the app coming back to the
+  /// foreground. No spinners and no error banners. It is skipped while a
+  /// load or a status change is already running, and the list is only
+  /// reloaded while just the first page is shown (reloading would drop the
+  /// pages the vendor scrolled to).
+  Future<void> refreshQuietly() async {
+    if (_quietRefreshing) return;
+    _quietRefreshing = true;
+    try {
+      await Future.wait([
+        if (!dashboardLoading && !togglingAvailability) loadDashboard(quiet: true),
+        if (!bookingsLoading && !loadingMore && busyIds.isEmpty && _page <= 1)
+          loadBookings(quiet: true),
+      ]);
+    } finally {
+      _quietRefreshing = false;
+    }
+  }
+
+  Future<void> loadDashboard({bool quiet = false}) async {
+    if (!quiet) {
+      dashboardLoading = true;
+      dashboardError = null;
+      update();
+    }
     final res = await CleaningApi.get(ApiEndPoints.serviceDashboard);
+    // A toggle or a full load started meanwhile: let that one win.
+    if (quiet && (togglingAvailability || dashboardLoading)) return;
     if (res.ok) {
+      dashboardError = null;
       dashboard = CleaningDashboard.fromJson(res.map);
       // serviceDashboard carries the membership since §6.40.
       if (res.map.containsKey('membership')) {
@@ -114,7 +141,7 @@ class HomeCleaningController extends GetxController {
       }
       acceptingBookings = dashboard!.acceptingBookings ?? acceptingBookings;
       storeOpen = dashboard!.isOpen;
-    } else {
+    } else if (!quiet) {
       dashboardError = res.message ?? '';
     }
     dashboardLoading = false;
@@ -151,17 +178,19 @@ class HomeCleaningController extends GetxController {
   /// `GET serviceBookings?status=S&limit=20&page=N[&keyword=K]`
   /// The ACCEPTED chip covers two statuses (2 accepted, 8 on the way); the
   /// endpoint filters by one status, so both are fetched and merged.
-  Future<void> loadBookings({bool more = false}) async {
+  /// [quiet] reloads the first page without a spinner or an error state.
+  Future<void> loadBookings({bool more = false, bool quiet = false}) async {
     if (more && (loadingMore || bookingsLoading || !hasMore)) return;
     final seq = ++_seq;
     final page = more ? _page + 1 : 1;
     if (more) {
       loadingMore = true;
-    } else {
+      update();
+    } else if (!quiet) {
       bookingsLoading = true;
       bookingsError = null;
+      update();
     }
-    update();
 
     final keyword = searchController.text.trim();
     final results = await Future.wait(tab.statuses.map((status) {
@@ -179,7 +208,7 @@ class HomeCleaningController extends GetxController {
     if (failed.isNotEmpty) {
       if (more) {
         loadingMore = false;
-      } else {
+      } else if (!quiet) {
         bookingsLoading = false;
         bookingsError = failed.first.message ?? '';
       }
@@ -212,6 +241,7 @@ class HomeCleaningController extends GetxController {
     bookings = merged.values.toList()..sort((a, b) => b.id.compareTo(a.id));
     _page = page;
     hasMore = anyMore;
+    bookingsError = null;
     bookingsLoading = false;
     loadingMore = false;
     update();
