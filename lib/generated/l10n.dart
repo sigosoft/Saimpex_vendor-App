@@ -12443,10 +12443,10 @@ class S {
     );
   }
 
-  /// `Order preparation started`
+  /// `Order preparation started successfully`
   String get orderPreparationStartedSuccessfully {
     return Intl.message(
-      'Order preparation started',
+      'Order preparation started successfully',
       name: 'orderPreparationStartedSuccessfully',
       desc: '',
       args: [],
@@ -14490,6 +14490,16 @@ class S {
       name: 'itemValidationTooFewOptions',
       desc: '',
       args: [group, max, count],
+    );
+  }
+
+  /// `Order marked as picked up successfully`
+  String get orderMarkedPickedUpSuccessfully {
+    return Intl.message(
+      'Order marked as picked up successfully',
+      name: 'orderMarkedPickedUpSuccessfully',
+      desc: '',
+      args: [],
     );
   }
 }

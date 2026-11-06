@@ -2826,7 +2826,7 @@
   "vendorTypeWater": "Eau",
   "vendorTypePharmacy": "Pharmacie",
   "vendorTypeHomeCleaning": "Nettoyage à domicile",
-  "orderPreparationStartedSuccessfully": "Préparation de la commande démarrée",
+  "orderPreparationStartedSuccessfully": "Préparation de la commande démarrée avec succès",
   "orderMarkedReadySuccessfully": "Commande marquée comme prête",
   "preparingOrder": "Préparation de la commande",
   "@preparingOrder": {},
@@ -3344,5 +3344,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "orderMarkedPickedUpSuccessfully": "Commande marquée comme récupérée avec succès"
 }
