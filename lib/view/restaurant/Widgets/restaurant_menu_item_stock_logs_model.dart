@@ -231,10 +231,14 @@ class Product {
   final String? nameAr;
   final String? nameFr;
 
+  /// Stock on hand (`product.stock`); null when the API does not send it.
+  final int? stock;
+
   Product({
     this.nameEn,
     this.nameAr,
     this.nameFr,
+    this.stock,
   });
 
   factory Product.fromJson(Map<String, dynamic>? json) {
@@ -242,6 +246,10 @@ class Product {
       nameEn: json?['name_en']?.toString(),
       nameAr: json?['name_ar']?.toString(),
       nameFr: json?['name_fr']?.toString(),
+      stock: json?['stock'] == null
+          ? null
+          : int.tryParse(json!['stock'].toString()) ??
+              double.tryParse(json['stock'].toString())?.toInt(),
     );
   }
 

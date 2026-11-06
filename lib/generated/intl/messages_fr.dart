@@ -946,6 +946,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "currentLocation": MessageLookupByLibrary.simpleMessage(
       "Position actuelle",
     ),
+    "currentStock": MessageLookupByLibrary.simpleMessage("Stock actuel"),
     "currentlyClosed": MessageLookupByLibrary.simpleMessage(
       "Actuellement fermé",
     ),

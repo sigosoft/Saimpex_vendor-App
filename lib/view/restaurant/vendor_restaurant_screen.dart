@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
+import 'package:saimpex_vendor/utils/pick_lang.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
@@ -802,16 +803,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     final filteredGroceryMenus = profileController.groceryMenus.where((menu) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
-      final name = lang == 'fr'
-          ? (menu.nameFr ?? menu.nameEn ?? "")
-          : lang == 'ar'
-          ? (menu.nameAr ?? menu.nameEn ?? "")
-          : (menu.nameEn ?? "");
-      final category = lang == 'fr'
-          ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
-          : lang == 'ar'
-          ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
-          : (menu.categoryNameEn ?? "");
+      final name = pickLang(lang, menu.nameEn, menu.nameFr, menu.nameAr);
+      final category = pickLang(lang, menu.categoryNameEn, menu.categoryNameFr, menu.categoryNameAr);
       return name.toLowerCase().contains(query) ||
           category.toLowerCase().contains(query) ||
           (menu.id?.toString() ?? "").contains(query);
@@ -822,16 +815,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
-      final name = lang == 'fr'
-          ? (menu.nameFr ?? menu.nameEn ?? "")
-          : lang == 'ar'
-          ? (menu.nameAr ?? menu.nameEn ?? "")
-          : (menu.nameEn ?? "");
-      final category = lang == 'fr'
-          ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
-          : lang == 'ar'
-          ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
-          : (menu.categoryNameEn ?? "");
+      final name = pickLang(lang, menu.nameEn, menu.nameFr, menu.nameAr);
+      final category = pickLang(lang, menu.categoryNameEn, menu.categoryNameFr, menu.categoryNameAr);
       return name.toLowerCase().contains(query) ||
           category.toLowerCase().contains(query) ||
           (menu.categoryId ?? "").toLowerCase().contains(query) ||
@@ -852,16 +837,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         ...filteredGroceryMenus.map((menu) {
           final lang =
               profileController.localization.currentLocale?.languageCode;
-          final name = lang == 'fr'
-              ? (menu.nameFr ?? menu.nameEn ?? "")
-              : lang == 'ar'
-              ? (menu.nameAr ?? menu.nameEn ?? "")
-              : (menu.nameEn ?? "");
-          final category = lang == 'fr'
-              ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
-              : lang == 'ar'
-              ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
-              : (menu.categoryNameEn ?? "");
+          final name = pickLang(lang, menu.nameEn, menu.nameFr, menu.nameAr);
+          final category = pickLang(lang, menu.categoryNameEn, menu.categoryNameFr, menu.categoryNameAr);
 
           return _menuItem(
             name,
@@ -874,16 +851,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         ...filteredRestaurantMenus.map((menu) {
           final lang =
               profileController.localization.currentLocale?.languageCode;
-          final name = lang == 'fr'
-              ? (menu.nameFr ?? menu.nameEn ?? "")
-              : lang == 'ar'
-              ? (menu.nameAr ?? menu.nameEn ?? "")
-              : (menu.nameEn ?? "");
-          final category = lang == 'fr'
-              ? (menu.categoryNameFr ?? menu.categoryNameEn ?? "")
-              : lang == 'ar'
-              ? (menu.categoryNameAr ?? menu.categoryNameEn ?? "")
-              : (menu.categoryNameEn ?? "");
+          final name = pickLang(lang, menu.nameEn, menu.nameFr, menu.nameAr);
+          final category = pickLang(lang, menu.categoryNameEn, menu.categoryNameFr, menu.categoryNameAr);
           return _menuItem(
             name,
             menu.id?.toString() ?? "",
@@ -1249,6 +1218,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     bool isMenu = false,
     List<RestaurantCategory>? categories,
     int? availabilityStatus,
+    int? stock,
   }) {
     return VendorRichCard(
       id: id,
@@ -1261,6 +1231,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       isMenu: isMenu,
       categories: categories,
       availabilityStatus: availabilityStatus,
+      stock: stock,
       onViewDetails: () {
         if (isMenu) {
           Navigator.push(
@@ -1360,16 +1331,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     ) {
       if (query.isEmpty) return true;
       final lang = profileController.localization.currentLocale?.languageCode;
-      final name = lang == 'fr'
-          ? (item.nameFr ?? item.nameEn ?? "")
-          : lang == 'ar'
-          ? (item.nameAr ?? item.nameEn ?? "")
-          : (item.nameEn ?? "");
-      final category = lang == 'fr'
-          ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
-          : lang == 'ar'
-          ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
-          : (item.categoryNameEn ?? "");
+      final name = pickLang(lang, item.nameEn, item.nameFr, item.nameAr);
+      final category = pickLang(lang, item.categoryNameEn, item.categoryNameFr, item.categoryNameAr);
       return name.toLowerCase().contains(query) ||
           category.toLowerCase().contains(query) ||
           (item.id?.toString() ?? "").contains(query);
@@ -1379,16 +1342,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       (item) {
         if (query.isEmpty) return true;
         final lang = profileController.localization.currentLocale?.languageCode;
-        final name = lang == 'fr'
-            ? (item.nameFr ?? item.nameEn ?? "")
-            : lang == 'ar'
-            ? (item.nameAr ?? item.nameEn ?? "")
-            : (item.nameEn ?? "");
-        final category = lang == 'fr'
-            ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
-            : lang == 'ar'
-            ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
-            : (item.categoryNameEn ?? "");
+        final name = pickLang(lang, item.nameEn, item.nameFr, item.nameAr);
+        final category = pickLang(lang, item.categoryNameEn, item.categoryNameFr, item.categoryNameAr);
         return name.toLowerCase().contains(query) ||
             category.toLowerCase().contains(query) ||
             (item.id?.toString() ?? "").contains(query);
@@ -1414,16 +1369,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         ...filteredGroceryItems.map((item) {
           final lang =
               profileController.localization.currentLocale?.languageCode;
-          final name = lang == 'fr'
-              ? (item.nameFr ?? item.nameEn ?? "")
-              : lang == 'ar'
-              ? (item.nameAr ?? item.nameEn ?? "")
-              : (item.nameEn ?? "");
-          final category = lang == 'fr'
-              ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
-              : lang == 'ar'
-              ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
-              : (item.categoryNameEn ?? "");
+          final name = pickLang(lang, item.nameEn, item.nameFr, item.nameAr);
+          final category = pickLang(lang, item.categoryNameEn, item.categoryNameFr, item.categoryNameAr);
           final price = "${item.price} MRU";
           final card = _foodItem(
             name,
@@ -1433,6 +1380,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             item.menuItemId?.toString() ?? item.id.toString(),
             category: category,
             availabilityStatus: item.availableStatus,
+            stock: item.stock,
           );
           // Hide / unhide (§6.21): grocery and local store rows are menu
           // rows, so the row id is the menu_id.
@@ -1454,16 +1402,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
         ...filteredRestaurantItems.map((item) {
           final lang =
               profileController.localization.currentLocale?.languageCode;
-          final name = lang == 'fr'
-              ? (item.nameFr ?? item.nameEn ?? "")
-              : lang == 'ar'
-              ? (item.nameAr ?? item.nameEn ?? "")
-              : (item.nameEn ?? "");
-          final category = lang == 'fr'
-              ? (item.categoryNameFr ?? item.categoryNameEn ?? "")
-              : lang == 'ar'
-              ? (item.categoryNameAr ?? item.categoryNameEn ?? "")
-              : (item.categoryNameEn ?? "");
+          final name = pickLang(lang, item.nameEn, item.nameFr, item.nameAr);
+          final category = pickLang(lang, item.categoryNameEn, item.categoryNameFr, item.categoryNameAr);
           final hasDiscount =
               item.discountPrice != null &&
               item.discountPrice!.isNotEmpty &&
@@ -1482,6 +1422,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             category: category,
             originalPrice: originalPrice,
             availabilityStatus: item.availableStatus,
+            stock: item.stock,
           );
           // Hide / unhide (§6.21, backend #132): catalog rows are menu rows,
           // so the row id is the menu_id for vertical `food`.
@@ -1529,6 +1470,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     List<RestaurantCategory>? categories,
     String? originalPrice,
     int? availabilityStatus,
+    int? stock,
   }) {
     return _richCard(
       id: itemId,
@@ -1542,6 +1484,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       isMenu: false,
       categories: categories,
       availabilityStatus: availabilityStatus,
+      stock: stock,
     );
   }
 

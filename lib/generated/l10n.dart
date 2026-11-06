@@ -14482,6 +14482,16 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Current stock`
+  String get currentStock {
+    return Intl.message(
+      'Current stock',
+      name: 'currentStock',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

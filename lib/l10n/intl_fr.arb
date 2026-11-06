@@ -3343,5 +3343,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "currentStock": "Stock actuel",
+  "@currentStock": {}
 }

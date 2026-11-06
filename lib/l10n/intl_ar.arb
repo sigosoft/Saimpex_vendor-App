@@ -3342,5 +3342,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "currentStock": "المخزون الحالي",
+  "@currentStock": {}
 }
