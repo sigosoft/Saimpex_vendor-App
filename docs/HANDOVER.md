@@ -353,6 +353,8 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Printing | Done (Android), `feature/bluetooth-printing` | `lib/pharmacy/view/otc_order_details_screen.dart`, `lib/utils/printing/vertical_order_ticket.dart` | Print button in the OTC order header (hidden until the order loads); `pharmacyOrderDetail` {order, items} is mapped onto the same ticket. Printer picker in Account. Prescription requests (not orders yet) have no ticket. **Not yet tested on a real printer.** |
 | Localisation | Partial | - | Most pharmacy screens are English literals. |
 
+**Pharmacy lists and counters (✅ `fix/pharmacy-lists-and-counters`, retest 6 Nov VA-23 / VA-24):** the status-chip badge uses the home call's stage counts for prescriptions (`pharmacy.new_prescriptions`, `under_review`, `review_completed`, `awaiting_payment`, as on the Home cards) and the server's paginated `total` for order stages (lists hold one page of 10); the Prescription / OTC switch badges are the new prescriptions / new OTC orders, so they no longer change with the chip. After "Send quote" the list opens on Awaiting Payment. The New chip listing every prescription (VA-20) is fixed by `63ba019` on `fix/pharmacy-new-tab-only-new` (#49).
+
 ### 4.4 By feature, Water / Gas section
 
 | Feature | Status | Main files | Notes |

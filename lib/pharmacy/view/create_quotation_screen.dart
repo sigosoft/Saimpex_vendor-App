@@ -152,7 +152,7 @@ class _PharmacyCreateQuotationScreenState
       final navigator = Navigator.of(context);
       navigator.pop();
       if (Get.isRegistered<PharmacyHomeController>()) {
-        Get.find<PharmacyHomeController>().showReviewCompleted();
+        Get.find<PharmacyHomeController>().showAwaitingPayment();
       }
       navigator.popUntil((route) => route.isFirst);
     }
