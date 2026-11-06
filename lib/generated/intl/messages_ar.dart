@@ -2474,6 +2474,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "substitutionChangeQty": MessageLookupByLibrary.simpleMessage(
       "تغيير الكمية",
     ),
+    "substitutionChangeQtyOnlyOne": MessageLookupByLibrary.simpleMessage(
+      "تم طلب قطعة واحدة فقط، لذا لا يمكن تقليل الكمية. استخدم «إزالة المنتج» بدلاً من ذلك.",
+    ),
     "substitutionChangeQuantity": MessageLookupByLibrary.simpleMessage(
       "تغيير الكمية",
     ),

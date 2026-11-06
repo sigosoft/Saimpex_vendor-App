@@ -12,7 +12,6 @@ import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_order_list_item.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
-import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 
 import '../../utils/widgets/custom_app_bar.dart';
@@ -186,7 +185,7 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     });
   }
 
-  void _handleAcceptOrder(String orderId) {
+  void _handleAcceptOrder(String orderId, {bool print = false}) {
     // Accept & Print didn't pass printAfter, so nothing printed. The tab
     // count drops at the tap and comes back if the server refuses (V-B5).
     Future<void> accept({required bool print}) async {
@@ -214,11 +213,9 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       }
     }
 
-    showAcceptOrderDialog(
-      context: context,
-      onAccept: () => accept(print: false),
-      onAcceptAndPrint: () => accept(print: true),
-    );
+    // The card has its own Accept & Print, so Accept no longer opens a
+    // second Accept / Accept & Print / Cancel dialog (VA-04).
+    accept(print: print);
   }
 
   Future<void> _handleCancelOrder(String orderId) async {
@@ -425,6 +422,10 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       ),
                                       onAccept: () => _handleAcceptOrder(
                                         order.id?.toString() ?? "",
+                                      ),
+                                      onAcceptAndPrint: () => _handleAcceptOrder(
+                                        order.id?.toString() ?? "",
+                                        print: true,
                                       ),
                                       onReject: () => _handleCancelOrder(
                                         order.id?.toString() ?? "",

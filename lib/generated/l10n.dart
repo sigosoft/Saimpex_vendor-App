@@ -11408,6 +11408,16 @@ class S {
     );
   }
 
+  /// `Only 1 was ordered, so the quantity can't be lowered. Use "Remove Item" instead.`
+  String get substitutionChangeQtyOnlyOne {
+    return Intl.message(
+      'Only 1 was ordered, so the quantity can\'t be lowered. Use "Remove Item" instead.',
+      name: 'substitutionChangeQtyOnlyOne',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Change Qty`
   String get substitutionChangeQty {
     return Intl.message(

@@ -27,7 +27,6 @@ import 'package:saimpex_vendor/view/home/widgets/vendor_stats_section.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
 import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
-import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 import 'package:saimpex_vendor/view/notifications/notification.dart';
 
@@ -431,7 +430,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
     });
   }
 
-  void _handleAcceptOrder(String orderId) {
+  void _handleAcceptOrder(String orderId, {bool print = false}) {
     // Coming back to the home focused the search box again and opened the
     // keyboard after every action (VA-07).
     FocusManager.instance.primaryFocus?.unfocus();
@@ -462,11 +461,9 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
       }
     }
 
-    showAcceptOrderDialog(
-      context: context,
-      onAccept: () => accept(print: false),
-      onAcceptAndPrint: () => accept(print: true),
-    );
+    // The card has its own Accept & Print, so Accept no longer opens a
+    // second Accept / Accept & Print / Cancel dialog (VA-04).
+    accept(print: print);
   }
 
   Future<void> _handleCancelOrder(String orderId) async {
@@ -786,6 +783,10 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                                             ),
                                         onAccept: () => _handleAcceptOrder(
                                           order.id?.toString() ?? "",
+                                        ),
+                                        onAcceptAndPrint: () => _handleAcceptOrder(
+                                          order.id?.toString() ?? "",
+                                          print: true,
                                         ),
                                         onReject: () => _handleCancelOrder(
                                           order.id?.toString() ?? "",
