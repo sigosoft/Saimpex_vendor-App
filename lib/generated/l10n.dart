@@ -15718,6 +15718,256 @@ class S {
     return Intl.message('Paid', name: 'lnfPaid', desc: '', args: []);
   }
 
+  /// `Please enter your username`
+  String get loginEnterUsername {
+    return Intl.message(
+      'Please enter your username',
+      name: 'loginEnterUsername',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your password`
+  String get loginEnterPassword {
+    return Intl.message(
+      'Please enter your password',
+      name: 'loginEnterPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login successful`
+  String get loginSuccessful {
+    return Intl.message(
+      'Login successful',
+      name: 'loginSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login failed. Please try again.`
+  String get loginFailed {
+    return Intl.message(
+      'Login failed. Please try again.',
+      name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request timed out. Please try again.`
+  String get requestTimedOut {
+    return Intl.message(
+      'The request timed out. Please try again.',
+      name: 'requestTimedOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item deleted successfully`
+  String get rmItemDeleted {
+    return Intl.message(
+      'Item deleted successfully',
+      name: 'rmItemDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not delete the item`
+  String get rmItemDeleteFailed {
+    return Intl.message(
+      'Could not delete the item',
+      name: 'rmItemDeleteFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Items imported successfully`
+  String get rmImportSuccess {
+    return Intl.message(
+      'Items imported successfully',
+      name: 'rmImportSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select veg or non-veg`
+  String get rmSelectVegType {
+    return Intl.message(
+      'Please select veg or non-veg',
+      name: 'rmSelectVegType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a description`
+  String get rmEnterDescription {
+    return Intl.message(
+      'Please enter a description',
+      name: 'rmEnterDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter the maximum allowed quantity`
+  String get rmEnterMaxQuantity {
+    return Intl.message(
+      'Please enter the maximum allowed quantity',
+      name: 'rmEnterMaxQuantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please upload at least one image`
+  String get rmUploadOneImage {
+    return Intl.message(
+      'Please upload at least one image',
+      name: 'rmUploadOneImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load ratings and reviews`
+  String get rmReviewsLoadFailed {
+    return Intl.message(
+      'Could not load ratings and reviews',
+      name: 'rmReviewsLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the 6-digit code`
+  String get rmEnterSixDigitCode {
+    return Intl.message(
+      'Enter the 6-digit code',
+      name: 'rmEnterSixDigitCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image uploaded successfully`
+  String get rmImageUploaded {
+    return Intl.message(
+      'Image uploaded successfully',
+      name: 'rmImageUploaded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image upload failed`
+  String get rmImageUploadFailed {
+    return Intl.message(
+      'Image upload failed',
+      name: 'rmImageUploadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not download the template`
+  String get rmTemplateDownloadFailed {
+    return Intl.message(
+      'Could not download the template',
+      name: 'rmTemplateDownloadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saved: {file}`
+  String rmTemplateSaved(String file) {
+    return Intl.message(
+      'Saved: $file',
+      name: 'rmTemplateSaved',
+      desc: '',
+      args: [file],
+    );
+  }
+
+  /// `Coupon added successfully`
+  String get rmCouponAdded {
+    return Intl.message(
+      'Coupon added successfully',
+      name: 'rmCouponAdded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not add the coupon`
+  String get rmCouponAddFailed {
+    return Intl.message(
+      'Could not add the coupon',
+      name: 'rmCouponAddFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coupon updated successfully`
+  String get rmCouponUpdated {
+    return Intl.message(
+      'Coupon updated successfully',
+      name: 'rmCouponUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not update the coupon`
+  String get rmCouponUpdateFailed {
+    return Intl.message(
+      'Could not update the coupon',
+      name: 'rmCouponUpdateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coupon deleted successfully`
+  String get rmCouponDeleted {
+    return Intl.message(
+      'Coupon deleted successfully',
+      name: 'rmCouponDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not delete the coupon`
+  String get rmCouponDeleteFailed {
+    return Intl.message(
+      'Could not delete the coupon',
+      name: 'rmCouponDeleteFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current stock`
+  String get currentStock {
+    return Intl.message(
+      'Current stock',
+      name: 'currentStock',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Confirm this step for booking {code}?`
   String serviceStepConfirmBody(String code) {
     return Intl.message(
