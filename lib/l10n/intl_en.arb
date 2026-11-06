@@ -3381,5 +3381,21 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pharmacyProfileTitle": "Pharmacy Profile",
+  "@pharmacyProfileTitle": {},
+  "pharmacyDetailsTitle": "PHARMACY DETAILS",
+  "@pharmacyDetailsTitle": {},
+  "vendorIdLabel": "ID",
+  "@vendorIdLabel": {},
+  "tinNifNumber": "TIN/NIF Number",
+  "@tinNifNumber": {},
+  "pfTodayLabel": "Today:",
+  "@pfTodayLabel": {},
+  "pfLeaveUnmarked": "Leave unmarked successfully",
+  "@pfLeaveUnmarked": {},
+  "pfFailedToUnmarkLeave": "Failed to unmark leave",
+  "@pfFailedToUnmarkLeave": {},
+  "pfDeliveryPartners": "Delivery Partners",
+  "@pfDeliveryPartners": {}
 }

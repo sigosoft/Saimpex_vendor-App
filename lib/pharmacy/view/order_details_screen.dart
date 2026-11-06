@@ -71,13 +71,12 @@ void _openCustomerChat(
 class PharmacyOrderDetailsScreen extends StatefulWidget {
   const PharmacyOrderDetailsScreen({
     super.key,
-    this.customerName = 'Ahmed',
-    this.phone = '+222 45 12 34 56',
-    this.requestId = '#22789007',
-    this.requestMeta = 'Today • 10:45 AM',
+    this.customerName = '',
+    this.phone = '',
+    this.requestId = '',
+    this.requestMeta = '',
     this.notesType = PharmacyOrderNotesType.none,
-    this.specialNotes =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis',
+    this.specialNotes = '',
     this.voiceNoteDuration = const Duration(seconds: 15),
     this.isSelfPickup = false,
     this.isUnderReview = false,
@@ -562,32 +561,66 @@ class _PharmacyOrderDetailsScreenState
     _TimelineStep(title: 'Order Delivered', icon: Icons.home_outlined),
   ];
 
-  List<_TimelineStep> get _timeline {
+  /// The step list for the current stage. The server status
+  /// ([underReview] / [reviewed] / [quoted]) moves the timeline on as well,
+  /// so a screen opened from a stale list still shows the real stage.
+  List<_TimelineStep> _timelineFor({
+    required bool underReview,
+    required bool reviewed,
+    required bool quoted,
+  }) {
     if (widget.isDelivered) return _deliveredTimeline;
     if (widget.isReady) return _readyTimeline;
     if (widget.isPreparing) return _preparingTimeline;
     if (widget.isToPrepare) return _toPrepareTimeline;
-    if (widget.isAwaitingPayment) return _awaitingPaymentTimeline;
-    if (widget.isReviewCompleted) return _reviewCompletedTimeline;
-    if (widget.isUnderReview) return _underReviewTimeline;
+    if (quoted) return _awaitingPaymentTimeline;
+    if (reviewed) return _reviewCompletedTimeline;
+    if (underReview) return _underReviewTimeline;
     if (widget.isSelfPickup) return _selfPickupTimeline;
     return _deliveryTimeline;
   }
 
-  List<_TimelineStep> _buildTimeline(String? createdTime) {
-    final baseSteps = _timeline;
-    if (createdTime == null || createdTime.isEmpty) return baseSteps;
-    return baseSteps.asMap().entries.map((entry) {
-      if (entry.key == 0) {
-        return _TimelineStep(
-          title: entry.value.title,
-          subtitle: createdTime,
-          icon: entry.value.icon,
-          customIcon: entry.value.customIcon,
-          completed: entry.value.completed,
-        );
+  /// Only real times: the first step gets [createdTime] and "Quotation
+  /// Sent" gets the server's `quoted_at`; the step lists carry fixed sample
+  /// dates ("Feb 07, 2026 10:45 AM") that are never shown.
+  ///
+  /// Figma (pharmacy check, 6 Nov): a self-pickup order reads "Ready for
+  /// Pickup" and has no "Delivery Partner Assigned" step at every stage.
+  List<_TimelineStep> _buildTimeline(
+    String? createdTime, {
+    String? quotedTime,
+    bool underReview = false,
+    bool reviewed = false,
+    bool quoted = false,
+  }) {
+    final hasCreated = createdTime != null && createdTime.isNotEmpty;
+    final hasQuoted = quotedTime != null && quotedTime.isNotEmpty;
+    final steps = _timelineFor(
+      underReview: underReview,
+      reviewed: reviewed,
+      quoted: quoted,
+    ).where(
+      (s) => !(widget.isSelfPickup && s.title == 'Delivery Partner Assigned'),
+    );
+    return steps.toList().asMap().entries.map((entry) {
+      final step = entry.value;
+      String? subtitle;
+      if (entry.key == 0 && hasCreated) {
+        subtitle = createdTime;
+      } else if (step.title == 'Quotation Sent' &&
+          step.completed &&
+          hasQuoted) {
+        subtitle = quotedTime;
       }
-      return entry.value;
+      return _TimelineStep(
+        title: widget.isSelfPickup && step.title == 'Ready for Dispatch'
+            ? 'Ready for Pickup'
+            : step.title,
+        subtitle: subtitle,
+        icon: step.icon,
+        customIcon: step.customIcon,
+        completed: step.completed,
+      );
     }).toList();
   }
 
@@ -595,16 +628,16 @@ class _PharmacyOrderDetailsScreenState
     final presc = _detailsController.prescriptionObj;
     final customerName = presc?.customerName?.trim().isNotEmpty == true
         ? presc!.customerName!
-        : (widget.customerName != 'Ahmed' ? widget.customerName : S.of(context).quoteCustomer);
+        : (widget.customerName.isNotEmpty ? widget.customerName : S.of(context).quoteCustomer);
     final phone = presc?.displayPhone.trim().isNotEmpty == true
         ? presc!.displayPhone
-        : (widget.phone != '+222 45 12 34 56' ? widget.phone : '');
+        : (widget.phone.isNotEmpty ? widget.phone : '');
     final requestId = presc?.prescriptionId != null
         ? '#${presc!.prescriptionId}'
-        : (widget.requestId != '#22789007' ? widget.requestId : '');
+        : (widget.requestId.isNotEmpty ? widget.requestId : '');
     final requestMeta = presc?.createdAt?.trim().isNotEmpty == true
         ? formatServerDateTime(presc!.createdAt)
-        : (widget.requestMeta != 'Today • 10:45 AM' ? widget.requestMeta : '');
+        : (widget.requestMeta.isNotEmpty ? widget.requestMeta : '');
     final primaryImageUrl =
         _detailsController.prescriptionDetailData?.primaryImageUrl ??
         widget.prescriptionImageUrl;
@@ -701,7 +734,7 @@ class _PharmacyOrderDetailsScreenState
         final effectiveCustomerName =
             (rawCustName != null && rawCustName.isNotEmpty)
             ? rawCustName
-            : (widget.customerName != 'Ahmed'
+            : (widget.customerName.isNotEmpty
                   ? widget.customerName
                   : (rawCustName ?? S.of(context).quoteCustomer));
 
@@ -712,13 +745,13 @@ class _PharmacyOrderDetailsScreenState
         final rawPhone = prescObj?.displayPhone.trim();
         final effectivePhone = (rawPhone != null && rawPhone.isNotEmpty)
             ? rawPhone
-            : (widget.phone != '+222 45 12 34 56'
+            : (widget.phone.isNotEmpty
                   ? widget.phone
                   : (rawPhone ?? ''));
 
         final effectiveRequestId = prescObj?.prescriptionId != null
             ? '#${prescObj!.prescriptionId}'
-            : (widget.requestId != '#22789007'
+            : (widget.requestId.isNotEmpty
                   ? widget.requestId
                   : (prescObj?.displayOrderCode ?? widget.requestId));
 
@@ -726,15 +759,14 @@ class _PharmacyOrderDetailsScreenState
         final effectiveRequestMeta =
             (rawCreatedAt != null && rawCreatedAt.isNotEmpty)
             ? formatServerDateTime(rawCreatedAt)
-            : (widget.requestMeta != 'Today • 10:45 AM'
+            : (widget.requestMeta.isNotEmpty
                   ? widget.requestMeta
                   : (rawCreatedAt ?? ''));
 
         final rawNote = prescObj?.note?.trim();
         final effectiveNote = (rawNote != null && rawNote.isNotEmpty)
             ? rawNote
-            : (widget.specialNotes !=
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum mattis'
+            : (widget.specialNotes.isNotEmpty
                   ? widget.specialNotes
                   : (rawNote ?? ''));
 
@@ -864,6 +896,7 @@ class _PharmacyOrderDetailsScreenState
                                     preparing: widget.isPreparing,
                                     ready: widget.isReady,
                                     delivered: widget.isDelivered,
+                                    selfPickup: widget.isSelfPickup,
                                     onChatTap: () => _openCustomerChat(
                                       context,
                                       customerName: effectiveCustomerName,
@@ -941,8 +974,14 @@ class _PharmacyOrderDetailsScreenState
                                   if (isEffectiveAwaitingPayment) ...[
                                     const SizedBox(height: 12),
                                     _AwaitingCustomerPaymentCard(
-                                      time: effectiveRequestMeta.isNotEmpty
-                                          ? effectiveRequestMeta
+                                      // When the quote went out (quoted_at);
+                                      // nothing when the server has no time.
+                                      time: (prescObj?.quotedAt ?? '')
+                                              .trim()
+                                              .isNotEmpty
+                                          ? formatServerDateTime(
+                                              prescObj!.quotedAt,
+                                            )
                                           : null,
                                     ),
                                   ],
@@ -959,7 +998,20 @@ class _PharmacyOrderDetailsScreenState
                                 ),
                                 const SizedBox(height: 12),
                                 _TimelineCard(
-                                  steps: _buildTimeline(effectiveRequestMeta),
+                                  steps: _buildTimeline(
+                                    effectiveRequestMeta,
+                                    quotedTime: (prescObj?.quotedAt ?? '')
+                                            .trim()
+                                            .isNotEmpty
+                                        ? formatServerDateTime(
+                                            prescObj!.quotedAt,
+                                          )
+                                        : null,
+                                    underReview: widget.isUnderReview ||
+                                        statusStr == 'under_review',
+                                    reviewed: isEffectiveReviewCompleted,
+                                    quoted: isEffectiveAwaitingPayment,
+                                  ),
                                 ),
                               ],
                             ),
@@ -1068,8 +1120,8 @@ class _CustomerCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              if (!awaitingPayment)
-                Container(
+              // Figma: the Awaiting Payment detail keeps its status badge.
+              Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: reviewCompleted || awaitingPayment
                         ? 8
@@ -1768,8 +1820,13 @@ class _ToPrepareInfoCard extends StatelessWidget {
     this.ready = false,
     this.delivered = false,
     this.onChatTap,
+    this.address,
+    this.selfPickup = false,
   });
 
+  /// Delivery address when known; the block is hidden otherwise.
+  final String? address;
+  final bool selfPickup;
   final String initial;
   final String name;
   final String phone;
@@ -2013,16 +2070,27 @@ class _ToPrepareInfoCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Image.asset(
-                            'lib/pharmacy/Assets/images/delivery_icon.png',
-                            width: 16,
-                            height: 16,
-                            fit: BoxFit.contain,
-                          ),
+                          if (selfPickup)
+                            const Icon(
+                              Icons.shopping_bag_outlined,
+                              size: 16,
+                              color: _accent,
+                            )
+                          else
+                            Image.asset(
+                              'lib/pharmacy/Assets/images/delivery_icon.png',
+                              width: 16,
+                              height: 16,
+                              fit: BoxFit.contain,
+                            ),
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              S.of(context).delivery,
+                              // Figma: "Delivery" or "Self Pickup", from the
+                              // order's is_self_pickup (was always Delivery).
+                              selfPickup
+                                  ? S.of(context).selfPickup
+                                  : S.of(context).delivery,
                               style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,
@@ -2039,6 +2107,10 @@ class _ToPrepareInfoCard extends StatelessWidget {
               ),
             ],
           ),
+          // Only a real address: this showed a fixed sample ("Sahara View
+          // Home") and an "Online payment" pill for every order; the
+          // prescription detail has neither field.
+          if ((address ?? '').trim().isNotEmpty) ...[
           const SizedBox(height: 16),
           Row(
             children: [
@@ -2086,21 +2158,11 @@ class _ToPrepareInfoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sahara View Home',
-                        style: appFont('Inter', 
+                        address!.trim(),
+                        style: appFont('Inter',
                           color: const Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          height: 1.15,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Near Marhaba Supermarket,Nouakchott',
-                        style: appFont('Inter', 
-                          color: _meta,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                           height: 1.2,
                         ),
                       ),
@@ -2110,37 +2172,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4EA),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'lib/pharmacy/Assets/images/online_payment.png',
-                  width: 18,
-                  height: 18,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  S.of(context).onlinePayment,
-                  style: appFont('Inter', 
-                    color: _accent,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ],
       ),
     );
@@ -2573,7 +2605,7 @@ class _AwaitingCustomerPaymentCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  time ?? '23/04/2026 10:45 AM',
+                  time ?? '',
                   style: appFont('Inter', 
                     color: const Color(0xFF9CA3AF),
                     fontWeight: FontWeight.w500,
@@ -3190,6 +3222,12 @@ class _DeliveryPartnerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Only a real rider: the card showed a stock photo, no name and, on OTC
+    // orders, a fixed "4.8 (124 reviews)". Order details carry only the
+    // rider id, so it stays hidden until the API sends name / phone.
+    final riderName = (name ?? '').trim();
+    if (riderName.isEmpty) return const SizedBox.shrink();
+    final riderImage = (image ?? '').trim();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -3232,14 +3270,21 @@ class _DeliveryPartnerSection extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 2),
-                        image: const DecorationImage(
-                          image: AssetImage(
-                            'lib/water/Assets/Images/delivery_boy1.png',
-                          ),
-                          fit: BoxFit.cover,
-                          alignment: Alignment(0, -0.2),
-                        ),
+                        color: const Color(0xFFFFF4EA),
+                        image: riderImage.isEmpty
+                            ? null
+                            : DecorationImage(
+                                image: NetworkImage(riderImage),
+                                fit: BoxFit.cover,
+                              ),
                       ),
+                      alignment: Alignment.center,
+                      child: riderImage.isEmpty
+                          ? Text(
+                              riderName.substring(0, 1).toUpperCase(),
+                              style: appFont('Inter', color: const Color(0xFFFF5216), fontWeight: FontWeight.w700, fontSize: 18),
+                            )
+                          : null,
                     ),
                     Positioned(
                       right: 0,
@@ -3263,7 +3308,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name?.isNotEmpty == true ? name! : '',
+                      riderName,
                       style: appFont('Inter', 
                         color: const Color(0xFF1A2332),
                         fontWeight: FontWeight.w700,
@@ -3272,45 +3317,15 @@ class _DeliveryPartnerSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    if (showPhone)
+                    if (showPhone && (phone ?? '').trim().isNotEmpty)
                       Text(
-                        phone?.isNotEmpty == true ? phone! : '',
+                        phone!.trim(),
                         style: appFont('Inter', 
                           color: const Color(0xFF6B7280),
                           fontWeight: FontWeight.w500,
                           fontSize: 13.5,
                           height: 1.2,
                         ),
-                      )
-                    else
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            size: 16,
-                            color: Color(0xFFF5B400),
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            '4.8',
-                            style: appFont('Inter', 
-                              color: const Color(0xFF1A2332),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                              height: 1,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '(124 ${S.of(context).reviews})',
-                            style: appFont('Inter', 
-                              color: const Color(0xFF9CA3AF),
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                              height: 1,
-                            ),
-                          ),
-                        ],
                       ),
                   ],
                 ),

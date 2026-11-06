@@ -152,7 +152,7 @@ class _PharmacyCreateQuotationScreenState
       final navigator = Navigator.of(context);
       navigator.pop();
       if (Get.isRegistered<PharmacyHomeController>()) {
-        Get.find<PharmacyHomeController>().showReviewCompleted();
+        Get.find<PharmacyHomeController>().showAwaitingPayment();
       }
       navigator.popUntil((route) => route.isFirst);
     }
@@ -166,7 +166,7 @@ class _PharmacyCreateQuotationScreenState
             ? Get.find<PharmacyOrderDetailsController>().prescriptionObj
             : null;
         final rawCustName = widget.customerName.trim();
-        final effectiveCustomerName = rawCustName.isNotEmpty && rawCustName != 'Ahmed'
+        final effectiveCustomerName = rawCustName.isNotEmpty
             ? rawCustName
             : (prescObj?.customerName?.trim().isNotEmpty == true
                 ? prescObj!.customerName!
@@ -175,13 +175,13 @@ class _PharmacyCreateQuotationScreenState
             ? effectiveCustomerName.substring(0, 1).toUpperCase()
             : 'C';
         final rawPhone = widget.phone.trim();
-        final effectivePhone = rawPhone.isNotEmpty && rawPhone != '+222 45 12 34 56'
+        final effectivePhone = rawPhone.isNotEmpty
             ? rawPhone
             : (prescObj?.displayPhone.trim().isNotEmpty == true
                 ? prescObj!.displayPhone
                 : (rawPhone.isNotEmpty ? rawPhone : ''));
         final rawRequestId = widget.requestId.trim();
-        final effectiveRequestId = rawRequestId.isNotEmpty && rawRequestId != '#22789007'
+        final effectiveRequestId = rawRequestId.isNotEmpty
             ? rawRequestId
             : (widget.prescriptionId != null
                 ? '#${widget.prescriptionId}'
@@ -189,7 +189,7 @@ class _PharmacyCreateQuotationScreenState
                     ? '#${prescObj!.prescriptionId}'
                     : (rawRequestId.isNotEmpty ? rawRequestId : '')));
         final rawRequestMeta = widget.requestMeta.trim();
-        final effectiveRequestMeta = rawRequestMeta.isNotEmpty && rawRequestMeta != 'Today • 10:45 AM'
+        final effectiveRequestMeta = rawRequestMeta.isNotEmpty
             ? rawRequestMeta
             : (prescObj?.createdAt?.trim().isNotEmpty == true
                 ? formatServerDateTime(prescObj!.createdAt)

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
@@ -188,7 +189,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 to: parsed.$2,
                 reason: (item.reason != null && item.reason!.isNotEmpty)
                     ? item.reason!
-                    : 'Leave',
+                    : S.current.leave,
                 completed: false,
               ));
             }
@@ -204,7 +205,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 to: parsed.$2,
                 reason: (item.reason != null && item.reason!.isNotEmpty)
                     ? item.reason!
-                    : 'Leave',
+                    : S.current.leave,
                 completed: true,
               ));
             }
@@ -254,15 +255,15 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
   Future<void> _markLeave() async {
     final reason = _reason.text.trim();
     if (_from == null || _to == null) {
-      setState(() => _error = 'Select from and to dates');
+      setState(() => _error = S.current.waterSelectFromAndToDates);
       return;
     }
     if (_to!.isBefore(_from!)) {
-      setState(() => _error = 'To date must be after from date');
+      setState(() => _error = S.current.waterToDateAfterFromDate);
       return;
     }
     if (reason.isEmpty) {
-      setState(() => _error = 'Enter a reason');
+      setState(() => _error = S.current.waterEnterReason);
       return;
     }
 
@@ -333,7 +334,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
       if (isSuccess) {
         HapticFeedback.lightImpact();
         if (mounted) {
-          String message = _extractMessage(resData, 'Leave marked successfully');
+          String message = _extractMessage(resData, S.current.waterLeaveMarkedSuccessfully);
           showToast(context, message);
           final fromSaved = _from!;
           final toSaved = _to!;
@@ -356,7 +357,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
         }
       } else {
         if (mounted) {
-          String message = _extractMessage(resData, 'Failed to mark leave');
+          String message = _extractMessage(resData, S.current.waterFailedToMarkLeave);
           showToast(context, message);
         }
       }
@@ -410,7 +411,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Cancel Leave',
+                  S.of(context).cancelLeave,
                   style: appFont('Inter', 
                     color: PharmacyLeaveManagementScreen.ink,
                     fontWeight: FontWeight.w700,
@@ -419,7 +420,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Are you sure you want to cancel this leave?',
+                  S.of(context).waterCancelLeaveConfirm,
                   textAlign: TextAlign.center,
                   style: appFont('Inter', 
                     color: const Color(0xFF6B7280),
@@ -444,7 +445,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                             ),
                           ),
                           child: Text(
-                            'No',
+                            S.of(context).no,
                             style: appFont('Inter', 
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -467,7 +468,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                             ),
                           ),
                           child: Text(
-                            'Yes',
+                            S.of(context).yes,
                             style: appFont('Inter', 
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -493,7 +494,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
     HapticFeedback.lightImpact();
     if (leave.id == null || leave.id!.isEmpty) {
       setState(() => _leaves.remove(leave));
-      showToast(context, 'Leave cancelled successfully');
+      showToast(context, S.current.waterLeaveCancelledSuccessfully);
       return;
     }
 
@@ -545,7 +546,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
 
       if (isSuccess) {
         if (mounted) {
-          String message = _extractMessage(resData, 'Leave unmarked successfully');
+          String message = _extractMessage(resData, S.current.pfLeaveUnmarked);
           showToast(context, message);
           setState(() {
             _leaves.remove(leave);
@@ -554,7 +555,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
         }
       } else {
         if (mounted) {
-          String message = _extractMessage(resData, 'Failed to unmark leave');
+          String message = _extractMessage(resData, S.current.pfFailedToUnmarkLeave);
           showToast(context, message);
         }
       }
@@ -605,7 +606,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                     children: [
                       Text(
-                        'Mark Leave',
+                        S.of(context).markLeave,
                         style: appFont('Inter', 
                           color: PharmacyLeaveManagementScreen.ink,
                           fontWeight: FontWeight.w700,
@@ -624,9 +625,9 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                           children: [
                             Row(
                               children: [
-                                Expanded(child: _fieldLabel('From Date')),
+                                Expanded(child: _fieldLabel(S.of(context).fromDate)),
                                 const SizedBox(width: 12),
-                                Expanded(child: _fieldLabel('To Date')),
+                                Expanded(child: _fieldLabel(S.of(context).toDate)),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -648,7 +649,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                               ],
                             ),
                             const SizedBox(height: 14),
-                            _fieldLabel('Reason For Leave'),
+                            _fieldLabel(S.of(context).reasonForLeave),
                             const SizedBox(height: 8),
                             TextField(
                               controller: _reason,
@@ -662,7 +663,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'e.g. Annual vacation, renovation...',
+                                hintText: S.of(context).egAnnualVacationRenovation,
                                 hintStyle: appFont('Inter', 
                                   color: const Color(0xFFB7C2D0),
                                   fontWeight: FontWeight.w500,
@@ -706,7 +707,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
                                   child: Text(
-                                    'Mark Leave',
+                                    S.of(context).markLeave,
                                     style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                                   ),
                                 ),
@@ -718,7 +719,7 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                       const SizedBox(height: 20),
                       const _HistoryHeader(),
                       const SizedBox(height: 14),
-                      const _GroupTitle('Upcoming Leaves', color: Color(0xFF3B82F6)),
+                      _GroupTitle(S.of(context).upcomingLeaves, color: const Color(0xFF3B82F6)),
                       const SizedBox(height: 10),
                       for (final leave in upcoming) ...[
                         _LeaveCard(
@@ -728,11 +729,11 @@ class _PharmacyLeaveManagementScreenState extends State<PharmacyLeaveManagementS
                         const SizedBox(height: 12),
                       ],
                       const SizedBox(height: 6),
-                      const Row(
+                      Row(
                         children: [
-                          _GroupTitle('Completed Leaves', color: Color(0xFF16A34A)),
-                          Spacer(),
-                          _SeeAll(),
+                          _GroupTitle(S.of(context).completedLeaves, color: const Color(0xFF16A34A)),
+                          const Spacer(),
+                          const _SeeAll(),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -783,7 +784,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Leave Management',
+              S.of(context).waterLeaveManagement,
               style: appFont('Inter', 
                 color: PharmacyLeaveManagementScreen.ink,
                 fontWeight: FontWeight.w700,
@@ -827,7 +828,7 @@ class _DateBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = value == null
-        ? 'dd-mm-yyyy'
+        ? S.of(context).waterDatePlaceholder
         : '${value!.day.toString().padLeft(2, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.year}';
     return Material(
       color: const Color(0xFFF8FAFC),
@@ -876,7 +877,7 @@ class _HistoryHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'LEAVES HISTORY',
+          S.of(context).leavesHistory.toUpperCase(),
           style: appFont('Inter', 
             color: const Color(0xFF3F4454),
             fontWeight: FontWeight.w700,
@@ -897,7 +898,7 @@ class _SeeAll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'See All',
+      S.of(context).seeAll,
       style: appFont('Inter', 
         color: PharmacyLeaveManagementScreen.orange,
         fontWeight: FontWeight.w600,
@@ -985,7 +986,7 @@ class _LeaveCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  scheduled ? 'SCHEDULED' : 'COMPLETED',
+                  scheduled ? S.of(context).scheduled : S.of(context).completed,
                   style: appFont('Inter', 
                     color: scheduled ? const Color(0xFF3B82F6) : const Color(0xFF16A34A),
                     fontWeight: FontWeight.w700,
@@ -1009,7 +1010,7 @@ class _LeaveCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
-                  'Cancel Leave',
+                  S.of(context).cancelLeave,
                   style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               ),
