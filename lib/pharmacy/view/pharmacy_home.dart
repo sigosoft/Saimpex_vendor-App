@@ -4453,6 +4453,9 @@ class _DeliveredCard extends StatelessWidget {
                 ],
               ),
             ),
+            // Only a payment type the server sent: a missing one was shown
+            // as "Online payment", also for wallet orders (VA-22).
+            if (paymentTypeCode(paymentType) != null) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
@@ -4486,6 +4489,7 @@ class _DeliveredCard extends StatelessWidget {
                 ],
               ),
             ),
+            ],
           ],
         ),
       ),
@@ -4924,6 +4928,10 @@ class _OtcNewOrderCard extends StatelessWidget {
   final bool express;
   final bool cashOnDelivery;
   final dynamic paymentType;
+
+  /// The payment pill needs a real `payment_type` (or a known cash order).
+  bool get _hasPaymentType =>
+      paymentTypeCode(paymentType) != null || cashOnDelivery;
   final bool scheduled;
   final bool accepted;
   final bool preparing;
@@ -5281,6 +5289,8 @@ class _OtcNewOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                     ],
+                    // Only a payment type the server sent (VA-22).
+                    if (_hasPaymentType)
                     _OtcInfoPill(
                       icon: Image.asset(
                         cashOnDelivery
@@ -5314,6 +5324,7 @@ class _OtcNewOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                     ],
+                    if (_hasPaymentType)
                     _OtcInfoPill(
                       icon: Image.asset(
                         cashOnDelivery

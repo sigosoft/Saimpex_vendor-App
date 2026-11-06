@@ -199,7 +199,7 @@ class PharmacyPendingOrderItem {
     if (name != null && name.trim().isNotEmpty) {
       return name.trim();
     }
-    return 'Customer';
+    return S.current.quoteCustomer;
   }
 
   String get displayOrderCode {
@@ -403,12 +403,12 @@ class PharmacyPendingOrderItem {
     final count = displayItemsCount;
     final tot = displayTotal;
     if (count > 0 && tot.isNotEmpty) {
-      final itemLabel = count == 1 ? '1 Item' : '$count Items';
+      final itemLabel = S.current.pharmacyHomeItemCount('$count');
       return '$itemLabel • $tot';
     } else if (tot.isNotEmpty) {
       return tot;
     } else if (count > 0) {
-      return count == 1 ? '1 Item' : '$count Items';
+      return S.current.pharmacyHomeItemCount('$count');
     }
     return '';
   }

@@ -116,6 +116,7 @@ class CreateQuotationController extends GetxController {
       }
       searching = false;
       update();
+      if (found.isNotEmpty) _revealSearchField(alt: alt);
     });
   }
 
@@ -234,20 +235,30 @@ class CreateQuotationController extends GetxController {
     _schedule(value, alt: true);
     update();
     if (value.trim().isEmpty) return;
+    _revealSearchField(alt: true);
+  }
+
+  void onMedicineQueryChanged(String value) {
+    _schedule(value, alt: false);
+    update();
+    if (value.trim().isEmpty) return;
+    _revealSearchField(alt: false);
+  }
+
+  /// Scrolls the search field near the top so the results listed under it
+  /// stay above the keyboard. The medicine search did not, so its results
+  /// were hidden behind the keyboard (retest 6 Nov, VA-27).
+  void _revealSearchField({required bool alt}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final fieldContext = altFocus.context;
-      if (fieldContext == null) return;
+      final focus = alt ? altFocus : medicineFocus;
+      final fieldContext = focus.context;
+      if (fieldContext == null || !focus.hasFocus) return;
       Scrollable.ensureVisible(
         fieldContext,
         alignment: 0.05,
         duration: const Duration(milliseconds: 250),
       );
     });
-  }
-
-  void onMedicineQueryChanged(String value) {
-    _schedule(value, alt: false);
-    update();
   }
 
   void setQuoteValid(String value) {
@@ -263,6 +274,10 @@ class CreateQuotationController extends GetxController {
   void focusMedicineSearch() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       medicineFocus.requestFocus();
+      // Again once the keyboard is up and the list has shrunk.
+      Future<void>.delayed(const Duration(milliseconds: 350), () {
+        if (!isClosed) _revealSearchField(alt: false);
+      });
     });
   }
 

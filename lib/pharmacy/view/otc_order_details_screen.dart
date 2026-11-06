@@ -1295,7 +1295,11 @@ class _OtcPaymentSummary extends StatelessWidget {
           const SizedBox(height: 12),
           _OtcPayRow(
             label: S.of(context).paymentType,
-            value: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
+            // The order's real method (wallet showed as "Online payment"
+            // when the type was missing, VA-22); "-" when the server has none.
+            value: paymentTypeCode(paymentType) != null
+                ? paymentTypeLabel(paymentType)
+                : (cashOnDelivery ? S.of(context).cashOnDelivery : '-'),
             valueColor: _orange,
           ),
           if (paymentOn != null && paymentOn!.trim().isNotEmpty) ...[
