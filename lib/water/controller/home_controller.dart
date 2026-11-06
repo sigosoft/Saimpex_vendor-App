@@ -162,12 +162,33 @@ class WaterHomeController extends GetxController {
     return '0';
   }
 
+  /// Today's hours from GET home `screen.welcome`. The server sends
+  /// `timings` as a list of `{open_time, close_time}` (it was printed raw as
+  /// "[{open_time: 00:00, ...}]"); older builds sent a string or
+  /// `opening_time`/`closing_time`. '' when none: the line is hidden, never a
+  /// made-up 08:00 – 22:00.
   String get storeTimings {
     final welcome = rawScreen?['welcome'];
     if (welcome is Map) {
-      final timings = welcome['timings']?.toString().trim();
-      if (timings != null && timings.isNotEmpty && timings != 'null') {
-        return timings;
+      final t = welcome['timings'];
+      // A list of maps, or the same list already turned into text: read the
+      // open/close pairs out of either.
+      if (t != null && '$t'.contains('open_time')) {
+        final ranges = <List<String>>[
+          for (final m in RegExp(r'open_time"?\s*:\s*"?(\d{1,2}:\d{2})[^}]*?close_time"?\s*:\s*"?(\d{1,2}:\d{2})')
+              .allMatches('$t'))
+            [m.group(1)!, m.group(2)!],
+        ];
+        if (ranges.isNotEmpty) {
+          // "Today: 08:00 - 12:00", then any further ranges: ", 14:00 - 20:00".
+          final rest = ranges.skip(1).map((r) => '${r[0]} - ${r[1]}');
+          return [
+            S.current.waterTodayTimings(ranges.first[0], ranges.first[1]),
+            ...rest,
+          ].join(', ');
+        }
+      } else if (t is String && t.trim().isNotEmpty && t.trim() != 'null') {
+        return t.trim();
       }
       final open = welcome['opening_time']?.toString().trim();
       final close = welcome['closing_time']?.toString().trim();
@@ -178,7 +199,7 @@ class WaterHomeController extends GetxController {
         return S.current.waterTodayTimings(open, close);
       }
     }
-    return S.current.waterTodayTimings('08:00', '22:00');
+    return '';
   }
 
   String get shopName {
