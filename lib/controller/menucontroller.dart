@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'dart:io';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:dio/dio.dart' as dio;
@@ -543,41 +544,41 @@ class MenuController extends GetxController {
 
   String? addMenuValidation() {
     if (nameEnCtrl.text.trim().isEmpty) {
-      return "Please enter item name";
+      return S.current.itemValidationEnterName;
     }
     if (selectedCategoryIds.isEmpty) {
-      return "Please select at least one category";
+      return S.current.itemValidationSelectCategory;
     }
     final profileController = Get.find<ProfileController>();
     if (profileController.vendorType == '1' &&
         (selectedIsVeg == null || selectedIsVeg!.trim().isEmpty)) {
-      return "Please select veg type";
+      return S.current.rmSelectVegType;
     }
     if (descEnCtrl.text.trim().isEmpty) {
-      return "Please enter description";
+      return S.current.rmEnterDescription;
     }
     if (selectedTagIds.isEmpty) {
-      return "Please select at least one tag";
+      return S.current.itemValidationSelectTag;
     }
     if (attributeDisplayNames.isNotEmpty &&
         (selectedAttributeId == null || selectedAttributeId!.trim().isEmpty)) {
-      return "Please select attribute";
+      return S.current.itemValidationSelectAttribute;
     }
     if (profileController.vendorType == '1' &&
         prepTimeCtrl.text.trim().isEmpty) {
-      return "Please enter preparation time";
+      return S.current.itemValidationEnterPrepTime;
     }
     if (priceCtrl.text.trim().isEmpty) {
-      return "Please enter price";
+      return S.current.itemValidationEnterPrice;
     }
     if (discountPriceCtrl.text.trim().isEmpty) {
-      return "Please enter discount price";
+      return S.current.itemValidationEnterDiscountPrice;
     }
     if (quantityAllowedCtrl.text.trim().isEmpty) {
-      return "Please enter maximum allowed quantity";
+      return S.current.rmEnterMaxQuantity;
     }
     if (uploadedImages.isEmpty) {
-      return "Please upload at least one image";
+      return S.current.rmUploadOneImage;
     }
     return null;
   }
@@ -683,23 +684,17 @@ class MenuController extends GetxController {
         }
         if (context.mounted) {
           Get.back();
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // Server text only in the app language (it sent message_en).
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.addItemAddedSuccessfully),
+          );
         }
       } else {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            ApiMessage.localOr(response.data, S.current.addItemFailedToAdd),
           );
         }
       }
@@ -715,8 +710,8 @@ class MenuController extends GetxController {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Select Image"),
-        content: const Text("Choose image from gallery or camera"),
+        title: Text(S.current.mgmtSelectImage),
+        content: Text(S.current.mgmtChooseImageSource),
         actions: [
           TextButton(
             onPressed: () async {
@@ -1141,23 +1136,17 @@ class MenuController extends GetxController {
           await profileController.fetchRestaurantMenus();
         }
         if (context.mounted) {
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // Server text only in the app language (it sent message_en).
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.rmItemDeleted),
+          );
         }
       } else {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            ApiMessage.localOr(response.data, S.current.rmItemDeleteFailed),
           );
         }
       }
@@ -1489,38 +1478,18 @@ class MenuController extends GetxController {
           }
         }
         if (context.mounted) {
-          String successMessage = "Menu updated successfully";
-          final msgMap = response.data['message'];
-          if (msgMap is Map) {
-            final locale = Get.locale?.languageCode ?? 'en';
-            final localMsg = msgMap['message_$locale'] ?? msgMap['message_en'];
-            if (localMsg is List && localMsg.isNotEmpty) {
-              successMessage = localMsg.first.toString();
-            } else if (localMsg != null) {
-              successMessage = localMsg.toString();
-            }
-          } else if (msgMap is String && msgMap.isNotEmpty) {
-            successMessage = msgMap;
-          }
-          showToast(context, successMessage);
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.itemUpdatedSuccessfully),
+          );
           Get.back();
         }
       } else {
         if (context.mounted) {
-          String errorMessage = "Failed to update menu";
-          final msgMap = response.data['message'];
-          if (msgMap is Map) {
-            final locale = Get.locale?.languageCode ?? 'en';
-            final localMsg = msgMap['message_$locale'] ?? msgMap['message_en'];
-            if (localMsg is List && localMsg.isNotEmpty) {
-              errorMessage = localMsg.first.toString();
-            } else if (localMsg != null) {
-              errorMessage = localMsg.toString();
-            }
-          } else if (msgMap is String && msgMap.isNotEmpty) {
-            errorMessage = msgMap;
-          }
-          showToast(context, errorMessage);
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.failedToUpdateItem),
+          );
         }
       }
     } catch (error) {
@@ -1578,10 +1547,7 @@ class MenuController extends GetxController {
           try {
             final map = jsonDecode(asText);
             if (map is Map) {
-              final msg =
-                  map['message']?.toString() ??
-                  map['error']?.toString() ??
-                  S.current.menuExportFailed;
+              final msg = ApiMessage.localOr(map, S.current.menuExportFailed);
               if (context.mounted) showToast(context, msg);
             }
           } catch (_) {
@@ -1594,13 +1560,7 @@ class MenuController extends GetxController {
       }
       if (response.statusCode != null && response.statusCode! >= 400) {
         if (context.mounted) {
-          final msg = maybeJsonBody
-              ? utf8.decode(bytes, allowMalformed: true).trim()
-              : '';
-          showToast(
-            context,
-            msg.isNotEmpty ? msg : S.current.menuExportFailed,
-          );
+          showToast(context, S.current.menuExportFailed);
         }
         return;
       }
@@ -1688,7 +1648,7 @@ class MenuController extends GetxController {
       final picked = result.files.single;
       final path = picked.path;
       if (path == null || path.isEmpty) {
-        showToast(context, "Could not access the selected file");
+        showToast(context, S.current.couldNotAccessTheSelectedFile);
         return;
       }
 
@@ -1710,46 +1670,25 @@ class MenuController extends GetxController {
 
       final raw = response.data;
       if (raw is! Map) {
-        showToast(context, "Invalid server response");
+        showToast(context, S.current.somethingWentWrong);
         return;
       }
 
       final map = Map<String, dynamic>.from(raw);
       final ok = map['status']?.toString() == 'true' || map['status'] == true;
-      String resolveMessage(dynamic message, String fallback) {
-        if (message == null) return fallback;
-        if (message is String && message.trim().isNotEmpty) return message;
-        if (message is Map) {
-          final m = Map<String, dynamic>.from(message);
-          final lang = Get.locale?.languageCode ?? 'en';
-          final key = lang == 'ar'
-              ? 'message_ar'
-              : lang == 'fr'
-              ? 'message_fr'
-              : 'message_en';
-          final localized = m[key];
-          if (localized is List && localized.isNotEmpty) {
-            return localized.first.toString();
-          }
-          final en = m['message_en'];
-          if (en is List && en.isNotEmpty) return en.first.toString();
-          for (final v in m.values) {
-            if (v is List && v.isNotEmpty) return v.first.toString();
-            if (v is String && v.trim().isNotEmpty) return v;
-          }
-        }
-        return fallback;
-      }
+      // Server text only in the app language, else the app's own text.
+      String resolveMessage(dynamic message, String fallback) =>
+          ApiMessage.fromMessage(message) ?? fallback;
 
       if (ok) {
         if (Get.isRegistered<ProfileController>()) {
           await Get.find<ProfileController>().fetchRestaurantMenus();
         }
-        final msg = resolveMessage(map['message'], 'Upload successful');
+        final msg = resolveMessage(map['message'], S.current.rmImportSuccess);
         showToast(context, msg);
         debugPrint("uploadItemTemplate: $msg");
       } else {
-        showToast(context, resolveMessage(map['message'], 'Upload failed'));
+        showToast(context, resolveMessage(map['message'], S.current.importFailedTitle));
       }
     } catch (error) {
       debugPrint("uploadItemTemplate Error: $error");

@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -603,7 +604,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
 
       if (isSuccess) {
         final message =
-            resData['message']?.toString() ??
+            ApiMessage.local(resData) ??
             'Delivery boy deleted successfully';
         if (mounted) {
           showToast(context, message);
@@ -611,7 +612,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         }
       } else {
         final message = resData is Map
-            ? resData['message']?.toString() ?? 'Failed to delete delivery boy'
+            ? ApiMessage.local(resData) ?? 'Failed to delete delivery boy'
             : 'Failed to delete delivery boy';
         if (mounted) {
           showToast(context, message);
@@ -848,7 +849,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           final defaultMsg = _isEditing
               ? 'Delivery boy updated successfully'
               : 'Delivery boy added successfully';
-          final message = resData['message']?.toString() ?? defaultMsg;
+          final message = ApiMessage.local(resData) ?? defaultMsg;
           try {
             showToast(context, message);
           } catch (_) {}
@@ -860,7 +861,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
               ? 'Failed to update delivery boy'
               : 'Failed to add delivery boy';
           final message = resData is Map
-              ? resData['message']?.toString() ?? defaultMsg
+              ? ApiMessage.local(resData) ?? defaultMsg
               : defaultMsg;
           try {
             showToast(context, message);
