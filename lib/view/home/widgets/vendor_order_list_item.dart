@@ -71,6 +71,9 @@ class VendorOrderListItem extends StatelessWidget {
         onMarkSelfPickupCompleted: onMarkSelfPickupCompleted,
         scheduledFor: scheduledFor,
         onTap: () {
+          // Back on the home the search box got the focus again and the
+          // keyboard opened (VA-07).
+          FocusManager.instance.primaryFocus?.unfocus();
           if (status.toLowerCase() != 'cancelled') {
             Get.to(
               () => VendorOrderDetails(

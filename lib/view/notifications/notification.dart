@@ -707,11 +707,19 @@ class FCM {
   static final ValueNotifier<List<({String number, String amount, Map<String, dynamic> data})>>
       _alertOrders = ValueNotifier(const []);
 
+  /// Order ids a new-order popup was already shown for, from a push or from
+  /// the home's poll, so the same order never rings twice.
+  static final Set<String> alertedOrderIds = <String>{};
+
   static void showInAppNewOrderAlert(Map<String, dynamic> notificationData, {String? notificationBody}) {
     if (Get.context == null) return;
-    _startAlarm();
 
     final orderData = _extractOrderData(notificationData, notificationBody: notificationBody);
+    final alertedId = orderData['orderId'];
+    if (alertedId != null && alertedId.isNotEmpty) {
+      alertedOrderIds.add(alertedId);
+    }
+    _startAlarm();
     final orderNumber = orderData['orderNumber'] ?? orderData['orderId'] ?? '';
     final formattedOrderNumber = orderNumber.isNotEmpty ? cleanOrderNumber(orderNumber) : 'New';
     final amount = orderData['amount'] ?? '';

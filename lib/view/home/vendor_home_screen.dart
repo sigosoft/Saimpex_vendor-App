@@ -29,6 +29,7 @@ import 'package:saimpex_vendor/controller/order_details_controller.dart';
 import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
+import 'package:saimpex_vendor/view/notifications/notification.dart';
 
 import '../../utils/utils.dart';
 import '../../configs/ApiConfigs.dart';
@@ -125,7 +126,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
     }
     _refreshSubscription = homeController.refreshStream.listen((_) {
       if (mounted) {
-        _fetchOrders();
+        _fetchOrders(quiet: true);
       }
     });
     WidgetsBinding.instance.addObserver(this);
@@ -133,12 +134,14 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
       // final homeController = Get.put(HomeController());
       maintenance(context);
     });
+    _startPolling();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _refreshSubscription?.cancel();
+    _pollTimer?.cancel();
     super.dispose();
   }
 
@@ -146,7 +149,61 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint("=== App resumed, auto-refreshing orders ===");
-      _fetchOrders();
+      _startPolling();
+      _fetchOrders(quiet: true);
+      _pollNewOrders();
+    } else if (state == AppLifecycleState.paused) {
+      _pollTimer?.cancel();
+    }
+  }
+
+  // New orders without a push (VA-01): the restaurant home only refreshed on
+  // a push, so an order whose push never arrived stayed hidden until the app
+  // was restarted. While the app is open, look for new pending orders every
+  // [_pollEvery]; a new one rings the same popup as a push and reloads the list.
+  static const Duration _pollEvery = Duration(seconds: 30);
+  Timer? _pollTimer;
+  bool _polling = false;
+  bool _pollPrimed = false;
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(_pollEvery, (_) => _pollNewOrders());
+  }
+
+  Future<void> _pollNewOrders() async {
+    if (!mounted || _polling) return;
+    _polling = true;
+    try {
+      final pending = await homeController.fetchPendingOrders();
+      if (!mounted || pending == null) return;
+      final ids = pending
+          .map((o) => o.id?.toString() ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList();
+      // The first look only records what is already there.
+      if (!_pollPrimed) {
+        _pollPrimed = true;
+        FCM.alertedOrderIds.addAll(ids);
+        return;
+      }
+      final fresh = pending
+          .where((o) => !FCM.alertedOrderIds.contains(o.id?.toString() ?? ''))
+          .where((o) => (o.id?.toString() ?? '').isNotEmpty)
+          .toList();
+      if (fresh.isEmpty) return;
+      for (final o in fresh) {
+        FCM.showInAppNewOrderAlert({
+          'type': 'new_order_request',
+          'order_id': o.id.toString(),
+          if ((o.orderCode ?? '').isNotEmpty) 'order_code': o.orderCode!,
+          if ((o.total?.toString() ?? '').isNotEmpty)
+            'total_delivery_amount': o.total.toString(),
+        });
+      }
+      await _fetchOrders(quiet: true);
+    } finally {
+      _polling = false;
     }
   }
 
@@ -322,7 +379,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
     }
   }
 
-  Future<void> _fetchOrders({String? keyword}) async {
+  Future<void> _fetchOrders({String? keyword, bool quiet = false}) async {
     await homeController.getProfile(context);
     if (!mounted) return;
 
@@ -343,23 +400,41 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
       orderStatus: _statusValue(selectedTab),
       keyword: keyword ?? homeController.searchController.text.trim(),
       limit: _defaultLimit,
+      quiet: quiet,
     );
     if (!mounted) return;
     _refreshSelectedTabCount();
   }
 
+  /// Every tab badge from the server's per-status counts. Only the open
+  /// tab's badge was ever updated, so after an action the others kept an old
+  /// number ("Pending 01" with no pending order, VA-06 / VA-16).
   void _refreshSelectedTabCount() {
     if (!mounted) return;
-    final totalCount =
-        homeController.homeData?.data?.orders?.total ??
-        homeController.homeData?.data?.orders?.data?.length ??
-        0;
+    final orders = homeController.homeData?.data?.orders;
+    final summary = homeController.homeData?.data?.summary;
+    final searching = homeController.searchController.text.trim().isNotEmpty;
     setState(() {
-      _tabCounts[selectedTab] = totalCount;
+      if (summary != null) {
+        _tabCounts["Pending"] = summary.pendingOrdersCount ?? 0;
+        _tabCounts["Accepted"] = summary.acceptedOrdersCount ?? 0;
+        _tabCounts["Preparing"] = summary.processedOrdersCount ?? 0;
+        _tabCounts["Ready"] = summary.readyOrdersCount ?? 0;
+        _tabCounts["On Going"] = summary.ongoingOrdersCount ?? 0;
+        _tabCounts["Delivered"] = summary.completedOrdersCount ?? 0;
+        _tabCounts["Cancelled"] = summary.cancelledOrdersCount ?? 0;
+      }
+      // While searching, the open tab shows how many orders match.
+      if (summary == null || searching) {
+        _tabCounts[selectedTab] = orders?.total ?? orders?.data?.length ?? 0;
+      }
     });
   }
 
   void _handleAcceptOrder(String orderId) {
+    // Coming back to the home focused the search box again and opened the
+    // keyboard after every action (VA-07).
+    FocusManager.instance.primaryFocus?.unfocus();
     // Accept & Print didn't pass printAfter, so nothing printed. The tab
     // count drops at the tap and comes back if the server refuses (V-B5).
     Future<void> accept({required bool print}) async {
@@ -395,6 +470,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
   }
 
   Future<void> _handleCancelOrder(String orderId) async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final vendorType =
         homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
     final isRestaurant = vendorType == "1";
@@ -420,6 +496,7 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
   }
 
   void _handleMarkAsReady(String orderId) {
+    FocusManager.instance.primaryFocus?.unfocus();
     final vendorType =
         homeController.homeData?.data?.vendor?.vendorType?.toString() ?? "0";
     if (vendorType == "1") {
