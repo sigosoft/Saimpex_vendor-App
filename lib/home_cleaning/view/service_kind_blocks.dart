@@ -142,7 +142,16 @@ class LaundryServiceCard extends StatelessWidget {
     final tag = laundryTurnaround(s, b);
     final perKg = _num(b.raw['estimate_kg']) != null;
     final garments = b.chipLines;
-    final summary = _str(b.raw['summary']);
+    // `summary` is English server text ("2 pieces · Standard (24h)", VA-32);
+    // it is built in the app language from `unit` / `quantity` when they
+    // are sent, and shown as sent only for another unit.
+    final qty = _num(b.raw['quantity']);
+    final unit = _str(b.raw['unit'])?.toLowerCase();
+    final summary = qty != null && qty > 0 && (unit == 'piece' || unit == 'item')
+        ? '${_kg(qty)} × ${s.unitPiece}'
+        : qty != null && qty > 0 && unit == 'metre'
+            ? '${_kg(qty)} ${s.unitMetre}'
+            : _str(b.raw['summary']);
     Widget tile(Widget child) => Container(
           width: 56,
           height: 56,
