@@ -107,32 +107,24 @@ class _SettingsState extends State<Settings> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: controller.profilePicture.isNotEmpty
-                              ? (controller.profilePicture.startsWith('http') ||
-                                        controller.profilePicture.startsWith(
-                                          'user/',
-                                        ))
-                                    ? Image.network(
-                                        controller.profilePicture.startsWith(
-                                              'http',
-                                            )
-                                            ? controller.profilePicture
-                                            : ApiConfigs.IMAGE_URL +
-                                                  controller.profilePicture,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => _initials(
-                                          controller.profileData?.name,
-                                        ),
-                                      )
-                                    : controller.profilePicture.contains('/')
-                                    ? Image.file(
-                                        File(controller.profilePicture),
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => _initials(
-                                          controller.profileData?.name,
-                                        ),
-                                      )
-                                    : _initials(controller.profileData?.name)
+                          // VA-13: logo from any server path or URL; the
+                          // initials only when there is none.
+                          child: storeImageLocalFile(controller.profilePicture) != null
+                              ? Image.file(
+                                  storeImageLocalFile(controller.profilePicture)!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => _initials(
+                                    controller.profileData?.name,
+                                  ),
+                                )
+                              : storeImageNetworkUrl(controller.profilePicture) != null
+                              ? Image.network(
+                                  storeImageNetworkUrl(controller.profilePicture)!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => _initials(
+                                    controller.profileData?.name,
+                                  ),
+                                )
                               : _initials(controller.profileData?.name),
                         ),
                       ),
