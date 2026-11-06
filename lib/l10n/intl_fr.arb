@@ -3564,5 +3564,9 @@
   "todaysDeliveries": "Livraisons du jour",
   "wfDeliveryPartners": "Partenaires de livraison",
   "wfSearchDeliveryPartner": "Rechercher un partenaire de livraison",
-  "wfAddDeliveryPartner": "Ajouter un partenaire de livraison"
+  "wfAddDeliveryPartner": "Ajouter un partenaire de livraison",
+  "pfTodayLabel": "Aujourd'hui :",
+  "pfLeaveUnmarked": "Congé retiré avec succès",
+  "pfFailedToUnmarkLeave": "Impossible de retirer le congé",
+  "pfDeliveryPartners": "Partenaires de livraison"
 }

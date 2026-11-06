@@ -304,16 +304,20 @@ class _OtcOrderDetailsPage extends StatelessWidget {
           icon: Icons.check_rounded,
           completed: accepted || preparing || ready || delivered,
         ),
+        // Figma (pharmacy check, 6 Nov): same steps as delivery, with
+        // "Ready for Pickup" and no rider steps.
         _TimelineStep(
-          title: S.current.preparing,
+          title: S.current.pharmacyOtcPreparingMedicines,
           subtitle: preparingSubtitle,
-          icon: Icons.assignment_outlined,
+          icon: Icons.medication_outlined,
+          customIcon: _TimelineCustomIcon.capsule,
           completed: preparing || ready || delivered,
         ),
         _TimelineStep(
           title: S.current.pharmacyOtcReadyForPickup,
           subtitle: readySubtitle,
-          icon: Icons.check_rounded,
+          icon: Icons.inventory_2_outlined,
+          customIcon: _TimelineCustomIcon.openBox,
           completed: ready || delivered,
         ),
         _TimelineStep(
@@ -355,14 +359,16 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       ),
       _TimelineStep(
         title: S.current.pharmacyOtcPartnerAssigned,
-        subtitle: readySubtitle,
+        // No log time for these two steps; the "ready" time was repeated
+        // here, so they show no time.
+        subtitle: null,
         icon: Icons.delivery_dining,
         customIcon: _TimelineCustomIcon.scooter,
         completed: partnerAssigned || delivered,
       ),
       _TimelineStep(
         title: S.current.pharmacyOtcPickedUpByRider,
-        subtitle: readySubtitle,
+        subtitle: null,
         icon: Icons.check_rounded,
         completed: delivered,
       ),

@@ -3653,5 +3653,13 @@
   "todaysDeliveries": "Today's Deliveries",
   "wfDeliveryPartners": "Delivery Partners",
   "wfSearchDeliveryPartner": "Search delivery partner",
-  "wfAddDeliveryPartner": "Add Delivery Partner"
+  "wfAddDeliveryPartner": "Add Delivery Partner",
+  "pfTodayLabel": "Today:",
+  "@pfTodayLabel": {},
+  "pfLeaveUnmarked": "Leave unmarked successfully",
+  "@pfLeaveUnmarked": {},
+  "pfFailedToUnmarkLeave": "Failed to unmark leave",
+  "@pfFailedToUnmarkLeave": {},
+  "pfDeliveryPartners": "Delivery Partners",
+  "@pfDeliveryPartners": {}
 }

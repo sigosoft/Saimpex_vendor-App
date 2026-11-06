@@ -3563,5 +3563,9 @@
   "todaysDeliveries": "توصيلات اليوم",
   "wfDeliveryPartners": "شركاء التوصيل",
   "wfSearchDeliveryPartner": "ابحث عن شريك توصيل",
-  "wfAddDeliveryPartner": "إضافة شريك توصيل"
+  "wfAddDeliveryPartner": "إضافة شريك توصيل",
+  "pfTodayLabel": "اليوم:",
+  "pfLeaveUnmarked": "تم إلغاء تحديد الإجازة بنجاح",
+  "pfFailedToUnmarkLeave": "تعذّر إلغاء تحديد الإجازة",
+  "pfDeliveryPartners": "شركاء التوصيل"
 }

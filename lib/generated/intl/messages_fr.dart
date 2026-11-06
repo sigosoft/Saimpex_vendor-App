@@ -1917,6 +1917,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Solde des commandes en attente",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("Pourcentage"),
+    "pfDeliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Partenaires de livraison",
+    ),
+    "pfFailedToUnmarkLeave": MessageLookupByLibrary.simpleMessage(
+      "Impossible de retirer le congé",
+    ),
+    "pfLeaveUnmarked": MessageLookupByLibrary.simpleMessage(
+      "Congé retiré avec succès",
+    ),
+    "pfTodayLabel": MessageLookupByLibrary.simpleMessage("Aujourd\'hui :"),
     "pharmacyDetailAwaitingCustomerPayment":
         MessageLookupByLibrary.simpleMessage(
           "En attente du paiement du client",

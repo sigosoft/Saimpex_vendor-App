@@ -1702,6 +1702,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "رصيد الطلبات المعلقة",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("نسبة مئوية"),
+    "pfDeliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
+    "pfFailedToUnmarkLeave": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إلغاء تحديد الإجازة",
+    ),
+    "pfLeaveUnmarked": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء تحديد الإجازة بنجاح",
+    ),
+    "pfTodayLabel": MessageLookupByLibrary.simpleMessage("اليوم:"),
     "pharmacyDetailAwaitingCustomerPayment":
         MessageLookupByLibrary.simpleMessage("بانتظار دفع العميل"),
     "pharmacyDetailBadgeAwaitingPayment": MessageLookupByLibrary.simpleMessage(

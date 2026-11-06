@@ -1710,6 +1710,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pending Order Balance",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("Percentage"),
+    "pfDeliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partners",
+    ),
+    "pfFailedToUnmarkLeave": MessageLookupByLibrary.simpleMessage(
+      "Failed to unmark leave",
+    ),
+    "pfLeaveUnmarked": MessageLookupByLibrary.simpleMessage(
+      "Leave unmarked successfully",
+    ),
+    "pfTodayLabel": MessageLookupByLibrary.simpleMessage("Today:"),
     "pharmacyDetailAwaitingCustomerPayment":
         MessageLookupByLibrary.simpleMessage("Awaiting Customer Payment"),
     "pharmacyDetailBadgeAwaitingPayment": MessageLookupByLibrary.simpleMessage(

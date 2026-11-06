@@ -221,6 +221,13 @@ class PharmacyPendingOrderItem {
         deliveryType?.toString().toLowerCase() == 'pickup';
   }
 
+  /// pharmacyOrders sends `is_express` (true when the order `type` is
+  /// "express"); shown as the Express Delivery tag (Figma).
+  bool get isExpressBool {
+    final v = rawJson?['is_express'];
+    return v == true || v == 1 || v?.toString() == '1' || type == 'express';
+  }
+
   bool get isCashOnDeliveryBool => isCashPayment(paymentType);
 
   int get displayItemsCount {
