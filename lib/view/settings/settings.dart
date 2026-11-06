@@ -10,6 +10,7 @@ import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 // import 'package:saimpex_vendor/view/settings/about_us.dart';
+import 'package:saimpex_vendor/view/profile/edit_profile.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
@@ -207,6 +208,51 @@ class _SettingsState extends State<Settings> {
                               maxLines: 2,
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Figma: "Edit Profile Details" under the details card.
+                    // Opens the name / photo / phone (WhatsApp code) editor
+                    // on vendorapp/profile/update.
+                    ElevatedButton.icon(
+                      onPressed: () => Get.to(() => const EditProfile())
+                          ?.then((_) {
+                            if (context.mounted) controller.getProfile(context);
+                          }),
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            S.of(context).editProfileDetails,
+                            style: appFont('Rubik',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.chevron_right,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorPrimary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 10,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),

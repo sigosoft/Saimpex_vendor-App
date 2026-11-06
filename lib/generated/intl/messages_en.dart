@@ -1012,6 +1012,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editItem": MessageLookupByLibrary.simpleMessage("Edit Item"),
     "editMenu": MessageLookupByLibrary.simpleMessage("Edit Menu"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
+    "editProfileDetails": MessageLookupByLibrary.simpleMessage(
+      "Edit Profile Details",
+    ),
     "editService": MessageLookupByLibrary.simpleMessage("Edit Service"),
     "egAnnualVacationRenovation": MessageLookupByLibrary.simpleMessage(
       "e.g. Annual vacation, renovation...",

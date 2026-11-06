@@ -3344,5 +3344,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "editProfileDetails": "Modifier les informations du profil"
 }

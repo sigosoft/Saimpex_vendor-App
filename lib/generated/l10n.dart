@@ -14492,6 +14492,16 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Edit Profile Details`
+  String get editProfileDetails {
+    return Intl.message(
+      'Edit Profile Details',
+      name: 'editProfileDetails',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

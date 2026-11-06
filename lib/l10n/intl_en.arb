@@ -3397,5 +3397,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "editProfileDetails": "Edit Profile Details"
 }
