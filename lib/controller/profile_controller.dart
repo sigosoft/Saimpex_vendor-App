@@ -1812,7 +1812,8 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> updateBusyStatus(BuildContext context, int status) async {
+  /// Returns true when the server saved the new state.
+  Future<bool> updateBusyStatus(BuildContext context, int status) async {
     try {
       showLoadingDialog(context);
       var token = await getSavedObject("token");
@@ -1839,16 +1840,19 @@ class ProfileController extends GetxController {
             status == 1 ? S.current.busyModeOn : S.current.busyModeOff,
           );
         }
+        return true;
       } else {
         if (context.mounted) {
           showToast(context, S.current.busyModeUpdateFailed);
         }
+        return false;
       }
     } catch (error) {
       if (context.mounted) {
         Get.back();
         showToast(context, error.toString());
       }
+      return false;
     }
   }
 }
