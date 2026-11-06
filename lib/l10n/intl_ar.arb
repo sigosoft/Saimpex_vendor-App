@@ -3669,5 +3669,23 @@
   "rmCouponDeleteFailed": "تعذر حذف القسيمة",
   "@rmCouponDeleteFailed": {},
   "currentStock": "المخزون الحالي",
-  "@currentStock": {}
+  "@currentStock": {},
+  "serviceStepConfirmBody": "هل تؤكد هذه الخطوة للحجز {code}؟",
+  "@serviceStepConfirmBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepFutureWarning": "هذا الحجز مقرر في {date} وليس اليوم.",
+  "@serviceStepFutureWarning": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepConfirm": "تأكيد",
+  "@serviceStepConfirm": {}
 }

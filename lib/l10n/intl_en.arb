@@ -3763,5 +3763,23 @@
   "rmCouponDeleteFailed": "Could not delete the coupon",
   "@rmCouponDeleteFailed": {},
   "currentStock": "Current stock",
-  "@currentStock": {}
+  "@currentStock": {},
+  "serviceStepConfirmBody": "Confirm this step for booking {code}?",
+  "@serviceStepConfirmBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepFutureWarning": "This booking is scheduled for {date}, not today.",
+  "@serviceStepFutureWarning": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepConfirm": "Confirm",
+  "@serviceStepConfirm": {}
 }

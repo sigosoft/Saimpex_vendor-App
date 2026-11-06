@@ -3670,5 +3670,23 @@
   "rmCouponDeleteFailed": "Impossible de supprimer le coupon",
   "@rmCouponDeleteFailed": {},
   "currentStock": "Stock actuel",
-  "@currentStock": {}
+  "@currentStock": {},
+  "serviceStepConfirmBody": "Confirmer cette étape pour la réservation {code} ?",
+  "@serviceStepConfirmBody": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepFutureWarning": "Cette réservation est prévue le {date}, pas aujourd'hui.",
+  "@serviceStepFutureWarning": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "serviceStepConfirm": "Confirmer",
+  "@serviceStepConfirm": {}
 }
