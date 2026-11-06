@@ -3737,5 +3737,6 @@
   "itemDetailCategoryLabel": "الفئة:",
   "itemDetailSerialNoLabel": "الرقم التسلسلي:",
   "itemDetailPrepTimeLabel": "وقت التحضير:",
-  "itemDetailMinShort": "د"
+  "itemDetailMinShort": "د",
+  "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح"
 }

@@ -3738,5 +3738,6 @@
   "itemDetailCategoryLabel": "Catégorie :",
   "itemDetailSerialNoLabel": "N° de série :",
   "itemDetailPrepTimeLabel": "Temps de préparation :",
-  "itemDetailMinShort": "min"
+  "itemDetailMinShort": "min",
+  "orderMarkedPickedUpSuccessfully": "Commande marquée comme récupérée avec succès"
 }

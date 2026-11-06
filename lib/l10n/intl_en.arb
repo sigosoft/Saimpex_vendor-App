@@ -3831,5 +3831,6 @@
   "itemDetailCategoryLabel": "Category:",
   "itemDetailSerialNoLabel": "Serial No:",
   "itemDetailPrepTimeLabel": "Preparation Time:",
-  "itemDetailMinShort": "min"
+  "itemDetailMinShort": "min",
+  "orderMarkedPickedUpSuccessfully": "Order marked as picked up successfully"
 }

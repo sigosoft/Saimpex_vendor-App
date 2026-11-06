@@ -1676,6 +1676,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderIdLabel": m37,
     "orderItems": MessageLookupByLibrary.simpleMessage("عناصر الطلب"),
+    "orderMarkedPickedUpSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد الطلب كمستلم بنجاح",
+    ),
     "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تحديد الطلب كجاهز",
     ),
@@ -1688,7 +1691,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "بدأ تحضير الطلب",
     ),
     "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "بدأ تحضير الطلب",
+      "بدأ تحضير الطلب بنجاح",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("الطلب جاهز"),
     "orderRules": MessageLookupByLibrary.simpleMessage("قواعد الطلب"),
