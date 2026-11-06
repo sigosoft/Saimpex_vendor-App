@@ -85,9 +85,10 @@ void main() {
     )));
     expect(find.text('1234 AB 01'), findsOneWidget);
     expect(find.text('550 MRU'), findsOneWidget);
-    expect(find.text('• Engine Wash'), findsOneWidget);
+    expect(find.text('Engine Wash'), findsOneWidget);
     expect(find.text(signedMru('+', '50')), findsOneWidget);
-    expect(find.text('At Wash Station'), findsOneWidget);
+    // The place moved to the SERVICE LOCATION card of the booking detail (Figma).
+    expect(find.text('At Wash Station'), findsNothing);
   });
 
   Future<VerifyWeightResult?> weigh(WidgetTester t, CleaningBooking b, String kg, String button) async {
