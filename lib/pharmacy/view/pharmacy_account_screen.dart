@@ -964,7 +964,8 @@ class _PharmacyAccountScreenState extends State<PharmacyAccountScreen> {
                         ),
                         _MenuTile(
                           icon: Icons.delivery_dining_outlined,
-                          label: _t('Delivery Boys'),
+                          // Figma (pharmacy check, 6 Nov): "Delivery Partners".
+                          label: S.of(context).pfDeliveryPartners,
                           onTap: _onDeliveryBoysTap,
                         ),
                       ],

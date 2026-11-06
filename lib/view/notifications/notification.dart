@@ -17,6 +17,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
+import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
 import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
@@ -486,6 +487,25 @@ class FCM {
           final openOrderId = (orderData['orderId'] ?? '').trim();
           if (appType != VendorAppType.groceryRestaurant) {
             await VendorAppRouter.goToSelectedApp(type: appType);
+            if (appType == VendorAppType.pharmacy) {
+              final orderIdNum = int.tryParse(openOrderId);
+              final prescriptionIdNum = int.tryParse(
+                getEffectiveData(notificationData!)['prescription_id']
+                        ?.toString() ??
+                    '',
+              );
+              if (orderIdNum != null || prescriptionIdNum != null) {
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  final ctx = Get.context;
+                  if (ctx == null) return;
+                  PharmacyOrderDetailsScreen.openById(
+                    ctx,
+                    orderId: orderIdNum,
+                    prescriptionId: prescriptionIdNum,
+                  );
+                });
+              }
+            }
             if (appType == VendorAppType.water && openOrderId.isNotEmpty) {
               Future.delayed(const Duration(milliseconds: 300), () {
                 if (Get.context == null) return;

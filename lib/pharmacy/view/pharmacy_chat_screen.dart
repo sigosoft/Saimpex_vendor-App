@@ -737,7 +737,7 @@ class _ChatItem {
 class PharmacyChatScreen extends StatefulWidget {
   const PharmacyChatScreen({
     super.key,
-    this.customerName = 'Ahmed',
+    this.customerName = '',
     this.conversationId = 0,
     this.customerId = 1,
     this.avatar = _avatar,
@@ -761,7 +761,7 @@ class PharmacyChatScreen extends StatefulWidget {
 
   static Future<void> open(
     BuildContext context, {
-    String customerName = 'Ahmed',
+    String customerName = '',
     int conversationId = 0,
     int customerId = 1,
     String avatar = _avatar,
@@ -923,7 +923,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
 
     if (isAudio) {
       return _ChatItem.audio(
-        duration: '0:12',
+        duration: '',
         time: timeStr,
         isRead: isRead,
         isDelivered: isDelivered,
@@ -1118,7 +1118,7 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
                                   Widget bubble;
                                   if (msg.isAudio) {
                                     bubble = _AudioBubble(
-                                      duration: msg.audioDuration ?? '0:12',
+                                      duration: msg.audioDuration ?? '',
                                       time: msg.time,
                                       isRead: msg.isRead,
                                       isDelivered: msg.isDelivered,

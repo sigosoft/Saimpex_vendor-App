@@ -20,6 +20,23 @@ import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/water/core/constants/app_assets.dart';
 import 'package:saimpex_vendor/water/core/constants/app_colors.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:saimpex_vendor/view/home/widgets/vendor_membership_card.dart';
+
+/// Membership name in the app language from GET home `membership`, or null
+/// when the vendor has no membership (the card is then hidden).
+String? _membershipName(BuildContext context, Membership? m) {
+  if (m == null) return null;
+  final lang = Localizations.localeOf(context).languageCode;
+  final en = m.nameEn?.trim() ?? '';
+  final fr = m.nameFr?.trim() ?? '';
+  final ar = m.nameAr?.trim() ?? '';
+  final name = switch (lang) {
+    'ar' => ar.isNotEmpty ? ar : (en.isNotEmpty ? en : fr),
+    'fr' => fr.isNotEmpty ? fr : (en.isNotEmpty ? en : ar),
+    _ => en.isNotEmpty ? en : (fr.isNotEmpty ? fr : ar),
+  };
+  return name.isEmpty ? null : name;
+}
 
 class PharmacyHome extends StatefulWidget {
   const PharmacyHome({super.key});
@@ -185,9 +202,40 @@ class _PharmacyHomeState extends State<PharmacyHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Figma (pharmacy check, 6 Nov): membership with its
+                  // expiry chip, from GET home `membership` (hidden when
+                  // the vendor has none).
+                  if (_membershipName(
+                        context,
+                        controller.homeData?.data?.membership,
+                      ) !=
+                      null) ...[
+                    VendorMembershipCard(
+                      horizontalPadding: 0,
+                      width: double.infinity,
+                      height: 56,
+                      membershipName: _membershipName(
+                        context,
+                        controller.homeData?.data?.membership,
+                      )!,
+                      expiryText: S.of(context).expiresInDays(
+                        '${controller.homeData?.data?.membership?.expiresInDays ?? 0}',
+                      ),
+                      isWarning:
+                          (controller
+                                  .homeData
+                                  ?.data
+                                  ?.membership
+                                  ?.expiresInDays ??
+                              0) <=
+                          10,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   _StoreStatusCard(
                     isOpen: controller.isStoreOpen,
                     onToggle: controller.toggleStore,
+                    timings: controller.storeTimings,
                   ),
                   const SizedBox(height: 12),
                   _MetricsGrid(
@@ -970,7 +1018,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: item.displayTimeAgo,
             isSelfPickup: item.isSelfPickupBool,
             partnerName: item.deliveryBoyName,
-            prescriptionId: rawId,
+            orderId: rawId,
+            prescriptionId: item.prescriptionId,
             phone: item.phone,
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
@@ -1028,7 +1077,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderCode: item.displayOrderCode,
             timeAgo: item.displayTimeAgo,
             isSelfPickup: item.isSelfPickupBool,
-            prescriptionId: rawId,
+            orderId: rawId,
+            prescriptionId: item.prescriptionId,
             phone: item.phone,
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
@@ -1081,6 +1131,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: false,
@@ -1151,6 +1202,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: true,
@@ -1215,6 +1267,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: false,
@@ -1281,6 +1334,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: false,
@@ -1338,6 +1392,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: false,
@@ -1395,6 +1450,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderId: order.displayOrderCode,
             timeAgo: order.displayTimeAgo,
             selfPickup: order.isSelfPickupBool,
+            express: order.isExpressBool,
             cashOnDelivery: order.isCashOnDeliveryBool,
             paymentType: order.paymentType,
             accepted: false,
@@ -1777,9 +1833,12 @@ class _Header extends StatelessWidget {
 }
 
 class _StoreStatusCard extends StatelessWidget {
-  const _StoreStatusCard({required this.isOpen, required this.onToggle});
+  const _StoreStatusCard({required this.isOpen, required this.onToggle, this.timings});
 
   final bool isOpen;
+
+  /// Today's hours from the server; it always read "Today: 08:00 - 22:00".
+  final String? timings;
   final ValueChanged<bool> onToggle;
 
   @override
@@ -1834,15 +1893,17 @@ class _StoreStatusCard extends StatelessWidget {
                     fontSize: 14.5,
                   ),
                 ),
+                if ((timings ?? '').isNotEmpty) ...[
                 const SizedBox(height: 2),
                 Text(
-                  LocalizationService.tr('Today: 08:00 - 22:00'),
+                  timings!,
                   style: const TextStyle(
                     color: Color(0xFF757575),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                ],
               ],
             ),
           ),
@@ -2051,7 +2112,8 @@ class _TotalsRow extends StatelessWidget {
               title: LocalizationService.tr('REVENUE'),
               value: revenue,
               suffix: 'MRU',
-              showTrend: true,
+              // No trend in the API: the arrow was always up and green.
+              showTrend: false,
             ),
           ),
         ],
@@ -3757,6 +3819,7 @@ class _ReadyCard extends StatelessWidget {
     this.partnerName,
     this.isSelfPickup = false,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -3770,6 +3833,9 @@ class _ReadyCard extends StatelessWidget {
   final String? partnerName;
   final bool isSelfPickup;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
@@ -3798,8 +3864,8 @@ class _ReadyCard extends StatelessWidget {
           isSelfPickup: isSelfPickup,
           isOtcPartnerAssigned: partnerName != null && partnerName!.isNotEmpty,
           prescriptionId: prescriptionId,
-          orderId: prescriptionId,
-          orderRawId: prescriptionId,
+          orderId: orderId ?? prescriptionId,
+          orderRawId: orderId ?? prescriptionId,
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
@@ -4130,6 +4196,7 @@ class _DeliveredCard extends StatelessWidget {
     this.timeAgo = '',
     this.isSelfPickup = false,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -4142,6 +4209,9 @@ class _DeliveredCard extends StatelessWidget {
   final String timeAgo;
   final bool isSelfPickup;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
@@ -4167,8 +4237,8 @@ class _DeliveredCard extends StatelessWidget {
           isDelivered: true,
           isSelfPickup: isSelfPickup,
           prescriptionId: prescriptionId,
-          orderId: prescriptionId,
-          orderRawId: prescriptionId,
+          orderId: orderId ?? prescriptionId,
+          orderRawId: orderId ?? prescriptionId,
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
@@ -4466,6 +4536,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
     this.timeAgo = '',
     this.quotationAmount,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -4478,6 +4549,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
   final String timeAgo;
   final String? quotationAmount;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
@@ -4818,6 +4892,7 @@ class _OtcNewOrderCard extends StatelessWidget {
     this.orderId = '',
     this.timeAgo = '',
     this.selfPickup = false,
+    this.express = false,
     this.cashOnDelivery = false,
     this.paymentType,
     this.scheduled = false,
@@ -4844,6 +4919,9 @@ class _OtcNewOrderCard extends StatelessWidget {
   final String orderId;
   final String timeAgo;
   final bool selfPickup;
+
+  /// Express delivery order (`is_express`): Figma shows an Express tag.
+  final bool express;
   final bool cashOnDelivery;
   final dynamic paymentType;
   final bool scheduled;
@@ -5068,6 +5146,39 @@ class _OtcNewOrderCard extends StatelessWidget {
                                 height: 1.1,
                               ),
                             ),
+                            if (express) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _orange.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.bolt_rounded,
+                                      size: 12,
+                                      color: _orange,
+                                    ),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      S.of(context).processingExpress,
+                                      style: const TextStyle(
+                                        color: _orange,
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ],
                           const SizedBox(width: 4),
                           Flexible(
@@ -5094,50 +5205,11 @@ class _OtcNewOrderCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             if (scheduled)
+              // No sample slot ("15 Aug 2026", "6:00 - 7:00 PM"): the list
+              // carries no scheduled date or time, so only the pill shows.
               const Row(
                 children: [
                   _ScheduledPill(),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.calendar_today_outlined,
-                            size: 14,
-                            color: _blue,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            '15 Aug 2026',
-                            style: TextStyle(
-                              color: Color(0xFF374151),
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Icon(
-                            Icons.access_time_rounded,
-                            size: 15,
-                            color: _blue,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            '6:00 - 7:00 PM',
-                            style: TextStyle(
-                              color: Color(0xFF374151),
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
               )
             else if (ready)
