@@ -3344,5 +3344,13 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pharmacyProfileTitle": "Profil de la pharmacie",
+  "pharmacyDetailsTitle": "DÉTAILS DE LA PHARMACIE",
+  "vendorIdLabel": "ID",
+  "tinNifNumber": "Numéro TIN/NIF",
+  "pfTodayLabel": "Aujourd'hui :",
+  "pfLeaveUnmarked": "Congé retiré avec succès",
+  "pfFailedToUnmarkLeave": "Impossible de retirer le congé",
+  "pfDeliveryPartners": "Partenaires de livraison"
 }

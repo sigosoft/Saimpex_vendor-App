@@ -41,10 +41,15 @@ class PharmacyPrescriptionDetailData {
   final List<PharmacyPrescriptionImage> images;
   final List<PharmacyPrescriptionQuoteItem> quoteItems;
 
+  /// `data.order`: the order this prescription became once paid (address,
+  /// payment, rider); null before payment.
+  final PharmacyPrescriptionLinkedOrder? order;
+
   PharmacyPrescriptionDetailData({
     this.prescription,
     this.images = const [],
     this.quoteItems = const [],
+    this.order,
   });
 
   factory PharmacyPrescriptionDetailData.fromJson(Map<String, dynamic> json) {
@@ -91,6 +96,11 @@ class PharmacyPrescriptionDetailData {
           : null,
       images: parsedImages,
       quoteItems: parsedQuoteItems,
+      order: json['order'] is Map
+          ? PharmacyPrescriptionLinkedOrder.fromJson(
+              Map<String, dynamic>.from(json['order'] as Map),
+            )
+          : null,
     );
   }
 
@@ -219,6 +229,61 @@ class PharmacyPrescriptionDetailPrescription {
 
   String get displayOrderCode =>
       prescriptionId != null ? '#$prescriptionId' : '';
+}
+
+/// `pharmacyPrescriptionDetails` → `data.order` (integration/v2): the order
+/// the prescription became after payment.
+class PharmacyPrescriptionLinkedOrder {
+  final int? orderId;
+  final String? orderCode;
+  final int? status;
+  final String? deliveryAddress;
+  final dynamic paymentType;
+  final int? paymentStatus;
+  final String? total;
+  final String? riderName;
+  final String? riderPhone;
+  final String? riderImage;
+
+  PharmacyPrescriptionLinkedOrder({
+    this.orderId,
+    this.orderCode,
+    this.status,
+    this.deliveryAddress,
+    this.paymentType,
+    this.paymentStatus,
+    this.total,
+    this.riderName,
+    this.riderPhone,
+    this.riderImage,
+  });
+
+  factory PharmacyPrescriptionLinkedOrder.fromJson(Map<String, dynamic> json) {
+    String? str(dynamic v) {
+      final s = v?.toString().trim();
+      return (s == null || s.isEmpty || s == 'null') ? null : s;
+    }
+
+    final rider = json['rider'] is Map
+        ? Map<String, dynamic>.from(json['rider'] as Map)
+        : null;
+    return PharmacyPrescriptionLinkedOrder(
+      orderId: int.tryParse(json['order_id']?.toString() ?? ''),
+      orderCode: str(json['order_code']),
+      status: int.tryParse(json['status']?.toString() ?? ''),
+      deliveryAddress: str(json['delivery_address']),
+      paymentType: json['payment_type'],
+      paymentStatus: int.tryParse(json['payment_status']?.toString() ?? ''),
+      total: str(json['total']),
+      riderName: str(rider?['name']),
+      riderPhone: str(rider?['phone']),
+      riderImage: str(rider?['image']),
+    );
+  }
+
+  /// The rider photo as a full URL on the configured server.
+  String? get riderImageUrl =>
+      PharmacyPrescriptionImage(imagePath: riderImage).fullImageUrl;
 }
 
 class PharmacyPrescriptionImage {
