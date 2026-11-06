@@ -122,6 +122,9 @@ class PharmacyOrderDetailOrder {
   String? customerEmail;
   String? customerAddress;
 
+  /// The prescription this order was paid for (null for an OTC order).
+  int? prescriptionId;
+
   PharmacyOrderDetailOrder({
     this.id,
     this.orderCode,
@@ -162,6 +165,7 @@ class PharmacyOrderDetailOrder {
     this.customerMobile,
     this.customerEmail,
     this.customerAddress,
+    this.prescriptionId,
   });
 
   PharmacyOrderDetailOrder.fromJson(Map<String, dynamic> json) {
@@ -222,6 +226,9 @@ class PharmacyOrderDetailOrder {
     customerMobile = json['customer_mobile']?.toString();
     customerEmail = json['customer_email']?.toString();
     customerAddress = json['customer_address']?.toString();
+    prescriptionId = json['prescription_id'] is int
+        ? json['prescription_id']
+        : int.tryParse(json['prescription_id']?.toString() ?? '');
   }
 
   Map<String, dynamic> toJson() {
@@ -265,6 +272,7 @@ class PharmacyOrderDetailOrder {
     res['customer_mobile'] = customerMobile;
     res['customer_email'] = customerEmail;
     res['customer_address'] = customerAddress;
+    res['prescription_id'] = prescriptionId;
     return res;
   }
 

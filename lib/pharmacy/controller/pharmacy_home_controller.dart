@@ -1687,9 +1687,11 @@ class PharmacyHomeController extends GetxController {
     return url;
   }
 
+  /// [note]: the reason picked in the Reject sheet (server field `note`).
   Future<bool> rejectPharmacyPrescription(
     dynamic prescriptionId, {
     BuildContext? context,
+    String? note,
   }) async {
     if (prescriptionId == null) return false;
     final parsedId = (prescriptionId is int)
@@ -1707,7 +1709,10 @@ class PharmacyHomeController extends GetxController {
         DioClient().updateToken(token);
       }
 
-      final formData = FormData.fromMap({'prescription_id': parsedId});
+      final formData = FormData.fromMap({
+        'prescription_id': parsedId,
+        if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+      });
 
       final url = _getRejectPharmacyPrescriptionUrl();
       debugPrint(
@@ -2227,6 +2232,7 @@ class PharmacyHomeController extends GetxController {
     bool isPrescription = false,
     dynamic prescriptionId,
     BuildContext? context,
+    String? reason,
   }) async {
     final targetId = prescriptionId ?? orderId;
     if (targetId == null) return false;
@@ -2250,6 +2256,8 @@ class PharmacyHomeController extends GetxController {
           'prescription_id': parsedId
         else
           'order_id': parsedId,
+        // The Reject sheet's reason (cancelPharmacyOrder `reason`).
+        if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
       };
 
       final url = _getCancelPharmacyOrderUrl(queryParams);

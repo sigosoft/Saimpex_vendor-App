@@ -188,6 +188,11 @@ class PharmacyPendingOrderItem {
 
   int? get resolvedId => orderId ?? id;
 
+  /// `pharmacyOrders` → `prescription_id`: the prescription a paid order
+  /// came from (null for OTC).
+  int? get prescriptionId =>
+      int.tryParse(rawJson?['prescription_id']?.toString() ?? '');
+
   String get displayCustomerName {
     final name = customerName ?? userName;
     if (name != null && name.trim().isNotEmpty) {
