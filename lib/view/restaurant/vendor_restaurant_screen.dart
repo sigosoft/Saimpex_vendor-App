@@ -161,6 +161,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     final profileController = Get.find<ProfileController>();
     if (selectedMenu == 'Account') {
       await profileController.getProfile(context);
+      // Take the busy switch from the fresh profile.
+      if (mounted) setState(() => _busyStatusInitialized = false);
     } else if (selectedMenu == 'Items') {
       await profileController.fetchGroceryMenuItems(
         categoryId: profileController.selectedRestaurantCategoryId,
@@ -253,21 +255,46 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                       elevation: 3,
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(
-                        height: 56,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           child: Row(
                             children: [
-                              Text(
-                                S.of(context).busy,
-                                style: appFont('Rubik', 
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFEF4444),
+                              // VA-09: the card said "Busy" in red even with
+                              // the switch off. The title now says what the
+                              // switch does, and the line under it shows the
+                              // current state in the matching colour.
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      S.of(context).markAsBusy,
+                                      style: appFont('Rubik',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF1F2937),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _isRestaurantBusy
+                                          ? S.of(context).busy
+                                          : S.of(context).waterAcceptingOrders,
+                                      style: appFont('Rubik',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: _isRestaurantBusy
+                                            ? const Color(0xFFEF4444)
+                                            : const Color(0xFF16A34A),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const Spacer(),
                               Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
@@ -275,12 +302,19 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                                   onChanged: (value) async {
                                     setState(() => _isRestaurantBusy = value);
                                     final statusToSend = value ? 1 : 2;
-                                    await profileController.updateBusyStatus(
+                                    final ok =
+                                        await profileController.updateBusyStatus(
                                       context,
                                       statusToSend,
                                     );
-                                    // Re-sync from server on next rebuild if profile is refreshed elsewhere.
-                                    _busyStatusInitialized = false;
+                                    // Not saved: put the switch back so the
+                                    // card shows the server's state. (It used
+                                    // to re-read the old profile value on the
+                                    // next rebuild, which could flip it back
+                                    // even after a successful save.)
+                                    if (!ok && mounted) {
+                                      setState(() => _isRestaurantBusy = !value);
+                                    }
                                   },
                                   activeTrackColor: const Color(0xFFEF4444),
                                   thumbColor: Colors.white,
@@ -290,7 +324,6 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                             ],
                           ),
                         ),
-                      ),
                     ),
                     const SizedBox(height: 24),
                     _sectionHeader(profileController.vendorType == "1"

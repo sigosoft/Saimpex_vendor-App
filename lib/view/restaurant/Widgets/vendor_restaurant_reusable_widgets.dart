@@ -3328,69 +3328,40 @@ class VendorProfileHeaderCard extends StatelessWidget {
               color: const Color(0xFFEEF2FF),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: imageUrl != null && imageUrl!.isNotEmpty
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child:
-                        (imageUrl!.startsWith('http') ||
-                            imageUrl!.startsWith('user/'))
-                        ? Image.network(
-                            imageUrl!.startsWith('http')
-                                ? imageUrl!
-                                : '${ApiConfigs.IMAGE_URL}$imageUrl',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Center(
-                                  child: Text(
-                                    vendorInitials(name),
-                                    style: appFont('Rubik', 
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFFFF5216),
-                                    ),
-                                  ),
-                                ),
-                          )
-                        : imageUrl!.contains('/')
-                        ? Image.file(
-                            File(imageUrl!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Center(
-                                  child: Text(
-                                    vendorInitials(name),
-                                    style: appFont('Rubik', 
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFFFF5216),
-                                    ),
-                                  ),
-                                ),
-                          )
-                        : Center(
-                            child: Text(
-                              vendorInitials(name),
-                              style: appFont('Rubik', 
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFFFF5216),
-                              ),
-                            ),
-                          ),
-                  )
-                : Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        vendorInitials(name),
-                        style: appFont('Rubik', 
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFFFF5216),
-                        ),
-                      ),
+            // VA-13: the logo (users.image) from any server path or URL;
+            // a phone file only when it really exists on the phone; the
+            // initials only when there is no logo or it fails to load.
+            child: Builder(
+              builder: (context) {
+                final initials = Center(
+                  child: Text(
+                    vendorInitials(name),
+                    style: appFont('Rubik',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFFF5216),
                     ),
                   ),
+                );
+                final localFile = storeImageLocalFile(imageUrl);
+                final networkUrl = storeImageNetworkUrl(imageUrl);
+                if (localFile == null && networkUrl == null) return initials;
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: localFile != null
+                      ? Image.file(
+                          localFile,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => initials,
+                        )
+                      : Image.network(
+                          networkUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => initials,
+                        ),
+                );
+              },
+            ),
           ),
           Text(
             name,
