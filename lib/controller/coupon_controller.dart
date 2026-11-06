@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -126,9 +128,10 @@ class CouponController extends GetxController {
       final resData = response.data;
       final bool isSuccess =
           resData['status'].toString() == 'true' || resData['status'] == true;
-      final String toastMessage =
-          resData['message']?.toString() ??
-          (isSuccess ? "Coupon added successfully" : "Failed to add coupon");
+      final String toastMessage = ApiMessage.localOr(
+        resData,
+        isSuccess ? S.current.rmCouponAdded : S.current.rmCouponAddFailed,
+      );
 
       _showResponseToast(toastMessage);
 
@@ -189,11 +192,10 @@ class CouponController extends GetxController {
       final resData = response.data;
       final bool isSuccess =
           resData['status'].toString() == 'true' || resData['status'] == true;
-      final String toastMessage =
-          resData['message']?.toString() ??
-          (isSuccess
-              ? "Coupon updated successfully"
-              : "Failed to update coupon");
+      final String toastMessage = ApiMessage.localOr(
+        resData,
+        isSuccess ? S.current.rmCouponUpdated : S.current.rmCouponUpdateFailed,
+      );
 
       _showResponseToast(toastMessage);
 
@@ -240,11 +242,10 @@ class CouponController extends GetxController {
       final resData = response.data;
       final bool isSuccess =
           resData['status'].toString() == 'true' || resData['status'] == true;
-      final String toastMessage =
-          resData['message']?.toString() ??
-          (isSuccess
-              ? "Coupon deleted successfully"
-              : "Failed to delete coupon");
+      final String toastMessage = ApiMessage.localOr(
+        resData,
+        isSuccess ? S.current.rmCouponDeleted : S.current.rmCouponDeleteFailed,
+      );
 
       _showResponseToast(toastMessage);
 
@@ -286,9 +287,12 @@ class CouponController extends GetxController {
       final resData = response.data;
       final bool isSuccess =
           resData['status'].toString() == 'true' || resData['status'] == true;
-      final String toastMessage =
-          resData['message']?.toString() ??
-          (isSuccess ? "Status updated successfully" : "Operation failed");
+      final String toastMessage = ApiMessage.localOr(
+        resData,
+        isSuccess
+            ? S.current.mgmtStatusUpdated
+            : S.current.mgmtStatusUpdateFailed,
+      );
 
       _showResponseToast(toastMessage);
 

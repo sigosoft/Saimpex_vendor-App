@@ -3717,5 +3717,49 @@
   "loginFailed": "Login failed. Please try again.",
   "@loginFailed": {},
   "requestTimedOut": "The request timed out. Please try again.",
-  "@requestTimedOut": {}
+  "@requestTimedOut": {},
+  "rmItemDeleted": "Item deleted successfully",
+  "@rmItemDeleted": {},
+  "rmItemDeleteFailed": "Could not delete the item",
+  "@rmItemDeleteFailed": {},
+  "rmImportSuccess": "Items imported successfully",
+  "@rmImportSuccess": {},
+  "rmSelectVegType": "Please select veg or non-veg",
+  "@rmSelectVegType": {},
+  "rmEnterDescription": "Please enter a description",
+  "@rmEnterDescription": {},
+  "rmEnterMaxQuantity": "Please enter the maximum allowed quantity",
+  "@rmEnterMaxQuantity": {},
+  "rmUploadOneImage": "Please upload at least one image",
+  "@rmUploadOneImage": {},
+  "rmReviewsLoadFailed": "Could not load ratings and reviews",
+  "@rmReviewsLoadFailed": {},
+  "rmEnterSixDigitCode": "Enter the 6-digit code",
+  "@rmEnterSixDigitCode": {},
+  "rmImageUploaded": "Image uploaded successfully",
+  "@rmImageUploaded": {},
+  "rmImageUploadFailed": "Image upload failed",
+  "@rmImageUploadFailed": {},
+  "rmTemplateDownloadFailed": "Could not download the template",
+  "@rmTemplateDownloadFailed": {},
+  "rmTemplateSaved": "Saved: {file}",
+  "@rmTemplateSaved": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "rmCouponAdded": "Coupon added successfully",
+  "@rmCouponAdded": {},
+  "rmCouponAddFailed": "Could not add the coupon",
+  "@rmCouponAddFailed": {},
+  "rmCouponUpdated": "Coupon updated successfully",
+  "@rmCouponUpdated": {},
+  "rmCouponUpdateFailed": "Could not update the coupon",
+  "@rmCouponUpdateFailed": {},
+  "rmCouponDeleted": "Coupon deleted successfully",
+  "@rmCouponDeleted": {},
+  "rmCouponDeleteFailed": "Could not delete the coupon",
+  "@rmCouponDeleteFailed": {}
 }

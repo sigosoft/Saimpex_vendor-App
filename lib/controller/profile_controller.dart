@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -196,8 +197,7 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ??
-                "Failed to fetch ratings and reviews",
+            ApiMessage.localOr(response.data, S.current.rmReviewsLoadFailed),
           );
         }
       }
@@ -581,7 +581,10 @@ class ProfileController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          showToast(context, "Grocery item added successfully");
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.addItemAddedSuccessfully),
+          );
           Get.back();
           fetchGroceryMenuItems();
         }
@@ -589,7 +592,7 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to add item",
+            ApiMessage.localOr(response.data, S.current.addItemFailedToAdd),
           );
         }
       }
@@ -619,8 +622,10 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ??
-                "You are logged out successfully.",
+            ApiMessage.localOr(
+              response.data,
+              S.current.youAreLoggedOutSuccessfully,
+            ),
           );
         }
         final prefs = await SharedPreferences.getInstance();
@@ -631,7 +636,7 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Logout failed.",
+            ApiMessage.localOr(response.data, S.current.waterLogoutFailed),
           );
         }
       }
@@ -858,12 +863,7 @@ class ProfileController extends GetxController {
 
   /// The server's message in the app language, or [fallback].
   String _serverMessage(dynamic data, String fallback) {
-    final message = data is Map ? data['message'] : null;
-    if (message is! Map) return fallback;
-    final lang = localization.currentLocale?.languageCode ?? 'en';
-    final list = message['message_$lang'] ?? message['message_en'];
-    if (list is List && list.isNotEmpty) return list.first.toString();
-    return fallback;
+    return ApiMessage.localOr(data, fallback);
   }
 
   bool _isSuccess(dynamic data) =>
@@ -918,7 +918,7 @@ class ProfileController extends GetxController {
     String otp,
   ) async {
     if (otp.trim().length != 6) {
-      showToast(context, "Enter the 6-digit code");
+      showToast(context, S.of(context).rmEnterSixDigitCode);
       return;
     }
     isOtpVerified = await _saveProfile(
@@ -1018,21 +1018,14 @@ class ProfileController extends GetxController {
       }
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
-        final languageCode = localization.currentLocale?.languageCode;
-        final messageObj = response.data['message'];
-        String? toastMessage;
-        if (messageObj is Map) {
-          final list = languageCode == 'fr'
-              ? messageObj['message_fr']
-              : languageCode == 'ar'
-              ? messageObj['message_ar']
-              : messageObj['message_en'];
-          if (list is List && list.isNotEmpty) {
-            toastMessage = list.first.toString();
-          }
-        }
         if (context.mounted) {
-          showToast(context, toastMessage ?? "Account deleted successfully");
+          showToast(
+            context,
+            ApiMessage.localOr(
+              response.data,
+              S.current.waterAccountDeletedSuccessfully,
+            ),
+          );
         }
         final prefs = await SharedPreferences.getInstance();
         await clearPrefsKeepLanguage(prefs);
@@ -1042,7 +1035,10 @@ class ProfileController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Delete account failed.",
+            ApiMessage.localOr(
+              response.data,
+              S.current.waterFailedToDeleteAccount,
+            ),
           );
         }
       }
@@ -1320,7 +1316,7 @@ class ProfileController extends GetxController {
       final bytes = response.data;
       if (bytes == null || bytes.isEmpty) {
         if (context.mounted) {
-          showToast(context, 'Empty template response');
+          showToast(context, S.current.rmTemplateDownloadFailed);
         }
         return;
       }
@@ -1340,14 +1336,12 @@ class ProfileController extends GetxController {
             final map = jsonDecode(asText);
             if (map is Map) {
               final msg =
-                  map['message']?.toString() ??
-                  map['error']?.toString() ??
-                  'Could not download template';
+                  ApiMessage.localOr(map, S.current.rmTemplateDownloadFailed);
               if (context.mounted) showToast(context, msg);
             }
           } catch (_) {
             if (context.mounted) {
-              showToast(context, 'Unexpected response (not Excel file)');
+              showToast(context, S.current.rmTemplateDownloadFailed);
             }
           }
           return;
@@ -1355,13 +1349,7 @@ class ProfileController extends GetxController {
       }
       if (response.statusCode != null && response.statusCode! >= 400) {
         if (context.mounted) {
-          final msg = maybeJsonBody
-              ? utf8.decode(bytes, allowMalformed: true).trim()
-              : '';
-          showToast(
-            context,
-            msg.isNotEmpty ? msg : 'Download failed (${response.statusCode})',
-          );
+          showToast(context, S.current.rmTemplateDownloadFailed);
         }
         return;
       }
@@ -1390,7 +1378,7 @@ class ProfileController extends GetxController {
       }
 
       if (context.mounted) {
-        showToast(context, 'Saved: ${file.path}');
+        showToast(context, S.current.rmTemplateSaved(file.path));
         await OpenFilex.open(file.path);
       }
     } catch (error) {
@@ -1454,7 +1442,7 @@ class ProfileController extends GetxController {
       final raw = response.data;
       if (raw is! Map) {
         if (context.mounted) {
-          showToast(context, 'Invalid server response');
+          showToast(context, S.current.somethingWentWrong);
         }
       } else {
         final map = Map<String, dynamic>.from(raw);
@@ -1531,33 +1519,24 @@ class ProfileController extends GetxController {
 
   String _extractErrorMessage(dynamic message) {
     if (message is Map) {
+      final lang = localization.currentLocale?.languageCode ?? 'en';
       final errors = <String>[];
       for (final entry in message.entries) {
+        if (!entry.key.toString().endsWith('_$lang')) continue;
         final val = entry.value;
         if (val is List && val.isNotEmpty) {
           errors.add(val.first.toString());
-        } else if (val != null) {
-          errors.add(val.toString());
+        } else if (val is String && val.trim().isNotEmpty) {
+          errors.add(val);
         }
       }
       if (errors.isNotEmpty) return errors.join("\n");
     }
-    if (message is String && message.isNotEmpty) return message;
-    return 'Bulk upload failed';
+    return ApiMessage.fromMessage(message) ?? S.current.importFailedTitle;
   }
 
-  String _bulkImportSuccessMessage(Map<String, dynamic> map) {
-    final msg = map['message'];
-    if (msg is Map) {
-      for (final key in ['message_en', 'message', 'success']) {
-        final v = msg[key];
-        if (v is List && v.isNotEmpty) return v.first.toString();
-        if (v is String && v.isNotEmpty) return v;
-      }
-    }
-    if (msg is String && msg.isNotEmpty) return msg;
-    return 'Bulk menu uploaded successfully';
-  }
+  String _bulkImportSuccessMessage(Map<String, dynamic> map) =>
+      ApiMessage.localOr(map, S.current.rmImportSuccess);
 
   Future<void> uploadImages(BuildContext context) async {
     try {
@@ -1631,13 +1610,12 @@ class ProfileController extends GetxController {
             response.data['status'] == true) {
           showToast(
             context,
-            response.data['message']?.toString() ??
-                'Image uploaded successfully',
+            ApiMessage.localOr(response.data, S.current.rmImageUploaded),
           );
         } else {
           showToast(
             context,
-            response.data['message']?.toString() ?? 'Image upload failed',
+            ApiMessage.localOr(response.data, S.current.rmImageUploadFailed),
           );
         }
       }
@@ -1742,24 +1720,10 @@ class ProfileController extends GetxController {
         Get.back();
         if (response.data['status'] == 'true' ||
             response.data['status'] == true) {
-          final languageCode = localization.currentLocale?.languageCode;
-          final messageObj = response.data['message'];
-          String toastMessage = 'Working hours updated successfully';
-          if (messageObj is Map) {
-            final key = languageCode == 'fr'
-                ? 'message_fr'
-                : languageCode == 'ar'
-                ? 'message_ar'
-                : 'message_en';
-            final raw = messageObj[key];
-            if (raw is List && raw.isNotEmpty) {
-              toastMessage = raw.first.toString();
-            } else if (raw != null) {
-              toastMessage = raw.toString();
-            }
-          } else if (messageObj != null) {
-            toastMessage = messageObj.toString();
-          }
+          final toastMessage = ApiMessage.localOr(
+            response.data,
+            S.current.waterWorkingHoursUpdated,
+          );
           showToast(context, toastMessage);
           debugPrint("Working hours updated successfully: $toastMessage");
           getProfile(context);

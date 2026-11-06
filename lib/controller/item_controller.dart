@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -989,23 +990,17 @@ class ItemController extends GetxController {
           await profileController.fetchGroceryMenuItems();
         }
         if (context.mounted) {
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // Server text only in the app language (it sent message_en).
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.rmItemDeleted),
+          );
         }
       } else {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            ApiMessage.localOr(response.data, S.current.rmItemDeleteFailed),
           );
         }
       }
@@ -1419,17 +1414,7 @@ class ItemController extends GetxController {
     if (body is! Map) return fallback;
     // Server text is shown only in the app language; English from the server
     // in Arabic or French mode falls back to the app's own text (V17).
-    final lang = appDateLocale();
-    final message = body['message'];
-    if (message is String && message.isNotEmpty) {
-      return lang == 'en' ? message : fallback;
-    }
-    if (message is Map) {
-      final v = message['message_$lang'];
-      if (v is List && v.isNotEmpty) return v.first.toString();
-      if (v is String && v.isNotEmpty) return v;
-    }
-    return fallback;
+    return ApiMessage.localOr(body, fallback);
   }
 
   Future<void> updateItemAfterEdit(
@@ -1508,17 +1493,11 @@ class ItemController extends GetxController {
       if (response.data['status'] == 'true' ||
           response.data['status'] == true) {
         if (context.mounted) {
-          String successMessage = "Leave marked successfully";
-          if (response.data['message'] != null) {
-            var msgMap = response.data['message'];
-            if (msgMap is Map &&
-                msgMap.containsKey('message_en') &&
-                msgMap['message_en'] is List &&
-                msgMap['message_en'].isNotEmpty) {
-              successMessage = msgMap['message_en'][0];
-            }
-          }
-          showToast(context, successMessage);
+          // Server text only in the app language (it sent message_en).
+          showToast(
+            context,
+            ApiMessage.localOr(response.data, S.current.itemUpdatedSuccessfully),
+          );
 
           if (currentMenuData != null) {
             try {
@@ -1570,7 +1549,7 @@ class ItemController extends GetxController {
         if (context.mounted) {
           showToast(
             context,
-            response.data['message']?.toString() ?? "Failed to mark leave",
+            ApiMessage.localOr(response.data, S.current.failedToUpdateItem),
           );
         }
       }

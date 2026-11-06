@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -606,7 +607,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
 
       if (isSuccess) {
         final message =
-            resData['message']?.toString() ??
+            ApiMessage.local(resData) ??
             S.current.rsDeliveryBoyDeleted;
         if (mounted) {
           showToast(context, message);
@@ -614,7 +615,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
         }
       } else {
         final message = resData is Map
-            ? resData['message']?.toString() ??
+            ? ApiMessage.local(resData) ??
                   S.current.rsFailedDeleteDeliveryBoy
             : S.current.rsFailedDeleteDeliveryBoy;
         if (mounted) {
@@ -852,7 +853,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
           final defaultMsg = _isEditing
               ? S.of(context).rsDeliveryBoyUpdated
               : S.of(context).rsDeliveryBoyAdded;
-          final message = resData['message']?.toString() ?? defaultMsg;
+          final message = ApiMessage.local(resData) ?? defaultMsg;
           try {
             showToast(context, message);
           } catch (_) {}
@@ -864,7 +865,7 @@ class _AddDeliveryBoyScreenState extends State<AddDeliveryBoyScreen> {
               ? S.of(context).rsFailedUpdateDeliveryBoy
               : S.of(context).rsFailedAddDeliveryBoy;
           final message = resData is Map
-              ? resData['message']?.toString() ?? defaultMsg
+              ? ApiMessage.local(resData) ?? defaultMsg
               : defaultMsg;
           try {
             showToast(context, message);

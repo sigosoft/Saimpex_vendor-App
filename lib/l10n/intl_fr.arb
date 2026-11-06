@@ -3624,5 +3624,49 @@
   "loginFailed": "Échec de la connexion. Veuillez réessayer.",
   "@loginFailed": {},
   "requestTimedOut": "La requête a expiré. Veuillez réessayer.",
-  "@requestTimedOut": {}
+  "@requestTimedOut": {},
+  "rmItemDeleted": "Article supprimé avec succès",
+  "@rmItemDeleted": {},
+  "rmItemDeleteFailed": "Impossible de supprimer l'article",
+  "@rmItemDeleteFailed": {},
+  "rmImportSuccess": "Articles importés avec succès",
+  "@rmImportSuccess": {},
+  "rmSelectVegType": "Veuillez choisir végétarien ou non végétarien",
+  "@rmSelectVegType": {},
+  "rmEnterDescription": "Veuillez saisir une description",
+  "@rmEnterDescription": {},
+  "rmEnterMaxQuantity": "Veuillez saisir la quantité maximale autorisée",
+  "@rmEnterMaxQuantity": {},
+  "rmUploadOneImage": "Veuillez ajouter au moins une image",
+  "@rmUploadOneImage": {},
+  "rmReviewsLoadFailed": "Impossible de charger les notes et avis",
+  "@rmReviewsLoadFailed": {},
+  "rmEnterSixDigitCode": "Saisissez le code à 6 chiffres",
+  "@rmEnterSixDigitCode": {},
+  "rmImageUploaded": "Image ajoutée avec succès",
+  "@rmImageUploaded": {},
+  "rmImageUploadFailed": "Échec de l'envoi de l'image",
+  "@rmImageUploadFailed": {},
+  "rmTemplateDownloadFailed": "Impossible de télécharger le modèle",
+  "@rmTemplateDownloadFailed": {},
+  "rmTemplateSaved": "Enregistré : {file}",
+  "@rmTemplateSaved": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "rmCouponAdded": "Coupon ajouté avec succès",
+  "@rmCouponAdded": {},
+  "rmCouponAddFailed": "Impossible d'ajouter le coupon",
+  "@rmCouponAddFailed": {},
+  "rmCouponUpdated": "Coupon mis à jour avec succès",
+  "@rmCouponUpdated": {},
+  "rmCouponUpdateFailed": "Impossible de mettre à jour le coupon",
+  "@rmCouponUpdateFailed": {},
+  "rmCouponDeleted": "Coupon supprimé avec succès",
+  "@rmCouponDeleted": {},
+  "rmCouponDeleteFailed": "Impossible de supprimer le coupon",
+  "@rmCouponDeleteFailed": {}
 }
