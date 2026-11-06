@@ -184,6 +184,9 @@ class _InventoryViewState extends State<InventoryView> {
                   _LowStockAlertCard(
                     lowStockProducts: controller.lowStockProducts,
                     onUpdateStock: (p) => _onUpdateStockForProduct(p),
+                    // "View all" shows the list below on its Low stock chip
+                    // (index 2 in _FilterChips).
+                    onViewAll: () => controller.selectFilter(2),
                   ),
                 ],
                 const SizedBox(height: 14),
@@ -577,10 +580,12 @@ class _LowStockAlertCard extends StatelessWidget {
   const _LowStockAlertCard({
     required this.lowStockProducts,
     required this.onUpdateStock,
+    required this.onViewAll,
   });
 
   final List<InventoryProduct> lowStockProducts;
   final ValueChanged<InventoryProduct> onUpdateStock;
+  final VoidCallback onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -648,7 +653,7 @@ class _LowStockAlertCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: onViewAll,
                   child: Text(
                     S.of(context).viewAll,
                     style: TextStyle(
