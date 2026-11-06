@@ -679,9 +679,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 controller.isRejectingPrescription &&
                 controller.rejectingPrescriptionId == rawPrescriptionId,
             onReject: rawPrescriptionId != null
-                ? () => controller.rejectPharmacyPrescription(
-                    rawPrescriptionId,
-                    context: context,
+                ? () => _rejectWithReason(
+                    context,
+                    (reason) => controller.rejectPharmacyPrescription(
+                      rawPrescriptionId,
+                      context: context,
+                      note: reason,
+                    ),
                   )
                 : null,
           ),
@@ -752,9 +756,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 controller.isRejectingPrescription &&
                 controller.rejectingPrescriptionId == rawPrescriptionId,
             onReject: rawPrescriptionId != null
-                ? () => controller.rejectPharmacyPrescription(
-                    rawPrescriptionId,
-                    context: context,
+                ? () => _rejectWithReason(
+                    context,
+                    (reason) => controller.rejectPharmacyPrescription(
+                      rawPrescriptionId,
+                      context: context,
+                      note: reason,
+                    ),
                   )
                 : null,
           ),
@@ -816,9 +824,13 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 controller.isRejectingPrescription &&
                 controller.rejectingPrescriptionId == rawPrescriptionId,
             onReject: rawPrescriptionId != null
-                ? () => controller.rejectPharmacyPrescription(
-                    rawPrescriptionId,
-                    context: context,
+                ? () => _rejectWithReason(
+                    context,
+                    (reason) => controller.rejectPharmacyPrescription(
+                      rawPrescriptionId,
+                      context: context,
+                      note: reason,
+                    ),
                   )
                 : null,
           ),
@@ -1152,7 +1164,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                 controller.isCancellingOrder &&
                 controller.cancellingOrderId == rawId,
             onReject: rawId != null
-                ? () => controller.cancelPharmacyOrder(rawId, context: context)
+                ? () => _rejectWithReason(
+                    context,
+                    (reason) => controller.cancelPharmacyOrder(
+                      rawId,
+                      context: context,
+                      reason: reason,
+                    ),
+                  )
                 : null,
           ),
         );
@@ -1579,7 +1598,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                     !isReady &&
                     !isDelivered &&
                     rawId != null)
-                ? () => controller.cancelPharmacyOrder(rawId, context: context)
+                ? () => _rejectWithReason(
+                    context,
+                    (reason) => controller.cancelPharmacyOrder(
+                      rawId,
+                      context: context,
+                      reason: reason,
+                    ),
+                  )
                 : null,
             isPreparingAction:
                 controller.isPreparingOrder &&
@@ -1732,10 +1758,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                   controller.isCancellingOrder &&
                   controller.cancellingOrderId == rawPrescriptionId,
               onReject: rawPrescriptionId != null
-                  ? () => controller.cancelPharmacyOrder(
-                      rawPrescriptionId,
-                      isPrescription: true,
-                      context: context,
+                  ? () => _rejectWithReason(
+                      context,
+                      (reason) => controller.cancelPharmacyOrder(
+                        rawPrescriptionId,
+                        isPrescription: true,
+                        context: context,
+                        reason: reason,
+                      ),
                     )
                   : null,
             ),
@@ -1746,6 +1776,18 @@ class _PharmacyHomeState extends State<PharmacyHome> {
 
     return widgets;
   }
+}
+
+/// Opens the Reject sheet, then sends the picked reason. Closing the sheet
+/// without a choice sends nothing. (The home cards used to reject at once
+/// with no reason.)
+Future<void> _rejectWithReason(
+  BuildContext context,
+  Future<bool> Function(String reason) send,
+) async {
+  final reason = await showPharmacyRejectOrderSheet(context);
+  if (reason == null || reason.trim().isEmpty) return;
+  await send(reason);
 }
 
 class _Header extends StatelessWidget {
@@ -2608,7 +2650,14 @@ Widget _prescriptionOrderCard(
     isRejecting: controller.isCancellingOrder && controller.cancellingOrderId == rawId,
     onReject: rawId == null || status != 1
         ? null
-        : () => controller.cancelPharmacyOrder(rawId, context: context),
+        : () => _rejectWithReason(
+                    context,
+                    (reason) => controller.cancelPharmacyOrder(
+                      rawId,
+                      context: context,
+                      reason: reason,
+                    ),
+                  ),
     isPreparingAction: controller.isPreparingOrder && controller.preparingOrderId == rawId,
     onPrepare: rawId == null || status != 2
         ? null
@@ -2924,15 +2973,10 @@ class _PrescriptionOrderCard extends StatelessWidget {
                         onPressed:
                             (isRejectingAction ||
                                 isReviewingAction ||
-                                isMarkingReviewedAction)
+                                isMarkingReviewedAction ||
+                                onReject == null)
                             ? null
-                            : () {
-                                if (onReject != null) {
-                                  onReject!();
-                                } else {
-                                  showPharmacyRejectOrderSheet(context);
-                                }
-                              },
+                            : onReject,
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: _nameColor,
@@ -5548,241 +5592,6 @@ class _OtcInfoPill extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.1,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OtcOrderCard extends StatelessWidget {
-  const _OtcOrderCard({
-    required this.customerName,
-    required this.orderId,
-    required this.timeAgo,
-    required this.items,
-  });
-
-  final String customerName;
-  final String orderId;
-  final String timeAgo;
-  final String items;
-
-  static const Color _avatarBg = Color(0xFFFDEAEA);
-  static const Color _avatarText = Color(0xFFC62828);
-  static const Color _nameColor = Color(0xFF111827);
-  static const Color _metaColor = Color(0xFF6B7280);
-  static const Color _newBadge = Color(0xFFF99D1C);
-  static const Color _linkOrange = Color(0xFFFF6B2B);
-  static const Color _rejectBorder = Color(0xFFE0E0E0);
-  static const Color _itemBg = Color(0xFFFAF9F7);
-  static const Color _itemBorder = Color(0xFFEAEAEA);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: _avatarBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  customerName.isNotEmpty
-                      ? customerName.substring(0, 1).toUpperCase()
-                      : 'A',
-                  style: const TextStyle(
-                    color: _avatarText,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      customerName,
-                      style: const TextStyle(
-                        color: _nameColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$orderId  •  $timeAgo',
-                      style: const TextStyle(
-                        color: _metaColor,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: _newBadge,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  S.of(context).pharmacyHomeBadgeNew,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
-                    height: 1,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _itemBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _itemBorder),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE0F2F1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.medication_outlined,
-                    color: Color(0xFF00695C),
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    items,
-                    style: const TextStyle(
-                      color: _nameColor,
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w600,
-                      height: 1.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 48,
-                  child: OutlinedButton(
-                    onPressed: () => showPharmacyRejectOrderSheet(context),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: _nameColor,
-                      side: const BorderSide(color: _rejectBorder, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    child: Text(
-                      S.of(context).reject,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 3,
-                child: SizedBox(
-                  height: 48,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: _linkOrange,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _linkOrange.withValues(alpha: 0.28),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        S.of(context).acceptOrder,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),
