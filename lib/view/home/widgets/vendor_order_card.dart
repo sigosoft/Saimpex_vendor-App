@@ -573,7 +573,7 @@ class VendorOrderCard extends StatelessWidget {
                           child: Text(
                             S.of(context).markSelfPickupCompleted,
                             textAlign: TextAlign.center,
-                            style: appFont('Rubik', 
+                            style: appFont('Rubik',
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -582,27 +582,8 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 40,
-                    child: OutlinedButton(
-                      onPressed: onPrint ?? () {},
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFFFF5216)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        S.of(context).printOrder,
-                        style: appFont('Rubik', 
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFFFF5216),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Figma self-pickup Ready card: View Details and Mark as
+                  // Picked only, no Print row.
                 ],
               )
             else if (_code == 2)
@@ -672,30 +653,8 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _code == 10
-                      ? Container()
-                      : SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          child: OutlinedButton(
-                            onPressed: onPrint ?? () {},
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFFFF5216)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              S.of(context).printOrder,
-                              style: appFont('Rubik', 
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFFF5216),
-                              ),
-                            ),
-                          ),
-                        ),
+                  // Figma Ready / Delivered cards: View Details only (no
+                  // second Print button; printing stays on the details).
                 ],
               ),
           ],
