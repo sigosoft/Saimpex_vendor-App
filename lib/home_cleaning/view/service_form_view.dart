@@ -318,7 +318,7 @@ class _ServiceFormViewState extends State<ServiceFormView> {
           children: [
             Text(s.serviceImage, style: _t(13, FontWeight.w600, _muted)),
             const SizedBox(height: 8),
-            _imageBox(file: _image, url: _imageUrl, height: 160, hint: _laundry ? null : s.cleaningImageFormatsHint, onTap: () async {
+            _imageBox(file: _image, url: _imageUrl, height: 160, hint: s.cleaningImageFormatsHint, onTap: () async {
               final f = await _pick();
               if (f != null) setState(() => _image = f);
             }),
@@ -566,6 +566,12 @@ Widget _imageBox({File? file, String? url, required double height, String? hint,
 
 enum _RowKind { garment, vehicle, addon, distance }
 
+String _unitName(S s, String? unit) => switch (unit) {
+      'kg' => s.unitKg,
+      'metre' => s.unitMetre,
+      _ => s.unitPiece,
+    };
+
 class _RowSheet extends StatefulWidget {
   const _RowSheet({required this.kind, this.initial, required this.pick});
 
@@ -627,8 +633,10 @@ class _RowSheetState extends State<_RowSheet> {
     Widget gap() => const SizedBox(height: 10);
     // Car wash sheets (Figma Add Vehicle Type / Add-On Services / Add
     // Distance Range): a label over each field and Cancel / Add buttons.
+    // Laundry Add Item (Figma): labels too, with a single Add button.
     final labelled = widget.kind != _RowKind.garment;
-    Widget label(String text) => labelled
+    final garment = widget.kind == _RowKind.garment;
+    Widget label(String text) => labelled || garment
         ? Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(text, style: _t(13, FontWeight.w600, _ink)))
         : const SizedBox.shrink();
     final canSubmit = _ready;
@@ -666,7 +674,7 @@ class _RowSheetState extends State<_RowSheet> {
             ]),
             if (!_distance) ...[
               label(s.itemImage),
-              _imageBox(file: _file, url: widget.initial?.imageUrl, height: 120, hint: labelled ? s.cleaningImageFormatsHint : null, onTap: () async {
+              _imageBox(file: _file, url: widget.initial?.imageUrl, height: 120, hint: s.cleaningImageFormatsHint, onTap: () async {
                 final f = await widget.pick();
                 if (f != null) setState(() => _file = f);
               }),
@@ -684,6 +692,7 @@ class _RowSheetState extends State<_RowSheet> {
             ],
             if (widget.kind == _RowKind.garment) ...[
               gap(),
+              label(s.pricingUnit),
               DropdownButtonFormField<String>(
                 initialValue: _unit,
                 items: [
@@ -733,7 +742,8 @@ class _RowSheetState extends State<_RowSheet> {
               controller: _price,
               onChanged: (_) => setState(() {}),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: deco(s.price, suffix: 'MRU'),
+              // Laundry item: "MRU / piece" (Figma MRU/Item).
+              decoration: deco(s.price, suffix: garment ? s.mruPerUnit(_unitName(s, _unit)) : 'MRU'),
             ),
             const SizedBox(height: 16),
             if (labelled)

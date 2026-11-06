@@ -3361,5 +3361,15 @@
   "cwfTypeName": "اسم النوع",
   "@cwfTypeName": {},
   "cwfDistanceBased": "حسب المسافة",
-  "@cwfDistanceBased": {}
+  "@cwfDistanceBased": {},
+  "lnfEstimatedKg": "تقديري {kg} كغ",
+  "@lnfEstimatedKg": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "lnfPaid": "مدفوع",
+  "@lnfPaid": {}
 }

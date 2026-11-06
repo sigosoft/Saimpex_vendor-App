@@ -195,15 +195,18 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         _sectionLabel(S.of(context).cwfBookingSlot),
         const SizedBox(height: 8),
         _CarWashSlot(key: _serviceKey, booking: b),
+      ] else if (ServiceKinds.isLaundry) ...[
+        // Laundry (Figma, 6 Nov): image, name, turnaround tag and the
+        // estimated / actual weight with prices.
+        const SizedBox(height: 12),
+        LaundryServiceCard(key: _serviceKey, booking: b),
       ] else ...[
         const SizedBox(height: 12),
         _ServiceCard(key: _serviceKey, booking: b),
       ],
-      // Laundry / car wash parts (V14).
-      if (ServiceKinds.isLaundry) ...[
-        const SizedBox(height: 12),
-        LaundryBookingBlock(booking: b),
-      ],
+      // Laundry / car wash parts (V14): PICKUP SLOT, DELIVERY TURNAROUND,
+      // PICKUP & DELIVERY and Payment Status.
+      if (ServiceKinds.isLaundry) LaundryBookingBlock(booking: b),
       if (ServiceKinds.isCarWash) ...[
         CarWashBookingBlock(booking: b),
         // SERVICE LOCATION: At Wash Station, or the customer's place with
@@ -271,7 +274,8 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 8),
         _noteBox(cancelText),
       ],
-      if (b.address != null && !ServiceKinds.isCarWash) ...[
+      // Laundry shows the address under PICKUP & DELIVERY.
+      if (b.address != null && !ServiceKinds.isCarWash && !(ServiceKinds.isLaundry && b.raw['pickup_address'] != null)) ...[
         const SizedBox(height: 12),
         _LocationCard(
           label: b.raw['address_label']?.toString(),
@@ -280,10 +284,18 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
           longitude: b.longitude,
         ),
       ],
-      const SizedBox(height: 16),
-      _sectionLabel(S.of(context).paymentSummary),
-      const SizedBox(height: 8),
-      _PaymentCard(booking: b),
+      // Laundry (Figma): the dark PAYMENT DETAILS card carries its own
+      // title; after a weight check that added an amount, the Payment
+      // Status block above takes its place.
+      if (!ServiceKinds.isLaundry) ...[
+        const SizedBox(height: 16),
+        _sectionLabel(S.of(context).paymentSummary),
+        const SizedBox(height: 8),
+        _PaymentCard(booking: b),
+      ] else if (!LaundryBookingBlock.showsPaymentStatus(b)) ...[
+        const SizedBox(height: 16),
+        _PaymentCard(booking: b),
+      ],
       if (b.isCompleted || b.isCancelled)
         const SizedBox.shrink()
       else ...[
@@ -1247,9 +1259,9 @@ class _PaymentCard extends StatelessWidget {
     final b = booking;
     final type = CleaningBookingFormat.paymentType(context, b.paymentType);
     final paidOn = b.paidOn;
-    // Car wash (Figma PAYMENT DETAILS): Total, Tax, ... Total paid. The
+    // Car wash and laundry (Figma PAYMENT DETAILS): Total, Tax, ... Total paid. The
     // server's `total` already includes `tax`, so Total shows it without.
-    final tax = ServiceKinds.isCarWash ? (b.tax ?? 0) : 0.0;
+    final tax = ServiceKinds.isCarWash || ServiceKinds.isLaundry ? (b.tax ?? 0) : 0.0;
     final showTax = tax > 0;
     final totalShown = showTax && b.total != null ? b.total! - tax : b.total;
     return Container(

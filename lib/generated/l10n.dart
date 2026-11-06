@@ -14460,6 +14460,21 @@ class S {
       args: [],
     );
   }
+
+  /// `Estimated {kg} kg`
+  String lnfEstimatedKg(String kg) {
+    return Intl.message(
+      'Estimated $kg kg',
+      name: 'lnfEstimatedKg',
+      desc: '',
+      args: [kg],
+    );
+  }
+
+  /// `Paid`
+  String get lnfPaid {
+    return Intl.message('Paid', name: 'lnfPaid', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
@@ -29,6 +30,7 @@ CleaningBooking _laundry({double? actual, bool pending = false}) => CleaningBook
     });
 
 void main() {
+  setUpAll(() => initializeDateFormatting());
   tearDown(() => ServiceKinds.current = ServiceKind.homeCleaning);
 
   test('laundry and car wash have six tabs with Ready (status 4)', () {
@@ -41,15 +43,31 @@ void main() {
     expect(ServiceKinds.fromVendorType('8'), ServiceKind.carWash);
   });
 
-  testWidgets('laundry block: estimate, slot, addresses, balance due', (t) async {
-    await t.pumpWidget(_app(LaundryBookingBlock(booking: _laundry(actual: 3.6, pending: true))));
+  testWidgets('laundry service card: turnaround tag and weights', (t) async {
+    await t.pumpWidget(_app(LaundryServiceCard(booking: _laundry())));
     expect(find.text('Standard (24h)'), findsOneWidget);
+    expect(find.text('Estimated 3 kg'), findsOneWidget);
+    expect(find.text('450 MRU'), findsOneWidget);
+    await t.pumpWidget(_app(LaundryServiceCard(booking: _laundry(actual: 3.6, pending: true))));
     expect(find.text('Customer estimate (3 kg)'), findsOneWidget);
     expect(find.text('Actual weight (3.6 kg)'), findsOneWidget);
-    expect(find.text('540 MRU'), findsWidgets);
-    expect(find.text('25 Aug 2026, 2:00 PM – 4:00 PM'), findsOneWidget);
+    expect(find.text('540 MRU'), findsOneWidget);
+  });
+
+  testWidgets('laundry block: slot chips, addresses, balance due', (t) async {
+    await t.pumpWidget(_app(LaundryBookingBlock(booking: _laundry(actual: 3.6, pending: true))));
+    expect(find.text('Aug 25, 2026'), findsOneWidget);
+    expect(find.text('2:00 PM - 4:00 PM'), findsOneWidget);
+    expect(find.text('ADDITIONAL PAYMENT PENDING'), findsOneWidget);
     expect(find.text('Balance due'), findsOneWidget);
     expect(find.text('90 MRU'), findsOneWidget);
+  });
+
+  testWidgets('laundry block: Paid once nothing is pending', (t) async {
+    final paid = CleaningBooking.fromJson({..._laundry(actual: 3.6, pending: true).raw, 'additional_payment_pending': false});
+    await t.pumpWidget(_app(LaundryBookingBlock(booking: paid)));
+    expect(find.text('Paid'), findsOneWidget);
+    expect(find.text('ADDITIONAL PAYMENT PENDING'), findsNothing);
   });
 
   testWidgets('car wash block: vehicles with add-ons', (t) async {
