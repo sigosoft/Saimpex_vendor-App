@@ -3415,5 +3415,15 @@
   "cwfTypeName": "Type Name",
   "@cwfTypeName": {},
   "cwfDistanceBased": "Distance Based",
-  "@cwfDistanceBased": {}
+  "@cwfDistanceBased": {},
+  "lnfEstimatedKg": "Estimated {kg} kg",
+  "@lnfEstimatedKg": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "lnfPaid": "Paid",
+  "@lnfPaid": {}
 }
