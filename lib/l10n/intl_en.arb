@@ -568,7 +568,13 @@
   "@account": {},
   "myRestaurant": "My Restaurant",
   "durationMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
-  "@durationMinutes": {"placeholders": {"count": {"type": "int"}}},
+  "@durationMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "deliveryPartnerAccepted": "Delivery Partner Accepted",
   "deliveryPartnerAcceptedSub": "The order will be picked up shortly",
   "reachedRestaurantTitle": "Reached Restaurant",
@@ -1926,9 +1932,6 @@
   "waterOrderPickedUp": "Order handed over to the customer",
   "waterFailedToMarkPickedUp": "Could not mark the order as picked up",
   "waterWaitingForDeliveryPartner": "Ready: waiting for a delivery partner to pick it up",
-  "waterWaitingForDeliveryPartner": "Ready: waiting for a delivery partner to pick it up",
-  "waterOrderPickedUp": "Order handed over to the customer",
-  "waterFailedToMarkPickedUp": "Could not mark the order as picked up",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Order moved to preparing successfully",
   "@waterOrderMovedToPreparing": {},
@@ -2202,7 +2205,13 @@
   "@waterVoiceMessage": {},
   "waterWaterSupplyIssue": "Water Supply Issue",
   "waterCancelReason": "Reason: {reason}",
-  "@waterCancelReason": {"placeholders": {"reason": {"type": "String"}}},
+  "@waterCancelReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
   "@waterWaterSupplyIssue": {},
   "waterWeek": "Week",
   "@waterWeek": {},
@@ -3698,5 +3707,15 @@
     }
   },
   "lnfPaid": "Paid",
-  "@lnfPaid": {}
+  "@lnfPaid": {},
+  "loginEnterUsername": "Please enter your username",
+  "@loginEnterUsername": {},
+  "loginEnterPassword": "Please enter your password",
+  "@loginEnterPassword": {},
+  "loginSuccessful": "Login successful",
+  "@loginSuccessful": {},
+  "loginFailed": "Login failed. Please try again.",
+  "@loginFailed": {},
+  "requestTimedOut": "The request timed out. Please try again.",
+  "@requestTimedOut": {}
 }

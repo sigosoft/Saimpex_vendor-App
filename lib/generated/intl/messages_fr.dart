@@ -1549,8 +1549,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "Chargement de la localisation…",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Connexion"),
+    "loginEnterPassword": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir votre mot de passe",
+    ),
+    "loginEnterUsername": MessageLookupByLibrary.simpleMessage(
+      "Veuillez saisir votre nom d\'utilisateur",
+    ),
+    "loginFailed": MessageLookupByLibrary.simpleMessage(
+      "Échec de la connexion. Veuillez réessayer.",
+    ),
     "loginOrSignUp": MessageLookupByLibrary.simpleMessage(
       "Connexion ou inscription",
+    ),
+    "loginSuccessful": MessageLookupByLibrary.simpleMessage(
+      "Connexion réussie",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Déconnexion"),
     "lunchMenu": MessageLookupByLibrary.simpleMessage("Menu du Déjeuner"),
@@ -2704,6 +2716,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "requestRejected": MessageLookupByLibrary.simpleMessage("Refusée"),
     "requestSentForReview": MessageLookupByLibrary.simpleMessage(
       "Envoyé. SAIMPEX va l\'examiner.",
+    ),
+    "requestTimedOut": MessageLookupByLibrary.simpleMessage(
+      "La requête a expiré. Veuillez réessayer.",
     ),
     "resendCodeIn30Sec": MessageLookupByLibrary.simpleMessage(
       "Renvoyer le code dans 30 secondes",

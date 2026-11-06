@@ -553,7 +553,13 @@
   "@account": {},
   "myRestaurant": "مطعمي",
   "durationMinutes": "{count, plural, =0{0 دقيقة} =1{دقيقة واحدة} =2{دقيقتان} few{{count} دقائق} many{{count} دقيقة} other{{count} دقيقة}}",
-  "@durationMinutes": {"placeholders": {"count": {"type": "int"}}},
+  "@durationMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "deliveryPartnerAccepted": "قبل مندوب التوصيل",
   "deliveryPartnerAcceptedSub": "سيتم استلام الطلب قريبًا",
   "reachedRestaurantTitle": "وصل إلى المطعم",
@@ -1989,9 +1995,6 @@
   "waterOrderPickedUp": "تم تسليم الطلب للعميل",
   "waterFailedToMarkPickedUp": "تعذّر تحديد الطلب كمُستلَم",
   "waterWaitingForDeliveryPartner": "جاهز: بانتظار مندوب التوصيل لاستلامه",
-  "waterWaitingForDeliveryPartner": "جاهز: بانتظار مندوب التوصيل لاستلامه",
-  "waterOrderPickedUp": "تم تسليم الطلب للعميل",
-  "waterFailedToMarkPickedUp": "تعذّر تحديد الطلب كمُستلَم",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "تم نقل الطلب إلى التحضير بنجاح",
   "@waterOrderMovedToPreparing": {},
@@ -2265,7 +2268,13 @@
   "@waterVoiceMessage": {},
   "waterWaterSupplyIssue": "مشكلة في إمدادات المياه",
   "waterCancelReason": "السبب: {reason}",
-  "@waterCancelReason": {"placeholders": {"reason": {"type": "String"}}},
+  "@waterCancelReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
   "@waterWaterSupplyIssue": {},
   "waterWeek": "الأسبوع",
   "@waterWeek": {},
@@ -3604,5 +3613,15 @@
     }
   },
   "lnfPaid": "مدفوع",
-  "@lnfPaid": {}
+  "@lnfPaid": {},
+  "loginEnterUsername": "الرجاء إدخال اسم المستخدم",
+  "@loginEnterUsername": {},
+  "loginEnterPassword": "الرجاء إدخال كلمة المرور",
+  "@loginEnterPassword": {},
+  "loginSuccessful": "تم تسجيل الدخول بنجاح",
+  "@loginSuccessful": {},
+  "loginFailed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+  "@loginFailed": {},
+  "requestTimedOut": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
+  "@requestTimedOut": {}
 }
