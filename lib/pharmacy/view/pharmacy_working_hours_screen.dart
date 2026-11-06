@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
@@ -34,7 +35,7 @@ class _DayHours {
   static const allDayHours = '12:00 AM - 11:59 PM';
 
   String get label {
-    if (closed) return 'Closed';
+    if (closed) return S.current.closed;
     if (open24) return allDayHours;
     if (start != null && end != null) {
       return '${_format12(start!)} - ${_format12(end!)}';
@@ -42,6 +43,18 @@ class _DayHours {
     return 'Closed';
   }
 }
+
+/// Day names in the app language (the list keeps English keys).
+String _dayLabel(String name) => switch (name) {
+      'Monday' => S.current.monday,
+      'Tuesday' => S.current.tuesday,
+      'Wednesday' => S.current.wednesday,
+      'Thursday' => S.current.thursday,
+      'Friday' => S.current.friday,
+      'Saturday' => S.current.saturday,
+      'Sunday' => S.current.sunday,
+      _ => name,
+    };
 
 String _format12(TimeOfDay time) {
   final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
@@ -298,7 +311,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
       if (isSuccess) {
         HapticFeedback.lightImpact();
         if (mounted) {
-          String message = 'Working hours updated successfully';
+          String message = S.current.waterWorkingHoursUpdated;
           if (resData['message'] != null) {
             final msg = resData['message'];
             if (msg is Map) {
@@ -326,8 +339,8 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
       } else {
         if (mounted) {
           final message = resData is Map
-              ? resData['message']?.toString() ?? 'Failed to update working hours'
-              : 'Failed to update working hours';
+              ? resData['message']?.toString() ?? S.current.waterFailedToUpdateWorkingHours
+              : S.current.waterFailedToUpdateWorkingHours;
           showToast(context, message);
         }
         return false;
@@ -357,7 +370,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
       context: context,
       barrierColor: const Color(0xFF1A1A1A).withValues(alpha: 0.45),
       builder: (context) => _EditHourDialog(
-        dayName: day.name,
+        dayName: _dayLabel(day.name),
         open24: day.open24,
         start: day.start ?? const TimeOfDay(hour: 8, minute: 0),
         end: day.end ?? const TimeOfDay(hour: 22, minute: 0),
@@ -422,7 +435,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Current Status',
+                            S.of(context).waterCurrentStatus,
                             style: appFont('Inter', 
                               color: const Color(0xFF8A7B76),
                               fontWeight: FontWeight.w500,
@@ -438,7 +451,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                                 fontSize: 15,
                               ),
                               children: [
-                                const TextSpan(text: 'Today: '),
+                                TextSpan(text: '${S.of(context).pfTodayLabel} '),
                                 TextSpan(
                                   text: _todayHours,
                                   style: TextStyle(
@@ -460,7 +473,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                '24-Hour Open',
+                                S.of(context).waterOpen24Hours,
                                 style: appFont('Inter', 
                                   color: PharmacyWorkingHoursScreen.ink,
                                   fontWeight: FontWeight.w600,
@@ -496,7 +509,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                     ),
                     const SizedBox(height: 22),
                     Text(
-                      'Weekly Schedule',
+                      S.of(context).waterWeeklySchedule,
                       style: appFont('Inter', 
                         color: PharmacyWorkingHoursScreen.ink,
                         fontWeight: FontWeight.w700,
@@ -549,7 +562,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Working Hours',
+              S.of(context).workingHours,
               style: appFont('Inter', 
                 color: PharmacyWorkingHoursScreen.ink,
                 fontWeight: FontWeight.w700,
@@ -603,7 +616,7 @@ class _DayRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  day.name,
+                  _dayLabel(day.name),
                   style: appFont('Inter', 
                     color: PharmacyWorkingHoursScreen.day,
                     fontWeight: FontWeight.w700,
@@ -708,7 +721,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
     final startMinutes = _start.hour * 60 + _start.minute;
     final endMinutes = _end.hour * 60 + _end.minute;
     if (!_open24 && endMinutes <= startMinutes) {
-      setState(() => _error = 'End time must be after start time');
+      setState(() => _error = S.of(context).waterEndTimeAfterStartTime);
       return;
     }
     Navigator.of(context).pop(_HourEdit(open24: _open24, start: _start, end: _end));
@@ -751,7 +764,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
             Row(
               children: [
                 Text(
-                  '24-Hour Open',
+                  S.of(context).waterOpen24Hours,
                   style: appFont('Inter', 
                     color: const Color(0xFF1C1D1B),
                     fontWeight: FontWeight.w600,
@@ -781,9 +794,9 @@ class _EditHourDialogState extends State<_EditHourDialog> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Expanded(child: _timeLabel('Start Time')),
+                Expanded(child: _timeLabel(S.of(context).waterStartTime)),
                 const SizedBox(width: 12),
-                Expanded(child: _timeLabel('End Time')),
+                Expanded(child: _timeLabel(S.of(context).waterEndTime)),
               ],
             ),
             const SizedBox(height: 8),
@@ -819,7 +832,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: Text(
-                        'Cancel',
+                        S.of(context).cancel,
                         style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 15),
                       ),
                     ),
@@ -844,7 +857,7 @@ class _EditHourDialogState extends State<_EditHourDialog> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: Text(
-                          'Save',
+                          S.of(context).save,
                           style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
                         ),
                       ),

@@ -14355,6 +14355,41 @@ class S {
       args: [],
     );
   }
+
+  /// `Today:`
+  String get pfTodayLabel {
+    return Intl.message('Today:', name: 'pfTodayLabel', desc: '', args: []);
+  }
+
+  /// `Leave unmarked successfully`
+  String get pfLeaveUnmarked {
+    return Intl.message(
+      'Leave unmarked successfully',
+      name: 'pfLeaveUnmarked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to unmark leave`
+  String get pfFailedToUnmarkLeave {
+    return Intl.message(
+      'Failed to unmark leave',
+      name: 'pfFailedToUnmarkLeave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partners`
+  String get pfDeliveryPartners {
+    return Intl.message(
+      'Delivery Partners',
+      name: 'pfDeliveryPartners',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

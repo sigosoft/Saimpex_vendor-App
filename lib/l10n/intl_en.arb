@@ -3387,5 +3387,13 @@
   "vendorIdLabel": "ID",
   "@vendorIdLabel": {},
   "tinNifNumber": "TIN/NIF Number",
-  "@tinNifNumber": {}
+  "@tinNifNumber": {},
+  "pfTodayLabel": "Today:",
+  "@pfTodayLabel": {},
+  "pfLeaveUnmarked": "Leave unmarked successfully",
+  "@pfLeaveUnmarked": {},
+  "pfFailedToUnmarkLeave": "Failed to unmark leave",
+  "@pfFailedToUnmarkLeave": {},
+  "pfDeliveryPartners": "Delivery Partners",
+  "@pfDeliveryPartners": {}
 }
