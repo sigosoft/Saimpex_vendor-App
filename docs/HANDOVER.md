@@ -407,10 +407,11 @@ Source: `SAIMPEX-V2-vendor-app-test-report.pdf` (6 Nov, 34 issues, tested on `ma
 | | `fix/laundry-booking-time` | ✅ | VA-29 |
 | | `fix/laundry-step-confirm` | ✅ | VA-30 (also car wash and home cleaning) |
 | | `fix/laundry-services-price-and-text` | ✅ | VA-31, VA-32 |
+| Water / gas, pharmacy | `fix/water-business-settings-save` (#100) | ✅ | Business Settings saved nothing (GET with no body); now posts `updateStoreAvailability`, `updateExpressDelivery`, `add/updateDeliveryDistance` || Restaurant, water / gas | `fix/payout-payment-proof` (#101) | ✅ | "View payment proof" did nothing (restaurant) or could not load (water); opens `payment_proof_url` || Water | `fix/water-low-stock-view-all` (#102) | ✅ | Low stock card "View all" did nothing; selects the Low stock chip |
 
 Already fixed on earlier PRs: VA-20 (#49), VA-25 (#50, server must also send `message_ar/fr`), VA-33 (#59), VA-34 (#53), water revenue 0 (#67).
 Backend gaps (no app change possible): VA-12 per-order commission / net; order Express flag; item Popular tag; service booking push (VA-28); laundry `slot_label`; pharmacy list `payment_type` / `is_self_pickup` / rider.
-Not done: a booking push handler in `lib/view/notifications/notification.dart` (call `HomeCleaningController.refreshQuietly()`) waits for the backend to define the push type.
+Not done: the barcode icon on the pharmacy and water inventory screens does nothing (the inventory search does not match barcodes; backend gap). A booking push handler in `lib/view/notifications/notification.dart` (call `HomeCleaningController.refreshQuietly()`) waits for the backend to define the push type.
 
 ---
 
