@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
-import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart' show cleaningPropertyLabel;
+import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart' show cleaningIssueLabel, cleaningPropertyLabel;
 
 /// Locale-aware formatting shared by the home list and the details screen.
 class CleaningBookingFormat {
@@ -67,7 +67,12 @@ class CleaningBookingFormat {
   /// Chip label: "Bedroom × 4" for priced lines, plain name otherwise.
   /// Property types arrive as their English value ("Apartment", V17).
   static String chip(BuildContext context, CleaningBookingLine line) {
-    final name = line.kind == 'property' ? cleaningPropertyLabel(context, line.name) : line.name;
+    final name = switch (line.kind) {
+      'property' => cleaningPropertyLabel(context, line.name),
+      // Pest issues arrive as their English value ("Cockroaches").
+      'issue' => cleaningIssueLabel(context, line.name),
+      _ => line.name,
+    };
     if (line.isSpace || line.isAddon || line.quantity > 1) {
       return '$name × ${line.quantity}';
     }

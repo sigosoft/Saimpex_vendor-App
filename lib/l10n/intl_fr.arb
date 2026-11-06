@@ -3328,5 +3328,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "hcfAreasHeader": "ZONES",
+  "@hcfAreasHeader": {},
+  "hcfIssuesHeader": "PROBLÈMES",
+  "@hcfIssuesHeader": {},
+  "hcfAddOnsHeader": "SUPPLÉMENTS :",
+  "@hcfAddOnsHeader": {},
+  "hcfIssueCoveredHeader": "NUISIBLES TRAITÉS :",
+  "@hcfIssueCoveredHeader": {},
+  "hcfBusinessReview": "Avis sur l'entreprise",
+  "@hcfBusinessReview": {}
 }

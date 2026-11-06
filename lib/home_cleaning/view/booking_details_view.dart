@@ -9,6 +9,8 @@ import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_kind.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
+import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart'
+    show cleaningIssueIcon, cleaningIssueLabel;
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/assign_cleaner_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaners/cleaner_widgets.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaner.dart';
@@ -206,11 +208,22 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
           },
         ),
       ],
+      // Figma pest control detail: "Areas" in place of "Spaces", then the
+      // Issues tiles. The booking has no service-type kind, so a booking
+      // with issue lines is shown the pest control way.
       if (ServiceKinds.isCleaning && b.spaceLines.isNotEmpty) ...[
         const SizedBox(height: 16),
-        _sectionLabel(S.of(context).cleaningSpacesHeader),
+        _sectionLabel(b.issueLines.isNotEmpty
+            ? S.of(context).hcfAreasHeader
+            : S.of(context).cleaningSpacesHeader),
         const SizedBox(height: 8),
         _LinesCard(lines: b.spaceLines),
+      ],
+      if (ServiceKinds.isCleaning && b.issueLines.isNotEmpty) ...[
+        const SizedBox(height: 16),
+        _sectionLabel(S.of(context).hcfIssuesHeader),
+        const SizedBox(height: 8),
+        _IssuesCard(issues: [for (final l in b.issueLines) l.name.trim()]),
       ],
       if (ServiceKinds.isCleaning && b.addonLines.isNotEmpty) ...[
         const SizedBox(height: 16),
@@ -790,6 +803,91 @@ class _LinesCard extends StatelessWidget {
               total: CleaningBookingFormat.money(lines[i].lineTotal),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Pest control issues as icon tiles, three per row (Figma "Issues").
+class _IssuesCard extends StatelessWidget {
+  const _IssuesCard({required this.issues});
+
+  /// English values from `lines[].name` (kind `issue`).
+  final List<String> issues;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <List<String>>[
+      for (var i = 0; i < issues.length; i += 3)
+        issues.sublist(i, i + 3 > issues.length ? issues.length : i + 3),
+    ];
+    return _WhiteCard(
+      child: Column(
+        children: [
+          for (var r = 0; r < rows.length; r++) ...[
+            if (r > 0) const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var c = 0; c < 3; c++) ...[
+                  if (c > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: c < rows[r].length
+                        ? _IssueTile(issue: rows[r][c])
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _IssueTile extends StatelessWidget {
+  const _IssueTile({required this.issue});
+
+  final String issue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 92,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Color(0xFFEFF4FC),
+              shape: BoxShape.circle,
+            ),
+            child: cleaningIssueIcon(issue, size: 20),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            cleaningIssueLabel(context, issue),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: appFont('Inter',
+              color: const Color(0xFF2D3748),
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              height: 1.15,
+            ),
+          ),
         ],
       ),
     );

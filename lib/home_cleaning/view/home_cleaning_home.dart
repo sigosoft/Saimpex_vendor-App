@@ -1004,6 +1004,10 @@ class _Filters extends StatelessWidget {
 /// Status pill text + colour shared by the list card.
 ({String label, Color color}) _statusPill(BuildContext context, CleaningBooking b) {
   if (!ServiceKinds.isCleaning) return ServiceKinds.statusPill(context, b.status);
+  // Figma home cleaning: the New card carries the same header with a NEW pill.
+  if (b.isNew) {
+    return (label: S.of(context).cleaningStatusNew, color: const Color(0xFFF3AA00));
+  }
   if (b.isInProgress) {
     return (label: S.of(context).cleaningStatusInProgress, color: const Color(0xFF1E6BE6));
   }
@@ -1032,7 +1036,9 @@ class _BookingCard extends StatelessWidget {
 
   static const _orange = Color(0xFFFF5216);
 
-  bool get _isDetailedStatus => !booking.isNew;
+  // Home cleaning (Figma, 6 Nov): every status, New included, shows
+  // "Service · code · time ago" on one line under the name, with the pill.
+  bool get _isDetailedStatus => ServiceKinds.isCleaning || !booking.isNew;
 
   @override
   Widget build(BuildContext context) {
@@ -1043,6 +1049,8 @@ class _BookingCard extends StatelessWidget {
     final slot = CleaningBookingFormat.slot(booking);
     final address = booking.address;
     final pill = _statusPill(context, booking);
+    // Figma home cleaning separates service, code and time with a dot.
+    final sep = ServiceKinds.isCleaning ? ' • ' : ' - ';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -1128,7 +1136,7 @@ class _BookingCard extends StatelessWidget {
                               children: [
                                 if (service.isNotEmpty)
                                   TextSpan(
-                                    text: '$service - ',
+                                    text: '$service$sep',
                                     style: appFont('Inter', 
                                       color: _orange,
                                       fontWeight: FontWeight.w700,
@@ -1136,7 +1144,7 @@ class _BookingCard extends StatelessWidget {
                                     ),
                                   ),
                                 TextSpan(
-                                  text: meta.join(' - '),
+                                  text: meta.join(sep),
                                   style: appFont('Inter', 
                                     color: const Color(0xFF757575),
                                     fontWeight: FontWeight.w500,

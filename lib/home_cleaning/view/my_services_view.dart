@@ -551,7 +551,10 @@ class _ServiceCard extends StatelessWidget {
                 ),
                 if (service.addons.isNotEmpty)
                   _BadgeSection(
-                    label: S.of(context).cleaningAddonServicesHeader,
+                    // Figma home cleaning card: "ADD-ONS:" / "ISSUES COVERED:".
+                    label: ServiceKinds.isCleaning
+                        ? S.of(context).hcfAddOnsHeader
+                        : S.of(context).cleaningAddonServicesHeader,
                     badges: [
                       for (final addon in service.addons)
                         _ServiceBadge(
@@ -562,7 +565,9 @@ class _ServiceCard extends StatelessWidget {
                   ),
                 if (service.issues.isNotEmpty)
                   _BadgeSection(
-                    label: S.of(context).cleaningIssuesCoveredHeader,
+                    label: ServiceKinds.isCleaning
+                        ? S.of(context).hcfIssueCoveredHeader
+                        : S.of(context).cleaningIssuesCoveredHeader,
                     badges: [
                       for (final issue in service.issues)
                         _ServiceBadge(

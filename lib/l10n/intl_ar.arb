@@ -3327,5 +3327,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "hcfAreasHeader": "المناطق",
+  "@hcfAreasHeader": {},
+  "hcfIssuesHeader": "المشكلات",
+  "@hcfIssuesHeader": {},
+  "hcfAddOnsHeader": "الإضافات:",
+  "@hcfAddOnsHeader": {},
+  "hcfIssueCoveredHeader": "الآفات المشمولة:",
+  "@hcfIssueCoveredHeader": {},
+  "hcfBusinessReview": "تقييم النشاط التجاري",
+  "@hcfBusinessReview": {}
 }

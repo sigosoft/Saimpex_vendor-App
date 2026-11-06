@@ -14340,6 +14340,46 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `AREAS`
+  String get hcfAreasHeader {
+    return Intl.message('AREAS', name: 'hcfAreasHeader', desc: '', args: []);
+  }
+
+  /// `ISSUES`
+  String get hcfIssuesHeader {
+    return Intl.message('ISSUES', name: 'hcfIssuesHeader', desc: '', args: []);
+  }
+
+  /// `ADD-ONS:`
+  String get hcfAddOnsHeader {
+    return Intl.message(
+      'ADD-ONS:',
+      name: 'hcfAddOnsHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ISSUES COVERED:`
+  String get hcfIssueCoveredHeader {
+    return Intl.message(
+      'ISSUES COVERED:',
+      name: 'hcfIssueCoveredHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Business Review`
+  String get hcfBusinessReview {
+    return Intl.message(
+      'Business Review',
+      name: 'hcfBusinessReview',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
