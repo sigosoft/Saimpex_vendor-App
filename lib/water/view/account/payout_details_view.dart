@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/widgets/payment_proof_dialog.dart';
 
 class PayoutDetailsView extends StatefulWidget {
   const PayoutDetailsView({
@@ -239,56 +240,6 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
     return str;
   }
 
-  void _showProofDialog(BuildContext context, String url) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      S.of(context).waterPaymentProof,
-                      style: appFont('Inter', 
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: PayoutDetailsView.ink,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                InteractiveViewer(
-                  child: Image.network(
-                    url,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Text(S.of(context).waterFailedToLoadImage),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final transactionId = _payoutDetails?['transaction_id']?.toString() ??
@@ -325,9 +276,8 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
         _payoutDetails?['notes']?.toString() ??
         S.current.waterNotAvailable;
 
-    final proofUrl = _payoutDetails?['payment_proof']?.toString() ??
-        _payoutDetails?['proof']?.toString() ??
-        _payoutDetails?['proof_image']?.toString();
+    // Full URL (`payment_proof_url`): the raw storage path could not load.
+    final proofUrl = paymentProofUrl(_payoutDetails);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
@@ -467,12 +417,10 @@ class _PayoutDetailsViewState extends State<PayoutDetailsView> {
                                       ),
                                     ),
                                   ),
+                                  if (proofUrl != null)
                                   GestureDetector(
-                                    onTap: () {
-                                      if (proofUrl != null && proofUrl.isNotEmpty && proofUrl != 'null') {
-                                        _showProofDialog(context, proofUrl);
-                                      }
-                                    },
+                                    onTap: () =>
+                                        showPaymentProofDialog(context, proofUrl),
                                     child: Text(
                                       S.of(context).viewPaymentProof,
                                       style: appFont('Inter', 

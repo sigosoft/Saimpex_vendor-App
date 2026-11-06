@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/widgets/app_loader.dart';
+import 'package:saimpex_vendor/utils/widgets/payment_proof_dialog.dart';
 
 class PayoutDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> payout;
@@ -248,8 +249,14 @@ class _PayoutDetailsScreenState extends State<PayoutDetailsScreen> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
+                        // Only when Admin attached a proof
+                        // (`payment_proof_url`); the link did nothing before.
+                        if (paymentProofUrl(_payoutDetails) != null)
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () => showPaymentProofDialog(
+                            context,
+                            paymentProofUrl(_payoutDetails)!,
+                          ),
                           child: Text(
                             S.of(context).viewPaymentProof,
                             style: appFont('Rubik', 
