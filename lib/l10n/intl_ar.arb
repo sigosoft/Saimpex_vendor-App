@@ -2825,7 +2825,7 @@
   "vendorTypeWater": "مياه",
   "vendorTypePharmacy": "صيدلية",
   "vendorTypeHomeCleaning": "تنظيف منزلي",
-  "orderPreparationStartedSuccessfully": "بدأ تحضير الطلب",
+  "orderPreparationStartedSuccessfully": "بدأ تحضير الطلب بنجاح",
   "orderMarkedReadySuccessfully": "تم تحديد الطلب كجاهز",
   "preparingOrder": "تحضير الطلب",
   "@preparingOrder": {},
@@ -3343,5 +3343,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح"
 }

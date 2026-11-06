@@ -1624,6 +1624,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "orderIdLabel": m35,
     "orderItems": MessageLookupByLibrary.simpleMessage("ORDER ITEMS"),
+    "orderMarkedPickedUpSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Order marked as picked up successfully",
+    ),
     "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
       "Order marked as ready",
     ),
@@ -1636,7 +1639,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Order Preparation Started",
     ),
     "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Order preparation started",
+      "Order preparation started successfully",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("Order Ready"),
     "orderRules": MessageLookupByLibrary.simpleMessage("Order rules"),

@@ -2879,7 +2879,7 @@
   "vendorTypeWater": "Water",
   "vendorTypePharmacy": "Pharmacy",
   "vendorTypeHomeCleaning": "Home Cleaning",
-  "orderPreparationStartedSuccessfully": "Order preparation started",
+  "orderPreparationStartedSuccessfully": "Order preparation started successfully",
   "orderMarkedReadySuccessfully": "Order marked as ready",
   "preparingOrder": "Preparing Order",
   "@preparingOrder": {},
@@ -3397,5 +3397,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "orderMarkedPickedUpSuccessfully": "Order marked as picked up successfully"
 }

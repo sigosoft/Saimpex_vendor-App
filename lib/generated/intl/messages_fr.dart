@@ -1817,6 +1817,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderItems": MessageLookupByLibrary.simpleMessage(
       "Articles de la commande",
     ),
+    "orderMarkedPickedUpSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Commande marquée comme récupérée avec succès",
+    ),
     "orderMarkedReadySuccessfully": MessageLookupByLibrary.simpleMessage(
       "Commande marquée comme prête",
     ),
@@ -1829,7 +1832,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Préparation de la commande commencée",
     ),
     "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Préparation de la commande démarrée",
+      "Préparation de la commande démarrée avec succès",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("Commande prête"),
     "orderRules": MessageLookupByLibrary.simpleMessage("Règles de commande"),
