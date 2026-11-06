@@ -3560,5 +3560,9 @@
   "hcfIssueCoveredHeader": "NUISIBLES TRAITÉS :",
   "@hcfIssueCoveredHeader": {},
   "hcfBusinessReview": "Avis sur l'entreprise",
-  "@hcfBusinessReview": {}
+  "@hcfBusinessReview": {},
+  "todaysDeliveries": "Livraisons du jour",
+  "wfDeliveryPartners": "Partenaires de livraison",
+  "wfSearchDeliveryPartner": "Rechercher un partenaire de livraison",
+  "wfAddDeliveryPartner": "Ajouter un partenaire de livraison"
 }

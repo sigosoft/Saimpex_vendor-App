@@ -41,7 +41,7 @@ class ChatView extends StatefulWidget {
   const ChatView({
     super.key,
     this.customerName = '',
-    this.isOnline = true,
+    this.isOnline,
     this.conversationId,
     this.customerId,
     this.orderId,
@@ -49,7 +49,11 @@ class ChatView extends StatefulWidget {
   });
 
   final String customerName;
-  final bool isOnline;
+
+  /// `customer_is_online` from the conversations list; null when the chat
+  /// is opened from an order or subscription (no presence data), and then
+  /// no Online/Offline line is shown.
+  final bool? isOnline;
   final int? conversationId;
   final int? customerId;
   final dynamic orderId;
@@ -58,7 +62,7 @@ class ChatView extends StatefulWidget {
   static Future<void> open(
     BuildContext context, {
     String customerName = '',
-    bool isOnline = true,
+    bool? isOnline,
     int? conversationId,
     int? customerId,
     dynamic orderId,
@@ -652,7 +656,7 @@ class _ChatHeader extends StatelessWidget {
   });
 
   final String name;
-  final bool isOnline;
+  final bool? isOnline;
   final VoidCallback onBack;
   final String? avatarUrl;
 
@@ -740,17 +744,19 @@ class _ChatHeader extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  isOnline ? S.of(context).waterOnline : S.of(context).waterOffline,
-                  style: TextStyle(
-                    color: isOnline
-                        ? AppColors.textSecondary
-                        : AppColors.textMuted,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.5,
+                if (isOnline != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    isOnline! ? S.of(context).waterOnline : S.of(context).waterOffline,
+                    style: TextStyle(
+                      color: isOnline!
+                          ? AppColors.textSecondary
+                          : AppColors.textMuted,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.5,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

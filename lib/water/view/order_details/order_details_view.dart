@@ -449,7 +449,10 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
     final userMap = _safeMap(orderMap['user']) ?? _safeMap(_orderDetail?['user']);
     final customerMap = _safeMap(orderMap['customer']) ?? _safeMap(_orderDetail?['customer']);
-    final partnerMap = _safeMap(orderMap['delivery_boy']) ??
+    // waterOrderDetail returns the assigned driver as `data.partner`
+    // ({id, name, phone}); older shapes used delivery_boy / driver.
+    final partnerMap = _safeMap(_orderDetail?['partner']) ??
+        _safeMap(orderMap['delivery_boy']) ??
         _safeMap(orderMap['driver']) ??
         _safeMap(_orderDetail?['delivery_boy']) ??
         _safeMap(_orderDetail?['driver']);
@@ -503,6 +506,14 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           (!widget.order.isDelivery && orderMap['delivery_type'] == null);
     }
     final isDelivery = !isPickup;
+
+    // Express: waterOrderDetail sends `is_express` (and `type == 'express'`).
+    final rawExpress = orderMap['is_express'];
+    final isExpress = rawExpress == true ||
+        rawExpress == 1 ||
+        rawExpress == '1' ||
+        orderMap['type']?.toString().toLowerCase() == 'express' ||
+        (rawExpress == null && widget.order.isExpress);
 
     // Status
     final currentStatus = _parseStatus(orderMap['status'], widget.order.status);
@@ -616,6 +627,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   orderType: isDelivery ? S.of(context).delivery : S.of(context).selfPickup,
                   isDelivery: isDelivery,
                   status: currentStatus,
+                  isExpress: isExpress,
                   addressTitle: addressTitle,
                   fullAddress: fullAddress,
                   onChat: () => _openUserChat(
@@ -842,11 +854,13 @@ class _CustomerCard extends StatelessWidget {
     required this.orderType,
     required this.isDelivery,
     required this.status,
+    this.isExpress = false,
     this.addressTitle,
     this.fullAddress,
     this.onChat,
   });
 
+  final bool isExpress;
   final String customerName;
   final String customerPhone;
   final String orderId;
@@ -1065,7 +1079,17 @@ class _CustomerCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 flex: 2,
-                child: _SoftPill(
+                // Figma "Express Delivery Details": the yellow tag takes the
+                // place of the delivery-type pill (is_express from the API).
+                child: isExpress
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 18),
+                        child: Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: _ExpressTag(),
+                        ),
+                      )
+                    : _SoftPill(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1211,6 +1235,32 @@ class _CustomerCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _ExpressTag extends StatelessWidget {
+  const _ExpressTag();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFD33D),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        S.of(context).waterExpressDelivery,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Color(0xFF3A2A00),
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
+          height: 1.2,
+        ),
       ),
     );
   }
@@ -1546,35 +1596,18 @@ class _DeliveryPartnerCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: const Color(0xFFFFE0D0),
-                child: Text(
-                  initials.isEmpty ? 'D' : initials,
-                  style: const TextStyle(
-                    color: OrderDetailsView._orange,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                ),
+          // No presence field in waterOrderDetail, so no green "online" dot.
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: const Color(0xFFFFE0D0),
+            child: Text(
+              initials.isEmpty ? 'D' : initials,
+              style: const TextStyle(
+                color: OrderDetailsView._orange,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
               ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2EAD5B),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -3649,5 +3649,9 @@
   "hcfIssueCoveredHeader": "ISSUES COVERED:",
   "@hcfIssueCoveredHeader": {},
   "hcfBusinessReview": "Business Review",
-  "@hcfBusinessReview": {}
+  "@hcfBusinessReview": {},
+  "todaysDeliveries": "Today's Deliveries",
+  "wfDeliveryPartners": "Delivery Partners",
+  "wfSearchDeliveryPartner": "Search delivery partner",
+  "wfAddDeliveryPartner": "Add Delivery Partner"
 }

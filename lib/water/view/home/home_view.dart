@@ -152,9 +152,17 @@ class _HomeViewState extends State<HomeView> {
                   onToggle: controller.toggleStore,
                 ),
                 const SizedBox(height: 12),
+                // Figma: Today's Orders / Today's Deliveries. Gas has no
+                // delivery calendar, so its second card stays New Orders.
                 _MetricsGrid(
-                  newOrders: controller.newOrdersCount,
-                  subscriptionOrders: controller.subscriptionOrdersCount,
+                  firstCount: controller.todayOrdersCount,
+                  firstLabel: S.of(context).todaysOrders,
+                  secondCount: WaterApi.isGas
+                      ? controller.newOrdersCount
+                      : controller.todayDeliveriesCount,
+                  secondLabel: WaterApi.isGas
+                      ? S.of(context).waterNewOrders
+                      : S.of(context).todaysDeliveries,
                   preparing: controller.preparingOrdersCount,
                   ready: controller.readyOrdersCount,
                 ),
@@ -678,14 +686,18 @@ class _StoreStatusCard extends StatelessWidget {
 
 class _MetricsGrid extends StatelessWidget {
   const _MetricsGrid({
-    this.newOrders = '0',
-    this.subscriptionOrders = '0',
+    required this.firstCount,
+    required this.firstLabel,
+    required this.secondCount,
+    required this.secondLabel,
     this.preparing = '0',
     this.ready = '0',
   });
 
-  final String newOrders;
-  final String subscriptionOrders;
+  final String firstCount;
+  final String firstLabel;
+  final String secondCount;
+  final String secondLabel;
   final String preparing;
   final String ready;
 
@@ -698,8 +710,8 @@ class _MetricsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _MetricCard(
-                count: newOrders,
-                label: S.of(context).waterNewOrders,
+                count: firstCount,
+                label: firstLabel,
                 badgeGradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -713,8 +725,8 @@ class _MetricsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                count: subscriptionOrders,
-                label: S.of(context).waterSubscriptionOrders,
+                count: secondCount,
+                label: secondLabel,
                 badgeColor: const Color(0xFFB2DFDB),
                 countColor: const Color(0xFF00695C),
               ),
@@ -1478,7 +1490,12 @@ class _OrderCard extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _OrderTypeBadge(isDelivery: order.isDelivery),
+                            // Figma: express orders show a yellow
+                            // "Express Delivery" tag in place of "Delivery".
+                            if (order.isExpress)
+                              const _ExpressTag()
+                            else
+                              _OrderTypeBadge(isDelivery: order.isDelivery),
                             Text(
                               ' • ',
                               style: TextStyle(
@@ -1952,6 +1969,31 @@ class _OrderCard extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpressTag extends StatelessWidget {
+  const _ExpressTag();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFD33D),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        S.of(context).waterExpressDelivery,
+        softWrap: false,
+        style: const TextStyle(
+          color: Color(0xFF3A2A00),
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
+          height: 1.2,
         ),
       ),
     );

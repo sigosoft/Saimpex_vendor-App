@@ -34,11 +34,16 @@ class WorkingHoursView extends StatefulWidget {
 class _WorkingHoursViewState extends State<WorkingHoursView> {
   bool open24Hours = false;
 
-  // "-" until profile.working_hours loads: every day showed sample hours
-  // (Mon-Sat 08:00 AM - 10:00 PM, Sunday closed) when it was empty.
+  // Placeholders until GET profile sends the working hours; they show "-"
+  // (known: false), never sample hours (Figma water check, 6 Nov).
   final schedule = [
-    for (final day in const ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
-      _DayHours(day: day, hours: '-'),
+    _DayHours(day: 'Monday', hours: '', known: false),
+    _DayHours(day: 'Tuesday', hours: '', known: false),
+    _DayHours(day: 'Wednesday', hours: '', known: false),
+    _DayHours(day: 'Thursday', hours: '', known: false),
+    _DayHours(day: 'Friday', hours: '', known: false),
+    _DayHours(day: 'Saturday', hours: '', known: false),
+    _DayHours(day: 'Sunday', hours: '', closed: true, known: false),
   ];
 
   @override
@@ -139,14 +144,12 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
         );
       } else {
         all24 = false;
-        String? open = h.openingTime;
-        String? close = h.closingTime;
+        String open = h.openingTime ?? '08:00';
+        String close = h.closingTime ?? '22:00';
         if (h.timeSlots != null && h.timeSlots!.isNotEmpty) {
           open = h.timeSlots!.first.openTime ?? open;
           close = h.timeSlots!.first.closeTime ?? close;
         }
-        // No made-up 08:00 - 22:00 when the server sends no times: keep "-".
-        if (open == null || close == null) continue;
         final startFormatted = _formatTimePart(open);
         final endFormatted = _formatTimePart(close);
         schedule[i] = _DayHours(
@@ -385,7 +388,7 @@ class _WorkingHoursViewState extends State<WorkingHoursView> {
     final todayHours = open24Hours
         ? _ltr(WorkingHoursView.allDayHours)
         : _hoursLabel(context, today);
-    final todayClosed = !open24Hours && today.closed;
+    final todayClosed = !open24Hours && today.known && today.closed;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
@@ -492,6 +495,7 @@ String _dayLabel(BuildContext context, int index) {
 /// Display label for a day's hours. Time ranges are wrapped in an LTR
 /// embedding so "08:00 AM - 10:00 PM" keeps its order inside RTL (Arabic) text.
 String _hoursLabel(BuildContext context, _DayHours item) {
+  if (!item.known) return '-';
   if (item.open24Hours) return S.of(context).waterOpen24Hours;
   if (item.closed) return S.of(context).waterClosed;
   return _ltr(item.hours);
@@ -507,8 +511,12 @@ class _DayHours {
     this.open24Hours = false,
     this.startTime = '08:00',
     this.endTime = '22:00',
+    this.known = true,
   });
 
+  /// False for the placeholder rows shown before (or without) the API
+  /// sending this day: they show "-" instead of sample hours.
+  final bool known;
   final String day;
   final String hours;
   final bool closed;
@@ -530,6 +538,7 @@ class _DayHours {
       open24Hours: open24Hours ?? this.open24Hours,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
+      known: true,
     );
   }
 }
@@ -696,7 +705,7 @@ class _DayRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final closed = hours == null && item.closed;
+    final closed = hours == null && item.known && item.closed;
     final label = hours != null ? _ltr(hours!) : _hoursLabel(context, item);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),

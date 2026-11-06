@@ -3559,5 +3559,9 @@
   "hcfIssueCoveredHeader": "الآفات المشمولة:",
   "@hcfIssueCoveredHeader": {},
   "hcfBusinessReview": "تقييم النشاط التجاري",
-  "@hcfBusinessReview": {}
+  "@hcfBusinessReview": {},
+  "todaysDeliveries": "توصيلات اليوم",
+  "wfDeliveryPartners": "شركاء التوصيل",
+  "wfSearchDeliveryPartner": "ابحث عن شريك توصيل",
+  "wfAddDeliveryPartner": "إضافة شريك توصيل"
 }

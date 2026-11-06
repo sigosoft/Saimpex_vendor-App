@@ -2858,6 +2858,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "toDate": MessageLookupByLibrary.simpleMessage("To Date"),
     "toPay": MessageLookupByLibrary.simpleMessage("To Pay"),
     "today": MessageLookupByLibrary.simpleMessage("Today"),
+    "todaysDeliveries": MessageLookupByLibrary.simpleMessage(
+      "Today\'s Deliveries",
+    ),
     "todaysOrders": MessageLookupByLibrary.simpleMessage("Today\'s Orders"),
     "topSellingDishes": MessageLookupByLibrary.simpleMessage(
       "Top Selling Dishes",
@@ -3629,6 +3632,15 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "We’ve sent a verification code to your WhatsApp",
         ),
+    "wfAddDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "Add Delivery Partner",
+    ),
+    "wfDeliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Delivery Partners",
+    ),
+    "wfSearchDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "Search delivery partner",
+    ),
     "whatDoYouNeedToday": MessageLookupByLibrary.simpleMessage(
       "What do you need today?",
     ),

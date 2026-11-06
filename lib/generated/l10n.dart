@@ -15525,6 +15525,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Today's Deliveries`
+  String get todaysDeliveries {
+    return Intl.message(
+      'Today\'s Deliveries',
+      name: 'todaysDeliveries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partners`
+  String get wfDeliveryPartners {
+    return Intl.message(
+      'Delivery Partners',
+      name: 'wfDeliveryPartners',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search delivery partner`
+  String get wfSearchDeliveryPartner {
+    return Intl.message(
+      'Search delivery partner',
+      name: 'wfSearchDeliveryPartner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Delivery Partner`
+  String get wfAddDeliveryPartner {
+    return Intl.message(
+      'Add Delivery Partner',
+      name: 'wfAddDeliveryPartner',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
