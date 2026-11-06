@@ -3343,5 +3343,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "loginEnterUsername": "Veuillez saisir votre nom d'utilisateur",
+  "@loginEnterUsername": {},
+  "loginEnterPassword": "Veuillez saisir votre mot de passe",
+  "@loginEnterPassword": {},
+  "loginSuccessful": "Connexion réussie",
+  "@loginSuccessful": {},
+  "loginFailed": "Échec de la connexion. Veuillez réessayer.",
+  "@loginFailed": {},
+  "requestTimedOut": "La requête a expiré. Veuillez réessayer.",
+  "@requestTimedOut": {}
 }

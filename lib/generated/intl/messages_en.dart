@@ -1355,7 +1355,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Loading location...",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "loginEnterPassword": MessageLookupByLibrary.simpleMessage(
+      "Please enter your password",
+    ),
+    "loginEnterUsername": MessageLookupByLibrary.simpleMessage(
+      "Please enter your username",
+    ),
+    "loginFailed": MessageLookupByLibrary.simpleMessage(
+      "Login failed. Please try again.",
+    ),
     "loginOrSignUp": MessageLookupByLibrary.simpleMessage("Login or Sign up"),
+    "loginSuccessful": MessageLookupByLibrary.simpleMessage("Login successful"),
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "lunchMenu": MessageLookupByLibrary.simpleMessage("Lunch Menu"),
     "mAgo": MessageLookupByLibrary.simpleMessage("m ago"),
@@ -2345,6 +2355,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "requestRejected": MessageLookupByLibrary.simpleMessage("Rejected"),
     "requestSentForReview": MessageLookupByLibrary.simpleMessage(
       "Sent. SAIMPEX will review it.",
+    ),
+    "requestTimedOut": MessageLookupByLibrary.simpleMessage(
+      "The request timed out. Please try again.",
     ),
     "resendCodeIn30Sec": MessageLookupByLibrary.simpleMessage(
       "Resend code in 30 sec",

@@ -14482,6 +14482,56 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Please enter your username`
+  String get loginEnterUsername {
+    return Intl.message(
+      'Please enter your username',
+      name: 'loginEnterUsername',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your password`
+  String get loginEnterPassword {
+    return Intl.message(
+      'Please enter your password',
+      name: 'loginEnterPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login successful`
+  String get loginSuccessful {
+    return Intl.message(
+      'Login successful',
+      name: 'loginSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login failed. Please try again.`
+  String get loginFailed {
+    return Intl.message(
+      'Login failed. Please try again.',
+      name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request timed out. Please try again.`
+  String get requestTimedOut {
+    return Intl.message(
+      'The request timed out. Please try again.',
+      name: 'requestTimedOut',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
