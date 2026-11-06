@@ -3325,5 +3325,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todaysDeliveries": "توصيلات اليوم",
+  "wfDeliveryPartners": "شركاء التوصيل",
+  "wfSearchDeliveryPartner": "ابحث عن شريك توصيل",
+  "wfAddDeliveryPartner": "إضافة شريك توصيل"
 }

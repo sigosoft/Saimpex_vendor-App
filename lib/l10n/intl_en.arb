@@ -3379,5 +3379,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "todaysDeliveries": "Today's Deliveries",
+  "wfDeliveryPartners": "Delivery Partners",
+  "wfSearchDeliveryPartner": "Search delivery partner",
+  "wfAddDeliveryPartner": "Add Delivery Partner"
 }

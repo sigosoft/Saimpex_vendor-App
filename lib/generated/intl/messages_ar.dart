@@ -2518,6 +2518,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toPay": MessageLookupByLibrary.simpleMessage("المبلغ المستحق"),
     "today": MessageLookupByLibrary.simpleMessage("اليوم"),
+    "todaysDeliveries": MessageLookupByLibrary.simpleMessage("توصيلات اليوم"),
     "todaysOrders": MessageLookupByLibrary.simpleMessage("طلبات اليوم"),
     "topSellingDishes": MessageLookupByLibrary.simpleMessage(
       "الأطباق الأكثر مبيعاً",
@@ -3260,6 +3261,13 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "لقد أرسلنا رمز التحقق إلى واتساب الخاص بك",
         ),
+    "wfAddDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "إضافة شريك توصيل",
+    ),
+    "wfDeliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
+    "wfSearchDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن شريك توصيل",
+    ),
     "whatDoYouNeedToday": MessageLookupByLibrary.simpleMessage(
       "ماذا تحتاج اليوم؟",
     ),

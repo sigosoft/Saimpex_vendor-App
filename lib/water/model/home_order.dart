@@ -24,6 +24,8 @@ class HomeOrder {
   final bool isDelivery;
   final bool isOnlinePayment;
   final bool isScheduled;
+  /// Express order: `is_express` (order lists) or `type == 'express'` (home).
+  final bool isExpress;
   final String? scheduleDate;
   final String? scheduleTime;
   final String? deliveryPartnerName;
@@ -45,6 +47,7 @@ class HomeOrder {
     required this.isDelivery,
     required this.isOnlinePayment,
     this.isScheduled = false,
+    this.isExpress = false,
     this.scheduleDate,
     this.scheduleTime,
     this.deliveryPartnerName,
@@ -139,6 +142,10 @@ class HomeOrder {
         raw['is_scheduled'] == 1 ||
         raw['is_scheduled'] == true ||
         raw['is_scheduled'] == '1';
+    final isExpress = raw['is_express'] == true ||
+        raw['is_express'] == 1 ||
+        raw['is_express'] == '1' ||
+        '${order.type ?? raw['type'] ?? ''}'.toLowerCase() == 'express';
     final scheduleDate = raw['schedule_date']?.toString();
     final scheduleTime = raw['schedule_time']?.toString();
     final deliveryPartner = order.deliveryBoyName;
@@ -181,6 +188,7 @@ class HomeOrder {
       isDelivery: isDelivery,
       isOnlinePayment: isOnlinePayment,
       isScheduled: isScheduled,
+      isExpress: isExpress,
       scheduleDate: scheduleDate,
       scheduleTime: scheduleTime,
       deliveryPartnerName: deliveryPartner,

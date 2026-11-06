@@ -206,7 +206,7 @@ class _DeliveryBoysViewState extends State<DeliveryBoysView> {
                           fontSize: 13,
                         ),
                         decoration: InputDecoration(
-                          hintText: S.of(context).waterSearchDeliveryBoy,
+                          hintText: S.of(context).wfSearchDeliveryPartner,
                           hintStyle: appFont('Inter', 
                             color: const Color(0xFFA9AEB6),
                             fontWeight: FontWeight.w500,
@@ -345,7 +345,7 @@ class _Header extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                S.of(context).deliveryBoys,
+                S.of(context).wfDeliveryPartners,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: appFont('Inter', 
@@ -377,7 +377,7 @@ class _Header extends StatelessWidget {
                           color: DeliveryBoysView.orange, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        S.of(context).waterAddDeliveryBoy,
+                        S.of(context).wfAddDeliveryPartner,
                         style: appFont('Inter', 
                           color: DeliveryBoysView.orange,
                           fontSize: 12,
