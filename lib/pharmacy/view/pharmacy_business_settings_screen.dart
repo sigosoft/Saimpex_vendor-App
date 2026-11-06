@@ -2,9 +2,9 @@ import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
@@ -259,7 +259,14 @@ class _PharmacyBusinessSettingsScreenState
                 double.tryParse(priceVal?.toString() ?? '')?.toInt();
 
             if (min != null && max != null && price != null) {
-              parsedRanges.add(_Distance(min: min, max: max, price: price));
+              parsedRanges.add(
+                _Distance(
+                  min: min,
+                  max: max,
+                  price: price,
+                  id: int.tryParse(item['id']?.toString() ?? ''),
+                ),
+              );
             }
           }
         }
@@ -268,81 +275,20 @@ class _PharmacyBusinessSettingsScreenState
     });
   }
 
-  Future<bool> _updateBusinessSettings() async {
+  /// Sends one change to the Business Settings API (vendorapp
+  /// `BusinessSettingsController`, the same endpoints as the restaurant
+  /// screen; they work for every vendor type). The screen used to send a
+  /// GET to `businessSettings` with no body, so nothing was ever saved.
+  /// On success the screen shows what the server now has.
+  Future<bool> _save(String endpoint, Map<String, dynamic> body) async {
     showLoadingDialog(context);
     try {
       final token = (await getSavedObject("token"))?.toString() ?? "";
-      if (token.isNotEmpty) {
+      if (token.isNotEmpty && token != "null") {
         DioClient().updateToken(token);
       }
 
-      final savedVendorType = await getSavedObject("vendorType");
-      final savedAppType = await getSavedObject(VendorAppRouter.storageKey);
-      final vendorTypeStr =
-          (savedVendorType != null &&
-              savedVendorType.toString().isNotEmpty &&
-              savedVendorType.toString() != "0")
-          ? savedVendorType.toString()
-          : (savedAppType?.toString().isNotEmpty == true
-                ? savedAppType.toString()
-                : "3");
-      final vendorType = int.tryParse(vendorTypeStr) ?? 3;
-
-      final pricingPayload = _ranges
-          .map(
-            (r) => {
-              "min": r.min,
-              "max": r.max,
-              "price": r.price,
-              "min_distance": r.min,
-              "max_distance": r.max,
-            },
-          )
-          .toList();
-
-      final Map<String, dynamic> body = {
-        "vendor_type": vendorType,
-        "store_status": _storeOpen ? 1 : 0,
-        "store_open": _storeOpen ? 1 : 0,
-        "is_store_open": _storeOpen ? 1 : 0,
-        "accepting_orders": _acceptingOrders ? 1 : 0,
-        "is_accepting_orders": _acceptingOrders ? 1 : 0,
-        "is_busy": _storeBusy ? 1 : 2,
-        "store_busy": _storeBusy ? 1 : 0,
-        "express_available": _expressAvailable ? 1 : 0,
-        "express_delivery": _expressAvailable ? 1 : 0,
-        "is_express": _expressAvailable ? 1 : 0,
-        "pricing": pricingPayload,
-        "distance_ranges": pricingPayload,
-      };
-
-      final url = _getBusinessSettingsUrl();
-      debugPrint(
-        "==================== POST BUSINESS SETTINGS ====================",
-      );
-      debugPrint("API Call: POST $url");
-      debugPrint("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
-      debugPrint("Body: ${jsonEncode(body)}");
-
-      print("==================== POST BUSINESS SETTINGS ====================");
-      print("API Call: POST $url");
-      print("Endpoint: ${ApiEndPoints.pharmacyBusinessSettings}");
-      print("Body: ${jsonEncode(body)}");
-
-      final response = await DioClient().get(
-        ApiEndPoints.pharmacyBusinessSettings,
-        //body: body,
-      );
-
-      debugPrint("Response Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.data}");
-      debugPrint(
-        "================================================================",
-      );
-
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Body: ${response.data}");
-      print("================================================================");
+      final response = await DioClient().post(endpoint, body: body);
 
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -356,77 +302,32 @@ class _PharmacyBusinessSettingsScreenState
               resData['status'] == 1 ||
               resData['status'] == '1');
 
+      if (!mounted) return isSuccess;
       if (isSuccess) {
         HapticFeedback.lightImpact();
-        if (mounted) {
-          String message = 'Business settings updated successfully';
-          if (resData['message'] != null) {
-            final msg = resData['message'];
-            if (msg is Map) {
-              final lang =
-                  FlutterLocalization.instance.currentLocale?.languageCode ??
-                  'en';
-              final key = lang == 'ar'
-                  ? 'message_ar'
-                  : lang == 'fr'
-                  ? 'message_fr'
-                  : 'message_en';
-              if (msg[key] != null) {
-                final raw = msg[key];
-                if (raw is List && raw.isNotEmpty) {
-                  message = raw.first.toString();
-                } else {
-                  message = raw.toString();
-                }
-              }
-            } else if (msg is String) {
-              message = msg;
-            }
-          }
-          showToast(context, message);
-        }
-        return true;
+        _parseAndApplySettings(resData);
+        showToast(context, S.current.waterBusinessSettingsUpdated);
       } else {
-        if (mounted) {
-          final message = resData is Map
-              ? resData['message']?.toString() ??
-                    'Failed to update business settings'
-              : 'Failed to update business settings';
-          showToast(context, message);
-        }
-        return false;
+        showToast(context, S.current.waterFailedToUpdateBusinessSettings);
       }
+      return isSuccess;
     } catch (e) {
+      debugPrint("Business settings save failed ($endpoint): $e");
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
-      }
-      debugPrint(
-        "==================== POST BUSINESS SETTINGS ERROR ====================",
-      );
-      debugPrint("Error: $e");
-      debugPrint(
-        "======================================================================",
-      );
-
-      print(
-        "==================== POST BUSINESS SETTINGS ERROR ====================",
-      );
-      print("Error: $e");
-      print(
-        "======================================================================",
-      );
-
-      if (mounted) {
         showErrorMessage(e);
       }
       return false;
     }
   }
 
+  Future<bool> _saveAvailability(String field, bool on) =>
+      _save(ApiEndPoints.updateStoreAvailability, {field: on ? 1 : 2});
+
   Future<void> _onStoreOpenChanged(bool value) async {
     final previous = _storeOpen;
     setState(() => _storeOpen = value);
-    final success = await _updateBusinessSettings();
+    final success = await _saveAvailability('store_open', value);
     if (!success && mounted) {
       setState(() => _storeOpen = previous);
     }
@@ -435,7 +336,7 @@ class _PharmacyBusinessSettingsScreenState
   Future<void> _onAcceptingOrdersChanged(bool value) async {
     final previous = _acceptingOrders;
     setState(() => _acceptingOrders = value);
-    final success = await _updateBusinessSettings();
+    final success = await _saveAvailability('accepting_orders', value);
     if (!success && mounted) {
       setState(() => _acceptingOrders = previous);
     }
@@ -444,7 +345,7 @@ class _PharmacyBusinessSettingsScreenState
   Future<void> _onStoreBusyChanged(bool value) async {
     final previous = _storeBusy;
     setState(() => _storeBusy = value);
-    final success = await _updateBusinessSettings();
+    final success = await _saveAvailability('is_busy', value);
     if (!success && mounted) {
       setState(() => _storeBusy = previous);
     }
@@ -453,7 +354,9 @@ class _PharmacyBusinessSettingsScreenState
   Future<void> _onExpressAvailableChanged(bool value) async {
     final previous = _expressAvailable;
     setState(() => _expressAvailable = value);
-    final success = await _updateBusinessSettings();
+    final success = await _save(ApiEndPoints.updateExpressDelivery, {
+      'available': value ? 1 : 2,
+    });
     if (!success && mounted) {
       setState(() => _expressAvailable = previous);
     }
@@ -484,7 +387,11 @@ class _PharmacyBusinessSettingsScreenState
     if (added == null || !mounted) return;
     final previous = List<_Distance>.from(_ranges);
     setState(() => _ranges.add(added));
-    final success = await _updateBusinessSettings();
+    final success = await _save(ApiEndPoints.addDeliveryDistance, {
+      'min_km': added.min,
+      'max_km': added.max,
+      'price': added.price,
+    });
     if (!success && mounted) {
       setState(() => _ranges = previous);
     }
@@ -496,9 +403,21 @@ class _PharmacyBusinessSettingsScreenState
       editingIndex: index,
     );
     if (edited == null || !mounted) return;
+    final id = _ranges[index].id;
+    if (id == null) {
+      // A range without a server id can't be updated; reload instead.
+      showToast(context, S.current.waterFailedToUpdateBusinessSettings);
+      _fetchBusinessSettings();
+      return;
+    }
     final previous = List<_Distance>.from(_ranges);
-    setState(() => _ranges[index] = edited);
-    final success = await _updateBusinessSettings();
+    setState(() => _ranges[index] = edited.withId(id));
+    final success = await _save(ApiEndPoints.updateDeliveryDistance, {
+      'id': id,
+      'min_km': edited.min,
+      'max_km': edited.max,
+      'price': edited.price,
+    });
     if (!success && mounted) {
       setState(() => _ranges = previous);
     }
@@ -765,11 +684,21 @@ class _SwitchRow extends StatelessWidget {
 }
 
 class _Distance {
-  const _Distance({required this.min, required this.max, required this.price});
+  const _Distance({
+    required this.min,
+    required this.max,
+    required this.price,
+    this.id,
+  });
 
+  /// Server row id (`distance_ranges[].id`), needed to update a range.
+  final int? id;
   final int min;
   final int max;
   final int price;
+
+  _Distance withId(int id) =>
+      _Distance(min: min, max: max, price: price, id: id);
 }
 
 class _DistanceRange extends StatelessWidget {
