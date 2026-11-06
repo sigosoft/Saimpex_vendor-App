@@ -2394,6 +2394,18 @@ class S {
     );
   }
 
+  /// `{count, plural, =1{1 minute} other{{count} minutes}}`
+  String durationMinutes(int count) {
+    return Intl.plural(
+      count,
+      one: '1 minute',
+      other: '$count minutes',
+      name: 'durationMinutes',
+      desc: '',
+      args: [count],
+    );
+  }
+
   /// `Delivery Partner Accepted`
   String get deliveryPartnerAccepted {
     return Intl.message(

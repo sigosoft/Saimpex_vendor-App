@@ -567,6 +567,8 @@
   "account": "Account",
   "@account": {},
   "myRestaurant": "My Restaurant",
+  "durationMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@durationMinutes": {"placeholders": {"count": {"type": "int"}}},
   "deliveryPartnerAccepted": "Delivery Partner Accepted",
   "deliveryPartnerAcceptedSub": "The order will be picked up shortly",
   "reachedRestaurantTitle": "Reached Restaurant",

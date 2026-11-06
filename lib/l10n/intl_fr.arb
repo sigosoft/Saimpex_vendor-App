@@ -520,6 +520,8 @@
   "account": "Compte",
   "@account": {},
   "myRestaurant": "Mon Restaurant",
+  "durationMinutes": "{count, plural, =0{0 minute} =1{1 minute} other{{count} minutes}}",
+  "@durationMinutes": {"placeholders": {"count": {"type": "int"}}},
   "deliveryPartnerAccepted": "Livreur a accepté",
   "deliveryPartnerAcceptedSub": "La commande sera bientôt récupérée",
   "reachedRestaurantTitle": "Arrivé au restaurant",
