@@ -13,7 +13,6 @@ import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_order_list_item.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_status_tabs.dart';
 import 'package:saimpex_vendor/controller/order_details_controller.dart';
-import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/view/home/widgets/vendor_reject_order_sheet.dart';
 
 import '../../utils/widgets/custom_app_bar.dart';
@@ -176,18 +175,30 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
     _refreshSelectedTabCount();
   }
 
+  /// Every tab badge from the server's per-status counts, as on the home
+  /// (only the open tab was updated, so the others kept old numbers, VA-06).
   void _refreshSelectedTabCount() {
     if (!mounted) return;
-    final totalCount =
-        homeController.homeData?.data?.orders?.total ??
-        homeController.homeData?.data?.orders?.data?.length ??
-        0;
+    final orders = homeController.homeData?.data?.orders;
+    final summary = homeController.homeData?.data?.summary;
+    final searching = homeController.searchController.text.trim().isNotEmpty;
     setState(() {
-      _tabCounts[selectedTab] = totalCount;
+      if (summary != null) {
+        _tabCounts["Pending"] = summary.pendingOrdersCount ?? 0;
+        _tabCounts["Accepted"] = summary.acceptedOrdersCount ?? 0;
+        _tabCounts["Preparing"] = summary.processedOrdersCount ?? 0;
+        _tabCounts["Ready"] = summary.readyOrdersCount ?? 0;
+        _tabCounts["On Going"] = summary.ongoingOrdersCount ?? 0;
+        _tabCounts["Delivered"] = summary.completedOrdersCount ?? 0;
+        _tabCounts["Cancelled"] = summary.cancelledOrdersCount ?? 0;
+      }
+      if (summary == null || searching) {
+        _tabCounts[selectedTab] = orders?.total ?? orders?.data?.length ?? 0;
+      }
     });
   }
 
-  void _handleAcceptOrder(String orderId) {
+  void _handleAcceptOrder(String orderId, {bool print = false}) {
     // Accept & Print didn't pass printAfter, so nothing printed. The tab
     // count drops at the tap and comes back if the server refuses (V-B5).
     Future<void> accept({required bool print}) async {
@@ -215,11 +226,9 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
       }
     }
 
-    showAcceptOrderDialog(
-      context: context,
-      onAccept: () => accept(print: false),
-      onAcceptAndPrint: () => accept(print: true),
-    );
+    // The card has its own Accept & Print, so Accept no longer opens a
+    // second Accept / Accept & Print / Cancel dialog (VA-04).
+    accept(print: print);
   }
 
   Future<void> _handleCancelOrder(String orderId) async {
@@ -426,6 +435,10 @@ class _OrdersViewAllState extends State<OrdersViewAll> {
                                       ),
                                       onAccept: () => _handleAcceptOrder(
                                         order.id?.toString() ?? "",
+                                      ),
+                                      onAcceptAndPrint: () => _handleAcceptOrder(
+                                        order.id?.toString() ?? "",
+                                        print: true,
                                       ),
                                       onReject: () => _handleCancelOrder(
                                         order.id?.toString() ?? "",

@@ -2722,6 +2722,7 @@
   "somethingWentWrong": "حدث خطأ. حاول مرة أخرى.",
   "substitutionEditItems": "تعديل المنتجات",
   "substitutionRemoveItem": "إزالة المنتج",
+  "substitutionChangeQtyOnlyOne": "تم طلب قطعة واحدة فقط، لذا لا يمكن تقليل الكمية. استخدم «إزالة المنتج» بدلاً من ذلك.",
   "substitutionChangeQty": "تغيير الكمية",
   "substitutionSuggest": "اقتراح بديل",
   "substitutionSuggestTitle": "اقتراح بديل",

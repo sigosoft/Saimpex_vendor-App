@@ -2723,6 +2723,7 @@
   "somethingWentWrong": "Une erreur s'est produite. Réessayez.",
   "substitutionEditItems": "Modifier les articles",
   "substitutionRemoveItem": "Retirer",
+  "substitutionChangeQtyOnlyOne": "Une seule unité commandée : la quantité ne peut pas être réduite. Utilisez plutôt « Retirer ».",
   "substitutionChangeQty": "Modifier qté",
   "substitutionSuggest": "Proposer un substitut",
   "substitutionSuggestTitle": "Proposer un substitut",

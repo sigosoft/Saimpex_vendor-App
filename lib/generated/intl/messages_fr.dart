@@ -3070,6 +3070,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "substitutionChangeQty": MessageLookupByLibrary.simpleMessage(
       "Modifier qté",
     ),
+    "substitutionChangeQtyOnlyOne": MessageLookupByLibrary.simpleMessage(
+      "Une seule unité commandée : la quantité ne peut pas être réduite. Utilisez plutôt « Retirer ».",
+    ),
     "substitutionChangeQuantity": MessageLookupByLibrary.simpleMessage(
       "Modifier la quantité",
     ),

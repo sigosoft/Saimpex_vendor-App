@@ -2797,6 +2797,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter Available Quantity",
     ),
     "substitutionChangeQty": MessageLookupByLibrary.simpleMessage("Change Qty"),
+    "substitutionChangeQtyOnlyOne": MessageLookupByLibrary.simpleMessage(
+      "Only 1 was ordered, so the quantity can\'t be lowered. Use \"Remove Item\" instead.",
+    ),
     "substitutionChangeQuantity": MessageLookupByLibrary.simpleMessage(
       "Change Quantity",
     ),

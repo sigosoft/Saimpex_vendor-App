@@ -43,7 +43,8 @@ class HomeController extends GetxController {
   int unreadChatCount = 0;
   int currentOrderStatus = 1;
 
-  bool get isAutoAcceptOrders => (autoAcceptMode ?? 1) == 1;
+  // Manual (2) is the server default; an unknown mode hid the Pending tab.
+  bool get isAutoAcceptOrders => (autoAcceptMode ?? 2) == 1;
 
   @override
   void onInit() {
@@ -153,12 +154,17 @@ class HomeController extends GetxController {
     int limit = 5,
     int page = 1,
     bool isLoadMore = false,
+    bool quiet = false,
   }) async {
     currentOrderStatus = orderStatus;
     try {
       if (!isLoadMore) {
-        isFirstLoadRunning = true;
-        update();
+        // A quiet reload (poll, push, after an action) keeps the list on
+        // screen: the loader replaced it and the list jumped to the top (VA-07).
+        if (!quiet) {
+          isFirstLoadRunning = true;
+          update();
+        }
       } else {
         isLoadMoreRunning = true;
         update();
@@ -242,7 +248,32 @@ class HomeController extends GetxController {
       context,
       orderStatus: currentOrderStatus,
       keyword: searchController.text.trim(),
+      quiet: true,
     );
+  }
+
+  /// Pending (status 1) orders straight from the server, without touching the
+  /// list on screen. The home polls this so a new order shows up even when
+  /// its push never arrives (VA-01). Returns null when the call fails.
+  Future<List<OrderData>?> fetchPendingOrders({int limit = 10}) async {
+    try {
+      final token = await getSavedObject("token");
+      if (token == null || token.toString().isEmpty) return null;
+      DioClient().updateToken(token);
+      final response = await DioClient().get(
+        ApiEndPoints.home,
+        query: {"order_status": 1, "keyword": "", "limit": limit},
+      );
+      if (response.data == null ||
+          response.data['status']?.toString() != "true") {
+        return null;
+      }
+      final model = HomeModel.fromJson(response.data as Map<String, dynamic>?);
+      return model.data?.orders?.data ?? <OrderData>[];
+    } catch (error) {
+      debugPrint("fetchPendingOrders error: $error");
+      return null;
+    }
   }
 
   Future<void> fetchUnreadChatCount() async {
