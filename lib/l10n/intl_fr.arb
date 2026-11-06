@@ -3688,5 +3688,55 @@
     }
   },
   "serviceStepConfirm": "Confirmer",
-  "@serviceStepConfirm": {}
+  "@serviceStepConfirm": {},
+  "itemDetailVariants": "Variantes",
+  "itemDetailAddExtras": "Suppléments",
+  "itemDetailRequired": "Obligatoire",
+  "itemDetailOptional": "Facultatif",
+  "itemDetailSelectCount": "Choisir {count}",
+  "@itemDetailSelectCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailUpToCount": "Jusqu'à {count}",
+  "@itemDetailUpToCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailViewStockHistory": "Voir l'historique du stock",
+  "itemDetailJustNow": "À l'instant",
+  "itemDetailMinutesAgo": "Il y a {count} minutes",
+  "@itemDetailMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailHoursAgo": "Il y a {count} heures",
+  "@itemDetailHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailDaysAgo": "Il y a {count} jours",
+  "@itemDetailDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailCategoryLabel": "Catégorie :",
+  "itemDetailSerialNoLabel": "N° de série :",
+  "itemDetailPrepTimeLabel": "Temps de préparation :",
+  "itemDetailMinShort": "min"
 }

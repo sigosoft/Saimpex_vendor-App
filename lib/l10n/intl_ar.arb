@@ -3687,5 +3687,55 @@
     }
   },
   "serviceStepConfirm": "تأكيد",
-  "@serviceStepConfirm": {}
+  "@serviceStepConfirm": {},
+  "itemDetailVariants": "الأحجام",
+  "itemDetailAddExtras": "إضافات",
+  "itemDetailRequired": "مطلوب",
+  "itemDetailOptional": "اختياري",
+  "itemDetailSelectCount": "اختر {count}",
+  "@itemDetailSelectCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailUpToCount": "حتى {count}",
+  "@itemDetailUpToCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailViewStockHistory": "عرض سجل المخزون",
+  "itemDetailJustNow": "الآن",
+  "itemDetailMinutesAgo": "منذ {count} دقيقة",
+  "@itemDetailMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailHoursAgo": "منذ {count} ساعة",
+  "@itemDetailHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailDaysAgo": "منذ {count} يوم",
+  "@itemDetailDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailCategoryLabel": "الفئة:",
+  "itemDetailSerialNoLabel": "الرقم التسلسلي:",
+  "itemDetailPrepTimeLabel": "وقت التحضير:",
+  "itemDetailMinShort": "د"
 }

@@ -34,6 +34,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
   String? _error;
   RestaurantItemsDetailsModel? _detailsModel;
 
+  /// Raw `data` of the detail response. restaurantCatalogItemDetail sends the
+  /// variants, option groups (sides) and extras here (API formPayload).
+  Map<String, dynamic>? _raw;
+
   @override
   void initState() {
     super.initState();
@@ -112,6 +116,8 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           ? raw
           : (raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{});
 
+      final rawData = map['data'];
+      _raw = rawData is Map ? Map<String, dynamic>.from(rawData) : null;
       _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
       debugPrint(
         '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
@@ -186,7 +192,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                 ),
               ),
               child: Text(
-                S.of(context).rsViewStockHistory,
+                S.of(context).itemDetailViewStockHistory,
                 style: appFont('Rubik', 
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -289,17 +295,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                     width: double.infinity,
                     height: 190,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => noImageBox(
-                      width: double.infinity,
-                      height: 190,
-                      fit: BoxFit.cover,
-                    ),
+                    errorWidget: (_, _, _) => _noImage(),
                   )
-                : noImageBox(
-                    width: double.infinity,
-                    height: 190,
-                    fit: BoxFit.cover,
-                  ),
+                // No sample burger photo for items without an image.
+                : _noImage(),
           ),
           const SizedBox(height: 14),
 
@@ -359,9 +358,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            isAvailable
-                                ? S.of(context).available
-                                : S.of(context).outOfStock,
+                            isAvailable ? S.of(context).availableStatus : S.of(context).outOfStock,
                             style: appFont('Rubik', 
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -387,7 +384,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "${S.of(context).categoryLabel}: ",
+                              text: "${S.of(context).itemDetailCategoryLabel} ",
                               style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF64748B),
@@ -413,7 +410,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "${S.of(context).serialNoLabel}: ",
+                            text: "${S.of(context).itemDetailSerialNoLabel} ",
                             style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
@@ -490,7 +487,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "${S.of(context).preparationTimeLabel}: ",
+                            text: "${S.of(context).itemDetailPrepTimeLabel} ",
                             style: appFont('Rubik', 
                               fontSize: 12,
                               color: const Color(0xFF64748B),
@@ -507,7 +504,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                           ),
                           if (prepTimeStr != "-")
                             TextSpan(
-                              text: " min",
+                              text: " ${S.of(context).itemDetailMinShort}",
                               style: appFont('Rubik', 
                                 fontSize: 12,
                                 color: const Color(0xFF64748B),
@@ -552,7 +549,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
 
                 // Description
                 Text(
-                  S.of(context).description.toUpperCase(),
+                  S.of(context).description,
                   style: appFont('Rubik', 
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -575,6 +572,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               ],
             ),
           ),
+
+          // Variants, sides (option groups) and extras, as in Figma.
+          ..._choiceSections(),
 
           // Edit Item Button
           const SizedBox(height: 16),
@@ -609,25 +609,28 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ),
           ),
 
-          // SALES & PERFORMANCE Section (Dynamic Data from Response)
-          const SizedBox(height: 22),
-          Text(
-            S.of(context).salesPerformanceHeader,
-            style: appFont('Rubik', 
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF4B5563),
-              letterSpacing: 0.5,
+          // SALES & PERFORMANCE: only when the endpoint sends the figures
+          // (restaurantCatalogItemDetail has none; showing 0s would be wrong).
+          if (details.totalOrders != null) ...[
+            const SizedBox(height: 22),
+            Text(
+              S.of(context).salesPerformance,
+              style: appFont('Rubik',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF4B5563),
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          _statsGrid(
-            totalOrders: _toInt(details.totalOrders?.toString()),
-            totalRevenue: details.totalPriceAfterCommission ?? 0,
-            avgRating: _toDouble(details.avgRating),
-            totalRatings: _toInt(details.totalRatings?.toString()),
-            lastPurchaseAgo: _timeAgo(details.lastOrderDate),
-          ),
+            const SizedBox(height: 10),
+            _statsGrid(
+              totalOrders: _toInt(details.totalOrders?.toString()),
+              totalRevenue: details.totalPriceAfterCommission ?? 0,
+              avgRating: _toDouble(details.avgRating),
+              totalRatings: _toInt(details.totalRatings?.toString()),
+              lastPurchaseAgo: _timeAgo(details.lastOrderDate),
+            ),
+          ],
 
           const SizedBox(height: 20),
         ],
@@ -672,13 +675,153 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     );
   }
 
+  Widget _noImage() => Container(
+    width: double.infinity,
+    height: 190,
+    color: const Color(0xFFF3F4F6),
+    alignment: Alignment.center,
+    child: const Icon(Icons.restaurant, size: 48, color: Color(0xFF9CA3AF)),
+  );
+
+  List<Map<String, dynamic>> _maps(dynamic list) => list is List
+      ? list.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
+      : <Map<String, dynamic>>[];
+
+  String? _imageUrl(dynamic v) {
+    final s = v?.toString().trim() ?? '';
+    if (s.isEmpty || s == 'null') return null;
+    return s.startsWith('http') ? s : ApiConfigs.IMAGE_URL + s;
+  }
+
+  String _money(dynamic v) {
+    final d = double.tryParse('${v ?? ''}');
+    if (d == null) return '-';
+    return d == d.roundToDouble() ? d.toInt().toString() : d.toStringAsFixed(2);
+  }
+
+  /// "Required · Select 1", "Optional · Choose up to 3", or just the
+  /// requirement when the API sets no count.
+  String _rule(String? requirement, {int? min, int? max}) {
+    final s = S.of(context);
+    final req = requirement == 'required'
+        ? s.itemDetailRequired
+        : s.itemDetailOptional;
+    String? count;
+    if (min != null && max != null && min > 0 && min == max) {
+      count = s.itemDetailSelectCount('$min');
+    } else if (max != null && max > 0) {
+      count = s.itemDetailUpToCount('$max');
+    } else if (min != null && min > 0) {
+      count = s.itemDetailSelectCount('$min');
+    }
+    return count == null ? req : '$req · $count';
+  }
+
+  /// Variants, option groups (e.g. "Choose Your Side") and extras from
+  /// restaurantCatalogItemDetail. Blocks without rows are not shown.
+  List<Widget> _choiceSections() {
+    final raw = _raw;
+    if (raw == null) return const [];
+    final s = S.of(context);
+    final out = <Widget>[];
+
+    void section(String title, String badge, bool required, List<Widget> rows) {
+      if (rows.isEmpty) return;
+      out
+        ..add(const SizedBox(height: 18))
+        ..add(
+          _sectionHeaderWithBadge(
+            title: title,
+            badgeText: badge,
+            badgeBg: required
+                ? const Color(0xFFFFEDD5)
+                : const Color(0xFFE0F2FE),
+            badgeTextColor: required
+                ? const Color(0xFFEA580C)
+                : const Color(0xFF0284C7),
+          ),
+        )
+        ..add(const SizedBox(height: 10))
+        ..addAll(rows);
+    }
+
+    final variants = _maps(raw['variants']);
+    final variantRequired = variants.any(
+      (v) => v['selection_requirement'] == 'required',
+    );
+    final groupName = raw['variant_group_name']?.toString().trim() ?? '';
+    section(
+      groupName.isNotEmpty ? groupName : s.itemDetailVariants,
+      // A variant is a single choice: the customer picks one.
+      _rule(variantRequired ? 'required' : 'optional', min: 1, max: 1),
+      variantRequired,
+      [
+        for (final v in variants)
+          _optionCard(
+            title: '${v['name'] ?? '-'}',
+            price: '${_money(v['price'])} MRU',
+            networkImage: _imageUrl(v['image_url']),
+          ),
+      ],
+    );
+
+    for (final g in _maps(raw['option_groups'])) {
+      final required = g['selection_requirement'] == 'required';
+      section(
+        '${g['name'] ?? ''}'.trim().isEmpty ? '-' : '${g['name']}',
+        _rule(
+          '${g['selection_requirement']}',
+          min: int.tryParse('${g['min_selections']}'),
+          max: int.tryParse('${g['max_selections']}'),
+        ),
+        required,
+        [
+          for (final o in _maps(g['options']))
+            _optionCard(
+              title: '${o['name'] ?? '-'}',
+              price: '+${_money(o['additional_price'])} MRU',
+              isAvailable: '${o['available_status']}' == '1',
+              networkImage: _imageUrl(o['image_url']),
+            ),
+        ],
+      );
+    }
+
+    final extras = raw['extras'] is Map
+        ? Map<String, dynamic>.from(raw['extras'] as Map)
+        : <String, dynamic>{};
+    section(
+      s.itemDetailAddExtras,
+      _rule(
+        '${extras['selection_requirement']}',
+        max: int.tryParse('${extras['max_selections']}'),
+      ),
+      extras['selection_requirement'] == 'required',
+      [
+        for (final e in _maps(extras['items']))
+          _optionCard(
+            title: '${e['name'] ?? '-'}',
+            price: '+${_money(e['additional_price'])} MRU',
+            isAvailable: '${e['available_status']}' == '1',
+            networkImage: _imageUrl(e['image_url']),
+          ),
+      ],
+    );
+    return out;
+  }
+
+  /// One variant / option / extra row. [isAvailable] null hides the
+  /// availability dot (variants carry no availability in the API).
   Widget _optionCard({
     required String title,
     required String price,
-    required bool isAvailable,
-    String? assetImage,
+    bool? isAvailable,
     String? networkImage,
   }) {
+    const placeholder = ColoredBox(
+      color: Color(0xFFF3F4F6),
+      child: Icon(Icons.restaurant, size: 20, color: Color(0xFF9CA3AF)),
+    );
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -698,13 +841,9 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   ? CachedNetworkImage(
                       imageUrl: networkImage,
                       fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => (assetImage != null
-                        ? Image.asset(assetImage, fit: BoxFit.cover)
-                        : noImageBox()),
+                      errorWidget: (_, _, _) => placeholder,
                     )
-                  : (assetImage != null
-                      ? Image.asset(assetImage, fit: BoxFit.cover)
-                      : noImageBox()),
+                  : placeholder,
             ),
           ),
           const SizedBox(width: 12),
@@ -726,35 +865,37 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
               color: const Color(0xFFFF5216),
             ),
           ),
-          const SizedBox(width: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: isAvailable
-                      ? const Color(0xFF16A34A)
-                      : const Color(0xFFDC2626),
-                  shape: BoxShape.circle,
+          if (isAvailable != null) ...[
+            const SizedBox(width: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: isAvailable
+                        ? const Color(0xFF16A34A)
+                        : const Color(0xFFDC2626),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                isAvailable
-                                ? S.of(context).available
-                                : S.of(context).outOfStock,
-                style: appFont('Rubik', 
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: isAvailable
-                      ? const Color(0xFF16A34A)
-                      : const Color(0xFFDC2626),
+                const SizedBox(width: 4),
+                Text(
+                  isAvailable
+                      ? S.of(context).availableStatus
+                      : S.of(context).outOfStock,
+                  style: appFont('Rubik',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: isAvailable
+                        ? const Color(0xFF16A34A)
+                        : const Color(0xFFDC2626),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -853,9 +994,16 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     return '—';
   }
 
+  /// `name_fr` / `name_ar` (or `description_*`) from the raw response in
+  /// the app language, falling back to English.
+  String? _rawLocalized(String field, String lang) {
+    if (lang != 'fr' && lang != 'ar') return null;
+    final v = _raw?['${field}_$lang']?.toString().trim() ?? '';
+    return v.isEmpty || v == 'null' ? null : v;
+  }
+
   String _pickMenuName(RestaurantMenu menu, String lang) {
-    // This API model only exposes English fields for menu items.
-    return menu.nameEn ?? '';
+    return _rawLocalized('name', lang) ?? menu.nameEn ?? '';
   }
 
   String _pickCategoryName(RestaurantMenu menu, String lang) {
@@ -866,11 +1014,11 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
   }
 
   String _pickDescription(RestaurantMenu menu, String lang) {
-    return menu.descriptionEn ?? '';
+    return _rawLocalized('description', lang) ?? menu.descriptionEn ?? '';
   }
 
   String _formatPrepTime(String? raw) {
-    if (raw == null || raw.trim().isEmpty) return "7";
+    if (raw == null || raw.trim().isEmpty) return "-";
     final trimmed = raw.trim();
     if (trimmed.contains(':')) {
       final parts = trimmed.split(':');
@@ -935,14 +1083,10 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       final dt = DateTime.parse(date);
       final diff = DateTime.now().difference(dt);
       if (diff.inSeconds < 0) return "-";
-      if (diff.inMinutes < 1) return S.of(context).cleaningJustNow;
-      if (diff.inHours < 1) {
-        return S.of(context).cleaningMinutesAgoCount(diff.inMinutes);
-      }
-      if (diff.inHours < 24) {
-        return S.of(context).cleaningHoursAgoCount(diff.inHours);
-      }
-      if (diff.inDays < 7) return S.of(context).cleaningDaysAgoCount(diff.inDays);
+      if (diff.inMinutes < 1) return S.of(context).itemDetailJustNow;
+      if (diff.inHours < 1) return S.of(context).itemDetailMinutesAgo("${diff.inMinutes}");
+      if (diff.inHours < 24) return S.of(context).itemDetailHoursAgo("${diff.inHours}");
+      if (diff.inDays < 7) return S.of(context).itemDetailDaysAgo("${diff.inDays}");
       return _formatDateTime(date);
     } catch (_) {
       return "-";

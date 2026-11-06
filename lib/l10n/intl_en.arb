@@ -3781,5 +3781,55 @@
     }
   },
   "serviceStepConfirm": "Confirm",
-  "@serviceStepConfirm": {}
+  "@serviceStepConfirm": {},
+  "itemDetailVariants": "Variants",
+  "itemDetailAddExtras": "Add Extras",
+  "itemDetailRequired": "Required",
+  "itemDetailOptional": "Optional",
+  "itemDetailSelectCount": "Select {count}",
+  "@itemDetailSelectCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailUpToCount": "Choose up to {count}",
+  "@itemDetailUpToCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailViewStockHistory": "View Stock History",
+  "itemDetailJustNow": "Just now",
+  "itemDetailMinutesAgo": "{count} minutes ago",
+  "@itemDetailMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailHoursAgo": "{count} hours ago",
+  "@itemDetailHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailDaysAgo": "{count} days ago",
+  "@itemDetailDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "itemDetailCategoryLabel": "Category:",
+  "itemDetailSerialNoLabel": "Serial No:",
+  "itemDetailPrepTimeLabel": "Preparation Time:",
+  "itemDetailMinShort": "min"
 }
