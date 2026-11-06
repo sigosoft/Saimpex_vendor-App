@@ -17,6 +17,8 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
+import 'package:saimpex_vendor/water/model/home_order.dart';
+import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../utils/utils.dart';
 import '../../utils/vendor_app_router.dart';
@@ -479,8 +481,33 @@ class FCM {
           final appType = VendorAppTypeX.fromStorage(
             (await getSavedObject(VendorAppRouter.storageKey))?.toString(),
           );
+          // "View order" only went to the home; open the order itself
+          // (VA-15 grocery and water, VA-21 pharmacy).
+          final openOrderId = (orderData['orderId'] ?? '').trim();
           if (appType != VendorAppType.groceryRestaurant) {
             await VendorAppRouter.goToSelectedApp(type: appType);
+            if (appType == VendorAppType.water && openOrderId.isNotEmpty) {
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (Get.context == null) return;
+                Get.to(
+                  () => OrderDetailsView(
+                    // Only the id is known here; the screen loads the order.
+                    order: HomeOrder(
+                      customerName: '',
+                      orderType: '',
+                      orderId: orderData['orderNumber'] ?? '',
+                      timeAgo: '',
+                      itemLabel: '',
+                      paymentLabel: '',
+                      isDelivery: true,
+                      isOnlinePayment: false,
+                      rawId: openOrderId,
+                    ),
+                    orderId: openOrderId,
+                  ),
+                );
+              });
+            }
             return;
           }
           if (Get.isRegistered<HomeController>()) {
@@ -489,6 +516,12 @@ class FCM {
             Get.put(HomeController()).targetOrderStatusTab = targetTab;
           }
           Get.offAll(() => Home());
+          if (openOrderId.isNotEmpty) {
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (Get.context == null) return;
+              Get.to(() => VendorOrderDetails(orderId: openOrderId));
+            });
+          }
         }
       });
     } else {
