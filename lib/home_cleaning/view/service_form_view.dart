@@ -318,7 +318,7 @@ class _ServiceFormViewState extends State<ServiceFormView> {
           children: [
             Text(s.serviceImage, style: _t(13, FontWeight.w600, _muted)),
             const SizedBox(height: 8),
-            _imageBox(file: _image, url: _imageUrl, height: 160, onTap: () async {
+            _imageBox(file: _image, url: _imageUrl, height: 160, hint: s.cleaningImageFormatsHint, onTap: () async {
               final f = await _pick();
               if (f != null) setState(() => _image = f);
             }),
@@ -382,6 +382,13 @@ class _ServiceFormViewState extends State<ServiceFormView> {
                 _addButton(s.addAddOn, () => _editRow(_addons, kind: _RowKind.addon)),
               ]),
               _section(s.homeWorkplacePricing, [
+                // Figma car wash: a "Distance Based" strip over the ranges.
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(color: _field, borderRadius: BorderRadius.circular(8)),
+                  child: Text(s.cwfDistanceBased, style: _t(12, FontWeight.w600, _orange)),
+                ),
+                const SizedBox(height: 6),
                 Text(s.homeWorkplacePricingHelp, style: _t(12, FontWeight.w400, _muted)),
                 const SizedBox(height: 8),
                 for (var i = 0; i < _distances.length; i++)
@@ -418,7 +425,8 @@ class _ServiceFormViewState extends State<ServiceFormView> {
                   ),
                   child: _saving
                       ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : Text(widget.initial == null ? s.addService : s.saveChanges, style: _t(15, FontWeight.w700, Colors.white)),
+                      // Figma car wash Add Service: Reset / Add.
+                      : Text(widget.initial == null ? (_laundry ? s.addService : s.add) : s.saveChanges, style: _t(15, FontWeight.w700, Colors.white)),
                 ),
               ),
             ]),
@@ -529,7 +537,7 @@ Widget _thumb(File? file, String? url) {
   return const ColoredBox(color: _field, child: Icon(Icons.image_outlined, color: _muted));
 }
 
-Widget _imageBox({File? file, String? url, required double height, required VoidCallback onTap}) => InkWell(
+Widget _imageBox({File? file, String? url, required double height, String? hint, required VoidCallback onTap}) => InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -547,12 +555,22 @@ Widget _imageBox({File? file, String? url, required double height, required Void
                   const Icon(Icons.add_a_photo_outlined, color: _orange, size: 28),
                   const SizedBox(height: 6),
                   Text(S.of(context).tapToUploadImage, style: _t(13, FontWeight.w600, _ink)),
+                  if (hint != null) ...[
+                    const SizedBox(height: 2),
+                    Text(hint, style: _t(11, FontWeight.w400, _muted)),
+                  ],
                 ]),
               ),
       ),
     );
 
 enum _RowKind { garment, vehicle, addon, distance }
+
+String _unitName(S s, String? unit) => switch (unit) {
+      'kg' => s.unitKg,
+      'metre' => s.unitMetre,
+      _ => s.unitPiece,
+    };
 
 class _RowSheet extends StatefulWidget {
   const _RowSheet({required this.kind, this.initial, required this.pick});
@@ -613,6 +631,36 @@ class _RowSheetState extends State<_RowSheet> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
         );
     Widget gap() => const SizedBox(height: 10);
+    // Car wash sheets (Figma Add Vehicle Type / Add-On Services / Add
+    // Distance Range): a label over each field and Cancel / Add buttons.
+    // Laundry Add Item (Figma): labels too, with a single Add button.
+    final labelled = widget.kind != _RowKind.garment;
+    final garment = widget.kind == _RowKind.garment;
+    Widget label(String text) => labelled || garment
+        ? Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(text, style: _t(13, FontWeight.w600, _ink)))
+        : const SizedBox.shrink();
+    final canSubmit = _ready;
+    void submit() => Navigator.of(context).pop(_Row(
+          name: _name.text.trim(),
+          unit: widget.kind == _RowKind.garment ? _unit : null,
+          detail: widget.kind == _RowKind.addon ? _detail.text.trim() : null,
+          price: double.tryParse(_price.text),
+          min: _distance ? double.tryParse(_min.text) : null,
+          max: _distance ? double.tryParse(_max.text) : null,
+          imagePath: widget.initial?.imagePath,
+          imageUrl: widget.initial?.imageUrl,
+        )..imageFile = _file);
+    final submitButton = ElevatedButton(
+      onPressed: canSubmit ? submit : null,
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        backgroundColor: _orange,
+        disabledBackgroundColor: _orange.withValues(alpha: 0.4),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: Text(widget.initial == null ? s.add : s.saveChanges, style: _t(15, FontWeight.w700, Colors.white)),
+    );
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -625,11 +673,13 @@ class _RowSheetState extends State<_RowSheet> {
               IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close)),
             ]),
             if (!_distance) ...[
-              _imageBox(file: _file, url: widget.initial?.imageUrl, height: 120, onTap: () async {
+              label(s.itemImage),
+              _imageBox(file: _file, url: widget.initial?.imageUrl, height: 120, hint: s.cleaningImageFormatsHint, onTap: () async {
                 final f = await widget.pick();
                 if (f != null) setState(() => _file = f);
               }),
               gap(),
+              label(widget.kind == _RowKind.vehicle ? s.cwfTypeName : s.itemFormItemName),
               TextField(
                 controller: _name,
                 onChanged: (_) => setState(() {}),
@@ -642,6 +692,7 @@ class _RowSheetState extends State<_RowSheet> {
             ],
             if (widget.kind == _RowKind.garment) ...[
               gap(),
+              label(s.pricingUnit),
               DropdownButtonFormField<String>(
                 initialValue: _unit,
                 items: [
@@ -655,59 +706,64 @@ class _RowSheetState extends State<_RowSheet> {
             ],
             if (widget.kind == _RowKind.addon) ...[
               gap(),
+              label(s.cleaningShortDescription),
               TextField(controller: _detail, maxLines: 2, decoration: deco(s.addOnDescriptionHint)),
             ],
             if (_distance) ...[
-              Row(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
-                  child: TextField(
-                    controller: _min,
-                    onChanged: (_) => setState(() {}),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: deco(s.minKm, suffix: 'km'),
-                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                    label(s.waterMinimumDistance),
+                    TextField(
+                      controller: _min,
+                      onChanged: (_) => setState(() {}),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: deco(s.minKm, suffix: 'km'),
+                    ),
+                  ]),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: TextField(
-                    controller: _max,
-                    onChanged: (_) => setState(() {}),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: deco(s.maxKm, suffix: 'km'),
-                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                    label(s.waterMaximumDistance),
+                    TextField(
+                      controller: _max,
+                      onChanged: (_) => setState(() {}),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: deco(s.maxKm, suffix: 'km'),
+                    ),
+                  ]),
                 ),
               ]),
             ],
             gap(),
+            label(s.price),
             TextField(
               controller: _price,
               onChanged: (_) => setState(() {}),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: deco(s.price, suffix: 'MRU'),
+              // Laundry item: "MRU / piece" (Figma MRU/Item).
+              decoration: deco(s.price, suffix: garment ? s.mruPerUnit(_unitName(s, _unit)) : 'MRU'),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: !_ready
-                  ? null
-                  : () => Navigator.of(context).pop(_Row(
-                        name: _name.text.trim(),
-                        unit: widget.kind == _RowKind.garment ? _unit : null,
-                        detail: widget.kind == _RowKind.addon ? _detail.text.trim() : null,
-                        price: double.tryParse(_price.text),
-                        min: _distance ? double.tryParse(_min.text) : null,
-                        max: _distance ? double.tryParse(_max.text) : null,
-                        imagePath: widget.initial?.imagePath,
-                        imageUrl: widget.initial?.imageUrl,
-                      )..imageFile = _file),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                backgroundColor: _orange,
-                disabledBackgroundColor: _orange.withValues(alpha: 0.4),
-                elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Text(widget.initial == null ? s.add : s.saveChanges, style: _t(15, FontWeight.w700, Colors.white)),
-            ),
+            if (labelled)
+              Row(children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      side: const BorderSide(color: Color(0xFFE0E0E0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(s.cancel, style: _t(15, FontWeight.w600, _ink)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: submitButton),
+              ])
+            else
+              submitButton,
           ],
         ),
       ),

@@ -3567,5 +3567,39 @@
   "pfTodayLabel": "اليوم:",
   "pfLeaveUnmarked": "تم إلغاء تحديد الإجازة بنجاح",
   "pfFailedToUnmarkLeave": "تعذّر إلغاء تحديد الإجازة",
-  "pfDeliveryPartners": "شركاء التوصيل"
+  "pfDeliveryPartners": "شركاء التوصيل",
+  "cwfBookingSlot": "موعد الحجز",
+  "@cwfBookingSlot": {},
+  "cwfVehicleNumber": "المركبة {number}",
+  "@cwfVehicleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cwfAtWashStation": "في محطة الغسيل",
+  "@cwfAtWashStation": {},
+  "cwfAtHomeWorkplace": "في المنزل/مكان العمل",
+  "@cwfAtHomeWorkplace": {},
+  "cwfAtHome": "في المنزل",
+  "@cwfAtHome": {},
+  "cwfAtWorkplace": "في مكان العمل",
+  "@cwfAtWorkplace": {},
+  "cwfAtAnotherAddress": "في عنوان آخر",
+  "@cwfAtAnotherAddress": {},
+  "cwfTypeName": "اسم النوع",
+  "@cwfTypeName": {},
+  "cwfDistanceBased": "حسب المسافة",
+  "@cwfDistanceBased": {},
+  "lnfEstimatedKg": "تقديري {kg} كغ",
+  "@lnfEstimatedKg": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "lnfPaid": "مدفوع",
+  "@lnfPaid": {}
 }

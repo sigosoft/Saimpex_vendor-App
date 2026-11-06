@@ -13,6 +13,7 @@ import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_action.dart';
 import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_account_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/my_services_view.dart';
+import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
 
 // HomeCleaningController lives in controller/; re-exported so the other
 // home cleaning tabs keep importing it from here.
@@ -604,8 +605,9 @@ class _MetricsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                // Laundry / car wash: bookings waiting for pickup / vehicle (status 2).
-                count: _count(ServiceKinds.isCleaning
+                // Laundry: bookings waiting for pickup (status 2). Car wash
+                // (Figma Home): Upcoming, kpis.upcoming (new + waiting).
+                count: _count(ServiceKinds.isCleaning || ServiceKinds.isCarWash
                     ? dashboard?.upcoming
                     : dashboard?.countFor(CleaningBookingTab.values[1])),
                 label: ServiceKinds.secondCounterLabel(context),
@@ -1042,19 +1044,30 @@ class _BookingCard extends StatelessWidget {
 
   // Home cleaning (Figma, 6 Nov): every status, New included, shows
   // "Service · code · time ago" on one line under the name, with the pill.
-  bool get _isDetailedStatus => ServiceKinds.isCleaning || !booking.isNew;
+  // Car wash (Figma, 6 Nov): same header with the status pill (NEW too).
+  // Laundry (Figma, 6 Nov): same header with the pill; the service is in
+  // the tinted box under it.
+  bool get _isDetailedStatus =>
+      ServiceKinds.isCleaning || ServiceKinds.isCarWash || ServiceKinds.isLaundry || !booking.isNew;
 
   @override
   Widget build(BuildContext context) {
-    final service = booking.serviceName ?? '';
+    final carWash = ServiceKinds.isCarWash;
+    final laundry = ServiceKinds.isLaundry;
+    // Car wash card (Figma): one line per vehicle, "Vehicle 1 · Sedan ·
+    // Exterior Wash", from the booking's `vehicles`; the service name is
+    // on those lines, so it leaves the header.
+    final vehicles = carWash ? _carWashVehicles(booking) : const <Map<String, dynamic>>[];
+    final service = (carWash && vehicles.isNotEmpty) || laundry ? '' : booking.serviceName ?? '';
     final timeAgo = CleaningBookingFormat.timeAgo(context, booking.createdAt);
     final meta = [booking.displayCode, if (timeAgo.isNotEmpty) timeAgo];
-    final chips = booking.chipLines;
+    final chips = (carWash && vehicles.isNotEmpty) || laundry ? const <CleaningBookingLine>[] : booking.chipLines;
     final slot = CleaningBookingFormat.slot(booking);
-    final address = booking.address == null ? null : carWashPlaceLabel(S.of(context), booking.address!);
+    // Car wash card shows the date and time only.
+    final address = carWash || laundry ? null : booking.address;
     final pill = _statusPill(context, booking);
-    // Figma home cleaning separates service, code and time with a dot.
-    final sep = ServiceKinds.isCleaning ? ' • ' : ' - ';
+    // Figma home cleaning and car wash separate service, code and time with a dot.
+    final sep = ServiceKinds.isCleaning || carWash || laundry ? ' • ' : ' - ';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -1219,6 +1232,10 @@ class _BookingCard extends StatelessWidget {
               ],
             ],
           ),
+          if (laundry) ...[
+            const SizedBox(height: 12),
+            _LaundryCardBox(booking: booking, slot: slot),
+          ],
           if (chips.isNotEmpty) ...[
             const SizedBox(height: 12),
             Container(
@@ -1253,6 +1270,14 @@ class _BookingCard extends StatelessWidget {
               ),
             ),
           ],
+          if (vehicles.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            for (var i = 0; i < vehicles.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: _CarWashVehicleLine(index: i + 1, vehicle: vehicles[i], serviceName: booking.serviceName),
+              ),
+          ],
           // Home cleaning: the assigned cleaner (V16, V18).
           if (booking.cleaner != null && booking.cleaner!.name.trim().isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -1275,11 +1300,32 @@ class _BookingCard extends StatelessWidget {
               ],
             ),
           ],
-          if (_isDetailedStatus) ...[
+          if (_isDetailedStatus && !laundry) ...[
             const SizedBox(height: 12),
             const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
           ],
-          if (slot != null || address != null) ...[
+          // Car wash (Figma): calendar icon and "15 Aug 2026, 2:00 PM - 4:00 PM" on one line.
+          if (carWash && slot != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.calendar_month_outlined, size: 16, color: Color(0xFF42A5F5)),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    slot,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appFont('Inter',
+                      color: const Color(0xFF616161),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (!laundry && (slot != null || address != null)) ...[
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1422,6 +1468,135 @@ class _BookingCard extends StatelessWidget {
         ],
       ),
     ),
+    );
+  }
+}
+
+/// Laundry card box (Figma Home): service name with "Estimated 3 kg" (or
+/// the turnaround tag once weighed), the estimate / actual weight lines,
+/// the picked garments, and the pickup slot with the turnaround tag.
+class _LaundryCardBox extends StatelessWidget {
+  const _LaundryCardBox({required this.booking, required this.slot});
+
+  final CleaningBooking booking;
+  final String? slot;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final name = booking.serviceName;
+    final tag = laundryTurnaround(s, booking);
+    final estimate = double.tryParse('${booking.raw['estimate_kg'] ?? ''}');
+    final weighed = booking.raw['actual_kg'] != null;
+    final garments = booking.chipLines;
+    final tagWidget = tag == null ? null : LaundryTurnaroundTag(label: tag.label, express: tag.express);
+    // Before the weight check the estimate sits next to the name and the
+    // tag next to the date; after it the tag moves up (Figma).
+    final tagTop = weighed || estimate == null;
+    final muted = appFont('Inter', color: const Color(0xFF616161), fontWeight: FontWeight.w500, fontSize: 12);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F3F0),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  name ?? '—',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: appFont('Inter', color: const Color(0xFF1A1A1A), fontWeight: FontWeight.w700, fontSize: 13.5),
+                ),
+              ),
+              if (!tagTop)
+                Text(s.lnfEstimatedKg(CleaningBookingFormat.number(estimate)), style: muted)
+              else if (tagWidget != null)
+                tagWidget,
+            ],
+          ),
+          if (weighed) ...[
+            const SizedBox(height: 6),
+            LaundryWeightLines(booking: booking),
+          ],
+          if (garments.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(garments.map((g) => CleaningBookingFormat.chip(context, g)).join(' · '), style: muted),
+          ],
+          if (slot != null || (!tagTop && tagWidget != null)) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                if (slot != null) ...[
+                  const Icon(Icons.calendar_month_outlined, size: 16, color: Color(0xFF42A5F5)),
+                  const SizedBox(width: 6),
+                  Expanded(child: Text(slot!, maxLines: 1, overflow: TextOverflow.ellipsis, style: muted)),
+                ] else
+                  const Spacer(),
+                if (!tagTop && tagWidget != null) ...[
+                  const SizedBox(width: 8),
+                  tagWidget,
+                ],
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Car wash `vehicles` rows of a booking (type, plate, service, price, addons).
+List<Map<String, dynamic>> _carWashVehicles(CleaningBooking b) {
+  final list = b.raw['vehicles'];
+  if (list is! List) return const [];
+  return list
+      .whereType<Map>()
+      .map((m) => Map<String, dynamic>.from(m))
+      .where((v) => '${v['type'] ?? ''}'.trim().isNotEmpty || '${v['service'] ?? ''}'.trim().isNotEmpty)
+      .toList();
+}
+
+/// "Vehicle 1 · Sedan · Exterior Wash" (Figma car wash booking card).
+class _CarWashVehicleLine extends StatelessWidget {
+  const _CarWashVehicleLine({required this.index, required this.vehicle, this.serviceName});
+
+  final int index;
+  final Map<String, dynamic> vehicle;
+
+  /// The booking's service name in the app language; `vehicles[].service`
+  /// is the English name of the same service item.
+  final String? serviceName;
+
+  @override
+  Widget build(BuildContext context) {
+    String? str(dynamic v) {
+      final t = v?.toString().trim();
+      return t == null || t.isEmpty || t == 'null' ? null : t;
+    }
+
+    final type = str(vehicle['type']);
+    final service = str(serviceName) ?? str(vehicle['service']);
+    final plain = appFont('Inter', color: const Color(0xFF616161), fontWeight: FontWeight.w500, fontSize: 12);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: S.of(context).cwfVehicleNumber(index), style: plain),
+          if (type != null) TextSpan(text: ' • $type', style: plain),
+          if (service != null)
+            TextSpan(
+              text: ' • $service',
+              style: appFont('Inter', color: const Color(0xFFFF5216), fontWeight: FontWeight.w600, fontSize: 12),
+            ),
+        ],
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

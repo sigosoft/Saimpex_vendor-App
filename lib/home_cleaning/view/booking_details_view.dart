@@ -188,14 +188,36 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 12),
       ],
       _CustomerCard(booking: b),
-      const SizedBox(height: 12),
-      _ServiceCard(key: _serviceKey, booking: b),
-      // Laundry / car wash parts (V14).
-      if (ServiceKinds.isLaundry) ...[
+      // Car wash (Figma, 6 Nov): BOOKING SLOT with date and time chips in
+      // place of the service card; the service name is on each vehicle.
+      if (ServiceKinds.isCarWash) ...[
+        const SizedBox(height: 16),
+        _sectionLabel(S.of(context).cwfBookingSlot),
+        const SizedBox(height: 8),
+        _CarWashSlot(key: _serviceKey, booking: b),
+      ] else if (ServiceKinds.isLaundry) ...[
+        // Laundry (Figma, 6 Nov): image, name, turnaround tag and the
+        // estimated / actual weight with prices.
         const SizedBox(height: 12),
-        LaundryBookingBlock(booking: b),
+        LaundryServiceCard(key: _serviceKey, booking: b),
+      ] else ...[
+        const SizedBox(height: 12),
+        _ServiceCard(key: _serviceKey, booking: b),
       ],
-      if (ServiceKinds.isCarWash) CarWashBookingBlock(booking: b),
+      // Laundry / car wash parts (V14): PICKUP SLOT, DELIVERY TURNAROUND,
+      // PICKUP & DELIVERY and Payment Status.
+      if (ServiceKinds.isLaundry) LaundryBookingBlock(booking: b),
+      if (ServiceKinds.isCarWash) ...[
+        CarWashBookingBlock(booking: b),
+        // SERVICE LOCATION: At Wash Station, or the customer's place with
+        // the map, address title and address (Figma Home/Workplace detail).
+        if (ServiceKinds.carWashPlaceLabel(context, b.raw) != null || b.address != null) ...[
+          const SizedBox(height: 16),
+          _sectionLabel(S.of(context).carWashServiceLocation.toUpperCase()),
+          const SizedBox(height: 8),
+          _CarWashLocationCard(booking: b),
+        ],
+      ],
       // Home cleaning: the assigned cleaner with Change (V16, Figma 10868:12059).
       if (ServiceKinds.isCleaning && b.cleaner != null) ...[
         const SizedBox(height: 12),
@@ -252,7 +274,8 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         const SizedBox(height: 8),
         _noteBox(cancelText),
       ],
-      if (b.address != null) ...[
+      // Laundry shows the address under PICKUP & DELIVERY.
+      if (b.address != null && !ServiceKinds.isCarWash && !(ServiceKinds.isLaundry && b.raw['pickup_address'] != null)) ...[
         const SizedBox(height: 12),
         _LocationCard(
           label: b.raw['address_label']?.toString(),
@@ -261,10 +284,18 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
           longitude: b.longitude,
         ),
       ],
-      const SizedBox(height: 16),
-      _sectionLabel(S.of(context).paymentSummary),
-      const SizedBox(height: 8),
-      _PaymentCard(booking: b),
+      // Laundry (Figma): the dark PAYMENT DETAILS card carries its own
+      // title; after a weight check that added an amount, the Payment
+      // Status block above takes its place.
+      if (!ServiceKinds.isLaundry) ...[
+        const SizedBox(height: 16),
+        _sectionLabel(S.of(context).paymentSummary),
+        const SizedBox(height: 8),
+        _PaymentCard(booking: b),
+      ] else if (!LaundryBookingBlock.showsPaymentStatus(b)) ...[
+        const SizedBox(height: 16),
+        _PaymentCard(booking: b),
+      ],
       if (b.isCompleted || b.isCancelled)
         const SizedBox.shrink()
       else ...[
@@ -785,6 +816,152 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
+/// Car wash BOOKING SLOT: a date chip and a time chip (Figma), from
+/// `scheduled_for` / `slot_end`; the server's window when they don't parse.
+class _CarWashSlot extends StatelessWidget {
+  const _CarWashSlot({super.key, required this.booking});
+
+  final CleaningBooking booking;
+
+  Widget _chip(IconData icon, String text) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: const Color(0xFF42A5F5)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: appFont('Inter', color: const Color(0xFF424242), fontWeight: FontWeight.w600, fontSize: 12.5),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final start = booking.scheduledFor;
+    if (start == null) {
+      final window = booking.slotWindow;
+      return window == null ? const SizedBox.shrink() : _chip(Icons.calendar_today_outlined, window);
+    }
+    final end = booking.slotEnd;
+    final time = end == null
+        ? CleaningBookingFormat.time(start)
+        : '${CleaningBookingFormat.time(start)} - ${CleaningBookingFormat.time(end)}';
+    return Row(
+      children: [
+        Expanded(flex: 4, child: _chip(Icons.calendar_today_outlined, CleaningBookingFormat.date(start))),
+        const SizedBox(width: 10),
+        Expanded(flex: 5, child: _chip(Icons.access_time_rounded, time)),
+      ],
+    );
+  }
+}
+
+/// Car wash SERVICE LOCATION (Figma): the place ("At Wash Station" /
+/// "At Home/Workplace") and, for the customer's place, the map with the
+/// address title and address.
+class _CarWashLocationCard extends StatelessWidget {
+  const _CarWashLocationCard({required this.booking});
+
+  final CleaningBooking booking;
+
+  @override
+  Widget build(BuildContext context) {
+    final b = booking;
+    final place = ServiceKinds.carWashPlaceLabel(context, b.raw);
+    final label = b.raw['address_label']?.toString().trim();
+    final hasLabel = label != null && label.isNotEmpty && label != 'null';
+    final hasMap = b.address != null &&
+        b.latitude != null &&
+        b.longitude != null &&
+        !(b.latitude == 0 && b.longitude == 0);
+    return _WhiteCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (place != null)
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(color: const Color(0xFFFFF4EC), borderRadius: BorderRadius.circular(10)),
+                  child: Icon(
+                    b.address == null ? Icons.local_car_wash_outlined : Icons.home_work_outlined,
+                    size: 18,
+                    color: BookingDetailsView._orange,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    place,
+                    style: appFont('Inter', color: BookingDetailsView._ink, fontWeight: FontWeight.w600, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          if (hasMap) ...[
+            if (place != null) const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                height: 140,
+                width: double.infinity,
+                child: _BookingMap(target: LatLng(b.latitude!, b.longitude!)),
+              ),
+            ),
+          ],
+          if (b.address != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  width: 3.5,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: BookingDetailsView._orange,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (hasLabel)
+                        Text(
+                          label,
+                          style: appFont('Inter', color: const Color(0xFF1D1B20), fontWeight: FontWeight.w700, fontSize: 15),
+                        ),
+                      Text(
+                        b.address!,
+                        style: hasLabel
+                            ? appFont('Inter', color: const Color(0xFF6B7280), fontWeight: FontWeight.w500, fontSize: 13)
+                            : appFont('Inter', color: const Color(0xFF1D1B20), fontWeight: FontWeight.w600, fontSize: 15),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _LinesCard extends StatelessWidget {
   const _LinesCard({required this.lines});
 
@@ -1082,6 +1259,11 @@ class _PaymentCard extends StatelessWidget {
     final b = booking;
     final type = CleaningBookingFormat.paymentType(context, b.paymentType);
     final paidOn = b.paidOn;
+    // Car wash and laundry (Figma PAYMENT DETAILS): Total, Tax, ... Total paid. The
+    // server's `total` already includes `tax`, so Total shows it without.
+    final tax = ServiceKinds.isCarWash || ServiceKinds.isLaundry ? (b.tax ?? 0) : 0.0;
+    final showTax = tax > 0;
+    final totalShown = showTax && b.total != null ? b.total! - tax : b.total;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
@@ -1102,7 +1284,11 @@ class _PaymentCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _PayRow(S.of(context).cleaningTotal, CleaningBookingFormat.money(b.total)),
+          _PayRow(S.of(context).cleaningTotal, CleaningBookingFormat.money(totalShown)),
+          if (showTax) ...[
+            const SizedBox(height: 12),
+            _PayRow(S.of(context).tax, CleaningBookingFormat.money(tax)),
+          ],
           if (type != null) ...[
             const SizedBox(height: 12),
             _PayRow(

@@ -52,13 +52,37 @@ class ServiceKinds {
     };
   }
 
-  /// Second home counter: "Upcoming" (cleaning), "Waiting for Pickup"
-  /// (laundry), "Waiting for Vehicle" (car wash).
+  /// Second home counter: "Upcoming" (cleaning and car wash, Figma car wash
+  /// Home), "Waiting for Pickup" (laundry).
   static String secondCounterLabel(BuildContext context) => switch (current) {
         ServiceKind.laundry => S.of(context).laundryWaitingForPickup,
-        ServiceKind.carWash => S.of(context).carWashWaitingForVehicle,
+        ServiceKind.carWash => S.of(context).cleaningUpcoming,
         ServiceKind.homeCleaning => S.of(context).cleaningUpcoming,
       };
+
+  /// Car wash service location in the app language. The server sends
+  /// `place` (station | home | workplace | other) and an English
+  /// `service_location` label; unknown values are shown as sent.
+  static String? carWashPlaceLabel(BuildContext context, Map<String, dynamic> raw) {
+    final s = S.of(context);
+    final place = raw['place']?.toString().trim().toLowerCase();
+    final label = raw['service_location']?.toString().trim();
+    return switch (place) {
+      'station' => s.cwfAtWashStation,
+      'home' => s.cwfAtHome,
+      'workplace' => s.cwfAtWorkplace,
+      'other' => s.cwfAtAnotherAddress,
+      _ => switch (label) {
+          'At Wash Station' => s.cwfAtWashStation,
+          'At Home/Workplace' => s.cwfAtHomeWorkplace,
+          'At Home' => s.cwfAtHome,
+          'At Workplace' => s.cwfAtWorkplace,
+          'At Another Address' => s.cwfAtAnotherAddress,
+          null || '' || 'null' => null,
+          _ => label,
+        },
+    };
+  }
 
   // ── Status pill and next action ───────────────────────────────────────
 

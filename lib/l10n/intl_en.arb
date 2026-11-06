@@ -3661,5 +3661,39 @@
   "pfFailedToUnmarkLeave": "Failed to unmark leave",
   "@pfFailedToUnmarkLeave": {},
   "pfDeliveryPartners": "Delivery Partners",
-  "@pfDeliveryPartners": {}
+  "@pfDeliveryPartners": {},
+  "cwfBookingSlot": "BOOKING SLOT",
+  "@cwfBookingSlot": {},
+  "cwfVehicleNumber": "Vehicle {number}",
+  "@cwfVehicleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cwfAtWashStation": "At Wash Station",
+  "@cwfAtWashStation": {},
+  "cwfAtHomeWorkplace": "At Home/Workplace",
+  "@cwfAtHomeWorkplace": {},
+  "cwfAtHome": "At Home",
+  "@cwfAtHome": {},
+  "cwfAtWorkplace": "At Workplace",
+  "@cwfAtWorkplace": {},
+  "cwfAtAnotherAddress": "At Another Address",
+  "@cwfAtAnotherAddress": {},
+  "cwfTypeName": "Type Name",
+  "@cwfTypeName": {},
+  "cwfDistanceBased": "Distance Based",
+  "@cwfDistanceBased": {},
+  "lnfEstimatedKg": "Estimated {kg} kg",
+  "@lnfEstimatedKg": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "lnfPaid": "Paid",
+  "@lnfPaid": {}
 }

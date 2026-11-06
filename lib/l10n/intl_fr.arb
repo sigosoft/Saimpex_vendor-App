@@ -3568,5 +3568,39 @@
   "pfTodayLabel": "Aujourd'hui :",
   "pfLeaveUnmarked": "Congé retiré avec succès",
   "pfFailedToUnmarkLeave": "Impossible de retirer le congé",
-  "pfDeliveryPartners": "Partenaires de livraison"
+  "pfDeliveryPartners": "Partenaires de livraison",
+  "cwfBookingSlot": "CRÉNEAU DE RÉSERVATION",
+  "@cwfBookingSlot": {},
+  "cwfVehicleNumber": "Véhicule {number}",
+  "@cwfVehicleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cwfAtWashStation": "À la station de lavage",
+  "@cwfAtWashStation": {},
+  "cwfAtHomeWorkplace": "À domicile/au travail",
+  "@cwfAtHomeWorkplace": {},
+  "cwfAtHome": "À domicile",
+  "@cwfAtHome": {},
+  "cwfAtWorkplace": "Au travail",
+  "@cwfAtWorkplace": {},
+  "cwfAtAnotherAddress": "À une autre adresse",
+  "@cwfAtAnotherAddress": {},
+  "cwfTypeName": "Nom du type",
+  "@cwfTypeName": {},
+  "cwfDistanceBased": "Selon la distance",
+  "@cwfDistanceBased": {},
+  "lnfEstimatedKg": "Estimé {kg} kg",
+  "@lnfEstimatedKg": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "lnfPaid": "Payé",
+  "@lnfPaid": {}
 }

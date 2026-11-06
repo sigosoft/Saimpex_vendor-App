@@ -9,6 +9,7 @@ import 'package:saimpex_vendor/home_cleaning/controller/services_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/service_item_model.dart';
 import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_home.dart';
+import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart' show laundryProcessingLabel;
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
@@ -412,12 +413,21 @@ class _ServiceCard extends StatelessWidget {
         ? 'MRU'
         : 'MRU / ${cleaningUnitLabel(context, unit)}';
     final description = service.description ?? '';
+    // Laundry (Figma My Services): a per-kg service shows "150 MRU / kg"
+    // with its processing time; a per-item one (dry cleaning) its lowest
+    // item price as the starting rate.
+    final laundryUnit = ServiceKinds.isLaundry ? _laundryUnit(service.raw['unit']) : null;
+    final processing = service.raw['processing']?.toString().trim();
     final placeholder = Container(
       height: 155,
       color: const Color(0xFFF5F5F5),
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.cleaning_services,
+      child: Icon(
+        ServiceKinds.isCarWash
+            ? Icons.local_car_wash
+            : ServiceKinds.isLaundry
+                ? Icons.local_laundry_service_outlined
+                : Icons.cleaning_services,
         size: 40,
         color: MyServicesView._orange,
       ),
@@ -501,6 +511,39 @@ class _ServiceCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 12),
+                if (laundryUnit == 'kg')
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF7F2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: [
+                        Text(
+                          S.of(context).laundryRatePerKg(formatServicePrice(service.price)),
+                          style: appFont('Inter', color: MyServicesView._orange, fontWeight: FontWeight.w700, fontSize: 15),
+                        ),
+                        if (processing != null && processing.isNotEmpty && processing != 'null')
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.access_time_rounded, size: 14, color: MyServicesView._muted),
+                              const SizedBox(width: 4),
+                              Text(
+                                laundryProcessingLabel(S.of(context), processing),
+                                style: appFont('Inter', color: MyServicesView._muted, fontWeight: FontWeight.w500, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  )
+                else
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -528,7 +571,7 @@ class _ServiceCard extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: '$rate ',
+                              text: laundryUnit == 'item' ? '${_lowestItemPrice(service)} ' : '$rate ',
                               style: appFont('Inter', 
                                 color: MyServicesView._orange,
                                 fontWeight: FontWeight.w700,
@@ -536,7 +579,7 @@ class _ServiceCard extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: rateUnit,
+                              text: laundryUnit == 'item' ? 'MRU' : rateUnit,
                               style: appFont('Inter', 
                                 color: const Color(0xFFFF8A65),
                                 fontWeight: FontWeight.w600,
@@ -551,8 +594,8 @@ class _ServiceCard extends StatelessWidget {
                 ),
                 if (service.addons.isNotEmpty)
                   _BadgeSection(
-                    // Figma home cleaning card: "ADD-ONS:" / "ISSUES COVERED:".
-                    label: ServiceKinds.isCleaning
+                    // Figma home cleaning and car wash cards: "ADD-ONS:" / "ISSUES COVERED:".
+                    label: ServiceKinds.isCleaning || ServiceKinds.isCarWash
                         ? S.of(context).hcfAddOnsHeader
                         : S.of(context).cleaningAddonServicesHeader,
                     badges: [
@@ -582,6 +625,31 @@ class _ServiceCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Laundry pricing unit of a service ("kg", "Per Kg", "item", "Per Item").
+String? _laundryUnit(dynamic unit) {
+  final u = unit?.toString().trim().toLowerCase().replaceFirst('per ', '');
+  return switch (u) {
+    'kg' => 'kg',
+    'item' || 'piece' => 'item',
+    _ => null,
+  };
+}
+
+/// Lowest item price of a per-item laundry service (its starting rate),
+/// or the service price when it has no items.
+String _lowestItemPrice(CleaningServiceItem service) {
+  final prices = service.raw['garments'] is List
+      ? (service.raw['garments'] as List)
+          .whereType<Map>()
+          .map((g) => double.tryParse('${g['price']}'))
+          .whereType<double>()
+          .toList()
+      : <double>[];
+  if (prices.isEmpty) return formatServicePrice(service.price);
+  prices.sort();
+  return formatServicePrice(prices.first);
 }
 
 class _ServiceBadge {
