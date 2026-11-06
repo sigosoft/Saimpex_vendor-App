@@ -9,6 +9,8 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/RetryInterceptor.dart';
 import 'package:saimpex_vendor/configs/store_endpoints.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
+import 'package:saimpex_vendor/utils/api_message.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 
 class DioClient {
@@ -197,6 +199,14 @@ class DioClient {
       final data = e.response!.data;
       final statusCode = e.response!.statusCode;
 
+      // Server text in the app language first: login and validation errors
+      // come as {field_en, field_fr, field_ar}, and taking the first entry
+      // showed English in the Arabic app (VA-03).
+      if (data is Map && statusCode != 401 && statusCode != 500) {
+        final local = ApiMessage.fromMessage(data['message']);
+        if (local != null) return local;
+      }
+
       if (statusCode == 422 && data is Map) {
         final msg = data['message'];
 
@@ -235,10 +245,10 @@ class DioClient {
           return msg;
         }
 
-        return "Validation failed";
+        return S.current.somethingWentWrong;
       } else if (statusCode == 500) {
         // Get.to(ServerDown());
-        return "Server error occurred";
+        return S.current.somethingWentWrong;
       } else if (statusCode == 401) {
         return "Unauthorized";
       } else {
@@ -278,7 +288,7 @@ class DioClient {
             }
           }
         }
-        return "Something went wrong. Code: $statusCode";
+        return S.current.somethingWentWrong;
       }
 
       // if (data['message'] != null) {
@@ -299,19 +309,19 @@ class DioClient {
     }
 
     if (e.type == DioExceptionType.connectionError) {
-      return "No Internet Connection";
+      return S.current.noInternetConnection;
     }
 
     if (e.type == DioExceptionType.connectionTimeout) {
-      return "Connection Timeout. Try again.";
+      return S.current.requestTimedOut;
     }
 
     if (e.type == DioExceptionType.receiveTimeout) {
-      return "Receive Timeout. Try again.";
+      return S.current.requestTimedOut;
     }
 
     if (e.type == DioExceptionType.sendTimeout) {
-      return "Send Timeout. Try again.";
+      return S.current.requestTimedOut;
     }
 
     // Log the error type and message for debugging
@@ -322,7 +332,7 @@ class DioClient {
       log("Response Data: ${e.response!.data}");
     }
 
-    return "Unexpected error occurred: ${e.message ?? e.type.toString()}";
+    return S.current.somethingWentWrong;
   }
 
   /// Enhance an image using the imageEnhance endpoint.

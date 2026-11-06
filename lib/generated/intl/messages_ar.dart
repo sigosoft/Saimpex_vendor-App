@@ -1327,8 +1327,20 @@ class MessageLookup extends MessageLookupByLibrary {
       "جارٍ تحميل الموقع…",
     ),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "loginEnterPassword": MessageLookupByLibrary.simpleMessage(
+      "الرجاء إدخال كلمة المرور",
+    ),
+    "loginEnterUsername": MessageLookupByLibrary.simpleMessage(
+      "الرجاء إدخال اسم المستخدم",
+    ),
+    "loginFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+    ),
     "loginOrSignUp": MessageLookupByLibrary.simpleMessage(
       "تسجيل الدخول أو إنشاء حساب",
+    ),
+    "loginSuccessful": MessageLookupByLibrary.simpleMessage(
+      "تم تسجيل الدخول بنجاح",
     ),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "lunchMenu": MessageLookupByLibrary.simpleMessage("قائمة الغداء"),
@@ -2317,6 +2329,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "requestRejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
     "requestSentForReview": MessageLookupByLibrary.simpleMessage(
       "تم الإرسال. ستراجعه SAIMPEX.",
+    ),
+    "requestTimedOut": MessageLookupByLibrary.simpleMessage(
+      "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
     ),
     "resendCodeIn30Sec": MessageLookupByLibrary.simpleMessage(
       "إعادة إرسال الرمز خلال 30 ثانية",

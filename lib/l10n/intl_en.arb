@@ -3396,5 +3396,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "loginEnterUsername": "Please enter your username",
+  "@loginEnterUsername": {},
+  "loginEnterPassword": "Please enter your password",
+  "@loginEnterPassword": {},
+  "loginSuccessful": "Login successful",
+  "@loginSuccessful": {},
+  "loginFailed": "Login failed. Please try again.",
+  "@loginFailed": {},
+  "requestTimedOut": "The request timed out. Please try again.",
+  "@requestTimedOut": {}
 }

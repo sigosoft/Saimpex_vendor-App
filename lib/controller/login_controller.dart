@@ -10,6 +10,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/model/login_model.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
+import '../utils/api_message.dart';
 import '../utils/utils.dart';
 import '../view/otp/otp.dart';
 
@@ -72,6 +73,15 @@ class LoginController extends GetxController {
     // No spaces in a username: a pasted or keyboard-added one ("grocery. 08")
     // made the login fail (K-B1 on the kitchen app).
     userName = userName.replaceAll(RegExp(r'\s'), '');
+    // Empty fields: say what is missing instead of doing nothing (VA-02).
+    if (userName.isEmpty) {
+      showToast(context, S.of(context).loginEnterUsername);
+      return;
+    }
+    if (password.isEmpty) {
+      showToast(context, S.of(context).loginEnterPassword);
+      return;
+    }
     try {
       showLoadingDialog(context);
       String? fcm_token;
@@ -131,43 +141,29 @@ class LoginController extends GetxController {
           VendorAppRouter.storageKey,
           selectedAppType.storageValue,
         );
-        final languageCode = localization.currentLocale?.languageCode;
-        final message = loginModel.message;
-        final toastMessage = languageCode == "fr"
-            ? (message?.messageFr?.isNotEmpty == true
-                  ? message!.messageFr!.first
-                  : null)
-            : languageCode == "ar"
-            ? (message?.messageAr?.isNotEmpty == true
-                  ? message!.messageAr!.first
-                  : null)
-            : (message?.messageEn?.isNotEmpty == true
-                  ? message!.messageEn!.first
-                  : null);
-
-        showToast(context, toastMessage ?? "Login successful");
+        // Server text in the app language only (VA-03).
+        showToast(
+          context,
+          ApiMessage.local(response.data) ??
+              S.of(context).loginSuccessful,
+        );
         await VendorAppRouter.goToSelectedApp(type: selectedAppType);
       } else {
-        final languageCode = localization.currentLocale?.languageCode;
-        final message = loginModel.message;
-        final toastMessage = languageCode == "fr"
-            ? (message?.messageFr?.isNotEmpty == true
-                  ? message!.messageFr!.first
-                  : null)
-            : languageCode == "ar"
-            ? (message?.messageAr?.isNotEmpty == true
-                  ? message!.messageAr!.first
-                  : null)
-            : (message?.messageEn?.isNotEmpty == true
-                  ? message!.messageEn!.first
-                  : null);
-
-        showToast(context, toastMessage ?? "Login failed");
+        // Server text in the app language only (VA-03).
+        showToast(
+          context,
+          ApiMessage.local(response.data) ??
+              S.of(context).loginFailed,
+        );
       }
     } catch (error) {
       Get.back();
-      print("Login Error: $error");
-      showToast(context, error.toString());
+      debugPrint("Login Error: $error");
+      // DioClient errors are already a message in the app language.
+      showToast(
+        context,
+        error is String && error.isNotEmpty ? error : S.of(context).loginFailed,
+      );
     }
   }
 }

@@ -3342,5 +3342,15 @@
         "type": "String"
       }
     }
-  }
+  },
+  "loginEnterUsername": "الرجاء إدخال اسم المستخدم",
+  "@loginEnterUsername": {},
+  "loginEnterPassword": "الرجاء إدخال كلمة المرور",
+  "@loginEnterPassword": {},
+  "loginSuccessful": "تم تسجيل الدخول بنجاح",
+  "@loginSuccessful": {},
+  "loginFailed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+  "@loginFailed": {},
+  "requestTimedOut": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
+  "@requestTimedOut": {}
 }
