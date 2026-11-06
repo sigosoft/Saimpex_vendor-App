@@ -212,11 +212,14 @@ class LaundryServiceCard extends StatelessWidget {
 /// TURNAROUND). [window] is the server's "25 Aug 2026, 2:00 PM – 4:00 PM";
 /// when it doesn't parse it is shown whole.
 class LaundrySlotChips extends StatelessWidget {
-  const LaundrySlotChips({super.key, this.start, this.end, this.window});
+  const LaundrySlotChips({super.key, this.start, this.end, this.window, this.dateOnly = false});
 
   final DateTime? start;
   final DateTime? end;
   final String? window;
+
+  /// [start] is a day with no time (VA-29): one date chip.
+  final bool dateOnly;
 
   static final RegExp _windowPattern = RegExp(r'^(\d{1,2} [A-Za-z]{3} \d{4}), (.+)$');
 
@@ -231,7 +234,8 @@ class LaundrySlotChips extends StatelessWidget {
           Icon(icon, size: 16, color: const Color(0xFF42A5F5)),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: _t(12.5, FontWeight.w600, const Color(0xFF424242))),
+            // Isolated: "12:00 AM" / "7 Nov 2026" kept in order in Arabic (VA-29).
+            child: Text(isolated(text), maxLines: 1, overflow: TextOverflow.ellipsis, style: _t(12.5, FontWeight.w600, const Color(0xFF424242))),
           ),
         ]),
       );
@@ -265,6 +269,7 @@ class LaundrySlotChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final from = start;
+    if (from != null && dateOnly) return _chip(Icons.calendar_today_outlined, CleaningBookingFormat.date(from));
     if (from != null) {
       final to = end;
       return _pair(
@@ -281,6 +286,11 @@ class LaundrySlotChips extends StatelessWidget {
     final times = m.group(2)!.split('–').map((e) => e.trim()).toList();
     final a = _parseTime(day, times.first);
     final b = times.length > 1 ? _parseTime(day, times[1]) : null;
+    // "7 Nov 2026, 12:00 AM" with no end: the server's format of a day with
+    // no time (VA-29), so the date alone.
+    if (a != null && times.length < 2 && a.hour == 0 && a.minute == 0) {
+      return _chip(Icons.calendar_today_outlined, CleaningBookingFormat.date(day));
+    }
     final time = a == null
         ? m.group(2)!
         : times.length < 2
@@ -323,7 +333,12 @@ class LaundryBookingBlock extends StatelessWidget {
       children: [
         if (booking.scheduledFor != null || pickupSlot != null) ...[
           _label(s.laundryPickupSlot),
-          LaundrySlotChips(start: booking.scheduledFor, end: booking.slotEnd, window: pickupSlot),
+          LaundrySlotChips(
+            start: booking.scheduledFor,
+            end: booking.slotEnd,
+            window: pickupSlot,
+            dateOnly: booking.scheduledDateOnly,
+          ),
         ],
         if (turnaround != null) ...[
           _label(s.laundryDeliveryTurnaround),

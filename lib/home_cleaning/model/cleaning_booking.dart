@@ -136,6 +136,13 @@ class CleaningBooking {
   final DateTime? scheduledFor;
   final DateTime? slotEnd;
 
+  /// The booking carries a day but no time (VA-29): `scheduled_for` is a
+  /// date or midnight ("2026-11-07 00:00:00") and there is no `slot_end`.
+  /// [scheduledFor] is then that calendar day (not shifted to phone time,
+  /// which showed 05:30 AM on a UTC+5:30 phone), and screens show the date
+  /// alone instead of a made-up 12:00 AM.
+  bool get scheduledDateOnly => slotEnd == null && _isDateOnly(raw['scheduled_for']);
+
   /// Server-formatted window (English), used only when dates fail to parse.
   final String? slotWindow;
   final DateTime? createdAt;
@@ -279,7 +286,9 @@ class CleaningBooking {
               .toList()
           : const [],
       summary: _str(json['summary']),
-      scheduledFor: _date(json['scheduled_for']),
+      scheduledFor: _str(json['slot_end']) == null && _isDateOnly(json['scheduled_for'])
+          ? _day(json['scheduled_for'])
+          : _date(json['scheduled_for']),
       slotEnd: _date(json['slot_end']),
       slotWindow: _str(json['slot_window']) ?? _str(json['slot']),
       createdAt: _date(json['created_at']) ?? _date(json['placed_at']),
@@ -438,4 +447,18 @@ bool? _bool(dynamic v) {
 DateTime? _date(dynamic v) {
   final s = _str(v);
   return parseServerTime(s);
+}
+
+final RegExp _midnight = RegExp(r'^\d{4}-\d{2}-\d{2}(?:[ T]00:00(?::00(?:\.0+)?)?)?(?:Z|[+-]00:?00)?$');
+
+/// "2026-11-07" or "2026-11-07 00:00:00": a day with no time of day.
+bool _isDateOnly(dynamic v) {
+  final s = _str(v);
+  return s != null && _midnight.hasMatch(s);
+}
+
+/// The calendar day of a date-only server value, kept as that day.
+DateTime? _day(dynamic v) {
+  final t = DateTime.tryParse(_str(v)?.substring(0, 10) ?? '');
+  return t == null ? null : DateTime(t.year, t.month, t.day);
 }

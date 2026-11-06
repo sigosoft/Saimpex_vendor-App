@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
 import 'package:saimpex_vendor/home_cleaning/view/add_service_view.dart' show cleaningIssueLabel, cleaningPropertyLabel;
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 
 /// Locale-aware formatting shared by the home list and the details screen.
 class CleaningBookingFormat {
@@ -30,11 +31,17 @@ class CleaningBookingFormat {
     return v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
   }
 
-  /// "15 Aug 2026, 2:00 PM - 4:00 PM" from scheduled_for / slot_end.
+  /// "15 Aug 2026, 2:00 PM - 4:00 PM" from scheduled_for / slot_end; the
+  /// date alone when the booking has no time (VA-29). Each date / time is
+  /// isolated so its parts keep their order inside Arabic text.
   static String? slot(CleaningBooking b) {
     final start = b.scheduledFor;
-    if (start == null) return b.slotWindow;
-    final day = _fmt('d MMM yyyy, h:mm a').format(start);
+    if (start == null) {
+      final window = b.slotWindow;
+      return window == null ? null : isolated(window);
+    }
+    if (b.scheduledDateOnly) return isolated(_fmt('d MMM yyyy').format(start));
+    final day = isolated(_fmt('d MMM yyyy, h:mm a').format(start));
     final end = b.slotEnd;
     if (end == null) return day;
     final sameDay =
@@ -42,7 +49,16 @@ class CleaningBookingFormat {
     final endText = sameDay
         ? _fmt('h:mm a').format(end)
         : _fmt('d MMM yyyy, h:mm a').format(end);
-    return '$day - $endText';
+    return '$day - ${isolated(endText)}';
+  }
+
+  /// "2:00 PM - 4:00 PM" (or one time) as one isolated run; null when the
+  /// booking has a day but no time.
+  static String? timeRange(CleaningBooking b) {
+    final start = b.scheduledFor;
+    if (start == null || b.scheduledDateOnly) return null;
+    final end = b.slotEnd;
+    return isolated(end == null ? time(start) : '${time(start)} - ${time(end)}');
   }
 
   static String dateTime(DateTime value) => _fmt('d MMM yyyy, h:mm a').format(value);
