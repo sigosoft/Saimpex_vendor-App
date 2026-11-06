@@ -416,7 +416,13 @@ class _ServiceCard extends StatelessWidget {
     // Laundry (Figma My Services): a per-kg service shows "150 MRU / kg"
     // with its processing time; a per-item one (dry cleaning) its lowest
     // item price as the starting rate.
-    final laundryUnit = ServiceKinds.isLaundry ? _laundryUnit(service.raw['unit']) : null;
+    // A laundry service with priced garments starts at its lowest garment
+    // price whatever its unit text: "Starting price MRU 0" showed for a
+    // garment-priced service whose own price is 0 (VA-31).
+    final rawLaundryUnit = ServiceKinds.isLaundry ? _laundryUnit(service.raw['unit']) : null;
+    final laundryUnit = ServiceKinds.isLaundry && rawLaundryUnit != 'kg' && _garmentPrices(service).isNotEmpty
+        ? 'item'
+        : rawLaundryUnit;
     final processing = service.raw['processing']?.toString().trim();
     final placeholder = Container(
       height: 155,
@@ -579,7 +585,11 @@ class _ServiceCard extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: laundryUnit == 'item' ? 'MRU' : rateUnit,
+                              text: laundryUnit == 'item'
+                                  ? 'MRU'
+                                  : laundryUnit == 'metre'
+                                      ? 'MRU / ${S.of(context).unitMetre}'
+                                      : rateUnit,
                               style: appFont('Inter', 
                                 color: const Color(0xFFFF8A65),
                                 fontWeight: FontWeight.w600,
@@ -632,21 +642,25 @@ String? _laundryUnit(dynamic unit) {
   final u = unit?.toString().trim().toLowerCase().replaceFirst('per ', '');
   return switch (u) {
     'kg' => 'kg',
-    'item' || 'piece' => 'item',
+    'item' || 'piece' || 'pieces' => 'item',
+    'metre' || 'meter' || 'm' => 'metre',
     _ => null,
   };
 }
 
+/// Prices of the service's garments (`garments[].price`), as sent.
+List<double> _garmentPrices(CleaningServiceItem service) => service.raw['garments'] is List
+    ? (service.raw['garments'] as List)
+        .whereType<Map>()
+        .map((g) => double.tryParse('${g['price']}'))
+        .whereType<double>()
+        .toList()
+    : <double>[];
+
 /// Lowest item price of a per-item laundry service (its starting rate),
 /// or the service price when it has no items.
 String _lowestItemPrice(CleaningServiceItem service) {
-  final prices = service.raw['garments'] is List
-      ? (service.raw['garments'] as List)
-          .whereType<Map>()
-          .map((g) => double.tryParse('${g['price']}'))
-          .whereType<double>()
-          .toList()
-      : <double>[];
+  final prices = _garmentPrices(service);
   if (prices.isEmpty) return formatServicePrice(service.price);
   prices.sort();
   return formatServicePrice(prices.first);
