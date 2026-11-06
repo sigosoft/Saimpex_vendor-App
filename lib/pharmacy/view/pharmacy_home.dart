@@ -1018,7 +1018,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             timeAgo: item.displayTimeAgo,
             isSelfPickup: item.isSelfPickupBool,
             partnerName: item.deliveryBoyName,
-            prescriptionId: rawId,
+            orderId: rawId,
+            prescriptionId: item.prescriptionId,
             phone: item.phone,
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
@@ -1076,7 +1077,8 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             orderCode: item.displayOrderCode,
             timeAgo: item.displayTimeAgo,
             isSelfPickup: item.isSelfPickupBool,
-            prescriptionId: rawId,
+            orderId: rawId,
+            prescriptionId: item.prescriptionId,
             phone: item.phone,
             prescriptionFileName: item.prescriptionFileName,
             prescriptionImageUrl: item.prescriptionImageUrl,
@@ -3817,6 +3819,7 @@ class _ReadyCard extends StatelessWidget {
     this.partnerName,
     this.isSelfPickup = false,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -3830,6 +3833,9 @@ class _ReadyCard extends StatelessWidget {
   final String? partnerName;
   final bool isSelfPickup;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
@@ -3858,8 +3864,8 @@ class _ReadyCard extends StatelessWidget {
           isSelfPickup: isSelfPickup,
           isOtcPartnerAssigned: partnerName != null && partnerName!.isNotEmpty,
           prescriptionId: prescriptionId,
-          orderId: prescriptionId,
-          orderRawId: prescriptionId,
+          orderId: orderId ?? prescriptionId,
+          orderRawId: orderId ?? prescriptionId,
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
@@ -4190,6 +4196,7 @@ class _DeliveredCard extends StatelessWidget {
     this.timeAgo = '',
     this.isSelfPickup = false,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -4202,6 +4209,9 @@ class _DeliveredCard extends StatelessWidget {
   final String timeAgo;
   final bool isSelfPickup;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;
@@ -4227,8 +4237,8 @@ class _DeliveredCard extends StatelessWidget {
           isDelivered: true,
           isSelfPickup: isSelfPickup,
           prescriptionId: prescriptionId,
-          orderId: prescriptionId,
-          orderRawId: prescriptionId,
+          orderId: orderId ?? prescriptionId,
+          orderRawId: orderId ?? prescriptionId,
           prescriptionImageUrl: prescriptionImageUrl,
         ),
       ),
@@ -4526,6 +4536,7 @@ class _AwaitingPaymentCard extends StatelessWidget {
     this.timeAgo = '',
     this.quotationAmount,
     this.prescriptionId,
+    this.orderId,
     this.phone,
     this.prescriptionFileName,
     this.prescriptionImageUrl,
@@ -4538,6 +4549,9 @@ class _AwaitingPaymentCard extends StatelessWidget {
   final String timeAgo;
   final String? quotationAmount;
   final int? prescriptionId;
+
+  /// The paid order (`order_id`); the details load it and its prescription.
+  final int? orderId;
   final String? phone;
   final String? prescriptionFileName;
   final String? prescriptionImageUrl;

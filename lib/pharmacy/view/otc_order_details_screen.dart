@@ -18,7 +18,16 @@ class _OtcOrderDetailsPage extends StatelessWidget {
     this.orderDetailData,
     this.orderId,
     this.orderRawId,
+    this.actionRunning = false,
+    this.onPrimary,
+    this.onReject,
   });
+
+  /// Accept / Prepare / Mark as Ready for the current status, and Reject;
+  /// the same calls as the Home order cards.
+  final bool actionRunning;
+  final VoidCallback? onPrimary;
+  final VoidCallback? onReject;
 
   final String name;
   final String phone;
@@ -582,7 +591,13 @@ class _OtcOrderDetailsPage extends StatelessWidget {
               ),
             ),
             if (!ready && !delivered && !cancelled)
-              _OtcDetailsActions(accepted: accepted, preparing: preparing),
+              _OtcDetailsActions(
+                accepted: accepted,
+                preparing: preparing,
+                busy: actionRunning,
+                onPrimary: onPrimary,
+                onReject: onReject,
+              ),
           ],
         ),
       ),
@@ -1360,10 +1375,19 @@ class _OtcPayRow extends StatelessWidget {
 }
 
 class _OtcDetailsActions extends StatelessWidget {
-  const _OtcDetailsActions({this.accepted = false, this.preparing = false});
+  const _OtcDetailsActions({
+    this.accepted = false,
+    this.preparing = false,
+    this.busy = false,
+    this.onPrimary,
+    this.onReject,
+  });
 
   final bool accepted;
   final bool preparing;
+  final bool busy;
+  final VoidCallback? onPrimary;
+  final VoidCallback? onReject;
 
   static const Color _orange = Color(0xFFFF5216);
 
@@ -1372,23 +1396,33 @@ class _OtcDetailsActions extends StatelessWidget {
     final prepare = SizedBox(
       height: 50,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: busy ? null : onPrimary,
         style: ElevatedButton.styleFrom(
           backgroundColor: _orange,
           foregroundColor: Colors.white,
+          disabledBackgroundColor: _orange.withValues(alpha: 0.6),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
         ),
-        child: Text(
-          preparing
-              ? S.of(context).markAsReady
-              : accepted
-              ? S.of(context).prepareOrder
-              : S.of(context).acceptOrder,
-          style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
-        ),
+        child: busy
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.4,
+                ),
+              )
+            : Text(
+                preparing
+                    ? S.of(context).markAsReady
+                    : accepted
+                    ? S.of(context).prepareOrder
+                    : S.of(context).acceptOrder,
+                style: appFont('Inter', fontWeight: FontWeight.w700, fontSize: 15),
+              ),
       ),
     );
 
@@ -1409,7 +1443,7 @@ class _OtcDetailsActions extends StatelessWidget {
                   child: SizedBox(
                     height: 50,
                     child: OutlinedButton(
-                      onPressed: () => showPharmacyRejectOrderSheet(context),
+                      onPressed: busy ? null : onReject,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color(0xFF1A1A1A),
