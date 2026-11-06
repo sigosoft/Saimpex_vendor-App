@@ -3329,5 +3329,9 @@
   "pharmacyProfileTitle": "ملف الصيدلية",
   "pharmacyDetailsTitle": "تفاصيل الصيدلية",
   "vendorIdLabel": "المعرّف",
-  "tinNifNumber": "رقم التعريف الضريبي (NIF)"
+  "tinNifNumber": "رقم التعريف الضريبي (NIF)",
+  "pfTodayLabel": "اليوم:",
+  "pfLeaveUnmarked": "تم إلغاء تحديد الإجازة بنجاح",
+  "pfFailedToUnmarkLeave": "تعذّر إلغاء تحديد الإجازة",
+  "pfDeliveryPartners": "شركاء التوصيل"
 }
