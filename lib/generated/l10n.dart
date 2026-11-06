@@ -14340,6 +14340,76 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Pharmacy Profile`
+  String get pharmacyProfileTitle {
+    return Intl.message(
+      'Pharmacy Profile',
+      name: 'pharmacyProfileTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PHARMACY DETAILS`
+  String get pharmacyDetailsTitle {
+    return Intl.message(
+      'PHARMACY DETAILS',
+      name: 'pharmacyDetailsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ID`
+  String get vendorIdLabel {
+    return Intl.message('ID', name: 'vendorIdLabel', desc: '', args: []);
+  }
+
+  /// `TIN/NIF Number`
+  String get tinNifNumber {
+    return Intl.message(
+      'TIN/NIF Number',
+      name: 'tinNifNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today:`
+  String get pfTodayLabel {
+    return Intl.message('Today:', name: 'pfTodayLabel', desc: '', args: []);
+  }
+
+  /// `Leave unmarked successfully`
+  String get pfLeaveUnmarked {
+    return Intl.message(
+      'Leave unmarked successfully',
+      name: 'pfLeaveUnmarked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to unmark leave`
+  String get pfFailedToUnmarkLeave {
+    return Intl.message(
+      'Failed to unmark leave',
+      name: 'pfFailedToUnmarkLeave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Partners`
+  String get pfDeliveryPartners {
+    return Intl.message(
+      'Delivery Partners',
+      name: 'pfDeliveryPartners',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -304,16 +304,20 @@ class _OtcOrderDetailsPage extends StatelessWidget {
           icon: Icons.check_rounded,
           completed: accepted || preparing || ready || delivered,
         ),
+        // Figma (pharmacy check, 6 Nov): same steps as delivery, with
+        // "Ready for Pickup" and no rider steps.
         _TimelineStep(
-          title: S.current.preparing,
+          title: S.current.pharmacyOtcPreparingMedicines,
           subtitle: preparingSubtitle,
-          icon: Icons.assignment_outlined,
+          icon: Icons.medication_outlined,
+          customIcon: _TimelineCustomIcon.capsule,
           completed: preparing || ready || delivered,
         ),
         _TimelineStep(
           title: S.current.pharmacyOtcReadyForPickup,
           subtitle: readySubtitle,
-          icon: Icons.check_rounded,
+          icon: Icons.inventory_2_outlined,
+          customIcon: _TimelineCustomIcon.openBox,
           completed: ready || delivered,
         ),
         _TimelineStep(
@@ -355,14 +359,16 @@ class _OtcOrderDetailsPage extends StatelessWidget {
       ),
       _TimelineStep(
         title: S.current.pharmacyOtcPartnerAssigned,
-        subtitle: readySubtitle,
+        // No log time for these two steps; the "ready" time was repeated
+        // here, so they show no time.
+        subtitle: null,
         icon: Icons.delivery_dining,
         customIcon: _TimelineCustomIcon.scooter,
         completed: partnerAssigned || delivered,
       ),
       _TimelineStep(
         title: S.current.pharmacyOtcPickedUpByRider,
-        subtitle: readySubtitle,
+        subtitle: null,
         icon: Icons.check_rounded,
         completed: delivered,
       ),
@@ -448,7 +454,7 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                 const SizedBox(height: 18),
                                 Text(
                                   S.of(context).quoteOrderItems(
-                                    '${items.isNotEmpty ? items.length : (orderDetailData != null ? 0 : 2)}',
+                                    '${items.isNotEmpty ? items.length : 0}',
                                   ),
                                   style: appFont('Inter', 
                                     color: _section,
@@ -496,18 +502,13 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                     ),
                                   ),
                                 ] else ...[
-                                  const _OtcItemCard(
-                                    name: 'Digital Thermometer',
-                                    price: '50 MRU',
-                                    image:
-                                        'lib/pharmacy/Assets/images/digital_thermometer.jpg',
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const _OtcItemCard(
-                                    name: 'Baby Diapers',
-                                    price: '50 MRU',
-                                    image:
-                                        'lib/pharmacy/Assets/images/baby_diapers.jpg',
+                                  // Still loading (or the call failed): no
+                                  // sample items ("Digital Thermometer").
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(color: Color(0xFFFF5216)),
+                                    ),
                                   ),
                                 ],
                                 const SizedBox(height: 18),
@@ -1279,7 +1280,11 @@ class _OtcPaymentSummary extends StatelessWidget {
           const SizedBox(height: 12),
           _OtcPayRow(
             label: S.of(context).paymentType,
-            value: paymentTypeLabel(paymentType, cashFallback: cashOnDelivery),
+            // The order's real method (wallet showed as "Online payment"
+            // when the type was missing, VA-22); "-" when the server has none.
+            value: paymentTypeCode(paymentType) != null
+                ? paymentTypeLabel(paymentType)
+                : (cashOnDelivery ? S.of(context).cashOnDelivery : '-'),
             valueColor: _orange,
           ),
           if (paymentOn != null && paymentOn!.trim().isNotEmpty) ...[

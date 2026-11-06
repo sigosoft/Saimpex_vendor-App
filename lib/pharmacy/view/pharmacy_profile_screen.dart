@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
+import 'package:saimpex_vendor/model/rating_review_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
+import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
 
 class PharmacyProfileScreen extends StatefulWidget {
   const PharmacyProfileScreen({super.key});
@@ -26,10 +29,33 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
   Map<String, dynamic>? _rawVendorData;
   bool _isLoading = false;
 
+  /// The latest reviews from ratingsReviews; the section showed two fixed
+  /// sample cards ("Aicha Mint Ahmed", ORD-000091).
+  List<ReviewItem> _reviews = [];
+
   @override
   void initState() {
     super.initState();
     _fetchPharmacyProfile();
+    _fetchReviews();
+  }
+
+  Future<void> _fetchReviews() async {
+    try {
+      final res = await DioClient().get(
+        ApiEndPoints.getRatingReview,
+        query: {'limit': 2, 'page': 1, 'vendor_type': 3},
+      );
+      final body = res.data is String ? jsonDecode(res.data as String) : res.data;
+      if (body is! Map) return;
+      final data = body['data'];
+      final items = data is Map
+          ? (RatingReviewModel.fromJson(Map<String, dynamic>.from(body)).data?.reviews ?? <ReviewItem>[])
+          : (data is List
+              ? data.whereType<Map>().map((m) => ReviewItem.fromJson(Map<String, dynamic>.from(m))).toList()
+              : <ReviewItem>[]);
+      if (mounted) setState(() => _reviews = items.take(2).toList());
+    } catch (_) {}
   }
 
   Future<void> _fetchPharmacyProfile() async {
@@ -272,62 +298,81 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
                   children: [
-                    const _SectionTitle('Pharmacy Details'),
+                    _SectionTitle(S.of(context).pharmacyDetailsTitle),
                     const SizedBox(height: 18),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Name', pharmacyName),
-                        _InfoRow('Owner', ownerName),
-                        _InfoRow('ID', pharmacyId),
-                        _InfoRow('Contact', contact),
-                        _InfoRow('Email', email),
-                        _InfoRow('Status', status, badge: true),
-                        _InfoRow('Address', address),
+                        _InfoRow(S.of(context).name, pharmacyName),
+                        _InfoRow(S.of(context).owner, ownerName),
+                        _InfoRow(S.of(context).vendorIdLabel, pharmacyId),
+                        _InfoRow(S.of(context).contact, contact),
+                        _InfoRow(S.of(context).email, email),
+                        _InfoRow(
+                          S.of(context).status,
+                          switch (status.toUpperCase()) {
+                            'ACTIVE' => S.of(context).active,
+                            'INACTIVE' => S.of(context).inactive,
+                            _ => status,
+                          },
+                          badge: true,
+                        ),
+                        _InfoRow(S.of(context).address, address),
                       ],
                     ),
                     const SizedBox(height: 18),
-                    const _SectionTitle('Bank Details'),
+                    _SectionTitle(S.of(context).bankDetails),
                     const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Holder Name', holderName),
-                        _InfoRow('IBAN Number', ibanNumber),
-                        _InfoRow('SWIFT Code', swiftCode),
+                        _InfoRow(S.of(context).holderName, holderName),
+                        _InfoRow(S.of(context).ibanNumber, ibanNumber),
+                        _InfoRow(S.of(context).swiftCode, swiftCode),
                       ],
                     ),
                     const SizedBox(height: 18),
-                    const _SectionTitle('Registration Details'),
+                    _SectionTitle(S.of(context).registrationDetails),
                     const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Reg. Number', regNumber),
-                        _InfoRow('Reg. Date', regDate),
-                        _InfoRow('TIN/NIF Number', tinNumber),
+                        _InfoRow(S.of(context).regNumber, regNumber),
+                        _InfoRow(S.of(context).regDate, regDate),
+                        _InfoRow(S.of(context).tinNifNumber, tinNumber),
                       ],
                     ),
                     const SizedBox(height: 18),
-                    const _SectionTitle('Payment Details'),
+                    _SectionTitle(S.of(context).paymentSummaryDetails),
                     const SizedBox(height: 8),
                     _InfoCard(
                       rows: [
-                        _InfoRow('Commission %', commission),
-                        _InfoRow('Total Profit', totalProfit, emphasize: true),
+                        _InfoRow(S.of(context).commissionPercentage, commission),
+                        _InfoRow(S.of(context).totalProfit, totalProfit, emphasize: true),
                       ],
                     ),
                     const SizedBox(height: 18),
-                    const _SectionTitle('Owner Identity Proof'),
+                    _SectionTitle(S.of(context).ownerIdentityProof),
                     const SizedBox(height: 8),
                     _EmptyCard(imageUrl: ownerIdProof),
                     const SizedBox(height: 18),
-                    const _SectionTitle('Certificate'),
+                    _SectionTitle(S.of(context).certificates),
                     const SizedBox(height: 8),
                     _EmptyCard(imageUrl: certificate),
                     const SizedBox(height: 20),
-                    const _ReviewsHeader(),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(builder: (_) => const RatingReviewsScreen()),
+                      ),
+                      child: const _ReviewsHeader(),
+                    ),
                     const SizedBox(height: 10),
-                    const _ReviewCard(),
-                    const SizedBox(height: 10),
-                    const _ReviewCard(),
+                    if (_reviews.isEmpty)
+                      Text(
+                        S.of(context).noReviewsFound,
+                        style: appFont('Inter', color: PharmacyProfileScreen._label, fontSize: 13),
+                      ),
+                    for (final review in _reviews) ...[
+                      _ReviewCard(review: review),
+                      const SizedBox(height: 10),
+                    ],
                   ],
                 ),
               ),
@@ -354,7 +399,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Pharmacy Profile',
+              S.of(context).pharmacyProfileTitle,
               style: appFont('Inter', 
                 color: PharmacyProfileScreen._ink,
                 fontWeight: FontWeight.w700,
@@ -547,7 +592,7 @@ class _ReviewsHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'RATING & REVIEWS',
+          S.of(context).ratingReviews.toUpperCase(),
           style: appFont('Inter', 
             color: const Color.fromARGB(255, 46, 48, 50),
             fontWeight: FontWeight.w700,
@@ -557,7 +602,7 @@ class _ReviewsHeader extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          'See All',
+          S.of(context).seeAll,
           style: appFont('Inter', 
             color: PharmacyProfileScreen._orange,
             fontWeight: FontWeight.w600,
@@ -570,10 +615,19 @@ class _ReviewsHeader extends StatelessWidget {
 }
 
 class _ReviewCard extends StatelessWidget {
-  const _ReviewCard();
+  const _ReviewCard({required this.review});
+
+  final ReviewItem review;
 
   @override
   Widget build(BuildContext context) {
+    final name = (review.username ?? '').trim();
+    final rating = double.tryParse(review.rating ?? '') ?? 0;
+    final stars = rating.round().clamp(0, 5);
+    final comment = (review.comment ?? '').trim();
+    final orderCode = (review.orderCode ?? '').trim();
+    final created = parseServerTime(review.createdAt);
+    final date = created == null ? '' : appDateFormat('d MMM yyyy, h:mm a').format(created);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -603,7 +657,7 @@ class _ReviewCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Text(
-                  'S',
+                  name.isEmpty ? '?' : name.substring(0, 1).toUpperCase(),
                   style: appFont('Inter', 
                     color: const Color(0xFF059669),
                     fontWeight: FontWeight.w700,
@@ -620,7 +674,7 @@ class _ReviewCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            'Aicha Mint Ahmed',
+                            name,
                             style: appFont('Inter', 
                               color: const Color(0xFF3F4555),
                               fontWeight: FontWeight.w700,
@@ -629,7 +683,7 @@ class _ReviewCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Jan 12 2026, 07:13 am',
+                          date,
                           style: appFont('Inter', 
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
@@ -643,13 +697,13 @@ class _ReviewCard extends StatelessWidget {
                       children: [
                         for (var i = 0; i < 5; i++)
                           Icon(
-                            i < 3 ? Icons.star_rounded : Icons.star_border_rounded,
-                            color: i < 3 ? const Color(0xFFFBBF24) : const Color(0xFFD1D5DB),
+                            i < stars ? Icons.star_rounded : Icons.star_border_rounded,
+                            color: i < stars ? const Color(0xFFFBBF24) : const Color(0xFFD1D5DB),
                             size: 16,
                           ),
                         const SizedBox(width: 4),
                         Text(
-                          '3.0',
+                          rating.toStringAsFixed(1),
                           style: appFont('Inter', 
                             color: const Color(0xFF9AA8B8),
                             fontWeight: FontWeight.w500,
@@ -663,15 +717,18 @@ class _ReviewCard extends StatelessWidget {
               ),
             ],
           ),
+          if (comment.isNotEmpty) ...[
           const SizedBox(height: 10),
           Text(
-            'Fast prescription verification.',
+            comment,
             style: appFont('Inter', 
               color: const Color(0xFF3F4555),
               fontWeight: FontWeight.w500,
               fontSize: 13,
             ),
           ),
+          ],
+          if (orderCode.isNotEmpty) ...[
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
@@ -683,7 +740,7 @@ class _ReviewCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'Order: ORD-000091',
+              '${S.of(context).order}: $orderCode',
               style: appFont('Inter', 
                 color: const Color(0xFF94A3B8),
                 fontWeight: FontWeight.w500,
@@ -691,6 +748,7 @@ class _ReviewCard extends StatelessWidget {
               ),
             ),
           ),
+          ],
         ],
       ),
     );

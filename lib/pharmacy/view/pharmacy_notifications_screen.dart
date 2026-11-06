@@ -279,8 +279,9 @@ class _PharmacyNotificationsScreenState
       MaterialPageRoute<void>(
         builder: (_) => PharmacyOrderDetailsScreen(
           customerName: S.current.quoteCustomer,
-          requestId: orderId != null ? '#$orderId' : '#22789007',
-          requestMeta: S.current.today,
+          // No sample code / "Today": the detail screen fills both from
+          // the server once it loads.
+          requestId: orderId != null ? '#$orderId' : '',
           notesType: PharmacyOrderNotesType.none,
         ),
       ),

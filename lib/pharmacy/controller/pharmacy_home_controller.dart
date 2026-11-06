@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart' hide FormData;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/home_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_pending_orders_model.dart';
 import 'package:saimpex_vendor/pharmacy/model/pharmacy_prescriptions_model.dart';
@@ -2816,6 +2817,39 @@ class PharmacyHomeController extends GetxController {
       await fetchPharmacyOrders(status: otcOrderStatuses[i]);
     }
     await fetchPharmacyHome();
+  }
+
+  /// Today's hours from home `screen.welcome` (as the water home reads
+  /// them); null when the server sends none, and the line is hidden.
+  String? get storeTimings {
+    final welcome = rawScreen?['welcome'];
+    if (welcome is! Map) return null;
+    String? text(dynamic v) {
+      final t = v?.toString().trim();
+      return (t == null || t.isEmpty || t == 'null') ? null : t;
+    }
+    // The server sends 'timings' as a list of {open_time, close_time}; it was
+    // printed raw ("[{open_time: 00:00, close_time: 23:59}]", device 6 Nov).
+    final raw = welcome['timings'];
+    if (raw is List) {
+      final slots = <String>[];
+      for (final t in raw) {
+        if (t is! Map) continue;
+        final o = text(t['open_time']);
+        final c = text(t['close_time']);
+        if (o != null && c != null) slots.add('$o - $c');
+      }
+      if (slots.isNotEmpty) {
+        final first = slots.first.split(' - ');
+        return [S.current.waterTodayTimings(first[0], first[1]), ...slots.skip(1)].join(', ');
+      }
+    } else {
+      final timings = text(raw);
+      if (timings != null) return timings;
+    }
+    final open = text(welcome['opening_time']);
+    final close = text(welcome['closing_time']);
+    return open != null && close != null ? S.current.waterTodayTimings(open, close) : null;
   }
 
   void toggleStore(bool value) {

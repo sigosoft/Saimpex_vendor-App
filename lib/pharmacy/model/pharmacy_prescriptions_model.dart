@@ -195,9 +195,9 @@ class PrescriptionItem {
       return user!['name'].toString().trim();
     }
     if (userId != null) {
-      return 'Customer #$userId';
+      return '${S.current.quoteCustomer} #$userId';
     }
-    return 'Customer';
+    return S.current.quoteCustomer;
   }
 
   String get displayOrderCode {

@@ -1858,6 +1858,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Solde des commandes en attente",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("Pourcentage"),
+    "pfDeliveryPartners": MessageLookupByLibrary.simpleMessage(
+      "Partenaires de livraison",
+    ),
+    "pfFailedToUnmarkLeave": MessageLookupByLibrary.simpleMessage(
+      "Impossible de retirer le congé",
+    ),
+    "pfLeaveUnmarked": MessageLookupByLibrary.simpleMessage(
+      "Congé retiré avec succès",
+    ),
+    "pfTodayLabel": MessageLookupByLibrary.simpleMessage("Aujourd\'hui :"),
     "pharmacyDetailAwaitingCustomerPayment":
         MessageLookupByLibrary.simpleMessage(
           "En attente du paiement du client",
@@ -1963,6 +1973,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Voir l\'ordonnance complète",
     ),
     "pharmacyDetailZoom": MessageLookupByLibrary.simpleMessage("Zoom"),
+    "pharmacyDetailsTitle": MessageLookupByLibrary.simpleMessage(
+      "DÉTAILS DE LA PHARMACIE",
+    ),
     "pharmacyGenericEquivalent": MessageLookupByLibrary.simpleMessage(
       "Équivalent générique",
     ),
@@ -2164,6 +2177,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Fermeture temporaire de la pharmacie",
     ),
     "pharmacyOtcTotalPaid": MessageLookupByLibrary.simpleMessage("Total payé"),
+    "pharmacyProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Profil de la pharmacie",
+    ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("Numéro de téléphone"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(
       "Choisissez ce que vous voulez et remplissez votre panier !",
@@ -2820,6 +2836,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
       "Ticket envoyé à l\'imprimante",
     ),
+    "tinNifNumber": MessageLookupByLibrary.simpleMessage("Numéro TIN/NIF"),
     "toDate": MessageLookupByLibrary.simpleMessage("Date de Fin"),
     "toPay": MessageLookupByLibrary.simpleMessage("À payer"),
     "today": MessageLookupByLibrary.simpleMessage("Aujourd’hui"),
@@ -2923,6 +2940,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Type de véhicule, ex. Berline",
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("Vendeur"),
+    "vendorIdLabel": MessageLookupByLibrary.simpleMessage("ID"),
     "vendorType": MessageLookupByLibrary.simpleMessage("Type de vendeur"),
     "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
       "Épicerie / Restaurant",
