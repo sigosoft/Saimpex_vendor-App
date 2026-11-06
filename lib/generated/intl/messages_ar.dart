@@ -1651,6 +1651,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "رصيد الطلبات المعلقة",
     ),
     "percentage": MessageLookupByLibrary.simpleMessage("نسبة مئوية"),
+    "pfDeliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
+    "pfFailedToUnmarkLeave": MessageLookupByLibrary.simpleMessage(
+      "تعذّر إلغاء تحديد الإجازة",
+    ),
+    "pfLeaveUnmarked": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء تحديد الإجازة بنجاح",
+    ),
+    "pfTodayLabel": MessageLookupByLibrary.simpleMessage("اليوم:"),
     "pharmacyDetailAwaitingCustomerPayment":
         MessageLookupByLibrary.simpleMessage("بانتظار دفع العميل"),
     "pharmacyDetailBadgeAwaitingPayment": MessageLookupByLibrary.simpleMessage(
@@ -1754,6 +1762,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "عرض الوصفة كاملة",
     ),
     "pharmacyDetailZoom": MessageLookupByLibrary.simpleMessage("تكبير"),
+    "pharmacyDetailsTitle": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الصيدلية",
+    ),
     "pharmacyGenericEquivalent": MessageLookupByLibrary.simpleMessage(
       "البديل الجنيس",
     ),
@@ -1950,6 +1961,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pharmacyOtcTotalPaid": MessageLookupByLibrary.simpleMessage(
       "إجمالي المدفوع",
+    ),
+    "pharmacyProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "ملف الصيدلية",
     ),
     "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
     "pickWhatYouWantAndFillYourBasket": MessageLookupByLibrary.simpleMessage(
@@ -2515,6 +2529,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "ticketSentToPrinter": MessageLookupByLibrary.simpleMessage(
       "تم إرسال التذكرة إلى الطابعة",
     ),
+    "tinNifNumber": MessageLookupByLibrary.simpleMessage(
+      "رقم التعريف الضريبي (NIF)",
+    ),
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toPay": MessageLookupByLibrary.simpleMessage("المبلغ المستحق"),
     "today": MessageLookupByLibrary.simpleMessage("اليوم"),
@@ -2600,6 +2617,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "نوع المركبة، مثل سيدان",
     ),
     "vendor": MessageLookupByLibrary.simpleMessage("بائع"),
+    "vendorIdLabel": MessageLookupByLibrary.simpleMessage("المعرّف"),
     "vendorType": MessageLookupByLibrary.simpleMessage("نوع البائع"),
     "vendorTypeGroceryRestaurant": MessageLookupByLibrary.simpleMessage(
       "بقالة / مطعم",

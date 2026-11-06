@@ -31,6 +31,18 @@ class PharmacyOrderDetailsController extends GetxController {
   List<PharmacyPrescriptionQuoteItem> get prescriptionQuoteItems =>
       prescriptionDetailData?.quoteItems ?? [];
 
+  /// The paid order of the prescription (`data.order`), null before payment.
+  PharmacyPrescriptionLinkedOrder? get linkedOrder =>
+      prescriptionDetailData?.order;
+
+  /// An order action (accept / prepare / ready / reject) is running.
+  bool isActionRunning = false;
+
+  void setActionRunning(bool value) {
+    isActionRunning = value;
+    update();
+  }
+
   Uint8List? prescriptionImageBytes;
   String? prescriptionImageLoadedUrl;
   bool isLoadingPrescriptionImage = false;

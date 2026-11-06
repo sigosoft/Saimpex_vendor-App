@@ -188,6 +188,11 @@ class PharmacyPendingOrderItem {
 
   int? get resolvedId => orderId ?? id;
 
+  /// `pharmacyOrders` → `prescription_id`: the prescription a paid order
+  /// came from (null for OTC).
+  int? get prescriptionId =>
+      int.tryParse(rawJson?['prescription_id']?.toString() ?? '');
+
   String get displayCustomerName {
     final name = customerName ?? userName;
     if (name != null && name.trim().isNotEmpty) {
@@ -218,6 +223,13 @@ class PharmacyPendingOrderItem {
         isSelfPickup?.toString() == '1' ||
         isSelfPickup?.toString().toLowerCase() == 'true' ||
         deliveryType?.toString().toLowerCase() == 'pickup';
+  }
+
+  /// pharmacyOrders sends `is_express` (true when the order `type` is
+  /// "express"); shown as the Express Delivery tag (Figma).
+  bool get isExpressBool {
+    final v = rawJson?['is_express'];
+    return v == true || v == 1 || v?.toString() == '1' || type == 'express';
   }
 
   bool get isCashOnDeliveryBool => isCashPayment(paymentType);
