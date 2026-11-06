@@ -168,6 +168,12 @@ class ApiEndPoints {
   static String MarkLeave = "markLeave";
   static String UnmarkLeave = "unmarkLeave";
   static String BusinessSettings = "businessSettings";
+  // Business Settings writes (API: BusinessSettingsController).
+  static String updateStoreAvailability = "updateStoreAvailability";
+  static String updateExpressDelivery = "updateExpressDelivery";
+  static String addDeliveryDistance = "addDeliveryDistance";
+  static String updateDeliveryDistance = "updateDeliveryDistance";
+  static String deleteDeliveryDistance = "deleteDeliveryDistance";
   static String getRatingReview = "ratingsReviews";
 
   // Pharmacy api endpoints
