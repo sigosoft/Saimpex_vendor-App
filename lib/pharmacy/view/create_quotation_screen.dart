@@ -278,7 +278,15 @@ class _PharmacyCreateQuotationScreenState
                     const SizedBox(height: 12),
                     Expanded(
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        // While the keyboard is open, room below the search
+                        // field so it can scroll to the top with its results
+                        // in view (VA-27).
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          0,
+                          16,
+                          MediaQuery.viewInsetsOf(context).bottom > 0 ? 320 : 20,
+                        ),
                         children: [
                           _CustomerCard(
                             initial: initial,
