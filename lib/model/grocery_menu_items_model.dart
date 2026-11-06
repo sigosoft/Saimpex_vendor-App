@@ -134,6 +134,9 @@ class GroceryMenuItem {
   int? status;
   int? availableStatus;
 
+  /// Stock on hand (row `stock`); null when the API does not send it.
+  int? stock;
+
   /// Hidden state (API doc §6.21): `is_hidden`, `hidden_until`, `hidden_forever`.
   ProductVisibilityState visibility;
   String? categoryNameEn;
@@ -158,6 +161,7 @@ class GroceryMenuItem {
     this.variantNameFr,
     this.status,
     this.availableStatus,
+    this.stock,
     this.visibility = const ProductVisibilityState(),
     this.categoryNameEn,
     this.categoryNameAr,
@@ -185,6 +189,10 @@ class GroceryMenuItem {
       variantNameFr: json['variant_name_fr']?.toString() ?? '',
       status: json['status'] as int? ?? 0,
       availableStatus: json['available_status'] as int? ?? 0,
+      stock: json['stock'] == null
+          ? null
+          : int.tryParse(json['stock'].toString()) ??
+              double.tryParse(json['stock'].toString())?.toInt(),
       visibility: ProductVisibilityState.fromJson(json),
       categoryNameEn: json['category_name_en']?.toString() ?? '',
       categoryNameAr: json['category_name_ar']?.toString() ?? '',
