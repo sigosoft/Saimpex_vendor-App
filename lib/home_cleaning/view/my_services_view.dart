@@ -416,8 +416,8 @@ class _ServiceCard extends StatelessWidget {
       height: 155,
       color: const Color(0xFFF5F5F5),
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.cleaning_services,
+      child: Icon(
+        ServiceKinds.isCarWash ? Icons.local_car_wash : Icons.cleaning_services,
         size: 40,
         color: MyServicesView._orange,
       ),
@@ -551,8 +551,8 @@ class _ServiceCard extends StatelessWidget {
                 ),
                 if (service.addons.isNotEmpty)
                   _BadgeSection(
-                    // Figma home cleaning card: "ADD-ONS:" / "ISSUES COVERED:".
-                    label: ServiceKinds.isCleaning
+                    // Figma home cleaning and car wash cards: "ADD-ONS:" / "ISSUES COVERED:".
+                    label: ServiceKinds.isCleaning || ServiceKinds.isCarWash
                         ? S.of(context).hcfAddOnsHeader
                         : S.of(context).cleaningAddonServicesHeader,
                     badges: [

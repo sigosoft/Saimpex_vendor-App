@@ -52,7 +52,8 @@ void main() {
     await t.enterText(find.widgetWithText(TextField, 'Vehicle type, e.g. Sedan'), 'Sedan');
     await t.enterText(find.widgetWithText(TextField, 'Price'), '550');
     await t.pump();
-    await t.tap(find.widgetWithText(ElevatedButton, 'Add'));
+    // The form's own button also says "Add" (Figma Reset / Add); the sheet's is last.
+    await t.tap(find.widgetWithText(ElevatedButton, 'Add').last);
     await t.pumpAndSettle();
     expect(find.text('Sedan'), findsOneWidget);
     expect(find.text('550 MRU'), findsOneWidget);
