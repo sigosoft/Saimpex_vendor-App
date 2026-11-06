@@ -8,6 +8,7 @@ import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/model/profile_model.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
 class PharmacyWorkingHoursScreen extends StatefulWidget {
@@ -453,7 +454,7 @@ class _PharmacyWorkingHoursScreenState extends State<PharmacyWorkingHoursScreen>
                               children: [
                                 TextSpan(text: '${S.of(context).pfTodayLabel} '),
                                 TextSpan(
-                                  text: _todayHours,
+                                  text: isolated(_todayHours),
                                   style: TextStyle(
                                     color: todayClosed
                                         ? PharmacyWorkingHoursScreen.closed
@@ -625,7 +626,7 @@ class _DayRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  label,
+                  isolated(label),
                   style: appFont('Inter', 
                     color: closed ? PharmacyWorkingHoursScreen.closed : PharmacyWorkingHoursScreen.muted,
                     fontWeight: closed ? FontWeight.w700 : FontWeight.w500,
