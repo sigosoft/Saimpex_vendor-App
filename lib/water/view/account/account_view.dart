@@ -489,7 +489,7 @@ class _AccountViewState extends State<AccountView> {
                     ),
                     _SettingsTile(
                       icon: Icons.delivery_dining_outlined,
-                      title: S.of(context).deliveryBoys,
+                      title: S.of(context).wfDeliveryPartners,
                       onTap: () => DeliveryBoysView.open(context),
                       showDivider: false,
                     ),

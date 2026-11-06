@@ -3327,5 +3327,8 @@
       }
     }
   },
-  "todaysDeliveries": "Livraisons du jour"
+  "todaysDeliveries": "Livraisons du jour",
+  "wfDeliveryPartners": "Partenaires de livraison",
+  "wfSearchDeliveryPartner": "Rechercher un partenaire de livraison",
+  "wfAddDeliveryPartner": "Ajouter un partenaire de livraison"
 }

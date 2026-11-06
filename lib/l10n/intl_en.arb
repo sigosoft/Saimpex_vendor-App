@@ -3380,5 +3380,8 @@
       }
     }
   },
-  "todaysDeliveries": "Today's Deliveries"
+  "todaysDeliveries": "Today's Deliveries",
+  "wfDeliveryPartners": "Delivery Partners",
+  "wfSearchDeliveryPartner": "Search delivery partner",
+  "wfAddDeliveryPartner": "Add Delivery Partner"
 }

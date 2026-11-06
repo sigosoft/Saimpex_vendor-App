@@ -3261,6 +3261,13 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "لقد أرسلنا رمز التحقق إلى واتساب الخاص بك",
         ),
+    "wfAddDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "إضافة شريك توصيل",
+    ),
+    "wfDeliveryPartners": MessageLookupByLibrary.simpleMessage("شركاء التوصيل"),
+    "wfSearchDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن شريك توصيل",
+    ),
     "whatDoYouNeedToday": MessageLookupByLibrary.simpleMessage(
       "ماذا تحتاج اليوم؟",
     ),
