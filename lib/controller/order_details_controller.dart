@@ -204,7 +204,8 @@ class OrderDetailsController extends GetxController {
         response.data,
       );
       if (orderStatusModel.status.toString() == "true") {
-        _toast(S.current.orderAcceptedSuccessfully);
+        // Figma success popup; the toast did not show on Android 16 (VA-04).
+        showSuccessDialog(S.current.orderAcceptedSuccessfully);
         if (printAfter) {
           OrderPrintService()
               .printOrder(orderId: orderid, orderType: orderType)
@@ -311,6 +312,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -360,6 +372,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -404,6 +427,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -448,6 +482,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderId,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -492,6 +537,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -536,6 +592,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {
@@ -577,6 +644,17 @@ class OrderDetailsController extends GetxController {
             (element) => element.id.toString() == orderid,
           );
           homeCtrl.update();
+          // Reload from the server so the lists show what was really saved
+          // (VA-05: an order looked Ready but stayed Preparing).
+          homeCtrl.triggerFullRefresh();
+        } catch (_) {}
+      } else {
+        // The server refused: close the loader and say so (it stayed open
+        // with no message).
+        Get.back();
+        showToast(context, S.current.somethingWentWrong);
+        try {
+          Get.find<HomeController>().triggerFullRefresh();
         } catch (_) {}
       }
     } catch (error, stackTrace) {

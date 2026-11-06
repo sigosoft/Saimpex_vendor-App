@@ -646,7 +646,11 @@ class _EditItemsViewState extends State<EditItemsView> with WidgetsBindingObserv
           Row(children: [
             _action(Icons.delete_outline, s.substitutionRemoveItem, _red, () => _remove(line)),
             const SizedBox(width: 8),
-            _action(Icons.hourglass_empty, s.substitutionChangeQty, _ink, line.quantity > 1 ? () => _changeQty(line) : null),
+            _action(Icons.hourglass_empty, s.substitutionChangeQty, _ink, line.quantity > 1
+                ? () => _changeQty(line)
+                // Quantity can only go down; with one left, say why instead of
+                // a silently disabled button (VA-18).
+                : () => _snack(s.substitutionChangeQtyOnlyOne)),
             const SizedBox(width: 8),
             _action(Icons.swap_horiz, s.substitutionSuggest, Colors.white, () => _suggest(line), filled: true),
           ]),

@@ -17,6 +17,7 @@ class VendorOrderCard extends StatelessWidget {
   final VoidCallback onReject;
   final VoidCallback onAccept;
   final VoidCallback? onMarkAsReady;
+  final VoidCallback? onAcceptAndPrint;
   final VoidCallback? onPrint;
   final VoidCallback? onTap;
   final String? deliveryBoyName;
@@ -40,6 +41,7 @@ class VendorOrderCard extends StatelessWidget {
     required this.onReject,
     required this.onAccept,
     this.onMarkAsReady,
+    this.onAcceptAndPrint,
     this.onPrint,
     this.onTap,
     this.deliveryBoyName,
@@ -387,6 +389,8 @@ class VendorOrderCard extends StatelessWidget {
             ],
             const SizedBox(height: 24),
             if (_code == 1)
+              Column(
+                children: [
               Row(
                 children: [
                   Expanded(
@@ -426,6 +430,32 @@ class VendorOrderCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                ],
+              ),
+              // Figma pending card: Accept & Print under Reject / Accept.
+              if (onAcceptAndPrint != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: onAcceptAndPrint,
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFFF5216)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    child: Text(
+                      S.of(context).acceptAndPrint,
+                      style: appFont('Rubik',
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFFFF5216),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
                 ],
               )
             else if (_code == 3)

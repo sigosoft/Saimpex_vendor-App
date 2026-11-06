@@ -16,7 +16,6 @@ import 'package:saimpex_vendor/utils/widgets/dotted_line_painter.dart';
 // ignore: unused_import — success_dialog is used indirectly via utils
 import 'package:saimpex_vendor/utils/widgets/success_dialog.dart';
 import 'package:saimpex_vendor/view/shimmer_loading/shimmer_text_content.dart';
-import 'package:saimpex_vendor/utils/widgets/accept_order_dialog.dart';
 import 'package:saimpex_vendor/utils/printing/order_print_service.dart';
 
 import '../../configs/ApiConfigs.dart';
@@ -571,6 +570,11 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       controller.orderData!.deliveryBoyPhone
                                           .toString(),
                                     ),
+                              // Edit Items sits above the item list: at the end of the list it
+                              // was right above the identical full-width "Accept & Print" in the
+                              // bottom bar, and a tap there accepted the order (VA-14).
+                              if (!isBasketOrder)
+                                _editItemsButton(controller),
                               const SizedBox(height: 32),
                               Text(
                                 S.of(context).orderItems +
@@ -708,8 +712,6 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                 },
                               ),
 
-                              if (!isBasketOrder)
-                                _editItemsButton(controller),
                               Builder(
                                 builder: (context) {
                                   final audioUrl = controller
@@ -1221,9 +1223,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                     await getSavedObject(
                                                       "vendorType",
                                                     );
-                                                showAcceptOrderDialog(
-                                                  context: context,
-                                                  onAccept: () {
+                                                // The bar already offers Accept & Print: accept at once, no
+                                                // second Accept / Accept & Print / Cancel dialog (VA-04).
                                                     if (vendorType == "1") {
                                                       controller
                                                           .acceptRestaurantOrder(
@@ -1237,25 +1238,6 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                             widget.orderId,
                                                           );
                                                     }
-                                                  },
-                                                  onAcceptAndPrint: () {
-                                                    if (vendorType == "1") {
-                                                      controller
-                                                          .acceptRestaurantOrder(
-                                                            context,
-                                                            widget.orderId,
-                                                            printAfter: true,
-                                                          );
-                                                    } else {
-                                                      controller
-                                                          .acceptGroceryOrder(
-                                                            context,
-                                                            widget.orderId,
-                                                            printAfter: true,
-                                                          );
-                                                    }
-                                                  },
-                                                );
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: const Color(
