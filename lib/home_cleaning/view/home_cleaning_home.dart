@@ -600,8 +600,9 @@ class _MetricsGrid extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _MetricCard(
-                // Laundry / car wash: bookings waiting for pickup / vehicle (status 2).
-                count: _count(ServiceKinds.isCleaning
+                // Laundry: bookings waiting for pickup (status 2). Car wash
+                // (Figma Home): Upcoming, kpis.upcoming (new + waiting).
+                count: _count(ServiceKinds.isCleaning || ServiceKinds.isCarWash
                     ? dashboard?.upcoming
                     : dashboard?.countFor(CleaningBookingTab.values[1])),
                 label: ServiceKinds.secondCounterLabel(context),
@@ -1038,19 +1039,26 @@ class _BookingCard extends StatelessWidget {
 
   // Home cleaning (Figma, 6 Nov): every status, New included, shows
   // "Service · code · time ago" on one line under the name, with the pill.
-  bool get _isDetailedStatus => ServiceKinds.isCleaning || !booking.isNew;
+  // Car wash (Figma, 6 Nov): same header with the status pill (NEW too).
+  bool get _isDetailedStatus => ServiceKinds.isCleaning || ServiceKinds.isCarWash || !booking.isNew;
 
   @override
   Widget build(BuildContext context) {
-    final service = booking.serviceName ?? '';
+    final carWash = ServiceKinds.isCarWash;
+    // Car wash card (Figma): one line per vehicle, "Vehicle 1 · Sedan ·
+    // Exterior Wash", from the booking's `vehicles`; the service name is
+    // on those lines, so it leaves the header.
+    final vehicles = carWash ? _carWashVehicles(booking) : const <Map<String, dynamic>>[];
+    final service = carWash && vehicles.isNotEmpty ? '' : booking.serviceName ?? '';
     final timeAgo = CleaningBookingFormat.timeAgo(context, booking.createdAt);
     final meta = [booking.displayCode, if (timeAgo.isNotEmpty) timeAgo];
-    final chips = booking.chipLines;
+    final chips = carWash && vehicles.isNotEmpty ? const <CleaningBookingLine>[] : booking.chipLines;
     final slot = CleaningBookingFormat.slot(booking);
-    final address = booking.address;
+    // Car wash card shows the date and time only.
+    final address = carWash ? null : booking.address;
     final pill = _statusPill(context, booking);
-    // Figma home cleaning separates service, code and time with a dot.
-    final sep = ServiceKinds.isCleaning ? ' • ' : ' - ';
+    // Figma home cleaning and car wash separate service, code and time with a dot.
+    final sep = ServiceKinds.isCleaning || carWash ? ' • ' : ' - ';
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -1249,6 +1257,14 @@ class _BookingCard extends StatelessWidget {
               ),
             ),
           ],
+          if (vehicles.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            for (var i = 0; i < vehicles.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: _CarWashVehicleLine(index: i + 1, vehicle: vehicles[i], serviceName: booking.serviceName),
+              ),
+          ],
           // Home cleaning: the assigned cleaner (V16, V18).
           if (booking.cleaner != null && booking.cleaner!.name.trim().isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -1275,7 +1291,28 @@ class _BookingCard extends StatelessWidget {
             const SizedBox(height: 12),
             const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
           ],
-          if (slot != null || address != null) ...[
+          // Car wash (Figma): calendar icon and "15 Aug 2026, 2:00 PM - 4:00 PM" on one line.
+          if (carWash && slot != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.calendar_month_outlined, size: 16, color: Color(0xFF42A5F5)),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    slot,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appFont('Inter',
+                      color: const Color(0xFF616161),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (slot != null || address != null) ...[
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1418,6 +1455,56 @@ class _BookingCard extends StatelessWidget {
         ],
       ),
     ),
+    );
+  }
+}
+
+/// Car wash `vehicles` rows of a booking (type, plate, service, price, addons).
+List<Map<String, dynamic>> _carWashVehicles(CleaningBooking b) {
+  final list = b.raw['vehicles'];
+  if (list is! List) return const [];
+  return list
+      .whereType<Map>()
+      .map((m) => Map<String, dynamic>.from(m))
+      .where((v) => '${v['type'] ?? ''}'.trim().isNotEmpty || '${v['service'] ?? ''}'.trim().isNotEmpty)
+      .toList();
+}
+
+/// "Vehicle 1 · Sedan · Exterior Wash" (Figma car wash booking card).
+class _CarWashVehicleLine extends StatelessWidget {
+  const _CarWashVehicleLine({required this.index, required this.vehicle, this.serviceName});
+
+  final int index;
+  final Map<String, dynamic> vehicle;
+
+  /// The booking's service name in the app language; `vehicles[].service`
+  /// is the English name of the same service item.
+  final String? serviceName;
+
+  @override
+  Widget build(BuildContext context) {
+    String? str(dynamic v) {
+      final t = v?.toString().trim();
+      return t == null || t.isEmpty || t == 'null' ? null : t;
+    }
+
+    final type = str(vehicle['type']);
+    final service = str(serviceName) ?? str(vehicle['service']);
+    final plain = appFont('Inter', color: const Color(0xFF616161), fontWeight: FontWeight.w500, fontSize: 12);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: S.of(context).cwfVehicleNumber(index), style: plain),
+          if (type != null) TextSpan(text: ' • $type', style: plain),
+          if (service != null)
+            TextSpan(
+              text: ' • $service',
+              style: appFont('Inter', color: const Color(0xFFFF5216), fontWeight: FontWeight.w600, fontSize: 12),
+            ),
+        ],
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
