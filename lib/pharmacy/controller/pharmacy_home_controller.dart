@@ -2769,8 +2769,25 @@ class PharmacyHomeController extends GetxController {
       final t = v?.toString().trim();
       return (t == null || t.isEmpty || t == 'null') ? null : t;
     }
-    final timings = text(welcome['timings']);
-    if (timings != null) return timings;
+    // The server sends 'timings' as a list of {open_time, close_time}; it was
+    // printed raw ("[{open_time: 00:00, close_time: 23:59}]", device 6 Nov).
+    final raw = welcome['timings'];
+    if (raw is List) {
+      final slots = <String>[];
+      for (final t in raw) {
+        if (t is! Map) continue;
+        final o = text(t['open_time']);
+        final c = text(t['close_time']);
+        if (o != null && c != null) slots.add('$o - $c');
+      }
+      if (slots.isNotEmpty) {
+        final first = slots.first.split(' - ');
+        return [S.current.waterTodayTimings(first[0], first[1]), ...slots.skip(1)].join(', ');
+      }
+    } else {
+      final timings = text(raw);
+      if (timings != null) return timings;
+    }
     final open = text(welcome['opening_time']);
     final close = text(welcome['closing_time']);
     return open != null && close != null ? S.current.waterTodayTimings(open, close) : null;
