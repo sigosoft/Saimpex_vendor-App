@@ -13,7 +13,7 @@ import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
-import 'package:saimpex_vendor/view/settings/app_settings.dart';
+import 'package:saimpex_vendor/view/settings/restaurant_business_settings.dart';
 import 'package:saimpex_vendor/view/settings/coupons_screen.dart';
 import 'package:saimpex_vendor/view/settings/delivery_boys.dart';
 import 'package:saimpex_vendor/view/settings/earnings.dart';
@@ -341,7 +341,9 @@ class _SettingsState extends State<Settings> {
                                 "lib/assets/images/SettingsVendor.png",
                               ),
                               () {
-                                Get.to(() => const AppSettings());
+                                Get.to(
+                                  () => const RestaurantBusinessSettings(),
+                                );
                               },
                             ),
                             // const Divider(height: 1),
