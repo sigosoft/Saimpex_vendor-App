@@ -1027,6 +1027,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editItem": MessageLookupByLibrary.simpleMessage("تعديل العنصر"),
     "editMenu": MessageLookupByLibrary.simpleMessage("تعديل القائمة"),
     "editProfile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
+    "editProfileDetails": MessageLookupByLibrary.simpleMessage(
+      "تعديل بيانات الملف الشخصي",
+    ),
     "editService": MessageLookupByLibrary.simpleMessage("تعديل الخدمة"),
     "egAnnualVacationRenovation": MessageLookupByLibrary.simpleMessage(
       "مثال: إجازة سنوية، تجديد...",

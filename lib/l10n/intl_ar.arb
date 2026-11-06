@@ -3738,5 +3738,6 @@
   "itemDetailSerialNoLabel": "الرقم التسلسلي:",
   "itemDetailPrepTimeLabel": "وقت التحضير:",
   "itemDetailMinShort": "د",
-  "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح"
+  "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح",
+  "editProfileDetails": "تعديل بيانات الملف الشخصي"
 }

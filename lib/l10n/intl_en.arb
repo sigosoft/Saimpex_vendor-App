@@ -3832,5 +3832,6 @@
   "itemDetailSerialNoLabel": "Serial No:",
   "itemDetailPrepTimeLabel": "Preparation Time:",
   "itemDetailMinShort": "min",
-  "orderMarkedPickedUpSuccessfully": "Order marked as picked up successfully"
+  "orderMarkedPickedUpSuccessfully": "Order marked as picked up successfully",
+  "editProfileDetails": "Edit Profile Details"
 }
