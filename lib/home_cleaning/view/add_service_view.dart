@@ -82,6 +82,23 @@ String cleaningIssueLabel(BuildContext context, String issue) {
   }
 }
 
+/// Icon of an issue tile (the same drawings as the Issues Covered picker),
+/// for the booking details' Issues block. Unknown values get "Other Pests".
+Widget cleaningIssueIcon(String issue, {double size = 22}) {
+  final CustomPainter painter = switch (issue) {
+    'Cockroaches' => const _CockroachPainter(),
+    'Ants' => const _AntPainter(),
+    'Bed Bugs' => const _BedBugPainter(),
+    'Mosquitoes' => const _MosquitoPainter(),
+    'Rodents' => const _RodentPainter(),
+    'Termites' => const _TermitePainter(),
+    'General Sanitization' => const _SanitizationPainter(),
+    'Flies' => const _FlyPainter(),
+    _ => const _OtherPestsPainter(),
+  };
+  return CustomPaint(size: Size(size, size), painter: painter);
+}
+
 class SpacePricingItem {
   SpacePricingItem({
     required this.name,

@@ -1179,6 +1179,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "gstVat": MessageLookupByLibrary.simpleMessage("GST/TVA"),
     "guestLogin": MessageLookupByLibrary.simpleMessage("Connexion invité"),
     "hAgo": MessageLookupByLibrary.simpleMessage("il y a"),
+    "hcfAddOnsHeader": MessageLookupByLibrary.simpleMessage("SUPPLÉMENTS :"),
+    "hcfAreasHeader": MessageLookupByLibrary.simpleMessage("ZONES"),
+    "hcfBusinessReview": MessageLookupByLibrary.simpleMessage(
+      "Avis sur l\'entreprise",
+    ),
+    "hcfIssueCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "NUISIBLES TRAITÉS :",
+    ),
+    "hcfIssuesHeader": MessageLookupByLibrary.simpleMessage("PROBLÈMES"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Aide et assistance"),
     "hideFor1Hour": MessageLookupByLibrary.simpleMessage("Pendant 1 heure"),
     "hideFor4Hours": MessageLookupByLibrary.simpleMessage("Pendant 4 heures"),
