@@ -28,6 +28,8 @@ import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/order_fulfillment.dart';
 import '../../utils/utils.dart';
 import '../../utils/widgets/no_data_widget.dart';
+import '../../controller/chat_controller.dart';
+import '../chat/ChatDetails.dart';
 import 'widgets/customer_voice_note_widget.dart';
 import 'widgets/order_fulfillment_badge.dart';
 import 'widgets/vendor_reject_order_sheet.dart';
@@ -540,6 +542,15 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                         ),
                                       ],
                                     ),
+                                    // Figma: "Chat with Customer" under the
+                                    // address, on every status.
+                                    if (controller.orderData?.userId != null) ...[
+                                      const SizedBox(height: 14),
+                                      _chatWithCustomerButton(
+                                        controller.orderData!.userId!,
+                                        controller.orderData?.userName,
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -2016,6 +2027,67 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
     );
   }
 
+  /// "+222 12345678" from the driver's country code and phone.
+  String _dialNumber(String? countryCode, String phone) {
+    final cc = (countryCode ?? '').trim();
+    final p = phone.trim();
+    if (cc.isEmpty || cc == 'null' || p.startsWith('+')) return p;
+    return '${cc.startsWith('+') ? cc : '+$cc'} $p';
+  }
+
+  /// Opens the vendor's chat with this order's customer (lib/view/chat).
+  /// The server keeps one conversation per vendor and customer
+  /// (chat/sendMessage firstOrCreate), so an existing one is reopened.
+  Widget _chatWithCustomerButton(int customerId, String? customerName) {
+    return SizedBox(
+      width: double.infinity,
+      height: 40,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          final chat = Get.isRegistered<ChatController>()
+              ? Get.find<ChatController>()
+              : Get.put(ChatController());
+          if (chat.conversations.isEmpty) {
+            await chat.getAllConversations(context, quiet: true);
+          }
+          final existing = chat.conversations.firstWhereOrNull(
+            (c) => c.customerId == customerId || c.customer?.id == customerId,
+          );
+          final name = (customerName ?? '').trim();
+          Get.to(
+            () => ChatDetails(
+              contactName: name.isNotEmpty && name != 'null'
+                  ? name
+                  : (existing?.customer?.name ?? S.of(context).unknown),
+              conversationId: existing?.id ?? 0,
+              customerId: customerId,
+            ),
+          );
+        },
+        icon: const Icon(
+          Icons.chat_bubble_outline,
+          size: 16,
+          color: Colors.white,
+        ),
+        label: Text(
+          S.of(context).waterChatWithCustomer,
+          style: appFont('Rubik',
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFFF5216),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _driverDetails(
     BuildContext context,
     String? image,
@@ -2104,46 +2176,61 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.phone_outlined,
-                    size: 16,
-                    color: Color(0xFFFF5216),
+          // Phone (tap to call) and, as in Figma, a WhatsApp button. Hidden
+          // when the order detail sends no driver phone.
+          if ((phone ?? '').trim().isNotEmpty && phone != 'null') ...[
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () => launchUrl(
+                    Uri.parse("tel:${_dialNumber(countryCode, phone ?? "")}"),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    countryCode! + " " + phone!,
-                    style: appFont('Rubik', 
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1E293B),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.phone_outlined,
+                        size: 16,
+                        color: Color(0xFFFF5216),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _dialNumber(countryCode, phone ?? ""),
+                        textDirection: TextDirection.ltr,
+                        style: appFont('Rubik',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF1E293B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => launchUrl(
+                    Uri.parse(
+                      "https://wa.me/${_dialNumber(countryCode, phone ?? "").replaceAll(RegExp(r'[^0-9]'), '')}",
+                    ),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF22C55E),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.chat_rounded,
+                      color: Colors.white,
+                      size: 18,
                     ),
                   ),
-                ],
-              ),
-
-              InkWell(
-                onTap: () {
-                  launchUrl(Uri.parse("tel:" + countryCode + phone));
-                },
-
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF22C55E),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.phone, color: Colors.white, size: 16),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );
