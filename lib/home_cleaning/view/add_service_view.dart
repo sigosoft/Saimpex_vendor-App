@@ -42,14 +42,16 @@ String cleaningUnitLabel(BuildContext context, String unit) {
 /// Localised label for a property type stored as its English value
 /// (`Apartment`, `Villa`; API doc `serviceOptions`); others as stored.
 String cleaningPropertyLabel(BuildContext context, String value) {
-  switch (value.trim()) {
-    case CleaningServiceValues.propertyApartment:
-      return S.of(context).cleaningApartment;
-    case CleaningServiceValues.propertyVilla:
-      return S.of(context).cleaningVilla;
-    default:
-      return value;
+  // Bookings send the type in any case ("Apartment" or "apartment",
+  // device 6 Nov); match without case.
+  final v = value.trim().toLowerCase();
+  if (v == CleaningServiceValues.propertyApartment.toLowerCase()) {
+    return S.of(context).cleaningApartment;
   }
+  if (v == CleaningServiceValues.propertyVilla.toLowerCase()) {
+    return S.of(context).cleaningVilla;
+  }
+  return value;
 }
 
 /// Localised label for an "issue covered" stored as its English id; values
