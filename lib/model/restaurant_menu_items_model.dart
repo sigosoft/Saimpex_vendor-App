@@ -163,6 +163,10 @@ class RestaurantMenuItemData {
   int? availableStatus;
   String? preparationTime;
 
+  /// Stock on hand (catalog list `stock`, grocery row `stock`); null when
+  /// the API does not send it.
+  int? stock;
+
   /// Hide / unhide state (§6.21, #132): `is_hidden`, `hidden_until`, `hidden_forever`.
   ProductVisibilityState visibility;
 
@@ -184,6 +188,7 @@ class RestaurantMenuItemData {
     this.categoryNameFr,
     this.availableStatus,
     this.preparationTime,
+    this.stock,
     this.visibility = const ProductVisibilityState(),
   });
 
@@ -240,6 +245,10 @@ class RestaurantMenuItemData {
           ? json['available_status'] as int
           : int.tryParse(json['available_status']?.toString() ?? '0'),
       visibility: ProductVisibilityState.fromJson(json),
+      stock: json['stock'] == null
+          ? null
+          : int.tryParse(json['stock'].toString()) ??
+              double.tryParse(json['stock'].toString())?.toInt(),
       preparationTime:
           json['preparation_time']?.toString() ?? json['prep_time']?.toString(),
     );

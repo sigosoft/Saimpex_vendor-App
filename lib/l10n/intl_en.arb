@@ -3761,5 +3761,7 @@
   "rmCouponDeleted": "Coupon deleted successfully",
   "@rmCouponDeleted": {},
   "rmCouponDeleteFailed": "Could not delete the coupon",
-  "@rmCouponDeleteFailed": {}
+  "@rmCouponDeleteFailed": {},
+  "currentStock": "Current stock",
+  "@currentStock": {}
 }

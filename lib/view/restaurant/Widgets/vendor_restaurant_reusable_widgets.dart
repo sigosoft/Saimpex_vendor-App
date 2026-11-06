@@ -1805,6 +1805,10 @@ class VendorRichCard extends StatelessWidget {
   final bool isMenu;
   final List<RestaurantCategory>? categories;
   final int? availabilityStatus;
+
+  /// Stock on hand from the item list; shown in the Update Stock dialog
+  /// (VA-11). Null when the API does not send it.
+  final int? stock;
   final VoidCallback onViewDetails;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
@@ -1822,6 +1826,7 @@ class VendorRichCard extends StatelessWidget {
     required this.isMenu,
     this.categories,
     this.availabilityStatus,
+    this.stock,
     required this.onViewDetails,
     required this.onEdit,
     this.onDelete,
@@ -2047,6 +2052,10 @@ class VendorRichCard extends StatelessWidget {
                       Future<void> showUpdateStockDialog() async {
                         final qtyController = TextEditingController();
                         String stockAction = 'Add';
+                        // Shown under the field: a toast from inside the
+                        // dialog sat behind the keyboard, so an empty
+                        // quantity looked like Update did nothing (VA-11).
+                        String? qtyError;
 
                         return showDialog<void>(
                           context: context,
@@ -2118,6 +2127,17 @@ class VendorRichCard extends StatelessWidget {
                                             ),
                                           ],
                                         ),
+                                        if (stock != null) ...[
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            '${S.of(context).currentStock}: $stock',
+                                            style: appFont('Rubik',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF111827),
+                                            ),
+                                          ),
+                                        ],
                                         const SizedBox(height: 16),
                                         Text(
                                           S.of(context).stockMovementType,
@@ -2163,6 +2183,7 @@ class VendorRichCard extends StatelessWidget {
                                                 if (value == null) return;
                                                 setDialogState(() {
                                                   stockAction = value;
+                                                  qtyError = null;
                                                 });
                                               },
                                             ),
@@ -2185,9 +2206,18 @@ class VendorRichCard extends StatelessWidget {
                                             FilteringTextInputFormatter
                                                 .digitsOnly,
                                           ],
+                                          onChanged: (_) {
+                                            if (qtyError != null) {
+                                              setDialogState(
+                                                () => qtyError = null,
+                                              );
+                                            }
+                                          },
                                           decoration: InputDecoration(
                                             isDense: true,
                                             hintText: '',
+                                            errorText: qtyError,
+                                            errorMaxLines: 2,
                                             contentPadding:
                                                 const EdgeInsets.symmetric(
                                                   horizontal: 12,
@@ -2262,9 +2292,16 @@ class VendorRichCard extends StatelessWidget {
                                                     );
                                                     if (qty == null ||
                                                         qty <= 0) {
-                                                      showToast(
-                                                        context,
-                                                        S.of(context).stockEnterValidQuantity,
+                                                      setDialogState(
+                                                        () => qtyError = S.of(context).stockEnterValidQuantity,
+                                                      );
+                                                      return;
+                                                    }
+                                                    if (stockAction == 'Remove' &&
+                                                        stock != null &&
+                                                        qty > stock!) {
+                                                      setDialogState(
+                                                        () => qtyError = S.of(context).stockOnlyAvailableToRemove('$stock'),
                                                       );
                                                       return;
                                                     }

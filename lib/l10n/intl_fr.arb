@@ -3668,5 +3668,7 @@
   "rmCouponDeleted": "Coupon supprimé avec succès",
   "@rmCouponDeleted": {},
   "rmCouponDeleteFailed": "Impossible de supprimer le coupon",
-  "@rmCouponDeleteFailed": {}
+  "@rmCouponDeleteFailed": {},
+  "currentStock": "Stock actuel",
+  "@currentStock": {}
 }

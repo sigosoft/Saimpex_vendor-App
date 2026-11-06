@@ -883,6 +883,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "crop": MessageLookupByLibrary.simpleMessage("Crop"),
     "cropImage": MessageLookupByLibrary.simpleMessage("Crop Image"),
     "currentLocation": MessageLookupByLibrary.simpleMessage("Current Location"),
+    "currentStock": MessageLookupByLibrary.simpleMessage("Current stock"),
     "currentlyClosed": MessageLookupByLibrary.simpleMessage("Currently Closed"),
     "currentlyClosedOpens": MessageLookupByLibrary.simpleMessage(
       "Currently closed • Opens",

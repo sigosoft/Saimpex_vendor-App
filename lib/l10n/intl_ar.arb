@@ -3667,5 +3667,7 @@
   "rmCouponDeleted": "تم حذف القسيمة بنجاح",
   "@rmCouponDeleted": {},
   "rmCouponDeleteFailed": "تعذر حذف القسيمة",
-  "@rmCouponDeleteFailed": {}
+  "@rmCouponDeleteFailed": {},
+  "currentStock": "المخزون الحالي",
+  "@currentStock": {}
 }

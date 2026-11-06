@@ -486,6 +486,7 @@ class ProfileController extends GetxController {
                   categoryNameAr: g.categoryNameAr,
                   categoryNameFr: g.categoryNameFr,
                   availableStatus: g.availableStatus,
+                  stock: g.stock,
                 ),
               )
               .toList();

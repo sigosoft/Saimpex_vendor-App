@@ -873,6 +873,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "crop": MessageLookupByLibrary.simpleMessage("قص"),
     "cropImage": MessageLookupByLibrary.simpleMessage("قص الصورة"),
     "currentLocation": MessageLookupByLibrary.simpleMessage("الموقع الحالي"),
+    "currentStock": MessageLookupByLibrary.simpleMessage("المخزون الحالي"),
     "currentlyClosed": MessageLookupByLibrary.simpleMessage("مغلق حالياً"),
     "currentlyClosedOpens": MessageLookupByLibrary.simpleMessage(
       "مغلق حالياً • يفتح",
