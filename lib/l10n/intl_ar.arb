@@ -3352,5 +3352,49 @@
   "loginFailed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
   "@loginFailed": {},
   "requestTimedOut": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
-  "@requestTimedOut": {}
+  "@requestTimedOut": {},
+  "rmItemDeleted": "تم حذف المنتج بنجاح",
+  "@rmItemDeleted": {},
+  "rmItemDeleteFailed": "تعذر حذف المنتج",
+  "@rmItemDeleteFailed": {},
+  "rmImportSuccess": "تم استيراد المنتجات بنجاح",
+  "@rmImportSuccess": {},
+  "rmSelectVegType": "الرجاء اختيار نباتي أو غير نباتي",
+  "@rmSelectVegType": {},
+  "rmEnterDescription": "الرجاء إدخال وصف",
+  "@rmEnterDescription": {},
+  "rmEnterMaxQuantity": "الرجاء إدخال الحد الأقصى للكمية المسموح بها",
+  "@rmEnterMaxQuantity": {},
+  "rmUploadOneImage": "الرجاء رفع صورة واحدة على الأقل",
+  "@rmUploadOneImage": {},
+  "rmReviewsLoadFailed": "تعذر تحميل التقييمات والمراجعات",
+  "@rmReviewsLoadFailed": {},
+  "rmEnterSixDigitCode": "أدخل الرمز المكون من 6 أرقام",
+  "@rmEnterSixDigitCode": {},
+  "rmImageUploaded": "تم رفع الصورة بنجاح",
+  "@rmImageUploaded": {},
+  "rmImageUploadFailed": "فشل رفع الصورة",
+  "@rmImageUploadFailed": {},
+  "rmTemplateDownloadFailed": "تعذر تنزيل النموذج",
+  "@rmTemplateDownloadFailed": {},
+  "rmTemplateSaved": "تم الحفظ: {file}",
+  "@rmTemplateSaved": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "rmCouponAdded": "تمت إضافة القسيمة بنجاح",
+  "@rmCouponAdded": {},
+  "rmCouponAddFailed": "تعذرت إضافة القسيمة",
+  "@rmCouponAddFailed": {},
+  "rmCouponUpdated": "تم تحديث القسيمة بنجاح",
+  "@rmCouponUpdated": {},
+  "rmCouponUpdateFailed": "تعذر تحديث القسيمة",
+  "@rmCouponUpdateFailed": {},
+  "rmCouponDeleted": "تم حذف القسيمة بنجاح",
+  "@rmCouponDeleted": {},
+  "rmCouponDeleteFailed": "تعذر حذف القسيمة",
+  "@rmCouponDeleteFailed": {}
 }
