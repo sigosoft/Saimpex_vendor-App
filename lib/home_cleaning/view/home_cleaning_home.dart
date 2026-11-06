@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,8 +30,18 @@ class HomeCleaningHome extends StatefulWidget {
   State<HomeCleaningHome> createState() => _HomeCleaningHomeState();
 }
 
-class _HomeCleaningHomeState extends State<HomeCleaningHome> {
+class _HomeCleaningHomeState extends State<HomeCleaningHome>
+    with WidgetsBindingObserver {
   late final HomeCleaningController controller;
+
+  /// Live bookings (VA-28): new bookings only showed after a pull-to-refresh.
+  /// The list refreshes quietly on a foreground push, every [_pollEvery]
+  /// while this screen is on top and the app is in the foreground, and when
+  /// the app comes back to the foreground.
+  static const Duration _pollEvery = Duration(seconds: 30);
+  Timer? _poll;
+  Timer? _pushDebounce;
+  StreamSubscription<RemoteMessage>? _pushSub;
 
   @override
   void initState() {
@@ -36,6 +49,50 @@ class _HomeCleaningHomeState extends State<HomeCleaningHome> {
     controller = Get.isRegistered<HomeCleaningController>()
         ? Get.find<HomeCleaningController>()
         : Get.put(HomeCleaningController());
+    WidgetsBinding.instance.addObserver(this);
+    _pushSub = FirebaseMessaging.onMessage.listen((_) {
+      // Several pushes can arrive together; one refresh is enough.
+      _pushDebounce?.cancel();
+      _pushDebounce = Timer(const Duration(milliseconds: 800), controller.refreshQuietly);
+    });
+    _startPolling();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _stopPolling();
+    _pushDebounce?.cancel();
+    _pushSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      controller.refreshQuietly();
+      _startPolling();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      _stopPolling();
+    }
+  }
+
+  void _startPolling() {
+    _poll?.cancel();
+    _poll = Timer.periodic(_pollEvery, (_) {
+      if (!mounted) return;
+      // Only the Home and Bookings tabs show the list; skip while another
+      // screen (booking detail, a sheet) is on top.
+      final onTop = ModalRoute.of(context)?.isCurrent ?? true;
+      if (onTop && controller.navIndex <= 1) controller.refreshQuietly();
+    });
+  }
+
+  void _stopPolling() {
+    _poll?.cancel();
+    _poll = null;
   }
 
   @override
