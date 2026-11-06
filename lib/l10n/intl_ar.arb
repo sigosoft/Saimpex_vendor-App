@@ -3549,5 +3549,15 @@
   "@rsEnterSwiftHint": {},
   "reachedStore": "وصل إلى المتجر",
   "storeStatus": "حالة المتجر",
-  "storeCommission": "نسبة عمولة المتجر لكل طلب"
+  "storeCommission": "نسبة عمولة المتجر لكل طلب",
+  "hcfAreasHeader": "المناطق",
+  "@hcfAreasHeader": {},
+  "hcfIssuesHeader": "المشكلات",
+  "@hcfIssuesHeader": {},
+  "hcfAddOnsHeader": "الإضافات:",
+  "@hcfAddOnsHeader": {},
+  "hcfIssueCoveredHeader": "الآفات المشمولة:",
+  "@hcfIssueCoveredHeader": {},
+  "hcfBusinessReview": "تقييم النشاط التجاري",
+  "@hcfBusinessReview": {}
 }

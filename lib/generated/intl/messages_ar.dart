@@ -1091,6 +1091,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "gstVat": MessageLookupByLibrary.simpleMessage("الضريبة"),
     "guestLogin": MessageLookupByLibrary.simpleMessage("دخول الزائر"),
     "hAgo": MessageLookupByLibrary.simpleMessage("منذ"),
+    "hcfAddOnsHeader": MessageLookupByLibrary.simpleMessage("الإضافات:"),
+    "hcfAreasHeader": MessageLookupByLibrary.simpleMessage("المناطق"),
+    "hcfBusinessReview": MessageLookupByLibrary.simpleMessage(
+      "تقييم النشاط التجاري",
+    ),
+    "hcfIssueCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "الآفات المشمولة:",
+    ),
+    "hcfIssuesHeader": MessageLookupByLibrary.simpleMessage("المشكلات"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
     "hideFor1Hour": MessageLookupByLibrary.simpleMessage("لمدة ساعة"),
     "hideFor4Hours": MessageLookupByLibrary.simpleMessage("لمدة 4 ساعات"),

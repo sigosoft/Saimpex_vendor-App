@@ -3550,5 +3550,15 @@
   "@rsEnterSwiftHint": {},
   "reachedStore": "ARRIVÉ AU MAGASIN",
   "storeStatus": "Statut du magasin",
-  "storeCommission": "Pourcentage de commission du magasin par commande"
+  "storeCommission": "Pourcentage de commission du magasin par commande",
+  "hcfAreasHeader": "ZONES",
+  "@hcfAreasHeader": {},
+  "hcfIssuesHeader": "PROBLÈMES",
+  "@hcfIssuesHeader": {},
+  "hcfAddOnsHeader": "SUPPLÉMENTS :",
+  "@hcfAddOnsHeader": {},
+  "hcfIssueCoveredHeader": "NUISIBLES TRAITÉS :",
+  "@hcfIssueCoveredHeader": {},
+  "hcfBusinessReview": "Avis sur l'entreprise",
+  "@hcfBusinessReview": {}
 }

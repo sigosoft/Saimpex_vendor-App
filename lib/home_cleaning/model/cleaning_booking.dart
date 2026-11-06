@@ -248,6 +248,10 @@ class CleaningBooking {
 
   List<CleaningBookingLine> get spaceLines => lines.where((l) => l.isSpace).toList();
   List<CleaningBookingLine> get addonLines => lines.where((l) => l.isAddon).toList();
+
+  /// Pest control issues the customer picked (`lines[].kind == 'issue'`).
+  List<CleaningBookingLine> get issueLines =>
+      lines.where((l) => l.kind == 'issue' && l.name.trim().isNotEmpty).toList();
   CleaningBookingLine? get supplyLine {
     for (final l in lines) {
       if (l.isSupply) return l;

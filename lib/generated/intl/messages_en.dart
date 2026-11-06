@@ -1121,6 +1121,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "gstVat": MessageLookupByLibrary.simpleMessage("Gst/Vat"),
     "guestLogin": MessageLookupByLibrary.simpleMessage("Guest Login"),
     "hAgo": MessageLookupByLibrary.simpleMessage("h ago"),
+    "hcfAddOnsHeader": MessageLookupByLibrary.simpleMessage("ADD-ONS:"),
+    "hcfAreasHeader": MessageLookupByLibrary.simpleMessage("AREAS"),
+    "hcfBusinessReview": MessageLookupByLibrary.simpleMessage(
+      "Business Review",
+    ),
+    "hcfIssueCoveredHeader": MessageLookupByLibrary.simpleMessage(
+      "ISSUES COVERED:",
+    ),
+    "hcfIssuesHeader": MessageLookupByLibrary.simpleMessage("ISSUES"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
     "hideFor1Hour": MessageLookupByLibrary.simpleMessage("For 1 hour"),
     "hideFor4Hours": MessageLookupByLibrary.simpleMessage("For 4 hours"),

@@ -3639,5 +3639,15 @@
   "storeStatus": "Store Status",
   "@storeStatus": {},
   "storeCommission": "Store Commission Percentage per Order",
-  "@storeCommission": {}
+  "@storeCommission": {},
+  "hcfAreasHeader": "AREAS",
+  "@hcfAreasHeader": {},
+  "hcfIssuesHeader": "ISSUES",
+  "@hcfIssuesHeader": {},
+  "hcfAddOnsHeader": "ADD-ONS:",
+  "@hcfAddOnsHeader": {},
+  "hcfIssueCoveredHeader": "ISSUES COVERED:",
+  "@hcfIssueCoveredHeader": {},
+  "hcfBusinessReview": "Business Review",
+  "@hcfBusinessReview": {}
 }
