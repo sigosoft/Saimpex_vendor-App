@@ -75,179 +75,189 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(count) => "${count} empty cylinders to collect";
 
-  static String m26(group) =>
+  static String m26(count) => "${count} days ago";
+
+  static String m27(count) => "${count} hours ago";
+
+  static String m28(count) => "${count} minutes ago";
+
+  static String m29(count) => "Select ${count}";
+
+  static String m30(count) => "Choose up to ${count}";
+
+  static String m31(group) =>
       "Minimum selections can\'t be more than maximum in ${group}";
 
-  static String m27(group, max, count) =>
+  static String m32(group, max, count) =>
       "${group} allows ${max} selections but has ${count} options";
 
-  static String m28(kg) => "Actual weight (${kg} kg)";
+  static String m33(kg) => "Actual weight (${kg} kg)";
 
-  static String m29(kg) => "Customer estimate (${kg} kg)";
+  static String m34(kg) => "Customer estimate (${kg} kg)";
 
-  static String m30(rate) => "${rate} MRU / kg";
+  static String m35(rate) => "${rate} MRU / kg";
 
-  static String m31(kg) => "Estimated ${kg} kg";
+  static String m36(kg) => "Estimated ${kg} kg";
 
-  static String m32(file) => "Menu exported: ${file}";
+  static String m37(file) => "Menu exported: ${file}";
 
-  static String m33(name) =>
+  static String m38(name) =>
       "Are you sure you want to delete category \"${name}\"?";
 
-  static String m34(name) => "Are you sure you want to delete tag \"${name}\"?";
+  static String m39(name) => "Are you sure you want to delete tag \"${name}\"?";
 
-  static String m35(minutes) => "${minutes} min";
+  static String m40(minutes) => "${minutes} min";
 
-  static String m36(unit) => "MRU / ${unit}";
+  static String m41(unit) => "MRU / ${unit}";
 
-  static String m37(id) => "ORDER #${id}";
+  static String m42(id) => "ORDER #${id}";
 
-  static String m38(count) => "${count} Items";
+  static String m43(count) => "${count} Items";
 
-  static String m39(code) => "Order ${code}";
+  static String m44(code) => "Order ${code}";
 
-  static String m40(code) => "Prescription ${code}";
+  static String m45(code) => "Prescription ${code}";
 
-  static String m41(stock) => "${stock} Left";
+  static String m46(stock) => "${stock} Left";
 
-  static String m42(code, time) =>
+  static String m47(code, time) =>
       "Pre-order ${code} is due at ${time}. Please have it ready.";
 
-  static String m43(time) => "Hidden until ${time}";
+  static String m48(time) => "Hidden until ${time}";
 
-  static String m44(qty) => "Qty: ${qty}";
+  static String m49(qty) => "Qty: ${qty}";
 
-  static String m45(available, prescribed) =>
+  static String m50(available, prescribed) =>
       "${available} of ${prescribed} available";
 
-  static String m46(name) =>
+  static String m51(name) =>
       "Are you sure you want to remove ${name} from the quotation?";
 
-  static String m47(hours, minutes) => "Expires in ${hours} h ${minutes} min";
+  static String m52(hours, minutes) => "Expires in ${hours} h ${minutes} min";
 
-  static String m48(minutes) => "Expires in ${minutes} min";
+  static String m53(minutes) => "Expires in ${minutes} min";
 
-  static String m49(count) => "ORDER ITEMS (${count})";
+  static String m54(count) => "ORDER ITEMS (${count})";
 
-  static String m50(count) =>
+  static String m55(count) =>
       "${count} alternative(s) waiting for the customer\'s answer. They cannot pay until they answer.";
 
-  static String m51(qty, price) => "${qty} × ${price} MRU";
+  static String m56(qty, price) => "${qty} × ${price} MRU";
 
-  static String m52(count) => "${count} in stock";
+  static String m57(count) => "${count} in stock";
 
-  static String m53(count) => "${count} Days";
+  static String m58(count) => "${count} Days";
 
-  static String m54(reason) => "Reason: ${reason}";
+  static String m59(reason) => "Reason: ${reason}";
 
-  static String m55(file) => "Saved: ${file}";
+  static String m60(file) => "Saved: ${file}";
 
-  static String m56(date) => "Added on: ${date}";
+  static String m61(date) => "Added on: ${date}";
 
-  static String m57(name) => "by ${name}";
+  static String m62(name) => "by ${name}";
 
-  static String m58(name) => "Are you sure you want to delete \"${name}\"?";
+  static String m63(name) => "Are you sure you want to delete \"${name}\"?";
 
-  static String m59(id) => "STOCK ID: #${id}";
+  static String m64(id) => "STOCK ID: #${id}";
 
-  static String m60(time) => "Scheduled for ${time}";
+  static String m65(time) => "Scheduled for ${time}";
 
-  static String m61(code) => "Confirm this step for booking ${code}?";
+  static String m66(code) => "Confirm this step for booking ${code}?";
 
-  static String m62(date) =>
+  static String m67(date) =>
       "This booking is scheduled for ${date}, not today.";
 
-  static String m63(count) => "Only ${count} items are available to remove";
+  static String m68(count) => "Only ${count} items are available to remove";
 
-  static String m64(count) => "${count} in stock";
+  static String m69(count) => "${count} in stock";
 
-  static String m65(minutes) =>
+  static String m70(minutes) =>
       "Each change is sent to the customer for approval. With no answer in ${minutes} minutes it is accepted automatically, except a pricier substitute, which is removed. Totals are recalculated automatically.";
 
-  static String m66(qty, amount) => "Ordered: ${qty} · ${amount}";
+  static String m71(qty, amount) => "Ordered: ${qty} · ${amount}";
 
-  static String m67(max) => "Enter a quantity from 1 to ${max}.";
+  static String m72(max) => "Enter a quantity from 1 to ${max}.";
 
-  static String m68(name) =>
+  static String m73(name) =>
       "The customer is told that ${name} is unavailable.";
 
-  static String m69(qty, amount) => "Updated: ${qty} · ${amount}";
+  static String m74(qty, amount) => "Updated: ${qty} · ${amount}";
 
-  static String m70(time) => "Waiting for customer · ${time}";
+  static String m75(time) => "Waiting for customer · ${time}";
 
-  static String m71(code) => "Order #${code}";
+  static String m76(code) => "Order #${code}";
 
-  static String m72(count) => "Upcoming pre-orders (${count})";
+  static String m77(count) => "Upcoming pre-orders (${count})";
 
-  static String m73(count) => "${count} Bottles";
+  static String m78(count) => "${count} Bottles";
 
-  static String m74(count) => "${count} Bottles Left";
+  static String m79(count) => "${count} Bottles Left";
 
-  static String m75(reason) => "Reason: ${reason}";
+  static String m80(reason) => "Reason: ${reason}";
 
-  static String m76(name) => "Are you sure you want to delete \"${name}\"?";
+  static String m81(name) => "Are you sure you want to delete \"${name}\"?";
 
-  static String m77(min, max) => "${min} - ${max} km";
+  static String m82(min, max) => "${min} - ${max} km";
 
-  static String m78(error) => "Error accepting order: ${error}";
+  static String m83(error) => "Error accepting order: ${error}";
 
-  static String m79(error) => "Error accepting subscription: ${error}";
+  static String m84(error) => "Error accepting subscription: ${error}";
 
-  static String m80(error) => "Error adding product: ${error}";
+  static String m85(error) => "Error adding product: ${error}";
 
-  static String m81(error) => "Error cancelling order: ${error}";
+  static String m86(error) => "Error cancelling order: ${error}";
 
-  static String m82(error) => "Error deleting product: ${error}";
+  static String m87(error) => "Error deleting product: ${error}";
 
-  static String m83(error) => "Error marking order as ready: ${error}";
+  static String m88(error) => "Error marking order as ready: ${error}";
 
-  static String m84(error) => "Error pausing subscription: ${error}";
+  static String m89(error) => "Error pausing subscription: ${error}";
 
-  static String m85(error) => "Error preparing order: ${error}";
+  static String m90(error) => "Error preparing order: ${error}";
 
-  static String m86(error) => "Error rejecting subscription: ${error}";
+  static String m91(error) => "Error rejecting subscription: ${error}";
 
-  static String m87(error) => "Error resuming subscription: ${error}";
+  static String m92(error) => "Error resuming subscription: ${error}";
 
-  static String m88(error) => "Error updating item status: ${error}";
+  static String m93(error) => "Error updating item status: ${error}";
 
-  static String m89(error) => "Error updating price: ${error}";
+  static String m94(error) => "Error updating price: ${error}";
 
-  static String m90(error) => "Error updating stock: ${error}";
+  static String m95(error) => "Error updating stock: ${error}";
 
-  static String m91(days) => "Every ${days} days";
+  static String m96(days) => "Every ${days} days";
 
-  static String m92(count) => "All ${count}";
+  static String m97(count) => "All ${count}";
 
-  static String m93(count) => "In Stock ${count}";
+  static String m98(count) => "In Stock ${count}";
 
-  static String m94(count) => "Low Stock ${count}";
+  static String m99(count) => "Low Stock ${count}";
 
-  static String m95(id) => "ID: ${id}";
+  static String m100(id) => "ID: ${id}";
 
-  static String m96(count) => "${count} images selected";
+  static String m101(count) => "${count} images selected";
 
-  static String m97(date) => "Last Sold: ${date}";
+  static String m102(date) => "Last Sold: ${date}";
 
-  static String m98(count) => "+${count} More Products";
+  static String m103(count) => "+${count} More Products";
 
-  static String m99(count) => "ORDER ITEMS (${count})";
+  static String m104(count) => "ORDER ITEMS (${count})";
 
-  static String m100(date) => "Paused on: ${date}";
+  static String m105(date) => "Paused on: ${date}";
 
-  static String m101(start) => "Start ${start}";
+  static String m106(start) => "Start ${start}";
 
-  static String m102(start, end) => "Start ${start} - End ${end}";
+  static String m107(start, end) => "Start ${start} - End ${end}";
 
-  static String m103(count) => "(${count} reviews)";
+  static String m108(count) => "(${count} reviews)";
 
-  static String m104(count) => "${count} scheduled deliveries";
+  static String m109(count) => "${count} scheduled deliveries";
 
-  static String m105(id) => "STOCK ID: ${id}";
+  static String m110(id) => "STOCK ID: ${id}";
 
-  static String m106(open, close) => "Today: ${open} - ${close}";
+  static String m111(open, close) => "Today: ${open} - ${close}";
 
-  static String m107(name) => "Welcome to ${name}!";
+  static String m112(name) => "Welcome to ${name}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1226,6 +1236,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "isVegLabel": MessageLookupByLibrary.simpleMessage("Is Veg"),
     "item": MessageLookupByLibrary.simpleMessage("Item"),
     "itemBulkImport": MessageLookupByLibrary.simpleMessage("Item Bulk Import"),
+    "itemDetailAddExtras": MessageLookupByLibrary.simpleMessage("Add Extras"),
+    "itemDetailCategoryLabel": MessageLookupByLibrary.simpleMessage(
+      "Category:",
+    ),
+    "itemDetailDaysAgo": m26,
+    "itemDetailHoursAgo": m27,
+    "itemDetailJustNow": MessageLookupByLibrary.simpleMessage("Just now"),
+    "itemDetailMinShort": MessageLookupByLibrary.simpleMessage("min"),
+    "itemDetailMinutesAgo": m28,
+    "itemDetailOptional": MessageLookupByLibrary.simpleMessage("Optional"),
+    "itemDetailPrepTimeLabel": MessageLookupByLibrary.simpleMessage(
+      "Preparation Time:",
+    ),
+    "itemDetailRequired": MessageLookupByLibrary.simpleMessage("Required"),
+    "itemDetailSelectCount": m29,
+    "itemDetailSerialNoLabel": MessageLookupByLibrary.simpleMessage(
+      "Serial No:",
+    ),
+    "itemDetailUpToCount": m30,
+    "itemDetailVariants": MessageLookupByLibrary.simpleMessage("Variants"),
+    "itemDetailViewStockHistory": MessageLookupByLibrary.simpleMessage(
+      "View Stock History",
+    ),
     "itemFormAddAnotherItem": MessageLookupByLibrary.simpleMessage(
       "Add Another Item",
     ),
@@ -1327,7 +1360,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemValidationEnterSerialNumber": MessageLookupByLibrary.simpleMessage(
       "Please enter serial number",
     ),
-    "itemValidationMinOverMax": m26,
+    "itemValidationMinOverMax": m31,
     "itemValidationSelectAttribute": MessageLookupByLibrary.simpleMessage(
       "Please select an attribute",
     ),
@@ -1340,7 +1373,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemValidationSelectTag": MessageLookupByLibrary.simpleMessage(
       "Please select at least one tag",
     ),
-    "itemValidationTooFewOptions": m27,
+    "itemValidationTooFewOptions": m32,
     "items": MessageLookupByLibrary.simpleMessage("Items"),
     "itemsCountLabel": MessageLookupByLibrary.simpleMessage("ITEMS COUNT"),
     "itemsTotal": MessageLookupByLibrary.simpleMessage("ITEMS TOTAL"),
@@ -1350,7 +1383,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastPurchase": MessageLookupByLibrary.simpleMessage("Last Purchase"),
     "lastPurchaseLabel": MessageLookupByLibrary.simpleMessage("Last Purchase"),
-    "laundryActualWeight": m28,
+    "laundryActualWeight": m33,
     "laundryActualWeightLabel": MessageLookupByLibrary.simpleMessage(
       "Actual weight",
     ),
@@ -1362,7 +1395,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "laundryConfirmPickup": MessageLookupByLibrary.simpleMessage(
       "Confirm Pickup",
     ),
-    "laundryCustomerEstimate": m29,
+    "laundryCustomerEstimate": m34,
     "laundryDelivered": MessageLookupByLibrary.simpleMessage("Delivered"),
     "laundryDelivery": MessageLookupByLibrary.simpleMessage("Delivery"),
     "laundryDeliveryTurnaround": MessageLookupByLibrary.simpleMessage(
@@ -1389,7 +1422,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "laundryPriceBreakdown": MessageLookupByLibrary.simpleMessage(
       "Price breakdown",
     ),
-    "laundryRatePerKg": m30,
+    "laundryRatePerKg": m35,
     "laundryReadyForDelivery": MessageLookupByLibrary.simpleMessage(
       "Ready for Delivery",
     ),
@@ -1406,7 +1439,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "leave": MessageLookupByLibrary.simpleMessage("Leave"),
     "leaves": MessageLookupByLibrary.simpleMessage("Leaves"),
     "leavesHistory": MessageLookupByLibrary.simpleMessage("LEAVES HISTORY"),
-    "lnfEstimatedKg": m31,
+    "lnfEstimatedKg": m36,
     "lnfPaid": MessageLookupByLibrary.simpleMessage("Paid"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "loadingLocation": MessageLookupByLibrary.simpleMessage(
@@ -1455,7 +1488,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menuExportFailed": MessageLookupByLibrary.simpleMessage(
       "Could not export the menu. Please try again.",
     ),
-    "menuExportSaved": m32,
+    "menuExportSaved": m37,
     "menuInformation": MessageLookupByLibrary.simpleMessage("Menu Information"),
     "menuName": MessageLookupByLibrary.simpleMessage("MENU NAME"),
     "mgmtAddCategory": MessageLookupByLibrary.simpleMessage("Add Category"),
@@ -1483,9 +1516,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "mgmtDeleteCategory": MessageLookupByLibrary.simpleMessage(
       "Delete Category",
     ),
-    "mgmtDeleteCategoryConfirm": m33,
+    "mgmtDeleteCategoryConfirm": m38,
     "mgmtDeleteTag": MessageLookupByLibrary.simpleMessage("Delete Tag"),
-    "mgmtDeleteTagConfirm": m34,
+    "mgmtDeleteTagConfirm": m39,
     "mgmtEditCategory": MessageLookupByLibrary.simpleMessage("Edit Category"),
     "mgmtEditTag": MessageLookupByLibrary.simpleMessage("Edit Tag"),
     "mgmtNoTagsFound": MessageLookupByLibrary.simpleMessage("No tags found"),
@@ -1521,7 +1554,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Minimum order value",
     ),
     "mins": MessageLookupByLibrary.simpleMessage("Mins"),
-    "minutesShort": m35,
+    "minutesShort": m40,
     "missedSomething": MessageLookupByLibrary.simpleMessage(
       "Missed Something?",
     ),
@@ -1529,7 +1562,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "morePoints": MessageLookupByLibrary.simpleMessage("More Points"),
     "mruOnThisOrder": MessageLookupByLibrary.simpleMessage("MRU on this order"),
     "mruPerKg": MessageLookupByLibrary.simpleMessage("MRU / kg"),
-    "mruPerUnit": m36,
+    "mruPerUnit": m41,
     "mruWithThisCode": MessageLookupByLibrary.simpleMessage(
       "MRU with this code",
     ),
@@ -1690,7 +1723,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
       "Order Duration Breakdown",
     ),
-    "orderIdLabel": m37,
+    "orderIdLabel": m42,
     "orderItems": MessageLookupByLibrary.simpleMessage("ORDER ITEMS"),
     "orderMarkedPickedUpSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Order marked as picked up successfully",
@@ -1707,7 +1740,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Order Preparation Started",
     ),
     "orderPreparationStartedSuccessfully": MessageLookupByLibrary.simpleMessage(
-      "Order preparation started successfully",
+      "Order preparation started",
     ),
     "orderReady": MessageLookupByLibrary.simpleMessage("Order Ready"),
     "orderRules": MessageLookupByLibrary.simpleMessage("Order rules"),
@@ -1912,7 +1945,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pharmacyHomeBadgeToPrepare": MessageLookupByLibrary.simpleMessage(
       "TO PREPARE",
     ),
-    "pharmacyHomeItemCount": m38,
+    "pharmacyHomeItemCount": m43,
     "pharmacyHomeMarkAsReviewed": MessageLookupByLibrary.simpleMessage(
       "Mark as Reviewed",
     ),
@@ -1920,11 +1953,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Not Assigned",
     ),
     "pharmacyHomeOneItem": MessageLookupByLibrary.simpleMessage("1 Item"),
-    "pharmacyHomeOrderCode": m39,
+    "pharmacyHomeOrderCode": m44,
     "pharmacyHomePrescription": MessageLookupByLibrary.simpleMessage(
       "Prescription",
     ),
-    "pharmacyHomePrescriptionCode": m40,
+    "pharmacyHomePrescriptionCode": m45,
     "pharmacyHomeQuotationLabel": MessageLookupByLibrary.simpleMessage(
       "QUOTATION",
     ),
@@ -1999,7 +2032,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pharmacyInvProductSpecifications": MessageLookupByLibrary.simpleMessage(
       "Product Specifications",
     ),
-    "pharmacyInvStockLeft": m41,
+    "pharmacyInvStockLeft": m46,
     "pharmacyInvUnitBottle": MessageLookupByLibrary.simpleMessage("Bottle"),
     "pharmacyInvUnitBox": MessageLookupByLibrary.simpleMessage("Box"),
     "pharmacyInvUnitPiece": MessageLookupByLibrary.simpleMessage("Piece"),
@@ -2208,7 +2241,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "preOrders": MessageLookupByLibrary.simpleMessage("Pre-orders"),
     "preorderBadge": MessageLookupByLibrary.simpleMessage("Pre-order"),
     "preorderDueNow": MessageLookupByLibrary.simpleMessage("Due now"),
-    "preorderReminderBody": m42,
+    "preorderReminderBody": m47,
     "preorderReminderTitle": MessageLookupByLibrary.simpleMessage(
       "Pre-order due soon",
     ),
@@ -2251,7 +2284,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "productHiddenForever": MessageLookupByLibrary.simpleMessage(
       "Hidden until you show it",
     ),
-    "productHiddenUntil": m43,
+    "productHiddenUntil": m48,
     "productOutOfStock": MessageLookupByLibrary.simpleMessage(
       "Product out of stock",
     ),
@@ -2261,7 +2294,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "products": MessageLookupByLibrary.simpleMessage("Products"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
-    "qtyLabel": m44,
+    "qtyLabel": m49,
     "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
     "quickEditAdvanced": MessageLookupByLibrary.simpleMessage(
       "Advanced edit (variants, options, extras)",
@@ -2315,7 +2348,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quoteAvailableInStock": MessageLookupByLibrary.simpleMessage(
       "Available (In Stock)",
     ),
-    "quoteAvailableOf": m45,
+    "quoteAvailableOf": m50,
     "quoteAvailableQty": MessageLookupByLibrary.simpleMessage(
       "Available Quantity",
     ),
@@ -2333,13 +2366,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Waiting for customer",
     ),
     "quoteDelete": MessageLookupByLibrary.simpleMessage("Delete"),
-    "quoteDeleteBody": m46,
+    "quoteDeleteBody": m51,
     "quoteDeleteTitle": MessageLookupByLibrary.simpleMessage(
       "Delete medicine?",
     ),
     "quoteExpired": MessageLookupByLibrary.simpleMessage("Expired"),
-    "quoteExpiresInHours": m47,
-    "quoteExpiresInMinutes": m48,
+    "quoteExpiresInHours": m52,
+    "quoteExpiresInMinutes": m53,
     "quoteInStock": MessageLookupByLibrary.simpleMessage("In Stock"),
     "quoteItemTotal": MessageLookupByLibrary.simpleMessage("Item total"),
     "quoteItemsTitle": MessageLookupByLibrary.simpleMessage("Quotation Items"),
@@ -2355,21 +2388,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Not in your inventory",
     ),
     "quoteNotCharged": MessageLookupByLibrary.simpleMessage("Not charged"),
-    "quoteOrderItems": m49,
+    "quoteOrderItems": m54,
     "quotePartialLimited": MessageLookupByLibrary.simpleMessage(
       "Partially Available (Limited)",
     ),
     "quotePartiallyAvailable": MessageLookupByLibrary.simpleMessage(
       "Partially Available",
     ),
-    "quotePendingAlternatives": m50,
+    "quotePendingAlternatives": m55,
     "quotePrescribedQty": MessageLookupByLibrary.simpleMessage(
       "Prescribed Quantity",
     ),
     "quotePrescriptionMissing": MessageLookupByLibrary.simpleMessage(
       "Prescription ID is required",
     ),
-    "quoteQtyTimesPrice": m51,
+    "quoteQtyTimesPrice": m56,
     "quoteSaveAndNext": MessageLookupByLibrary.simpleMessage(
       "Save & Add Next Medicine",
     ),
@@ -2381,7 +2414,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "quoteServerTotalNote": MessageLookupByLibrary.simpleMessage(
       "The customer pays for available items and the alternatives they accept. The final amount is calculated by the server.",
     ),
-    "quoteStockLeft": m52,
+    "quoteStockLeft": m57,
     "quoteSuggestAlternative": MessageLookupByLibrary.simpleMessage(
       "Suggest Alternative Medicine",
     ),
@@ -2396,7 +2429,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "quoteUnit": MessageLookupByLibrary.simpleMessage("Unit"),
     "quoteValidLabel": MessageLookupByLibrary.simpleMessage("Quote Valid"),
-    "quoteValidityDays": m53,
+    "quoteValidityDays": m58,
     "quoteValidityOneDay": MessageLookupByLibrary.simpleMessage("1 Day"),
     "rateOrder": MessageLookupByLibrary.simpleMessage("Rate Order"),
     "rateOrderedItems": MessageLookupByLibrary.simpleMessage(
@@ -2424,7 +2457,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reachedStore": MessageLookupByLibrary.simpleMessage("REACHED STORE"),
     "ready": MessageLookupByLibrary.simpleMessage("Ready"),
-    "reasonColonLabel": m54,
+    "reasonColonLabel": m59,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Reason For Leave"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Reason"),
     "receivedPayouts": MessageLookupByLibrary.simpleMessage("Received Payouts"),
@@ -2569,7 +2602,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rmTemplateDownloadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not download the template",
     ),
-    "rmTemplateSaved": m55,
+    "rmTemplateSaved": m60,
     "rmUploadOneImage": MessageLookupByLibrary.simpleMessage(
       "Please upload at least one image",
     ),
@@ -2581,12 +2614,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please add at least one valid time slot.",
     ),
     "rsAdded": MessageLookupByLibrary.simpleMessage("Added"),
-    "rsAddedOn": m56,
+    "rsAddedOn": m61,
     "rsAddressMin3": MessageLookupByLibrary.simpleMessage(
       "Address must be at least 3 characters",
     ),
     "rsBasketOrder": MessageLookupByLibrary.simpleMessage("Basket order"),
-    "rsByUser": m57,
+    "rsByUser": m62,
     "rsChooseFromGallery": MessageLookupByLibrary.simpleMessage(
       "Choose from Gallery",
     ),
@@ -2594,7 +2627,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rsConfirmDeleteDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this delivery boy?",
     ),
-    "rsConfirmDeleteDeliveryBoyNamed": m58,
+    "rsConfirmDeleteDeliveryBoyNamed": m63,
     "rsCountry": MessageLookupByLibrary.simpleMessage("Country"),
     "rsDeleteDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "Delete Delivery Boy",
@@ -2722,7 +2755,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rsSelectProfileImage": MessageLookupByLibrary.simpleMessage(
       "Please select profile image",
     ),
-    "rsStockId": m59,
+    "rsStockId": m64,
     "rsUpdateDeliveryBoy": MessageLookupByLibrary.simpleMessage(
       "Update Delivery Boy",
     ),
@@ -2747,7 +2780,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveCleaner": MessageLookupByLibrary.simpleMessage("Save cleaner"),
     "scanBarcode": MessageLookupByLibrary.simpleMessage("Scan Barcode"),
     "scheduled": MessageLookupByLibrary.simpleMessage("SCHEDULED"),
-    "scheduledForTime": m60,
+    "scheduledForTime": m65,
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchAmountOrTransactionId": MessageLookupByLibrary.simpleMessage(
       "Search amount or Transaction ID",
@@ -2822,8 +2855,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "serviceKindLaundry": MessageLookupByLibrary.simpleMessage("Laundry"),
     "serviceStepConfirm": MessageLookupByLibrary.simpleMessage("Confirm"),
-    "serviceStepConfirmBody": m61,
-    "serviceStepFutureWarning": m62,
+    "serviceStepConfirmBody": m66,
+    "serviceStepFutureWarning": m67,
     "serviceTypeLabel": MessageLookupByLibrary.simpleMessage("Service type"),
     "serviceTypeName": MessageLookupByLibrary.simpleMessage(
       "Service type name",
@@ -2857,7 +2890,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter a valid quantity",
     ),
     "stockMovementType": MessageLookupByLibrary.simpleMessage("Type"),
-    "stockOnlyAvailableToRemove": m63,
+    "stockOnlyAvailableToRemove": m68,
     "stockRemovedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Stock removed successfully",
     ),
@@ -2896,23 +2929,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "Confirm Selection",
     ),
     "substitutionEditItems": MessageLookupByLibrary.simpleMessage("Edit Items"),
-    "substitutionInStock": m64,
-    "substitutionInfo": m65,
+    "substitutionInStock": m69,
+    "substitutionInfo": m70,
     "substitutionItemRemoved": MessageLookupByLibrary.simpleMessage(
       "Item Removed",
     ),
-    "substitutionOrdered": m66,
+    "substitutionOrdered": m71,
     "substitutionOrderedQuantity": MessageLookupByLibrary.simpleMessage(
       "Ordered Quantity",
     ),
     "substitutionQuantityChanged": MessageLookupByLibrary.simpleMessage(
       "Quantity Changed",
     ),
-    "substitutionQuantityHint": m67,
+    "substitutionQuantityHint": m72,
     "substitutionRejected": MessageLookupByLibrary.simpleMessage(
       "Rejected by customer",
     ),
-    "substitutionRemoveBody": m68,
+    "substitutionRemoveBody": m73,
     "substitutionRemoveItem": MessageLookupByLibrary.simpleMessage(
       "Remove Item",
     ),
@@ -2940,19 +2973,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "substitutionUpdateQuantity": MessageLookupByLibrary.simpleMessage(
       "Update Quantity",
     ),
-    "substitutionUpdated": m69,
+    "substitutionUpdated": m74,
     "substitutionUpdatedTotal": MessageLookupByLibrary.simpleMessage(
       "Updated Item Total:",
     ),
     "substitutionWaiting": MessageLookupByLibrary.simpleMessage(
       "Waiting for customer",
     ),
-    "substitutionWaitingFor": m70,
+    "substitutionWaitingFor": m75,
     "substitutionWithdrawn": MessageLookupByLibrary.simpleMessage("Withdrawn"),
     "subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
     "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),
     "supportMessages": MessageLookupByLibrary.simpleMessage("Support messages"),
-    "supportOrderCode": m71,
+    "supportOrderCode": m76,
     "sushiPlatter": MessageLookupByLibrary.simpleMessage("Sushi Platter"),
     "swiftCode": MessageLookupByLibrary.simpleMessage("SWIFT Code"),
     "tags": MessageLookupByLibrary.simpleMessage("Tags"),
@@ -3037,7 +3070,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unknownDriver": MessageLookupByLibrary.simpleMessage("Unknown Driver"),
     "unknownVendor": MessageLookupByLibrary.simpleMessage("Unknown Vendor"),
     "upcomingLeaves": MessageLookupByLibrary.simpleMessage("Upcoming Leaves"),
-    "upcomingPreordersCount": m72,
+    "upcomingPreordersCount": m77,
     "update": MessageLookupByLibrary.simpleMessage("Update"),
     "updateCoupon": MessageLookupByLibrary.simpleMessage("Update Coupon"),
     "updateCouponStatus": MessageLookupByLibrary.simpleMessage(
@@ -3134,8 +3167,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterBottleSize": MessageLookupByLibrary.simpleMessage("Bottle Size"),
     "waterBottles": MessageLookupByLibrary.simpleMessage("Bottles"),
-    "waterBottlesCount": m73,
-    "waterBottlesLeft": m74,
+    "waterBottlesCount": m78,
+    "waterBottlesLeft": m79,
     "waterBrand": MessageLookupByLibrary.simpleMessage("Brand"),
     "waterBrandName": MessageLookupByLibrary.simpleMessage("Brand Name"),
     "waterBusiness": MessageLookupByLibrary.simpleMessage("Business"),
@@ -3161,7 +3194,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterCancelLeaveConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to cancel this leave?",
     ),
-    "waterCancelReason": m75,
+    "waterCancelReason": m80,
     "waterCertificate": MessageLookupByLibrary.simpleMessage("Certificate"),
     "waterChatWithCustomer": MessageLookupByLibrary.simpleMessage(
       "Chat With Customer",
@@ -3170,7 +3203,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterConfirmDeleteItem": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this item?",
     ),
-    "waterConfirmDeleteNamedItem": m76,
+    "waterConfirmDeleteNamedItem": m81,
     "waterConfirmMarkAvailable": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to mark this item as available?",
     ),
@@ -3219,7 +3252,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "DELIVERY TYPE",
     ),
     "waterDescription": MessageLookupByLibrary.simpleMessage("Description"),
-    "waterDistanceRangeKm": m77,
+    "waterDistanceRangeKm": m82,
     "waterEditDistanceRange": MessageLookupByLibrary.simpleMessage(
       "Edit Distance Range",
     ),
@@ -3240,25 +3273,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter Quantity",
     ),
     "waterEnterReason": MessageLookupByLibrary.simpleMessage("Enter a reason"),
-    "waterErrorAcceptingOrder": m78,
-    "waterErrorAcceptingSubscription": m79,
-    "waterErrorAddingProduct": m80,
-    "waterErrorCancellingOrder": m81,
-    "waterErrorDeletingProduct": m82,
-    "waterErrorMarkingOrderAsReady": m83,
-    "waterErrorPausingSubscription": m84,
-    "waterErrorPreparingOrder": m85,
-    "waterErrorRejectingSubscription": m86,
-    "waterErrorResumingSubscription": m87,
-    "waterErrorUpdatingItemStatus": m88,
-    "waterErrorUpdatingPrice": m89,
-    "waterErrorUpdatingStock": m90,
+    "waterErrorAcceptingOrder": m83,
+    "waterErrorAcceptingSubscription": m84,
+    "waterErrorAddingProduct": m85,
+    "waterErrorCancellingOrder": m86,
+    "waterErrorDeletingProduct": m87,
+    "waterErrorMarkingOrderAsReady": m88,
+    "waterErrorPausingSubscription": m89,
+    "waterErrorPreparingOrder": m90,
+    "waterErrorRejectingSubscription": m91,
+    "waterErrorResumingSubscription": m92,
+    "waterErrorUpdatingItemStatus": m93,
+    "waterErrorUpdatingPrice": m94,
+    "waterErrorUpdatingStock": m95,
     "waterEstValue": MessageLookupByLibrary.simpleMessage("Est. value"),
     "waterEstimatedDeliveryFee": MessageLookupByLibrary.simpleMessage(
       "Estimated Delivery Fee",
     ),
     "waterEvening": MessageLookupByLibrary.simpleMessage("Evening"),
-    "waterEveryNDays": m91,
+    "waterEveryNDays": m96,
     "waterExpressDelivery": MessageLookupByLibrary.simpleMessage(
       "Express Delivery",
     ),
@@ -3325,20 +3358,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFillInEveryField": MessageLookupByLibrary.simpleMessage(
       "Fill in every field",
     ),
-    "waterFilterAllCount": m92,
+    "waterFilterAllCount": m97,
     "waterFilterByCategory": MessageLookupByLibrary.simpleMessage(
       "Filter by category",
     ),
-    "waterFilterInStockCount": m93,
-    "waterFilterLowStockCount": m94,
+    "waterFilterInStockCount": m98,
+    "waterFilterLowStockCount": m99,
     "waterFlat": MessageLookupByLibrary.simpleMessage("Flat"),
     "waterFrequency": MessageLookupByLibrary.simpleMessage("Frequency"),
-    "waterIdLabel": m95,
+    "waterIdLabel": m100,
     "waterImage": MessageLookupByLibrary.simpleMessage("Image"),
     "waterImageFormatHint": MessageLookupByLibrary.simpleMessage(
       "PNG, JPG up to 5MB",
     ),
-    "waterImagesSelected": m96,
+    "waterImagesSelected": m101,
     "waterInProgress": MessageLookupByLibrary.simpleMessage("In progress"),
     "waterInStock": MessageLookupByLibrary.simpleMessage("In Stock"),
     "waterInventory": MessageLookupByLibrary.simpleMessage("Inventory"),
@@ -3352,7 +3385,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterItemMarkedOutOfStock": MessageLookupByLibrary.simpleMessage(
       "Item marked as out of stock successfully",
     ),
-    "waterLastSold": m97,
+    "waterLastSold": m102,
     "waterLeaveCancelledSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Leave cancelled successfully",
     ),
@@ -3398,7 +3431,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterMonth": MessageLookupByLibrary.simpleMessage("Month"),
     "waterMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "waterMore": MessageLookupByLibrary.simpleMessage("More"),
-    "waterMoreProducts": m98,
+    "waterMoreProducts": m103,
     "waterMorning": MessageLookupByLibrary.simpleMessage("Morning"),
     "waterNewBadge": MessageLookupByLibrary.simpleMessage("NEW"),
     "waterNewOrders": MessageLookupByLibrary.simpleMessage("New Orders"),
@@ -3456,7 +3489,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterOrderDelivered": MessageLookupByLibrary.simpleMessage(
       "Order Delivered",
     ),
-    "waterOrderItemsCount": m99,
+    "waterOrderItemsCount": m104,
     "waterOrderMarkedAsReady": MessageLookupByLibrary.simpleMessage(
       "Order marked as ready successfully",
     ),
@@ -3486,7 +3519,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterPaused": MessageLookupByLibrary.simpleMessage("Paused"),
     "waterPausedByLabel": MessageLookupByLibrary.simpleMessage("PAUSED BY:"),
-    "waterPausedOn": m100,
+    "waterPausedOn": m105,
     "waterPausedOnLabel": MessageLookupByLibrary.simpleMessage("PAUSED ON:"),
     "waterPaymentDetails": MessageLookupByLibrary.simpleMessage(
       "Payment Details",
@@ -3509,8 +3542,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Picked Up by Rider",
     ),
     "waterPlan": MessageLookupByLibrary.simpleMessage("Plan"),
-    "waterPlanRangeStart": m101,
-    "waterPlanRangeStartEnd": m102,
+    "waterPlanRangeStart": m106,
+    "waterPlanRangeStartEnd": m107,
     "waterPlanSummary": MessageLookupByLibrary.simpleMessage("PLAN SUMMARY"),
     "waterPleaseEnterAvailableStock": MessageLookupByLibrary.simpleMessage(
       "Please enter available stock",
@@ -3604,7 +3637,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterRevenueSummary": MessageLookupByLibrary.simpleMessage(
       "Revenue Summary",
     ),
-    "waterReviewsCount": m103,
+    "waterReviewsCount": m108,
     "waterSalesPerformance": MessageLookupByLibrary.simpleMessage(
       "Sales Performance",
     ),
@@ -3612,7 +3645,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterScanOrEnterBarcode": MessageLookupByLibrary.simpleMessage(
       "Scan or enter barcode",
     ),
-    "waterScheduledDeliveries": m104,
+    "waterScheduledDeliveries": m109,
     "waterSearchBySubscriptionIdName": MessageLookupByLibrary.simpleMessage(
       "Search by subscription ID, name",
     ),
@@ -3645,7 +3678,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterStartTime": MessageLookupByLibrary.simpleMessage("Start Time"),
     "waterStockAdded": MessageLookupByLibrary.simpleMessage("Stock Added"),
     "waterStockHistory": MessageLookupByLibrary.simpleMessage("Stock History"),
-    "waterStockIdLabel": m105,
+    "waterStockIdLabel": m110,
     "waterStockRemoved": MessageLookupByLibrary.simpleMessage("Stock Removed"),
     "waterStockUpdatedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Stock updated successfully",
@@ -3704,7 +3737,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterToDateAfterFromDate": MessageLookupByLibrary.simpleMessage(
       "To date must be after from date",
     ),
-    "waterTodayTimings": m106,
+    "waterTodayTimings": m111,
     "waterTomorrow": MessageLookupByLibrary.simpleMessage("Tomorrow"),
     "waterTotalHeader": MessageLookupByLibrary.simpleMessage("TOTAL"),
     "waterTotalPaid": MessageLookupByLibrary.simpleMessage("Total paid"),
@@ -3736,7 +3769,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterWeeklySchedule": MessageLookupByLibrary.simpleMessage(
       "Weekly Schedule",
     ),
-    "waterWelcomeToShop": m107,
+    "waterWelcomeToShop": m112,
     "waterWorkingHoursUpdated": MessageLookupByLibrary.simpleMessage(
       "Working hours updated successfully",
     ),
