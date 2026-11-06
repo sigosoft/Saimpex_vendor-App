@@ -14475,6 +14475,36 @@ class S {
   String get lnfPaid {
     return Intl.message('Paid', name: 'lnfPaid', desc: '', args: []);
   }
+
+  /// `Confirm this step for booking {code}?`
+  String serviceStepConfirmBody(String code) {
+    return Intl.message(
+      'Confirm this step for booking $code?',
+      name: 'serviceStepConfirmBody',
+      desc: '',
+      args: [code],
+    );
+  }
+
+  /// `This booking is scheduled for {date}, not today.`
+  String serviceStepFutureWarning(String date) {
+    return Intl.message(
+      'This booking is scheduled for $date, not today.',
+      name: 'serviceStepFutureWarning',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Confirm`
+  String get serviceStepConfirm {
+    return Intl.message(
+      'Confirm',
+      name: 'serviceStepConfirm',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
