@@ -49,6 +49,9 @@ class CleaningBookingFormat {
 
   static String time(DateTime value) => _fmt('h:mm a').format(value);
 
+  /// "Aug 25, 2026" (car wash BOOKING SLOT date chip).
+  static String date(DateTime value) => _fmt('MMM d, yyyy').format(value);
+
   static String timeAgo(BuildContext context, DateTime? created) {
     if (created == null) return '';
     // created is already in phone time (CleaningBooking reads server UTC).
