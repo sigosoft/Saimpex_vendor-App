@@ -2887,6 +2887,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
       "Failed to mark order as ready",
     ),
+    "waterFailedToMarkPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Could not mark the order as picked up",
+    ),
     "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
       "Failed to pause subscription",
     ),
@@ -3054,6 +3057,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
       "Order moved to preparing successfully",
+    ),
+    "waterOrderPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Order handed over to the customer",
     ),
     "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
       "Order Received",

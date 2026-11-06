@@ -1972,6 +1972,8 @@
     }
   },
   "waterOrderMarkedAsReady": "Commande marquée comme prête",
+  "waterOrderPickedUp": "Commande remise au client",
+  "waterFailedToMarkPickedUp": "Impossible de marquer la commande comme retirée",
   "@waterOrderMarkedAsReady": {},
   "waterOrderMovedToPreparing": "Commande passée en préparation",
   "@waterOrderMovedToPreparing": {},

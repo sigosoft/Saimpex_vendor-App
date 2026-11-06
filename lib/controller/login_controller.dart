@@ -69,6 +69,9 @@ class LoginController extends GetxController {
     String userName,
     String password,
   ) async {
+    // No spaces in a username: a pasted or keyboard-added one ("grocery. 08")
+    // made the login fail (K-B1 on the kitchen app).
+    userName = userName.replaceAll(RegExp(r'\s'), '');
     try {
       showLoadingDialog(context);
       String? fcm_token;

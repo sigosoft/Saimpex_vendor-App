@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 
 import '../../../controller/login_controller.dart';
@@ -120,6 +121,12 @@ class LoginFormCard extends StatelessWidget {
             const SizedBox(height: 8),
             TextField(
               controller: loginController.userNameController,
+              // Usernames are emails or ids: no spaces. The phone keyboard
+              // added one after each "." ("grocery. 08"), see K-B1.
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              enableSuggestions: false,
+              inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'\s'))],
               decoration: InputDecoration(
                 hintText: S.of(context).enterYourUsername,
                 hintStyle: appFont('Rubik', fontSize: 14, color: Colors.grey),

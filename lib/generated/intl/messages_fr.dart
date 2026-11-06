@@ -3175,6 +3175,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waterFailedToMarkOrderAsReady": MessageLookupByLibrary.simpleMessage(
       "Impossible de marquer la commande comme prête",
     ),
+    "waterFailedToMarkPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Impossible de marquer la commande comme retirée",
+    ),
     "waterFailedToPauseSubscription": MessageLookupByLibrary.simpleMessage(
       "Impossible de suspendre l\'abonnement",
     ),
@@ -3352,6 +3355,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "waterOrderMovedToPreparing": MessageLookupByLibrary.simpleMessage(
       "Commande passée en préparation",
+    ),
+    "waterOrderPickedUp": MessageLookupByLibrary.simpleMessage(
+      "Commande remise au client",
     ),
     "waterOrderReceived": MessageLookupByLibrary.simpleMessage(
       "Commande reçue",
