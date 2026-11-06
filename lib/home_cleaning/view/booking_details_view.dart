@@ -851,15 +851,15 @@ class _CarWashSlot extends StatelessWidget {
     final start = booking.scheduledFor;
     if (start == null) {
       final window = booking.slotWindow;
-      return window == null ? const SizedBox.shrink() : _chip(Icons.calendar_today_outlined, window);
+      return window == null ? const SizedBox.shrink() : _chip(Icons.calendar_today_outlined, isolated(window));
     }
-    final end = booking.slotEnd;
-    final time = end == null
-        ? CleaningBookingFormat.time(start)
-        : '${CleaningBookingFormat.time(start)} - ${CleaningBookingFormat.time(end)}';
+    final date = isolated(CleaningBookingFormat.date(start));
+    // A booking with a day but no time shows the date alone (VA-29).
+    final time = CleaningBookingFormat.timeRange(booking);
+    if (time == null) return _chip(Icons.calendar_today_outlined, date);
     return Row(
       children: [
-        Expanded(flex: 4, child: _chip(Icons.calendar_today_outlined, CleaningBookingFormat.date(start))),
+        Expanded(flex: 4, child: _chip(Icons.calendar_today_outlined, date)),
         const SizedBox(width: 10),
         Expanded(flex: 5, child: _chip(Icons.access_time_rounded, time)),
       ],
