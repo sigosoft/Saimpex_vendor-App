@@ -14492,6 +14492,151 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Variants`
+  String get itemDetailVariants {
+    return Intl.message(
+      'Variants',
+      name: 'itemDetailVariants',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Extras`
+  String get itemDetailAddExtras {
+    return Intl.message(
+      'Add Extras',
+      name: 'itemDetailAddExtras',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Required`
+  String get itemDetailRequired {
+    return Intl.message(
+      'Required',
+      name: 'itemDetailRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional`
+  String get itemDetailOptional {
+    return Intl.message(
+      'Optional',
+      name: 'itemDetailOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select {count}`
+  String itemDetailSelectCount(String count) {
+    return Intl.message(
+      'Select $count',
+      name: 'itemDetailSelectCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Choose up to {count}`
+  String itemDetailUpToCount(String count) {
+    return Intl.message(
+      'Choose up to $count',
+      name: 'itemDetailUpToCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `View Stock History`
+  String get itemDetailViewStockHistory {
+    return Intl.message(
+      'View Stock History',
+      name: 'itemDetailViewStockHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Just now`
+  String get itemDetailJustNow {
+    return Intl.message(
+      'Just now',
+      name: 'itemDetailJustNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} minutes ago`
+  String itemDetailMinutesAgo(String count) {
+    return Intl.message(
+      '$count minutes ago',
+      name: 'itemDetailMinutesAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} hours ago`
+  String itemDetailHoursAgo(String count) {
+    return Intl.message(
+      '$count hours ago',
+      name: 'itemDetailHoursAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} days ago`
+  String itemDetailDaysAgo(String count) {
+    return Intl.message(
+      '$count days ago',
+      name: 'itemDetailDaysAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Category:`
+  String get itemDetailCategoryLabel {
+    return Intl.message(
+      'Category:',
+      name: 'itemDetailCategoryLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Serial No:`
+  String get itemDetailSerialNoLabel {
+    return Intl.message(
+      'Serial No:',
+      name: 'itemDetailSerialNoLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparation Time:`
+  String get itemDetailPrepTimeLabel {
+    return Intl.message(
+      'Preparation Time:',
+      name: 'itemDetailPrepTimeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `min`
+  String get itemDetailMinShort {
+    return Intl.message('min', name: 'itemDetailMinShort', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

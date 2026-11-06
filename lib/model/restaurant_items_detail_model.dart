@@ -76,7 +76,10 @@ class MenuItemData {
                       json?['grocery_item_tags'] ??
                       json?['tags'])
                   as List?)
-              ?.map((e) => MenuItemTag.fromJson(e))
+              // restaurantCatalogItemDetail sends `tags` as plain ids (no
+              // names); only tag objects can be shown.
+              ?.whereType<Map>()
+              .map((e) => MenuItemTag.fromJson(Map<String, dynamic>.from(e)))
               .toList() ??
           [],
     );
