@@ -256,189 +256,105 @@ class PharmacyHomeController extends GetxController {
     }
   }
 
-  String get filterBadgeLabel {
-    if (!isOtcTab && selectedFilterIndex == 0) {
-      if (prescriptionsList.isNotEmpty) {
-        return prescriptionsList.length < 10
-            ? '0${prescriptionsList.length}'
-            : '${prescriptionsList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 1) {
-      if (underReviewPrescriptionsList.isNotEmpty) {
-        return underReviewPrescriptionsList.length < 10
-            ? '0${underReviewPrescriptionsList.length}'
-            : '${underReviewPrescriptionsList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 2) {
-      if (reviewedPrescriptionsList.isNotEmpty) {
-        return reviewedPrescriptionsList.length < 10
-            ? '0${reviewedPrescriptionsList.length}'
-            : '${reviewedPrescriptionsList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 3) {
-      if (quotedPrescriptionsList.isNotEmpty) {
-        return quotedPrescriptionsList.length < 10
-            ? '0${quotedPrescriptionsList.length}'
-            : '${quotedPrescriptionsList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 4) {
-      if (prescriptionToPrepareOrdersList.isNotEmpty) {
-        return prescriptionToPrepareOrdersList.length < 10
-            ? '0${prescriptionToPrepareOrdersList.length}'
-            : '${prescriptionToPrepareOrdersList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 5) {
-      if (prescriptionPreparingOrdersList.isNotEmpty) {
-        return prescriptionPreparingOrdersList.length < 10
-            ? '0${prescriptionPreparingOrdersList.length}'
-            : '${prescriptionPreparingOrdersList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 6) {
-      if (prescriptionReadyOrdersList.isNotEmpty) {
-        return prescriptionReadyOrdersList.length < 10
-            ? '0${prescriptionReadyOrdersList.length}'
-            : '${prescriptionReadyOrdersList.length}';
-      }
-      return '';
-    }
-    if (!isOtcTab && selectedFilterIndex == 7) {
-      if (prescriptionDeliveredOrdersList.isNotEmpty) {
-        return prescriptionDeliveredOrdersList.length < 10
-            ? '0${prescriptionDeliveredOrdersList.length}'
-            : '${prescriptionDeliveredOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 0) {
-      if (otcOrdersList.isNotEmpty) {
-        return otcOrdersList.length < 10
-            ? '0${otcOrdersList.length}'
-            : '${otcOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 1) {
-      if (otcAcceptedOrdersList.isNotEmpty) {
-        return otcAcceptedOrdersList.length < 10
-            ? '0${otcAcceptedOrdersList.length}'
-            : '${otcAcceptedOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 2) {
-      if (otcPreparingOrdersList.isNotEmpty) {
-        return otcPreparingOrdersList.length < 10
-            ? '0${otcPreparingOrdersList.length}'
-            : '${otcPreparingOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 3) {
-      if (otcReadyOrdersList.isNotEmpty) {
-        return otcReadyOrdersList.length < 10
-            ? '0${otcReadyOrdersList.length}'
-            : '${otcReadyOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 4) {
-      if (otcDeliveredOrdersList.isNotEmpty) {
-        return otcDeliveredOrdersList.length < 10
-            ? '0${otcDeliveredOrdersList.length}'
-            : '${otcDeliveredOrdersList.length}';
-      }
-      return '';
-    }
-    if (isOtcTab && selectedFilterIndex == 5) {
-      if (otcCancelledOrdersList.isNotEmpty) {
-        return otcCancelledOrdersList.length < 10
-            ? '0${otcCancelledOrdersList.length}'
-            : '${otcCancelledOrdersList.length}';
-      }
-      return '';
-    }
-    if (ordersList.isNotEmpty) {
-      return ordersList.length < 10
-          ? '0${ordersList.length}'
-          : '${ordersList.length}';
-    }
-    return '';
+  /// Server count for a prescription stage (`pharmacy.new_prescriptions`,
+  /// `under_review`, `review_completed`, `awaiting_payment` on the home
+  /// call): the same numbers as the Home cards.
+  int? _serverStageCount(String key) {
+    final v = rawPharmacy?[key];
+    return v == null ? null : int.tryParse(v.toString());
   }
 
-  String? get prescriptionBadge {
+  /// Rows of an order chip: the server's paginated `total`, plus any rows
+  /// added on top of that page (To Prepare also lists paid new orders).
+  /// The list holds one page (limit 10), so its length undercounted.
+  int _ordersCount(
+    List<PharmacyPendingOrderItem> list,
+    PharmacyPendingOrdersModel? data,
+  ) {
+    final total = int.tryParse('${data?.data?.total ?? ''}');
+    if (total == null) return list.length;
+    final pageRows = data?.data?.data?.length ?? 0;
+    final extra = list.length - pageRows;
+    return total + (extra > 0 ? extra : 0);
+  }
+
+  /// The count for one status chip of the current tab.
+  int _chipCount(int index) {
     if (!isOtcTab) {
-      if (selectedFilterIndex == 0 && prescriptionsList.isNotEmpty) {
-        return prescriptionsList.length.toString();
+      switch (index) {
+        case 0:
+          return int.tryParse(newPrescriptionsCount) ??
+              prescriptionsList.length;
+        case 1:
+          return _serverStageCount('under_review') ??
+              underReviewPrescriptionsList.length;
+        case 2:
+          return _serverStageCount('review_completed') ??
+              reviewedPrescriptionsList.length;
+        case 3:
+          return _serverStageCount('awaiting_payment') ??
+              quotedPrescriptionsList.length;
+        case 4:
+          return _ordersCount(
+            prescriptionToPrepareOrdersList,
+            prescriptionToPrepareOrdersData,
+          );
+        case 5:
+          return _ordersCount(
+            prescriptionPreparingOrdersList,
+            prescriptionPreparingOrdersData,
+          );
+        case 6:
+          return _ordersCount(
+            prescriptionReadyOrdersList,
+            prescriptionReadyOrdersData,
+          );
+        case 7:
+          return _ordersCount(
+            prescriptionDeliveredOrdersList,
+            prescriptionDeliveredOrdersData,
+          );
       }
-      if (selectedFilterIndex == 1 && underReviewPrescriptionsList.isNotEmpty) {
-        return underReviewPrescriptionsList.length.toString();
-      }
-      if (selectedFilterIndex == 2 && reviewedPrescriptionsList.isNotEmpty) {
-        return reviewedPrescriptionsList.length.toString();
-      }
-      if (selectedFilterIndex == 3 && quotedPrescriptionsList.isNotEmpty) {
-        return quotedPrescriptionsList.length.toString();
-      }
-      if (selectedFilterIndex == 4 &&
-          prescriptionToPrepareOrdersList.isNotEmpty) {
-        return prescriptionToPrepareOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 5 &&
-          prescriptionPreparingOrdersList.isNotEmpty) {
-        return prescriptionPreparingOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 6 &&
-          prescriptionReadyOrdersList.isNotEmpty) {
-        return prescriptionReadyOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 7 &&
-          prescriptionDeliveredOrdersList.isNotEmpty) {
-        return prescriptionDeliveredOrdersList.length.toString();
-      }
-      if (ordersList.isNotEmpty) {
-        return ordersList.length.toString();
-      }
+      return 0;
     }
-    return null;
+    switch (index) {
+      case 0:
+        return _ordersCount(otcOrdersList, otcOrdersData);
+      case 1:
+        return _ordersCount(otcAcceptedOrdersList, otcAcceptedOrdersData);
+      case 2:
+        return _ordersCount(otcPreparingOrdersList, otcPreparingOrdersData);
+      case 3:
+        return _ordersCount(otcReadyOrdersList, otcReadyOrdersData);
+      case 4:
+        return _ordersCount(otcDeliveredOrdersList, otcDeliveredOrdersData);
+      case 5:
+        return _ordersCount(otcCancelledOrdersList, otcCancelledOrdersData);
+    }
+    return 0;
+  }
+
+  /// Badge on the selected status chip. Retest 6 Nov (VA-23): "New orders"
+  /// showed 09 (every prescription on the page) while Home said "New
+  /// prescriptions 1"; prescription stages now use the same server counts
+  /// as Home, order stages the server's total.
+  String get filterBadgeLabel {
+    final n = _chipCount(selectedFilterIndex);
+    if (n <= 0) return '';
+    return n < 10 ? '0$n' : '$n';
+  }
+
+  /// Badges on the Prescription / OTC switch: the new items waiting in each
+  /// (the Home "New prescriptions" / "New OTC orders" numbers). They copied
+  /// the selected chip's list, so they jumped 9 → 1 → 0 between chips.
+  String? get prescriptionBadge {
+    final n = int.tryParse(newPrescriptionsCount) ?? 0;
+    return n > 0 ? '$n' : null;
   }
 
   String? get otcBadge {
-    if (isOtcTab) {
-      if (selectedFilterIndex == 0 && otcOrdersList.isNotEmpty) {
-        return otcOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 1 && otcAcceptedOrdersList.isNotEmpty) {
-        return otcAcceptedOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 2 && otcPreparingOrdersList.isNotEmpty) {
-        return otcPreparingOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 3 && otcReadyOrdersList.isNotEmpty) {
-        return otcReadyOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 4 && otcDeliveredOrdersList.isNotEmpty) {
-        return otcDeliveredOrdersList.length.toString();
-      }
-      if (selectedFilterIndex == 5 && otcCancelledOrdersList.isNotEmpty) {
-        return otcCancelledOrdersList.length.toString();
-      }
-      if (ordersList.isNotEmpty) {
-        return ordersList.length.toString();
-      }
-    }
-    return null;
+    final n = int.tryParse(newOtcCount) ?? 0;
+    return n > 0 ? '$n' : null;
   }
 
   String get newPrescriptionsCount {
@@ -2769,12 +2685,15 @@ class PharmacyHomeController extends GetxController {
     }
   }
 
-  void showReviewCompleted() {
+  /// After "Send quote": the prescription is now quoted, so open the
+  /// Awaiting Payment chip. It opened Review Completed, where the
+  /// prescription no longer is (retest 6 Nov, VA-24).
+  void showAwaitingPayment() {
     bottomNavIndex = 0;
     selectedOrderType = 0;
-    selectedFilterIndex = 2;
+    selectedFilterIndex = 3;
     update();
-    fetchPharmacyPrescriptions(status: 'reviewed');
+    fetchPharmacyPrescriptions(status: 'quoted');
     fetchPharmacyHome();
   }
 
