@@ -3337,5 +3337,29 @@
   "hcfIssueCoveredHeader": "الآفات المشمولة:",
   "@hcfIssueCoveredHeader": {},
   "hcfBusinessReview": "تقييم النشاط التجاري",
-  "@hcfBusinessReview": {}
+  "@hcfBusinessReview": {},
+  "cwfBookingSlot": "موعد الحجز",
+  "@cwfBookingSlot": {},
+  "cwfVehicleNumber": "المركبة {number}",
+  "@cwfVehicleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cwfAtWashStation": "في محطة الغسيل",
+  "@cwfAtWashStation": {},
+  "cwfAtHomeWorkplace": "في المنزل/مكان العمل",
+  "@cwfAtHomeWorkplace": {},
+  "cwfAtHome": "في المنزل",
+  "@cwfAtHome": {},
+  "cwfAtWorkplace": "في مكان العمل",
+  "@cwfAtWorkplace": {},
+  "cwfAtAnotherAddress": "في عنوان آخر",
+  "@cwfAtAnotherAddress": {},
+  "cwfTypeName": "اسم النوع",
+  "@cwfTypeName": {},
+  "cwfDistanceBased": "حسب المسافة",
+  "@cwfDistanceBased": {}
 }

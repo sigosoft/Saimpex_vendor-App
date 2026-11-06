@@ -14380,6 +14380,86 @@ class S {
       args: [],
     );
   }
+
+  /// `BOOKING SLOT`
+  String get cwfBookingSlot {
+    return Intl.message(
+      'BOOKING SLOT',
+      name: 'cwfBookingSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle {number}`
+  String cwfVehicleNumber(int number) {
+    return Intl.message(
+      'Vehicle $number',
+      name: 'cwfVehicleNumber',
+      desc: '',
+      args: [number],
+    );
+  }
+
+  /// `At Wash Station`
+  String get cwfAtWashStation {
+    return Intl.message(
+      'At Wash Station',
+      name: 'cwfAtWashStation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Home/Workplace`
+  String get cwfAtHomeWorkplace {
+    return Intl.message(
+      'At Home/Workplace',
+      name: 'cwfAtHomeWorkplace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Home`
+  String get cwfAtHome {
+    return Intl.message('At Home', name: 'cwfAtHome', desc: '', args: []);
+  }
+
+  /// `At Workplace`
+  String get cwfAtWorkplace {
+    return Intl.message(
+      'At Workplace',
+      name: 'cwfAtWorkplace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `At Another Address`
+  String get cwfAtAnotherAddress {
+    return Intl.message(
+      'At Another Address',
+      name: 'cwfAtAnotherAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type Name`
+  String get cwfTypeName {
+    return Intl.message('Type Name', name: 'cwfTypeName', desc: '', args: []);
+  }
+
+  /// `Distance Based`
+  String get cwfDistanceBased {
+    return Intl.message(
+      'Distance Based',
+      name: 'cwfDistanceBased',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

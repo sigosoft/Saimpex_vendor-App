@@ -3338,5 +3338,29 @@
   "hcfIssueCoveredHeader": "NUISIBLES TRAITÉS :",
   "@hcfIssueCoveredHeader": {},
   "hcfBusinessReview": "Avis sur l'entreprise",
-  "@hcfBusinessReview": {}
+  "@hcfBusinessReview": {},
+  "cwfBookingSlot": "CRÉNEAU DE RÉSERVATION",
+  "@cwfBookingSlot": {},
+  "cwfVehicleNumber": "Véhicule {number}",
+  "@cwfVehicleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "cwfAtWashStation": "À la station de lavage",
+  "@cwfAtWashStation": {},
+  "cwfAtHomeWorkplace": "À domicile/au travail",
+  "@cwfAtHomeWorkplace": {},
+  "cwfAtHome": "À domicile",
+  "@cwfAtHome": {},
+  "cwfAtWorkplace": "Au travail",
+  "@cwfAtWorkplace": {},
+  "cwfAtAnotherAddress": "À une autre adresse",
+  "@cwfAtAnotherAddress": {},
+  "cwfTypeName": "Nom du type",
+  "@cwfTypeName": {},
+  "cwfDistanceBased": "Selon la distance",
+  "@cwfDistanceBased": {}
 }

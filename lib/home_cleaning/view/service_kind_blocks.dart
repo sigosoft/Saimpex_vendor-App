@@ -228,29 +228,18 @@ class CarWashBookingBlock extends StatelessWidget {
     final vehicles = booking.raw['vehicles'] is List
         ? (booking.raw['vehicles'] as List).whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
         : <Map<String, dynamic>>[];
-    final place = _str(booking.raw['service_location']) ?? _str(booking.raw['place']) ?? _str(booking.raw['address_label']);
+    // Figma car wash detail: VEHICLES, one card per vehicle with its
+    // add-ons. The service location is drawn by the details screen (it has
+    // the map).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (vehicles.isNotEmpty) ...[
           _label(s.carWashVehicles),
-          for (final v in vehicles) ...[
-            _vehicle(s, v),
-            const SizedBox(height: 10),
+          for (var i = 0; i < vehicles.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _vehicle(s, vehicles[i]),
           ],
-        ],
-        if (place != null) ...[
-          _label(s.carWashServiceLocation),
-          _card(child: Row(children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(color: _tint, borderRadius: BorderRadius.circular(10)),
-              child: const Icon(Icons.local_car_wash_outlined, size: 18, color: _orange),
-            ),
-            const SizedBox(width: 12),
-            Expanded(child: Text(place, style: _t(14, FontWeight.w600, _ink))),
-          ])),
         ],
       ],
     );
@@ -262,20 +251,37 @@ class CarWashBookingBlock extends StatelessWidget {
         : <Map<String, dynamic>>[];
     final plate = _str(v['plate']);
     final type = _str(v['type']);
-    final service = _str(v['service']);
+    // `service` is the item's English name; the booking has it localized.
+    final service = booking.serviceName ?? _str(v['service']);
     final price = _num(v['price']);
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(color: _tint, borderRadius: BorderRadius.circular(10)),
-                child: const Icon(Icons.directions_car_outlined, color: _orange),
+              // Figma: vehicle picture with the type under it. The booking
+              // has no vehicle image, so the tile keeps a car icon.
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 64,
+                    height: 44,
+                    decoration: BoxDecoration(color: _tint, borderRadius: BorderRadius.circular(10)),
+                    child: const Icon(Icons.directions_car_outlined, color: _orange),
+                  ),
+                  if (type != null && plate != null) ...[
+                    const SizedBox(height: 4),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 64),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(color: const Color(0xFF5F6B7A), borderRadius: BorderRadius.circular(6)),
+                      child: Text(type, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: _t(10, FontWeight.w600, Colors.white)),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -283,8 +289,10 @@ class CarWashBookingBlock extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(plate ?? type ?? '—', textDirection: TextDirection.ltr, style: _t(14, FontWeight.w700, _ink)),
-                    if (plate != null && type != null) Text(type, style: _t(12, FontWeight.w500, _soft)),
-                    if (service != null) Text(service, style: _t(12, FontWeight.w500, _soft)),
+                    if (service != null) ...[
+                      const SizedBox(height: 2),
+                      Text(service, style: _t(12, FontWeight.w500, _soft)),
+                    ],
                   ],
                 ),
               ),
@@ -292,10 +300,11 @@ class CarWashBookingBlock extends StatelessWidget {
             ],
           ),
           if (addons.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Text(s.carWashAddOns.toUpperCase(), style: _t(11, FontWeight.w600, _muted)),
+            const SizedBox(height: 12),
+            Text(s.carWashAddOns.toUpperCase(), style: _t(11, FontWeight.w600, _muted).copyWith(letterSpacing: 0.6)),
+            const SizedBox(height: 4),
             for (final a in addons)
-              _row('• ${_str(a['name']) ?? ''}', signedMru('+', _mru(_num(a['price']) ?? 0))),
+              _row(_str(a['name']) ?? '', signedMru('+', _mru(_num(a['price']) ?? 0))),
           ],
         ],
       ),
