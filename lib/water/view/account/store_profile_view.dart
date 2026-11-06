@@ -836,6 +836,19 @@ class _ReviewCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Row(
                       children: [
+                        // Home cleaning (Figma): the shop rating is labelled
+                        // "Business Review" when a cleaner rating follows.
+                        if (cleanerReview != null) ...[
+                          Text(
+                            S.of(context).hcfBusinessReview,
+                            style: appFont('Inter',
+                              color: const Color(0xFF6B7280),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                        ],
                         for (var i = 0; i < 5; i++)
                           Icon(
                             i < ratingVal.round()
