@@ -3343,5 +3343,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "editProfileDetails": "تعديل بيانات الملف الشخصي"
 }
