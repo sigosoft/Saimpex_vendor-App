@@ -8,21 +8,35 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/water/core/water_state_view.dart';
+import 'package:saimpex_vendor/view/notifications/notification.dart' show FCM;
 
 class AppNotification {
   const AppNotification({
     required this.title,
     required this.body,
     required this.timeAgo,
+    this.linkType,
+    this.linkId,
+    this.orderCode,
   });
 
   final String title;
   final String body;
   final String timeAgo;
 
+  /// What the notification is about (backend #179): `order` / `booking`
+  /// and its id; null for general notifications (no button).
+  final String? linkType;
+  final String? linkId;
+  final String? orderCode;
+
+  bool get hasLink =>
+      (linkType == 'order' || linkType == 'booking') &&
+      int.tryParse(linkId ?? '') != null;
+
   /// `GET vendorapp/notifications` row: `title_en|fr|ar`, `content_en|fr|ar`,
-  /// `created_at`. The row carries no order/subscription link, so no action
-  /// button is shown.
+  /// `created_at`, and since backend 01b526613 `link_type` / `link_id` /
+  /// `order_code` (#179), used for the "View details" button.
   factory AppNotification.fromJson(Map<String, dynamic> json, String lang) {
     String pick(String base) {
       final local = json['${base}_$lang']?.toString().trim() ?? '';
@@ -35,6 +49,9 @@ class AppNotification {
       title: pick('title'),
       body: pick('content'),
       timeAgo: WaterApi.timeAgo(json['created_at']),
+      linkType: json['link_type']?.toString(),
+      linkId: json['link_id']?.toString(),
+      orderCode: json['order_code']?.toString(),
     );
   }
 }
@@ -365,6 +382,43 @@ class _NotificationCard extends StatelessWidget {
                               height: 1.35,
                             ),
                           ),
+                          ],
+                          // Figma action button (#179): opens the order or
+                          // booking with the same routing as a push tap.
+                          if (item.hasLink) ...[
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: OutlinedButton(
+                                onPressed: () =>
+                                    FCM.navigateToAcceptOrderIfLoggedIn(
+                                  notificationData: {
+                                    'order_id': item.linkId,
+                                    if (item.linkType == 'booking')
+                                      'booking_id': item.linkId,
+                                    if (item.linkType == 'booking')
+                                      'is_booking': '1',
+                                    if (item.orderCode != null)
+                                      'order_code': item.orderCode,
+                                  },
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.primaryOrange,
+                                  side: const BorderSide(
+                                    color: AppColors.primaryOrange,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  minimumSize: const Size(0, 34),
+                                ),
+                                child: Text(S.of(context).viewDetails),
+                              ),
+                            ),
                           ],
                         ],
                       ),
