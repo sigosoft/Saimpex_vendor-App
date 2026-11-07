@@ -146,6 +146,9 @@ class RestaurantMenuItemsPagination {
 
 class RestaurantMenuItemData {
   int? id;
+
+  /// The API row as sent (flags such as is_veg, is_new_arrival, is_popular).
+  Map<String, dynamic>? raw;
   String? nameEn;
   String? nameAr;
   String? nameFr;
@@ -185,6 +188,7 @@ class RestaurantMenuItemData {
     this.availableStatus,
     this.preparationTime,
     this.visibility = const ProductVisibilityState(),
+    this.raw,
   });
 
   factory RestaurantMenuItemData.fromJson(Map<String, dynamic>? json) {
@@ -213,6 +217,7 @@ class RestaurantMenuItemData {
     }
 
     return RestaurantMenuItemData(
+      raw: json,
       id: json['id'] as int? ?? int.tryParse(json['id']?.toString() ?? '') ?? 0,
       nameEn: json['name_en']?.toString() ?? '',
       nameAr: json['name_ar']?.toString() ?? '',
