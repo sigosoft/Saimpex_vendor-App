@@ -54,7 +54,9 @@ class _EditablePhoneFieldState extends State<EditablePhoneField> {
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 16),
+                // Start side: in Arabic the code sat on the right edge
+                // with no padding and "+222" was clipped.
+                padding: const EdgeInsetsDirectional.only(start: 16),
                 child: BoldTextRubik(
                   text: widget.countryCode,
                   fontSize: 14,
