@@ -237,7 +237,6 @@ class DioClient {
 
         return "Validation failed";
       } else if (statusCode == 500) {
-        // Get.to(ServerDown());
         return "Server error occurred";
       } else if (statusCode == 401) {
         return "Unauthorized";
