@@ -488,7 +488,7 @@ class _PharmacyBusinessSettingsScreenState
                           Padding(
                             padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: AlignmentDirectional.centerStart,
                               child: Text(
                                 S.of(context).waterPricing,
                                 style: appFont('Inter', 
@@ -555,7 +555,7 @@ class _Header extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: InkWell(
                 onTap: onBack,
                 borderRadius: BorderRadius.circular(12),
