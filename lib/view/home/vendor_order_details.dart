@@ -236,6 +236,10 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                     isSelfPickup: controller
                                                         .orderData
                                                         ?.isSelfPickup,
+                                                    isExpress: controller
+                                                            .orderData
+                                                            ?.isExpress ??
+                                                        false,
                                                   ),
                                                 ],
                                               ),
