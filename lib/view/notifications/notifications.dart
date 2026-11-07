@@ -16,6 +16,7 @@ import '../../utils/widgets/custom_app_bar.dart';
 import '../../utils/widgets/common_background.dart';
 import '../../utils/widgets/no_data_widget.dart';
 import '../shimmer_loading/shimmer_notification.dart';
+import 'notification.dart' show FCM;
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});
@@ -112,7 +113,7 @@ class _NotificationsState extends State<Notifications> {
                       ? notification.contentFr
                       : notification.contentEn;
                 }
-                return NotificationItem(
+                final item = NotificationItem(
                   context: context,
                   message: content,
                   time: _formatNotificationTime(
@@ -120,6 +121,42 @@ class _NotificationsState extends State<Notifications> {
                     notification.time.toString(),
                     notification.date.toString(),
                   ),
+                );
+                // Backend #179: a notification about an order gets a
+                // "View details" button that opens it (same routing as a
+                // push tap).
+                final linkId = notification.linkId;
+                if (notification.linkType != 'order' || linkId == null) {
+                  return item;
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    item,
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: 16,
+                        top: 4,
+                      ),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: TextButton(
+                          onPressed: () =>
+                              FCM.navigateToAcceptOrderIfLoggedIn(
+                            notificationData: {
+                              'order_id': '$linkId',
+                              if (notification.orderCode != null)
+                                'order_code': notification.orderCode,
+                            },
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor: colorPrimary,
+                          ),
+                          child: Text(S.of(context).viewDetails),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             );
