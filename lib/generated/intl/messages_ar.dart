@@ -2658,6 +2658,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewOrders": MessageLookupByLibrary.simpleMessage("عرض الطلبات"),
     "viewPaymentProof": MessageLookupByLibrary.simpleMessage("عرض إثبات الدفع"),
     "viewReports": MessageLookupByLibrary.simpleMessage("عرض التقارير"),
+    "waitingForDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "بانتظار مندوب التوصيل",
+    ),
     "walletPayment": MessageLookupByLibrary.simpleMessage("محفظة SAIMPEX"),
     "waterAcceptingOrders": MessageLookupByLibrary.simpleMessage(
       "يستقبل الطلبات",

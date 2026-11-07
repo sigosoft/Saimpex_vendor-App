@@ -2394,6 +2394,16 @@ class S {
     );
   }
 
+  /// `Waiting for a delivery partner`
+  String get waitingForDeliveryPartner {
+    return Intl.message(
+      'Waiting for a delivery partner',
+      name: 'waitingForDeliveryPartner',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{count, plural, =1{1 minute} other{{count} minutes}}`
   String durationMinutes(int count) {
     return Intl.plural(
