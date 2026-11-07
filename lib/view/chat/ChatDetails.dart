@@ -87,7 +87,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                   child: Text(
                                     S
                                         .of(context)
-                                        .currentlyNoContactsFoundPleaseTryLater,
+                                        .noMessagesYet,
                                     style: appFont('Rubik', 
                                       color: Colors.grey,
                                     ),
