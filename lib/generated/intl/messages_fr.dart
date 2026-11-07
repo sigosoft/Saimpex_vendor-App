@@ -3427,6 +3427,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Voir la preuve de paiement",
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("Voir les rapports"),
+    "waitingForDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "En attente d’un livreur",
+    ),
     "walletPayment": MessageLookupByLibrary.simpleMessage(
       "Portefeuille SAIMPEX",
     ),

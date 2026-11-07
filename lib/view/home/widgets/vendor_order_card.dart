@@ -62,6 +62,11 @@ class VendorOrderCard extends StatelessWidget {
   /// callers pass the label in the app language, so the colour and the
   /// buttons compared it with English words and broke in French and Arabic.
   /// Both the translated label and the English word are recognised.
+  bool get _hasDriverName {
+    final n = deliveryBoyName?.trim() ?? '';
+    return n.isNotEmpty && n != 'null';
+  }
+
   int get _code {
     final s = status.trim().toLowerCase();
     bool isAny(String translated, List<String> english) =>
@@ -331,7 +336,13 @@ class VendorOrderCard extends StatelessWidget {
                   style: appFont('Rubik', fontSize: 11),
                   children: [
                     TextSpan(
-                      text: "${S.of(context).assignedStatus} ",
+                      // A ready order (4) has no driver yet unless the API
+                      // sends a name; "Assigned" with no name was shown
+                      // (phone check 7 Nov, ORD-001546). From status 5 on a
+                      // driver is assigned.
+                      text: _code == 4 && !_hasDriverName
+                          ? S.of(context).waitingForDeliveryPartner
+                          : "${S.of(context).assignedStatus} ",
                       style: const TextStyle(
                         color: Color(0xFFFF5216),
                         fontWeight: FontWeight.w600,

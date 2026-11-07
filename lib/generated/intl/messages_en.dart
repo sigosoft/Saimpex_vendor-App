@@ -3130,6 +3130,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "View Payment Proof",
     ),
     "viewReports": MessageLookupByLibrary.simpleMessage("View Reports"),
+    "waitingForDeliveryPartner": MessageLookupByLibrary.simpleMessage(
+      "Waiting for a delivery partner",
+    ),
     "walletPayment": MessageLookupByLibrary.simpleMessage("SAIMPEX Wallet"),
     "waterAcceptingOrders": MessageLookupByLibrary.simpleMessage(
       "Accepting orders",

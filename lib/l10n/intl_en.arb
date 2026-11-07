@@ -567,6 +567,7 @@
   "account": "Account",
   "@account": {},
   "myRestaurant": "My Restaurant",
+  "waitingForDeliveryPartner": "Waiting for a delivery partner",
   "durationMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
   "@durationMinutes": {
     "placeholders": {
