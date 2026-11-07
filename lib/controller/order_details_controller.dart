@@ -206,6 +206,10 @@ class OrderDetailsController extends GetxController {
       if (orderStatusModel.status.toString() == "true") {
         // Figma success popup; the toast did not show on Android 16 (VA-04).
         showSuccessDialog(S.current.orderAcceptedSuccessfully);
+        // Home re-reads the list and every tab badge: after Accept on the
+        // order details screen, "Pending 01" stayed (phone check 7 Nov,
+        // ORD-001549). The home card's Accept reloads on its own.
+        homeCtrl?.triggerFullRefresh();
         if (printAfter) {
           OrderPrintService()
               .printOrder(orderId: orderid, orderType: orderType)
