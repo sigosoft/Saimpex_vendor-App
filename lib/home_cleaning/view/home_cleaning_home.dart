@@ -1296,7 +1296,9 @@ class _BookingCard extends StatelessWidget {
               ],
             ),
           ],
-          if (_isDetailedStatus && !laundry) ...[
+          // Only when a date or address follows: a car wash booking with no
+          // date showed a divider over an empty footer.
+          if (_isDetailedStatus && !laundry && (slot != null || address != null)) ...[
             const SizedBox(height: 12),
             const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
           ],
