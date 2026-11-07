@@ -779,6 +779,9 @@ class FCM {
       'total': {'en': 'Total', 'fr': 'Total', 'ar': 'المجموع'},
       'dismiss': {'en': 'Later', 'fr': 'Plus tard', 'ar': 'لاحقًا'},
       'view': {'en': 'View order', 'fr': 'Voir la commande', 'ar': 'عرض الطلب'},
+      'titleBooking': {'en': 'New booking!', 'fr': 'Nouvelle réservation !', 'ar': 'حجز جديد!'},
+      'receivedBooking': {'en': 'Booking', 'fr': 'Réservation', 'ar': 'الحجز'},
+      'viewBooking': {'en': 'View booking', 'fr': 'Voir la réservation', 'ar': 'عرض الحجز'},
     };
     final code = LocalizationService.currentLanguageCode;
     return words[key]?[code] ?? words[key]?['en'] ?? key;
@@ -834,6 +837,11 @@ class FCM {
     List<({String number, String amount, Map<String, dynamic> data})> orders,
   ) {
     final latest = orders.last;
+    // A service booking (backend #168, is_booking 1) says booking, not order.
+    final latestData = getEffectiveData(latest.data);
+    final isBooking = latestData['is_booking']?.toString() == '1' ||
+        latestData['type']?.toString() == newServiceBookingType;
+    String tr(String key) => _t(isBooking ? '${key}Booking' : key);
     final formattedOrderNumber = orders.map((o) => o.number).join(', ');
     final amount = orders.length == 1 ? latest.amount : '';
     final notificationData = latest.data;
@@ -857,7 +865,7 @@ class FCM {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _t('title'),
+                        tr('title'),
                         style: appFont('Rubik', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -869,7 +877,7 @@ class FCM {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "${_t('received')} $formattedOrderNumber",
+                  "${tr('received')} $formattedOrderNumber",
                   style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[
@@ -922,7 +930,7 @@ class FCM {
                         ),
                       ),
                       child: Text(
-                        _t('view'),
+                        tr('view'),
                         style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 14,
