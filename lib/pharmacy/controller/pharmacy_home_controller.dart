@@ -241,14 +241,18 @@ class PharmacyHomeController extends GetxController {
           return 3; // Review Completed
         case 3:
           return 4; // Awaiting Payment
+        // Paid prescription orders use the order statuses, as their lists
+        // do (fetchPharmacyOrders tab: prescription, status 2/3/4/9). This
+        // sent 5, 6, 7 and 8: `home` refuses 5–7 (422), which wiped the
+        // dashboard to 0, and 8 means "on the way", not delivered.
         case 4:
-          return 5; // To Prepare
+          return 2; // To Prepare (accepted)
         case 5:
-          return 6; // Preparing
+          return 3; // Preparing
         case 6:
-          return 7; // Ready
+          return 4; // Ready
         case 7:
-          return 8; // Delivered
+          return 9; // Delivered
         default:
           return 1;
       }
@@ -672,16 +676,9 @@ class PharmacyHomeController extends GetxController {
           cachedShopName = resolvedName;
           savename("name", resolvedName);
         }
-      } else {
-        homeData = null;
-        ordersList = [];
-        rawSummary = null;
-        rawVendor = null;
-        rawScreen = null;
-        rawPharmacy = null;
-        rawKpis = null;
-        rawAtAGlance = null;
       }
+      // A refused reload keeps the last good figures: wiping them showed
+      // every dashboard number as 0 until the next successful load.
     } catch (e) {
       debugPrint(
         "==================== GET PHARMACY HOME ERROR ====================",
@@ -696,15 +693,7 @@ class PharmacyHomeController extends GetxController {
       );
       print("Error: $e");
       print("================================================================");
-
-      homeData = null;
-      ordersList = [];
-      rawSummary = null;
-      rawVendor = null;
-      rawScreen = null;
-      rawPharmacy = null;
-      rawKpis = null;
-      rawAtAGlance = null;
+      // Keep the last good figures (see above).
     } finally {
       isLoadingHome = false;
       update();
