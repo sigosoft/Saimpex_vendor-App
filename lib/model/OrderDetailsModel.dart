@@ -1,3 +1,4 @@
+import 'package:saimpex_vendor/view/home/widgets/order_fulfillment_badge.dart' show isExpressOrder;
 // To parse this JSON data, do
 //
 //     final orderDetailsModel = orderDetailsModelFromJson(jsonString);
@@ -69,7 +70,11 @@ class Data {
   final dynamic isSelfPickup;
   final List<StatusLog>? statusLogs;
 
+  /// Express delivery order (`is_express`, backend #175), or `type` express.
+  final bool isExpress;
+
   Data({
+    this.isExpress = false,
     this.id,
     this.orderCode,
     this.status,
@@ -106,6 +111,7 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
+    isExpress: isExpressOrder(json["is_express"], json["type"]),
     id: (json["id"] is int)
         ? json["id"]
         : int.tryParse(json["id"]?.toString() ?? ''),

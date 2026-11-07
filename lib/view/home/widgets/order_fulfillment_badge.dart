@@ -4,19 +4,57 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
 import 'package:saimpex_vendor/utils/order_fulfillment.dart';
 
-/// Inline badge beside order id: orange delivery or blue self pickup.
+/// True for an express order: `is_express` (1 / true, backend #175) or the
+/// raw order `type` "express" (order lists).
+bool isExpressOrder(dynamic isExpress, dynamic type) {
+  final v = isExpress?.toString().trim().toLowerCase();
+  if (v == '1' || v == 'true') return true;
+  return type?.toString().trim().toLowerCase() == 'express';
+}
+
+/// Inline badge beside order id: orange delivery or blue self pickup, then
+/// the Figma "Express" tag for an express order.
 class OrderFulfillmentBadge extends StatelessWidget {
   const OrderFulfillmentBadge({
     super.key,
     this.deliveryType,
     this.isSelfPickup,
+    this.isExpress = false,
   });
 
   final dynamic deliveryType;
   final dynamic isSelfPickup;
+  final bool isExpress;
 
   @override
   Widget build(BuildContext context) {
+    final badge = _fulfillment(context);
+    if (!isExpress) return badge;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        badge,
+        const SizedBox(width: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFC107),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            S.of(context).processingExpress,
+            style: appFont('Rubik',
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1F2937),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _fulfillment(BuildContext context) {
     if (OrderFulfillment.isSelfPickupFrom(
       deliveryType: deliveryType,
       isSelfPickup: isSelfPickup,

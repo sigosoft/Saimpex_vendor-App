@@ -129,6 +129,8 @@ class VendorOrderCard extends StatelessWidget {
                           OrderFulfillmentBadge(
                             deliveryType: deliveryType,
                             isSelfPickup: isSelfPickup,
+                            // Order lists send the raw `type` ("express").
+                            isExpress: isExpressOrder(null, type),
                           ),
                           if (scheduledFor != null)
                             PreorderBadge(scheduledFor: scheduledFor!),
