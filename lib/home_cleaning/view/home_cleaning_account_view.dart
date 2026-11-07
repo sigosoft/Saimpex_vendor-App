@@ -21,6 +21,7 @@ import 'package:saimpex_vendor/view/login/login.dart';
 import 'package:saimpex_vendor/view/settings/help_and_support.dart';
 import 'package:saimpex_vendor/view/settings/privacy_policy.dart';
 import 'package:saimpex_vendor/view/settings/terms_and_conditions.dart';
+import 'package:saimpex_vendor/water/view/account/business_settings_view.dart';
 import 'package:saimpex_vendor/water/view/account/coupons_view.dart';
 import 'package:saimpex_vendor/water/view/account/received_payouts_view.dart';
 import 'package:saimpex_vendor/water/view/account/store_profile_view.dart';
@@ -735,7 +736,12 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             _buildSettingRow(
               icon: Icons.store_mall_directory_outlined,
               title: S.of(context).cleaningBusinessSettings,
-              onTap: () => ServiceBusinessSettingsView.open(context),
+              // Figma (home cleaning, car wash, laundry): Store availability
+              // plus Express Delivery pricing, the same screen as water, on
+              // the vendor businessSettings endpoints. The old two-switch
+              // screen read accepting_bookings from serviceDashboard, which
+              // does not send it, so that switch stayed off and disabled.
+              onTap: () => BusinessSettingsView.open(context),
             ),
             // Cleaners are part of running the business, not support (V18).
             if (ServiceKinds.isCleaning)
