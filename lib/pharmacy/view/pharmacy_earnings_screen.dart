@@ -822,14 +822,14 @@ class _PharmacyEarningsScreenState extends State<PharmacyEarningsScreen> {
                       _SummaryCard(
                         rows: ordersTab
                             ? [
-                                ('Pending Order Balance', pendingOrderBal),
-                                ('Available Order Balance', availableOrderBal),
-                                ('Total Payout Received', orderTotalPayout),
+                                (S.of(context).pendingOrderBalance, pendingOrderBal),
+                                (S.of(context).availableOrderBalance, availableOrderBal),
+                                (S.of(context).totalPayoutReceived, orderTotalPayout),
                               ]
                             : [
-                                ('Total Sale Amount', totalSaleAmount),
-                                ('Available Payout Balance', availablePayoutBal),
-                                ('Total Payout Received', payoutTotalReceived),
+                                (S.of(context).totalSaleAmount, totalSaleAmount),
+                                (S.of(context).availablePayoutBalance, availablePayoutBal),
+                                (S.of(context).totalPayoutReceived, payoutTotalReceived),
                               ],
                       ),
                     const SizedBox(height: 14),
@@ -938,7 +938,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Earnings',
+              S.of(context).earnings,
               style: appFont('Inter', 
                 color: PharmacyEarningsScreen.ink,
                 fontWeight: FontWeight.w700,
@@ -979,11 +979,10 @@ class _TabSwitch extends StatelessWidget {
   final bool orders;
   final ValueChanged<bool> onChanged;
 
-  static const _labels = ['Order Amount', 'Payouts'];
-
   @override
   Widget build(BuildContext context) {
     final selected = orders ? 0 : 1;
+    final labels = [S.of(context).orderAmount, S.of(context).payouts];
     return Container(
       height: 44,
       padding: const EdgeInsets.all(3),
@@ -993,15 +992,17 @@ class _TabSwitch extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final segment = constraints.maxWidth / _labels.length;
+          final segment = constraints.maxWidth / labels.length;
           return SizedBox(
             height: 38,
             child: Stack(
               children: [
-                AnimatedPositioned(
+                // Directional: in Arabic the highlight sat under the other
+                // tab, so the selected label (white) was invisible.
+                AnimatedPositionedDirectional(
                   duration: const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
-                  left: selected * segment,
+                  start: selected * segment,
                   top: 0,
                   bottom: 0,
                   width: segment,
@@ -1013,7 +1014,7 @@ class _TabSwitch extends StatelessWidget {
                   ),
                 ),
                 Row(
-                  children: List.generate(_labels.length, (index) {
+                  children: List.generate(labels.length, (index) {
                     final isSelected = selected == index;
                     return Expanded(
                       child: GestureDetector(
@@ -1033,7 +1034,7 @@ class _TabSwitch extends StatelessWidget {
                               fontSize: 14,
                               height: 1.1,
                             ),
-                            child: Text(_labels[index]),
+                            child: Text(labels[index]),
                           ),
                         ),
                       ),
@@ -1120,11 +1121,11 @@ class _Filters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (_OrderFilter.all, 'All'),
-      (_OrderFilter.available, 'Available'),
-      (_OrderFilter.pending, 'Pending'),
-      (_OrderFilter.cancelled, 'Cancelled'),
+    final items = [
+      (_OrderFilter.all, S.of(context).all),
+      (_OrderFilter.available, S.of(context).available),
+      (_OrderFilter.pending, S.of(context).pending),
+      (_OrderFilter.cancelled, S.of(context).cancelled),
     ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -1193,13 +1194,12 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = switch (order.status) {
-      _OrderStatus.available => ('AVAILABLE', const Color(0xFF16A34A)),
-      _OrderStatus.pending => ('PENDING', const Color(0xFFF59E0B)),
-      _OrderStatus.cancelled => ('CANCELLED', const Color(0xFFF01E1E)),
+      _OrderStatus.available => (S.of(context).available, const Color(0xFF16A34A)),
+      _OrderStatus.pending => (S.of(context).pending, const Color(0xFFF59E0B)),
+      _OrderStatus.cancelled => (S.of(context).cancelled, const Color(0xFFF01E1E)),
     };
-    final statusText = (order.statusLabel != null && order.statusLabel!.trim().isNotEmpty)
-        ? order.statusLabel!.toUpperCase()
-        : status.$1;
+    // The status in the app language (the raw English status was shown).
+    final statusText = status.$1;
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
@@ -1288,6 +1288,16 @@ class _PayoutCard extends StatelessWidget {
   final _Payout payout;
   final VoidCallback onDetails;
 
+  /// Payout status in the app language; an unknown one as sent.
+  String _statusText(BuildContext context, String status) {
+    return switch (status.trim().toUpperCase()) {
+      'CREDITED' || 'PAID' || 'COMPLETED' || 'SUCCESS' => S.of(context).credited,
+      'PENDING' || 'PROCESSING' => S.of(context).pending,
+      'CANCELLED' || 'FAILED' || 'REJECTED' => S.of(context).cancelled,
+      _ => status.toUpperCase(),
+    };
+  }
+
   Color _statusColor(String status) {
     final s = status.toUpperCase();
     if (s == 'CREDITED' || s == 'PAID' || s == 'COMPLETED' || s == 'SUCCESS') {
@@ -1357,7 +1367,7 @@ class _PayoutCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    payout.status.toUpperCase(),
+                    _statusText(context, payout.status),
                     style: appFont('Inter', 
                       color: _statusColor(payout.status),
                       fontWeight: FontWeight.w700,
@@ -1395,7 +1405,7 @@ class _PayoutCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'View Details',
+                S.of(context).viewDetails,
                 style: appFont('Inter', 
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
