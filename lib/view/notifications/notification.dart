@@ -19,6 +19,8 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
+import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
 import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../utils/utils.dart';
@@ -68,6 +70,12 @@ const String preorderReminderType = 'preorder_reminder';
 /// Message from SAIMPEX (Admin) about an order (API doc §6.37, task V17).
 /// It carries an order_id but is not a new order: open the support chat.
 const String adminMessageType = 'admin_message';
+
+/// Service booking pushes (backend #168, API_CHANGELOG 7 Nov): a new
+/// laundry / car wash / home cleaning / gas booking, and a customer cancel.
+/// data: {type, booking_id, order_id, order_type (7–10), is_booking: "1"}.
+const String newServiceBookingType = 'new_service_booking';
+const String serviceBookingCancelledType = 'service_booking_cancelled';
 
 class FCM {
   final streamCtlr = StreamController<String>.broadcast();
@@ -179,7 +187,12 @@ class FCM {
 
       // A pre-order reminder carries an order_id but is not a new order.
       final bool isPreorderReminder = notificationType == preorderReminderType;
+      // A cancelled booking also carries an order_id, but must not ring as
+      // a new order: it only refreshes the lists.
+      final bool isBookingCancelled =
+          notificationType == serviceBookingCancelledType;
       final bool isOrderRequestType = !isPreorderReminder &&
+                                      !isBookingCancelled &&
                                       notificationType != adminMessageType &&
                                       (notificationType == 'order_request' || 
                                        notificationType == 'new_order_request' || 
@@ -218,7 +231,7 @@ class FCM {
         "Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}",
       );
 
-      if (isPreorderReminder) {
+      if (isPreorderReminder || isBookingCancelled) {
         await refreshHomeUI();
       } else if (isOrderRequestType) {
         // Refresh Home UI & Show In-App Dialog Alert in real-time
@@ -505,6 +518,23 @@ class FCM {
                   );
                 });
               }
+            }
+            // Service booking (#168): open the booking itself; the screen
+            // loads it from serviceBookingDetail with only the id.
+            final bookingId = (getEffectiveData(notificationData!)['booking_id']
+                        ?.toString() ??
+                    openOrderId)
+                .trim();
+            if (appType == VendorAppType.homeCleaning &&
+                int.tryParse(bookingId) != null) {
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (Get.context == null) return;
+                Get.to(
+                  () => BookingDetailsView(
+                    booking: CleaningBooking.fromJson({'id': bookingId}),
+                  ),
+                );
+              });
             }
             if (appType == VendorAppType.water && openOrderId.isNotEmpty) {
               Future.delayed(const Duration(milliseconds: 300), () {
