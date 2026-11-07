@@ -956,6 +956,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "durationLabel": MessageLookupByLibrary.simpleMessage("المدة"),
     "earnings": MessageLookupByLibrary.simpleMessage("الأرباح"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("متاح"),
+    "earningsNet": MessageLookupByLibrary.simpleMessage("الصافي"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "editCleaner": MessageLookupByLibrary.simpleMessage("تعديل العامل"),

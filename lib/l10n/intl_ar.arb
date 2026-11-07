@@ -3327,5 +3327,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "earningsNet": "الصافي"
 }

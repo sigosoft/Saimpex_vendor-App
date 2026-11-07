@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/earnings_breakdown.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -35,6 +36,8 @@ class _Order {
     required this.amount,
     required this.status,
     this.statusLabel,
+    this.commission,
+    this.net,
   });
 
   final String id;
@@ -42,6 +45,10 @@ class _Order {
   final String amount;
   final _OrderStatus status;
   final String? statusLabel;
+
+  /// `commission_amount` / `net_amount` from earnings/orders (VA-12).
+  final dynamic commission;
+  final dynamic net;
 }
 
 class _Payout {
@@ -365,6 +372,8 @@ class _PharmacyEarningsScreenState extends State<PharmacyEarningsScreen> {
               amount: amountStr,
               status: statusEnum,
               statusLabel: rawStatus,
+              commission: order['commission_amount'],
+              net: order['net_amount'],
             ),
           );
         }
@@ -1255,12 +1264,13 @@ class _OrderCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 order.amount,
-                style: appFont('Inter', 
+                style: appFont('Inter',
                   color: PharmacyEarningsScreen.ink,
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
               ),
+              EarningsBreakdown(commission: order.commission, net: order.net),
             ],
           ),
         ],
