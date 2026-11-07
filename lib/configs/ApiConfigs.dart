@@ -1,18 +1,17 @@
 class ApiConfigs {
-  // //  // This is the Test Server URL
-  //static String BASE_URL = "https://api.saimpexenterprise.com/api/vendorapp/";  //LIVE
-  static String BASE_URL =
-      "https://dev.saimpexenterprise.com/api/vendorapp/"; //DEV/Test
-  // "https://ourworks.co.in/saimpex-backend/public/api/vendorapp/";
+  /// Server choice at build time, so nobody edits this file for a release:
+  /// dev by default; the live store build adds
+  /// `--dart-define=SAIMPEX_LIVE=true`.
+  static const bool isLive = bool.fromEnvironment('SAIMPEX_LIVE');
 
-  // // // // This is the Live Server URL
-  //   static String BASE_URL = "";
+  static String BASE_URL = isLive
+      ? "https://api.saimpexenterprise.com/api/vendorapp/" // LIVE
+      : "https://dev.saimpexenterprise.com/api/vendorapp/"; // DEV / test
 
-  // This is the base Image URL
-  static String IMAGE_URL =
-      "https://dev.saimpexenterprise.com/storage/"; //DEV/TEST
-  // static String IMAGE_URL = "https://api.saimpexenterprise.com/storage/"; // Live
-  // "https://ourworks.co.in/saimpex-backend/public/storage/";
+  // Base image URL, same server as BASE_URL.
+  static String IMAGE_URL = isLive
+      ? "https://api.saimpexenterprise.com/storage/" // LIVE
+      : "https://dev.saimpexenterprise.com/storage/"; // DEV / test
 
   /// Android package name for Play Store link
   static const String androidPackageName = "saimpex.vendor";
