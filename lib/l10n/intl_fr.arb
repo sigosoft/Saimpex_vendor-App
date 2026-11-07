@@ -520,6 +520,7 @@
   "account": "Compte",
   "@account": {},
   "myRestaurant": "Mon Restaurant",
+  "waitingForDeliveryPartner": "En attente d’un livreur",
   "durationMinutes": "{count, plural, =0{0 minute} =1{1 minute} other{{count} minutes}}",
   "@durationMinutes": {"placeholders": {"count": {"type": "int"}}},
   "deliveryPartnerAccepted": "Livreur a accepté",
