@@ -346,9 +346,28 @@ DateTime? parseServerTime(Object? raw) {
   final s = raw?.toString().trim() ?? '';
   if (s.isEmpty || s == 'null') return null;
   final t = DateTime.tryParse(s);
-  if (t == null) return null;
+  if (t == null) return _parseServerFormatted(s);
   if (s.length <= 10) return t;
   return serverTimeToLocal(t);
+}
+
+/// Times the server already formatted in English and UTC, e.g. order
+/// status logs "07 Nov 2026 07:39 AM" / "07 Nov 2026, 07:39 AM". They were
+/// shown as sent: UTC (07:39 for an order placed at 13:09 phone time) with
+/// an English month, scrambled in Arabic (phone check 7 Nov). Read as UTC
+/// and returned in phone time; null for any other text.
+DateTime? _parseServerFormatted(String s) {
+  const patterns = [
+    'dd MMM yyyy hh:mm a',
+    'dd MMM yyyy, hh:mm a',
+  ];
+  for (final p in patterns) {
+    try {
+      final t = DateFormat(p, 'en').parseStrict(s);
+      return serverTimeToLocal(t);
+    } catch (_) {}
+  }
+  return null;
 }
 
 /// "Nov 03, 2026 10:45 AM" in phone time and the app language from a raw

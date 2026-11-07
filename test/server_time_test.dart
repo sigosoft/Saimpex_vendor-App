@@ -52,4 +52,15 @@ void main() {
     expect(formatServerTimeAgo('not a date'), 'not a date');
     await S.load(const Locale('en'));
   });
+
+  test('server-formatted English UTC times are read as UTC (status logs)', () {
+    final expected = DateTime.utc(2026, 11, 7, 7, 39).toLocal();
+    expect(parseServerTime('07 Nov 2026 07:39 AM'), expected);
+    expect(parseServerTime('07 Nov 2026, 07:39 AM'), expected);
+    // Mid-month so the month is the same in every phone time zone.
+    LocalizationService.currentLanguageCode = 'fr';
+    expect(formatServerDateTime('15 Nov 2026 12:00 PM', pattern: 'MMMM'), 'novembre');
+    LocalizationService.currentLanguageCode = 'en';
+    expect(parseServerTime('Today, 10:45 AM'), isNull);
+  });
 }
