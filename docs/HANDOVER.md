@@ -410,10 +410,14 @@ Source: `SAIMPEX-V2-vendor-app-test-report.pdf` (6 Nov, 34 issues, tested on `ma
 | Water / gas, pharmacy | `fix/water-business-settings-save` (#100) | ✅ | Business Settings saved nothing (GET with no body); now posts `updateStoreAvailability`, `updateExpressDelivery`, `add/updateDeliveryDistance` |
 | Restaurant, water / gas | `fix/payout-payment-proof` (#101) | ✅ | "View payment proof" did nothing (restaurant) or could not load (water); opens `payment_proof_url` |
 | Water | `fix/water-low-stock-view-all` (#102) | ✅ | Low stock card "View all" did nothing; selects the Low stock chip |
+| Restaurant, pharmacy, water / gas | `feat/earnings-commission-net` (#103) | ✅ | VA-12: commission and net per order in Earnings (needs backend `5d83569df`) |
+| Clean-up | `chore/remove-unused-error-screens` (#104) | ✅ | Unused No Internet / Server Down screens removed |
+| Home cleaning, laundry, car wash | `fix/service-notifications-bell` (#105) | ✅ | Home bell did nothing; opens Notifications |
+| Pharmacy, water / gas | `feat/inventory-barcode-scan` (#106) | ✅ | Inventory scan button did nothing; scans a barcode into the search (matches `serial_number`) |
 
 Already fixed on earlier PRs: VA-20 (#49), VA-25 (#50, server must also send `message_ar/fr`), VA-33 (#59), VA-34 (#53), water revenue 0 (#67).
 Backend gaps (no app change possible): VA-12 per-order commission / net; order Express flag; item Popular tag; service booking push (VA-28); laundry `slot_label`; pharmacy list `payment_type` / `is_self_pickup` / rider.
-Not done: the barcode icon on the pharmacy and water inventory screens does nothing (the inventory search does not match barcodes; backend gap). A booking push handler in `lib/view/notifications/notification.dart` (call `HomeCleaningController.refreshQuietly()`) waits for the backend to define the push type.
+Backend #179 (7 Nov): restaurant item veg / new-arrival flags and notification links, needed for the Figma tags and notification action buttons. Not done: a booking push handler in `lib/view/notifications/notification.dart` (call `HomeCleaningController.refreshQuietly()`) waits for the backend to define the push type.
 
 ---
 
