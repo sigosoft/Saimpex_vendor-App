@@ -65,8 +65,10 @@ void main() {
 
   testWidgets('laundry block: slot chips, addresses, balance due', (t) async {
     await t.pumpWidget(_app(LaundryBookingBlock(booking: _laundry(actual: 3.6, pending: true))));
-    expect(find.text('Aug 25, 2026'), findsOneWidget);
-    expect(find.text('2:00 PM - 4:00 PM'), findsOneWidget);
+    // Dates and times are wrapped in direction marks (VA-29, kept in order
+    // in Arabic), so match the visible text.
+    expect(find.textContaining('Aug 25, 2026'), findsOneWidget);
+    expect(find.textContaining('2:00 PM - 4:00 PM'), findsOneWidget);
     expect(find.text('ADDITIONAL PAYMENT PENDING'), findsOneWidget);
     expect(find.text('Balance due'), findsOneWidget);
     expect(find.text('90 MRU'), findsOneWidget);
