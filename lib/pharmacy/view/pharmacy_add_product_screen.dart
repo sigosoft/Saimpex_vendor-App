@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/pharmacy/view/generic_equivalent_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/widgets/barcode_scan_page.dart';
 
 /// The label shown for one of the fixed Category / Form / Unit options (and
 /// the same names when the server sends them in English). The option values
@@ -308,7 +308,7 @@ class _PharmacyAddProductScreenState extends State<PharmacyAddProductScreen> {
 
   Future<void> _scanBarcode() async {
     final code = await Navigator.of(context).push<String>(
-      MaterialPageRoute<String>(builder: (_) => const _BarcodeScanPage()),
+      MaterialPageRoute<String>(builder: (_) => const BarcodeScanPage()),
     );
     if (!mounted || code == null || code.isEmpty) return;
     setState(() => _barcode.text = code);
@@ -2186,91 +2186,6 @@ class _BarcodeMark extends StatelessWidget {
           height: 22,
           fit: BoxFit.contain,
         ),
-      ),
-    );
-  }
-}
-
-class _BarcodeScanPage extends StatefulWidget {
-  const _BarcodeScanPage();
-
-  @override
-  State<_BarcodeScanPage> createState() => _BarcodeScanPageState();
-}
-
-class _BarcodeScanPageState extends State<_BarcodeScanPage> {
-  var _handled = false;
-
-  void _onDetect(BarcodeCapture capture) {
-    if (_handled || !mounted) return;
-    String? code;
-    for (final barcode in capture.barcodes) {
-      final value = barcode.rawValue;
-      if (value != null && value.isNotEmpty) {
-        code = value;
-        break;
-      }
-    }
-    if (code == null) return;
-    _handled = true;
-    Navigator.of(context).pop(code);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          S.of(context).scanBarcode,
-          style: appFont('Inter', fontWeight: FontWeight.w600, fontSize: 16),
-        ),
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          MobileScanner(
-            onDetect: _onDetect,
-            errorBuilder: (context, error) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    S.of(context).pharmacyInvCameraPermissionBarcode,
-                    textAlign: TextAlign.center,
-                    style: appFont('Inter', color: Colors.white, fontSize: 15),
-                  ),
-                ),
-              );
-            },
-          ),
-          Center(
-            child: Container(
-              width: 260,
-              height: 160,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: PharmacyAddProductScreen.orange,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 24,
-            right: 24,
-            bottom: 48,
-            child: Text(
-              S.of(context).pharmacyInvPositionBarcode,
-              textAlign: TextAlign.center,
-              style: appFont('Inter', color: Colors.white, fontSize: 14),
-            ),
-          ),
-        ],
       ),
     );
   }
