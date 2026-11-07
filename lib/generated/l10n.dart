@@ -14637,6 +14637,21 @@ class S {
   String get itemDetailMinShort {
     return Intl.message('min', name: 'itemDetailMinShort', desc: '', args: []);
   }
+
+  /// `Popular`
+  String get itemPopularTag {
+    return Intl.message('Popular', name: 'itemPopularTag', desc: '', args: []);
+  }
+
+  /// `New arrival`
+  String get itemNewArrivalTag {
+    return Intl.message(
+      'New arrival',
+      name: 'itemNewArrivalTag',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

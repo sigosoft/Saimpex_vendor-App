@@ -3363,5 +3363,7 @@
   "itemDetailCategoryLabel": "الفئة:",
   "itemDetailSerialNoLabel": "الرقم التسلسلي:",
   "itemDetailPrepTimeLabel": "وقت التحضير:",
-  "itemDetailMinShort": "د"
+  "itemDetailMinShort": "د",
+  "itemPopularTag": "الأكثر طلبًا",
+  "itemNewArrivalTag": "وصل حديثًا"
 }

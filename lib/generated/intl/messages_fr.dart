@@ -1408,10 +1408,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemNameHint": MessageLookupByLibrary.simpleMessage(
       "Nom de l\'article, ex. Chemise",
     ),
+    "itemNewArrivalTag": MessageLookupByLibrary.simpleMessage("Nouveauté"),
     "itemOrders": MessageLookupByLibrary.simpleMessage("COMMANDES D\'ARTICLES"),
     "itemOrdersHeader": MessageLookupByLibrary.simpleMessage(
       "COMMANDES D\'ARTICLES",
     ),
+    "itemPopularTag": MessageLookupByLibrary.simpleMessage("Populaire"),
     "itemPricing": MessageLookupByLibrary.simpleMessage("Prix par article"),
     "itemPricingHelp": MessageLookupByLibrary.simpleMessage(
       "Fixez un prix pour chaque type de vêtement. Les clients choisissent les quantités en réservant.",

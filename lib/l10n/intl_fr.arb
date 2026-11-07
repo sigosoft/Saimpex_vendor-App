@@ -3364,5 +3364,7 @@
   "itemDetailCategoryLabel": "Catégorie :",
   "itemDetailSerialNoLabel": "N° de série :",
   "itemDetailPrepTimeLabel": "Temps de préparation :",
-  "itemDetailMinShort": "min"
+  "itemDetailMinShort": "min",
+  "itemPopularTag": "Populaire",
+  "itemNewArrivalTag": "Nouveauté"
 }
