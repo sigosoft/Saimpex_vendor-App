@@ -34,7 +34,11 @@ class EarningsBreakdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = _num(commission);
     final n = _num(net);
-    if (c == null || n == null) return const SizedBox.shrink();
+    // Nothing to explain on a cancelled (0 MRU) order: the phone showed
+    // "Commission −0 MRU · Net 0 MRU" on every cancelled row.
+    if (c == null || n == null || (c == 0 && n == 0)) {
+      return const SizedBox.shrink();
+    }
     final s = S.of(context);
     final style = appFont(
       'Inter',
@@ -49,7 +53,7 @@ class EarningsBreakdown extends StatelessWidget {
         TextSpan(
           children: [
             TextSpan(text: '${s.commission} '),
-            TextSpan(text: '⁦−${_fmt(c)} MRU⁩'),
+            TextSpan(text: '⁦${c > 0 ? '−' : ''}${_fmt(c)} MRU⁩'),
             const TextSpan(text: '  ·  '),
             TextSpan(text: '${s.earningsNet} '),
             TextSpan(
