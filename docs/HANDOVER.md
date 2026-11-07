@@ -379,6 +379,52 @@ Figma "V2 Additions (1 Nov)": My Cleaners 10868:11391, Add Cleaner 10868:11643, 
 | Chat | Done (V6, not run against a real account) — shared `ChatController` (`chat/allConversations`, `getConversation`, `sendMessage`) | `lib/home_cleaning/view/chat/home_cleaning_messages_view.dart`, `lib/home_cleaning/view/chat/home_cleaning_conversation_view.dart` |
 | Account | Done (V15, `feature/v15-service-account`) | `lib/home_cleaning/view/home_cleaning_account_view.dart`, `lib/home_cleaning/view/service_account_screens.dart`. **Working hours & booking slots** (`serviceHours` / `saveServiceHours`: days with open/closed and times, slots available/unavailable, maximum bookings per slot), **Business settings** (`serviceAvailability`: open · accepting bookings, mark as busy), **Earnings** (`serviceEarnings`: pending / available / payout received, All / Available / Pending / Cancelled, Payouts tab) now use the service endpoints, for home cleaning, laundry and car wash. Received payouts and coupons stay on the shared vendor screens. Built in the section's style (no Figma frames for these service screens). My Cleaners: §3.5c. |
 
+### 4.6 Test report 6 Nov (retest) and Figma design branches
+
+Source: `SAIMPEX-V2-vendor-app-test-report.pdf` (6 Nov, 34 issues, tested on `main` `4c604a6`). ✅ = code done on the branch, `flutter analyze --no-pub` 0 errors, merged together on the local test branch `test/retest-2026-11-06`. **None is phone-checked yet** unless the row says so. Merge order: the restaurant branches are stacked (1 → 2 → 3 → 4, batch 2 on 3; `fix/restaurant-server-messages` on `fix/login-messages`); pharmacy fixes after `design/pharmacy`; laundry fixes after `design/laundry`.
+
+| Area | Branch | Done | Issues |
+|---|---|---|---|
+| Restaurant / grocery / local store | `design/restaurant` (#70) + strings (#71) | ✅ phone-checked on food.01 | Figma batch 1: labels, initials, card in FR/AR, reject reason sent, pickup / delivery timelines (VA-08, VA-17 recheck) |
+| | 1 `fix/restaurant-live-orders` | ✅ | VA-01 (new orders while the app is open, every 30 s / resume / pull), VA-06, VA-16 (server badges), VA-07 (quiet reloads) |
+| | 2 `fix/restaurant-order-actions` | ✅ | VA-04 (Accept at once, Accept & Print, success popup), VA-14 (Edit Items above the list), VA-05 (reload after every action), VA-18 |
+| | 3 `fix/new-order-popup-opens-order` | ✅ | VA-15 (popup "View order", also water / gas) |
+| | 4 `fix/popup-opens-pharmacy-order` | ✅ | VA-21 (popup opens the pharmacy order) |
+| | `fix/login-messages`, `fix/restaurant-server-messages` | ✅ | VA-02, VA-03 (`lib/utils/api_message.dart`); server messages in the app language |
+| | `fix/restaurant-store-card` | ✅ | VA-09 (busy card, built in the water style: no Figma frame), VA-13 (logo path) |
+| | `fix/restaurant-items-stock` | ✅ | VA-10 (`lib/utils/pick_lang.dart`), VA-11 (Update Stock dialog) |
+| | Batch 2: `design/restaurant-business-settings`, `-item-details`, `-order-details-chat`, `-order-card-express`, `-success-popups`, `-edit-profile` | ✅ | Business Settings screen (no "Mark Store Busy", owner decision), item variants / sides / extras, Chat with Customer, no Print on Ready cards, success popups, Edit Profile Details. Express tag: backend gap |
+| Pharmacy | `design/pharmacy` | ✅ phone-checked on pharmacy.15 | Figma: membership card, OTC Express tag, timelines, hours line, Arabic times |
+| | `fix/pharmacy-order-details-data` | ✅ | VA-19 (P1), detail buttons wired, `openById` |
+| | `fix/pharmacy-lists-and-counters` | ✅ | VA-23, VA-24 (needs #49 for VA-20) |
+| | `fix/pharmacy-labels-and-keyboard` | ✅ | VA-22 (app part), VA-26, VA-27 |
+| | `fix/pharmacy-home-reject-reason` | ✅ | Home card Reject opens the reason sheet and sends the reason; unused `_OtcOrderCard` removed |
+| Water / gas | `design/water-home-figma` | ✅ phone-checked on water.19 | Figma: today's cards, Express tag, hours, Delivery Partner card |
+| Home cleaning | `design/home-cleaning` | ✅ phone-checked on homecleaning.30 | Figma: booking card, Areas / Issues tiles, labels |
+| Car wash | `design/carwash` | ✅ | Figma: Upcoming card, vehicles, slot chips, location card, Tax |
+| Laundry | `design/laundry` | ✅ | Figma: estimate vs actual, slot and turnaround, Payment Status, Verify Weight header |
+| | `fix/laundry-live-bookings` | ✅ | VA-28 (app part; the backend sends no booking push) |
+| | `fix/laundry-booking-time` | ✅ | VA-29 |
+| | `fix/laundry-step-confirm` | ✅ | VA-30 (also car wash and home cleaning) |
+| | `fix/laundry-services-price-and-text` | ✅ | VA-31, VA-32 |
+| Water / gas, pharmacy | `fix/water-business-settings-save` (#100) | ✅ | Business Settings saved nothing (GET with no body); now posts `updateStoreAvailability`, `updateExpressDelivery`, `add/updateDeliveryDistance` |
+| Restaurant, water / gas | `fix/payout-payment-proof` (#101) | ✅ | "View payment proof" did nothing (restaurant) or could not load (water); opens `payment_proof_url` |
+| Water | `fix/water-low-stock-view-all` (#102) | ✅ | Low stock card "View all" did nothing; selects the Low stock chip |
+| Restaurant, pharmacy, water / gas | `feat/earnings-commission-net` (#103) | ✅ | VA-12: commission and net per order in Earnings (needs backend `5d83569df`) |
+| Clean-up | `chore/remove-unused-error-screens` (#104) | ✅ | Unused No Internet / Server Down screens removed |
+| Home cleaning, laundry, car wash | `fix/service-notifications-bell` (#105) | ✅ | Home bell did nothing; opens Notifications |
+| Pharmacy, water / gas | `feat/inventory-barcode-scan` (#106) | ✅ | Inventory scan button did nothing; scans a barcode into the search (matches `serial_number`) |
+| Pharmacy | `fix/pharmacy-home-chip-zeroes` (#107) | ✅ phone | Prescription To Prepare / Preparing / Ready chips reset the home dashboard to 0 (422 on `order_status` 5–7) |
+| Pharmacy | `fix/pharmacy-settings-earnings-l10n` (#108) | ✅ phone | Business settings and Earnings were English in Arabic; Earnings tab highlight not mirrored |
+| Restaurant | `fix/item-details-category` (#109, on #88) | ✅ phone | Item Details showed Category "-" (API sends only `category_ids`) |
+| Restaurant | `fix/restaurant-settings-rtl` (#110) | ✅ phone | Settings back arrow / Language label on the left and floating in Arabic; "+222" clipped |
+| Car wash | `fix/carwash-empty-slot-and-place` (#111, on #97) | ✅ phone | Empty date footer and slot heading; "At Wash Station" shown in English as an address with a map |
+| Home cleaning, laundry, car wash | `fix/service-business-settings-figma` (#112, on #100) | ✅ phone | Business settings as in Figma; "accepting" switch was stuck off |
+
+Already fixed on earlier PRs: VA-20 (#49), VA-25 (#50, server must also send `message_ar/fr`), VA-33 (#59), VA-34 (#53), water revenue 0 (#67).
+Backend gaps (no app change possible): VA-12 per-order commission / net; order Express flag; item Popular tag; service booking push (VA-28); laundry `slot_label`; pharmacy list `payment_type` / `is_self_pickup` / rider.
+Backend #179 (7 Nov): restaurant item veg / new-arrival flags and notification links, needed for the Figma tags and notification action buttons. Not done: a booking push handler in `lib/view/notifications/notification.dart` (call `HomeCleaningController.refreshQuietly()`) waits for the backend to define the push type.
+
 ---
 
 ## 5. API map
