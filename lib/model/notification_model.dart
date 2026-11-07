@@ -115,7 +115,15 @@ class Datum {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  /// Backend #179: `link_type` (order | booking), `link_id`, `order_code`.
+  final String? linkType;
+  final int? linkId;
+  final String? orderCode;
+
   Datum({
+    this.linkType,
+    this.linkId,
+    this.orderCode,
     this.id,
     this.titleEn,
     this.titleAr,
@@ -136,6 +144,9 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    linkType: json["link_type"]?.toString(),
+    linkId: int.tryParse(json["link_id"]?.toString() ?? ""),
+    orderCode: json["order_code"]?.toString(),
     id: json["id"],
     titleEn: titleEnValues.map[json["title_en"]],
     titleAr: titleArValues.map[json["title_ar"]],
