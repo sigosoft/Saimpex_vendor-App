@@ -416,6 +416,10 @@ Source: `SAIMPEX-V2-vendor-app-test-report.pdf` (6 Nov, 34 issues, tested on `ma
 | Pharmacy, water / gas | `feat/inventory-barcode-scan` (#106) | ✅ | Inventory scan button did nothing; scans a barcode into the search (matches `serial_number`) |
 | Pharmacy | `fix/pharmacy-home-chip-zeroes` (#107) | ✅ phone | Prescription To Prepare / Preparing / Ready chips reset the home dashboard to 0 (422 on `order_status` 5–7) |
 | Pharmacy | `fix/pharmacy-settings-earnings-l10n` (#108) | ✅ phone | Business settings and Earnings were English in Arabic; Earnings tab highlight not mirrored |
+| Restaurant | `fix/item-details-category` (#109, on #88) | ✅ phone | Item Details showed Category "-" (API sends only `category_ids`) |
+| Restaurant | `fix/restaurant-settings-rtl` (#110) | ✅ phone | Settings back arrow / Language label on the left and floating in Arabic; "+222" clipped |
+| Car wash | `fix/carwash-empty-slot-and-place` (#111, on #97) | ✅ phone | Empty date footer and slot heading; "At Wash Station" shown in English as an address with a map |
+| Home cleaning, laundry, car wash | `fix/service-business-settings-figma` (#112, on #100) | ✅ phone | Business settings as in Figma; "accepting" switch was stuck off |
 
 Already fixed on earlier PRs: VA-20 (#49), VA-25 (#50, server must also send `message_ar/fr`), VA-33 (#59), VA-34 (#53), water revenue 0 (#67).
 Backend gaps (no app change possible): VA-12 per-order commission / net; order Express flag; item Popular tag; service booking push (VA-28); laundry `slot_label`; pharmacy list `payment_type` / `is_self_pickup` / rider.
