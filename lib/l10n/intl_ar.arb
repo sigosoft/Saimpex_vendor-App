@@ -3739,5 +3739,6 @@
   "itemDetailPrepTimeLabel": "وقت التحضير:",
   "itemDetailMinShort": "د",
   "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح",
-  "editProfileDetails": "تعديل بيانات الملف الشخصي"
+  "editProfileDetails": "تعديل بيانات الملف الشخصي",
+  "earningsNet": "الصافي"
 }

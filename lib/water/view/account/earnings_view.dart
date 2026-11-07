@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/earnings_breakdown.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -38,12 +39,18 @@ class _Order {
     required this.when,
     required this.amount,
     required this.status,
+    this.commission,
+    this.net,
   });
 
   final String id;
   final String when;
   final String amount;
   final _OrderStatus status;
+
+  /// `commission_amount` / `net_amount` from earnings/orders (VA-12).
+  final dynamic commission;
+  final dynamic net;
 }
 
 class _Payout {
@@ -236,6 +243,8 @@ class _EarningsViewState extends State<EarningsView> {
             when: whenStr,
             amount: amountStr,
             status: statusEnum,
+            commission: order['commission_amount'],
+            net: order['net_amount'],
           ),
         );
       }
@@ -933,12 +942,13 @@ class _OrderCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 order.amount,
-                style: appFont('Inter', 
+                style: appFont('Inter',
                   color: EarningsView.ink,
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
               ),
+              EarningsBreakdown(commission: order.commission, net: order.net),
             ],
           ),
         ],

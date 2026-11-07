@@ -1060,6 +1060,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "earnings": MessageLookupByLibrary.simpleMessage("Earnings"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("Available"),
+    "earningsNet": MessageLookupByLibrary.simpleMessage("Net"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("Pending"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editCleaner": MessageLookupByLibrary.simpleMessage("Edit Cleaner"),

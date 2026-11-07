@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/earnings_breakdown.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/resources/colors.dart';
@@ -104,6 +105,8 @@ class _EarningsAllOrdersScreenState extends State<EarningsAllOrdersScreen> {
             'date': formattedDate,
             'status': order['earnings_status']?.toString() ?? '',
             'amount': '${order['earnings_amount'] ?? '0.00'} MRU',
+            'commission': order['commission_amount'],
+            'net': order['net_amount'],
           };
         }).toList();
 
@@ -397,11 +400,16 @@ class _EarningsAllOrdersScreenState extends State<EarningsAllOrdersScreen> {
               SizedBox(height: screenHeight * 0.005),
               Text(
                 order['amount'] as String,
-                style: appFont('Rubik', 
+                style: appFont('Rubik',
                   fontSize: screenWidth * 0.038,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF333E63),
                 ),
+              ),
+              // SAIMPEX commission and the vendor's net (VA-12).
+              EarningsBreakdown(
+                commission: order['commission'],
+                net: order['net'],
               ),
             ],
           ),

@@ -1166,6 +1166,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "earnings": MessageLookupByLibrary.simpleMessage("Gains"),
     "earningsAvailable": MessageLookupByLibrary.simpleMessage("Disponible"),
+    "earningsNet": MessageLookupByLibrary.simpleMessage("Net"),
     "earningsPending": MessageLookupByLibrary.simpleMessage("En attente"),
     "edit": MessageLookupByLibrary.simpleMessage("Modifier"),
     "editCleaner": MessageLookupByLibrary.simpleMessage("Modifier l\'agent"),

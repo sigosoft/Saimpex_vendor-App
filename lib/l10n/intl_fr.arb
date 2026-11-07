@@ -3740,5 +3740,6 @@
   "itemDetailPrepTimeLabel": "Temps de préparation :",
   "itemDetailMinShort": "min",
   "orderMarkedPickedUpSuccessfully": "Commande marquée comme récupérée avec succès",
-  "editProfileDetails": "Modifier les informations du profil"
+  "editProfileDetails": "Modifier les informations du profil",
+  "earningsNet": "Net"
 }
