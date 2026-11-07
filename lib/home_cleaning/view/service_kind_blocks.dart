@@ -307,6 +307,12 @@ class LaundryBookingBlock extends StatelessWidget {
     final r = booking.raw;
     final pickupSlot = _str(r['pickup_slot']);
     final turnaround = _str(r['delivery_turnaround']);
+    // Backend #169: delivery_window {start_iso, end_iso, label} as data, so
+    // the Figma DELIVERY TURNAROUND chips show phone time in the app
+    // language; the formatted text is the fallback.
+    final deliveryWindow = r['delivery_window'] is Map ? r['delivery_window'] as Map : null;
+    final deliveryStart = DateTime.tryParse('${deliveryWindow?['start_iso'] ?? ''}')?.toLocal();
+    final deliveryEnd = DateTime.tryParse('${deliveryWindow?['end_iso'] ?? ''}')?.toLocal();
     final pickupAddress = _str(r['pickup_address']);
     final deliveryAddress = _str(r['delivery_address']);
     final pending = r['additional_payment_pending'] == true;
@@ -327,7 +333,10 @@ class LaundryBookingBlock extends StatelessWidget {
             dateOnly: booking.scheduledDateOnly,
           ),
         ],
-        if (turnaround != null) ...[
+        if (deliveryStart != null) ...[
+          _label(s.laundryDeliveryTurnaround),
+          LaundrySlotChips(start: deliveryStart, end: deliveryEnd),
+        ] else if (turnaround != null) ...[
           _label(s.laundryDeliveryTurnaround),
           LaundrySlotChips(window: turnaround),
         ],
