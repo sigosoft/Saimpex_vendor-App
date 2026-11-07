@@ -94,9 +94,42 @@ class _SettingsState extends State<Settings> {
               SingleChildScrollView(
                 child: Column(
                   children: [
+                    // Spacing for the curve, holding the back button. The
+                    // button floated over the menu when scrolled and stayed
+                    // on the left in Arabic; it now scrolls with the page
+                    // and sits at the start side.
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.15,
-                    ), // Spacing for the curve
+                      child: Align(
+                        alignment: AlignmentDirectional.topStart,
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            top: 50,
+                            start: 20,
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              if (Navigator.canPop(context)) {
+                                Get.back();
+                              } else {
+                                Get.find<HomeController>().onTabTapped(
+                                  0,
+                                  context,
+                                );
+                              }
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                size: 22,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     // Profile R1 Icon
                     Center(
                       child: Container(
@@ -253,7 +286,8 @@ class _SettingsState extends State<Settings> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        // Start side: it stayed on the left in Arabic.
+                        alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           S.of(context).language,
                           style: appFont('Rubik', 
@@ -472,28 +506,6 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 40),
                   ],
-                ),
-              ),
-              // Back Button (Floating on top)
-              Positioned(
-                top: 50,
-                left: 20,
-                child: InkWell(
-                  onTap: () {
-                    if (Navigator.canPop(context)) {
-                      Get.back();
-                    } else {
-                      Get.find<HomeController>().onTabTapped(0, context);
-                    }
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      size: 22,
-                      color: Colors.black,
-                    ),
-                  ),
                 ),
               ),
             ],
