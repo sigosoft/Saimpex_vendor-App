@@ -191,9 +191,13 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
       // Car wash (Figma, 6 Nov): BOOKING SLOT with date and time chips in
       // place of the service card; the service name is on each vehicle.
       if (ServiceKinds.isCarWash) ...[
-        const SizedBox(height: 16),
-        _sectionLabel(S.of(context).cwfBookingSlot),
-        const SizedBox(height: 8),
+        // The BOOKING SLOT heading only with a date or slot to show (it
+        // stood alone on a booking without one).
+        if (b.scheduledFor != null || (b.slotWindow?.trim().isNotEmpty ?? false)) ...[
+          const SizedBox(height: 16),
+          _sectionLabel(S.of(context).cwfBookingSlot),
+          const SizedBox(height: 8),
+        ],
         _CarWashSlot(key: _serviceKey, booking: b),
       ] else if (ServiceKinds.isLaundry) ...[
         // Laundry (Figma, 6 Nov): image, name, turnaround tag and the

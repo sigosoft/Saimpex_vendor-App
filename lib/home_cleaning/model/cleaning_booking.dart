@@ -292,7 +292,10 @@ class CleaningBooking {
       slotEnd: _date(json['slot_end']),
       slotWindow: _str(json['slot_window']) ?? _str(json['slot']),
       createdAt: _date(json['created_at']) ?? _date(json['placed_at']),
-      address: _str(json['address']) ?? _str(json['location']),
+      // `location` is a real address for home cleaning, but for car wash it
+      // can be only the place name ("At Wash Station"), which then showed as
+      // an English address line with a map. A place name is not an address.
+      address: _str(json['address']) ?? _addressOnly(json['location']),
       latitude: _double(json['latitude']),
       longitude: _double(json['longitude']),
       notes: _str(json['notes']),
@@ -417,6 +420,19 @@ String? _str(dynamic v) {
   if (v == null) return null;
   final s = v.toString().trim();
   return (s.isEmpty || s == 'null') ? null : s;
+}
+
+/// [v] unless it is only a car wash place name (VendorScreenData `location`).
+String? _addressOnly(dynamic v) {
+  final s = _str(v);
+  const placeNames = {
+    'At Wash Station',
+    'At Home/Workplace',
+    'At Home',
+    'At Workplace',
+    'At Another Address',
+  };
+  return (s == null || placeNames.contains(s)) ? null : s;
 }
 
 int? _int(dynamic v) {
