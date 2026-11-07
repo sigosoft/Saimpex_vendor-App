@@ -21,6 +21,11 @@ class EarningsBreakdown extends StatelessWidget {
   final double fontSize;
   final bool alignEnd;
 
+  /// Left-to-right isolate and its end, so "−13.50 MRU" keeps its order in
+  /// Arabic (written as code points, not invisible characters in the source).
+  static final String _lri = String.fromCharCode(0x2066);
+  static final String _pdi = String.fromCharCode(0x2069);
+
   static double? _num(dynamic v) => v == null ? null : double.tryParse('$v');
 
   static String _fmt(double v) =>
@@ -53,11 +58,11 @@ class EarningsBreakdown extends StatelessWidget {
         TextSpan(
           children: [
             TextSpan(text: '${s.commission} '),
-            TextSpan(text: '⁦${c > 0 ? '−' : ''}${_fmt(c)} MRU⁩'),
+            TextSpan(text: '$_lri${c > 0 ? '−' : ''}${_fmt(c)} MRU$_pdi'),
             const TextSpan(text: '  ·  '),
             TextSpan(text: '${s.earningsNet} '),
             TextSpan(
-              text: '⁦${_fmt(n)} MRU⁩',
+              text: '$_lri${_fmt(n)} MRU$_pdi',
               style: style.copyWith(
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF111827),
