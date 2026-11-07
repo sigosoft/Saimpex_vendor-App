@@ -38,6 +38,11 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
   /// variants, option groups (sides) and extras here (API formPayload).
   Map<String, dynamic>? _raw;
 
+  /// The item's categories (`category_ids`) with their names from
+  /// getRestaurantCategories: the detail response sends only the ids, so
+  /// Category showed "-".
+  List<Map<String, dynamic>> _categories = const [];
+
   @override
   void initState() {
     super.initState();
@@ -119,6 +124,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       final rawData = map['data'];
       _raw = rawData is Map ? Map<String, dynamic>.from(rawData) : null;
       _detailsModel = RestaurantItemsDetailsModel.fromJson(map);
+      if (vendorType == "1") _categories = await _loadCategories();
       debugPrint(
         '[ViewItemDetails] parsed status=${_detailsModel?.status} message=${_detailsModel?.message} dataPresent=${_detailsModel?.data != null}',
       );
@@ -1006,7 +1012,37 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     return _rawLocalized('name', lang) ?? menu.nameEn ?? '';
   }
 
+  /// Names of the item's `category_ids`, or none (never fails the screen).
+  Future<List<Map<String, dynamic>>> _loadCategories() async {
+    final ids = (_raw?['category_ids'] is List)
+        ? (_raw!['category_ids'] as List).map((e) => '$e').toSet()
+        : <String>{};
+    if (ids.isEmpty) return const [];
+    try {
+      final res = await DioClient().get(ApiEndPoints.getRestaurantCategories);
+      final body = res.data;
+      if (body is! Map || body['data'] is! List) return const [];
+      return (body['data'] as List)
+          .whereType<Map>()
+          .where((c) => ids.contains('${c['id']}'))
+          .map((c) => Map<String, dynamic>.from(c))
+          .toList();
+    } catch (e) {
+      debugPrint('[ViewItemDetails] categories: $e');
+      return const [];
+    }
+  }
+
   String _pickCategoryName(RestaurantMenu menu, String lang) {
+    if (_categories.isNotEmpty) {
+      return _categories
+          .map((c) {
+            final local = c['name_$lang']?.toString().trim() ?? '';
+            return local.isNotEmpty ? local : (c['name_en']?.toString() ?? '');
+          })
+          .where((n) => n.isNotEmpty)
+          .join(lang == 'ar' ? '، ' : ', ');
+    }
     // Optional fields from API (parsed in model).
     if (lang == 'fr') return menu.categoryNameFr ?? '';
     if (lang == 'ar') return menu.categoryNameAr ?? '';
