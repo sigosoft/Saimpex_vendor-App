@@ -456,9 +456,15 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
               orderId,
               printAfter: print,
             );
-      if (!ok && mounted) {
+      if (!mounted) return;
+      if (!ok) {
         setState(() => _tabCounts[tab] = (_tabCounts[tab] ?? 0) + 1);
+        return;
       }
+      // Re-read the list and every tab badge from the server once it has
+      // accepted: "Pending 01" stayed until another tab was tapped (phone
+      // check 7 Nov, ORD-001546).
+      await _fetchOrders(quiet: true);
     }
 
     // The card has its own Accept & Print, so Accept no longer opens a
