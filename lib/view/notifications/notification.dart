@@ -19,6 +19,8 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/view/home/vendor_order_details.dart';
 import 'package:saimpex_vendor/pharmacy/view/order_details_screen.dart';
 import 'package:saimpex_vendor/water/model/home_order.dart';
+import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
+import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
 import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../utils/utils.dart';
@@ -68,6 +70,12 @@ const String preorderReminderType = 'preorder_reminder';
 /// Message from SAIMPEX (Admin) about an order (API doc §6.37, task V17).
 /// It carries an order_id but is not a new order: open the support chat.
 const String adminMessageType = 'admin_message';
+
+/// Service booking pushes (backend #168, API_CHANGELOG 7 Nov): a new
+/// laundry / car wash / home cleaning / gas booking, and a customer cancel.
+/// data: {type, booking_id, order_id, order_type (7–10), is_booking: "1"}.
+const String newServiceBookingType = 'new_service_booking';
+const String serviceBookingCancelledType = 'service_booking_cancelled';
 
 class FCM {
   final streamCtlr = StreamController<String>.broadcast();
@@ -179,7 +187,12 @@ class FCM {
 
       // A pre-order reminder carries an order_id but is not a new order.
       final bool isPreorderReminder = notificationType == preorderReminderType;
+      // A cancelled booking also carries an order_id, but must not ring as
+      // a new order: it only refreshes the lists.
+      final bool isBookingCancelled =
+          notificationType == serviceBookingCancelledType;
       final bool isOrderRequestType = !isPreorderReminder &&
+                                      !isBookingCancelled &&
                                       notificationType != adminMessageType &&
                                       (notificationType == 'order_request' || 
                                        notificationType == 'new_order_request' || 
@@ -218,7 +231,7 @@ class FCM {
         "Foreground notification type: $notificationType, data empty: ${message.data.isEmpty}",
       );
 
-      if (isPreorderReminder) {
+      if (isPreorderReminder || isBookingCancelled) {
         await refreshHomeUI();
       } else if (isOrderRequestType) {
         // Refresh Home UI & Show In-App Dialog Alert in real-time
@@ -506,6 +519,23 @@ class FCM {
                 });
               }
             }
+            // Service booking (#168): open the booking itself; the screen
+            // loads it from serviceBookingDetail with only the id.
+            final bookingId = (getEffectiveData(notificationData!)['booking_id']
+                        ?.toString() ??
+                    openOrderId)
+                .trim();
+            if (appType == VendorAppType.homeCleaning &&
+                int.tryParse(bookingId) != null) {
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (Get.context == null) return;
+                Get.to(
+                  () => BookingDetailsView(
+                    booking: CleaningBooking.fromJson({'id': bookingId}),
+                  ),
+                );
+              });
+            }
             if (appType == VendorAppType.water && openOrderId.isNotEmpty) {
               Future.delayed(const Duration(milliseconds: 300), () {
                 if (Get.context == null) return;
@@ -749,6 +779,9 @@ class FCM {
       'total': {'en': 'Total', 'fr': 'Total', 'ar': 'المجموع'},
       'dismiss': {'en': 'Later', 'fr': 'Plus tard', 'ar': 'لاحقًا'},
       'view': {'en': 'View order', 'fr': 'Voir la commande', 'ar': 'عرض الطلب'},
+      'titleBooking': {'en': 'New booking!', 'fr': 'Nouvelle réservation !', 'ar': 'حجز جديد!'},
+      'receivedBooking': {'en': 'Booking', 'fr': 'Réservation', 'ar': 'الحجز'},
+      'viewBooking': {'en': 'View booking', 'fr': 'Voir la réservation', 'ar': 'عرض الحجز'},
     };
     final code = LocalizationService.currentLanguageCode;
     return words[key]?[code] ?? words[key]?['en'] ?? key;
@@ -804,6 +837,11 @@ class FCM {
     List<({String number, String amount, Map<String, dynamic> data})> orders,
   ) {
     final latest = orders.last;
+    // A service booking (backend #168, is_booking 1) says booking, not order.
+    final latestData = getEffectiveData(latest.data);
+    final isBooking = latestData['is_booking']?.toString() == '1' ||
+        latestData['type']?.toString() == newServiceBookingType;
+    String tr(String key) => _t(isBooking ? '${key}Booking' : key);
     final formattedOrderNumber = orders.map((o) => o.number).join(', ');
     final amount = orders.length == 1 ? latest.amount : '';
     final notificationData = latest.data;
@@ -827,7 +865,7 @@ class FCM {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _t('title'),
+                        tr('title'),
                         style: appFont('Rubik', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -839,7 +877,7 @@ class FCM {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "${_t('received')} $formattedOrderNumber",
+                  "${tr('received')} $formattedOrderNumber",
                   style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[
@@ -892,7 +930,7 @@ class FCM {
                         ),
                       ),
                       child: Text(
-                        _t('view'),
+                        tr('view'),
                         style: appFont('Rubik', 
                           color: Colors.white,
                           fontSize: 14,
