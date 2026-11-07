@@ -2,6 +2,7 @@ import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/barcode_scan_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -231,7 +232,7 @@ class _InventoryItem {
             }
           })()),
       expiryDate: json['expiry_date']?.toString(),
-      barcode: json['barcode']?.toString(),
+      barcode: json['barcode']?.toString() ?? json['serial_number']?.toString(),
       rawJson: json,
     );
   }
@@ -263,6 +264,19 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Header scan button (it did nothing): the scanned code goes into the
+  /// search box, which also matches each product's barcode.
+  Future<void> _scanBarcode() async {
+    final code = await Navigator.of(context).push<String>(
+      MaterialPageRoute<String>(builder: (_) => const BarcodeScanPage()),
+    );
+    if (!mounted || code == null || code.trim().isEmpty) return;
+    setState(() {
+      _filter = 0;
+      _searchController.text = code.trim();
+    });
   }
 
   Future<void> _fetchInventory() async {
@@ -346,7 +360,9 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
       if (!matchesFilter) return false;
       if (query.isEmpty) return true;
       return item.name.toLowerCase().contains(query) ||
-          item.id.toLowerCase().contains(query);
+          item.id.toLowerCase().contains(query) ||
+          // A scanned or typed barcode (`serial_number`).
+          (item.barcode ?? '').toLowerCase().contains(query);
     }).toList();
   }
 
@@ -685,7 +701,11 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
       child: Column(
         children: [
           SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-          _InventoryHeader(onBack: widget.onBack, onRefresh: _fetchInventory),
+          _InventoryHeader(
+            onBack: widget.onBack,
+            onRefresh: _fetchInventory,
+            onScan: _scanBarcode,
+          ),
           Expanded(
             child: RefreshIndicator(
               color: const Color(0xFFFF5216),
@@ -774,9 +794,12 @@ class _PharmacyInventoryTabState extends State<PharmacyInventoryTab> {
 }
 
 class _InventoryHeader extends StatelessWidget {
-  const _InventoryHeader({this.onBack, this.onRefresh});
+  const _InventoryHeader({this.onBack, this.onRefresh, this.onScan});
 
   final VoidCallback? onBack;
+
+  /// Opens the barcode scanner; the code goes into the search box.
+  final VoidCallback? onScan;
   final VoidCallback? onRefresh;
 
   @override
@@ -808,7 +831,7 @@ class _InventoryHeader extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: _HeaderButton(
-                onTap: () {},
+                onTap: onScan,
                 icon: Icons.qr_code_scanner_rounded,
                 iconSize: 20,
               ),
