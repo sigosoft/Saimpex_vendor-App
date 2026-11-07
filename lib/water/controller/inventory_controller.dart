@@ -83,7 +83,9 @@ class WaterInventoryController extends GetxController {
         final nameMatch = p.name.toLowerCase().contains(query);
         final idMatch = p.id.toLowerCase().contains(query);
         final catMatch = (p.categoryName ?? '').toLowerCase().contains(query);
-        if (!nameMatch && !idMatch && !catMatch) return false;
+        // A scanned or typed barcode (`serial_number`).
+        final barcodeMatch = (p.barcode ?? '').toLowerCase().contains(query);
+        if (!nameMatch && !idMatch && !catMatch && !barcodeMatch) return false;
       }
 
       return true;

@@ -4,6 +4,7 @@ import 'package:saimpex_vendor/water/core/water_api.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/bidi_text.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/utils/widgets/barcode_scan_page.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -91,6 +92,17 @@ class _InventoryViewState extends State<InventoryView> {
     await controller.updateWaterItemStock(itemId, quantity, context: context);
   }
 
+  /// Header scan button (it did nothing): the scanned code goes into the
+  /// search box, which also matches each product's barcode.
+  Future<void> _scanBarcode() async {
+    final code = await Navigator.of(context).push<String>(
+      MaterialPageRoute<String>(builder: (_) => const BarcodeScanPage()),
+    );
+    if (!mounted || code == null || code.trim().isEmpty) return;
+    controller.selectFilter(0);
+    controller.searchController.text = code.trim();
+  }
+
   Future<void> _onUpdateStockForProduct(InventoryProduct product) async {
     final quantity = await showUpdateStockDialog(
       context,
@@ -169,6 +181,7 @@ class _InventoryViewState extends State<InventoryView> {
         _Header(
           showBack: !widget.embedded,
           onBack: () => Navigator.of(context).maybePop(),
+          onScan: _scanBarcode,
         ),
         Expanded(
           child: RefreshIndicator(
@@ -344,10 +357,13 @@ class _InventoryViewState extends State<InventoryView> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack, this.showBack = true});
+  const _Header({required this.onBack, this.showBack = true, this.onScan});
 
   final VoidCallback onBack;
   final bool showBack;
+
+  /// Opens the barcode scanner; the code goes into the search box.
+  final VoidCallback? onScan;
 
   @override
   Widget build(BuildContext context) {
@@ -378,7 +394,7 @@ class _Header extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: _HeaderIconButton(
-                onTap: () {},
+                onTap: onScan ?? () {},
                 icon: Icons.qr_code_scanner_rounded,
                 iconSize: 20,
               ),
