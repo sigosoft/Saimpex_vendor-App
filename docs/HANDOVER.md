@@ -125,7 +125,7 @@ There are no build flavours and no `.env`. The server is set in code:
 - `lib/configs/ApiConfigs.dart`
   - `ApiConfigs.BASE_URL` = `https://dev.saimpexenterprise.com/api/vendorapp/` (DEV/test, active)
   - `ApiConfigs.IMAGE_URL` = `https://dev.saimpexenterprise.com/storage/`
-  - The live URLs (`https://api.saimpexenterprise.com/...`) are present as comments.
+  - Live: build with `--dart-define=SAIMPEX_LIVE=true` (switches `BASE_URL` and `IMAGE_URL` to `https://api.saimpexenterprise.com/...`). Without it the app uses dev. Do not edit the URLs by hand.
 - To point at a local Laravel server, change both values (for an Android emulator use `http://10.0.2.2:8000/api/vendorapp/`). Do not commit that change.
 - Pusher (chat realtime) app key and cluster are hard-coded in `lib/configs/PusherConfig.dart`. Channel names there must match the backend broadcast channels.
 
@@ -142,8 +142,8 @@ The app calls `Firebase.initializeApp()` at start (`lib/main.dart`) and uses Mes
 ### 2.5 Signing and release
 
 - Android `applicationId` is `saimpex.vendor`. Version is in `pubspec.yaml` (`1.0.6+7` now).
-- **Release builds are signed with the debug key** (`android/app/build.gradle.kts`, `signingConfig = signingConfigs.getByName("debug")`). A Play Store upload needs a real release `signingConfig` that reads a `key.properties` file (not committed).
-- A file named `playstore_key` sits in the repo root on Praveen's Mac. It is **gitignored** and is not in GitHub. It is binary keystore data. Ask Praveen for the upload keystore and its passwords through a private channel. Never commit the keystore, its passwords, or `key.properties`.
+- **Release signing** (`android/app/build.gradle.kts`): reads `android/key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`; gitignored with `*.jks` / `*.keystore` / `playstore_key`). Without that file, release builds fall back to the debug key (fine for test APKs, not for Play Store). Store build: `flutter build appbundle --release --dart-define=SAIMPEX_LIVE=true`.
+- **`playstore_key` was committed** (commit `218d66e`, Mar 2026) and is in the public repo history. It is untracked and ignored since `chore/release-keys` (7 Nov). Treat it as exposed: if it is the live upload key, reset the upload key in Play Console (Setup › App signing › Request upload key reset); rewriting git history and making the repo private are owner decisions (launch keys checklist). Get the keystore and passwords from Praveen privately; never commit them.
 - iOS bundle id is still the template value `com.example.saimpexVendor` (`ios/Runner.xcodeproj/project.pbxproj`). Not set up for App Store.
 - `ApiConfigs.iosAppStoreId` is a placeholder (`123456789`).
 

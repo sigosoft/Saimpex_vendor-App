@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Signing secrets: never commit (launch keys checklist, 7 Nov)
+playstore_key
+*.jks
+*.keystore
+*.p12
+android/key.properties
