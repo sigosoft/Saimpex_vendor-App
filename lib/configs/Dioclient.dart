@@ -274,7 +274,6 @@ class DioClient {
 
         return S.current.somethingWentWrong;
       } else if (statusCode == 500) {
-        // Get.to(ServerDown());
         return S.current.somethingWentWrong;
       } else if (statusCode == 401) {
         return "Unauthorized";
