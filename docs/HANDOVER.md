@@ -414,6 +414,8 @@ Source: `SAIMPEX-V2-vendor-app-test-report.pdf` (6 Nov, 34 issues, tested on `ma
 | Clean-up | `chore/remove-unused-error-screens` (#104) | ✅ | Unused No Internet / Server Down screens removed |
 | Home cleaning, laundry, car wash | `fix/service-notifications-bell` (#105) | ✅ | Home bell did nothing; opens Notifications |
 | Pharmacy, water / gas | `feat/inventory-barcode-scan` (#106) | ✅ | Inventory scan button did nothing; scans a barcode into the search (matches `serial_number`) |
+| Pharmacy | `fix/pharmacy-home-chip-zeroes` (#107) | ✅ phone | Prescription To Prepare / Preparing / Ready chips reset the home dashboard to 0 (422 on `order_status` 5–7) |
+| Pharmacy | `fix/pharmacy-settings-earnings-l10n` (#108) | ✅ phone | Business settings and Earnings were English in Arabic; Earnings tab highlight not mirrored |
 
 Already fixed on earlier PRs: VA-20 (#49), VA-25 (#50, server must also send `message_ar/fr`), VA-33 (#59), VA-34 (#53), water revenue 0 (#67).
 Backend gaps (no app change possible): VA-12 per-order commission / net; order Express flag; item Popular tag; service booking push (VA-28); laundry `slot_label`; pharmacy list `payment_type` / `is_self_pickup` / rider.
