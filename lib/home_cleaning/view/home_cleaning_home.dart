@@ -17,6 +17,7 @@ import 'package:saimpex_vendor/home_cleaning/view/cleaning_booking_format.dart';
 import 'package:saimpex_vendor/home_cleaning/view/home_cleaning_account_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/my_services_view.dart';
 import 'package:saimpex_vendor/home_cleaning/view/service_kind_blocks.dart';
+import 'package:saimpex_vendor/water/view/notifications/notifications_view.dart';
 
 // HomeCleaningController lives in controller/; re-exported so the other
 // home cleaning tabs keep importing it from here.
@@ -426,7 +427,15 @@ class _WelcomeHeader extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        // The bell did nothing. It opens the vendor notifications list
+        // (`notifications`, which serves home cleaning, laundry and car
+        // wash too), using the water section's screen.
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const NotificationsView()),
+          ),
+          child: Container(
           width: 40,
           height: 40,
           decoration:  BoxDecoration(
@@ -446,6 +455,7 @@ class _WelcomeHeader extends StatelessWidget {
             color: Colors.black,
             size: 26,
           ),
+        ),
         ),
       ],
     );
