@@ -9,7 +9,8 @@ import 'package:saimpex_vendor/utils/utils.dart';
 // Account screens of the service section (laundry, car wash, home cleaning;
 // task V15). They used to open the Water screens, which call the water
 // endpoints. Now on the service endpoints: serviceHours / saveServiceHours,
-// serviceAvailability, serviceEarnings. Built in the section's style
+// serviceEarnings (Business settings now opens the water screen on the
+// vendor businessSettings endpoints, as in Figma). Built in the section's style
 // (VENDOR_APP_DESIGNS.md §3).
 
 const Color _bg = Color(0xFFFFF8F0);
@@ -229,85 +230,6 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
           child: Text(text, textDirection: TextDirection.ltr, style: _t(13, FontWeight.w600, _ink)),
         ),
       );
-}
-
-// ── Business settings ───────────────────────────────────────────────────
-
-class ServiceBusinessSettingsView extends StatefulWidget {
-  const ServiceBusinessSettingsView({super.key});
-
-  static Future<void> open(BuildContext context) =>
-      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ServiceBusinessSettingsView()));
-
-  @override
-  State<ServiceBusinessSettingsView> createState() => _ServiceBusinessSettingsViewState();
-}
-
-class _ServiceBusinessSettingsViewState extends State<ServiceBusinessSettingsView> {
-  bool? _accepting;
-  bool? _busy;
-  bool _saving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    final res = await CleaningApi.get(ApiEndPoints.serviceDashboard);
-    if (!mounted) return;
-    final m = res.map;
-    setState(() {
-      _accepting = '${m['accepting_bookings'] ?? 1}' != '2';
-      _busy = '${m['is_busy'] ?? m['busy'] ?? 2}' == '1';
-    });
-  }
-
-  Future<void> _set({bool? accepting, bool? busy}) async {
-    final messenger = ScaffoldMessenger.of(context);
-    setState(() => _saving = true);
-    final res = await CleaningApi.post(ApiEndPoints.serviceAvailability, {
-      if (accepting != null) 'accepting_bookings': accepting ? 1 : 2,
-      if (busy != null) 'is_busy': busy ? 1 : 2,
-    });
-    if (!mounted) return;
-    setState(() {
-      _saving = false;
-      if (res.ok) {
-        _accepting = res.map['accepting_bookings'] == null ? (accepting ?? _accepting) : '${res.map['accepting_bookings']}' != '2';
-        _busy = res.map['is_busy'] == null ? (busy ?? _busy) : '${res.map['is_busy']}' == '1';
-      }
-    });
-    if ((res.message ?? '').isNotEmpty) messenger.showSnackBar(SnackBar(content: Text(res.message!)));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = S.of(context);
-    Widget row(String title, String help, bool? value, ValueChanged<bool> onChanged) => Row(children: [
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: _t(15, FontWeight.w600, _ink)),
-              Text(help, style: _t(12, FontWeight.w400, _muted)),
-            ]),
-          ),
-          Switch(
-            value: value ?? false,
-            activeThumbColor: Colors.white,
-            activeTrackColor: _orange,
-            onChanged: value == null || _saving ? null : onChanged,
-          ),
-        ]);
-    return _scaffold(
-      context,
-      title: s.cleaningBusinessSettings,
-      body: ListView(padding: const EdgeInsets.all(16), children: [
-        _card([row(s.acceptingBookings, s.acceptingBookingsHelp, _accepting, (v) => _set(accepting: v))]),
-        _card([row(s.markAsBusy, s.markAsBusyHelp, _busy, (v) => _set(busy: v))]),
-      ]),
-    );
-  }
 }
 
 // ── Earnings ────────────────────────────────────────────────────────────
