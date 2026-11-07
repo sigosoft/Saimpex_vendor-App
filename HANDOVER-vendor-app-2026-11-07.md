@@ -1,0 +1,177 @@
+# SAIMPEX V2 vendor app: handover, 7 Nov 2026 (afternoon)
+
+For the next person continuing the vendor app. **Read this file first.**
+
+It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 still holds the 7 Nov morning notes and the full PR merge order. Team rules: `CLAUDE.md`.
+
+- Repo: https://github.com/sigosoft/Saimpex_vendor-App
+- Backend: https://github.com/praveensigo/saimpex-backend-new, branch `integration/v2`
+- Figma (view only, **never edit**): https://www.figma.com/design/ZCYkkdqmKm6Hn5Hcm12Mxg/Saimpex?node-id=3308-1865
+- Launch: **1 December 2026**
+
+---
+
+## 0b. Latest client build (7 Nov, ~19:00), replaces 0a
+
+- **APK for the client:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-07-4821b28.apk` (164 MB), from `test/retest-2026-11-06` at `4821b28` (pushed). Dev server, debug-key signed (as 0a). The `6c17701` APK below is older: don't send it.
+- **Adds since 0a:** #118 popup now says "New booking / View booking" for service bookings (EN/FR/AR); #121 item tags (Popular, Veg, New arrival); **#122 (new)** notification "View details" button on rows with `link_type`/`link_id` (restaurant, water/gas/service and pharmacy screens), routed like a push tap.
+- **Checks:** analyzer 0 errors; `flutter test` 63 / 63; installed on the Samsung.
+- **Phone ✅ #122:** laundry.24 (Arabic): button only on booking rows, RTL fine, opens Booking Details LNMR4R1P. Result posted on #122.
+- **Not phone-checked yet (needs a tester login):** #121 tags (food.01 → Items, Item Details), #122 on restaurant and pharmacy, #118 popup wording (place a new laundry booking), #119 Express tag (needs an express order), #120 (laundry booking with `delivery_window`).
+- **Backend, new (wording only):** the "Needs your attention" row (`GET activityNotifications`) shows "New order / View order" (طلب جديد / عرض الطلب) for a laundry **booking**; the text comes from the server's `title_*` / `action_*`. Ask backend to send booking wording when the row is a service booking. Added to `backend-issues-vendor-app-2026-11-07.md`.
+- PR #122 base is #118 (`fix/service-booking-push`); merge after it.
+
+## 0a. Client build (7 Nov, 18:18)
+
+- **APK for the client (superseded by 0b):** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-07-6c17701.apk` (164 MB), built from `test/retest-2026-11-06` at `6c17701` (pushed). **Dev server** (default; a live build needs `--dart-define=SAIMPEX_LIVE=true` and the real upload key, see #113). Signed with the debug key (no `key.properties` on this PC): fine for testing, not for the Play Store.
+- **Checks:** `flutter analyze --no-pub` 0 errors; `flutter test` **63 / 63 pass** (fixed the laundry slot-chips test on #84: dates now carry direction marks); installed on the Samsung, opens and loads (laundry.24, Arabic; store name now in Arabic thanks to backend #170).
+- **Phone ✅ #118:** laundry booking LNMR4R1P (placed by API) → push + popup within ~12 s → "View" opens the booking.
+- **Small, not fixed:** the new-booking popup says "New order · ORD-001556" instead of "New booking · LNMR4R1P" (`showInAppNewOrderAlert` in `lib/view/notifications/notification.dart`; add a "New booking" string in EN/FR/AR and use `order_code` when `is_booking` = 1).
+- **Test data on dev:** LNMR4R1P is New (cancel it from Admin, or use it for the laundry flow).
+
+## 0. Latest (7 Nov evening): backend fixes checked, app side done
+
+**Backend.** `integration/v2` commits `578cd1c` and `01b526613` (both 7 Nov, **deployed on dev**: `updated_at_iso` is live) fix every open `[vendor-app]` issue: #168 booking push, #169 laundry windows, #170 AR/FR names, #171 pharmacy rider, #172, #173, #174 push + vendor check, #175 express / popular, #179 veg / new arrival / notification links, plus status-log ISO times and `serviceDashboard.accepting_bookings`. The GitHub issues are **still open**: ask Praveen to close them (#176 is a duplicate). Full list: `backend-issues-vendor-app-2026-11-07.md`.
+
+**New PRs (pushed, merged into `test/retest-2026-11-06`, analyzer 0 errors):**
+
+| PR | Base | What | Backend |
+|---|---|---|---|
+| #118 | #75 | Service booking pushes: "View" / tap opens the booking (laundry, car wash, home cleaning); a `service_booking_cancelled` push no longer rings as a new order | #168 |
+| #119 | #90 | Express tag on restaurant / grocery / local store order cards and details (`is_express`, or raw `type` "express" on lists) | #175 |
+| #120 | #84 | Laundry details: DELIVERY TURNAROUND date/time chips from `delivery_window` (text fallback) | #169 |
+
+**No app change needed:** #171 rider (the pharmacy model already reads `delivery_boy_name`); #170 names (server-side); #174 (server-side); status-log times (#114 already reads the text; `updated_at_iso` also works); #172 / #173 (done earlier).
+
+**Still to do (app), in order:**
+1. **Phone checks** of #118 (place a laundry booking by API, tap the push / popup "View"), #119 (needs an express order: `checkoutV2` with an express delivery option), #120 (open a laundry booking that has `delivery_window`).
+2. **#175 / #179 item tags (P3):** Items list "Veg" / "New arrival" chips (`restaurantCatalogItems` rows `is_veg`, `is_new_arrival`; card in `lib/view/restaurant/vendor_restaurant_screen.dart` near the category chip, ~line 1369); Item Details "Popular" tag + orders count / recent orders (`restaurantCatalogItemDetail` `is_popular`, `orders_count`, `recent_orders[]`; `lib/view/restaurant/Widgets/view_item_details.dart`, branch on #88/#109). Strings exist: `veg`, `nonVeg`; add `newArrival`, `popular` in EN/FR/AR.
+3. **#179 notification action buttons:** `vendorapp/notifications` rows now have `link_type` (order / booking), `link_id`, `order_code`: add a "View order" / "View booking" button per row (water `lib/water/view/notifications/notifications_view.dart`, restaurant `lib/view/notifications/notifications.dart`, pharmacy screen).
+4. **Home endpoint** sends no `is_express` (only lists / detail do): ask backend to add it so Home cards show the Express tag.
+5. Existing test `test/service_kind_blocks_test.dart` "laundry block: slot chips…" fails on an IST PC (expects UTC dates): make it time-zone safe.
+6. Then §5 below (home cleaning test, PR results, message to Praveen, Admin requests).
+
+---
+
+## 1. Where things are now
+
+| What | State |
+|---|---|
+| `main` | `4c604a6`. It has the P1 merges #44, #45, #64 and #65. Nothing else is merged; Praveen approves every merge. |
+| Test branch | `test/retest-2026-11-06`, **pushed**, head `957d3aa`. It is `main` plus every open PR. Analyzer: 0 errors. |
+| Phone build | `build/app/outputs/flutter-apk/vendor-957d3aa.apk`, installed on the Samsung M11 (wireless adb). |
+| Uncommitted work | None. Every branch is pushed. |
+| GitHub CLI | `gh` is installed at `C:\Program Files\GitHub CLI\gh.exe` and signed in as `sigosoft`. |
+
+**Build and install:**
+
+```bash
+git fetch origin && git checkout test/retest-2026-11-06
+flutter pub get
+flutter analyze --no-pub
+flutter build apk --release
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+```
+
+---
+
+## 2. New PRs today (7 Nov, afternoon)
+
+They are all merged into the test branch and phone-tested (✅).
+
+| PR | Base | What | Phone |
+|---|---|---|---|
+| #114 | main | Order timeline times. The server sends status-log times already formatted in English and UTC ("07 Nov 2026 07:39 AM"); they are now read as UTC and shown in phone time and the app's language. Test added; 54 tests pass. | ✅ 02:09 م / 02:11 م on ORD-001548 |
+| #115 | #73 | Tab badges reload after Accept. "Pending 01" stayed after Accept, on the home card and from the order details screen (2 commits). | ✅ food.01, grocery.08, pharmacy.15 |
+| #116 | main | An empty chat says "No messages yet" (it said "no contacts found"). | ✅ |
+| #117 | #70 | A Ready order with no driver says "Waiting for a delivery partner" (it said "Assigned" with no name). New key `waitingForDeliveryPartner`. | ✅ |
+
+**Merge order:** add them to the end of the list in the 6 Nov file's §3:
+- #115 after #73;
+- #117 after #70;
+- #114 and #116 any time (they are on `main`).
+
+Expect the usual `.arb` conflicts: keep both sets of keys, then regenerate.
+
+---
+
+## 3. Live order testing done today
+
+**Method.** Orders and bookings were placed by API on the **dev** server as the demo customer **Aminata Sow (+222 95200020)**. This was approved by Stephy. Each one was then followed on the phone, in Arabic.
+- Log in: `POST /api/customer/sendOtp`, then `verifyOtp` with the dev test code 123456.
+  - `country_code` must be URL-encoded: `--data-urlencode "country_code=+222"`.
+  - Keep the token out of chat and logs.
+- Orders:
+  - add to cart with `cart/{restaurant|grocery|pharmacy|water}/add` (`restaurant_id` / `grocery_id` / `pharmacy_id` / `water_vendor_id`, `product_id` = item id, `quantity`);
+  - then `checkoutV2` with `is_self_pickup=0, lat, long, location, payment_type=1` (cash).
+- Service bookings: `service/book` with:
+  - `vertical`, `vendor_id`, `service_item_id`, `latitude`, `longitude`, `payment_type=1`, `scheduled_for`, `slot_end` (UTC "Y-m-d H:i:s");
+  - car wash: `place=station` plus `vehicles=[{"name":"Sedan","plate":"…"}]`;
+  - laundry: `quantity` (kg estimate), `address`, `delivery_address`.
+- Customer side of a rejected order: `GET orderDetails?order_id=` returns `cancel_reason` and `cancel_message`.
+
+| Vendor | Order | What was checked | Result |
+|---|---|---|---|
+| Restaurant food.01 | ORD-001548 (2 × Garden Salad, 300 MRU) | new-order popup within ~20 s; Pending card with Accept & Print; Accept + success popup; badges; Prepare; Mark ready; Ready card driver line; no Print on Ready; Chat with Customer (empty chat text); timeline times | ✅ all |
+| Grocery grocery.08 | ORD-001549 (Bananas × 1, Tomatoes × 2, 190 MRU) | popup → "View order" opens it (VA-15); Edit Items above the list, opens, order stays Pending (VA-14); Change quantity on a quantity-1 line explains why, in Arabic (VA-18); Accepted list layout in Arabic (VA-17); Accept from details | ✅ (fixed a badge bug, #115 second commit) |
+| Pharmacy pharmacy.15 | ORD-001550 and ORD-001551 (OTC, Cough Syrup × 2, 220 MRU each) | one popup for two orders; hours line "اليوم: 00:00 - 23:59"; home-card Reject reason sheet (#98): Confirm stays off until a reason is picked, "Out of Stock" sent, and **the customer sees "The store could not accept your order: Out of Stock"**; Accept, Prepare and Mark Ready **from the detail screen** | ✅ all |
+| Water water.19 | ORD-001552 (2 × 1.5 L, 230 MRU) | popup → View order; details; Accept → Prepare → Ready from details; timeline times; **Ready card "جاهز: بانتظار مندوب التوصيل لاستلامه" (W-14, #66)**; Revenue 3315 | ✅ all |
+| Car wash carwash.27 | CWICUIIR (Interior + Sedan 1234 AB 01, 300 MRU, at the station) | My Services › Edit: added vehicle type "Sedan · 300 MRU" (saved); card "Vehicle 1 · Interior · Sedan"; **Vehicles block** (car tile, plate, wash type, price); location "في محطة الغسيل"; **a confirmation dialog before every step (VA-30)**; Completed, paid 300 | ✅ all |
+| Laundry laundry.24 | LNHCFL01 (Wash & Fold, 3 kg estimate = 180 MRU) | **new booking popup within 30 s with no refresh (VA-28)**; card with estimate, slot, "Standard (24h)"; step dialogs (VA-30); **Verify Weight** 3 → 4 kg = 240, difference +60, Send payment request; "Additional payment pending" with Paid 0 / Final 240 / Balance 240; Delivered → green **"Paid"**, Balance 0 | ✅ all |
+
+**Test data left on dev:**
+- ORD-001546, ORD-001548 (restaurant), ORD-001550 (pharmacy) and ORD-001552 (water) are **Ready**.
+- ORD-001549 (grocery) is **Accepted**.
+- ORD-001551 is **cancelled** (Out of Stock).
+- CWICUIIR is **Completed**; LNHCFL01 is **Delivered**.
+- Cancel the open ones from Admin if they get in the way.
+
+---
+
+## 4. Found today and still open
+
+1. **The car wash service name changed after Edit (data, not the app).**
+   - What happened: saving "Interior Cleaning" (id 36) in the app renamed it "Interior" in EN, AR and FR.
+   - Why: as in Figma, a service takes its name from its **service type**, and on dev the car wash types are named "Interior" / "Exterior" in all three languages.
+   - What Admin should do: give the service types real AR/FR names, and restore the name of service 36 (it was "Interior Cleaning" / "تنظيف داخلي").
+2. **Small:** after saving a service, the keyboard pops up on the My Services search box. Not fixed.
+3. **Home cleaning is not tested yet.**
+   - The phone was about to be logged in as homecleaning.30.
+   - Its 4 services (Deep Clean 54, Disinfection 55, Regular Clean Apartment 52 / Villa 53) have **no spaces, add-ons or issues**.
+   - A booking can test the card, details, step dialogs (VA-30) and **assign cleaner**.
+   - The **pest control Areas and Issues tiles** need a service with issues covered first. Add them in the app (My Services › Add Service › Issues Covered) or ask Admin.
+4. **Still needs an Admin action:** a test **payout** with a payment proof, to test "View payment proof" (#101) on restaurant and water.
+5. **Still not tested:**
+   - water "Low stock › View all" (#102; no low-stock product);
+   - a gas account;
+   - scanning a real barcode in the inventory search (#106);
+   - the Express tag (waits for backend #175).
+
+---
+
+## 5. What to do next, in order
+
+1. **Home cleaning test (homecleaning.30):**
+   - book service 52 by API: `vertical=home_cleaning`, `vendor_id=78`, `service_item_id=52`, `property_type=Apartment`, `address`, `latitude` / `longitude`, `scheduled_for` / `slot_end`;
+   - check the card, details, step dialogs, assign cleaner, then complete it;
+   - then set up a pest-control service with issues covered and book it to see Areas and Issues.
+2. Post the "Phone ✅" results on the PRs: #114–#117, #98, #66 and #115 are already done. Add the car wash (#96 / #111), laundry (#97 / #83–#86) and VA-30 PRs.
+3. **Send Praveen** the review request, adding #114–#117 and today's results. Start from `message-to-praveen-2026-11-06-followup.md`.
+4. Ask Admin for: a test payout with a proof; real AR/FR names for the car wash service types; restoring service 36's name.
+5. Then follow the open list in `HANDOVER-vendor-app-2026-11-06-final.md`:
+   - §4.2 backend-dependent work;
+   - §4.3 decisions (V8, login type list, water call vs chat, restaurant Busy card);
+   - launch keys (§00).
+
+---
+
+## 6. Rules recap
+
+- Figma is reference only; never edit it.
+- UI changes only: every value comes from the API, with no sample data.
+- EN/FR/AR for every string; then run `flutter pub run intl_utils:generate`.
+- `flutter analyze --no-pub`: 0 errors.
+- One task = one branch = one PR into `main`.
+- Praveen approves merges.
+- Dev server only.
+- **Never put passwords or tokens in chat, commits or logs.** The tester logs in on the phone.
