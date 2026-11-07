@@ -13,6 +13,7 @@ import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/utils/widgets/no_data_widget.dart';
+import 'package:saimpex_vendor/view/notifications/notification.dart' show FCM;
 
 class PharmacyNotificationsScreen extends StatefulWidget {
   const PharmacyNotificationsScreen({super.key});
@@ -70,7 +71,9 @@ class _NotificationItemData {
       contentAr: map['content_ar']?.toString(),
       contentFr: map['content_fr']?.toString(),
       type: int.tryParse(map['type']?.toString() ?? ''),
-      orderId: map['order_id'],
+      // Backend #179: rows about an order carry link_type / link_id.
+      orderId: map['order_id'] ??
+          (map['link_type']?.toString() == 'order' ? map['link_id'] : null),
       date: map['date']?.toString(),
       time: map['time']?.toString(),
       createdAt: map['created_at']?.toString(),
@@ -274,6 +277,21 @@ class _PharmacyNotificationsScreenState
     }
   }
 
+  /// Rows with a server link (#179) open like a push tap (loads the order
+  /// by id); older rows keep the previous behaviour.
+  void _openOrder(BuildContext context, _NotificationItemData item) {
+    final raw = item.raw;
+    final linked = raw is Map && raw['link_type']?.toString() == 'order';
+    if (linked) {
+      FCM.navigateToAcceptOrderIfLoggedIn(notificationData: {
+        'order_id': '${item.orderId}',
+        if (raw['order_code'] != null) 'order_code': '${raw['order_code']}',
+      });
+      return;
+    }
+    _openDetails(context, orderId: item.orderId.toString());
+  }
+
   void _openDetails(BuildContext context, {String? orderId}) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -357,10 +375,7 @@ class _PharmacyNotificationsScreenState
                                   return _NotificationItemCard(
                                     item: item,
                                     onTap: item.orderId != null
-                                        ? () => _openDetails(
-                                              context,
-                                              orderId: item.orderId.toString(),
-                                            )
+                                        ? () => _openOrder(context, item)
                                         : null,
                                   );
                                 },
