@@ -3381,5 +3381,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "earningsNet": "Net"
 }

@@ -14340,6 +14340,11 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `Net`
+  String get earningsNet {
+    return Intl.message('Net', name: 'earningsNet', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
