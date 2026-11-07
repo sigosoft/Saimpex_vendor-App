@@ -3835,5 +3835,7 @@
   "itemDetailMinShort": "min",
   "orderMarkedPickedUpSuccessfully": "Order marked as picked up successfully",
   "editProfileDetails": "Edit Profile Details",
-  "earningsNet": "Net"
+  "earningsNet": "Net",
+  "itemPopularTag": "Popular",
+  "itemNewArrivalTag": "New arrival"
 }

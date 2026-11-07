@@ -3742,5 +3742,7 @@
   "itemDetailMinShort": "min",
   "orderMarkedPickedUpSuccessfully": "Commande marquée comme récupérée avec succès",
   "editProfileDetails": "Modifier les informations du profil",
-  "earningsNet": "Net"
+  "earningsNet": "Net",
+  "itemPopularTag": "Populaire",
+  "itemNewArrivalTag": "Nouveauté"
 }

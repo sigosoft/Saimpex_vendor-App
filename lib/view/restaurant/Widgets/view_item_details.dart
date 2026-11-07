@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/item_flag_tags.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
@@ -379,6 +380,11 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
                   ],
                 ),
                 const SizedBox(height: 8),
+                // Figma tags (backend #175 / #179): Popular, Veg, New arrival.
+                if (!ItemFlagTags.fromRaw(_raw).isEmpty) ...[
+                  ItemFlagTags.fromRaw(_raw),
+                  const SizedBox(height: 8),
+                ],
 
                 // Row 2: Category and Serial No
                 Row(

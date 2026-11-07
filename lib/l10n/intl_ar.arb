@@ -3741,5 +3741,7 @@
   "itemDetailMinShort": "د",
   "orderMarkedPickedUpSuccessfully": "تم تحديد الطلب كمستلم بنجاح",
   "editProfileDetails": "تعديل بيانات الملف الشخصي",
-  "earningsNet": "الصافي"
+  "earningsNet": "الصافي",
+  "itemPopularTag": "الأكثر طلبًا",
+  "itemNewArrivalTag": "وصل حديثًا"
 }

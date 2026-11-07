@@ -1301,8 +1301,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemNameHint": MessageLookupByLibrary.simpleMessage(
       "اسم القطعة، مثل قميص",
     ),
+    "itemNewArrivalTag": MessageLookupByLibrary.simpleMessage("وصل حديثًا"),
     "itemOrders": MessageLookupByLibrary.simpleMessage("طلبات العناصر"),
     "itemOrdersHeader": MessageLookupByLibrary.simpleMessage("طلبات الأصناف"),
+    "itemPopularTag": MessageLookupByLibrary.simpleMessage("الأكثر طلبًا"),
     "itemPricing": MessageLookupByLibrary.simpleMessage("تسعير القطع"),
     "itemPricingHelp": MessageLookupByLibrary.simpleMessage(
       "حدد سعرًا لكل نوع من الملابس. يختار العملاء الكميات عند الحجز.",

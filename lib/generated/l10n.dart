@@ -16177,6 +16177,21 @@ class S {
   String get earningsNet {
     return Intl.message('Net', name: 'earningsNet', desc: '', args: []);
   }
+
+  /// `Popular`
+  String get itemPopularTag {
+    return Intl.message('Popular', name: 'itemPopularTag', desc: '', args: []);
+  }
+
+  /// `New arrival`
+  String get itemNewArrivalTag {
+    return Intl.message(
+      'New arrival',
+      name: 'itemNewArrivalTag',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

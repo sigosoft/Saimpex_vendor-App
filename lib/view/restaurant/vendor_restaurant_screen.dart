@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:saimpex_vendor/view/restaurant/Widgets/item_flag_tags.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_item_details.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/view_menu_details.dart';
@@ -1463,10 +1464,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
           if (profileController.vendorType != "1" || item.id == null || item.id == 0) {
             return card;
           }
+          // Figma item tags (backend #175 / #179): Popular, Veg, New arrival.
+          final tags = ItemFlagTags.fromRaw(item.raw);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               card,
+              if (!tags.isEmpty)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 4, top: 6),
+                  child: Align(alignment: AlignmentDirectional.centerStart, child: tags),
+                ),
               ProductVisibilityBar(
                 key: ValueKey('vis-food-${item.id}'),
                 vertical: 'food',
