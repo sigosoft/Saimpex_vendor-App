@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
+import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 
@@ -532,36 +533,36 @@ class _PharmacyBusinessSettingsScreenState
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                     children: [
-                      const _SectionTitle('Store Availability'),
+                      _SectionTitle(S.of(context).waterStoreAvailability),
                       const SizedBox(height: 10),
                       _Card(
                         children: [
                           _SwitchRow(
-                            label: 'Store Status (Open)',
+                            label: S.of(context).waterStoreStatusOpen,
                             value: _storeOpen,
                             onChanged: _onStoreOpenChanged,
                           ),
                           const _Divider(),
                           _SwitchRow(
-                            label: 'Accepting Orders',
+                            label: S.of(context).waterAcceptingOrders,
                             value: _acceptingOrders,
                             onChanged: _onAcceptingOrdersChanged,
                           ),
                           const _Divider(),
                           _SwitchRow(
-                            label: 'Mark Store Busy',
+                            label: S.of(context).waterMarkStoreBusy,
                             value: _storeBusy,
                             onChanged: _onStoreBusyChanged,
                           ),
                         ],
                       ),
                       const SizedBox(height: 20),
-                      const _SectionTitle('Express Delivery'),
+                      _SectionTitle(S.of(context).waterExpressDelivery),
                       const SizedBox(height: 10),
                       _Card(
                         children: [
                           _SwitchRow(
-                            label: 'Available',
+                            label: S.of(context).available,
                             value: _expressAvailable,
                             onChanged: _onExpressAvailableChanged,
                           ),
@@ -571,7 +572,7 @@ class _PharmacyBusinessSettingsScreenState
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                'Pricing',
+                                S.of(context).waterPricing,
                                 style: appFont('Inter', 
                                   color: PharmacyBusinessSettingsScreen.ink,
                                   fontWeight: FontWeight.w700,
@@ -628,7 +629,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              'Business settings',
+              S.of(context).waterBusinessSettings,
               style: appFont('Inter', 
                 color: const Color(0xFF1C1D1B),
                 fontWeight: FontWeight.w700,
@@ -790,7 +791,7 @@ class _DistanceRange extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            '${range.min} – ${range.max} km',
+            S.of(context).waterDistanceRangeKm('${range.min}', '${range.max}'),
             style: appFont('Inter', 
               color: PharmacyBusinessSettingsScreen.ink,
               fontWeight: FontWeight.w500,
@@ -857,7 +858,7 @@ class _AddRangeButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            '+ Add Distance Range',
+            '+ ${S.of(context).waterAddDistanceRange}',
             style: appFont('Inter', 
               color: PharmacyBusinessSettingsScreen.orange,
               fontWeight: FontWeight.w600,
@@ -951,15 +952,15 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
     final price = int.tryParse(_price.text.trim());
     String? error;
     if (min == null || max == null) {
-      error = 'Enter minimum and maximum distance';
+      error = S.of(context).waterEnterMinMaxDistance;
     } else if (max <= min) {
-      error = 'Maximum must be greater than minimum';
+      error = S.of(context).waterMaxGreaterThanMin;
     } else if (price == null) {
-      error = 'Enter a price';
+      error = S.of(context).waterEnterPrice;
     } else if (widget.others.any(
       (range) => min < range.max && max > range.min,
     )) {
-      error = 'This range overlaps an existing range';
+      error = S.of(context).waterRangeOverlaps;
     }
     if (error != null) {
       setState(() => _error = error);
@@ -993,8 +994,8 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                 children: [
                   Text(
                     widget.editing
-                        ? 'Edit Distance Range'
-                        : 'Add Distance Range',
+                        ? S.of(context).waterEditDistanceRange
+                        : S.of(context).waterAddDistanceRange,
                     style: appFont('Inter', 
                       color: const Color(0xFF111827),
                       fontWeight: FontWeight.w700,
@@ -1027,24 +1028,24 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                 children: [
                   Expanded(
                     child: _Field(
-                      label: 'Minimum Distance',
+                      label: S.of(context).waterMinimumDistance,
                       controller: _min,
-                      suffix: 'Km',
+                      suffix: S.of(context).km,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _Field(
-                      label: 'Maximum Distance',
+                      label: S.of(context).waterMaximumDistance,
                       controller: _max,
-                      suffix: 'Km',
+                      suffix: S.of(context).km,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 14),
               Text(
-                'Price',
+                S.of(context).price,
                 style: appFont('Inter', 
                   color: const Color(0xFF6B7280),
                   fontWeight: FontWeight.w500,
@@ -1055,7 +1056,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
               Row(
                 children: [
                   Expanded(
-                    child: _Field(controller: _price, hint: 'e.g. 50'),
+                    child: _Field(controller: _price, hint: S.of(context).waterPriceExampleHint),
                   ),
                   const SizedBox(width: 12),
                   Container(
@@ -1105,7 +1106,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          S.of(context).cancel,
                           style: appFont('Inter', 
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -1128,7 +1129,7 @@ class _AddDistanceSheetState extends State<_AddDistanceSheet> {
                           ),
                         ),
                         child: Text(
-                          widget.editing ? 'Update' : 'Add',
+                          widget.editing ? S.of(context).update : S.of(context).add,
                           style: appFont('Inter', 
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
