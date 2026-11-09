@@ -4102,7 +4102,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "PROCHAINES LIVRAISONS",
     ),
     "waterUpdateStock": MessageLookupByLibrary.simpleMessage(
-      "Mettre à jour le stock",
+      "Modifier le stock",
     ),
     "waterValidUpto": MessageLookupByLibrary.simpleMessage("Valable jusqu\'au"),
     "waterVoiceMessage": MessageLookupByLibrary.simpleMessage("Message vocal"),
