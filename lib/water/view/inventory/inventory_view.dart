@@ -625,9 +625,9 @@ class _LowStockAlertCard extends StatelessWidget {
           for (var i = 0; i < displayItems.length; i++) ...[
             if (i > 0) const Divider(height: 1, color: AppColors.divider),
             _LowStockAlertRow(
-              // Laid out on its own: in Arabic a Latin name read
+              // Same as the product list: in Arabic a Latin name read
               // "L Jug with Bottle 19" (phone check 9 Nov).
-              name: isolated(displayItems[i].name),
+              name: keepNumberUnitsLtr(displayItems[i].name),
               remaining: displayItems[i].stockLabel.isNotEmpty
                   ? isolated(displayItems[i].stockLabel)
                   : S.of(context).waterBottlesLeft(
