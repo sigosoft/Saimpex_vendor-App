@@ -3746,5 +3746,7 @@
   "itemPopularTag": "Populaire",
   "itemNewArrivalTag": "Nouveauté",
   "autoAcceptOrdersOffSubtitle": "Vous acceptez ou refusez vous-même chaque nouvelle commande",
-  "@autoAcceptOrdersOffSubtitle": {}
+  "@autoAcceptOrdersOffSubtitle": {},
+  "bookingStatusCompleted": "TERMINÉE",
+  "@bookingStatusCompleted": {}
 }

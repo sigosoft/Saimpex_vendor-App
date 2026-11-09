@@ -3745,5 +3745,7 @@
   "itemPopularTag": "الأكثر طلبًا",
   "itemNewArrivalTag": "وصل حديثًا",
   "autoAcceptOrdersOffSubtitle": "تقبل أو ترفض كل طلب جديد بنفسك",
-  "@autoAcceptOrdersOffSubtitle": {}
+  "@autoAcceptOrdersOffSubtitle": {},
+  "bookingStatusCompleted": "مكتمل",
+  "@bookingStatusCompleted": {}
 }

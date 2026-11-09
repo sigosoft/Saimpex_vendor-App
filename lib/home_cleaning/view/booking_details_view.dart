@@ -548,7 +548,7 @@ class _CustomerCard extends StatelessWidget {
         : b.isInProgress
         ? (label: S.of(context).cleaningStatusInProgress, color: const Color(0xFF1E6BE6))
         : b.isCompleted
-        ? (label: S.of(context).completed, color: const Color(0xFF009624))
+        ? (label: S.of(context).bookingStatusCompleted, color: const Color(0xFF009624))
         : b.isOnTheWay
         ? (label: S.of(context).cleaningBookingStatusOnTheWay, color: const Color(0xFF009624))
         : b.isAccepted

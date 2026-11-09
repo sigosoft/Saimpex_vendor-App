@@ -97,7 +97,7 @@ class ServiceKinds {
     if (status == 3) return (label: s.cleaningStatusInProgress, color: blue);
     switch (current) {
       case ServiceKind.homeCleaning:
-        if (status == 9) return (label: s.completed, color: green);
+        if (status == 9) return (label: s.bookingStatusCompleted, color: green);
         if (status == 8) return (label: s.cleaningBookingStatusOnTheWay, color: green);
         return (label: s.cleaningStatusAccepted, color: green);
       case ServiceKind.laundry:
@@ -105,7 +105,7 @@ class ServiceKinds {
         if (status == 4) return (label: s.laundryReadyForDelivery, color: green);
         return (label: s.laundryWaitingForPickup, color: orange);
       case ServiceKind.carWash:
-        if (status == 9) return (label: s.completed, color: green);
+        if (status == 9) return (label: s.bookingStatusCompleted, color: green);
         if (status == 4) return (label: s.carWashReadyForPickup, color: green);
         return (label: s.carWashWaitingForVehicle, color: orange);
     }

@@ -514,6 +514,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookingSlots": MessageLookupByLibrary.simpleMessage(
       "Créneaux de réservation",
     ),
+    "bookingStatusCompleted": MessageLookupByLibrary.simpleMessage("TERMINÉE"),
     "breakfast": MessageLookupByLibrary.simpleMessage("Petit-déjeuner"),
     "busy": MessageLookupByLibrary.simpleMessage("Occupé"),
     "busyModeOff": MessageLookupByLibrary.simpleMessage(

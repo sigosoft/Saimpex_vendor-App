@@ -16202,6 +16202,16 @@ class S {
       args: [],
     );
   }
+
+  /// `COMPLETED`
+  String get bookingStatusCompleted {
+    return Intl.message(
+      'COMPLETED',
+      name: 'bookingStatusCompleted',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

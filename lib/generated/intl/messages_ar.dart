@@ -463,6 +463,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "bookingHash": m3,
     "bookingSlots": MessageLookupByLibrary.simpleMessage("مواعيد الحجز"),
+    "bookingStatusCompleted": MessageLookupByLibrary.simpleMessage("مكتمل"),
     "breakfast": MessageLookupByLibrary.simpleMessage("فطور"),
     "busy": MessageLookupByLibrary.simpleMessage("مشغول"),
     "busyModeOff": MessageLookupByLibrary.simpleMessage(
