@@ -13,10 +13,11 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-3564cbf.apk` from `test/retest-2026-11-06` at `3564cbf` (pushed). Dev server, debug-key signed. Includes #118–#126. Analyzer 0 errors, `flutter test` **65 / 65**. Older APKs in `client-build/` are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-2908bf9.apk` from `test/retest-2026-11-06` at `2908bf9` (pushed). Dev server, debug-key signed. Includes #118–#127. Analyzer 0 errors, `flutter test` **65 / 65**. Older APKs in `client-build/` (incl. `…-3564cbf.apk`) are superseded.
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
 - **food.01, 9 Nov:** #122 notifications "View details" ✅ (opens ORD-001548); #126 contact "+222 95100001" ✅; #121 Items list tags ✅. **Item Details shows no tags: dev's `restaurantCatalogItemDetail` doesn't send `is_popular` / `is_new_arrival` / `is_veg` / `orders_count` yet** (checked with a debug build; commented on backend #179). No app change needed; recheck after the backend deploy. Design note: the tag row sits under the card, above the visibility bar.
-- **Still to check on the phone:** #122 on pharmacy.15; #121 Item Details tags after backend #179; #119 Express tag (needs an express order); #120 (laundry booking with `delivery_window`); local store items once backend #180 is fixed.
+- **pharmacy.15, 9 Nov:** #122 order notification rows open the order (ORD-001550) ✅. **#127 (new, base main):** order details header "ORD-001550#" → "#ORD-001550" (prescription + OTC details) and the notifications title (hard-coded English "Notifications") translated. Phone ✅.
+- **Still to check on the phone:** #121 Item Details tags after backend #179; #119 Express tag (needs an express order); #120 (laundry booking with `delivery_window`); local store items once backend #180 is fixed.
 
 ## 0c. 9 Nov: home cleaning, local store, gas tested; PRs #123–#126
 
