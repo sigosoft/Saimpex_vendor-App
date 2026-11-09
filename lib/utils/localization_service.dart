@@ -247,10 +247,10 @@ class LocalizationService {
     'Preparing': {'en': 'Preparing', 'fr': 'En préparation', 'ar': 'قيد التحضير'},
     'Ready to Deliver': {
       'en': 'Ready to Deliver',
-      'fr': 'Prêt à livrer',
+      'fr': 'Prête à livrer',
       'ar': 'جاهز للتسليم',
     },
-    'Ready': {'en': 'Ready', 'fr': 'Prêt', 'ar': 'جاهز'},
+    'Ready': {'en': 'Ready', 'fr': 'Prête', 'ar': 'جاهز'},
     'Total Orders': {
       'en': 'Total Orders',
       'fr': 'Total des commandes',
