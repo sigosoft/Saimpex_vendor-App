@@ -81,21 +81,21 @@ class _MyServicesViewState extends State<MyServicesView> {
 
   Future<void> _openEditor([CleaningServiceItem? item]) async {
     HapticFeedback.lightImpact();
+    // Closing the form gives focus back to the search box, which opened the
+    // keyboard after every save: drop focus before and after the form.
+    FocusManager.instance.primaryFocus?.unfocus();
     // Laundry (per kg / per item) and car wash (vehicle types, add-ons,
     // distance pricing) use their own form (V14 part B).
-    if (!ServiceKinds.isCleaning) {
-      final saved = await Navigator.of(context).push<bool>(
-        MaterialPageRoute<bool>(builder: (_) => ServiceFormView(initial: item)),
-      );
-      if (saved == true && mounted) _load(quiet: true);
-      return;
-    }
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
-        builder: (_) => AddServiceView(initialService: item),
+        builder: (_) => ServiceKinds.isCleaning
+            ? AddServiceView(initialService: item)
+            : ServiceFormView(initial: item),
       ),
     );
-    if (saved == true && mounted) _load(quiet: true);
+    if (!mounted) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (saved == true) _load(quiet: true);
   }
 
   Future<void> _handleDelete(CleaningServiceItem item) async {
