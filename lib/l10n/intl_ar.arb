@@ -3327,5 +3327,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "bookingStatusCompleted": "مكتمل",
+  "@bookingStatusCompleted": {}
 }

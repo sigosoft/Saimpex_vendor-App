@@ -3381,5 +3381,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "bookingStatusCompleted": "COMPLETED",
+  "@bookingStatusCompleted": {}
 }

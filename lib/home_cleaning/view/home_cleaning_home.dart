@@ -1008,7 +1008,7 @@ class _Filters extends StatelessWidget {
     return (label: S.of(context).cleaningStatusInProgress, color: const Color(0xFF1E6BE6));
   }
   if (b.isCompleted) {
-    return (label: S.of(context).completed, color: const Color(0xFF009624));
+    return (label: S.of(context).bookingStatusCompleted, color: const Color(0xFF009624));
   }
   if (b.isOnTheWay) {
     return (label: S.of(context).cleaningBookingStatusOnTheWay, color: const Color(0xFF009624));

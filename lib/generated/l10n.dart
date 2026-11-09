@@ -14340,6 +14340,16 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `COMPLETED`
+  String get bookingStatusCompleted {
+    return Intl.message(
+      'COMPLETED',
+      name: 'bookingStatusCompleted',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

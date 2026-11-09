@@ -435,6 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "bookingHash": m3,
     "bookingSlots": MessageLookupByLibrary.simpleMessage("Booking slots"),
+    "bookingStatusCompleted": MessageLookupByLibrary.simpleMessage("COMPLETED"),
     "breakfast": MessageLookupByLibrary.simpleMessage("Breakfast"),
     "busy": MessageLookupByLibrary.simpleMessage("Busy"),
     "busyModeOff": MessageLookupByLibrary.simpleMessage(
