@@ -1814,6 +1814,10 @@ class VendorRichCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onAddItem;
 
+  /// Badges on the top corner of the item image (Figma Items list: "New
+  /// Arrival", Popular, Veg). Null shows none.
+  final Widget? imageBadge;
+
   const VendorRichCard({
     super.key,
     required this.id,
@@ -1831,6 +1835,7 @@ class VendorRichCard extends StatelessWidget {
     required this.onEdit,
     this.onDelete,
     this.onAddItem,
+    this.imageBadge,
   });
 
   String get _displayCategory {
@@ -1900,6 +1905,13 @@ class VendorRichCard extends StatelessWidget {
                                 )
                               : const _VendorDefaultImage(),
                         ),
+                        if (imageBadge != null)
+                          PositionedDirectional(
+                            top: 4,
+                            start: 4,
+                            end: 4,
+                            child: imageBadge!,
+                          ),
                       ],
                     ),
                     const SizedBox(width: 12),

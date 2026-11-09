@@ -1255,6 +1255,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     List<RestaurantCategory>? categories,
     int? availabilityStatus,
     int? stock,
+    Widget? imageBadge,
   }) {
     return VendorRichCard(
       id: id,
@@ -1268,6 +1269,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       categories: categories,
       availabilityStatus: availabilityStatus,
       stock: stock,
+      imageBadge: imageBadge,
       onViewDetails: () {
         if (isMenu) {
           Navigator.push(
@@ -1448,6 +1450,9 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               ? "${item.discountPrice} MRU"
               : "${item.price} MRU";
           final originalPrice = hasDiscount ? "${item.price} MRU" : null;
+          // Figma item tags (backend #175 / #179): Popular, Veg, New arrival,
+          // on the top corner of the item image as in the Items frame.
+          final tags = ItemFlagTags.fromRaw(item.raw, compact: true);
           final card = _foodItem(
             name,
             displayPrice,
@@ -1459,23 +1464,17 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
             originalPrice: originalPrice,
             availabilityStatus: item.availableStatus,
             stock: item.stock,
+            imageBadge: tags.isEmpty ? null : tags,
           );
           // Hide / unhide (§6.21, backend #132): catalog rows are menu rows,
           // so the row id is the menu_id for vertical `food`.
           if (profileController.vendorType != "1" || item.id == null || item.id == 0) {
             return card;
           }
-          // Figma item tags (backend #175 / #179): Popular, Veg, New arrival.
-          final tags = ItemFlagTags.fromRaw(item.raw);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               card,
-              if (!tags.isEmpty)
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 4, top: 6),
-                  child: Align(alignment: AlignmentDirectional.centerStart, child: tags),
-                ),
               ProductVisibilityBar(
                 key: ValueKey('vis-food-${item.id}'),
                 vertical: 'food',
@@ -1514,6 +1513,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
     String? originalPrice,
     int? availabilityStatus,
     int? stock,
+    Widget? imageBadge,
   }) {
     return _richCard(
       id: itemId,
@@ -1528,6 +1528,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
       categories: categories,
       availabilityStatus: availabilityStatus,
       stock: stock,
+      imageBadge: imageBadge,
     );
   }
 
