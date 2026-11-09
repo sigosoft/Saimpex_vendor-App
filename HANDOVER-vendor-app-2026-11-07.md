@@ -13,7 +13,15 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-9cb0311.apk` from `test/retest-2026-11-06` at `9cb0311` (pushed). Dev server, debug-key signed. Includes #118–#134. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-51ff3dd.apk` from `test/retest-2026-11-06` at `51ff3dd` (pushed). Dev server, debug-key signed. Includes #118–#136. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **Backend fixes rechecked, 9 Nov evening (backend f80296d, dd2aa02, c7f46d9 on dev), all phone ✅:**
+  - **#180** local store order ORD-001566: 2 lines, 330 + 50 = 380 MRU, cash; vendor card "2 Articles · 380.00 MRU", details, Accept.
+  - **#179** Item Details tags (Popular, New arrival). The app's first endpoint `vendor/restaurantCatalogItemDetail` now 404s on dev and the app falls back to `restaurantCatalogItemDetail`, which has the flags. **#121 new commit:** Item Orders section from `orders_count` / `recent_orders` (was never shown; app read `total_orders`).
+  - **#135 (new, base main):** gas / water order lines in the app language ("Recharge butane 12 kg").
+  - **#136 (new, base #118):** "Needs your attention" rows open their booking or order on water, gas and service screens (booking rows: calendar icon, "Voir la réservation").
+  - Service names: backend translated the service types; car wash shows "Nettoyage intérieur".
+  - **Express (#119):** backend says V2 has express for courier only; food / grocery orders are never express, so the tag can't appear there. #119 stays harmless; no test possible.
+  - Commented on backend #179 / #180 asking Praveen to close them (and #168–#175, #176).
 - **9 Nov afternoon, frontend clean-up (all phone ✅ unless noted):**
   - **#121 follow-up:** item tags moved onto the item image as in the Figma Items frame (bottom corner; the ⋮ menu is on top), instead of a row under the card.
   - **#128 (new, base main):** removed the unused No internet / Server down screens (handover B4). No behaviour change.
