@@ -1809,8 +1809,9 @@ class VendorRichCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onAddItem;
 
-  /// Badges on the top corner of the item image (Figma Items list: "New
-  /// Arrival", Popular, Veg). Null shows none.
+  /// Badges on the item image (Figma Items list: "New Arrival", Popular,
+  /// Veg), at the bottom corner so the ⋮ menu on top stays tappable.
+  /// Null shows none.
   final Widget? imageBadge;
 
   const VendorRichCard({
@@ -1901,7 +1902,7 @@ class VendorRichCard extends StatelessWidget {
                         ),
                         if (imageBadge != null)
                           PositionedDirectional(
-                            top: 4,
+                            bottom: 4,
                             start: 4,
                             end: 4,
                             child: imageBadge!,
