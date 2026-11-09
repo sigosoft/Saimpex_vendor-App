@@ -100,6 +100,13 @@ class FCM {
     return '#$cleaned';
   }
 
+  /// "#HCVRQZLW" in a booking push text (letters only is allowed, unlike
+  /// order numbers), or null.
+  static String? bookingCodeFromText(String? text) {
+    if (text == null || text.isEmpty) return null;
+    return RegExp(r'#([A-Za-z0-9]{5,})').firstMatch(text)?.group(1);
+  }
+
   static String? extractOrderCodeFromText(String? text) {
     if (text == null || text.isEmpty) return null;
     final regExp = RegExp(r'#?[A-Za-z0-9_-]*\d{3,}');
@@ -611,7 +618,16 @@ class FCM {
     final requestId = getValue(['request_id']);
 
     // Extract order number/code
-    var orderNumber = getValue(['order_code', 'order_number', 'order_id']);
+    var orderNumber = getValue(['order_code', 'order_number']);
+    // A booking push carries its code only in the text ("New booking
+    // #HCVRQZLW received."); without this the popup showed "ORD-001557".
+    if ((orderNumber == null || orderNumber.isEmpty) &&
+        effectiveData['is_booking']?.toString() == '1') {
+      orderNumber = bookingCodeFromText(notificationBody);
+    }
+    if (orderNumber == null || orderNumber.isEmpty) {
+      orderNumber = getValue(['order_id']);
+    }
     if (orderNumber == null || orderNumber.isEmpty) {
       orderNumber = extractOrderCodeFromText(notificationBody);
     }
