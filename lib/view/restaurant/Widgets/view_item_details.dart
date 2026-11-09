@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -892,7 +891,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     if (date == null || date.isEmpty) return '-';
     try {
       final dt = DateTime.parse(date);
-      return DateFormat('MMM dd, yyyy, hh:mm a').format(dt);
+      return appDateFormat('MMM dd, yyyy, hh:mm a').format(dt);
     } catch (_) {
       return date;
     }
@@ -990,7 +989,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     if (date == null || date.isEmpty) return "-";
     try {
       final dt = DateTime.parse(date);
-      final formatted = DateFormat('MMM dd, yyyy, hh:mm a').format(dt);
+      final formatted = appDateFormat('MMM dd, yyyy, hh:mm a').format(dt);
       final now = DateTime.now();
       final isToday =
           dt.year == now.year && dt.month == now.month && dt.day == now.day;

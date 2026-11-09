@@ -332,11 +332,37 @@ String formatServerPlacedAt(Object? raw) {
 String appDateLocale() => LocalizationService.currentLanguageCode;
 
 DateFormat appDateFormat(String pattern) {
+  final lang = appDateLocale();
   try {
-    return DateFormat(pattern, appDateLocale());
+    return DateFormat(localizeDatePattern(pattern, lang), lang);
   } catch (_) {
     return DateFormat(pattern, 'en');
   }
+}
+
+/// [pattern] written in English order ("MMM dd, yyyy hh:mm a"), adjusted for
+/// [lang]: French and Arabic put the day first ("09 nov. 2026"), and French
+/// uses the 24-hour clock ("14:05", not "02:05 PM"). English is unchanged.
+/// French screens showed "nov. 06, 2026 10:47 AM" (test 9 Nov).
+String localizeDatePattern(String pattern, String lang) {
+  if (lang != 'fr' && lang != 'ar') return pattern;
+  var p = pattern.replaceAllMapped(
+    RegExp(r'(M{3,4}) (d{1,2}),? (y+)'),
+    (m) => '${m[2]} ${m[1]} ${m[3]}',
+  );
+  // "MMM d" with no year (e.g. "Nov 9") → "9 MMM".
+  p = p.replaceAllMapped(
+    RegExp(r'^(M{3,4}) (d{1,2})$'),
+    (m) => '${m[2]} ${m[1]}',
+  );
+  if (lang == 'fr') {
+    p = p
+        .replaceAllMapped(
+            RegExp(r'hh:mm(:ss)? ?a'), (m) => 'HH:mm${m[1] ?? ''}')
+        .replaceAllMapped(
+            RegExp(r'\bh:mm(:ss)? ?a'), (m) => 'H:mm${m[1] ?? ''}');
+  }
+  return p;
 }
 
 /// Parses a server time (ISO or "Y-m-d H:i:s") into phone-local time with

@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show appDateFormat;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -21,7 +22,7 @@ class StockHistoryTransactionCard extends StatelessWidget {
   final int quantityDelta;
   final int remaining;
 
-  static final _dateFmt = DateFormat('dd MMM yyyy, hh:mm a');
+  static DateFormat get _dateFmt => appDateFormat('dd MMM yyyy, hh:mm a');
 
   @override
   Widget build(BuildContext context) {
