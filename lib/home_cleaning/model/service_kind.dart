@@ -162,4 +162,14 @@ class ServiceKinds {
       ('Other', s.cleaningRejectReasonOther),
     ];
   }
+
+  /// The stored reject reason (the English value sent above) in the app's
+  /// language; any other text (an "Other" note, an Admin reason) as is.
+  static String rejectReasonLabel(BuildContext context, String reason) {
+    final key = reason.trim().toLowerCase();
+    for (final (value, label) in rejectReasons(context)) {
+      if (value.toLowerCase() == key) return label;
+    }
+    return reason;
+  }
 }

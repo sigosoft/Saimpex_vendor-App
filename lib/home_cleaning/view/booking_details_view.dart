@@ -178,7 +178,10 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
   List<Widget> _content(BuildContext context) {
     final b = _booking;
     final notes = b.notes?.trim();
-    final cancelText = [b.rejectReason, b.rejectNote]
+    final cancelText = [
+      if (b.rejectReason != null) ServiceKinds.rejectReasonLabel(context, b.rejectReason!),
+      b.rejectNote,
+    ]
         .whereType<String>()
         .where((e) => e.trim().isNotEmpty)
         .join('\n');
@@ -980,7 +983,7 @@ class _LinesCard extends StatelessWidget {
             if (i > 0) const SizedBox(height: 10),
             _SpaceTile(
               title: lines[i].name,
-              detail: '${CleaningBookingFormat.money(lines[i].price)} x ${lines[i].quantity}',
+              detail: ltrIsolate('${CleaningBookingFormat.money(lines[i].price)} x ${lines[i].quantity}'),
               total: CleaningBookingFormat.money(lines[i].lineTotal),
             ),
           ],
@@ -1448,7 +1451,7 @@ class _AssignedCleanerCard extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(cleaner.name, style: cleanerText(15, FontWeight.w600, cleanerInk)),
               Text(
-                [if (cleaner.rating != null) '${cleaner.rating!.toStringAsFixed(1)} ★', if ((cleaner.phone ?? '').isNotEmpty) cleaner.phone!].join(' • '),
+                [if (cleaner.rating != null) '${cleaner.rating!.toStringAsFixed(1)} ★', if ((cleaner.phone ?? '').isNotEmpty) ltrIsolate(cleaner.phone!)].join(' • '),
                 style: cleanerText(12, FontWeight.w400, cleanerMuted),
               ),
             ]),
