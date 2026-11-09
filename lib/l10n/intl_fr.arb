@@ -1037,7 +1037,7 @@
   "@orderAccepted": {},
   "orderDetailsNotFound": "Détails de commande introuvables",
   "@orderDetailsNotFound": {},
-  "orderDurationBreakdown": "Détail de la durée de la commande",
+  "orderDurationBreakdown": "Durées par étape",
   "@orderDurationBreakdown": {},
   "orderItems": "Articles de la commande",
   "@orderItems": {},
