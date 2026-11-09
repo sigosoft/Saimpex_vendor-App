@@ -25,6 +25,17 @@
 
 ## 2. What is still needed
 
+### 2.00 · #180 (P1, new 9 Nov) · Local store checkoutV2 creates an order with no items
+- **Seen:** `cart/localStore/add` (vendor 60, 2 lines) then `checkoutV2` (cash) → ORD-001560 created with `items: []`, `item_total: 0`, payment "Online Payment"; the vendor app shows a basket order with 0 items.
+- **Needed:** checkoutV2 / checkoutSummaryV2 read local store cart lines (or say which checkout the customer app must use). Vendor app unaffected.
+
+### 2.01 · Admin data (9 Nov) · Home cleaning service type names
+- Service types 9 (Regular clean), 10 (Deep clean), 11 (Disinfection) have the English name in `name_ar` / `name_fr`. Saving a service takes its name from its type, so service 55 became "Disinfection" in Arabic (was "تعقيم"). Give the types AR/FR names and restore service 55.
+
+### 2.02 · New 9 Nov (P3) · Gas order lines have only an English name
+- **Seen:** `waterOrderDetail` for gas booking GSLKRQKD shows the line "12 kg Butane Refill" on the Arabic screen; the service has `name_ar` "تعبئة غاز البوتان 12 كغ".
+- **Needed:** send `name_en` / `name_fr` / `name_ar` on each gas line (`order_item`), from the service's names. Confirm the field names in `API_CHANGELOG.md`; the app will then show the line in the app language.
+
 ### 2.0 · New (7 Nov evening, P3) · "Needs your attention" says "order" for a service booking
 - **Screen:** laundry / car wash / home cleaning Notifications, "Needs your attention" row (`GET activityNotifications`).
 - **Now:** a new laundry booking (LNMR4R1P) shows title "New order #LNMR4R1P" / action "View order" (AR: طلب جديد / عرض الطلب). The app shows the server's `title_*` / `action_*` text as is.

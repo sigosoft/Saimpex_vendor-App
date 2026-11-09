@@ -11,6 +11,37 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ---
 
+## 0d. Latest client build (9 Nov), replaces 0b
+
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-3564cbf.apk` from `test/retest-2026-11-06` at `3564cbf` (pushed). Dev server, debug-key signed. Includes #118–#126. Analyzer 0 errors, `flutter test` **65 / 65**. Older APKs in `client-build/` are superseded.
+- **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
+- **Still to check on the phone:** #121 item tags and #122 "View details" on food.01; #122 on pharmacy.15; #119 Express tag (needs an express order); #120 (laundry booking with `delivery_window`); local store items once backend #180 is fixed.
+
+## 0c. 9 Nov: home cleaning, local store, gas tested; PRs #123–#126
+
+**New PRs** (pushed, merged into `test/retest-2026-11-06`, analyzer 0 errors):
+
+| PR | Base | What |
+|---|---|---|
+| #123 | main | My Services: the keyboard no longer opens on the search box after saving a service (phone ✅) |
+| #124 | main | Home cleaning booking details: cancel reason in the app language; "500 MRU x 2" and the cleaner's "+222 …" phone kept left-to-right in Arabic (phone ✅) |
+| #125 | #118 | New-booking popup shows the booking code ("#HCR3VO2O"), not "ORD-001557" (the push has no `order_code`; the code is read from the push text). Test added (phone ✅ code; the "#" side fix is in the next build) |
+
+**Home cleaning, homecleaning.30 (Clean Home Nouakchott, id 78), Arabic: ✅ all**
+- HCVRQZLW (Regular Clean Apartment, 1500 MRU): popup "حجز جديد!" + "عرض الحجز" (#118 ✅) → details (customer, code, service, slot in phone time, notes, map, cash 1500 / paid 0) → Accept (VA-30 dialog) → **Assign cleaner** (3 cleaners, rating, "available"; button off until one is picked) → Fatou Ba shown with "Change" → On the way → Start cleaning (dialog warns "scheduled 10 Nov, not today") → Mark completed → paid 1500 with paid time; "Change" hidden once started.
+- **Pest control:** set Disinfection (service 55) up in the app (Issues Covered: Cockroaches, Ants; space Kitchen 500 MRU / room) → card shows "500 MRU / room" and pest chips. Booking HC2ONUZF (2 × Kitchen + 2 issues): **Areas** block (Kitchen, 2 × 500 = 1000) and **Issues** tiles with icons ✅ → Reject: 4 reasons in Arabic, Confirm off until one is picked → rejected; reason now shown in Arabic (#124).
+- HCR3VO2O (Regular Clean Villa) left **New** for the next tester.
+
+**Admin (data, not the app):** the 3 home cleaning service types (Regular clean 9, Deep clean 10, Disinfection 11) have the English name in `name_ar` / `name_fr`. Saving a service takes its name from its type, so service 55 is now "Disinfection" in Arabic (it was "تعقيم"). Give the types real AR/FR names and restore service 55 (same problem as the car wash types).
+
+**Local store, Ksar Phone Center (vendor 60, localstore.12), Arabic:** order ORD-001560 placed by API (Fast Charger + 2 × Spiral Notebook) → popup "طلب جديد!" + "عرض الطلب" → details → Accept (Pending badge clears) → Prepare (success popup) → Mark ready (success popup) → Ready card "waiting for a delivery partner" (#117) ✅. My Store › Account: name, owner, id, contact, email, status, address, busy switch ✅. **Backend bug [#180](https://github.com/praveensigo/saimpex-backend-new/issues/180):** `checkoutV2` saved the local store order with **no items** (0.00 MRU, "basket order", payment "Online"), so the items list and totals could not be checked; recheck once #180 is fixed. ORD-001560 is Ready on dev.
+
+**Gas, Gaz Butane Dar Naim (vendor 70), water design, Arabic: ✅** booking GSLKRQKD (`service/book` `vertical=gas`, service 14, `quantity=2`, `return_empty_cylinder=1`; `true` as text is refused) → popup "حجز جديد! الحجز #GSLKRQKD" (#125 ✅) → "View booking" opens the water order details: code, delivery, address, line "12 kg Butane Refill" × 2 @ 280, **"2 empty cylinders to collect"**, 560 MRU cash → Accept → Prepare → Mark ready (no vendor button after Ready: the driver delivers) ✅. **Open:** the line name is English on the Arabic screen (the server builds "12 kg Butane Refill"; the service's AR name is "تعبئة غاز البوتان 12 كغ") and the water details card reads only `order_item.name_en`. Ask backend to send `name_ar` / `name_fr` on gas lines (backend list 2.02), then read them with `pickLang` in `_OrderItemCard` (`lib/water/view/order_details/order_details_view.dart`). GSLKRQKD is Ready on dev.
+
+**#126 (new, base main):** Arabic "طلب ORD-001560#" → "طلب #ORD-001560" (the AR `orderIdLabel` string, used on 7 screens) and store contact "95100012 222+" → "+222 95100012" (My Store, Settings). Phone ✅.
+
+**Dev accounts found** (public `GET customer/search`): local store **Test Local Store** (id 48); gas **Test Gas** (47) and **Gaz Butane Dar Naim** (70). Their usernames are not in the docs. Local store order: `cart/localStore/add` {`local_store_id`=48, `product_id`=29 (Spiral Notebook, 40 MRU), `quantity`} then `checkoutV2`. Gas: `service/book` `vertical=gas`, `vendor_id`=70, `service_item_id`=14 (Butane 12 kg, 280 MRU), `quantity`, `return_empty_cylinder=true` (§6.17).
+
 ## 0b. Latest client build (7 Nov, ~19:00), replaces 0a
 
 - **APK for the client:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-07-4821b28.apk` (164 MB), from `test/retest-2026-11-06` at `4821b28` (pushed). Dev server, debug-key signed (as 0a). The `6c17701` APK below is older: don't send it.
