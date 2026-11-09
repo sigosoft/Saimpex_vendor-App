@@ -998,9 +998,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
     // Common backend: 1=Monday ... 7=Sunday
     // 1 Jan 2024 was a Monday, so day (dow) of that month has weekday dow.
     if (dow >= 1 && dow <= 7) {
-      final locale =
-          FlutterLocalization.instance.currentLocale?.languageCode ?? 'en';
-      return DateFormat('EEEE', locale).format(DateTime(2024, 1, dow));
+      return appDateFormat('EEEE').format(DateTime(2024, 1, dow));
     }
     return '—';
   }
