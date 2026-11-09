@@ -13,7 +13,14 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-2908bf9.apk` from `test/retest-2026-11-06` at `2908bf9` (pushed). Dev server, debug-key signed. Includes #118–#127. Analyzer 0 errors, `flutter test` **65 / 65**. Older APKs in `client-build/` (incl. `…-3564cbf.apk`) are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-7d2eb10.apk` from `test/retest-2026-11-06` at `7d2eb10` (pushed). Dev server, debug-key signed. Includes #118–#129. Analyzer 0 errors, `flutter test` **65 / 65**. Older APKs in `client-build/` are superseded.
+- **9 Nov afternoon, frontend clean-up (all phone ✅ unless noted):**
+  - **#121 follow-up:** item tags moved onto the item image as in the Figma Items frame (bottom corner; the ⋮ menu is on top), instead of a row under the card.
+  - **#128 (new, base main):** removed the unused No internet / Server down screens (handover B4). No behaviour change.
+  - **#129 (new, base main):** water low-stock alert showed "L Jug with Bottle 19" in Arabic; now "Jug with Bottle 19 L".
+  - **#102:** with 3 low-stock products the alert shows "+1 more" and View all, which selects the Low stock chip. Stock was set to 3 for the test and restored (300 / 288 / 291).
+  - **#100:** water Business settings › Express switch saves (on, reopen, off again).
+- **Login:** the tester gave Claude the demo accounts on 9 Nov, so phone checks can switch vendor without help. Passwords are not stored in any file.
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
 - **food.01, 9 Nov:** #122 notifications "View details" ✅ (opens ORD-001548); #126 contact "+222 95100001" ✅; #121 Items list tags ✅. **Item Details shows no tags: dev's `restaurantCatalogItemDetail` doesn't send `is_popular` / `is_new_arrival` / `is_veg` / `orders_count` yet** (checked with a debug build; commented on backend #179). No app change needed; recheck after the backend deploy. Design note: the tag row sits under the card, above the visibility bar.
 - **pharmacy.15, 9 Nov:** #122 order notification rows open the order (ORD-001550) ✅. **#127 (new, base main):** order details header "ORD-001550#" → "#ORD-001550" (prescription + OTC details) and the notifications title (hard-coded English "Notifications") translated. Phone ✅.
