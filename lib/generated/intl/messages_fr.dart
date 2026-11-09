@@ -259,7 +259,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Accepter et imprimer",
     ),
     "acceptOrder": MessageLookupByLibrary.simpleMessage("Accepter la commande"),
-    "accepted": MessageLookupByLibrary.simpleMessage("Accepté"),
+    "accepted": MessageLookupByLibrary.simpleMessage("Acceptée"),
     "acceptingBookings": MessageLookupByLibrary.simpleMessage(
       "Ouvert · accepte les réservations",
     ),
@@ -990,7 +990,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteConversationTitle": MessageLookupByLibrary.simpleMessage(
       "Supprimer cette discussion ?",
     ),
-    "delivered": MessageLookupByLibrary.simpleMessage("Livré"),
+    "delivered": MessageLookupByLibrary.simpleMessage("Livrée"),
     "delivering": MessageLookupByLibrary.simpleMessage("LIVRAISON EN COURS"),
     "delivery": MessageLookupByLibrary.simpleMessage("Livraison"),
     "deliveryAddress": MessageLookupByLibrary.simpleMessage(
@@ -2260,7 +2260,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "prepareOrder": MessageLookupByLibrary.simpleMessage(
       "Préparer la commande",
     ),
-    "preparing": MessageLookupByLibrary.simpleMessage("En Préparation"),
+    "preparing": MessageLookupByLibrary.simpleMessage("En préparation"),
     "preparingFood": MessageLookupByLibrary.simpleMessage(
       "Préparation des repas",
     ),
@@ -2475,7 +2475,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reachedRestaurant": MessageLookupByLibrary.simpleMessage(
       "ARRIVÉ AU RESTAURANT",
     ),
-    "ready": MessageLookupByLibrary.simpleMessage("Prêt"),
+    "ready": MessageLookupByLibrary.simpleMessage("Prête"),
     "reasonColonLabel": m51,
     "reasonForLeave": MessageLookupByLibrary.simpleMessage("Motif du Congé"),
     "reasonLabel": MessageLookupByLibrary.simpleMessage("Raison"),
@@ -2823,7 +2823,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "toDate": MessageLookupByLibrary.simpleMessage("Date de Fin"),
     "toPay": MessageLookupByLibrary.simpleMessage("À payer"),
     "today": MessageLookupByLibrary.simpleMessage("Aujourd’hui"),
-    "todaysOrders": MessageLookupByLibrary.simpleMessage("Commandes du Jour"),
+    "todaysOrders": MessageLookupByLibrary.simpleMessage("Commandes du jour"),
     "topSellingDishes": MessageLookupByLibrary.simpleMessage(
       "Plats les plus vendus",
     ),
@@ -3653,7 +3653,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "withThisCode": MessageLookupByLibrary.simpleMessage("% avec ce code"),
     "workHours": MessageLookupByLibrary.simpleMessage("Heures de travail"),
-    "workingHours": MessageLookupByLibrary.simpleMessage("Heures de Travail"),
+    "workingHours": MessageLookupByLibrary.simpleMessage("Heures de travail"),
     "yes": MessageLookupByLibrary.simpleMessage("Oui"),
     "yesLabel": MessageLookupByLibrary.simpleMessage("Oui"),
     "yesterday": MessageLookupByLibrary.simpleMessage("Hier"),
