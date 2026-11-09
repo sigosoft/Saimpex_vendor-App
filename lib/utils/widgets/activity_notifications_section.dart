@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/view/notifications/notification.dart' show FCM;
 
 /// "Needs your attention" on the notifications screens (API doc §6.44,
 /// task V18): orders waiting to be accepted, water subscriptions to review
@@ -61,8 +62,38 @@ class _ActivityNotificationsSectionState extends State<ActivityNotificationsSect
     return v.isNotEmpty && v != 'null' ? v : '${r['${base}_en'] ?? ''}';
   }
 
+  /// Rows about one order or booking (backend f80296d: `kind` new_order /
+  /// new_booking, `order_id`, `booking_id`, `link_type`) open it when the
+  /// screen gives no [onTap]: water, gas, laundry, car wash, home cleaning.
+  static String? _id(Object? v) {
+    final s = v?.toString() ?? '';
+    return int.tryParse(s) == null ? null : s;
+  }
+
+  bool _isBooking(Map<String, dynamic> r) =>
+      r['kind'] == 'new_booking' ||
+      r['link_type'] == 'booking' ||
+      r['target_type'] == 'booking';
+
+  bool _opensItem(Map<String, dynamic> r) =>
+      _id(r['order_id']) != null || _id(r['booking_id']) != null;
+
+  void _open(Map<String, dynamic> r) {
+    final booking = _isBooking(r);
+    final id = _id(booking ? (r['booking_id'] ?? r['order_id']) : r['order_id']) ??
+        _id(r['order_id']) ??
+        _id(r['booking_id']);
+    if (id == null) return;
+    FCM.navigateToAcceptOrderIfLoggedIn(notificationData: {
+      'order_id': id,
+      if (booking) 'booking_id': id,
+      if (booking) 'is_booking': '1',
+    });
+  }
+
   IconData _icon(String kind) => switch (kind) {
         'new_subscription' => Icons.autorenew_rounded,
+        'new_booking' => Icons.event_available_outlined,
         'low_stock' => Icons.inventory_2_outlined,
         _ => Icons.receipt_long_outlined,
       };
@@ -90,7 +121,9 @@ class _ActivityNotificationsSectionState extends State<ActivityNotificationsSect
               ),
               clipBehavior: Clip.antiAlias,
               child: ListTile(
-                onTap: widget.onTap == null ? null : () => widget.onTap!(r),
+                onTap: widget.onTap != null
+                    ? () => widget.onTap!(r)
+                    : (_opensItem(r) ? () => _open(r) : null),
                 leading: CircleAvatar(
                   backgroundColor: Colors.white,
                   child: Icon(_icon('${r['kind']}'), color: _orange, size: 20),
