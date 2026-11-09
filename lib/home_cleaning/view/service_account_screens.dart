@@ -34,6 +34,30 @@ Widget _scaffold(BuildContext context, {required String title, required Widget b
         elevation: 0,
         centerTitle: true,
         foregroundColor: _ink,
+        // Figma: white rounded back button with an orange chevron. The app's
+        // AppBar theme made the default arrow white on this light background.
+        leading: Navigator.of(context).canPop()
+            ? Padding(
+                padding: const EdgeInsetsDirectional.only(start: 12),
+                child: Center(
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).maybePop(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+                      ),
+                      child: Icon(rtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: _orange, size: 28),
+                    ),
+                  ),
+                ),
+              )
+            : null,
+        leadingWidth: 64,
         title: Text(title, style: _t(17, FontWeight.w700, _ink)),
       ),
       body: body,
@@ -295,38 +319,26 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
               child: Text(s.somethingWentWrong, textAlign: TextAlign.center, style: _t(14, FontWeight.w500, _muted)),
             )
           else ...[
-          Row(children: [
-            _stat(s.earningsPending, _num('pending_order_balance')),
-            const SizedBox(width: 8),
-            _stat(s.earningsAvailable, _num('available_order_balance')),
-            const SizedBox(width: 8),
-            _stat(s.payoutReceived, _num('total_payout_received')),
-          ]),
-          const SizedBox(height: 12),
-          SegmentedButton<bool>(
-            segments: [
-              ButtonSegment(value: false, label: Text(s.earnings)),
-              ButtonSegment(value: true, label: Text(s.payouts)),
-            ],
-            selected: {_payoutsTab},
-            showSelectedIcon: false,
-            onSelectionChanged: (v) => setState(() => _payoutsTab = v.first),
-          ),
-          const SizedBox(height: 12),
+          // Figma "Earnings": tab pill, orange summary card, one row of chips.
+          _tabs(s),
+          const SizedBox(height: 14),
+          _summary(s),
+          const SizedBox(height: 14),
           if (!_payoutsTab)
-            Wrap(spacing: 8, children: [
-              for (final (key, label) in filters)
-                ChoiceChip(
-                  label: Text(label),
-                  selected: _balance == key,
-                  selectedColor: const Color(0xFFFFE4D6),
-                  onSelected: (_) {
-                    setState(() => _balance = key);
-                    _load();
-                  },
-                ),
-            ]),
-          const SizedBox(height: 8),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                for (final (key, label) in filters)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(end: 8),
+                    child: _chip(label, _balance == key, () {
+                      setState(() => _balance = key);
+                      _load();
+                    }),
+                  ),
+              ]),
+            ),
+          const SizedBox(height: 12),
           if (_loading)
             const Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator(color: _orange)))
           else if (!_payoutsTab) ...[
@@ -345,17 +357,74 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
   Widget _empty(String text) =>
       Padding(padding: const EdgeInsets.only(top: 32), child: Text(text, textAlign: TextAlign.center, style: _t(14, FontWeight.w400, _muted)));
 
-  Widget _stat(String label, double value) => Expanded(
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: _border)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: _t(11, FontWeight.w500, _muted)),
-            const SizedBox(height: 4),
-            Text('${_mru(value)} MRU', style: _t(15, FontWeight.w700, _ink)),
-          ]),
+  Widget _tabs(S s) {
+    Widget tab(String label, bool value) {
+      final selected = _payoutsTab == value;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => setState(() => _payoutsTab = value),
+          child: Container(
+            height: 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: selected ? _orange : Colors.transparent, borderRadius: BorderRadius.circular(20)),
+            child: Text(label, style: _t(14, FontWeight.w600, selected ? Colors.white : _ink)),
+          ),
         ),
       );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24), border: Border.all(color: _border)),
+      child: Row(children: [tab(s.earnings, false), tab(s.payouts, true)]),
+    );
+  }
+
+  Widget _summary(S s) {
+    Widget line(String label, double value) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(children: [
+            Expanded(child: Text(label, style: _t(13, FontWeight.w500, Colors.white))),
+            Text('${_mru(value)} MRU', style: _t(14, FontWeight.w700, Colors.white)),
+          ]),
+        );
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(colors: [Color(0xFFFF5216), Color(0xFFFF8A3D)]),
+      ),
+      child: Column(children: [
+        line(s.earningsPending, _num('pending_order_balance')),
+        line(s.earningsAvailable, _num('available_order_balance')),
+        line(s.payoutReceived, _num('total_payout_received')),
+      ]),
+    );
+  }
+
+  Widget _chip(String label, bool selected, VoidCallback onTap) => InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? _orange : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: selected ? _orange : _border),
+          ),
+          child: Text(label, style: _t(13, FontWeight.w600, selected ? Colors.white : _ink)),
+        ),
+      );
+
+  /// "10 nov. 2026, 15:30 - 17:30" in the app language and phone time, from
+  /// scheduled_for / slot_end; the server's English `window` text otherwise.
+  String _when(Map<String, dynamic> o) {
+    final start = parseServerTime(o['scheduled_for'] ?? o['pickup_at'] ?? o['created_at']);
+    if (start == null) return '${o['window'] ?? ''}';
+    final end = parseServerTime(o['slot_end']);
+    final day = appDateFormat('MMM dd, yyyy, hh:mm a').format(start);
+    return end == null ? day : '$day - ${appDateFormat('hh:mm a').format(end)}';
+  }
 
   Widget _orderRow(S s, Map<String, dynamic> o) {
     final status = '${o['earnings_status'] ?? ''}';
@@ -364,17 +433,19 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
       'CANCELLED' => (s.cancelled, const Color(0xFFE11D48)),
       _ => (s.earningsPending, const Color(0xFFEA7A1A)),
     };
+    final when = _when(o);
     return _card([
       Row(children: [
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('#${o['order_code'] ?? o['id']}', style: _t(14, FontWeight.w700, _ink)),
-            if ('${o['window'] ?? ''}'.isNotEmpty) Text('${o['window']}', style: _t(12, FontWeight.w400, _muted)),
+            Text('#${o['order_code'] ?? o['id']}', style: _t(14, FontWeight.w700, _orange)),
+            if (when.isNotEmpty && when != 'null') Text(when, style: _t(12, FontWeight.w400, _muted)),
           ]),
         ),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text(label.toUpperCase(), style: _t(11, FontWeight.w700, color)),
+          const SizedBox(height: 2),
           Text('${_mru(double.tryParse('${o['amount'] ?? o['total'] ?? 0}') ?? 0)} MRU', style: _t(14, FontWeight.w700, _ink)),
-          Text(label, style: _t(12, FontWeight.w600, color)),
         ]),
       ]),
     ]);
@@ -390,7 +461,7 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('${_mru(amount)} MRU', style: _t(15, FontWeight.w700, _ink)),
             if (date != null)
-              Text('${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}',
+              Text(appDateFormat('MMM dd, yyyy').format(date),
                   style: _t(12, FontWeight.w400, _muted)),
             if (note.isNotEmpty && note != 'null') Text(note, style: _t(12, FontWeight.w400, _muted)),
           ]),
