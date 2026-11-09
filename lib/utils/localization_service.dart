@@ -161,7 +161,7 @@ class LocalizationService {
     },
     'Support & Legal': {
       'en': 'Support & Legal',
-      'fr': 'Assistance et Mentions Légales',
+      'fr': 'Assistance et mentions légales',
       'ar': 'الدعم والقانوني',
     },
     'Help & Support': {
