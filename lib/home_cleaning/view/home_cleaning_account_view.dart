@@ -652,9 +652,11 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
           ),
           child: Row(
             children: [
-              _buildLangTab(S.of(context).cleaningLanguageEnglish, 0),
-              _buildLangTab(S.of(context).cleaningLanguageFrench, 1),
-              _buildLangTab(S.of(context).cleaningLanguageArabic, 2),
+              // Each language in its own name, as on the other sections'
+              // Account screens (was "Anglais / Arabe" in French).
+              _buildLangTab('English', 0),
+              _buildLangTab('Français', 1),
+              _buildLangTab('العربية', 2),
             ],
           ),
         ),
