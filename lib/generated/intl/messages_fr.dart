@@ -508,7 +508,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Véhicules reçus",
     ),
     "carWashReadyForPickup": MessageLookupByLibrary.simpleMessage(
-      "Prêt à récupérer",
+      "Prête à récupérer",
     ),
     "carWashServiceLocation": MessageLookupByLibrary.simpleMessage(
       "Lieu du service",
