@@ -643,10 +643,91 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
             ),
           ],
 
+          // ITEM ORDERS (Figma Items Detail; backend #175): `orders_count`
+          // and the last few `recent_orders` of this item.
+          ..._recentOrdersSection(),
+
           const SizedBox(height: 20),
         ],
       ),
     );
+  }
+
+  List<Widget> _recentOrdersSection() {
+    final raw = _raw;
+    final count = int.tryParse('${raw?['orders_count'] ?? ''}');
+    if (raw == null || count == null) return const [];
+    final orders = (raw['recent_orders'] is List)
+        ? (raw['recent_orders'] as List).whereType<Map>().toList()
+        : const <Map>[];
+    final s = S.of(context);
+    const muted = Color(0xFF64748B);
+    return [
+      const SizedBox(height: 22),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              s.itemOrders,
+              style: appFont('Rubik',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF4B5563),
+                  letterSpacing: 0.5),
+            ),
+          ),
+          Text('${s.totalOrders}: $count',
+              style: appFont('Rubik',
+                  fontSize: 12, fontWeight: FontWeight.w600, color: muted)),
+        ],
+      ),
+      for (final o in orders) ...[
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.orderIdLabel('${o['order_code'] ?? o['order_id'] ?? ''}'),
+                      style: appFont('Rubik',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFFF5216)),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      [
+                        '${s.qty}: ${o['quantity'] ?? 1}',
+                        if (o['amount'] != null) '${o['amount']} MRU',
+                      ].join(' • '),
+                      style: appFont('Rubik', fontSize: 12, color: muted),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                () {
+                  final t = parseServerTime(o['placed_at_iso']);
+                  return t == null
+                      ? ''
+                      : appDateFormat('MMM dd, yyyy hh:mm a').format(t);
+                }(),
+                style: appFont('Rubik', fontSize: 11, color: muted),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ];
   }
 
   Widget _sectionHeaderWithBadge({
