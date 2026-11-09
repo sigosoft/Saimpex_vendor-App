@@ -185,6 +185,9 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
           : _error != null
               ? Center(child: Text(_error!, style: _t(14, FontWeight.w400, _muted)))
               : ListView(padding: const EdgeInsets.all(16), children: [
+                  // Figma "Working Hours & Booking Slots": current status card.
+                  _todayCard(s),
+                  const SizedBox(height: 16),
                   Text(s.workingHours.toUpperCase(), style: _t(12, FontWeight.w700, _muted)),
                   const SizedBox(height: 8),
                   _card([
@@ -242,6 +245,26 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
                   ]),
                 ]),
     );
+  }
+
+  /// "Current status · Today: 08:00 - 22:00" (or Closed) from today's row.
+  Widget _todayCard(S s) {
+    const names = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    final todayName = names[DateTime.now().weekday - 1];
+    final today = _days.cast<Map<String, dynamic>?>().firstWhere(
+          (d) => '${d?['day']}'.toLowerCase() == todayName,
+          orElse: () => null,
+        );
+    final closed = today == null || today['closed'] == true || today['closed'] == 1;
+    final hours = closed ? s.closed : '${today['start']} - ${today['end']}';
+    return _card([
+      Text(s.waterCurrentStatus, style: _t(12, FontWeight.w500, _muted)),
+      const SizedBox(height: 6),
+      Row(children: [
+        Text('${s.today}: ', style: _t(15, FontWeight.w700, _ink)),
+        Text(hours, textDirection: TextDirection.ltr, style: _t(15, FontWeight.w700, closed ? _muted : _orange)),
+      ]),
+    ]);
   }
 
   Widget _timeChip(String text, VoidCallback onTap) => InkWell(
