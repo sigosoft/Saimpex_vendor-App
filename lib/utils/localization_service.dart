@@ -299,7 +299,7 @@ class LocalizationService {
       'ar': 'في انتظار الدفع',
     },
     'To Prepare': {'en': 'To Prepare', 'fr': 'À préparer', 'ar': 'للتحضير'},
-    'Delivered': {'en': 'Delivered', 'fr': 'Livré', 'ar': 'تم التوصيل'},
+    'Delivered': {'en': 'Delivered', 'fr': 'Livrée', 'ar': 'تم التوصيل'},
     'Cancelled': {'en': 'Cancelled', 'fr': 'Annulée', 'ar': 'ملغى'},
     'Rejected': {'en': 'Rejected', 'fr': 'Rejeté', 'ar': 'مرفوض'},
     'Active': {'en': 'Active', 'fr': 'Actif', 'ar': 'نشط'},
