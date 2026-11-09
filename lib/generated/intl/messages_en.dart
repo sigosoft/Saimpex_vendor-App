@@ -371,6 +371,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "attributesReference": MessageLookupByLibrary.simpleMessage(
       "Attributes Reference",
     ),
+    "autoAcceptOrdersOffSubtitle": MessageLookupByLibrary.simpleMessage(
+      "You accept or reject each new order yourself",
+    ),
     "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
       "Orders will be accepted automatically",
     ),

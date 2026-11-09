@@ -3327,5 +3327,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "autoAcceptOrdersOffSubtitle": "تقبل أو ترفض كل طلب جديد بنفسك",
+  "@autoAcceptOrdersOffSubtitle": {}
 }

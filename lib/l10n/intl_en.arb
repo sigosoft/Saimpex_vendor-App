@@ -3381,5 +3381,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "autoAcceptOrdersOffSubtitle": "You accept or reject each new order yourself",
+  "@autoAcceptOrdersOffSubtitle": {}
 }

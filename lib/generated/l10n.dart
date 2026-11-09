@@ -14340,6 +14340,16 @@ class S {
       args: [group, max, count],
     );
   }
+
+  /// `You accept or reject each new order yourself`
+  String get autoAcceptOrdersOffSubtitle {
+    return Intl.message(
+      'You accept or reject each new order yourself',
+      name: 'autoAcceptOrdersOffSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
