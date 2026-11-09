@@ -1253,7 +1253,19 @@ class _OrderItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dynamic rawOrderItem = item['order_item'];
     final orderItemMap = rawOrderItem is Map ? rawOrderItem : null;
-    final name = orderItemMap?['name_en']?.toString() ??
+    // Line name in the app language (backend f80296d: gas lines send
+    // name_en / name_fr / name_ar); English, then the old keys, as fallback.
+    String? localName(Map? m) {
+      if (m == null) return null;
+      String? v(String k) {
+        final s = m[k]?.toString().trim() ?? '';
+        return s.isEmpty || s == 'null' ? null : s;
+      }
+      final lang = appDateLocale();
+      return (lang == 'en' ? null : v('name_$lang')) ?? v('name_en');
+    }
+    final name = localName(orderItemMap) ??
+        localName(item) ??
         orderItemMap?['name']?.toString() ??
         item['name']?.toString() ??
         item['product_name']?.toString() ??
