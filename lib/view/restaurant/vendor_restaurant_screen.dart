@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/utils/widgets/product_visibility.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart' show ltrIsolate;
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'dart:async';
 
@@ -311,7 +312,7 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
                           ),
                           _detailRow(
                             S.of(context).contact,
-                            "${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}",
+                            ltrIsolate("${profile?.countryCode ?? "+222"} ${profile?.mobile ?? ""}"),
                           ),
                           _detailRow(
                             S.of(context).email,
