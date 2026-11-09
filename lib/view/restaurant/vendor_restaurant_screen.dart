@@ -1451,7 +1451,8 @@ class _VendorRestaurantScreenState extends State<VendorRestaurantScreen> {
               : "${item.price} MRU";
           final originalPrice = hasDiscount ? "${item.price} MRU" : null;
           // Figma item tags (backend #175 / #179): Popular, Veg, New arrival,
-          // on the top corner of the item image as in the Items frame.
+          // on the item image as in the Items frame (bottom corner: the ⋮ menu
+          // is on top).
           final tags = ItemFlagTags.fromRaw(item.raw, compact: true);
           final card = _foodItem(
             name,
