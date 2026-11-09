@@ -24,6 +24,7 @@ import 'package:saimpex_vendor/home_cleaning/view/booking_details_view.dart';
 import 'package:saimpex_vendor/water/view/order_details/order_details_view.dart';
 import 'package:saimpex_vendor/view/home/widgets/preorder_badge.dart';
 import '../../utils/utils.dart';
+import '../../utils/bidi_text.dart' show isolated;
 import '../../utils/vendor_app_router.dart';
 import '../../utils/vendor_app_type.dart';
 import '../home/home.dart';
@@ -893,7 +894,7 @@ class FCM {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "${tr('received')} $formattedOrderNumber",
+                  "${tr('received')} ${isolated(formattedOrderNumber)}",
                   style: appFont('Rubik', fontSize: 15, color: Colors.black87),
                 ),
                 if (amount.isNotEmpty) ...[
