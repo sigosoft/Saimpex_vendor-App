@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart' show isolated;
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -1231,7 +1232,7 @@ class _CustomerCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: requestId,
+                        text: isolated(requestId),
                         style: appFont('Inter', 
                           color: _accent,
                           fontWeight: FontWeight.w700,
@@ -1964,7 +1965,7 @@ class _ToPrepareInfoCard extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: requestId,
+                              text: isolated(requestId),
                               style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,

@@ -910,7 +910,7 @@ class _OtcCustomerCard extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: requestId,
+                              text: isolated(requestId),
                               style: appFont('Inter', 
                                 color: _accent,
                                 fontWeight: FontWeight.w700,
