@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -706,7 +705,7 @@ class _ReviewCard extends StatelessWidget {
     final dt = DateTime.tryParse(raw.trim());
     if (dt != null) {
       try {
-        return DateFormat('MMM dd yyyy, hh:mm a', locale)
+        return appDateFormat('MMM dd yyyy, hh:mm a')
             .format(serverTimeToLocal(dt))
             .replaceAll('AM', 'am')
             .replaceAll('PM', 'pm');

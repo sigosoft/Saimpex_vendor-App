@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
@@ -1149,7 +1148,7 @@ class _LeaveCard extends StatelessWidget {
   final VoidCallback? onCancel;
 
   String _date(BuildContext context, DateTime date) =>
-      DateFormat('MMM d', Localizations.localeOf(context).languageCode).format(date);
+      appDateFormat('MMM d').format(date);
 
   @override
   Widget build(BuildContext context) {

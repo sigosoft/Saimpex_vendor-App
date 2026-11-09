@@ -1,9 +1,9 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show appDateFormat;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
 import 'package:saimpex_vendor/model/restaurant_menu_details_model.dart';
@@ -276,7 +276,7 @@ class _ViewMenuDetailsState extends State<ViewMenuDetails> {
     if (date == null || date.isEmpty) return '-';
     try {
       final dt = DateTime.parse(date);
-      return DateFormat('MMM dd, yyyy, hh:mm a').format(dt);
+      return appDateFormat('MMM dd, yyyy, hh:mm a').format(dt);
     } catch (_) {
       return date;
     }

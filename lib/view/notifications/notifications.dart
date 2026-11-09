@@ -198,12 +198,12 @@ class _NotificationsState extends State<Notifications> {
               parsedTime.hour,
               parsedTime.minute,
             );
-            return DateFormat('h:mm a').format(dateTime);
+            return appDateFormat('h:mm a').format(dateTime);
           } catch (e2) {
             // If time parsing fails, try parsing the date
             try {
               dateTime = DateTime.parse(date);
-              return DateFormat('h:mm a').format(dateTime);
+              return appDateFormat('h:mm a').format(dateTime);
             } catch (e3) {
               // Return original time if all parsing fails
             }
@@ -221,12 +221,12 @@ class _NotificationsState extends State<Notifications> {
             parsedTime.hour,
             parsedTime.minute,
           );
-          return DateFormat('h:mm a').format(dateTime);
+          return appDateFormat('h:mm a').format(dateTime);
         } catch (e) {
           // If time is not in HH:mm format, try parsing as full datetime
           try {
             dateTime = DateTime.parse(time);
-            return DateFormat('h:mm a').format(dateTime);
+            return appDateFormat('h:mm a').format(dateTime);
           } catch (e2) {
             // Return original if parsing fails
           }
@@ -235,7 +235,7 @@ class _NotificationsState extends State<Notifications> {
         // If only date is available
         try {
           dateTime = DateTime.parse(date);
-          return DateFormat('h:mm a').format(dateTime);
+          return appDateFormat('h:mm a').format(dateTime);
         } catch (e) {
           // Return original if parsing fails
         }

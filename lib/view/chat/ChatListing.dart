@@ -161,7 +161,7 @@ class _ChatListingState extends State<ChatListing> {
       DateTime dt = parseServerTime(timeStr) ?? DateTime.now();
       DateTime now = DateTime.now();
       if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
-        return DateFormat('hh:mm a').format(dt);
+        return appDateFormat('hh:mm a').format(dt);
       } else {
         return DateFormat('dd/MM/yyyy').format(dt);
       }

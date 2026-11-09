@@ -1,11 +1,11 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show appDateFormat;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import '../../controller/payout_controller.dart';
 import '../../generated/l10n.dart';
 import '../../model/received_payout_model.dart';
@@ -151,7 +151,7 @@ class _PayoutViewAllScreenState extends State<PayoutViewAllScreen> {
 
   Widget _payoutItemFromDatum(Datum d) {
     final dateTimeStr = d.paidAt != null
-        ? DateFormat('MMM dd, yyyy h:mm a').format(d.paidAt!)
+        ? appDateFormat('MMM dd, yyyy h:mm a').format(d.paidAt!)
         : '—';
     return PayoutItem(
       transactionId: 'PYT${d.id ?? ""}',

@@ -1,7 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show appDateFormat;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/controller/basket_controller.dart';
 import 'package:saimpex_vendor/model/basket_details_model.dart';
@@ -56,7 +56,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
         );
         final basketInitials = _initialsFromName(vendorName);
         final createdAtStr = detail?.createdAt != null
-            ? DateFormat('MMM dd, yyyy').format(detail!.createdAt!)
+            ? appDateFormat('MMM dd, yyyy').format(detail!.createdAt!)
             : '';
 
         final priceStr = detail?.price?.isNotEmpty == true

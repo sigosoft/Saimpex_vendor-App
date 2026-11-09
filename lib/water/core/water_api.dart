@@ -151,22 +151,22 @@ class WaterApi {
   static String formatDateTime(dynamic value) {
     final dt = parseDate(value);
     if (dt == null) return '—';
-    return DateFormat('dd/MM/yyyy • hh:mm a', _locale()).format(dt);
+    return appDateFormat('dd/MM/yyyy • hh:mm a').format(dt);
   }
 
   static String formatTime(DateTime dt) =>
-      DateFormat('hh:mm a', _locale()).format(dt);
+      appDateFormat('hh:mm a').format(dt);
 
-  static String weekday(DateTime dt) => DateFormat('EEEE', _locale()).format(dt);
+  static String weekday(DateTime dt) => appDateFormat('EEEE').format(dt);
 
   /// "Mon" in the app language (calendar strip).
-  static String shortWeekday(DateTime dt) => DateFormat('EEE', _locale()).format(dt);
+  static String shortWeekday(DateTime dt) => appDateFormat('EEE').format(dt);
 
   /// "Aug 2026" in the app language.
-  static String monthYear(DateTime dt) => DateFormat('MMM yyyy', _locale()).format(dt);
+  static String monthYear(DateTime dt) => appDateFormat('MMM yyyy').format(dt);
 
   /// "Wednesday, 14 Aug 2026" in the app language.
-  static String longDate(DateTime dt) => DateFormat('EEEE, d MMM yyyy', _locale()).format(dt);
+  static String longDate(DateTime dt) => appDateFormat('EEEE, d MMM yyyy').format(dt);
 
   /// "1,234.00 MRU"
   static String money(dynamic value) {

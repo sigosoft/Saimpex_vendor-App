@@ -1,7 +1,7 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show appDateFormat;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../generated/l10n.dart';
 import '../../model/basket_customers_model.dart';
@@ -145,7 +145,7 @@ class RedeemedCustomerTile extends StatelessWidget {
     final points = (customer.redeemPoints ?? 0).toString();
 
     final createdAtStr = customer.createdAt != null
-        ? DateFormat('MMM dd, yyyy, h:mm a').format(customer.createdAt!)
+        ? appDateFormat('MMM dd, yyyy, h:mm a').format(customer.createdAt!)
         : '-';
 
     return Container(

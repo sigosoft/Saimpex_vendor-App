@@ -4,7 +4,6 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:intl/intl.dart' show DateFormat;
 import '../../utils/utils.dart';
 import '../../controller/sales_report_controller.dart';
 import '../../generated/l10n.dart';
@@ -118,7 +117,7 @@ class _SalesReportsScreenState extends State<SalesReportsScreen> {
 
   String _dateTimeStr(DateTime? placedAt) {
     if (placedAt == null) return '—';
-    return DateFormat('MMM dd, yyyy h:mm a').format(placedAt);
+    return appDateFormat('MMM dd, yyyy h:mm a').format(placedAt);
   }
 
   Widget _buildReportCardFromDatum(BuildContext context, Datum datum) {
