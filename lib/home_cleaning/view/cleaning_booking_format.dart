@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show localizeDatePattern;
 import 'package:saimpex_vendor/generated/l10n.dart';
 import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/home_cleaning/model/cleaning_booking.dart';
@@ -13,7 +14,8 @@ class CleaningBookingFormat {
 
   static DateFormat _fmt(String pattern) {
     try {
-      return DateFormat(pattern, _locale());
+      final lang = _locale();
+      return DateFormat(localizeDatePattern(pattern, lang), lang);
     } catch (_) {
       return DateFormat(pattern, 'en');
     }
