@@ -526,7 +526,7 @@ class _MenuItemDetailsScreenState extends State<MenuItemDetailsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '$itemsTotal ${S.of(context).items}',
+                    '$itemsTotal ${int.tryParse(itemsTotal) == 1 ? S.of(context).item : S.of(context).items}',
                     style: appFont('Rubik', 
                       fontSize: 11,
                       fontWeight: FontWeight.bold,

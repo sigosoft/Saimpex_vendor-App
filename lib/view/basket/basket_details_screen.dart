@@ -277,7 +277,7 @@ class _BasketDetailsScreenState extends State<BasketDetailsScreen> {
                                 _infoBox(
                                   context,
                                   S.of(context).itemsCountLabel,
-                                  '${detail?.basketItemsCount ?? 0} ${S.of(context).items}',
+                                  '${detail?.basketItemsCount ?? 0} ${detail?.basketItemsCount == 1 ? S.of(context).item : S.of(context).items}',
                                 ),
                                 const SizedBox(width: 12),
                                 _infoBox(
