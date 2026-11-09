@@ -13,7 +13,7 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-ee3f574.apk` from `test/retest-2026-11-06` at `ee3f574` (pushed). Dev server, debug-key signed. Includes #118–#133. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-9cb0311.apk` from `test/retest-2026-11-06` at `9cb0311` (pushed). Dev server, debug-key signed. Includes #118–#134. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
 - **9 Nov afternoon, frontend clean-up (all phone ✅ unless noted):**
   - **#121 follow-up:** item tags moved onto the item image as in the Figma Items frame (bottom corner; the ⋮ menu is on top), instead of a row under the card.
   - **#128 (new, base main):** removed the unused No internet / Server down screens (handover B4). No behaviour change.
@@ -28,7 +28,8 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
   - Checked OK: water Home / Orders / order details / Account / Inventory (FR + EN); restaurant Home, orders, details, timeline, Settings, Edit Profile, Business settings (Express saves), Items, Item Details, stock history (FR); login errors in French (empty username, wrong password).
   - **Second round (same day):** pharmacy, grocery, local store, laundry, home cleaning checked in French. More fixes on the same PRs: #130 service-booking times were still 12-hour in French (own helper) → "10 nov. 2026, 15:30 - 17:30"; #131 pharmacy status map "Prêt / Livré" → "Prête / Livrée", "Assistance et mentions légales". Phone ✅.
   - **Admin data:** grocery.08 store address has a line break inside "Nouakchott" ("Nouak⏎chott"), so it wraps mid-word on My Store; fix the address text.
-  - Not yet: car wash in French (no carwash.27 password in the demo list); item variants / sides / extras (no demo item has them). The phone was left in French; switch back to Arabic in Account › Language if needed.
+  - **Car wash (carwash.27), French ✅:** Home, bookings, details (slot, vehicles, location, payment). **#134 (new):** completed booking badge said "TERMINÉ" (shared with leave status); now "TERMINÉE" on service bookings (new key EN/FR/AR). Phone ✅. "Interior" in English is the known Admin service-type name issue.
+  - Not yet: item variants / sides / extras (no demo item has them). The phone was left in French; switch back to Arabic in Account › Language if needed.
 - **Login:** the tester gave Claude the demo accounts on 9 Nov, so phone checks can switch vendor without help. Passwords are not stored in any file.
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
 - **food.01, 9 Nov:** #122 notifications "View details" ✅ (opens ORD-001548); #126 contact "+222 95100001" ✅; #121 Items list tags ✅. **Item Details shows no tags: dev's `restaurantCatalogItemDetail` doesn't send `is_popular` / `is_new_arrival` / `is_veg` / `orders_count` yet** (checked with a debug build; commented on backend #179). No app change needed; recheck after the backend deploy. Design note: the tag row sits under the card, above the visibility bar.
