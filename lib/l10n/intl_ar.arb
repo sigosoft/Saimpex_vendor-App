@@ -795,7 +795,7 @@
   "@addNewItem": {},
   "createNewBasket": "إنشاء سلة جديدة",
   "@createNewBasket": {},
-  "orderIdLabel": "طلب #{id}",
+  "orderIdLabel": "طلب ⁦#{id}⁩",
   "@orderIdLabel": {
     "placeholders": {
       "id": {

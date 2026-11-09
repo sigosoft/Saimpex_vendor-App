@@ -111,7 +111,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m41(unit) => "MRU / ${unit}";
 
-  static String m42(id) => "طلب #${id}";
+  static String m42(id) => "طلب ⁦#${id}⁩";
 
   static String m43(count) => "${count} أصناف";
 

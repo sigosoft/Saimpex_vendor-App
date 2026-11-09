@@ -1,5 +1,6 @@
 import 'package:saimpex_vendor/utils/vendor_initials.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart' show ltrIsolate;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -210,7 +211,7 @@ class _SettingsState extends State<Settings> {
                               S.of(context).contact,
                               (controller.profileData?.countryCode != null ||
                                       controller.profileData?.mobile != null)
-                                  ? "${controller.profileData?.countryCode ?? '+222'} ${controller.profileData?.mobile ?? ''}"
+                                  ? ltrIsolate("${controller.profileData?.countryCode ?? '+222'} ${controller.profileData?.mobile ?? ''}")
                                   : "",
                             ),
                             const SizedBox(height: 10),
