@@ -20,6 +20,13 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
   - **#129 (new, base main):** water low-stock alert showed "L Jug with Bottle 19" in Arabic; now "Jug with Bottle 19 L".
   - **#102:** with 3 low-stock products the alert shows "+1 more" and View all, which selects the Low stock chip. Stock was set to 3 for the test and restored (300 / 288 / 291).
   - **#100:** water Business settings › Express switch saves (on, reopen, off again).
+- **French / English pass, 9 Nov (water.19, food.01): bugs found and fixed (all merged into the test branch; phone ✅):**
+  - **#130** dates used the English order everywhere: French "nov. 06, 2026 10:47 AM" → "06 nov. 2026 10:47"; Arabic now day first too. Central fix in `appDateFormat` (`localizeDatePattern`, tested) + 23 formatters that bypassed it. Merge note on the PR (a `DateFormat('EEEE')` in the restaurant localisation branch).
+  - **#131** French wording: statuses agree with *commande* (Acceptée / Prête / Livrée), no English capitals, "Durées par étape" (tab label wrapped), "Modifier le stock" (button was cut off).
+  - **#132** restaurant auto-accept card said "orders will be accepted automatically" with a green check while the switch was off; now follows the switch (new key EN/FR/AR).
+  - **#133** "1 Articles / 1 Items" → "1 Article / 1 Item" on order cards, basket and item stats.
+  - Checked OK: water Home / Orders / order details / Account / Inventory (FR + EN); restaurant Home, orders, details, timeline, Settings, Edit Profile, Business settings (Express saves), Items, Item Details, stock history (FR); login errors in French (empty username, wrong password).
+  - Not yet: pharmacy, grocery, local store, laundry, car wash, home cleaning in FR/EN; item variants / sides / extras (no demo item has them).
 - **Login:** the tester gave Claude the demo accounts on 9 Nov, so phone checks can switch vendor without help. Passwords are not stored in any file.
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
 - **food.01, 9 Nov:** #122 notifications "View details" ✅ (opens ORD-001548); #126 contact "+222 95100001" ✅; #121 Items list tags ✅. **Item Details shows no tags: dev's `restaurantCatalogItemDetail` doesn't send `is_popular` / `is_new_arrival` / `is_veg` / `orders_count` yet** (checked with a debug build; commented on backend #179). No app change needed; recheck after the backend deploy. Design note: the tag row sits under the card, above the visibility bar.
