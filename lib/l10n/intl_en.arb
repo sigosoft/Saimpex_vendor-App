@@ -3837,5 +3837,7 @@
   "editProfileDetails": "Edit Profile Details",
   "earningsNet": "Net",
   "itemPopularTag": "Popular",
-  "itemNewArrivalTag": "New arrival"
+  "itemNewArrivalTag": "New arrival",
+  "autoAcceptOrdersOffSubtitle": "You accept or reject each new order yourself",
+  "@autoAcceptOrdersOffSubtitle": {}
 }

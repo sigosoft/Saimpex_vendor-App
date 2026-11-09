@@ -439,6 +439,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "attributesReference": MessageLookupByLibrary.simpleMessage(
       "Référence des attributs",
     ),
+    "autoAcceptOrdersOffSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Vous acceptez ou refusez vous-même chaque nouvelle commande",
+    ),
     "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
       "Les commandes seront acceptées automatiquement",
     ),

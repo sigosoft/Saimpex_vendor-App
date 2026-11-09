@@ -400,6 +400,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "attribute": MessageLookupByLibrary.simpleMessage("سمة"),
     "attributeLabel": MessageLookupByLibrary.simpleMessage("الخاصية"),
     "attributesReference": MessageLookupByLibrary.simpleMessage("مرجع السمات"),
+    "autoAcceptOrdersOffSubtitle": MessageLookupByLibrary.simpleMessage(
+      "تقبل أو ترفض كل طلب جديد بنفسك",
+    ),
     "autoAcceptOrdersSubtitle": MessageLookupByLibrary.simpleMessage(
       "سيتم قبول الطلبات تلقائيًا",
     ),

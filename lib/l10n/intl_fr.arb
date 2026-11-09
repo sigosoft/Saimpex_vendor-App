@@ -3744,5 +3744,7 @@
   "editProfileDetails": "Modifier les informations du profil",
   "earningsNet": "Net",
   "itemPopularTag": "Populaire",
-  "itemNewArrivalTag": "Nouveauté"
+  "itemNewArrivalTag": "Nouveauté",
+  "autoAcceptOrdersOffSubtitle": "Vous acceptez ou refusez vous-même chaque nouvelle commande",
+  "@autoAcceptOrdersOffSubtitle": {}
 }

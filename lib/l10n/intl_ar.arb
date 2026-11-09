@@ -3743,5 +3743,7 @@
   "editProfileDetails": "تعديل بيانات الملف الشخصي",
   "earningsNet": "الصافي",
   "itemPopularTag": "الأكثر طلبًا",
-  "itemNewArrivalTag": "وصل حديثًا"
+  "itemNewArrivalTag": "وصل حديثًا",
+  "autoAcceptOrdersOffSubtitle": "تقبل أو ترفض كل طلب جديد بنفسك",
+  "@autoAcceptOrdersOffSubtitle": {}
 }

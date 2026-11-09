@@ -616,9 +616,16 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(
-                                    Icons.check_circle,
-                                    color: Color(0xFF16A34A),
+                                  // Follows the switch: the card said
+                                  // "will be accepted automatically" with a
+                                  // green check while it was off (test 9 Nov).
+                                  Icon(
+                                    controller.isAutoAcceptOrders
+                                        ? Icons.check_circle
+                                        : Icons.pan_tool_alt_outlined,
+                                    color: controller.isAutoAcceptOrders
+                                        ? const Color(0xFF16A34A)
+                                        : const Color(0xFF9CA3AF),
                                     size: 18,
                                   ),
                                   const SizedBox(width: 10),
@@ -637,9 +644,13 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          S
-                                              .of(context)
-                                              .autoAcceptOrdersSubtitle,
+                                          controller.isAutoAcceptOrders
+                                              ? S
+                                                  .of(context)
+                                                  .autoAcceptOrdersSubtitle
+                                              : S
+                                                  .of(context)
+                                                  .autoAcceptOrdersOffSubtitle,
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color(0xFF9CA3AF),
