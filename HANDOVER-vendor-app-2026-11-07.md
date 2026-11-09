@@ -13,7 +13,12 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-51ff3dd.apk` from `test/retest-2026-11-06` at `51ff3dd` (pushed). Dev server, debug-key signed. Includes #118–#136. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-3ed6e67.apk` from `test/retest-2026-11-06` at `3ed6e67` (pushed). Dev server, debug-key signed. Includes #118–#137. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **Figma comparison, 9 Nov evening** (Figma file opens view-only without a login in the browser; open a frame with `?node-id=…` to zoom to it):
+  - **Fixed, #137 (new, base fix/services-fallbacks):** service (laundry / car wash / home cleaning) **Earnings** rebuilt to the Figma frame (orange Earnings/Payouts pill, orange summary card, one row of chips, orange order codes, dates in the app language); **back arrow** on all service account screens was white on a light background (now the white rounded button); **Working hours** gets the Figma "Current status · Today" card; language picker shows English / Français / العربية. Phone ✅.
+  - **Match ✅:** Business settings (water, restaurant, service), service Account menu, Vendor Profile (details, bank, registration, documents, reviews), Received Payouts, Coupons list header and empty state; earlier today: item tags on the image, Item Details tags + Item Orders.
+  - **Known differences kept:** Working hours edits each day inline (time chips + switch) where Figma opens an edit sheet per day; same data, not rewritten. Vendor Profile title "Profil du magasin" vs menu "Profil du prestataire".
+  - **Could not compare (no data on dev):** coupon card (no coupons), Item Details variants / sides / extras, pharmacy prescription timelines in every state, Express tag (food / grocery never express in V2).
 - **Backend fixes rechecked, 9 Nov evening (backend f80296d, dd2aa02, c7f46d9 on dev), all phone ✅:**
   - **#180** local store order ORD-001566: 2 lines, 330 + 50 = 380 MRU, cash; vendor card "2 Articles · 380.00 MRU", details, Accept.
   - **#179** Item Details tags (Popular, New arrival). The app's first endpoint `vendor/restaurantCatalogItemDetail` now 404s on dev and the app falls back to `restaurantCatalogItemDetail`, which has the flags. **#121 new commit:** Item Orders section from `orders_count` / `recent_orders` (was never shown; app read `total_orders`).
