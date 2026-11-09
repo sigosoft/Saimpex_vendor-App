@@ -28,6 +28,8 @@
 ### 2.00 · #180 (P1, new 9 Nov) · Local store checkoutV2 creates an order with no items
 - **Seen:** `cart/localStore/add` (vendor 60, 2 lines) then `checkoutV2` (cash) → ORD-001560 created with `items: []`, `item_total: 0`, payment "Online Payment"; the vendor app shows a basket order with 0 items.
 - **Needed:** checkoutV2 / checkoutSummaryV2 read local store cart lines (or say which checkout the customer app must use). Vendor app unaffected.
+- **Rechecked 9 Nov afternoon: still on dev** (`checkoutSummaryV2` → `item_total 0`, `items []`). No backend commit since 7 Nov 09:41. Likely cause: `OrderController` ~L1287 `type = hasOnlyBasketItems ? 'basket' : 'normal'`.
+- **Also (#119):** no checkout sets `type = 'express'`, so customers can't place an express restaurant / grocery order and the vendor Express tag can't be tested with a real order. Asked on #180 whether Admin should mark orders express.
 
 ### 2.01 · Admin data (9 Nov) · Home cleaning service type names
 - Service types 9 (Regular clean), 10 (Deep clean), 11 (Disinfection) have the English name in `name_ar` / `name_fr`. Saving a service takes its name from its type, so service 55 became "Disinfection" in Arabic (was "تعقيم"). Give the types AR/FR names and restore service 55.

@@ -17,7 +17,10 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
 - **food.01, 9 Nov:** #122 notifications "View details" ✅ (opens ORD-001548); #126 contact "+222 95100001" ✅; #121 Items list tags ✅. **Item Details shows no tags: dev's `restaurantCatalogItemDetail` doesn't send `is_popular` / `is_new_arrival` / `is_veg` / `orders_count` yet** (checked with a debug build; commented on backend #179). No app change needed; recheck after the backend deploy. Design note: the tag row sits under the card, above the visibility bar.
 - **pharmacy.15, 9 Nov:** #122 order notification rows open the order (ORD-001550) ✅. **#127 (new, base main):** order details header "ORD-001550#" → "#ORD-001550" (prescription + OTC details) and the notifications title (hard-coded English "Notifications") translated. Phone ✅.
-- **Still to check on the phone:** #121 Item Details tags after backend #179; #119 Express tag (needs an express order); #120 (laundry booking with `delivery_window`); local store items once backend #180 is fixed.
+- **laundry.24, 9 Nov:** #120 ✅ booking LNUNGLAC (placed with `delivery_scheduled_for` / `delivery_slot_end`) shows the delivery slot date and time chips. LNUQZC4R (no delivery slot) and LNUNGLAC are New on dev.
+- **Backend recheck, 9 Nov afternoon:** no backend commit since 7 Nov 09:41; **#180 still fails on dev** (`checkoutSummaryV2` → `item_total 0`); root cause and #119 question posted on #180. A Fast Charger (vendor 60) is left in the demo customer's cart.
+- **#179 recheck, 9 Nov 11:19 (food.01, logged in on the phone by Claude with the tester's demo account):** Garden Salad Item Details still shows no tags; dev still doesn't send the detail flags.
+- **Still to check on the phone:** #121 Item Details tags after backend #179 is deployed; #119 Express tag (no checkout can create an express food / grocery order; waiting on backend / Admin); local store items once backend #180 is fixed.
 
 ## 0c. 9 Nov: home cleaning, local store, gas tested; PRs #123–#126
 
