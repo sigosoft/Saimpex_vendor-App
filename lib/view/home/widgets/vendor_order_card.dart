@@ -225,7 +225,7 @@ class VendorOrderCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text:
-                                  "$itemsCount ${S.of(context).items}" +
+                                  "$itemsCount ${itemsCount == 1 ? S.of(context).item : S.of(context).items}" +
                                   (price > 0 ||
                                           type?.trim().toLowerCase().contains(
                                                 "basket",
