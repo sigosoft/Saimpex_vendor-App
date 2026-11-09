@@ -1931,7 +1931,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Détails de commande introuvables",
     ),
     "orderDurationBreakdown": MessageLookupByLibrary.simpleMessage(
-      "Détail de la durée de la commande",
+      "Durées par étape",
     ),
     "orderIdLabel": m42,
     "orderItems": MessageLookupByLibrary.simpleMessage(
