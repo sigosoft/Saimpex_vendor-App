@@ -27,8 +27,7 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
   - **#133** "1 Articles / 1 Items" → "1 Article / 1 Item" on order cards, basket and item stats.
   - Checked OK: water Home / Orders / order details / Account / Inventory (FR + EN); restaurant Home, orders, details, timeline, Settings, Edit Profile, Business settings (Express saves), Items, Item Details, stock history (FR); login errors in French (empty username, wrong password).
   - **Second round (same day):** pharmacy, grocery, local store, laundry, home cleaning checked in French. More fixes on the same PRs: #130 service-booking times were still 12-hour in French (own helper) → "10 nov. 2026, 15:30 - 17:30"; #131 pharmacy status map "Prêt / Livré" → "Prête / Livrée", "Assistance et mentions légales". Phone ✅.
-  - **Admin data:** grocery.08 store address has a line break inside "Nouak
-chott", so it wraps mid-word on My Store; fix the address text.
+  - **Admin data:** grocery.08 store address has a line break inside "Nouakchott" ("Nouak⏎chott"), so it wraps mid-word on My Store; fix the address text.
   - Not yet: car wash in French (no carwash.27 password in the demo list); item variants / sides / extras (no demo item has them). The phone was left in French; switch back to Arabic in Account › Language if needed.
 - **Login:** the tester gave Claude the demo accounts on 9 Nov, so phone checks can switch vendor without help. Passwords are not stored in any file.
 - **Vendor types tested on the phone, all in Arabic:** restaurant, grocery, pharmacy, water, car wash, laundry (7 Nov); **home cleaning, local store, gas (9 Nov)**. Every type has now been run end to end.
