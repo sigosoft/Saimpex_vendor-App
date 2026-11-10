@@ -1182,7 +1182,9 @@ class _PharmacyOrderDetailsScreenState
                                     phone: effectivePhone,
                                     requestId: effectiveRequestId,
                                     requestMeta: effectiveRequestMeta,
-                                    reviewing: isEffectiveReviewing,
+                                    // Badge: NEW until the pharmacy starts the review (server 'uploaded');
+                                    // the review actions below still show (test 10 Nov, #21).
+                                    reviewing: isEffectiveReviewing && statusStr != 'uploaded',
                                     reviewCompleted: isEffectiveReviewCompleted,
                                     awaitingPayment: isEffectiveAwaitingPayment,
                                     onChatTap: () => _openCustomerChat(
