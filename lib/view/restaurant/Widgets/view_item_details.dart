@@ -251,9 +251,26 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
       return val;
     }
 
+    // An item with variants has no own price (null): show the variant range
+    // "200 – 280", not "- MRU" (Test Burger, 10 Nov).
+    String variantRange() {
+      final v = _raw?['variants'];
+      final prices = (v is List ? v : const [])
+          .whereType<Map>()
+          .map((m) => double.tryParse('${m['price'] ?? ''}'))
+          .whereType<double>()
+          .toList()
+        ..sort();
+      if (prices.isEmpty) return "-";
+      String n(double p) => cleanMoney(p.toStringAsFixed(2));
+      return prices.first == prices.last
+          ? n(prices.first)
+          : "${n(prices.first)} – ${n(prices.last)}";
+    }
+
     final rawPrice = details.price != null && details.price!.isNotEmpty
         ? details.price!.replaceAll('MRU', '').trim()
-        : "-";
+        : variantRange();
     final priceStr = cleanMoney(rawPrice);
 
     final rawDiscount =
