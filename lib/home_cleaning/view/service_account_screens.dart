@@ -5,6 +5,7 @@ import 'package:saimpex_vendor/home_cleaning/controller/cleaning_api.dart';
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart' show isolated;
 
 // Account screens of the service section (laundry, car wash, home cleaning;
 // task V15). They used to open the Water screens, which call the water
@@ -50,7 +51,7 @@ Widget _scaffold(BuildContext context, {required String title, required Widget b
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
                       ),
-                      child: Icon(rtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded, color: _orange, size: 28),
+                      child: const Icon(Icons.chevron_left_rounded, color: _orange, size: 28), // mirrors itself in RTL
                     ),
                   ),
                 ),
@@ -546,7 +547,7 @@ class _ServiceEarningsViewState extends State<ServiceEarningsView> {
       Row(children: [
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('#${o['order_code'] ?? o['id']}', style: _t(14, FontWeight.w700, _orange)),
+            Text(isolated('#${o['order_code'] ?? o['id']}'), style: _t(14, FontWeight.w700, _orange)),
             if (when.isNotEmpty && when != 'null') Text(when, style: _t(12, FontWeight.w400, _muted)),
           ]),
         ),
