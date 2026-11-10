@@ -200,6 +200,9 @@ class _PharmacyAddCouponScreenState extends State<PharmacyAddCouponScreen> {
   }
 
   Future<void> _pickDate() async {
+    // Else the picker gives focus back to the last field and the keyboard
+    // opens over the form (test 10 Nov).
+    FocusManager.instance.primaryFocus?.unfocus();
     final now = DateTime.now();
     final effectiveFirstDate = (_validUntil != null && _validUntil!.isBefore(now))
         ? _validUntil!

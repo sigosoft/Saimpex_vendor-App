@@ -388,6 +388,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
       controller: _validUptoController,
       readOnly: true,
       onTap: () async {
+        FocusManager.instance.primaryFocus?.unfocus();
         DateTime? pickedDate = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
