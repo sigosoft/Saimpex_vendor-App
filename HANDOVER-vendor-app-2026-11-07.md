@@ -13,7 +13,10 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ## 0d. Latest client build (9 Nov), replaces 0b
 
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-09-3ed6e67.apk` from `test/retest-2026-11-06` at `3ed6e67` (pushed). Dev server, debug-key signed. Includes #118–#137. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-10-b601cee.apk` from `test/retest-2026-11-06` at `b601cee` (pushed). Dev server, debug-key signed. Includes #118–#138. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
+- **10 Nov morning:** backend changelog checked (no new `[vendor]` entries after 9 Nov). **English pass done for every type** (laundry, restaurant, pharmacy, gas; grocery / local store share the restaurant screens; water done earlier). "Chat with Customer" opens the chat ✅. **Coupon card vs Figma ✅** (test coupon TEST10 created on laundry.24, then deleted). Fixes, phone ✅:
+  - **#138 (new, base main):** coupon created / updated on showed UTC ("03:50 AM" at 09:20); now phone time in the app language (3 coupon screens). Add / Edit coupon: after the date picker or type menu the keyboard opened over the form; fixed.
+  - **#133 follow-up:** order details header said "1 Items".
 - **Figma comparison, 9 Nov evening** (Figma file opens view-only without a login in the browser; open a frame with `?node-id=…` to zoom to it):
   - **Fixed, #137 (new, base fix/services-fallbacks):** service (laundry / car wash / home cleaning) **Earnings** rebuilt to the Figma frame (orange Earnings/Payouts pill, orange summary card, one row of chips, orange order codes, dates in the app language); **back arrow** on all service account screens was white on a light background (now the white rounded button); **Working hours** gets the Figma "Current status · Today" card; language picker shows English / Français / العربية. Phone ✅.
   - **Match ✅:** Business settings (water, restaurant, service), service Account menu, Vendor Profile (details, bank, registration, documents, reviews), Received Payouts, Coupons list header and empty state; earlier today: item tags on the image, Item Details tags + Item Orders.
