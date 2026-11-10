@@ -727,7 +727,7 @@ class _HomeCleaningAccountViewState extends State<HomeCleaningAccountView> {
             _buildSettingRow(
               icon: Icons.storefront_outlined,
               title: S.of(context).cleaningVendorProfile,
-              onTap: () => StoreProfileView.open(context),
+              onTap: () => StoreProfileView.open(context, title: S.of(context).cleaningVendorProfile),
             ),
             _buildSettingRow(
               icon: Icons.access_time_rounded,

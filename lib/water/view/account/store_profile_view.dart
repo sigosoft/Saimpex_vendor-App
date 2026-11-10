@@ -15,16 +15,20 @@ import 'package:saimpex_vendor/utils/vendor_app_router.dart';
 import 'package:saimpex_vendor/view/restaurant/rating_reviews_screen.dart';
 
 class StoreProfileView extends StatefulWidget {
-  const StoreProfileView({super.key});
+  const StoreProfileView({super.key, this.title});
+
+  /// Screen title; the service sections pass "Vendor Profile" to match their
+  /// Account menu and Figma (water and gas keep "Store Profile").
+  final String? title;
 
   static const _label = Color(0xFF8A97A8);
   static const _value = Color(0xFF4C5260);
   static const _ink = Color(0xFF1C1D1B);
   static const _orange = Color(0xFFFF5216);
 
-  static void open(BuildContext context) {
+  static void open(BuildContext context, {String? title}) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const StoreProfileView()),
+      MaterialPageRoute<void>(builder: (_) => StoreProfileView(title: title)),
     );
   }
 
@@ -331,7 +335,7 @@ class _StoreProfileViewState extends State<StoreProfileView> {
           child: Column(
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 8),
-              _Header(onBack: () => Navigator.of(context).maybePop()),
+              _Header(title: widget.title, onBack: () => Navigator.of(context).maybePop()),
               Expanded(
                 child: _isLoading
                     ? const Center(
@@ -456,7 +460,8 @@ class _StoreProfileViewState extends State<StoreProfileView> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
+  const _Header({required this.onBack, this.title});
+  final String? title;
 
   final VoidCallback onBack;
 
@@ -470,7 +475,7 @@ class _Header extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Text(
-              S.of(context).waterStoreProfile,
+              title ?? S.of(context).waterStoreProfile,
               style: appFont('Inter', 
                 color: StoreProfileView._ink,
                 fontWeight: FontWeight.w700,
