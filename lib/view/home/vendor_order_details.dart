@@ -423,7 +423,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                       children: [
                                         _infoCol(
                                           S.of(context).items,
-                                          (isBasketOrder
+                                          ((int n) => "$n ${n == 1 ? S.of(context).item : S.of(context).items}")((isBasketOrder
                                                       ? (controller
                                                                 .orderData!
                                                                 .basketOrders
@@ -450,10 +450,8 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                                                 .orderData!
                                                                 .orderItems
                                                                 ?.length ??
-                                                            0))
-                                                  .toString() +
-                                              " " +
-                                              S.of(context).items +
+                                                            0)))
+                                                  +
                                               (((double.tryParse(
                                                             controller
                                                                     .orderData
