@@ -456,9 +456,14 @@ class _OtcOrderDetailsPage extends StatelessWidget {
                                     customerId: order?.userId,
                                   ),
                                 ),
-                                if (partnerAssigned) ...[
+                                // Figma: the rider card while the order is out (not once delivered).
+                                if (partnerAssigned && !delivered) ...[
                                   const SizedBox(height: 18),
-                                  const _DeliveryPartnerSection(),
+                                  _DeliveryPartnerSection(
+                                    showPhone: true,
+                                    name: order?.deliveryBoyName,
+                                    phone: order?.deliveryBoyPhone,
+                                  ),
                                 ],
                                 const SizedBox(height: 18),
                                 Text(
