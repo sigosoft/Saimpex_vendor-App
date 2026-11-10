@@ -547,9 +547,11 @@ class _VendorHomeScreenState extends State<VendorHomeScreen>
         final List<OrderData> orders =
             controller.homeData?.data?.orders?.data ?? <OrderData>[];
         final membershipName = _resolveMembershipName(context, membership);
-        final expiryText = S
-            .of(context)
-            .expiresInDays(membership?.expiresInDays?.toString() ?? "0");
+        // No chip until the membership arrives (it showed a red
+        // "Expires in 0 days" while the home screen was loading).
+        final expiryText = membership?.expiresInDays == null
+            ? ''
+            : S.of(context).expiresInDays('${membership!.expiresInDays}');
         return CommonBackground(
           resizeToAvoidBottomInset: false,
           child: SizedBox.expand(
