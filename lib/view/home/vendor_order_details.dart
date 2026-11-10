@@ -422,7 +422,7 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         _infoCol(
-                                          S.of(context).items,
+                                          S.of(context).items.toUpperCase(),
                                           ((int n) => "$n ${n == 1 ? S.of(context).item : S.of(context).items}")((isBasketOrder
                                                       ? (controller
                                                                 .orderData!
@@ -1114,14 +1114,18 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
                               // (Edit Items was hidden behind them, V18).
                               SizedBox(
                                 height:
-                                    220 + MediaQuery.of(context).padding.bottom,
+                                    (_hasBottomActions(controller) ? 220 : 24) +
+                                    MediaQuery.of(context).padding.bottom,
                               ),
                             ],
                           ),
                         ),
                 ),
                 // Bottom Buttons
-                controller.orderData == null
+                // Only when there is an action (new, accepted, preparing, or
+                // ready for self pickup); delivered / cancelled orders showed an
+                // empty white bar.
+                controller.orderData == null || !_hasBottomActions(controller)
                     ? Container()
                     : Positioned(
                         bottom: 0,
@@ -1584,6 +1588,17 @@ class _VendorOrderDetailsState extends State<VendorOrderDetails> {
         },
       ),
     );
+  }
+
+  /// Same statuses as the bottom bar's buttons below.
+  bool _hasBottomActions(OrderDetailsController controller) {
+    final status = controller.orderData?.status.toString();
+    if (status == '1' || status == '2' || status == '3') return true;
+    return status == '4' &&
+        OrderFulfillment.isSelfPickupFrom(
+          deliveryType: controller.orderData?.deliveryType,
+          isSelfPickup: controller.orderData?.isSelfPickup,
+        );
   }
 
   Future<void> _openInGoogleMaps(String? latitude, String? longitude) async {
