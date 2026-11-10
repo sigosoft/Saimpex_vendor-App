@@ -190,46 +190,24 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
                   // Figma "Working Hours & Booking Slots": current status card.
                   _todayCard(s),
                   const SizedBox(height: 16),
-                  Text(s.workingHours.toUpperCase(), style: _t(12, FontWeight.w700, _muted)),
+                  // Figma "Weekly Schedule": day, hours below (or Closed in
+                  // red), edit icon that opens "Edit Working Hour".
+                  Text(s.waterWeeklySchedule, style: _t(15, FontWeight.w700, _ink)),
                   const SizedBox(height: 8),
                   _card([
-                    for (final d in _days)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(children: [
-                          Expanded(child: Text(_dayLabel(context, '${d['day']}'), style: _t(14, FontWeight.w600, _ink))),
-                          if (d['closed'] == true || d['closed'] == 1)
-                            Text(s.closed, style: _t(13, FontWeight.w500, _muted))
-                          else ...[
-                            _timeChip('${d['start'] ?? '-'}', () => _pickTime(d, 'start')),
-                            const Padding(padding: EdgeInsets.symmetric(horizontal: 4), child: Text('–')),
-                            _timeChip('${d['end'] ?? '-'}', () => _pickTime(d, 'end')),
-                          ],
-                          Switch(
-                            value: !(d['closed'] == true || d['closed'] == 1),
-                            activeThumbColor: Colors.white,
-                            activeTrackColor: _orange,
-                            onChanged: (open) => setState(() => d['closed'] = !open),
-                          ),
-                        ]),
-                      ),
+                    for (var i = 0; i < _days.length; i++) ...[
+                      if (i > 0) const Divider(height: 1, color: _border),
+                      _dayRow(s, _days[i]),
+                    ],
                   ]),
                   const SizedBox(height: 8),
-                  Text(s.bookingSlots.toUpperCase(), style: _t(12, FontWeight.w700, _muted)),
+                  Text(s.bookingSlots, style: _t(15, FontWeight.w700, _ink)),
                   const SizedBox(height: 8),
                   _card([
-                    for (final slot in _slots)
-                      Row(children: [
-                        Expanded(child: Text('${slot['label']}', textDirection: TextDirection.ltr, style: _t(14, FontWeight.w600, _ink))),
-                        Text(slot['available'] == true || slot['available'] == 1 ? s.slotAvailable : s.slotUnavailable,
-                            style: _t(12, FontWeight.w500, _muted)),
-                        Switch(
-                          value: slot['available'] == true || slot['available'] == 1,
-                          activeThumbColor: Colors.white,
-                          activeTrackColor: _orange,
-                          onChanged: (v) => setState(() => slot['available'] = v),
-                        ),
-                      ]),
+                    for (var i = 0; i < _slots.length; i++) ...[
+                      if (i > 0) const Divider(height: 1, color: _border),
+                      _slotRow(s, _slots[i]),
+                    ],
                   ]),
                   _card([
                     Row(children: [
@@ -258,7 +236,7 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
           orElse: () => null,
         );
     final closed = today == null || today['closed'] == true || today['closed'] == 1;
-    final hours = closed ? s.closed : '${today['start']} - ${today['end']}';
+    final hours = closed ? s.closed : '${_clock(today['start'])} - ${_clock(today['end'])}';
     return _card([
       Text(s.waterCurrentStatus, style: _t(12, FontWeight.w500, _muted)),
       const SizedBox(height: 6),
@@ -269,15 +247,155 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
     ]);
   }
 
-  Widget _timeChip(String text, VoidCallback onTap) => InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(color: const Color(0xFFF3F4F6), borderRadius: BorderRadius.circular(8)),
-          child: Text(text, textDirection: TextDirection.ltr, style: _t(13, FontWeight.w600, _ink)),
+  static bool _isClosed(Map<String, dynamic> d) => d['closed'] == true || d['closed'] == 1;
+
+  /// "08:00" → "08:00 AM" (EN / AR) or "08:00" (FR), in the app language.
+  String _clock(Object? hhmm) {
+    final parts = '${hhmm ?? ''}'.split(':');
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts.elementAtOrNull(1) ?? '');
+    if (h == null || m == null) return '${hhmm ?? '-'}';
+    return appDateFormat('hh:mm a').format(DateTime(2000, 1, 1, h, m));
+  }
+
+  Widget _dayRow(S s, Map<String, dynamic> d) {
+    final closed = _isClosed(d);
+    return InkWell(
+      onTap: () => _editDay(s, d),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(_dayLabel(context, '${d['day']}'),
+                  style: _t(14, FontWeight.w600, closed ? _muted : _ink)),
+              const SizedBox(height: 2),
+              Text(
+                closed ? s.closed : '${_clock(d['start'])} - ${_clock(d['end'])}',
+                style: _t(12, FontWeight.w500, closed ? const Color(0xFFE11D48) : _muted),
+              ),
+            ]),
+          ),
+          const Icon(Icons.edit_square, color: _orange, size: 20),
+          const SizedBox(width: 2),
+          const Icon(Icons.chevron_right_rounded, color: _muted, size: 20),
+        ]),
+      ),
+    );
+  }
+
+  Widget _slotRow(S s, Map<String, dynamic> slot) {
+    final on = slot['available'] == true || slot['available'] == 1;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        const Icon(Icons.access_time_rounded, color: _muted, size: 20),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('${slot['label']}', style: _t(14, FontWeight.w600, _ink)),
+            Text(on ? s.slotAvailable : s.slotUnavailable,
+                style: _t(12, FontWeight.w500, on ? const Color(0xFF16A34A) : _muted)),
+          ]),
         ),
-      );
+        Switch(
+          value: on,
+          activeThumbColor: Colors.white,
+          activeTrackColor: _orange,
+          onChanged: (v) => setState(() => slot['available'] = v),
+        ),
+      ]),
+    );
+  }
+
+  /// Figma "Edit Working Hour" dialog: start / end time (and a Closed
+  /// switch, which the old screen had), Cancel / Save. Changes stay local
+  /// until "Save changes" at the bottom, as before.
+  Future<void> _editDay(S s, Map<String, dynamic> d) async {
+    final draft = Map<String, dynamic>.from(d);
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) {
+          Widget field(String label, String key) => Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(label, style: _t(12, FontWeight.w500, _muted)),
+                  const SizedBox(height: 6),
+                  InkWell(
+                    onTap: _isClosed(draft)
+                        ? null
+                        : () async {
+                            await _pickTime(draft, key);
+                            setSheet(() {});
+                          },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: const Color(0xFFF3F4F6), borderRadius: BorderRadius.circular(10)),
+                      child: Text(_clock(draft[key]),
+                          style: _t(14, FontWeight.w600, _isClosed(draft) ? _muted : _ink)),
+                    ),
+                  ),
+                ]),
+              );
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(s.waterEditWorkingHour, textAlign: TextAlign.center, style: _t(16, FontWeight.w700, _ink)),
+            content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(_dayLabel(context, '${draft['day']}'), style: _t(14, FontWeight.w700, _ink)),
+              const SizedBox(height: 12),
+              Row(children: [
+                field(s.waterStartTime, 'start'),
+                const SizedBox(width: 12),
+                field(s.waterEndTime, 'end'),
+              ]),
+              const SizedBox(height: 8),
+              Row(children: [
+                Expanded(child: Text(s.closed, style: _t(14, FontWeight.w500, _ink))),
+                Switch(
+                  value: _isClosed(draft),
+                  activeThumbColor: Colors.white,
+                  activeTrackColor: _orange,
+                  onChanged: (v) => setSheet(() => draft['closed'] = v),
+                ),
+              ]),
+            ]),
+            actions: [
+              Row(children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _ink,
+                      side: const BorderSide(color: _border),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Text(s.cancel),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _orange,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Text(s.save),
+                  ),
+                ),
+              ]),
+            ],
+          );
+        },
+      ),
+    );
+    if (saved == true && mounted) setState(() => d.addAll(draft));
+  }
 }
 
 // ── Earnings ────────────────────────────────────────────────────────────
