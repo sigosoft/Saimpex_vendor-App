@@ -1151,7 +1151,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: false,
             delivered: false,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: rawId,
             isAccepting:
@@ -1229,7 +1229,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: false,
             delivered: false,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: rawId,
             isPreparingAction:
@@ -1294,7 +1294,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: false,
             delivered: false,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: rawId,
             isMarkingReadyAction:
@@ -1361,7 +1361,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: true,
             delivered: false,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: order.resolvedId,
           ),
@@ -1419,7 +1419,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             ready: false,
             delivered: true,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: order.resolvedId,
           ),
@@ -1478,7 +1478,7 @@ class _PharmacyHomeState extends State<PharmacyHome> {
             delivered: false,
             cancelled: true,
             partnerName: order.deliveryBoyName,
-            itemsSummary: order.displayItemsSummary,
+            itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
             phone: order.phone,
             orderRawId: order.resolvedId,
           ),
@@ -1550,18 +1550,15 @@ class _PharmacyHomeState extends State<PharmacyHome> {
         final isReady = filter == 3 || order.status == 4;
         final isDelivered = filter == 4 || order.status == 9;
 
-        final itemCount = order.orderItemsCount ?? order.totalItems ?? 0;
+        final itemCount = (order.orderItemsCount ?? 0) > 0
+            ? order.orderItemsCount!
+            : (order.totalItems ?? 0);
         final totalStr = order.total?.toString().trim() ?? '';
-        final itemsLabel = itemCount == 1
-            ? S.of(context).pharmacyHomeOneItem
-            : S.of(context).pharmacyHomeItemCount('$itemCount');
-        final dynamicItemsSummary = itemCount > 0 && totalStr.isNotEmpty
-            ? '$itemsLabel • ${totalStr.contains('MRU') ? totalStr : '$totalStr MRU'}'
-            : (totalStr.isNotEmpty
-                  ? (totalStr.contains('MRU') ? totalStr : '$totalStr MRU')
-                  : (itemCount > 0
-                        ? itemsLabel
-                        : null));
+        final dynamicItemsSummary = _otcItemsSummary(
+          context,
+          itemCount,
+          totalStr.isEmpty || totalStr.contains('MRU') ? totalStr : '$totalStr MRU',
+        );
 
         final rawId = order.id;
         widgets.add(
@@ -2354,6 +2351,17 @@ class _TypeTab extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          // Figma: the selected type sits on a white pill.
+          Positioned.fill(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 360),
+              curve: Curves.easeInOutCubic,
+              decoration: BoxDecoration(
+                color: selected ? Colors.white : Colors.transparent,
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+          ),
           Center(
             child: AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 360),
@@ -2640,7 +2648,7 @@ Widget _prescriptionOrderCard(
     ready: false,
     delivered: false,
     partnerName: order.deliveryBoyName,
-    itemsSummary: order.displayItemsSummary,
+    itemsSummary: _otcItemsSummary(context, order.displayItemsCount, order.displayTotal),
     phone: order.phone,
     orderRawId: rawId,
     isAccepting: controller.isAcceptingOrder && controller.acceptingOrderId == rawId,
@@ -5778,4 +5786,14 @@ class _NavIcon extends StatelessWidget {
       ),
     );
   }
+}
+
+/// "3 Items • 305.00 MRU" in the app language (Figma OTC card pill).
+String? _otcItemsSummary(BuildContext context, int count, String total) {
+  final s = S.of(context);
+  final items = count <= 0
+      ? ''
+      : (count == 1 ? s.pharmacyHomeOneItem : s.pharmacyHomeItemCount('$count'));
+  final parts = [items, total.trim()].where((p) => p.isNotEmpty).toList();
+  return parts.isEmpty ? null : parts.join(' • ');
 }
