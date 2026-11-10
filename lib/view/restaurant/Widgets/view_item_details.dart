@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:saimpex_vendor/view/restaurant/Widgets/item_flag_tags.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:saimpex_vendor/utils/utils.dart';
+import 'package:saimpex_vendor/utils/bidi_text.dart' show signedMru;
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
 import 'package:saimpex_vendor/configs/Dioclient.dart';
 import 'package:saimpex_vendor/controller/profile_controller.dart';
@@ -888,7 +889,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
           for (final o in _maps(g['options']))
             _optionCard(
               title: '${o['name'] ?? '-'}',
-              price: '+${_money(o['additional_price'])} MRU',
+              price: signedMru('+', _money(o['additional_price'])),
               isAvailable: '${o['available_status']}' == '1',
               networkImage: _imageUrl(o['image_url']),
             ),
@@ -910,7 +911,7 @@ class _ViewItemDetailsState extends State<ViewItemDetails> {
         for (final e in _maps(extras['items']))
           _optionCard(
             title: '${e['name'] ?? '-'}',
-            price: '+${_money(e['additional_price'])} MRU',
+            price: signedMru('+', _money(e['additional_price'])),
             isAvailable: '${e['available_status']}' == '1',
             networkImage: _imageUrl(e['image_url']),
           ),
