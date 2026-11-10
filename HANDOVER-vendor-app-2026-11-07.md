@@ -23,7 +23,7 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 - **Backend issue opened, #181:** `waterOrders` list has no `payment_type` and its `summary` is English only, so the Figma card pills ("1 Bottle (19L) • 50 MRU", Online Payment / Cash on Delivery) can't be shown; the card shows the total only until then.
 - **Phone checks 10 Nov evening ✅:** #143 on laundry.24 (Vendor Profile title, Weekly Schedule list, Edit Working Hour dialog in English and Arabic, Cancel leaves data unchanged); Figma full-size pass of restaurant (list card, delivered order details) and water (Home, list, delivered order details) done; differences fixed in #146 / #147 or raised in #181.
 - **Note:** food.01 uses a different password from the other demo logins (Stephy has it; not written here).
-- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-10-2d593ff.apk` from `test/retest-2026-11-06` at `2d593ff` (pushed). Dev server, debug-key signed. = `main` + #143–#147. Analyzer 0 errors. Older APKs are superseded.
+- **APK for the client:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-10-04861c3.apk` (164 MB) from `test/retest-2026-11-06` at `04861c3` (pushed; same app code as `2d593ff`). Dev server, debug-key signed. = `main` + #143–#147. Analyzer 0 errors, `flutter test` 68 / 68, opens on the phone. Older APKs are superseded.
 - **Figma, pharmacy OTC (full size):** Home and Orders list ✅ after #144; Delivered order details (customer, request ID, delivery type, address, items with photos, dark payment summary, timeline) ✅.
 - **Backend issues still open on GitHub** (fixed on dev, waiting for Praveen to close): #168–#175, #176 (duplicate), #179, #180.
 
