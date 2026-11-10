@@ -263,7 +263,7 @@ class _ServiceWorkingHoursViewState extends State<ServiceWorkingHoursView> {
       const SizedBox(height: 6),
       Row(children: [
         Text('${s.today}: ', style: _t(15, FontWeight.w700, _ink)),
-        Text(hours, textDirection: TextDirection.ltr, style: _t(15, FontWeight.w700, closed ? _muted : _orange)),
+        Text(hours, style: _t(15, FontWeight.w700, closed ? _muted : _orange)),
       ]),
     ]);
   }
