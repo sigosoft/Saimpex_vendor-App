@@ -88,6 +88,8 @@ class PharmacyOrderDetailOrder {
   int? userId;
   int? vendorId;
   int? deliveryBoyId;
+  String? deliveryBoyName;
+  String? deliveryBoyPhone;
   int? orderType;
   String? type;
   int? source;
@@ -185,6 +187,8 @@ class PharmacyOrderDetailOrder {
     deliveryBoyId = json['delivery_boy_id'] is int
         ? json['delivery_boy_id']
         : int.tryParse(json['delivery_boy_id']?.toString() ?? '');
+    deliveryBoyName = _text(json['delivery_boy_name']);
+    deliveryBoyPhone = _text(json['delivery_boy_phone']);
     orderType = json['order_type'] is int
         ? json['order_type']
         : int.tryParse(json['order_type']?.toString() ?? '');
@@ -494,4 +498,9 @@ class PharmacyOrderStatusLog {
     res['updated_at'] = updatedAt;
     return res;
   }
+}
+
+String? _text(dynamic v) {
+  final s = v?.toString().trim() ?? '';
+  return (s.isEmpty || s == 'null') ? null : s;
 }

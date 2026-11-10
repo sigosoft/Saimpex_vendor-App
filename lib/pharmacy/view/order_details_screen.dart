@@ -27,6 +27,7 @@ import 'package:saimpex_vendor/pharmacy/view/reject_order_sheet.dart';
 import 'package:saimpex_vendor/view/home/substitution/order_substitutions.dart' show groceryUnitLabel;
 import 'package:saimpex_vendor/utils/utils.dart';
 import 'package:saimpex_vendor/utils/localization_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'create_quotation_screen.dart';
 part '../controller/create_quotation_controller.dart';
@@ -3735,7 +3736,10 @@ class _DeliveryPartnerSection extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
+              if ((phone ?? '').trim().isNotEmpty)
+              GestureDetector(
+                onTap: () => launchUrl(Uri.parse('tel:${phone!.trim()}')),
+                child: Container(
                 width: 48,
                 height: 48,
                 alignment: Alignment.center,
@@ -3755,6 +3759,7 @@ class _DeliveryPartnerSection extends StatelessWidget {
                   color: Colors.white,
                   size: 22,
                 ),
+              ),
               ),
             ],
           ),
