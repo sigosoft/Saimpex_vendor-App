@@ -218,9 +218,14 @@ class _PharmacyHomeState extends State<PharmacyHome> {
                         context,
                         controller.homeData?.data?.membership,
                       )!,
-                      expiryText: S.of(context).expiresInDays(
-                        '${controller.homeData?.data?.membership?.expiresInDays ?? 0}',
-                      ),
+                      // No chip until the membership arrives.
+                      expiryText:
+                          controller.homeData?.data?.membership?.expiresInDays ==
+                                  null
+                              ? ''
+                              : S.of(context).expiresInDays(
+                                  '${controller.homeData!.data!.membership!.expiresInDays}',
+                                ),
                       isWarning:
                           (controller
                                   .homeData
