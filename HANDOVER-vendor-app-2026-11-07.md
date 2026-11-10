@@ -11,6 +11,17 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ---
 
+## 0e. All PRs merged into `main` (10 Nov afternoon), replaces 0d's APK line
+
+- **Praveen merged all 98 PRs (#39–#142) on 10 Nov.** `main` (`a7f7d7d`) now has the same app code as `test/retest-2026-11-06`. From now on branch new work from `main`.
+- **Open PRs (base `main`), all merged into `test/retest-2026-11-06`:**
+  - **#143** service Vendor Profile title matches the Account menu; Working hours "Weekly Schedule" list with an "Edit Working Hour" dialog per day (Figma). Was based on #137; retargeted to `main`. This replaces the "known difference" in 0d (inline time chips).
+  - **#144** pharmacy OTC: cards show "3 Items • 305.00 MRU" (the list sends `item_count`, the app didn't read it; labels now in the app language); Prescription / OTC switch puts the selected type on a white pill (Figma). Phone ✅.
+  - **#145** pharmacy OTC details: Delivery Partner card shows the real rider (name, phone; `pharmacyOrderDetail` now sends `delivery_boy_name` / `delivery_boy_phone`) while the order is out, and the call button dials. Delivered order still shows no rider card (Figma) ✅. **Not seen on the phone:** no OTC order with a rider on the way exists on dev.
+- **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-10-529ea0c.apk` from `test/retest-2026-11-06` at `529ea0c` (pushed). Dev server, debug-key signed. = `main` + #143–#145. Older APKs are superseded.
+- **Figma, pharmacy OTC (full size):** Home and Orders list ✅ after #144; Delivered order details (customer, request ID, delivery type, address, items with photos, dark payment summary, timeline) ✅.
+- **Backend issues still open on GitHub** (fixed on dev, waiting for Praveen to close): #168–#175, #176 (duplicate), #179, #180.
+
 ## 0d. Latest client build (9 Nov), replaces 0b
 
 - **APK:** `client-build/SaimpexVendor-v1.0.6-7-dev-2026-11-10-79027b3.apk` from `test/retest-2026-11-06` at `79027b3` (pushed). Dev server, debug-key signed. Includes #118–#142. Analyzer 0 errors, `flutter test` **68 / 68**. Older APKs in `client-build/` are superseded.
