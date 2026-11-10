@@ -160,10 +160,10 @@ class _CouponsViewState extends State<CouponsView> {
           final String validUntil = validDate == null
               ? S.current.waterNotAvailable
               : WaterApi.formatDate(map['valid_upto']);
-          final String createdOn = map['formatted_created_on']?.toString() ??
-              S.current.waterNotAvailable;
-          final String updatedOn = map['formatted_updated_on']?.toString() ??
-              S.current.waterNotAvailable;
+          final String createdOn = _orElse(formatServerDateTime(map['created_at'], pattern: 'MMM dd, yyyy, hh:mm a'), map['formatted_created_on']?.toString() ??
+                  S.current.waterNotAvailable);
+          final String updatedOn = _orElse(formatServerDateTime(map['updated_at'], pattern: 'MMM dd, yyyy, hh:mm a'), map['formatted_updated_on']?.toString() ??
+                  S.current.waterNotAvailable);
           final draft = WaterCouponDraft(
             id: id,
             name: map['name_en']?.toString() ?? name,
@@ -1137,3 +1137,8 @@ class _MetaRow extends StatelessWidget {
     );
   }
 }
+
+/// [value] unless empty, else [fallback] (server pre-formatted text).
+/// Coupon dates: phone time in the app language from created_at /
+/// updated_at (UTC); the server text was UTC ("03:50 AM" at 09:20 IST).
+String _orElse(String value, String fallback) => value.isEmpty ? fallback : value;

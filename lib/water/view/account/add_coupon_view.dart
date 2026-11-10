@@ -91,6 +91,7 @@ class _AddCouponViewState extends State<AddCouponView> {
   }
 
   Future<void> _pickType() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final box = _typeKey.currentContext?.findRenderObject() as RenderBox?;
     if (box == null) return;
     final origin = box.localToGlobal(Offset.zero);
@@ -124,6 +125,9 @@ class _AddCouponViewState extends State<AddCouponView> {
   }
 
   Future<void> _pickDate() async {
+    // Else the picker gives focus back to the last field and the keyboard
+    // opens over the form (test 10 Nov).
+    FocusManager.instance.primaryFocus?.unfocus();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final current = _validUntil;

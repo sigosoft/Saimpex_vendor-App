@@ -109,16 +109,13 @@ class _Coupon {
         'N/A';
     final validUntil = _formatDate(validUntilRaw);
 
-    final createdOn =
-        raw['formatted_created_on']?.toString() ??
-        raw['created_at']?.toString() ??
-        raw['created_on']?.toString() ??
-        'N/A';
-    final updatedOn =
-        raw['formatted_updated_on']?.toString() ??
-        raw['updated_at']?.toString() ??
-        raw['updated_on']?.toString() ??
-        createdOn;
+    // Phone time in the app language (server sends created_at in UTC).
+    final createdOn = _orElse(formatServerDateTime(raw['created_at'], pattern: 'MMM dd, yyyy, hh:mm a'), raw['formatted_created_on']?.toString() ??
+            raw['created_on']?.toString() ??
+            'N/A');
+    final updatedOn = _orElse(formatServerDateTime(raw['updated_at'], pattern: 'MMM dd, yyyy, hh:mm a'), raw['formatted_updated_on']?.toString() ??
+            raw['updated_on']?.toString() ??
+            createdOn);
 
     final statusVal = raw['status'];
     final active =
@@ -1487,3 +1484,8 @@ class _MetaRow extends StatelessWidget {
     );
   }
 }
+
+/// [value] unless empty, else [fallback] (server pre-formatted text).
+/// Coupon dates: phone time in the app language from created_at /
+/// updated_at (UTC); the server text was UTC ("03:50 AM" at 09:20 IST).
+String _orElse(String value, String fallback) => value.isEmpty ? fallback : value;

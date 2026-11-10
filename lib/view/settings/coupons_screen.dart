@@ -1,4 +1,5 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
+import 'package:saimpex_vendor/utils/utils.dart' show formatServerDateTime;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:saimpex_vendor/generated/l10n.dart';
@@ -240,10 +241,8 @@ class _CouponsScreenState extends State<CouponsScreen> {
     final String discount = typeInt == 2 ? '$discountValue%' : discountValue;
     final String count = coupon['count']?.toString() ?? '0';
     final String validUpto = coupon['valid_upto']?.toString() ?? 'N/A';
-    final String createdOn =
-        coupon['formatted_created_on']?.toString() ?? 'N/A';
-    final String updatedOn =
-        coupon['formatted_updated_on']?.toString() ?? 'N/A';
+    final String createdOn = _orElse(formatServerDateTime(coupon['created_at'], pattern: 'MMM dd, yyyy, hh:mm a'), coupon['formatted_created_on']?.toString() ?? 'N/A');
+    final String updatedOn = _orElse(formatServerDateTime(coupon['updated_at'], pattern: 'MMM dd, yyyy, hh:mm a'), coupon['formatted_updated_on']?.toString() ?? 'N/A');
 
     return Container(
       width: screenWidth * 0.92,
@@ -774,3 +773,8 @@ class _CouponsScreenState extends State<CouponsScreen> {
     );
   }
 }
+
+/// [value] unless empty, else [fallback] (server pre-formatted text).
+/// Coupon dates: phone time in the app language from created_at /
+/// updated_at (UTC); the server text was UTC ("03:50 AM" at 09:20 IST).
+String _orElse(String value, String fallback) => value.isEmpty ? fallback : value;
