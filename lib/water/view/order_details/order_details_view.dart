@@ -1,6 +1,7 @@
 import 'package:saimpex_vendor/utils/payment_type.dart';
 import 'package:saimpex_vendor/utils/widgets/no_image_box.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:saimpex_vendor/configs/ApiConfigs.dart';
@@ -309,6 +310,20 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     return [];
   }
 
+  /// `payment_on` comes formatted in English and UTC ("Nov 05, 2026
+  /// 06:25 AM"); shown in phone time and the app language.
+  static String _formatPaymentOn(dynamic raw) {
+    final s = raw?.toString().trim() ?? '';
+    if (s.isEmpty || s == 'null') return '';
+    try {
+      final utc = DateFormat('MMM dd, yyyy hh:mm a', 'en').parseStrict(s);
+      return appDateFormat('MMM dd, yyyy hh:mm a')
+          .format(serverTimeToLocal(utc));
+    } catch (_) {
+      return _formatDateString(s);
+    }
+  }
+
   static String _formatDateString(dynamic rawDate) {
     if (rawDate == null) return '';
     final str = rawDate.toString().trim();
@@ -557,7 +572,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     final rawPayedOn = orderMap['payed_on'] ??
         orderMap['paid_at'] ??
         orderMap['payment_date'];
-    final payedOn = _formatDateString(rawPayedOn);
+    final payedOn = rawPayedOn != null
+        ? _formatDateString(rawPayedOn)
+        : _formatPaymentOn(orderMap['payment_on']);
 
     final subtotal = orderMap['subtotal']?.toString() ??
         orderMap['item_total']?.toString();
@@ -1472,7 +1489,8 @@ class _PaymentSummary extends StatelessWidget {
             _PayRow(label: S.of(context).deliveryFee, value: '$deliveryFee MRU'),
             const SizedBox(height: 10),
           ],
-          if (tax != null && tax!.isNotEmpty && tax != '0' && tax != '0.00') ...[
+          // Shown at 0.00 too, as in Figma and the pharmacy summary.
+          if (tax != null && tax!.isNotEmpty && tax != 'null') ...[
             _PayRow(label: S.of(context).tax, value: '$tax MRU'),
             const SizedBox(height: 10),
           ],
