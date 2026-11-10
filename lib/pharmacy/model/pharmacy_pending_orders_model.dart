@@ -169,6 +169,7 @@ class PharmacyPendingOrderItem {
       itemsCount: (json['items_count'] is int)
           ? json['items_count']
           : int.tryParse(json['items_count']?.toString() ?? '') ??
+              int.tryParse(json['item_count']?.toString() ?? '') ??
               int.tryParse(json['order_items_count']?.toString() ?? '') ??
               int.tryParse(json['total_items']?.toString() ?? '') ??
               (json['items'] is List

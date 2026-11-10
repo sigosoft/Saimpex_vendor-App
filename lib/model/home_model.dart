@@ -265,7 +265,9 @@ class OrderData {
               int.tryParse(json['basket_items_count']?.toString() ?? '') ??
               int.tryParse(json['order_items_count']?.toString() ?? '') ??
               0)
-          : (int.tryParse(json['order_items_count']?.toString() ?? '') ?? 0),
+          : (int.tryParse(json['order_items_count']?.toString() ?? '') ??
+              int.tryParse(json['item_count']?.toString() ?? '') ??
+              0),
       totalItems: (json['total_items'] is int)
           ? json['total_items']
           : int.tryParse(json['total_items']?.toString() ?? ''),
