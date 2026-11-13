@@ -718,14 +718,14 @@ class MenuController extends GetxController {
               Navigator.of(dialogContext).pop();
               await pickAndCropImage(context, ImageSource.gallery);
             },
-            child: const Text("Gallery"),
+            child: Text(S.current.gallery),
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(dialogContext).pop();
               await pickAndCropImage(context, ImageSource.camera);
             },
-            child: const Text("Camera"),
+            child: Text(S.current.camera),
           ),
         ],
       ),
@@ -745,14 +745,14 @@ class MenuController extends GetxController {
         sourcePath: picked.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Image',
+            toolbarTitle: S.current.cropImage,
             toolbarColor: const Color(0xFFFF5216),
             toolbarWidgetColor: Colors.white,
             activeControlsWidgetColor: const Color(0xFFFF5216),
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+          IOSUiSettings(title: S.current.cropImage, minimumAspectRatio: 1.0),
         ],
       );
       if (cropped != null) {
