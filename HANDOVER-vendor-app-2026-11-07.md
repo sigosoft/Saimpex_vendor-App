@@ -11,6 +11,14 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ---
 
+## 0f. Signed Play Store bundle (13 Nov)
+
+- **Play Console blocked the bundle** ("Use alternative system pickers for photos / videos"). **#148** removes `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO` (they were only declared in the manifest; images already come from the system photo picker / file picker) with `tools:node="remove"`; `READ_EXTERNAL_STORAGE` limited to Android 12 and lower. Phone ✅: Add item → Gallery opens the Android photo picker ("This app can only access the photos that you select"), no permission prompt, crop, image shows in the form (not submitted).
+- **Signed AAB:** `client-build/SaimpexVendor-v1.0.7-8-dev-release-2026-11-13-51e4062.aab` (+ same-build `.apk`), from `test/retest-2026-11-06` at `51e4062` = `main` + #143–#148. **Dev server**, version **1.0.7 (8)** (set with `--build-name` / `--build-number`; `pubspec.yaml` still says 1.0.6+7). Signed with the Play upload key `playstore_key`, alias `myflutterkey`, SHA-256 52:FA:E9:…:B6:0D (checked with `keytool -printcert -jarfile`).
+- **Signing setup on this PC:** `android/key.properties` (git-ignored) holds the keystore path, alias and passwords; never commit it. Build: `flutter build appbundle --release --build-name=X --build-number=N` (add `--dart-define=SAIMPEX_LIVE=true` for the live server).
+- **Phone:** the test app was uninstalled and the Play-key build installed (signatures differ from the old debug-key builds); log in again after reinstalling.
+- **Seen, not fixed yet:** the image source sheet ("Camera" / "Gallery") and the cropper title ("Crop Image") are English in Arabic / French (16 hard-coded strings).
+
 ## 0e. All PRs merged into `main` (10 Nov afternoon), replaces 0d's APK line
 
 - **Praveen merged all 98 PRs (#39–#142) on 10 Nov.** `main` (`a7f7d7d`) now has the same app code as `test/retest-2026-11-06`. From now on branch new work from `main`.
