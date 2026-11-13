@@ -18,7 +18,8 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 - **Signing setup on this PC:** `android/key.properties` (git-ignored) holds the keystore path, alias and passwords; never commit it. Build: `flutter build appbundle --release --build-name=X --build-number=N` (add `--dart-define=SAIMPEX_LIVE=true` for the live server).
 - **Phone:** the test app was uninstalled and the Play-key build installed (signatures differ from the old debug-key builds); log in again after reinstalling.
 - **#149:** image source sheet ("Camera" / "Gallery") and cropper title ("Crop Image") were hard-coded English; now in the app language (existing keys). Phone ✅ in Arabic: "الكاميرا / المعرض", title "قص الصورة". The small preset labels inside the cropper ("Original", "square", "Crop") come from the image_cropper / uCrop library and stay English.
-- **Latest signed AAB (use this one):** `client-build/SaimpexVendor-v1.0.7-8-dev-release-2026-11-13-e1bd896.aab` (+ `.apk`), `test/retest-2026-11-06` at `e1bd896` = `main` + #143–#149, dev server, 1.0.7 (8), Play key checked (52:FA:E9:…:B6:0D). Supersedes the 51e4062 bundle.
+- **Version 1.0.8 (9), #150:** Play rejected 1.0.7 (8) ("version code 8 has already been used"). `pubspec.yaml` is now 1.0.8+9; plain `flutter build appbundle --release` uses it. **Upload:** `client-build/SaimpexVendor-v1.0.8-9-dev-release-2026-11-13-1472c1e.aab` (+ `.apk`), test branch at `1472c1e` = `main` + #143–#150, dev server, Play key checked, no READ_MEDIA_IMAGES / VIDEO. Next upload must use 10 or higher.
+- **Superseded:** `client-build/SaimpexVendor-v1.0.7-8-dev-release-2026-11-13-e1bd896.aab` (+ `.apk`), `test/retest-2026-11-06` at `e1bd896` = `main` + #143–#149, dev server, 1.0.7 (8), Play key checked (52:FA:E9:…:B6:0D). Supersedes the 51e4062 bundle.
 
 ## 0e. All PRs merged into `main` (10 Nov afternoon), replaces 0d's APK line
 
