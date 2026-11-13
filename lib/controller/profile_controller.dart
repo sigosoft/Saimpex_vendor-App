@@ -1551,13 +1551,13 @@ class ProfileController extends GetxController {
               children: [
                 ListTile(
                   leading: const Icon(Icons.photo_library_outlined),
-                  title: const Text('Gallery'),
+                  title: Text(S.current.gallery),
                   onTap: () =>
                       Navigator.pop(bottomSheetContext, ImageSource.gallery),
                 ),
                 ListTile(
                   leading: const Icon(Icons.camera_alt_outlined),
-                  title: const Text('Camera'),
+                  title: Text(S.current.camera),
                   onTap: () =>
                       Navigator.pop(bottomSheetContext, ImageSource.camera),
                 ),

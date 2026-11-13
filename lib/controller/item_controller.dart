@@ -132,7 +132,7 @@ class ItemController extends GetxController {
                     Icons.camera_alt_outlined,
                     color: Color(0xFFFF5216),
                   ),
-                  title: const Text('Camera'),
+                  title: Text(S.current.camera),
                   onTap: () => Navigator.of(sc).pop(ImageSource.camera),
                 ),
                 ListTile(
@@ -140,7 +140,7 @@ class ItemController extends GetxController {
                     Icons.photo_library_outlined,
                     color: Color(0xFFFF5216),
                   ),
-                  title: const Text('Gallery'),
+                  title: Text(S.current.gallery),
                   onTap: () => Navigator.of(sc).pop(ImageSource.gallery),
                 ),
               ],
@@ -157,14 +157,14 @@ class ItemController extends GetxController {
         sourcePath: picked.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Image',
+            toolbarTitle: S.current.cropImage,
             toolbarColor: const Color(0xFFFF5216),
             toolbarWidgetColor: Colors.white,
             activeControlsWidgetColor: const Color(0xFFFF5216),
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(title: 'Crop Image', minimumAspectRatio: 1.0),
+          IOSUiSettings(title: S.current.cropImage, minimumAspectRatio: 1.0),
         ],
       );
       if (cropped == null) return;
