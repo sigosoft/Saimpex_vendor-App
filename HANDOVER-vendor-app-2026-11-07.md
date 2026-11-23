@@ -11,6 +11,13 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ---
 
+## 0g. Login without a vendor type; Play bundle 1.0.9 (10) (23 Nov)
+
+- **#151 (owner decision 23 Nov):** the login screen no longer has "Select type"; vendors enter username and password only, and the server's `vendor_type` opens the section (the app already routed by it). A login reply without a type is refused instead of guessing. Phone ✅ with all 9 types (restaurant, grocery, local store, pharmacy, water, gas, laundry, car wash, home cleaning), app data cleared before each. This closes the open question "keep the login type list?".
+- **#150 now sets 1.0.9+10** (Play has used 8 and 9). Next upload needs 11 or higher.
+- **Upload:** `client-build/SaimpexVendor-v1.0.9-10-dev-release-2026-11-23-00eae40.aab` (+ `.apk`), test branch `00eae40` = `main` + #143–#151, dev server, Play key checked (52:FA:E9:…:B6:0D), no READ_MEDIA_IMAGES / VIDEO.
+- **Phone over Wi-Fi:** wireless debugging dropped during the 164 MB install; use the USB cable for installs.
+
 ## 0f. Signed Play Store bundle (13 Nov)
 
 - **Play Console blocked the bundle** ("Use alternative system pickers for photos / videos"). **#148** removes `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO` (they were only declared in the manifest; images already come from the system photo picker / file picker) with `tools:node="remove"`; `READ_EXTERNAL_STORAGE` limited to Android 12 and lower. Phone ✅: Add item → Gallery opens the Android photo picker ("This app can only access the photos that you select"), no permission prompt, crop, image shows in the form (not submitted).
