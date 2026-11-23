@@ -11,6 +11,12 @@ It continues `HANDOVER-vendor-app-2026-11-06-final.md`; that file's section 00 s
 
 ---
 
+## 0h. Toast at the bottom; Play bundle 1.0.10 (11) (23 Nov)
+
+- **#152:** toasts ("Login successful", errors) floated mid-screen when sent with the keyboard open (`showToast` closes the keyboard but used its height). Now always at the bottom. Phone ✅ (login with keyboard open).
+- **#150 now sets 1.0.10+11** (Play has used 8, 9, 10). Next upload needs 12 or higher.
+- **Upload:** `client-build/SaimpexVendor-v1.0.10-11-dev-release-2026-11-23-9afacd2.aab` (+ `.apk`), test branch `9afacd2` = `main` + #143–#152, dev server, Play key checked, no READ_MEDIA_IMAGES / VIDEO. Supersedes 1.0.9 (10).
+
 ## 0g. Login without a vendor type; Play bundle 1.0.9 (10) (23 Nov)
 
 - **#151 (owner decision 23 Nov):** the login screen no longer has "Select type"; vendors enter username and password only, and the server's `vendor_type` opens the section (the app already routed by it). A login reply without a type is refused instead of guessing. Phone ✅ with all 9 types (restaurant, grocery, local store, pharmacy, water, gas, laundry, car wash, home cleaning), app data cleared before each. This closes the open question "keep the login type list?".
