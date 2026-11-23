@@ -1,7 +1,6 @@
 import 'package:saimpex_vendor/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:saimpex_vendor/utils/vendor_app_type.dart';
 
 import '../../../controller/login_controller.dart';
 import '../../../generated/l10n.dart';
@@ -68,48 +67,9 @@ class LoginFormCard extends StatelessWidget {
                 ],
               ),
             ),
+            // No vendor type to pick: the server says which type the account
+            // is, and that opens the matching section.
             const SizedBox(height: 24),
-            Text(
-              S.of(context).selectVendorType,
-              style: appFont('Rubik', 
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<int>(
-              key: ValueKey(loginController.selectedVendorType),
-              initialValue: loginController.selectedVendorType,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Colors.black12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Colors.orange),
-                ),
-              ),
-              icon: const Icon(Icons.keyboard_arrow_down),
-              style: appFont('Rubik', fontSize: 14, color: Colors.black87),
-              items: loginVendorTypes
-                  .map(
-                    (type) => DropdownMenuItem<int>(
-                      value: type,
-                      child: Text(vendorTypeName(type)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: loginController.setSelectedVendorType,
-            ),
-            const SizedBox(height: 16),
             Text(
               S.of(context).username,
               style: appFont('Rubik', 
