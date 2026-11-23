@@ -105,12 +105,11 @@ void showToast(BuildContext context, String message) {
   FocusScope.of(context).requestFocus(FocusNode());
   final overlay = Overlay.of(context);
 
-  // Calculate the position based on the keyboard visibility
-  double bottomPadding = 50.0; // Default padding for toast
-  if (MediaQuery.of(context).viewInsets.bottom > 0) {
-    // Keyboard is visible, adjust the position
-    bottomPadding = MediaQuery.of(context).viewInsets.bottom + 50.0;
-  }
+  // Always at the bottom, above the system navigation bar. The keyboard is
+  // closed above, so lifting the toast by the keyboard height left it
+  // floating mid-screen once the keyboard was gone (login, 23 Nov).
+  final double bottomPadding =
+      50.0 + MediaQuery.of(context).viewPadding.bottom;
 
   final overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
