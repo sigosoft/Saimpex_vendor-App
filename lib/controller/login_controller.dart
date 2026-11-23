@@ -27,24 +27,6 @@ class LoginController extends GetxController {
     update();
   }
 
-  void setSelectedAppType(VendorAppType? type) {
-    if (type == null) return;
-    selectedAppType = type;
-    update();
-  }
-
-  /// The vendor type picked on the login screen (API number, see
-  /// loginVendorTypes); it sets the matching app section.
-  int selectedVendorType = 1;
-
-  void setSelectedVendorType(int? vendorType) {
-    if (vendorType == null) return;
-    selectedVendorType = vendorType;
-    selectedAppType =
-        VendorAppTypeX.fromVendorType(vendorType) ?? VendorAppType.groceryRestaurant;
-    update();
-  }
-
   @override
   void onInit() {
     super.onInit();
@@ -77,7 +59,6 @@ class LoginController extends GetxController {
         await Future.delayed(Duration(seconds: 2));
       }
       debugPrint("==================================================");
-      debugPrint("[LOGIN REQUEST] Selected Vendor Type: ${selectedAppType.label}");
       debugPrint("[LOGIN REQUEST] Username: $userName");
       debugPrint("==================================================");
       final response = await DioClient().post(
@@ -97,19 +78,22 @@ class LoginController extends GetxController {
         }
         final apiVendorType = loginModel.data?.details?.vendorType;
         debugPrint("==================================================");
-        debugPrint("[LOGIN SUCCESS] Selected Vendor Type: ${selectedAppType.label}");
         debugPrint("[LOGIN SUCCESS] API Vendor Type: $apiVendorType");
         debugPrint("[LOGIN SUCCESS] User ID: ${loginModel.data?.details?.id}");
         debugPrint("[LOGIN SUCCESS] Vendor ID: ${loginModel.data?.details?.vendorId}");
         debugPrint("==================================================");
-        // Open the section for the vendor's real type, not the one picked on
-        // the login screen; a mismatched pick opened the wrong vertical.
+        // No type is picked on the login screen: the server's vendor_type
+        // decides which section opens. Without one, nothing is guessed.
         final serverAppType = VendorAppTypeX.fromVendorType(apiVendorType);
-        if (apiVendorType != null && serverAppType == null) {
+        if (apiVendorType == null) {
+          showToast(context, S.of(context).loginFailed);
+          return;
+        }
+        if (serverAppType == null) {
           showToast(context, S.of(context).vendorTypeUseWebPanel);
           return;
         }
-        if (serverAppType != null) selectedAppType = serverAppType;
+        selectedAppType = serverAppType;
         await savename("username", userName);
         await SecureCredentials.savePassword(password);
         await savename("token", authToken);
